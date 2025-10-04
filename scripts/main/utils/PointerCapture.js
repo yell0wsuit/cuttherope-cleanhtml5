@@ -107,7 +107,7 @@ define("utils/PointerCapture", [], function () {
     PointerCapture.useMSPointerEvents = window.navigator["msPointerEnabled"];
 
     // We are not using Modernizr in win8, but sometimes we debug in other browsers
-    PointerCapture.useTouchEvents = typeof Modernizr !== "undefined" && Modernizr.touch;
+    PointerCapture.useTouchEvents = "ontouchstart" in window || navigator.maxTouchPoints > 0;
 
     // cache the correct event names to use
     PointerCapture.startEventName = PointerCapture.useMSPointerEvents
