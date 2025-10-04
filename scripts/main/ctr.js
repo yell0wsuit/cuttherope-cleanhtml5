@@ -33,7 +33,7 @@ var GLOBAL_ZOOM = matchMedia("(min-width: 960px)").matches ? 2 : 1;
 
 (function () {
     requirejs.config({
-        baseUrl: "scripts",
+        baseUrl: "scripts/main",
     });
 
     // manages sounds (SoundManager2 only for now, but eventually PhoneGap as well)
