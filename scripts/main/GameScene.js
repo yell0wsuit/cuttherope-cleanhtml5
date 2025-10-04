@@ -438,11 +438,9 @@ define("GameScene", [
 
             if (currentPack != LevelState.pack) {
                 this.bgTexture = ResourceMgr.getTexture(bgrID);
-                $("#canvasBackground")
-                    .css({
-                        background: "url('" + this.bgTexture.image.src + "')",
-                    })
-                    .show();
+                const canvasBackground = document.getElementById("canvasBackground");
+                canvasBackground.style.background = "url('" + this.bgTexture.image.src + "')";
+                canvasBackground.style.display = "block";
 
                 currentPack = LevelState.pack;
             }
@@ -983,7 +981,7 @@ define("GameScene", [
         },
         loadGravitySwitch: function (item) {
             this.gravityButton = new GravityButton();
-            this.gravityButton.onButtonPressed = $.proxy(this.onButtonPressed, this);
+            this.gravityButton.onButtonPressed = this.onButtonPressed.bind(this);
             this.gravityButton.visible = false;
             this.gravityButton.touchable = false;
             this.addChild(this.gravityButton);
@@ -1213,7 +1211,7 @@ define("GameScene", [
             s.parseMover(item);
 
             if (tg) {
-                s.onRotateButtonPressed = $.proxy(this.rotateAllSpikesWithId, this);
+                s.onRotateButtonPressed = this.rotateAllSpikesWithId.bind(this);
             }
 
             if (item.name === MapItem.ELECTRO) {
@@ -1371,7 +1369,7 @@ define("GameScene", [
             target.playTimeline(CharAnimation.IDLE);
 
             const idle = target.getTimeline(CharAnimation.IDLE);
-            idle.onKeyFrame = $.proxy(this.onIdleOmNomKeyFrame, this);
+            idle.onKeyFrame = this.onIdleOmNomKeyFrame.bind(this);
 
             target.setPause(
                 IMG_CHAR_ANIMATIONS_mouth_open_end - IMG_CHAR_ANIMATIONS_mouth_open_start,
@@ -1576,7 +1574,7 @@ define("GameScene", [
                     if (g.radius !== Constants.UNDEFINED && !g.rope) {
                         // shared code for creating a rope with a star
                         var STAR_RADIUS = resolution.STAR_RADIUS,
-                            createRope = $.proxy(function (star) {
+                            createRope = function (star) {
                                 const l = new Vector(g.x, g.y).distance(star.pos);
                                 if (l <= g.radius + STAR_RADIUS) {
                                     const b = new Bungee(
@@ -1599,7 +1597,7 @@ define("GameScene", [
                                         SoundMgr.playSound(ResourceId.SND_BUZZ);
                                     }
                                 }
-                            }, this);
+                            }.bind(this);
 
                         if (this.twoParts !== PartsType.NONE) {
                             if (!this.noCandyL) {
@@ -3405,7 +3403,7 @@ define("GameScene", [
                 fadeOut.addKeyFrame(
                     KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0.2)
                 );
-                fadeOut.onFinished = $.proxy(this.onRotatedCircleTimelineFinished, this);
+                fadeOut.onFinished = this.onRotatedCircleTimelineFinished.bind(this);
 
                 const fadingOutCircle = activeCircle.copy();
                 fadingOutCircle.addTimeline(fadeOut);
