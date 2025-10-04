@@ -1,176 +1,129 @@
 define("utils/PointerCapture", [], function () {
-  var singleTouch = false;
+    var singleTouch = false;
 
-  function PointerCapture(settings) {
-    this.el = settings.element;
-    this.getZoom = settings.getZoom;
+    function PointerCapture(settings) {
+        this.el = settings.element;
+        this.getZoom = settings.getZoom;
 
-    var self = this;
+        var self = this;
 
-    // save references to the event handlers so they can be removed
-    this.startHandler = function (event) {
-      self.preventPanning(event);
+        // save references to the event handlers so they can be removed
+        this.startHandler = function (event) {
+            self.preventPanning(event);
 
-      if (singleTouch === false) {
-        singleTouch =
-          event.changedTouches && event.changedTouches[0].identifier;
-      } else {
-        return false;
-      }
+            if (singleTouch === false) {
+                singleTouch = event.changedTouches && event.changedTouches[0].identifier;
+            } else {
+                return false;
+            }
 
-      if (settings.onStart)
-        return self.translatePosition(event, settings.onStart);
-      else return false; // not handled
-    };
-    this.moveHandler = function (event) {
-      self.preventPanning(event);
+            if (settings.onStart) return self.translatePosition(event, settings.onStart);
+            else return false; // not handled
+        };
+        this.moveHandler = function (event) {
+            self.preventPanning(event);
 
-      if (
-        event.changedTouches &&
-        event.changedTouches[0].identifier !== singleTouch
-      )
-        return false;
+            if (event.changedTouches && event.changedTouches[0].identifier !== singleTouch)
+                return false;
 
-      if (settings.onMove)
-        return self.translatePosition(event, settings.onMove);
-      else return false; // not handled
-    };
-    this.endHandler = function (event) {
-      self.preventPanning(event);
-      singleTouch = false;
+            if (settings.onMove) return self.translatePosition(event, settings.onMove);
+            else return false; // not handled
+        };
+        this.endHandler = function (event) {
+            self.preventPanning(event);
+            singleTouch = false;
 
-      if (settings.onEnd) return self.translatePosition(event, settings.onEnd);
-      else return false; // not handled
-    };
-    this.outHandler = function (event) {
-      if (settings.onOut) return self.translatePosition(event, settings.onOut);
-      else return false; // not handled
-    };
-  }
-
-  // translates from page relative to element relative position
-  PointerCapture.prototype.translatePosition = function (event, callback) {
-    // get the mouse coordinate relative to the page
-    // http://www.quirksmode.org/js/events_properties.html
-    var posx = 0,
-      posy = 0;
-    if (!event) {
-      event = window.event;
+            if (settings.onEnd) return self.translatePosition(event, settings.onEnd);
+            else return false; // not handled
+        };
+        this.outHandler = function (event) {
+            if (settings.onOut) return self.translatePosition(event, settings.onOut);
+            else return false; // not handled
+        };
     }
 
-    if (event.changedTouches && event.changedTouches.length > 0) {
-      // iOS removes touches from targetTouches on touchend so we use
-      // changedTouches when it's available
-      posx = event.changedTouches[0].pageX;
-      posy = event.changedTouches[0].pageY;
-    } else if (event.targetTouches && event.targetTouches.length > 0) {
-      posx = event.targetTouches[0].pageX;
-      posy = event.targetTouches[0].pageY;
-    } else if (event.pageX || event.pageY) {
-      posx = event.pageX;
-      posy = event.pageY;
-    } else if (event.clientX || event.clientY) {
-      posx =
-        event.clientX +
-        document.body.scrollLeft +
-        document.documentElement.scrollLeft;
-      posy =
-        event.clientY +
-        document.body.scrollTop +
-        document.documentElement.scrollTop;
-    }
+    // translates from page relative to element relative position
+    PointerCapture.prototype.translatePosition = function (event, callback) {
+        // get the mouse coordinate relative to the page
+        // http://www.quirksmode.org/js/events_properties.html
+        var posx = 0,
+            posy = 0;
+        if (!event) {
+            event = window.event;
+        }
 
-    var offset = $(this.el).offset(), // get mouse coordinates relative to the element
-      zoom = this.getZoom ? this.getZoom() : 1, // adjust coordinates if the game is zoomed
-      mouseX = Math.round((posx - offset.left) / zoom),
-      mouseY = Math.round((posy - offset.top) / zoom);
+        if (event.changedTouches && event.changedTouches.length > 0) {
+            // iOS removes touches from targetTouches on touchend so we use
+            // changedTouches when it's available
+            posx = event.changedTouches[0].pageX;
+            posy = event.changedTouches[0].pageY;
+        } else if (event.targetTouches && event.targetTouches.length > 0) {
+            posx = event.targetTouches[0].pageX;
+            posy = event.targetTouches[0].pageY;
+        } else if (event.pageX || event.pageY) {
+            posx = event.pageX;
+            posy = event.pageY;
+        } else if (event.clientX || event.clientY) {
+            posx = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+            posy = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+        }
 
-    return callback(mouseX, mouseY);
-  };
+        var offset = $(this.el).offset(), // get mouse coordinates relative to the element
+            zoom = this.getZoom ? this.getZoom() : 1, // adjust coordinates if the game is zoomed
+            mouseX = Math.round((posx - offset.left) / zoom),
+            mouseY = Math.round((posy - offset.top) / zoom);
 
-  // prevent touches from panning the page
-  PointerCapture.prototype.preventPanning = function (event) {
-    if (event["preventManipulation"]) {
-      event["preventManipulation"]();
-    } else {
-      event.preventDefault();
-    }
-  };
+        return callback(mouseX, mouseY);
+    };
 
-  PointerCapture.prototype.activate = function () {
-    this.el.addEventListener(
-      PointerCapture.startEventName,
-      this.startHandler,
-      false,
-    );
-    this.el.addEventListener(
-      PointerCapture.moveEventName,
-      this.moveHandler,
-      false,
-    );
-    this.el.addEventListener(
-      PointerCapture.endEventName,
-      this.endHandler,
-      false,
-    );
-    this.el.addEventListener(
-      PointerCapture.outEventName,
-      this.outHandler,
-      false,
-    );
-  };
+    // prevent touches from panning the page
+    PointerCapture.prototype.preventPanning = function (event) {
+        if (event["preventManipulation"]) {
+            event["preventManipulation"]();
+        } else {
+            event.preventDefault();
+        }
+    };
 
-  PointerCapture.prototype.deactivate = function () {
-    this.el.removeEventListener(
-      PointerCapture.startEventName,
-      this.startHandler,
-      false,
-    );
-    this.el.removeEventListener(
-      PointerCapture.moveEventName,
-      this.moveHandler,
-      false,
-    );
-    this.el.removeEventListener(
-      PointerCapture.endEventName,
-      this.endHandler,
-      false,
-    );
-    this.el.removeEventListener(
-      PointerCapture.outEventName,
-      this.outHandler,
-      false,
-    );
-  };
+    PointerCapture.prototype.activate = function () {
+        this.el.addEventListener(PointerCapture.startEventName, this.startHandler, false);
+        this.el.addEventListener(PointerCapture.moveEventName, this.moveHandler, false);
+        this.el.addEventListener(PointerCapture.endEventName, this.endHandler, false);
+        this.el.addEventListener(PointerCapture.outEventName, this.outHandler, false);
+    };
 
-  // IE10 has pointer events that capture mouse, pen, and touch
-  PointerCapture.useMSPointerEvents = window.navigator["msPointerEnabled"];
+    PointerCapture.prototype.deactivate = function () {
+        this.el.removeEventListener(PointerCapture.startEventName, this.startHandler, false);
+        this.el.removeEventListener(PointerCapture.moveEventName, this.moveHandler, false);
+        this.el.removeEventListener(PointerCapture.endEventName, this.endHandler, false);
+        this.el.removeEventListener(PointerCapture.outEventName, this.outHandler, false);
+    };
 
-  // We are not using Modernizr in win8, but sometimes we debug in other browsers
-  PointerCapture.useTouchEvents =
-    typeof Modernizr !== "undefined" && Modernizr.touch;
+    // IE10 has pointer events that capture mouse, pen, and touch
+    PointerCapture.useMSPointerEvents = window.navigator["msPointerEnabled"];
 
-  // cache the correct event names to use
-  PointerCapture.startEventName = PointerCapture.useMSPointerEvents
-    ? "MSPointerDown"
-    : PointerCapture.useTouchEvents
-      ? "touchstart"
-      : "mousedown";
-  PointerCapture.moveEventName = PointerCapture.useMSPointerEvents
-    ? "MSPointerMove"
-    : PointerCapture.useTouchEvents
-      ? "touchmove"
-      : "mousemove";
-  PointerCapture.endEventName = PointerCapture.useMSPointerEvents
-    ? "MSPointerUp"
-    : PointerCapture.useTouchEvents
-      ? "touchend"
-      : "mouseup";
+    // We are not using Modernizr in win8, but sometimes we debug in other browsers
+    PointerCapture.useTouchEvents = typeof Modernizr !== "undefined" && Modernizr.touch;
 
-  // Unfortunately there is no touchleave event
-  PointerCapture.outEventName = PointerCapture.useMSPointerEvents
-    ? "MSPointerOut"
-    : "mouseout";
+    // cache the correct event names to use
+    PointerCapture.startEventName = PointerCapture.useMSPointerEvents
+        ? "MSPointerDown"
+        : PointerCapture.useTouchEvents
+          ? "touchstart"
+          : "mousedown";
+    PointerCapture.moveEventName = PointerCapture.useMSPointerEvents
+        ? "MSPointerMove"
+        : PointerCapture.useTouchEvents
+          ? "touchmove"
+          : "mousemove";
+    PointerCapture.endEventName = PointerCapture.useMSPointerEvents
+        ? "MSPointerUp"
+        : PointerCapture.useTouchEvents
+          ? "touchend"
+          : "mouseup";
 
-  return PointerCapture;
+    // Unfortunately there is no touchleave event
+    PointerCapture.outEventName = PointerCapture.useMSPointerEvents ? "MSPointerOut" : "mouseout";
+
+    return PointerCapture;
 });

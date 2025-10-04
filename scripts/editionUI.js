@@ -1,3 +1,3 @@
 define("editionUI", [], function () {
-  return {};
+    return {};
 });
