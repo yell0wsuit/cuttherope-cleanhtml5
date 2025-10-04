@@ -22,9 +22,11 @@ define("visual/Text", [
     settings
 ) {
     //settings.getLangId()
-    function FormattedString(str, width) {
-        this.string = str;
-        this.width = width;
+    class FormattedString {
+        constructor(str, width) {
+            this.string = str;
+            this.width = width;
+        }
     }
 
     Text = BaseElement.extend({
@@ -62,10 +64,7 @@ define("visual/Text", [
                 linesToDraw =
                     this.maxHeight === Constants.UNDEFINED
                         ? this.formattedStrings.length
-                        : Math.min(
-                              this.formattedStrings.length,
-                              this.maxHeight / itemHeight + this.font.lineOffset
-                          ),
+                        : Math.min(this.formattedStrings.length, this.maxHeight / itemHeight + this.font.lineOffset),
                 drawEllipsis = linesToDraw !== this.formattedStrings.length;
 
             for (let i = 0; i < linesToDraw; i++) {
@@ -98,9 +97,7 @@ define("visual/Text", [
                         const dotWidth = this.font.texture.rects[dotIndex].w;
                         if (
                             c === len - 1 ||
-                            (c === len - 2 &&
-                                dx + 3 * (dotWidth + dotsOffset) + this.font.spaceWidth >
-                                    this.wrapWidth)
+                            (c === len - 2 && dx + 3 * (dotWidth + dotsOffset) + this.font.spaceWidth > this.wrapWidth)
                         ) {
                             this.d.mapTextureQuad(dotIndex, Math.round(dx), Math.round(dy), n++);
                             dx += dotWidth + dotsOffset;
@@ -228,9 +225,7 @@ define("visual/Text", [
             if (xml.hasAttribute("string")) {
                 const strId = Xml.attrInt("string"),
                     str = ResourceMgr.getString(strId),
-                    strWidth = xml.hasAttribute("width")
-                        ? Xml.attrFloat(xml, "width")
-                        : Constants.UNDEFINED;
+                    strWidth = xml.hasAttribute("width") ? Xml.attrFloat(xml, "width") : Constants.UNDEFINED;
 
                 element.setString(str, strWidth);
             }
@@ -365,16 +360,19 @@ define("visual/Text", [
             img = document.getElementById(options.imgId);
         }
         if (!img && options.imgSel) {
-            img = $(options.imgSel)[0];
+            img = document.querySelector(options.imgSel);
         }
         if (!img && options.imgParentId) {
-            // obbtains img child or prepends new Image if necessary
-            var $parent = $("#" + options.imgParentId),
-                $img = $parent.find(options.canvas ? "canvas" : "img");
-            if ($img.length === 0) {
-                $img = $(options.canvas ? "<canvas>" : "<img>").prependTo($parent);
+            // obtains img child or prepends new Image if necessary
+            const parent = document.getElementById(options.imgParentId);
+            if (parent) {
+                let imgElement = parent.querySelector(options.canvas ? "canvas" : "img");
+                if (!imgElement) {
+                    imgElement = document.createElement(options.canvas ? "canvas" : "img");
+                    parent.insertBefore(imgElement, parent.firstChild);
+                }
+                img = imgElement;
             }
-            img = $img[0];
         }
         if (!img) {
             img = new Image();
@@ -382,7 +380,7 @@ define("visual/Text", [
 
         const lang = settings.getLangId();
         if (lang >= 4 && lang <= 9) {
-            $("#lang").addClass("lang-system");
+            document.getElementById("lang").classList.add("lang-system");
             options.img = img;
             options.text = options.text.toString();
             return Text.drawSystem(options);
@@ -455,11 +453,13 @@ define("visual/Text", [
 
         // When the src is set using image data, the height and width are
         // not immediately available so we'll explicitly set them
-        var $img = $(img).width(finalWidth).height(finalHeight).css("padding-top", 0);
+        img.style.width = finalWidth + "px";
+        img.style.height = finalHeight + "px";
+        img.style.paddingTop = "0px";
 
         // adjust the top padding if we scaled the image for width
         if (topPadding) {
-            $img.css("padding-top", topPadding);
+            img.style.paddingTop = topPadding + "px";
         }
 
         return img;
