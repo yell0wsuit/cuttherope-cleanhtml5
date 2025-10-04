@@ -9,14 +9,73 @@ define("ui/PurchaseBox", [
 ], function (Box, PubSub, Lang, Text, MenuStringId, resolution, Alignment) {
     // cache upgrade UI elements
     let $upgradePrompt, $upgradeButton;
-    $(function () {
-        $upgradePrompt = $("#boxUpgradePrompt").hide();
-        $upgradeButton = $("#boxUpgradeButton")
-            .hide()
-            .click(function () {
+
+    function initialize() {
+        $upgradePrompt = document.getElementById("boxUpgradePrompt");
+        $upgradeButton = document.getElementById("boxUpgradeButton");
+
+        if ($upgradePrompt) {
+            $upgradePrompt.style.display = "none";
+        }
+
+        if ($upgradeButton) {
+            $upgradeButton.style.display = "none";
+            $upgradeButton.addEventListener("click", function () {
                 PubSub.publish(PubSub.ChannelId.PurchaseBoxesPrompt);
             });
-    });
+        }
+    }
+
+    // Wait for DOM to be ready
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initialize);
+    } else {
+        initialize();
+    }
+
+    // Helper function for fade animations
+    function fadeIn(element, duration = 400) {
+        if (!element) return;
+
+        element.style.opacity = "0";
+        element.style.display = "";
+
+        let start = null;
+        function animate(timestamp) {
+            if (!start) start = timestamp;
+            const progress = timestamp - start;
+            const opacity = Math.min(progress / duration, 1);
+
+            element.style.opacity = opacity.toString();
+
+            if (progress < duration) {
+                requestAnimationFrame(animate);
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+
+    function fadeOut(element, duration = 400) {
+        if (!element) return;
+
+        let start = null;
+        const initialOpacity = parseFloat(window.getComputedStyle(element).opacity) || 1;
+
+        function animate(timestamp) {
+            if (!start) start = timestamp;
+            const progress = timestamp - start;
+            const opacity = Math.max(initialOpacity - progress / duration, 0);
+
+            element.style.opacity = opacity.toString();
+
+            if (progress < duration) {
+                requestAnimationFrame(animate);
+            } else {
+                element.style.display = "none";
+            }
+        }
+        requestAnimationFrame(animate);
+    }
 
     // localize UI element text
     PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
@@ -53,13 +112,13 @@ define("ui/PurchaseBox", [
         },
 
         onSelected: function () {
-            $upgradePrompt.fadeIn();
-            $upgradeButton.fadeIn();
+            fadeIn($upgradePrompt);
+            fadeIn($upgradeButton);
         },
 
         onUnselected: function () {
-            $upgradePrompt.fadeOut();
-            $upgradeButton.fadeOut(200);
+            fadeOut($upgradePrompt);
+            fadeOut($upgradeButton, 200);
         },
     });
 
