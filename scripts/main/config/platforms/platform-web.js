@@ -43,7 +43,7 @@ define("config/platforms/platform-web", [
 
         videoBaseUrl: "video/",
         getVideoExtension: function () {
-            return Modernizr.video.h264 ? ".mp4" : Modernizr.video.webm ? ".webm" : null;
+            return ".mp4";
         },
 
         getDrawingBaseUrl: function () {
@@ -152,7 +152,7 @@ define("config/platforms/platform-web", [
         },
         meetsRequirements: function () {
             // does the browser have the HTML5 features we need?
-            const meetsReqs =
+            /*const meetsReqs =
                 Modernizr.canvas &&
                 Modernizr.audio &&
                 Modernizr.video &&
@@ -186,8 +186,9 @@ define("config/platforms/platform-web", [
 
                 // track views of the ugprade page
                 _gaq.push(["_trackEvent", "Upgrade", "View"]);
-            }
-            return meetsReqs;
+            }*/
+
+            return true;
         },
     };
 
