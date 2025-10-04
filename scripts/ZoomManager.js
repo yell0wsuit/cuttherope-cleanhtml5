@@ -1,4 +1,7 @@
-define("ZoomManager", ["config/resolutions/ZoomManager", "resolution"], function (ZoomManager, resolution) {
+define("ZoomManager", ["config/resolutions/ZoomManager", "resolution"], function (
+    ZoomManager,
+    resolution
+) {
     ZoomManager.domReady = function () {
         // no scaling, just center the game
         this.setElementId("gameContainer");

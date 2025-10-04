@@ -1,71 +1,68 @@
 define("game/PumpDirt", [
-  "visual/MultiParticles",
-  "resolution",
-  "core/Vector",
-  "core/Rectangle",
-  "utils/MathHelper",
+    "visual/MultiParticles",
+    "resolution",
+    "core/Vector",
+    "core/Rectangle",
+    "utils/MathHelper",
 ], function (MultiParticles, resolution, Vector, Rectangle, MathHelper) {
-  var IMG_OBJ_PUMP_pump_start = 0,
-    IMG_OBJ_PUMP_pump_end = 5,
-    IMG_OBJ_PUMP_particle_1 = 6,
-    IMG_OBJ_PUMP_particle_2 = 7,
-    IMG_OBJ_PUMP_particle_3 = 8;
+    var IMG_OBJ_PUMP_pump_start = 0,
+        IMG_OBJ_PUMP_pump_end = 5,
+        IMG_OBJ_PUMP_particle_1 = 6,
+        IMG_OBJ_PUMP_particle_2 = 7,
+        IMG_OBJ_PUMP_particle_3 = 8;
 
-  var PumpDirt = MultiParticles.extend({
-    init: function (numParticles, texture, angle) {
-      this._super(numParticles, texture);
+    var PumpDirt = MultiParticles.extend({
+        init: function (numParticles, texture, angle) {
+            this._super(numParticles, texture);
 
-      this.angle = angle;
-      this.angleVar = 10;
+            this.angle = angle;
+            this.angleVar = 10;
 
-      this.speed = resolution.PUMP_DIRT_SPEED;
+            this.speed = resolution.PUMP_DIRT_SPEED;
 
-      // life of particles
-      this.life = 0.6;
+            // life of particles
+            this.life = 0.6;
 
-      // size in pixels
-      this.size = 0.002;
+            // size in pixels
+            this.size = 0.002;
 
-      // emissions per second
-      this.emissionRate = 50;
+            // emissions per second
+            this.emissionRate = 50;
 
-      // color of particles
-      this.startColor.r = 1.0;
-      this.startColor.g = 1.0;
-      this.startColor.b = 1.0;
-      this.startColor.a = 0.6;
+            // color of particles
+            this.startColor.r = 1.0;
+            this.startColor.g = 1.0;
+            this.startColor.b = 1.0;
+            this.startColor.a = 0.6;
 
-      this.endColor.r = 1.0;
-      this.endColor.g = 1.0;
-      this.endColor.b = 1.0;
-      this.endColor.a = 0.0;
+            this.endColor.r = 1.0;
+            this.endColor.g = 1.0;
+            this.endColor.b = 1.0;
+            this.endColor.a = 0.0;
 
-      this.additive = true;
-    },
-    initParticle: function (particle) {
-      this._super(particle);
+            this.additive = true;
+        },
+        initParticle: function (particle) {
+            this._super(particle);
 
-      var texture = this.imageGrid,
-        n = MathHelper.randomRange(
-          IMG_OBJ_PUMP_particle_1,
-          IMG_OBJ_PUMP_particle_3,
-        ),
-        tquad = texture.rects[n],
-        vquad = new Rectangle(0, 0, 0, 0); // don't draw initially
+            var texture = this.imageGrid,
+                n = MathHelper.randomRange(IMG_OBJ_PUMP_particle_1, IMG_OBJ_PUMP_particle_3),
+                tquad = texture.rects[n],
+                vquad = new Rectangle(0, 0, 0, 0); // don't draw initially
 
-      this.drawer.setTextureQuad(this.particles.length, tquad, vquad, 1);
+            this.drawer.setTextureQuad(this.particles.length, tquad, vquad, 1);
 
-      var particleSize = resolution.PUMP_DIRT_PARTICLE_SIZE;
-      particle.width = particleSize;
-      particle.height = particleSize;
-    },
-    updateParticleLocation: function (p, delta) {
-      p.dir.multiply(0.9);
-      var tmp = Vector.multiply(p.dir, delta);
-      tmp.add(this.gravity);
-      p.pos.add(tmp);
-    },
-  });
+            var particleSize = resolution.PUMP_DIRT_PARTICLE_SIZE;
+            particle.width = particleSize;
+            particle.height = particleSize;
+        },
+        updateParticleLocation: function (p, delta) {
+            p.dir.multiply(0.9);
+            var tmp = Vector.multiply(p.dir, delta);
+            tmp.add(this.gravity);
+            p.pos.add(tmp);
+        },
+    });
 
-  return PumpDirt;
+    return PumpDirt;
 });

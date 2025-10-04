@@ -1,71 +1,71 @@
 define("resources/SoundLoader", [
-  "platform",
-  "edition",
-  "resources/ResData",
-  "resources/Sounds",
-  "PxLoader",
-  "PxLoaderSound",
+    "platform",
+    "edition",
+    "resources/ResData",
+    "resources/Sounds",
+    "PxLoader",
+    "PxLoaderSound",
 ], function (platform, edition, resData, Sounds, PxLoader, PxLoaderSound) {
-  var completeListeners = [],
-    startRequested = false,
-    soundManagerReady = false,
-    startIfReady = function () {
-      // ensure start was requested and we are ready
-      if (!startRequested || !soundManagerReady) {
-        return;
-      }
+    var completeListeners = [],
+        startRequested = false,
+        soundManagerReady = false,
+        startIfReady = function () {
+            // ensure start was requested and we are ready
+            if (!startRequested || !soundManagerReady) {
+                return;
+            }
 
-      var pxLoader = new PxLoader({ noProgressTimeout: 30 * 1000 }), // stop waiting after 30 secs
-        baseUrl = platform.audioBaseUrl,
-        extension = platform.getAudioExtension(),
-        MENU_TAG = "MENU",
-        i,
-        len,
-        soundId,
-        soundUrl;
+            var pxLoader = new PxLoader({ noProgressTimeout: 30 * 1000 }), // stop waiting after 30 secs
+                baseUrl = platform.audioBaseUrl,
+                extension = platform.getAudioExtension(),
+                MENU_TAG = "MENU",
+                i,
+                len,
+                soundId,
+                soundUrl;
 
-      // menu sounds first
-      for (i = 0, len = edition.menuSoundIds.length; i < len; i++) {
-        soundId = edition.menuSoundIds[i];
-        soundUrl = baseUrl + resData[soundId].path + extension;
+            // menu sounds first
+            for (i = 0, len = edition.menuSoundIds.length; i < len; i++) {
+                soundId = edition.menuSoundIds[i];
+                soundUrl = baseUrl + resData[soundId].path + extension;
 
-        // SoundManager2 wants a sound id which a char prefix
-        pxLoader.addSound("s" + soundId, soundUrl, MENU_TAG);
-      }
+                // SoundManager2 wants a sound id which a char prefix
+                pxLoader.addSound("s" + soundId, soundUrl, MENU_TAG);
+            }
 
-      // now game sounds
-      for (i = 0, len = edition.gameSoundIds.length; i < len; i++) {
-        soundId = edition.gameSoundIds[i];
-        soundUrl = baseUrl + resData[soundId].path + extension;
+            // now game sounds
+            for (i = 0, len = edition.gameSoundIds.length; i < len; i++) {
+                soundId = edition.gameSoundIds[i];
+                soundUrl = baseUrl + resData[soundId].path + extension;
 
-        // SoundManager2 wants a sound id which a char prefix
-        pxLoader.addSound("s" + soundId, soundUrl);
-      }
+                // SoundManager2 wants a sound id which a char prefix
+                pxLoader.addSound("s" + soundId, soundUrl);
+            }
 
-      // wait for all sounds before showing main menu
-      pxLoader.addCompletionListener(function () {
-        for (var i = 0, len = completeListeners.length; i < len; i++) {
-          completeListeners[i]();
-        }
-      });
+            // wait for all sounds before showing main menu
+            pxLoader.addCompletionListener(function () {
+                for (var i = 0, len = completeListeners.length; i < len; i++) {
+                    completeListeners[i]();
+                }
+            });
 
-      pxLoader.start();
+            pxLoader.start();
+        };
+
+    var SoundLoader = {
+        start: function () {
+            startRequested = true;
+            startIfReady();
+        },
+        onMenuComplete: function (callback) {
+            completeListeners.push(callback);
+        },
     };
 
-  var SoundLoader = {
-    start: function () {
-      startRequested = true;
-      startIfReady();
-    },
-    onMenuComplete: function (callback) {
-      completeListeners.push(callback);
-    },
-  };
+    Sounds.onReady(function () {
+        soundManagerReady = true;
+        startIfReady();
+    });
 
-  Sounds.onReady(function () {
-    soundManagerReady = true;
-    startIfReady();
-  });
-
-  return SoundLoader;
+    return SoundLoader;
 });
