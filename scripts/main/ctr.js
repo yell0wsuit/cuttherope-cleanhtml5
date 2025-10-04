@@ -29,7 +29,7 @@ window.addEventListener(
     true
 );
 
-var GLOBAL_ZOOM = matchMedia("(min-width: 960px)").matches ? 2 : 1;
+const GLOBAL_ZOOM = matchMedia("(min-width: 960px)").matches ? 2 : 1;
 
 (function () {
     requirejs.config({
@@ -40,12 +40,12 @@ var GLOBAL_ZOOM = matchMedia("(min-width: 960px)").matches ? 2 : 1;
     document.addEventListener("mozvisibilitychange", function () {
         //console.log("VISIBILTY", document.mozHidden);
         if (document.mozHidden) {
-            for (var key in window.sounds__) {
+            for (let key in window.sounds__) {
                 window.sounds__[key]._wasPlaying = !window.sounds__[key].paused;
                 window.sounds__[key].pause();
             }
         } else {
-            for (var key in window.sounds__) {
+            for (let key in window.sounds__) {
                 window.sounds__[key]._wasPlaying && window.sounds__[key].play();
             }
         }
