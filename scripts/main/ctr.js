@@ -61,12 +61,16 @@ const GLOBAL_ZOOM = matchMedia("(min-width: 960px)").matches ? 2 : 1;
         app.init();
 
         // wait until the DOM is loaded before wiring up events
-        $(document).ready(function () {
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", function () {
+                app.domReady();
+                app.run();
+            });
+        } else {
+            // DOM already loaded
             app.domReady();
-
-            // for now, we will immediately run the app
             app.run();
-        });
+        }
     });
 
     define("main", function () {});
