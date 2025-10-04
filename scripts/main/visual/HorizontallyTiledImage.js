@@ -141,8 +141,8 @@ define("visual/HorizontallyTiledImage", [
 
             img.src = imageData;
 
-            // NOTE: important to use jQuery to avoid intermittent dimension issues
-            $(img).width(imgWidth).height(imgHeight);
+            img.width = imgWidth;
+            img.height = imgHeight;
 
             // restore the original canvas for the App
             if (existingCanvas) {
