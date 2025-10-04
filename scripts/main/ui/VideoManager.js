@@ -8,17 +8,7 @@ define("ui/VideoManager", [
     "game/CTRSoundMgr",
     "utils/PubSub",
     "ui/ScoreManager",
-], function (
-    edition,
-    resolution,
-    platform,
-    PanelId,
-    PanelManager,
-    settings,
-    SoundMgr,
-    PubSub,
-    ScoreManager
-) {
+], function (edition, resolution, platform, PanelId, PanelManager, settings, SoundMgr, PubSub, ScoreManager) {
     const ensureVideoElement = function () {
         let vid = document.getElementById("vid");
         if (!vid) {
@@ -30,9 +20,45 @@ define("ui/VideoManager", [
             }
             vid.id = "vid";
             vid.className = "ctrPointer";
-            $("#video").append(vid);
+            document.getElementById("video").appendChild(vid);
         }
         return vid;
+    };
+
+    const fadeIn = function (element, duration, callback) {
+        element.style.opacity = 0;
+        element.style.display = "block";
+        let start = null;
+        const animate = (timestamp) => {
+            if (!start) start = timestamp;
+            const progress = timestamp - start;
+            element.style.opacity = Math.min(progress / duration, 1);
+            if (progress < duration) {
+                requestAnimationFrame(animate);
+            } else if (callback) {
+                callback();
+            }
+        };
+        requestAnimationFrame(animate);
+    };
+
+    const fadeOut = function (element, duration, callback) {
+        element.style.opacity = 1;
+        let start = null;
+        const animate = (timestamp) => {
+            if (!start) start = timestamp;
+            const progress = timestamp - start;
+            element.style.opacity = Math.max(1 - progress / duration, 0);
+            if (progress < duration) {
+                requestAnimationFrame(animate);
+            } else {
+                element.style.display = "none";
+                if (callback) {
+                    callback();
+                }
+            }
+        };
+        requestAnimationFrame(animate);
     };
 
     let closeIntroCallback = null;
@@ -62,7 +88,10 @@ define("ui/VideoManager", [
             // as suggested by the IE team
             const firstLevelStars = ScoreManager.getStars(0, 0) || 0;
             if (firstLevelStars > 0) {
-                $("#vid").remove();
+                const vid = document.getElementById("vid");
+                if (vid) {
+                    vid.remove();
+                }
             }
         },
 
@@ -86,7 +115,7 @@ define("ui/VideoManager", [
                     // HAVE_ENOUGH_DATA  (canplaythrough)
 
                     SoundMgr.pauseMusic();
-                    $(vid).fadeIn(300, function () {
+                    fadeIn(vid, 300, function () {
                         vid.play();
                     });
                     vid.addEventListener("ended", VideoManager.closeIntroVideo);
@@ -100,10 +129,12 @@ define("ui/VideoManager", [
 
         closeIntroVideo: function () {
             const vid = document.getElementById("vid");
-            $(vid).fadeOut(500, function () {
-                vid.pause();
-                vid.seek = 0;
-            });
+            if (vid) {
+                fadeOut(vid, 500, function () {
+                    vid.pause();
+                    vid.currentTime = 0;
+                });
+            }
 
             if (closeIntroCallback) {
                 closeIntroCallback();
@@ -147,13 +178,13 @@ define("ui/VideoManager", [
                     if (!SoundMgr.musicEnabled) {
                         vid.volume = 0;
                     }
-                    $(vid).fadeIn(300, function () {
+                    fadeIn(vid, 300, function () {
                         vid.play();
                     });
                     vid.addEventListener("ended", VideoManager.closeOutroVideo);
                     vid.addEventListener("mousedown", VideoManager.closeOutroVideo);
                 } else {
-                    $(vid).remove();
+                    vid.remove();
                     PanelManager.showPanel(PanelId.GAMECOMPLETE, false);
                 }
             }
@@ -161,12 +192,14 @@ define("ui/VideoManager", [
 
         closeOutroVideo: function () {
             PanelManager.showPanel(PanelId.GAMECOMPLETE, true);
-            const $vid = $("#vid");
-            $vid.fadeOut(500, function () {
-                $vid[0].pause();
-                $vid[0].seek = 0;
-                $vid.remove();
-            });
+            const vid = document.getElementById("vid");
+            if (vid) {
+                fadeOut(vid, 500, function () {
+                    vid.pause();
+                    vid.currentTime = 0;
+                    vid.remove();
+                });
+            }
         },
 
         domReady: function () {
