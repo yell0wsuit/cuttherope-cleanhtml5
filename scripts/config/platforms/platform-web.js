@@ -147,7 +147,7 @@ define("config/platforms/platform-web", [
             if (!meetsReqs) {
                 // load the css for the downlevel experience
                 Modernizr.load({
-                    load: "css!css/nosupport.css?RELEASE_TAG",
+                    load: "css!css/nosupport.css",
                 });
 
                 // remove youtube video if it exists
