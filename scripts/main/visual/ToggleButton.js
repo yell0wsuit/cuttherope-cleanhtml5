@@ -28,8 +28,8 @@ define("visual/ToggleButton", [
             this.addChildWithID(this.b2, ToggleButtonId.FACE2);
 
             this.b2.setEnabled(false);
-            this.b1.onButtonPressed = $.proxy(this.onButtonPressed, this);
-            this.b2.onButtonPressed = $.proxy(this.onButtonPressed, this);
+            this.b1.onButtonPressed = this.onButtonPressed.bind(this);
+            this.b2.onButtonPressed = this.onButtonPressed.bind(this);
         },
         onButtonPressed: function (n) {
             switch (n) {
