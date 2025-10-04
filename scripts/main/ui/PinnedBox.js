@@ -34,6 +34,124 @@ define("ui/PinnedBox", [
         PROMPT_PIN: 3, // visible but with a prompt to pin the game
     };
 
+    // Helper functions for animations
+    function fadeIn(element, duration = 400, delay = 0) {
+        if (!element) return Promise.resolve();
+
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                element.style.opacity = "0";
+                element.style.display = "";
+
+                let start = null;
+                function animate(timestamp) {
+                    if (!start) start = timestamp;
+                    const progress = timestamp - start;
+                    const opacity = Math.min(progress / duration, 1);
+
+                    element.style.opacity = opacity.toString();
+
+                    if (progress < duration) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(animate);
+            }, delay);
+        });
+    }
+
+    function fadeOut(element, duration = 400, delay = 0) {
+        if (!element) return Promise.resolve();
+
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                let start = null;
+                const initialOpacity = parseFloat(window.getComputedStyle(element).opacity) || 1;
+
+                function animate(timestamp) {
+                    if (!start) start = timestamp;
+                    const progress = timestamp - start;
+                    const opacity = Math.max(initialOpacity - progress / duration, 0);
+
+                    element.style.opacity = opacity.toString();
+
+                    if (progress < duration) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        element.style.display = "none";
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(animate);
+            }, delay);
+        });
+    }
+
+    function animateProperty(element, props, duration, easing = "linear", delay = 0) {
+        if (!element) return Promise.resolve();
+
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const startValues = {};
+                const endValues = {};
+
+                // Get initial values
+                for (let prop in props) {
+                    if (prop === "scale") {
+                        startValues[prop] = parseFloat(element.style.transform?.match(/scale\(([^)]+)\)/)?.[1] || "1");
+                        endValues[prop] = parseFloat(props[prop]);
+                    } else {
+                        const computed = window.getComputedStyle(element);
+                        startValues[prop] = parseFloat(computed[prop]) || 0;
+                        endValues[prop] = parseFloat(props[prop]);
+                    }
+                }
+
+                let start = null;
+                function animate(timestamp) {
+                    if (!start) start = timestamp;
+                    const progress = Math.min((timestamp - start) / duration, 1);
+                    const easedProgress = applyEasing(progress, easing);
+
+                    for (let prop in props) {
+                        const value = startValues[prop] + (endValues[prop] - startValues[prop]) * easedProgress;
+                        if (prop === "scale") {
+                            element.style.transform = `scale(${value})`;
+                        } else {
+                            element.style[prop] = value + "px";
+                        }
+                    }
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(animate);
+            }, delay);
+        });
+    }
+
+    function applyEasing(t, easing) {
+        switch (easing) {
+            case "easeInOutCirc":
+                return t < 0.5
+                    ? (1 - Math.sqrt(1 - Math.pow(2 * t, 2))) / 2
+                    : (Math.sqrt(1 - Math.pow(-2 * t + 2, 2)) + 1) / 2;
+            case "easeInOutBack":
+                const c1 = 1.70158;
+                const c2 = c1 * 1.525;
+                return t < 0.5
+                    ? (Math.pow(2 * t, 2) * ((c2 + 1) * 2 * t - c2)) / 2
+                    : (Math.pow(2 * t - 2, 2) * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2;
+            default:
+                return t;
+        }
+    }
+
     const PinnedBox = Box.extend({
         init: function (boxIndex, bgimg, reqstars, islocked, type) {
             this._super(boxIndex, bgimg, reqstars, islocked, type);
@@ -42,38 +160,54 @@ define("ui/PinnedBox", [
 
             // dom ready init
             const self = this;
-            $(document).ready(function () {
-                $("#showMeBtn").click(function () {
-                    if (analytics.onShowPinning) {
-                        analytics.onShowPinning();
-                    }
-                    self.showMePinning();
-                });
+
+            function initialize() {
+                const showMeBtn = document.getElementById("showMeBtn");
+                if (showMeBtn) {
+                    showMeBtn.addEventListener("click", function () {
+                        if (analytics.onShowPinning) {
+                            analytics.onShowPinning();
+                        }
+                        self.showMePinning();
+                    });
+                }
 
                 // We'll only get download links for vista and win7. For win8
                 // the url is null and we will hide the button (since the user
                 // already has IE10 installed)
-                const $getIeButton = $("#installieBtn"),
-                    ieDownload = getIE9DownloadUrl();
-                if (ieDownload) {
-                    $getIeButton.on("click", function (e) {
-                        if (analytics.onDownloadIE) {
-                            analytics.onDownloadIE();
-                        }
-                        window.location.href = ieDownload;
-                    });
+                const getIeButton = document.getElementById("installieBtn");
+                const ieDownload = getIE9DownloadUrl();
 
-                    PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
-                        Text.drawBig({
-                            text: Lang.menuText(MenuStringId.FREE_DOWNLOAD),
-                            img: $getIeButton.find("img")[0],
-                            scaleToUI: true,
+                if (getIeButton) {
+                    if (ieDownload) {
+                        getIeButton.addEventListener("click", function (e) {
+                            if (analytics.onDownloadIE) {
+                                analytics.onDownloadIE();
+                            }
+                            window.location.href = ieDownload;
                         });
-                    });
-                } else {
-                    $getIeButton.hide();
+
+                        PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
+                            const img = getIeButton.querySelector("img");
+                            if (img) {
+                                Text.drawBig({
+                                    text: Lang.menuText(MenuStringId.FREE_DOWNLOAD),
+                                    img: img,
+                                    scaleToUI: true,
+                                });
+                            }
+                        });
+                    } else {
+                        getIeButton.style.display = "none";
+                    }
                 }
-            });
+            }
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", initialize);
+            } else {
+                initialize();
+            }
         },
 
         isRequired: function () {
@@ -90,12 +224,9 @@ define("ui/PinnedBox", [
             const getIEVersion = function () {
                 let rv = -1; // Return value assumes failure.
                 return rv;
-                if (
-                    navigator.appName == "Microsoft Internet Explorer" ||
-                    navigator.appName == "MSAppHost/1.0"
-                ) {
+                if (navigator.appName == "Microsoft Internet Explorer" || navigator.appName == "MSAppHost/1.0") {
                     const ua = navigator.userAgent,
-                        re = new RegExp("MSIE ([0-9]?[0-9]{1,}[\.0-9]{0,})"),
+                        re = new RegExp("MSIE ([0-9]?[0-9]{1,}[.0-9]{0,})"),
                         matches = re.exec(ua);
                     if (matches != null && matches.length > 1) {
                         // first entry is the original string followed by matches
@@ -129,8 +260,7 @@ define("ui/PinnedBox", [
             // are we in IE9 or greater
             if (ieVer >= 9 || QueryStrings.forcePinnedBox) {
                 let localStorageIsPinned =
-                        platform.ENABLE_PINNED_MODE ||
-                        SettingStorage.get("msIsSiteModeActivated") == "true",
+                        platform.ENABLE_PINNED_MODE || SettingStorage.get("msIsSiteModeActivated") == "true",
                     msIsSiteMode = platform.ENABLE_PINNED_MODE === true;
 
                 // no way to check if this function exists, we have to use try/catch
@@ -165,11 +295,14 @@ define("ui/PinnedBox", [
                     const self = this;
 
                     PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
-                        Text.drawBig({
-                            text: Lang.menuText(MenuStringId.SHOW_ME),
-                            imgSel: "#showMeBtn img",
-                            scaleToUI: true,
-                        });
+                        const showMeImg = document.querySelector("#showMeBtn img");
+                        if (showMeImg) {
+                            Text.drawBig({
+                                text: Lang.menuText(MenuStringId.SHOW_ME),
+                                img: showMeImg,
+                                scaleToUI: true,
+                            });
+                        }
                     });
                 }
             } else if (ieCan) {
@@ -184,10 +317,7 @@ define("ui/PinnedBox", [
             }
 
             // return a bool indicating whether the box should be added to the boxes collection
-            if (
-                this.pinnedState == PinnedStates.HIDDEN ||
-                this.pinnedState == PinnedStates.UNDEFINED
-            ) {
+            if (this.pinnedState == PinnedStates.HIDDEN || this.pinnedState == PinnedStates.UNDEFINED) {
                 return false;
             } else {
                 return true;
@@ -196,66 +326,92 @@ define("ui/PinnedBox", [
 
         onSelected: function () {
             if (this.promptId != null) {
-                $("#pinningContent").stop(true, true).delay(100).fadeIn(800);
-                $("#" + this.promptId).show();
+                const pinningContent = document.getElementById("pinningContent");
+                const promptElement = document.getElementById(this.promptId);
+
+                if (pinningContent) {
+                    fadeIn(pinningContent, 800, 100);
+                }
+                if (promptElement) {
+                    promptElement.style.display = "";
+                }
             }
         },
 
         onUnselected: function () {
             if (this.promptId != null) {
-                $("#pinningContent").stop(true, true).fadeOut(300);
+                const pinningContent = document.getElementById("pinningContent");
+                if (pinningContent) {
+                    fadeOut(pinningContent, 300);
+                }
             }
         },
 
         // runs (and the resets) the "show me" animation for the pinned box
         showMePinning: function () {
-            const cursor = $("#pinCursor");
-            const omnom = $("#pinOmNom");
-            const shadow = $("#pinChairShadow");
-            const button = $("#showMeBtn");
-            const taskbar = $("#pinTaskBar");
-            button.fadeOut().delay(5500).fadeIn(1000);
-            shadow.delay(500).fadeOut().delay(6000).fadeIn(300);
-            cursor
-                .delay(500)
-                .fadeIn()
-                .delay(2250)
-                .animate({ left: resolution.uiScaledNumber(200) }, 500, "easeInOutCirc")
-                .fadeOut()
-                .animate(
-                    {
-                        top: resolution.uiScaledNumber(65),
-                        left: resolution.uiScaledNumber(45),
-                        scale: "1.0",
-                    },
-                    0
-                );
-            omnom
-                .delay(500)
-                .fadeIn()
-                .delay(1000)
-                .animate(
-                    {
-                        top: resolution.uiScaledNumber(305),
-                        left: resolution.uiScaledNumber(165),
-                    },
-                    1000,
-                    "easeInOutBack"
-                )
-                .delay(1500)
-                .animate({ scale: "0.65" }, 200)
-                .delay(1500)
-                .fadeOut(1000)
-                .animate(
-                    {
-                        top: resolution.uiScaledNumber(115),
-                        left: resolution.uiScaledNumber(-49),
-                        scale: "1.0",
-                    },
-                    50
-                )
-                .fadeIn(500);
-            taskbar.delay(500).fadeIn().delay(5000).fadeOut(1000);
+            const cursor = document.getElementById("pinCursor");
+            const omnom = document.getElementById("pinOmNom");
+            const shadow = document.getElementById("pinChairShadow");
+            const button = document.getElementById("showMeBtn");
+            const taskbar = document.getElementById("pinTaskBar");
+
+            // Button animation
+            if (button) {
+                fadeOut(button, 400, 0).then(() => fadeIn(button, 1000, 5500));
+            }
+
+            // Shadow animation
+            if (shadow) {
+                fadeOut(shadow, 400, 500).then(() => fadeIn(shadow, 300, 6000));
+            }
+
+            // Cursor animation
+            if (cursor) {
+                fadeIn(cursor, 400, 500)
+                    .then(() => new Promise((resolve) => setTimeout(resolve, 2250)))
+                    .then(() => animateProperty(cursor, { left: resolution.uiScaledNumber(200) }, 500, "easeInOutCirc"))
+                    .then(() => fadeOut(cursor, 400))
+                    .then(() => {
+                        cursor.style.top = resolution.uiScaledNumber(65) + "px";
+                        cursor.style.left = resolution.uiScaledNumber(45) + "px";
+                        cursor.style.transform = "scale(1.0)";
+                    });
+            }
+
+            // Omnom animation
+            if (omnom) {
+                fadeIn(omnom, 400, 500)
+                    .then(() => new Promise((resolve) => setTimeout(resolve, 1000)))
+                    .then(() =>
+                        animateProperty(
+                            omnom,
+                            {
+                                top: resolution.uiScaledNumber(305),
+                                left: resolution.uiScaledNumber(165),
+                            },
+                            1000,
+                            "easeInOutBack"
+                        )
+                    )
+                    .then(() => new Promise((resolve) => setTimeout(resolve, 1500)))
+                    .then(() => animateProperty(omnom, { scale: "0.65" }, 200))
+                    .then(() => new Promise((resolve) => setTimeout(resolve, 1500)))
+                    .then(() => fadeOut(omnom, 1000))
+                    .then(() => {
+                        omnom.style.top = resolution.uiScaledNumber(115) + "px";
+                        omnom.style.left = resolution.uiScaledNumber(-49) + "px";
+                        omnom.style.transform = "scale(1.0)";
+                        return new Promise((resolve) => setTimeout(resolve, 50));
+                    })
+                    .then(() => fadeIn(omnom, 500));
+            }
+
+            // Taskbar animation
+            if (taskbar) {
+                fadeIn(taskbar, 400, 500)
+                    .then(() => new Promise((resolve) => setTimeout(resolve, 5000)))
+                    .then(() => fadeOut(taskbar, 1000));
+            }
         },
     });
 
