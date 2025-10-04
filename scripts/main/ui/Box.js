@@ -28,7 +28,7 @@ define("ui/Box", [
     settings
 ) {
     // cache upgrade UI elements
-    var $upgradeButton;
+    let $upgradeButton;
     $(function () {
         $upgradeButton = $("#boxUpgradePlate").hide();
     });
@@ -54,9 +54,9 @@ define("ui/Box", [
         });
     });
 
-    var boxImageBase = platform.boxImageBaseUrl || platform.uiImageBaseUrl;
+    const boxImageBase = platform.boxImageBaseUrl || platform.uiImageBaseUrl;
 
-    var Box = Class.extend({
+    const Box = Class.extend({
         init: function (boxIndex, bgimg, reqstars, islocked, type) {
             this.index = boxIndex;
             this.islocked = islocked;
@@ -75,7 +75,7 @@ define("ui/Box", [
                 this.boxImg.src = boxImageBase + bgimg;
             }
 
-            var textImg = (this.textImg = new Image()),
+            const textImg = (this.textImg = new Image()),
                 boxWidth = (this.boxWidth = resolution.uiScaledNumber(350)),
                 boxTextMargin = (this.boxTextMargin = resolution.uiScaledNumber(20)),
                 self = this;
@@ -129,7 +129,7 @@ define("ui/Box", [
         },
 
         draw: function (ctx, omnomoffset) {
-            var prevAlpha = ctx.globalAlpha;
+            const prevAlpha = ctx.globalAlpha;
             if (this.opacity !== prevAlpha) {
                 ctx.globalAlpha = this.opacity;
             }
@@ -144,7 +144,7 @@ define("ui/Box", [
         },
 
         render: function (ctx, omnomoffset) {
-            var isGameBox = this.isGameBox();
+            const isGameBox = this.isGameBox();
             if (isGameBox) {
                 // draw the black area
                 ctx.fillStyle = "rgb(45,45,53)";
@@ -262,18 +262,18 @@ define("ui/Box", [
             this.bounceStartTime = Date.now();
 
             // stage boundaries in msec
-            var s1 = 100,
+            const s1 = 100,
                 s2 = 300,
                 s3 = 600,
                 w = resolution.uiScaledNumber(1024),
                 h = resolution.uiScaledNumber(576);
 
-            var self = this,
+            const self = this,
                 renderBounce = function () {
                     // get the elapsed time
                     t = Date.now() - self.bounceStartTime;
 
-                    var d, x, y;
+                    let d, x, y;
 
                     if (t < s1) {
                         d = Easing.easeOutSine(t, 0, 0.05, s1); // to 0.95
@@ -291,7 +291,7 @@ define("ui/Box", [
                         y = 0.94 + d;
                     }
 
-                    var tx = (w - w * x) / 2.0,
+                    const tx = (w - w * x) / 2.0,
                         ty = (h - h * y) / 2.0,
                         sx = (w - 2.0 * tx) / w,
                         sy = (h - 2.0 * ty) / h;

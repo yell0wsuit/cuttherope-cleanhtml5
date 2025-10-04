@@ -1,12 +1,12 @@
 define("core/Texture2D", ["core/Vector", "core/Quad2D"], function (Vector, Quad2D) {
-    var Texture2D = function (image) {
+    const Texture2D = function (image) {
         this.image = image;
         this.rects = [];
         this.offsets = [];
         this.preCutSize = Vector.newUndefined();
 
         // use jquery to work around intermittent dimension issues with images
-        var $img = $(image);
+        const $img = $(image);
         this.imageWidth = image.width || $img.width();
         this.imageHeight = image.height || $img.height();
         this._invWidth = 1 / this.imageWidth;
@@ -23,7 +23,7 @@ define("core/Texture2D", ["core/Vector", "core/Quad2D"], function (Vector, Quad2
     };
 
     Texture2D.prototype.setOffset = function (index, x, y) {
-        var offset = this.offsets[index];
+        const offset = this.offsets[index];
         offset.x = x;
         offset.y = y;
     };

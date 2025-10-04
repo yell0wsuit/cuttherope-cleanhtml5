@@ -1,5 +1,5 @@
 define("config/resolutions/768x432", [], function () {
-    var res768x432 = {
+    const res768x432 = {
         /**
          * @const
          * @type {number}

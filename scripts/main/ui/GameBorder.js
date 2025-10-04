@@ -1,13 +1,13 @@
 define("ui/GameBorder", ["platform", "edition"], function (platform, edition) {
-    var $border = null,
+    let $border = null,
         GAME_COMPLETE_CLASS = "gameComplete";
 
-    var GameBorder = {
+    const GameBorder = {
         domReady: function () {
             $border = $("#gameBorder");
         },
         setBoxBorder: function (boxIndex) {
-            var borderFile = edition.boxBorders[boxIndex],
+            const borderFile = edition.boxBorders[boxIndex],
                 backgroundUrl = borderFile ? platform.uiImageBaseUrl + borderFile : "";
 
             $border

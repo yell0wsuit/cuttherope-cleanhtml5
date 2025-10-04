@@ -4,7 +4,7 @@ define("visual/RotateableMultiParticles", [
     "utils/MathHelper",
     "core/Vector",
 ], function (MultiParticles, Radians, MathHelper, Vector) {
-    var RotateableMultiParticles = MultiParticles.extend({
+    const RotateableMultiParticles = MultiParticles.extend({
         init: function (numParticles, texture) {
             this._super(numParticles, texture);
             this.drawer.rotationAngles = [];
@@ -17,7 +17,7 @@ define("visual/RotateableMultiParticles", [
                 this.rotateSpeed + this.rotateSpeedVar * MathHelper.randomMinus1to1()
             );
 
-            var index = this.particles.length;
+            const index = this.particles.length;
             this.drawer.rotationAngles[index] = 0;
             this.drawer.rotationPositions[index] = new Vector(0, 0);
         },
@@ -25,7 +25,7 @@ define("visual/RotateableMultiParticles", [
             v.x -= cx;
             v.y -= cy;
 
-            var nx = v.x * cosA - v.y * sinA,
+            const nx = v.x * cosA - v.y * sinA,
                 ny = v.x * sinA + v.y * cosA;
 
             v.x = nx + cx;

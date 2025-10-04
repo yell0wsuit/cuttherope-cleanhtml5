@@ -5,7 +5,7 @@ define("visual/GenericButton", [
     "utils/Constants",
     "core/Alignment",
 ], function (BaseElement, ImageElement, Rectangle, Constants, Alignment) {
-    var TOUCH_MOVE_AND_UP_ZONE_INCREASE = 15;
+    const TOUCH_MOVE_AND_UP_ZONE_INCREASE = 15;
 
     var GenericButton = BaseElement.extend({
         init: function (id) {
@@ -35,10 +35,10 @@ define("visual/GenericButton", [
             this.setState(GenericButton.StateType.UP);
         },
         initWithTextures: function (upTexture, downTexture) {
-            var up = new ImageElement();
+            const up = new ImageElement();
             up.initTexture(upTexture);
 
-            var down = new ImageElement();
+            const down = new ImageElement();
             down.initTexture(downTexture);
 
             this.initWithElements(up, down);
@@ -54,14 +54,14 @@ define("visual/GenericButton", [
         },
         setState: function (s) {
             this.state = s;
-            var up = this.getChild(GenericButton.StateType.UP),
+            const up = this.getChild(GenericButton.StateType.UP),
                 down = this.getChild(GenericButton.StateType.DOWN);
 
             up.setEnabled(s === GenericButton.StateType.UP);
             down.setEnabled(s === GenericButton.StateType.DOWN);
         },
         isInTouchZone: function (tx, ty, td) {
-            var tzIncrease = td ? 0 : TOUCH_MOVE_AND_UP_ZONE_INCREASE;
+            const tzIncrease = td ? 0 : TOUCH_MOVE_AND_UP_ZONE_INCREASE;
 
             if (this.forcedTouchZone.w !== Constants.UNDEFINED) {
                 return Rectangle.pointInRect(

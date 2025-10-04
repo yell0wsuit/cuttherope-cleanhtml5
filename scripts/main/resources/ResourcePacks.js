@@ -1,5 +1,5 @@
 define("resources/ResourcePacks", ["resources/ResourceId"], function (ResourceId) {
-    var ResourcePacks = {};
+    const ResourcePacks = {};
 
     ResourcePacks.StandardMenuSounds = [
         ResourceId.SND_MENU_MUSIC,

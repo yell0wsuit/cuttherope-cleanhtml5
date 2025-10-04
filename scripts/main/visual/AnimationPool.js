@@ -3,7 +3,7 @@ define("visual/AnimationPool", ["visual/BaseElement"], function (BaseElement) {
      * Container to hold animated objects which can be automatically deleted
      * once their animation timelines have completed
      */
-    var AnimationPool = BaseElement.extend({
+    const AnimationPool = BaseElement.extend({
         init: function () {
             this._super();
 
@@ -13,7 +13,7 @@ define("visual/AnimationPool", ["visual/BaseElement"], function (BaseElement) {
         },
         update: function (delta) {
             // remove the children
-            for (var i = 0, len = this.removeList.length; i < len; i++) {
+            for (let i = 0, len = this.removeList.length; i < len; i++) {
                 this.removeChild(this.removeList[i]);
             }
 
@@ -33,7 +33,7 @@ define("visual/AnimationPool", ["visual/BaseElement"], function (BaseElement) {
         timelineFinishedDelegate: function () {
             // save a reference to ourselves since we may be called in a
             // different context (typically by another class)
-            var self = this;
+            const self = this;
             return function (timeline) {
                 self.timelineFinished(timeline);
             };
@@ -50,7 +50,7 @@ define("visual/AnimationPool", ["visual/BaseElement"], function (BaseElement) {
         particlesFinishedDelegate: function () {
             // save a reference to ourselves since we may be called in a
             // different context (typically by another class)
-            var self = this;
+            const self = this;
             return function (particles) {
                 self.particlesFinished(particles);
             };

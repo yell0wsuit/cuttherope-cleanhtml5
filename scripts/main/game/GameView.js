@@ -10,10 +10,10 @@ define("game/GameView", [
             this._super();
         },
         draw: function () {
-            var children = this.children,
+            const children = this.children,
                 childCount = children.length;
-            for (var i = 0; i < childCount; i++) {
-                var c = children[i];
+            for (let i = 0; i < childCount; i++) {
+                const c = children[i];
                 if (!c.visible) {
                     continue;
                 }
@@ -21,14 +21,14 @@ define("game/GameView", [
                 c.draw();
             }
 
-            var gs = this.getChild(GameView.ElementType.GAME_SCENE);
+            const gs = this.getChild(GameView.ElementType.GAME_SCENE);
             if (gs.dimTime > 0) {
-                var alpha = gs.dimTime / Constants.DIM_TIMEOUT;
+                let alpha = gs.dimTime / Constants.DIM_TIMEOUT;
                 if (gs.isFadingIn()) {
                     alpha = 1 - alpha;
                 }
 
-                var ctx = Canvas.context,
+                const ctx = Canvas.context,
                     color = new RGBAColor(1, 1, 1, alpha);
                 ctx.fillStyle = color.rgbaStyle();
                 ctx.fillRect(0, 0, resolution.CANVAS_WIDTH, resolution.CANVAS_HEIGHT);
@@ -37,7 +37,7 @@ define("game/GameView", [
         show: function () {
             this._super();
 
-            var gs = this.getChild(GameView.ElementType.GAME_SCENE);
+            const gs = this.getChild(GameView.ElementType.GAME_SCENE);
             if (gs.animateRestartDim) {
                 gs.animateLevelRestart();
             }

@@ -1,5 +1,5 @@
 define("config/resolutions/2560x1440", ["core/Rectangle"], function (Rectangle) {
-    var res2560x1440 = {
+    const res2560x1440 = {
         /**
          * @const
          * @type {number}

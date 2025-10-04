@@ -25,7 +25,7 @@ define("ui/ScoreManager", [
     // prevent hacks - server side code would be necessary for that.
 
     // make the prefixes hard to find in source code
-    var SCORE_PREFIX = String.fromCharCode(98, 112), // 'bp' (short for box-points)
+    let SCORE_PREFIX = String.fromCharCode(98, 112), // 'bp' (short for box-points)
         STARS_PREFIX = String.fromCharCode(98, 115), // 'bs' (short for box-stars)
         // our XOR value is a random number that is stored in an entry that is
         // intended to look similar to the score record for a box
@@ -39,8 +39,8 @@ define("ui/ScoreManager", [
     }
 
     // helper functions to get/set score
-    var getScoreKey = function (box, level) {
-            var val = (box * 1000 + level) ^ XOR_VALUE,
+    const getScoreKey = function (box, level) {
+            const val = (box * 1000 + level) ^ XOR_VALUE,
                 key = SCORE_PREFIX + val;
 
             // make sure we don't overwrite our XOR key
@@ -61,7 +61,7 @@ define("ui/ScoreManager", [
         },
         getScore = function (box, level) {
             // fetch both roaming and local scores
-            var roamScore = RoamSettings.getScore(box, level) || 0,
+            const roamScore = RoamSettings.getScore(box, level) || 0,
                 localKey = getScoreKey(box, level),
                 localVal = SettingStorage.getIntOrDefault(localKey, null),
                 localScore = localVal == null ? 0 : (localVal ^ XOR_VALUE) - box - level * 1000;
@@ -70,14 +70,14 @@ define("ui/ScoreManager", [
         };
 
     // helper functions to get/set stars
-    var STARS_UNKNOWN = -1, // needs to be a number but can't be null
+    const STARS_UNKNOWN = -1, // needs to be a number but can't be null
         getStarsKey = function (box, level) {
             // NOTE: we intentionally swap multiplier from whats used for points
-            var key = (level * 1000 + box) ^ XOR_VALUE;
+            const key = (level * 1000 + box) ^ XOR_VALUE;
             return STARS_PREFIX + key;
         },
         setStars = function (box, level, stars) {
-            var localStars = stars == null ? STARS_UNKNOWN : stars;
+            const localStars = stars == null ? STARS_UNKNOWN : stars;
             SettingStorage.set(
                 getStarsKey(box, level),
                 // NOTE: we intentionally swap multiplier to box (key uses level)
@@ -87,7 +87,7 @@ define("ui/ScoreManager", [
             RoamSettings.setStars(box, level, stars);
         },
         getStars = function (box, level) {
-            var roamStars = RoamSettings.getStars(box, level),
+            const roamStars = RoamSettings.getStars(box, level),
                 localKey = getStarsKey(box, level),
                 localVal = SettingStorage.getIntOrDefault(localKey, null),
                 localStars = localVal == null ? null : (localVal ^ XOR_VALUE) - level - box * 1000;
@@ -101,15 +101,15 @@ define("ui/ScoreManager", [
             return Math.max(roamStars, localStars);
         };
 
-    var resetLevel = function (boxIndex, levelIndex) {
+    const resetLevel = function (boxIndex, levelIndex) {
         // first level gets 0 stars, otherwise null
-        var stars = levelIndex === 0 ? 0 : null;
+        const stars = levelIndex === 0 ? 0 : null;
 
         setStars(boxIndex, levelIndex, stars);
         setScore(boxIndex, levelIndex, 0);
     };
 
-    var ScoreBox = function (levelCount, requiredStars, scores, stars) {
+    const ScoreBox = function (levelCount, requiredStars, scores, stars) {
         this.levelCount = levelCount;
         this.requiredStars = requiredStars;
         this.scores = scores || [];
@@ -117,14 +117,14 @@ define("ui/ScoreManager", [
     };
 
     var ScoreManager = new (function () {
-        var boxes = [];
+        const boxes = [];
 
         this.load = function () {
             // clear existing boxes
             boxes.length = 0;
 
             // load box scores
-            for (var i = 0, len = edition.boxes.length; i < len; i++) {
+            for (let i = 0, len = edition.boxes.length; i < len; i++) {
                 boxes[i] = loadBox(i);
             }
 
@@ -147,7 +147,7 @@ define("ui/ScoreManager", [
         // load previous scores from local storage
         var loadBox = function (boxIndex) {
             // see if the box exists by checking for a level 1 star record
-            var boxExists = getStars(boxIndex, 0) !== null,
+            let boxExists = getStars(boxIndex, 0) !== null,
                 levelCount = edition.boxes[boxIndex].levels.length,
                 requiredStars = edition.unlockStars[boxIndex],
                 scores = [],
@@ -167,7 +167,7 @@ define("ui/ScoreManager", [
 
             // generate fake (and good) star counts
             if (QueryStrings.createScoresForBox == boxIndex + 1) {
-                for (var i = 0; i < levelCount; i++) {
+                for (let i = 0; i < levelCount; i++) {
                     ScoreManager.setStars(boxIndex, i, 3, true);
                 }
             }
@@ -185,23 +185,23 @@ define("ui/ScoreManager", [
         };
 
         this.levelCount = function (boxIndex) {
-            var box = boxes[boxIndex];
+            const box = boxes[boxIndex];
             if (box != null) return box.levelCount;
             return null;
         };
 
         this.requiredStars = function (boxIndex) {
-            var box = boxes[boxIndex];
+            const box = boxes[boxIndex];
             if (box != null) return box.requiredStars;
             return 0;
         };
 
         this.achievedStars = function (boxIndex) {
-            var box = boxes[boxIndex];
+            const box = boxes[boxIndex];
             if (box != null) {
-                var count = 0;
-                for (var j = 0; j < box.levelCount; j++) {
-                    var stars = box.stars[j];
+                let count = 0;
+                for (let j = 0; j < box.levelCount; j++) {
+                    const stars = box.stars[j];
                     count += stars == null ? 0 : stars;
                 }
                 return count;
@@ -210,15 +210,15 @@ define("ui/ScoreManager", [
         };
 
         this.totalStars = function () {
-            var total = 0;
-            for (var i = 0; i < boxes.length; i++) {
+            let total = 0;
+            for (let i = 0; i < boxes.length; i++) {
                 total += ScoreManager.achievedStars(i);
             }
             return total;
         };
 
         this.possibleStarsForBox = function (boxIndex) {
-            var box = boxes[boxIndex];
+            const box = boxes[boxIndex];
             if (box != null) {
                 return box.levelCount * 3;
             }
@@ -228,7 +228,7 @@ define("ui/ScoreManager", [
         this.isBoxLocked = function (boxIndex) {
             if (boxIndex == 0) return false;
             if (QueryStrings.unlockAllBoxes) return false;
-            var box = boxes[boxIndex];
+            const box = boxes[boxIndex];
             if (box != null && ScoreManager.totalStars() >= ScoreManager.requiredStars(boxIndex)) {
                 return false;
             }
@@ -236,7 +236,7 @@ define("ui/ScoreManager", [
         };
 
         this.isLevelUnlocked = function (boxIndex, levelindex) {
-            var box = boxes[boxIndex];
+            const box = boxes[boxIndex];
             if (QueryStrings.unlockAllBoxes) return true;
             if (box != null) {
                 return box.stars[levelindex] != null;
@@ -245,19 +245,19 @@ define("ui/ScoreManager", [
         };
 
         this.setScore = function (boxIndex, levelIndex, levelScore, overridePrevious) {
-            var box = boxes[boxIndex];
+            const box = boxes[boxIndex];
             if (box != null) {
                 if (overridePrevious) {
                     box.scores[levelIndex] = levelScore;
                 } else {
-                    var prevScore = getScore(boxIndex, levelIndex);
+                    const prevScore = getScore(boxIndex, levelIndex);
                     box.scores[levelIndex] = Math.max(levelScore, prevScore);
                 }
 
                 setScore(boxIndex, levelIndex, box.scores[levelIndex]);
 
                 // sum all scores for the box
-                var numLevels = box.scores.length,
+                let numLevels = box.scores.length,
                     boxScore = 0,
                     i;
                 for (i = 0; i < numLevels; i++) {
@@ -271,17 +271,17 @@ define("ui/ScoreManager", [
         };
 
         this.getScore = function (boxIndex, levelIndex) {
-            var box = boxes[boxIndex];
+            const box = boxes[boxIndex];
             if (box != null) return box.scores[levelIndex];
             return null;
         };
 
         this.setStars = function (boxIndex, levelIndex, score, overridePrevious) {
-            var previousStars = this.totalStars(),
+            const previousStars = this.totalStars(),
                 box = boxes[boxIndex];
             if (box != null) {
                 //don't override past high score
-                var prevStars = getStars(boxIndex, levelIndex);
+                const prevStars = getStars(boxIndex, levelIndex);
                 if (prevStars != null && !overridePrevious) {
                     box.stars[levelIndex] = Math.max(score, prevStars);
                 } else {
@@ -290,20 +290,20 @@ define("ui/ScoreManager", [
                 setStars(boxIndex, levelIndex, box.stars[levelIndex]);
             }
 
-            var newStarCount = this.totalStars();
+            const newStarCount = this.totalStars();
             if (newStarCount !== previousStars) {
                 PubSub.publish(PubSub.ChannelId.StarCountChanged, newStarCount);
             }
         };
 
         this.getStars = function (boxIndex, levelIndex) {
-            var box = boxes[boxIndex];
+            const box = boxes[boxIndex];
             if (box != null) return box.stars[levelIndex];
             return null;
         };
 
         this.resetGame = function () {
-            var boxCount = boxes.length,
+            let boxCount = boxes.length,
                 boxIndex,
                 box,
                 levelIndex,
@@ -324,7 +324,7 @@ define("ui/ScoreManager", [
         };
 
         this.updateTotalScoreText = function () {
-            var text = Lang.menuText(MenuStringId.TOTAL_STARS).replace(
+            const text = Lang.menuText(MenuStringId.TOTAL_STARS).replace(
                 "%d",
                 ScoreManager.totalStars()
             );

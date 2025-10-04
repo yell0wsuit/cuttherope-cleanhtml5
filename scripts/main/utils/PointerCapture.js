@@ -1,11 +1,11 @@
 define("utils/PointerCapture", [], function () {
-    var singleTouch = false;
+    let singleTouch = false;
 
     function PointerCapture(settings) {
         this.el = settings.element;
         this.getZoom = settings.getZoom;
 
-        var self = this;
+        const self = this;
 
         // save references to the event handlers so they can be removed
         this.startHandler = function (event) {
@@ -46,7 +46,7 @@ define("utils/PointerCapture", [], function () {
     PointerCapture.prototype.translatePosition = function (event, callback) {
         // get the mouse coordinate relative to the page
         // http://www.quirksmode.org/js/events_properties.html
-        var posx = 0,
+        let posx = 0,
             posy = 0;
         if (!event) {
             event = window.event;
@@ -68,7 +68,7 @@ define("utils/PointerCapture", [], function () {
             posy = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
         }
 
-        var offset = $(this.el).offset(), // get mouse coordinates relative to the element
+        const offset = $(this.el).offset(), // get mouse coordinates relative to the element
             zoom = this.getZoom ? this.getZoom() : 1, // adjust coordinates if the game is zoomed
             mouseX = Math.round((posx - offset.left) / zoom),
             mouseY = Math.round((posy - offset.top) / zoom);

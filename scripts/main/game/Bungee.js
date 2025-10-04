@@ -27,58 +27,58 @@ define("game/Bungee", [
      * @const
      * @type {number}
      */
-    var ROLLBACK_K = 0.5;
+    const ROLLBACK_K = 0.5;
 
     /**
      * @const
      * @type {number}
      */
-    var BUNGEE_RELAXION_TIMES = 25;
+    const BUNGEE_RELAXION_TIMES = 25;
 
     /**
      * @const
      * @type {number}
      */
-    var MAX_BUNGEE_SEGMENTS = 10;
+    const MAX_BUNGEE_SEGMENTS = 10;
 
     /**
      * @const
      * @type {number}
      */
-    var DEFAULT_PART_WEIGHT = 0.02;
+    const DEFAULT_PART_WEIGHT = 0.02;
 
     /**
      * @const
      * @type {number}
      */
-    var STRENGTHENED_PART_WEIGHT = 0.5;
+    const STRENGTHENED_PART_WEIGHT = 0.5;
 
     /**
      * @const
      * @type {number}
      */
-    var CUT_DISSAPPEAR_TIMEOUT = 2.0;
+    const CUT_DISSAPPEAR_TIMEOUT = 2.0;
 
     /**
      * @const
      * @type {number}
      */
-    var WHITE_TIMEOUT = 0.05;
+    const WHITE_TIMEOUT = 0.05;
 
     /** @enum {number} */
-    var BungeeMode = {
+    const BungeeMode = {
         NORMAL: 0,
         LOCKED: 1,
     };
 
     // create temp color objects used during draw (to reduce allocations)
-    var drawBlack = new RGBAColor(0, 0, 0, 1),
+    const drawBlack = new RGBAColor(0, 0, 0, 1),
         drawC1 = new RGBAColor(0, 0, 0, 1),
         drawD1 = new RGBAColor(0, 0, 0, 1),
         drawC2 = new RGBAColor(0, 0, 0, 1),
         drawD2 = new RGBAColor(0, 0, 0, 1);
 
-    var Bungee = ConstraintSystem.extend({
+    const Bungee = ConstraintSystem.extend({
         /**
          * Create a new Rope
          * @param headCp {ConstrainedPoint} head constrained point
@@ -124,8 +124,8 @@ define("game/Bungee", [
                 ConstraintType.DISTANCE
             );
 
-            var offset = Vector.subtract(this.tail.pos, this.bungeeAnchor.pos);
-            var pointsNum = Math.round(len / this.BUNGEE_REST_LEN + 2);
+            const offset = Vector.subtract(this.tail.pos, this.bungeeAnchor.pos);
+            const pointsNum = Math.round(len / this.BUNGEE_REST_LEN + 2);
             offset.divide(pointsNum);
 
             this.roll(len, offset);
@@ -143,13 +143,13 @@ define("game/Bungee", [
          * @return {number}
          */
         getLength: function () {
-            var len = 0,
+            let len = 0,
                 parts = this.parts,
                 numParts = parts.length;
             if (numParts > 0) {
-                var v = parts[0].pos;
-                for (var i = 1; i < numParts; i++) {
-                    var part = parts[i];
+                let v = parts[0].pos;
+                for (let i = 1; i < numParts; i++) {
+                    const part = parts[i];
                     len += v.distance(part.pos);
                     v = part.pos;
                 }
@@ -161,7 +161,7 @@ define("game/Bungee", [
                 offset = Vector.newZero();
             }
 
-            var parts = this.parts,
+            let parts = this.parts,
                 prev = parts[parts.length - 2],
                 tail = this.tail,
                 heroRestLen = tail.restLength(prev),
@@ -179,7 +179,7 @@ define("game/Bungee", [
                     cp.addConstraint(prev, this.BUNGEE_REST_LEN, ConstraintType.DISTANCE);
                     rollLen -= this.BUNGEE_REST_LEN;
                 } else {
-                    var newRestLen = rollLen + heroRestLen;
+                    const newRestLen = rollLen + heroRestLen;
                     if (newRestLen > this.BUNGEE_REST_LEN) {
                         rollLen = this.BUNGEE_REST_LEN;
                         heroRestLen = newRestLen - this.BUNGEE_REST_LEN;
@@ -192,7 +192,7 @@ define("game/Bungee", [
             }
         },
         rollBack: function (amount) {
-            var rollBackLen = amount,
+            let rollBackLen = amount,
                 parts = this.parts,
                 partsCount = parts.length,
                 prev = parts[partsCount - 2],
@@ -202,7 +202,7 @@ define("game/Bungee", [
 
             while (rollBackLen > 0) {
                 if (rollBackLen >= this.BUNGEE_REST_LEN) {
-                    var oldAnchorIndex = partsCount - 2,
+                    const oldAnchorIndex = partsCount - 2,
                         newAnchor = parts[partsCount - 3];
 
                     oldAnchor = parts[oldAnchorIndex];
@@ -211,7 +211,7 @@ define("game/Bungee", [
                     partsCount--;
                     rollBackLen -= this.BUNGEE_REST_LEN;
                 } else {
-                    var newRestLen = heroRestLen - rollBackLen;
+                    const newRestLen = heroRestLen - rollBackLen;
                     if (newRestLen < 1) {
                         rollBackLen = this.BUNGEE_REST_LEN;
                         heroRestLen = this.BUNGEE_REST_LEN + newRestLen + 1;
@@ -223,27 +223,27 @@ define("game/Bungee", [
                 }
             }
 
-            var newTailRestLen = (partsCount - 1) * (this.BUNGEE_REST_LEN + 3);
-            var constraints = tail.constraints,
+            const newTailRestLen = (partsCount - 1) * (this.BUNGEE_REST_LEN + 3);
+            const constraints = tail.constraints,
                 numConstraints = constraints.length;
-            for (var i = 0; i < numConstraints; i++) {
-                var c = constraints[i];
+            for (let i = 0; i < numConstraints; i++) {
+                const c = constraints[i];
                 if (c.type === ConstraintType.NOT_MORE_THAN) c.restLength = newTailRestLen;
             }
             return rollBackLen;
         },
         strengthen: function () {
-            var parts = this.parts,
+            const parts = this.parts,
                 numParts = parts.length;
-            for (var i = 0; i < numParts; i++) {
-                var cp = parts[i];
+            for (let i = 0; i < numParts; i++) {
+                const cp = parts[i];
                 if (this.bungeeAnchor.pin.x != Constants.UNDEFINED) {
                     if (cp != this.tail) {
                         cp.setWeight(STRENGTHENED_PART_WEIGHT);
                     }
 
                     if (i > 0) {
-                        var restLen = i * (this.BUNGEE_REST_LEN + 3);
+                        const restLen = i * (this.BUNGEE_REST_LEN + 3);
                         cp.addConstraint(this.bungeeAnchor, restLen, ConstraintType.NOT_MORE_THAN);
                     }
                 }
@@ -261,7 +261,7 @@ define("game/Bungee", [
                 }
             }
 
-            var parts = this.parts,
+            let parts = this.parts,
                 numParts = parts.length,
                 relaxationTimes = this.relaxationTimes,
                 tail = this.tail,
@@ -292,21 +292,21 @@ define("game/Bungee", [
         removePart: function (partIndex) {
             this.forceWhite = false;
 
-            var parts = this.parts,
+            const parts = this.parts,
                 p1 = parts[partIndex],
                 p2 = parts[partIndex + 1];
 
             if (!p2) {
                 p1.removeConstraints();
             } else {
-                var p2Constraints = p2.constraints,
+                const p2Constraints = p2.constraints,
                     p2NumConstraints = p2Constraints.length;
-                for (var k = 0; k < p2NumConstraints; k++) {
-                    var c = p2Constraints[k];
+                for (let k = 0; k < p2NumConstraints; k++) {
+                    const c = p2Constraints[k];
                     if (c.cp === p1) {
                         p2.removeConstraintAtIndex(k);
 
-                        var np2 = new ConstrainedPoint();
+                        const np2 = new ConstrainedPoint();
                         np2.setWeight(0.00001);
                         np2.pos.copyFrom(p2.pos);
                         np2.prevPos.copyFrom(p2.prevPos);
@@ -317,8 +317,8 @@ define("game/Bungee", [
                 }
             }
 
-            for (var i = 0, numParts = parts.length; i < numParts; i++) {
-                var cp = parts[i];
+            for (let i = 0, numParts = parts.length; i < numParts; i++) {
+                const cp = parts[i];
                 if (cp != this.tail) cp.setWeight(0.00001);
             }
         },
@@ -329,7 +329,7 @@ define("game/Bungee", [
             this.highlighted = false;
         },
         draw: function () {
-            var parts = this.parts,
+            let parts = this.parts,
                 count = parts.length,
                 ctx = Canvas.context,
                 i,
@@ -340,19 +340,19 @@ define("game/Bungee", [
             ctx.lineWidth = this.lineWidth;
 
             if (this.cut === Constants.UNDEFINED) {
-                var pts = new Array(count);
+                const pts = new Array(count);
                 for (i = 0; i < count; i++) {
                     pts[i] = parts[i].pos;
                     //Log.debug('Point ' + i + ': ' + pts[i].toString());
                 }
                 this.drawBungee(pts);
             } else {
-                var pts1 = [],
+                let pts1 = [],
                     pts2 = [],
                     part2 = false;
                 for (i = 0; i < count; i++) {
                     part = parts[i];
-                    var linked = true;
+                    let linked = true;
 
                     if (i > 0) {
                         prevPart = parts[i - 1];
@@ -382,7 +382,7 @@ define("game/Bungee", [
             ctx.lineWidth = 1;
         },
         drawBungee: function (pts) {
-            var count = pts.length,
+            const count = pts.length,
                 points = this.BUNGEE_BEZIER_POINTS,
                 drawPts = this.drawPts;
 
@@ -390,7 +390,7 @@ define("game/Bungee", [
             if (count < 2) return;
 
             // set the global alpha
-            var alpha =
+            const alpha =
                 this.cut === Constants.UNDEFINED || this.forceWhite
                     ? 1
                     : this.cutTime / (CUT_DISSAPPEAR_TIMEOUT - WHITE_TIMEOUT);
@@ -399,7 +399,7 @@ define("game/Bungee", [
                 return;
             }
 
-            var firstPoint = pts[0],
+            const firstPoint = pts[0],
                 secondPoint = pts[1],
                 tx = firstPoint.x - secondPoint.x,
                 ty = firstPoint.y - secondPoint.y,
@@ -414,7 +414,7 @@ define("game/Bungee", [
 
             if (count < 3) return;
 
-            var black = drawBlack,
+            const black = drawBlack,
                 c1 = drawC1,
                 d1 = drawD1,
                 c2 = drawC2,
@@ -458,23 +458,23 @@ define("game/Bungee", [
             }
 
             if (ptsDistance > this.BUNGEE_REST_LEN + 7 && !this.dontDrawRedStretch) {
-                var f = (ptsDistance / this.BUNGEE_REST_LEN) * 2;
+                const f = (ptsDistance / this.BUNGEE_REST_LEN) * 2;
                 d1.r *= f;
                 d2.r *= f;
             }
 
-            var useC1 = false, // ropes have alternating color segments
+            const useC1 = false, // ropes have alternating color segments
                 numVertices = (count - 1) * points;
 
             // // colors
             // //noinspection UnnecessaryLocalVariableJS
-            var b1 = d1,
+            const b1 = d1,
                 colorDivisor = numVertices - 1,
                 b1rf = (c1.r - d1.r) / colorDivisor,
                 b1gf = (c1.g - d1.g) / colorDivisor,
                 b1bf = (c1.b - d1.b) / colorDivisor;
 
-            var numSegments = this.BUNGEE_BEZIER_POINTS - 1,
+            const numSegments = this.BUNGEE_BEZIER_POINTS - 1,
                 lastSegmentIndex = numSegments - 1,
                 ctx = Canvas.context,
                 previousAlpha = ctx.globalAlpha;
@@ -485,7 +485,7 @@ define("game/Bungee", [
             }
 
             // store the first point in the path
-            var firstDrawPoint = drawPts[0];
+            let firstDrawPoint = drawPts[0];
             if (!firstDrawPoint) {
                 firstDrawPoint = drawPts[0] = firstPoint.copy();
             } else {
@@ -511,7 +511,7 @@ define("game/Bungee", [
                 Vector.setCalcPathBezier(pts, a, pathVector);
 
                 // see if we have all the points for this color section
-                var segmentIndex = (vertex - 1) % numSegments;
+                const segmentIndex = (vertex - 1) % numSegments;
                 if (segmentIndex === lastSegmentIndex || vertex === numVertices) {
                     // decide which color to use for this section
                     // if (this.forceWhite) {
@@ -527,8 +527,8 @@ define("game/Bungee", [
                     //ctx.strokeStyle = currentColor;
 
                     // move to the beginning of the color section
-                    var currentIndex = vertex - segmentIndex - 1;
-                    var point = drawPts[currentIndex++];
+                    let currentIndex = vertex - segmentIndex - 1;
+                    let point = drawPts[currentIndex++];
                     ctx.moveTo(point.x, point.y);
 
                     // draw each line segment (2 segments per color section)
@@ -541,7 +541,7 @@ define("game/Bungee", [
                     //ctx.stroke();
                     //useC1 = !useC1;
 
-                    var colorMultiplier = segmentIndex + 1;
+                    const colorMultiplier = segmentIndex + 1;
 
                     // adjust colors
                     b1.r += b1rf * colorMultiplier;

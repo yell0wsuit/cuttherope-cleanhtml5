@@ -23,12 +23,12 @@ define("core/RootControllerBase", [
      * @const
      * @type {number}
      */
-    var TRANSITION_DEFAULT_DELAY = 0.3;
+    const TRANSITION_DEFAULT_DELAY = 0.3;
 
     /**
      * @enum {number}
      */
-    var ViewTransition = {
+    const ViewTransition = {
         SLIDE_HORIZONTAL_RIGHT: 0,
         SLIDE_HORIZONTAL_LEFT: 1,
         SLIDE_VERTICAL_UP: 2,
@@ -39,7 +39,7 @@ define("core/RootControllerBase", [
         COUNT: 7,
     };
 
-    var RootController = ViewController.extend({
+    const RootController = ViewController.extend({
         init: function (parent) {
             this._super(parent);
             this.suspended = false;
@@ -101,7 +101,7 @@ define("core/RootControllerBase", [
 
             // draw the active view
             if (this.currentController.activeViewID !== Constants.UNDEFINED) {
-                var activeView = this.currentController.activeView();
+                const activeView = this.currentController.activeView();
                 if (activeView) {
                     activeView.draw();
                 }
@@ -112,10 +112,10 @@ define("core/RootControllerBase", [
                 // draw the fps meter
                 if (settings.fpsEnabled) {
                     // make sure we have one cycle of measurements
-                    var frameRate = this.currentController.frameRate.toFixed(0);
+                    const frameRate = this.currentController.frameRate.toFixed(0);
                     if (frameRate > 0) {
                         // draw the fps frame rate
-                        var ctx = Canvas.context;
+                        const ctx = Canvas.context;
                         ctx.font = "20px Arial";
                         ctx.fillStyle = RGBAColor.styles.SOLID_OPAQUE;
                         ctx.fillText(frameRate + " fps", 10, resolution.CANVAS_HEIGHT - 10);
@@ -150,10 +150,10 @@ define("core/RootControllerBase", [
             this.activateMouseEvents();
 
             // called to render a frame
-            var self = this,
+            const self = this,
                 requestAnimationFrame = window["requestAnimationFrame"],
                 animationLoop = function () {
-                    var now = Date.now();
+                    const now = Date.now();
                     self.operateCurrentMVC(now);
                     if (!self.stopAnimation) {
                         requestAnimationFrame(animationLoop);
@@ -200,7 +200,7 @@ define("core/RootControllerBase", [
             if (this.viewTransition !== Constants.UNDEFINED && this.previousView != null) {
                 this.currentController.calculateTimeDelta();
                 this.transitionTime = this.currentController.lastTime + this.transitionDelay;
-                var activeView = this.currentController.activeView();
+                const activeView = this.currentController.activeView();
                 if (activeView) {
                     activeView.draw();
                 }
@@ -246,7 +246,7 @@ define("core/RootControllerBase", [
         mouseUp: function (x, y) {
             if (this.currentController && this.currentController != this) {
                 //Log.debug('mouse up at:' + x + ',' + y + ' drag mode was:' + this.dragMode);
-                var handled = this.currentController.mouseUp(x, y);
+                const handled = this.currentController.mouseUp(x, y);
                 this.dragMode = false;
                 return handled;
             }
@@ -258,7 +258,7 @@ define("core/RootControllerBase", [
                 // event because we won't get it if the user lets go outside
                 if (this.dragMode) {
                     //Log.debug('mouse out at:' + x + ',' + y);
-                    var handled = this.currentController.mouseUp(x, y);
+                    const handled = this.currentController.mouseUp(x, y);
                     this.dragMode = false;
                     return handled;
                 }

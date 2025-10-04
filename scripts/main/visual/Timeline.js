@@ -24,12 +24,12 @@ define("visual/Timeline", [
             this.element = null;
         },
         addKeyFrame: function (keyFrame) {
-            var track = this.tracks[keyFrame.trackType],
+            const track = this.tracks[keyFrame.trackType],
                 index = track == null ? 0 : track.keyFrames.length;
             this.setKeyFrame(keyFrame, index);
         },
         setKeyFrame: function (keyFrame, index) {
-            var track = this.tracks[keyFrame.trackType];
+            let track = this.tracks[keyFrame.trackType];
             if (!track) {
                 this.tracks[keyFrame.trackType] = track = new TimelineTrack(
                     this,
@@ -47,8 +47,8 @@ define("visual/Timeline", [
                 this.timelineDirReverse = false;
                 this.length = 0;
 
-                for (var i = 0, len = this.tracks.length; i < len; i++) {
-                    var track = this.tracks[i];
+                for (let i = 0, len = this.tracks.length; i < len; i++) {
+                    const track = this.tracks[i];
                     if (track) {
                         track.updateRange();
                         if (track.endTime > this.length) {
@@ -67,7 +67,7 @@ define("visual/Timeline", [
             if (this.state === Timeline.StateType.STOPPED) {
                 this.state = Timeline.StateType.PAUSED;
             }
-            var delta = this.tracks[trackIndex].getFrameTime(keyFrame) - this.time;
+            const delta = this.tracks[trackIndex].getFrameTime(keyFrame) - this.time;
             this.update(delta);
         },
         stop: function () {
@@ -75,8 +75,8 @@ define("visual/Timeline", [
             this.deactivateTracks();
         },
         deactivateTracks: function () {
-            for (var i = 0, len = this.tracks.length; i < len; i++) {
-                var track = this.tracks[i];
+            for (let i = 0, len = this.tracks.length; i < len; i++) {
+                const track = this.tracks[i];
                 if (track) {
                     track.deactivate();
                 }
@@ -88,8 +88,8 @@ define("visual/Timeline", [
             if (!this.timelineDirReverse) this.time += delta;
             else this.time -= delta;
 
-            for (var i = 0, len = this.tracks.length; i < len; i++) {
-                var track = this.tracks[i];
+            for (let i = 0, len = this.tracks.length; i < len; i++) {
+                const track = this.tracks[i];
                 if (track != null) {
                     if (track.type === TrackType.ACTION) track.updateActionTrack(delta);
                     else track.updateNonActionTrack(delta);
@@ -97,14 +97,14 @@ define("visual/Timeline", [
             }
 
             if (this.loopType === Timeline.LoopType.PING_PONG) {
-                var reachedEnd =
+                const reachedEnd =
                     this.timelineDirReverse === false &&
                     this.time >= this.length - Constants.FLOAT_PRECISION;
                 if (reachedEnd) {
                     this.time = Math.max(0, this.length - (this.time - this.length));
                     this.timelineDirReverse = true;
                 } else {
-                    var reachedStart =
+                    const reachedStart =
                         this.timelineDirReverse && this.time <= Constants.FLOAT_PRECISION;
                     if (reachedStart) {
                         if (this.loopsLimit > 0) {

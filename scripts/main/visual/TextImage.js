@@ -3,12 +3,12 @@ define("visual/TextImage", ["visual/ImageElement", "visual/Text", "core/Texture2
     Text,
     Texture2D
 ) {
-    var TextImage = ImageElement.extend({
+    const TextImage = ImageElement.extend({
         init: function () {
             this._super();
         },
         setText: function (fontId, text, width, alignment) {
-            var img = Text.drawImg({
+            const img = Text.drawImg({
                 fontId: fontId,
                 text: text,
                 width: width,

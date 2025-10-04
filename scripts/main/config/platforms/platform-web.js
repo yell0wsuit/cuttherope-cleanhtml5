@@ -7,7 +7,7 @@ define("config/platforms/platform-web", [
     "edition",
 ], function (Text, resolution, Lang, MenuStringId, Alignment, edition) {
     // loc entries that are specific to the web platform
-    var locEntries = {
+    const locEntries = {
         GAME_COMPLETE: {
             en: "I just finished playing Cut the Rope on the web with %d (out of %d possible) stars!",
             fr: "",
@@ -47,12 +47,12 @@ define("config/platforms/platform-web", [
         },
 
         getDrawingBaseUrl: function () {
-            var loc = window.location,
+            const loc = window.location,
                 baseUrl = loc.protocol + "//" + loc.host;
             return baseUrl + "/images/" + resolution.UI_WIDTH + "/ui/";
         },
         getScoreImageBaseUrl: function () {
-            var loc = window.location,
+            const loc = window.location,
                 baseUrl = loc.protocol + "//" + loc.host;
             return baseUrl + "/images/scores/";
         },
@@ -73,7 +73,7 @@ define("config/platforms/platform-web", [
         },
         setLangOptionClick: function (callback) {
             $("#langBtn").click(function (e) {
-                var langId = null; // just advance to next supported language
+                const langId = null; // just advance to next supported language
                 callback(langId);
             });
         },
@@ -90,7 +90,7 @@ define("config/platforms/platform-web", [
         },
         updateCutSetting: function (isClickToCut) {
             // fonts use game sized assets based on canvas size
-            var textWidth = 400 * resolution.CANVAS_SCALE,
+            const textWidth = 400 * resolution.CANVAS_SCALE,
                 // scale need to take UI size into account
                 scale = 0.8 * resolution.UI_TEXT_SCALE,
                 alignment = Alignment.HCENTER;
@@ -126,14 +126,14 @@ define("config/platforms/platform-web", [
             });
         },
         getGameCompleteShareText: function (totalStars, possibleStars) {
-            var text = Lang.getText(locEntries.GAME_COMPLETE)
+            const text = Lang.getText(locEntries.GAME_COMPLETE)
                 .replace("%d", totalStars)
                 .replace("%d", possibleStars);
             return text;
         },
         meetsRequirements: function () {
             // does the browser have the HTML5 features we need?
-            var meetsReqs =
+            const meetsReqs =
                 Modernizr.canvas &&
                 Modernizr.audio &&
                 Modernizr.video &&

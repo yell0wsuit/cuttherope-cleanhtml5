@@ -89,13 +89,13 @@ define("core/ViewController", ["utils/Class", "utils/Constants", "utils/PubSub"]
                 return;
             }
 
-            var v = this.activeView();
+            const v = this.activeView();
 
             // the physics engine needs to be updated at 60fps. we
             // will do up to 3 updates for each frame that is
             // actually rendered. This means we could run as low as 20 fps
-            var maxUpdates = Math.min(3, this.frameBalance | 0);
-            for (var i = 0; i < maxUpdates; i++) {
+            const maxUpdates = Math.min(3, this.frameBalance | 0);
+            for (let i = 0; i < maxUpdates; i++) {
                 v.update(0.016);
                 this.frameBalance -= 1;
             }
@@ -158,7 +158,7 @@ define("core/ViewController", ["utils/Class", "utils/Constants", "utils/PubSub"]
             this.views[viewIndex] = null;
         },
         hideActiveView: function () {
-            var previousView = this.views[this.activeViewID];
+            const previousView = this.views[this.activeViewID];
             if (previousView) {
                 PubSub.publish(PubSub.ChannelId.ControllerViewHidden, previousView);
                 previousView.hide();
@@ -170,7 +170,7 @@ define("core/ViewController", ["utils/Class", "utils/Constants", "utils/PubSub"]
                 this.hideActiveView();
             }
             this.activeViewID = index;
-            var v = this.views[index];
+            const v = this.views[index];
             PubSub.publish(PubSub.ChannelId.ControllerViewShow, v);
             v.show();
         },
@@ -191,7 +191,7 @@ define("core/ViewController", ["utils/Class", "utils/Constants", "utils/PubSub"]
         },
         deactivateActiveChild: function () {
             if (this.activeChildID !== Constants.UNDEFINED) {
-                var prevController = this.children[this.activeChildID];
+                const prevController = this.children[this.activeChildID];
                 if (prevController) {
                     prevController.deactivate();
                 }

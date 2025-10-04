@@ -34,7 +34,7 @@ define("ui/TimeBox", [
     // promotion runs from March 4 - April 14
     // using ticks makes finding hacking more difficult because
     // you can't search the code for well known dates
-    var BoxOpenDates = [
+    let BoxOpenDates = [
         1362384000000, // Mar 4
         1362985200000, // Mar 11
         1363590000000, // Mar 18
@@ -57,39 +57,39 @@ define("ui/TimeBox", [
 
     // The random seeds that will be XOR'd with the user's unique value
     // to create the keys used to store the status of each box unlock
-    var BoxKeySeeds = [9240, 7453, 3646, 7305, 5093, 3829];
+    const BoxKeySeeds = [9240, 7453, 3646, 7305, 5093, 3829];
 
-    var LOCK_KEY_PREFIX = String.fromCharCode(98, 107), // prefix is 'bk'
+    const LOCK_KEY_PREFIX = String.fromCharCode(98, 107), // prefix is 'bk'
         XOR_VALUE = ScoreManager.getXorValue(),
         getLockKey = function (boxIndex) {
             return LOCK_KEY_PREFIX + (BoxKeySeeds[boxIndex] ^ XOR_VALUE);
         },
         isLocked = function (boxIndex) {
-            var key = getLockKey(boxIndex),
+            const key = getLockKey(boxIndex),
                 value = SettingStorage.getIntOrDefault(key, 0),
                 correctValue = (BoxKeySeeds[boxIndex] - 1000) ^ XOR_VALUE;
 
             return value !== correctValue && !QueryStrings.unlockAllBoxes;
         },
         unlockBox = function (boxIndex) {
-            var key = getLockKey(boxIndex),
+            const key = getLockKey(boxIndex),
                 value = (BoxKeySeeds[boxIndex] - 1000) ^ XOR_VALUE;
 
             SettingStorage.set(key, value);
         };
 
-    var $enterCodeButton = null;
+    let $enterCodeButton = null;
     $(document).ready(function () {
         $enterCodeButton = $("#boxEnterCodeButton").hide();
     });
 
     // cache text images shared between boxes
-    var availableTextImg = null,
+    let availableTextImg = null,
         collectTextImg = null,
         toUnlockTextImg = null,
         bkCodeTextImg = null;
 
-    var MonthNames = [
+    const MonthNames = [
         "January",
         "February",
         "March",
@@ -104,7 +104,7 @@ define("ui/TimeBox", [
         "December",
     ];
 
-    var TimeBox = Box.extend({
+    const TimeBox = Box.extend({
         init: function (boxIndex, bgimg, reqstars, islocked, type) {
             this._super(boxIndex, bgimg, reqstars, islocked, type);
             this.lockedBoxImg = new Image();
@@ -130,7 +130,7 @@ define("ui/TimeBox", [
         },
 
         render: function (ctx, omnomoffset) {
-            var locked = this.islocked || this.isTimeLocked || this.isBkCodeLocked;
+            const locked = this.islocked || this.isTimeLocked || this.isBkCodeLocked;
 
             // draw the base box image
             ctx.drawImage(
@@ -163,7 +163,7 @@ define("ui/TimeBox", [
                 // draw date the box will open
                 if (!this.dateImg) {
                     this.dateImg = new Image();
-                    var openDate = new Date(BoxOpenDates[this.index]);
+                    const openDate = new Date(BoxOpenDates[this.index]);
                     Text.drawBig({
                         text: MonthNames[openDate.getMonth()] + " " + openDate.getDate(),
                         img: this.dateImg,
@@ -224,7 +224,7 @@ define("ui/TimeBox", [
                 }
 
                 // prefer css dimensions (scaled) for text
-                var textWidth = ($(this.reqImg).width() || this.reqImg.width) * 1.2,
+                const textWidth = ($(this.reqImg).width() || this.reqImg.width) * 1.2,
                     textHeight = ($(this.reqImg).height() || this.reqImg.height) * 1.2,
                     // ok to use raw image width for star (image already scaled)
                     starWidth = this.starImg.width || $(this.starImg).width(),

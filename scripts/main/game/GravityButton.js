@@ -3,12 +3,12 @@ define("game/GravityButton", [
     "visual/ToggleButton",
     "resources/ResourceId",
 ], function (ImageElement, ToggleButton, ResourceId) {
-    var IMG_OBJ_STAR_IDLE_gravity_down = 56;
-    var IMG_OBJ_STAR_IDLE_gravity_up = 57;
+    const IMG_OBJ_STAR_IDLE_gravity_down = 56;
+    const IMG_OBJ_STAR_IDLE_gravity_up = 57;
 
     var GravityButton = ToggleButton.extend({
         init: function () {
-            var itn = ImageElement.create(
+            const itn = ImageElement.create(
                     ResourceId.IMG_OBJ_STAR_IDLE,
                     IMG_OBJ_STAR_IDLE_gravity_down
                 ),

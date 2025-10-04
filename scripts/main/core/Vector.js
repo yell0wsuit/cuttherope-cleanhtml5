@@ -31,14 +31,14 @@ define("core/Vector", [], function () {
     };
 
     Vector.prototype.distance = function (v2) {
-        var tx = this.x - v2.x,
+        const tx = this.x - v2.x,
             ty = this.y - v2.y,
             dot = tx * tx + ty * ty;
         return Math.sqrt(dot);
     };
 
     Vector.prototype.getLength = function () {
-        var dot = this.x * this.x + this.y * this.y;
+        const dot = this.x * this.x + this.y * this.y;
         return Math.sqrt(dot);
     };
 
@@ -107,7 +107,7 @@ define("core/Vector", [], function () {
 
     Vector.prototype.rotate = function (rad) {
         //noinspection UnnecessaryLocalVariableJS
-        var cosA = Math.cos(rad),
+        const cosA = Math.cos(rad),
             sinA = Math.sin(rad),
             nx = this.x * cosA - this.y * sinA,
             ny = this.x * sinA + this.y * cosA;
@@ -183,7 +183,7 @@ define("core/Vector", [], function () {
         return new Vector(v.x / s, v.y / s);
     };
     Vector.distance = function (x1, y1, x2, y2) {
-        var tx = x1 - x2,
+        const tx = x1 - x2,
             ty = y1 - y2,
             dot = tx * tx + ty * ty;
         return Math.sqrt(dot);
@@ -224,7 +224,7 @@ define("core/Vector", [], function () {
     Vector._tmpBezierY = new Array(64);
 
     Vector.calcPathBezier = function (points, delta) {
-        var result = new Vector(0, 0);
+        const result = new Vector(0, 0);
         Vector.setCalcPathBezier(points, delta, result);
         return result;
     };
@@ -236,25 +236,25 @@ define("core/Vector", [], function () {
      * @param result {Vector}
      */
     Vector.setCalcPathBezier = function (points, delta, result) {
-        var count = points.length;
+        let count = points.length;
         if (count <= 1) {
             result.x = result.y = 0;
             return;
         }
 
-        var xs = Vector._tmpBezierX,
+        const xs = Vector._tmpBezierX,
             ys = Vector._tmpBezierY,
             d1 = 1 - delta;
 
-        for (var j = 0; j < count; j++) {
-            var point = points[j];
+        for (let j = 0; j < count; j++) {
+            const point = points[j];
             xs[j] = point.x;
             ys[j] = point.y;
         }
 
-        var countMinusOne = count - 1;
+        let countMinusOne = count - 1;
         for (; countMinusOne > 0; count--, countMinusOne--) {
-            var i = 0,
+            let i = 0,
                 iPlusOne = 1;
             for (; i < countMinusOne; i++, iPlusOne++) {
                 xs[i] = xs[i] * d1 + xs[iPlusOne] * delta;

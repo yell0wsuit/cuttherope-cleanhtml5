@@ -69,7 +69,7 @@ define("game/Sock", [
             this.b2.rotateAround(this.angle, this.x, this.y);
         },
         draw: function () {
-            var tl = this.light.currentTimeline;
+            const tl = this.light.currentTimeline;
             if (tl && tl.state === Timeline.StateType.STOPPED) {
                 this.light.visible = false;
             }
@@ -78,7 +78,7 @@ define("game/Sock", [
         drawBB: function () {
             // DEBUG: draw bounding lines for transport area
             if (false) {
-                var ctx = Canvas.context;
+                const ctx = Canvas.context;
                 ctx.lineWidth = 3;
 
                 ctx.beginPath();

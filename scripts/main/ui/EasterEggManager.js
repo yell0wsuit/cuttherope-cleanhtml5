@@ -21,8 +21,8 @@ define("ui/EasterEggManager", [
     Lang,
     MenuStringId
 ) {
-    var EasterEggManager = function () {
-        var devCanvas,
+    const EasterEggManager = function () {
+        let devCanvas,
             canvas,
             scaleTo = resolution.uiScaledNumber(2.2);
 
@@ -150,35 +150,35 @@ define("ui/EasterEggManager", [
         var omNomShowing = false;
 
         var showDevLinkOmNom = function (onComplete) {
-            var ctx = devCanvas.getContext("2d");
-            var begin = Date.now();
-            var sx = 0.1;
-            var sy = 0.1;
-            var tx = 0;
-            var ty = 0;
-            var l = 0;
-            var r = 0;
-            var dur = 800;
+            const ctx = devCanvas.getContext("2d");
+            const begin = Date.now();
+            const sx = 0.1;
+            let sy = 0.1;
+            const tx = 0;
+            let ty = 0;
+            let l = 0;
+            let r = 0;
+            const dur = 800;
 
-            var sxbegin = sx;
-            var sybegin = sy;
+            const sxbegin = sx;
+            const sybegin = sy;
 
-            var txbegin = tx;
-            var tybegin = ty;
+            const txbegin = tx;
+            const tybegin = ty;
 
-            var s1 = 600;
-            var s2 = 400 + s1;
-            var s3 = 600 + s2;
-            var s4 = 700 + s3;
-            var s5 = 500 + s4;
-            var s6 = 800 + s5;
+            const s1 = 600;
+            const s2 = 400 + s1;
+            const s3 = 600 + s2;
+            const s4 = 700 + s3;
+            const s5 = 500 + s4;
+            const s6 = 800 + s5;
 
-            var mod = 0;
-            var modflag = false;
-            var modt = null;
+            let mod = 0;
+            const modflag = false;
+            const modt = null;
 
             function step() {
-                var now = Date.now(),
+                const now = Date.now(),
                     t = now - begin;
 
                 // zoom up OmNom
@@ -224,8 +224,8 @@ define("ui/EasterEggManager", [
                 }
 
                 // position in the canvas
-                var mx = 0 + tx;
-                var my = 75 + ty + sy;
+                const mx = 0 + tx;
+                const my = 75 + ty + sy;
 
                 ctx.save();
                 ctx.rotate((30 * Math.PI) / 180);
@@ -244,39 +244,39 @@ define("ui/EasterEggManager", [
         };
 
         this.showOmNom = function () {
-            var ctx = canvas.getContext("2d");
+            const ctx = canvas.getContext("2d");
 
             RootController.pauseLevel();
 
             $("#e").fadeIn(function () {
-                var begin = Date.now();
-                var sx = 0.1;
-                var sy = 0.1;
-                var tx = 0;
-                var ty = 0;
-                var l = 0;
-                var r = 0;
-                var dur = 800;
+                const begin = Date.now();
+                let sx = 0.1;
+                let sy = 0.1;
+                const tx = 0;
+                let ty = 0;
+                let l = 0;
+                let r = 0;
+                const dur = 800;
 
-                var sxbegin = sx;
-                var sybegin = sy;
+                const sxbegin = sx;
+                const sybegin = sy;
 
-                var txbegin = tx;
-                var tybegin = ty;
+                const txbegin = tx;
+                const tybegin = ty;
 
-                var s1 = 600;
-                var s2 = 400 + s1;
-                var s3 = 600 + s2;
-                var s4 = 700 + s3;
-                var s5 = 500 + s4;
-                var s6 = 800 + s5;
+                const s1 = 600;
+                const s2 = 400 + s1;
+                const s3 = 600 + s2;
+                const s4 = 700 + s3;
+                const s5 = 500 + s4;
+                const s6 = 800 + s5;
 
-                var mod = 0;
-                var modflag = false;
-                var modt = null;
+                let mod = 0;
+                const modflag = false;
+                const modt = null;
 
                 function step() {
-                    var now = Date.now(),
+                    const now = Date.now(),
                         t = now - begin;
 
                     // zoom in OmNom
@@ -370,11 +370,11 @@ define("ui/EasterEggManager", [
                     }
 
                     // position in the canvas
-                    var mx =
+                    const mx =
                         tx +
                         (resolution.uiScaledNumber(500) -
                             (sx / scaleTo) * resolution.uiScaledNumber(200));
-                    var my =
+                    const my =
                         ty +
                         (resolution.uiScaledNumber(600) -
                             (sy / scaleTo) * resolution.uiScaledNumber(400));

@@ -2,7 +2,7 @@ define("resources/ResourceType", [], function () {
     /**
      * @enum {number}
      */
-    var ResourceType = {
+    const ResourceType = {
         IMAGE: 0,
         SOUND: 1,
         FONT: 2,

@@ -5,7 +5,7 @@ define("game/CTRSettings", [
     "platformLoc",
     "utils/PubSub",
 ], function (SettingStorage, QueryStrings, LangId, platformLoc, PubSub) {
-    var SettingKeys = {
+    const SettingKeys = {
         MUSIC: "music",
         SOUND: "sound",
         CLICK_TO_CUT: "clickToCut",
@@ -13,7 +13,7 @@ define("game/CTRSettings", [
         LANGUAGE: "language",
     };
 
-    var CTRSettings = {
+    const CTRSettings = {
         showMenu: true,
 
         disableTextSelection: true,
@@ -55,7 +55,7 @@ define("game/CTRSettings", [
             }
 
             // next, check the local storage setting
-            var langId = SettingStorage.getIntOrDefault(SettingKeys.LANGUAGE, null);
+            let langId = SettingStorage.getIntOrDefault(SettingKeys.LANGUAGE, null);
             if (langId == null) {
                 // see if the platform can provide a default language
                 langId = platformLoc.getDefaultLangId();

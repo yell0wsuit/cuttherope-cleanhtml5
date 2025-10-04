@@ -8,7 +8,7 @@ define("ui/PurchaseBox", [
     "core/Alignment",
 ], function (Box, PubSub, Lang, Text, MenuStringId, resolution, Alignment) {
     // cache upgrade UI elements
-    var $upgradePrompt, $upgradeButton;
+    let $upgradePrompt, $upgradeButton;
     $(function () {
         $upgradePrompt = $("#boxUpgradePrompt").hide();
         $upgradeButton = $("#boxUpgradeButton")
@@ -35,7 +35,7 @@ define("ui/PurchaseBox", [
         });
     });
 
-    var PurchaseBox = Box.extend({
+    const PurchaseBox = Box.extend({
         init: function (boxIndex, bgimg, reqstars, islocked, type) {
             this._super(boxIndex, bgimg, reqstars, islocked, type);
             this.purchased = false;

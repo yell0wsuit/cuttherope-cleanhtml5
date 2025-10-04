@@ -59,14 +59,14 @@ define("ui/InterfaceManager", [
     Doors,
     Dialogs
 ) {
-    var menuMusicId = edition.menuMusicId || ResourceId.SND_MENU_MUSIC;
+    const menuMusicId = edition.menuMusicId || ResourceId.SND_MENU_MUSIC;
 
     var InterfaceManager = new (function () {
         // ------------------------------------------------------------------------
         // Locals Variables
         // ------------------------------------------------------------------------
 
-        var _this = this;
+        const _this = this;
         this.useHDVersion = resolution.isHD;
 
         this.isInLevelSelectMode = false;
@@ -76,10 +76,10 @@ define("ui/InterfaceManager", [
         this.isTransitionActive = false;
 
         // warn the user if the frame rate is low after the first level
-        var MIN_FPS = QueryStrings.minFps || 30;
+        const MIN_FPS = QueryStrings.minFps || 30;
 
         // sets scaled menu text for the image specified by the selector query
-        var setImageBigText = function (selector, menuStringId) {
+        const setImageBigText = function (selector, menuStringId) {
             return Text.drawBig({
                 text: Lang.menuText(menuStringId),
                 imgSel: selector,
@@ -91,10 +91,10 @@ define("ui/InterfaceManager", [
         // Initialize Panels (called once for each panel)
         // ------------------------------------------------------------------------
 
-        var updateMiniSoundButton = function (doToggle, buttonId, msgId) {
-            var className;
-            var isSoundOn = SoundMgr.soundEnabled;
-            var isMusicOn = SoundMgr.musicEnabled;
+        const updateMiniSoundButton = function (doToggle, buttonId, msgId) {
+            let className;
+            let isSoundOn = SoundMgr.soundEnabled;
+            let isMusicOn = SoundMgr.musicEnabled;
 
             if (doToggle) {
                 if (isSoundOn && isMusicOn) {
@@ -121,7 +121,7 @@ define("ui/InterfaceManager", [
                 className = "allSound";
             }
 
-            var allClassNames = "effectsOnly noSound allSound";
+            const allClassNames = "effectsOnly noSound allSound";
             $("#optionSound").removeClass(allClassNames).addClass(className);
             $("#gameSound").removeClass(allClassNames).addClass(className);
 
@@ -130,11 +130,11 @@ define("ui/InterfaceManager", [
             $("#musicBtn .options-x").css("display", !isMusicOn ? "block" : "none");
 
             // get the localized text for the new audio setting
-            var text;
+            let text;
             if (!isMusicOn && !isSoundOn) {
                 text = Lang.menuText(MenuStringId.EVERYTHING_OFF);
             } else {
-                var musicId = isMusicOn ? MenuStringId.MUSIC_ON : MenuStringId.MUSIC_OFF,
+                const musicId = isMusicOn ? MenuStringId.MUSIC_ON : MenuStringId.MUSIC_OFF,
                     soundId = isSoundOn ? MenuStringId.SOUNDS_ON : MenuStringId.SOUNDS_OFF,
                     template = Lang.menuText(MenuStringId.AND_TEMPLATE);
                 text = template
@@ -147,7 +147,7 @@ define("ui/InterfaceManager", [
 
         var showMiniOptionMessage = function (msgId, text, delay) {
             if (msgId != undefined) {
-                var showDelay = delay || 500,
+                let showDelay = delay || 500,
                     $msg = $("#" + msgId),
                     $img = $msg.find("img");
 
@@ -171,7 +171,7 @@ define("ui/InterfaceManager", [
         };
 
         // only enable achievements and leaderboard for signed-in users
-        var signedIn = false,
+        let signedIn = false,
             updateSignInControls = function () {
                 $("#achievementsBtn").toggleClass("disabled", !signedIn);
                 $("#leaderboardsBtn").toggleClass("disabled", !signedIn);
@@ -185,7 +185,7 @@ define("ui/InterfaceManager", [
             updateSignInControls();
         });
 
-        var onInitializePanel = function (panelId) {
+        const onInitializePanel = function (panelId) {
             // initialize the MENU panel
             if (panelId == PanelId.MENU) {
                 $("#playBtn").click(function () {
@@ -196,12 +196,12 @@ define("ui/InterfaceManager", [
                     }
 
                     VideoManager.playIntroVideo(function () {
-                        var firstLevelStars = ScoreManager.getStars(0, 0) || 0;
+                        const firstLevelStars = ScoreManager.getStars(0, 0) || 0;
                         if (firstLevelStars === 0) {
                             // start the first level immediately
                             _this.noMenuStartLevel(0, 0);
                         } else {
-                            var panelId = edition.disableBoxMenu ? PanelId.LEVELS : PanelId.BOXES;
+                            const panelId = edition.disableBoxMenu ? PanelId.LEVELS : PanelId.BOXES;
                             PanelManager.showPanel(panelId, true);
                         }
                     });
@@ -236,7 +236,7 @@ define("ui/InterfaceManager", [
                     .toggleClass("disabled", !signedIn);
 
                 // reset popup buttons
-                var resetTimer = null;
+                let resetTimer = null;
                 $("#resetYesBtn")
                     .on(PointerCapture.startEventName, function () {
                         SoundMgr.playSound(ResourceId.SND_TAP);
@@ -268,7 +268,7 @@ define("ui/InterfaceManager", [
                     updateMiniSoundButton(true, "optionSound", "optionMsg");
                 });
 
-                var hdtoggle;
+                let hdtoggle;
                 if (_this.useHDVersion) {
                     $("#optionHd").addClass("activeResolution");
                     $("#optionSd").addClass("inActiveResolution");
@@ -361,7 +361,7 @@ define("ui/InterfaceManager", [
             else if (panelId == PanelId.LEVELS) {
                 $("#levelBack").click(function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    var panelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
+                    const panelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
                     PanelManager.showPanel(panelId);
                 });
 
@@ -486,7 +486,7 @@ define("ui/InterfaceManager", [
                 });
 
                 $("#finalShareBtn").click(function () {
-                    var possibleStars = BoxManager.possibleStars(),
+                    const possibleStars = BoxManager.possibleStars(),
                         totalStars = ScoreManager.totalStars();
 
                     SocialHelper.postToFeed(
@@ -500,10 +500,10 @@ define("ui/InterfaceManager", [
                 });
             } else if (panelId == PanelId.OPTIONS) {
                 // sound effects
-                var updateSoundOption = platform.updateSoundOption,
+                const updateSoundOption = platform.updateSoundOption,
                     $soundBtn = $("#soundBtn"),
                     onSoundButtonChange = function () {
-                        var isSoundOn = !settings.getSoundEnabled();
+                        const isSoundOn = !settings.getSoundEnabled();
                         SoundMgr.setSoundEnabled(isSoundOn);
                         SoundMgr.playSound(ResourceId.SND_TAP);
                         updateSoundOption($soundBtn, isSoundOn);
@@ -513,11 +513,11 @@ define("ui/InterfaceManager", [
                 platform.setSoundButtonChange($soundBtn, onSoundButtonChange);
 
                 // game music
-                var updateMusicOption = platform.updateMusicOption,
+                const updateMusicOption = platform.updateMusicOption,
                     $musicBtn = $("#musicBtn"),
                     onMusicButtonChange = function () {
                         SoundMgr.playSound(ResourceId.SND_TAP);
-                        var isMusicOn = !settings.getMusicEnabled();
+                        const isMusicOn = !settings.getMusicEnabled();
                         SoundMgr.setMusicEnabled(isMusicOn);
                         updateMusicOption($musicBtn, isMusicOn);
                         updateMiniSoundButton(false, "gameSound");
@@ -526,14 +526,14 @@ define("ui/InterfaceManager", [
                 platform.setMusicButtonChange($musicBtn, onMusicButtonChange);
 
                 // change language
-                var updateLangOption = platform.updateLangSetting;
+                const updateLangOption = platform.updateLangSetting;
                 platform.setLangOptionClick(function (newLangId) {
                     SoundMgr.playSound(ResourceId.SND_TAP);
 
                     // if not specified we'll assume that we should advance to
                     // the next language (so we cycle through as user clicks)
                     if (newLangId == null) {
-                        var currentIndex = edition.languages.indexOf(settings.getLangId());
+                        const currentIndex = edition.languages.indexOf(settings.getLangId());
                         newLangId =
                             edition.languages[(currentIndex + 1) % edition.languages.length];
                     }
@@ -545,18 +545,18 @@ define("ui/InterfaceManager", [
                 });
 
                 // click or drag to cut
-                var updateCutOption = platform.updateCutSetting;
+                const updateCutOption = platform.updateCutSetting;
                 platform.setCutOptionClick(function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    var isClickToCut = !settings.getClickToCut();
+                    const isClickToCut = !settings.getClickToCut();
                     settings.setClickToCut(isClickToCut);
                     updateCutOption(isClickToCut);
                 });
 
                 // reset button
-                var $resetBtn = $("#resetBtn").click(function () {
+                const $resetBtn = $("#resetBtn").click(function () {
                     // create localized text images
-                    var resetTextImg = Text.drawBig({
+                    const resetTextImg = Text.drawBig({
                             text: Lang.menuText(MenuStringId.RESET_TEXT),
                             alignment: Alignment.CENTER,
 
@@ -588,7 +588,7 @@ define("ui/InterfaceManager", [
                 platform.toggleLangUI(!edition.disableLanguageOption);
 
                 // update options menu when the language changes
-                var refreshOptionsButtons = function () {
+                const refreshOptionsButtons = function () {
                     setImageBigText("#optionsTitle img", MenuStringId.OPTIONS);
                     updateSoundOption($soundBtn, settings.getSoundEnabled());
                     updateMusicOption($musicBtn, settings.getMusicEnabled());
@@ -597,7 +597,7 @@ define("ui/InterfaceManager", [
                     platform.setResetText($resetBtn, Lang.menuText(MenuStringId.RESET));
 
                     // apply a lang-{code} class to a language layer for css styles
-                    var langId = settings.getLangId();
+                    const langId = settings.getLangId();
                     // !LANG
                     $("#lang")
                         .removeClass(
@@ -630,9 +630,9 @@ define("ui/InterfaceManager", [
         // Show Panels (called for each panel when it's shown)
         // ------------------------------------------------------------------------
 
-        var bounceTimeOut = null;
-        var onShowPanel = function (panelId) {
-            var panel = PanelManager.getPanelById(panelId);
+        let bounceTimeOut = null;
+        const onShowPanel = function (panelId) {
+            const panel = PanelManager.getPanelById(panelId);
 
             if (panelId == PanelId.MENU || panelId == PanelId.BOXES || panelId == PanelId.OPTIONS) {
                 GameBorder.fadeOut(300);
@@ -651,7 +651,7 @@ define("ui/InterfaceManager", [
                 SoundMgr.playMusic(menuMusicId);
             }
 
-            var boxPanel = PanelManager.getPanelById(PanelId.BOXES);
+            const boxPanel = PanelManager.getPanelById(PanelId.BOXES);
             if (panelId == PanelId.BOXES) {
                 BoxManager.updateBoxLocks();
                 ScoreManager.updateTotalScoreText();
@@ -678,7 +678,7 @@ define("ui/InterfaceManager", [
                 boxPanel.onHide();
             }
 
-            var codePanel = PanelManager.getPanelById(PanelId.PASSWORD);
+            const codePanel = PanelManager.getPanelById(PanelId.PASSWORD);
             if (codePanel) {
                 if (panelId === PanelId.PASSWORD) {
                     codePanel.onShow();
@@ -700,7 +700,7 @@ define("ui/InterfaceManager", [
 
                 GameBorder.setGameCompleteBorder();
 
-                var gameWonText = Lang.menuText(MenuStringId.GAME_FINISHED_TEXT).replace(
+                const gameWonText = Lang.menuText(MenuStringId.GAME_FINISHED_TEXT).replace(
                     "%d",
                     ScoreManager.totalStars()
                 );
@@ -750,7 +750,7 @@ define("ui/InterfaceManager", [
         // reason for using a timer here is to ensure that we always clear the flag since some UI
         // will be disabled until the flag gets cleared. This is an attempt to prevent new bugs.
 
-        var transitionTimeout = null;
+        let transitionTimeout = null;
         var notifyBeginTransition = function (timeout, name) {
             _this.isTransitionActive = true;
             if (transitionTimeout != null) clearTimeout(transitionTimeout);
@@ -760,7 +760,7 @@ define("ui/InterfaceManager", [
             }, timeout);
         };
 
-        var runScoreTicker = function () {
+        const runScoreTicker = function () {
             //$('#resultTicker').text(resultTopLines[currentResultLine]);
             $("#resultScore").text(resultBottomLines[currentResultLine]);
             currentResultLine++;
@@ -803,13 +803,13 @@ define("ui/InterfaceManager", [
 
         var isLastLevel = function () {
             // see if we are on the last box
-            var lastPlayableBoxIndex = BoxManager.requiredCount() - 1;
+            const lastPlayableBoxIndex = BoxManager.requiredCount() - 1;
             if (BoxManager.currentBoxIndex !== lastPlayableBoxIndex) {
                 return false;
             }
 
             // on the last level?
-            var numLevels = ScoreManager.levelCount(BoxManager.currentBoxIndex);
+            const numLevels = ScoreManager.levelCount(BoxManager.currentBoxIndex);
             // unfortunately the currentLevelIndex is not zero-based
             if (BoxManager.currentLevelIndex !== numLevels) {
                 return false;
@@ -820,10 +820,10 @@ define("ui/InterfaceManager", [
 
         var completeBox = function () {
             //attempt to move to the next box
-            var boxIndex = BoxManager.currentBoxIndex;
+            const boxIndex = BoxManager.currentBoxIndex;
 
             // check for game complete
-            var requiredIndex = BoxManager.requiredCount() - 1,
+            const requiredIndex = BoxManager.requiredCount() - 1,
                 isGameComplete = boxIndex >= requiredIndex;
 
             if (isGameComplete) {
@@ -831,7 +831,7 @@ define("ui/InterfaceManager", [
                 VideoManager.playOutroVideo();
             } else {
                 _this.isInAdvanceBoxMode = true;
-                var panelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
+                const panelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
                 PanelManager.showPanel(panelId, false);
             }
         };
@@ -863,7 +863,7 @@ define("ui/InterfaceManager", [
         };
 
         this.openBox = function openboxFunc(skip) {
-            var timeout = PanelManager.currentPanelId == PanelId.LEVELS ? 400 : 0;
+            const timeout = PanelManager.currentPanelId == PanelId.LEVELS ? 400 : 0;
 
             //fade out options elements
             $("#levelScore").fadeOut();
@@ -919,11 +919,11 @@ define("ui/InterfaceManager", [
             }, 250);
         };
 
-        var showLevelBackground = function () {
+        const showLevelBackground = function () {
             $("#levelBackground").show();
         };
 
-        var hideLevelBackground = function () {
+        const hideLevelBackground = function () {
             $("#levelBackground").hide();
         };
 
@@ -951,17 +951,17 @@ define("ui/InterfaceManager", [
             resultTimeShiftIndex = 0;
 
         this.onLevelWon = function (info) {
-            var stars = info.stars,
+            const stars = info.stars,
                 score = info.score,
                 levelTime = info.time;
 
             //show level results
-            var resultStatusText;
-            var currentPoints = 0;
-            var index = 0;
-            var totalStarPoints = stars * 1000;
-            var currentTime = 1;
-            var timeSlicePoints = Math.round((score - stars * 1000) / levelTime);
+            let resultStatusText;
+            let currentPoints = 0;
+            const index = 0;
+            const totalStarPoints = stars * 1000;
+            const currentTime = 1;
+            const timeSlicePoints = Math.round((score - stars * 1000) / levelTime);
 
             switch (stars) {
                 case 3:
@@ -997,28 +997,28 @@ define("ui/InterfaceManager", [
             });
 
             // set stuff up
-            var valdiv = $("#resultTickerValue").hide();
-            var lbldiv = $("#resultTickerLabel").hide();
-            var resdiv = $("#resultScore").empty().hide();
-            var stamp = $("#resultImproved").hide();
-            var msgdiv = $("#resultTickerMessage").hide();
+            const valdiv = $("#resultTickerValue").hide();
+            const lbldiv = $("#resultTickerLabel").hide();
+            const resdiv = $("#resultScore").empty().hide();
+            const stamp = $("#resultImproved").hide();
+            const msgdiv = $("#resultTickerMessage").hide();
 
             // HELPER FUNCTIONS
 
-            var secondsToMin = function (sec) {
-                var m = (sec / 60) | 0,
+            const secondsToMin = function (sec) {
+                const m = (sec / 60) | 0,
                     s = Math.round(sec % 60);
                 return m + ":" + (s < 10 ? "0" + s : s);
             };
 
-            var doStarCountdown = function (from, callback) {
-                var countDownPoints = from,
+            const doStarCountdown = function (from, callback) {
+                let countDownPoints = from,
                     duration = 1000,
                     lastRender = Date.now(),
                     requestAnimationFrame = window["requestAnimationFrame"];
 
-                var renderCount = function () {
-                    var now = Date.now(),
+                const renderCount = function () {
+                    const now = Date.now(),
                         timeDelta = now - lastRender,
                         pointDelta = Math.min(
                             Math.round((from * timeDelta) / duration),
@@ -1055,16 +1055,16 @@ define("ui/InterfaceManager", [
                 renderCount();
             };
 
-            var doTimeCountdown = function (fromsec, frompoints, callback) {
-                var finalPoints = currentPoints + frompoints,
+            const doTimeCountdown = function (fromsec, frompoints, callback) {
+                let finalPoints = currentPoints + frompoints,
                     countDownSecs = fromsec,
                     // between 1 and 2 secs depending on time
                     duration = Math.max(1000, 2000 - fromsec * 50),
                     lastRender = Date.now(),
                     requestAnimationFrame = window["requestAnimationFrame"];
 
-                var renderScore = function () {
-                    var now = Date.now(),
+                const renderScore = function () {
+                    const now = Date.now(),
                         percentElapsed = (now - lastRender) / duration;
 
                     lastRender = now;
@@ -1167,7 +1167,7 @@ define("ui/InterfaceManager", [
             }, 1000);
 
             // TODO: right now boxIndex is zero based and levelIndex starts at 1?
-            var boxIndex = BoxManager.currentBoxIndex,
+            const boxIndex = BoxManager.currentBoxIndex,
                 levelIndex = BoxManager.currentLevelIndex;
 
             // save the prev score
@@ -1207,7 +1207,7 @@ define("ui/InterfaceManager", [
         };
 
         // show hide the "behind the scenes" link and the feedback tab when the screen changes size
-        var isDevLinkVisible = true;
+        let isDevLinkVisible = true;
         this.updateDevLink = function () {
             if ($(window).width() < resolution.uiScaledNumber(1024) + 120 && isDevLinkVisible) {
                 $("#moreLink").fadeOut(function () {
@@ -1290,7 +1290,7 @@ define("ui/InterfaceManager", [
                 this.noMenuStartLevel(QueryStrings.box - 1, QueryStrings.level - 1);
             } else if (settings.showMenu) {
                 // make sure the game is not password locked
-                var passwordPanel = PanelManager.getPanelById(PanelId.PASSWORD);
+                const passwordPanel = PanelManager.getPanelById(PanelId.PASSWORD);
                 if (passwordPanel && passwordPanel.isGameLocked && passwordPanel.isGameLocked()) {
                     Doors.renderDoors(true, 0);
                     PanelManager.showPanel(PanelId.PASSWORD, true);
@@ -1299,7 +1299,7 @@ define("ui/InterfaceManager", [
                 }
             }
 
-            var im = this;
+            const im = this;
             PubSub.subscribe(PubSub.ChannelId.PauseGame, function () {
                 im.pauseGame();
             });

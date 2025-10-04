@@ -1,5 +1,5 @@
 define("resources/LangId", [], function () {
-    var LangId = {
+    const LangId = {
         EN: 0,
         FR: 1,
         DE: 2,

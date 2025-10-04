@@ -1,10 +1,10 @@
 define("resources/ResScale", ["core/Vector", "core/Rectangle"], function (Vector, Rectangle) {
     // scales a number and rounds to 4 decimals places of precision
-    var scaleNumber = function (value, scale) {
+    const scaleNumber = function (value, scale) {
         return Math.round(value * scale * 10000) / 10000;
     };
 
-    var ResScaler = {
+    const ResScaler = {
         scaleResourceInfos: function (infos, canvasScale) {
             // the canvas scale is ratio of the canvas target size compared
             // to the resolution the original assets were designed for. The
@@ -12,7 +12,7 @@ define("resources/ResScale", ["core/Vector", "core/Rectangle"], function (Vector
             // different resolution. Most of the assets were designed for
             // 2560 x 1440 but a few of the later sprites target 2048 x 1080
 
-            var resScale, i, len, info;
+            let resScale, i, len, info;
             for (i = 0, len = infos.length; i < len; i++) {
                 info = infos[i];
                 resScale = info.resScale || 1;
@@ -38,7 +38,7 @@ define("resources/ResScale", ["core/Vector", "core/Rectangle"], function (Vector
             }
             if (info.rects) {
                 info.originalRects = this.parseOriginalRects(info.rects);
-                var extra = false;
+                const extra = false;
 
                 info.rects = this.scaleRects(info.originalRects, scale, info.id);
             }
@@ -51,18 +51,18 @@ define("resources/ResScale", ["core/Vector", "core/Rectangle"], function (Vector
         },
 
         parseOriginalRects: function (rects) {
-            var i = 0,
+            let i = 0,
                 len = rects.length,
                 originalRects = [];
             while (i < len) {
-                var rect = new Rectangle(rects[i++], rects[i++], rects[i++], rects[i++]);
+                const rect = new Rectangle(rects[i++], rects[i++], rects[i++], rects[i++]);
                 originalRects.push(rect);
             }
             return originalRects;
         },
 
         scaleRects: function (originalRects, scale, id) {
-            var PADDING = 4,
+            let PADDING = 4,
                 newRects = [],
                 maxWidth = 0,
                 currentY = 0,
@@ -78,8 +78,8 @@ define("resources/ResScale", ["core/Vector", "core/Rectangle"], function (Vector
                 scale *= 1.5;
             }
 
-            for (var j = 0; j < numRects; j++) {
-                var oldRect = originalRects[j],
+            for (let j = 0; j < numRects; j++) {
+                const oldRect = originalRects[j],
                     newRect = new Rectangle(
                         0,
                         currentY,
@@ -94,11 +94,11 @@ define("resources/ResScale", ["core/Vector", "core/Rectangle"], function (Vector
         },
 
         parseOriginalOffsets: function (offsets) {
-            var i = 0,
+            let i = 0,
                 len = offsets.length,
                 originalOffsets = [];
             while (i < len) {
-                var rect = new Vector(offsets[i++], offsets[i++]);
+                const rect = new Vector(offsets[i++], offsets[i++]);
                 originalOffsets.push(rect);
             }
             return originalOffsets;
@@ -113,9 +113,9 @@ define("resources/ResScale", ["core/Vector", "core/Rectangle"], function (Vector
             // the floating point offsets so we'll disable offset adjust for
             // now. Instead we'll use high precision drawing coords (instead
             // of rounding) for moving and animated elements.
-            var ALLOW_OFFSET_ADJUSTMENT = false;
+            const ALLOW_OFFSET_ADJUSTMENT = false;
 
-            var adjustments = [], // how much to offset the offsets :)
+            let adjustments = [], // how much to offset the offsets :)
                 oldOffsets = info.originalOffsets,
                 newOffsets = [],
                 scaledOffset,

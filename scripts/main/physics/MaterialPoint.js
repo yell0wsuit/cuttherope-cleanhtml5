@@ -4,7 +4,7 @@ define("physics/MaterialPoint", [
     "core/Vector",
     "physics/Gravity",
 ], function (Class, Constants, Vector, Gravity) {
-    var MaterialPoint = Class.extend({
+    const MaterialPoint = Class.extend({
         init: function () {
             this.disableGravity = false;
             this.setWeight(1);
@@ -16,7 +16,7 @@ define("physics/MaterialPoint", [
             this.gravity = new Vector(0, Constants.EARTH_Y * w);
         },
         resetAll: function () {
-            var newZero = Vector.newZero;
+            const newZero = Vector.newZero;
             this.v = newZero(); // velocity vector
             this.a = newZero(); // acceleration vector
             this.pos = newZero();
@@ -26,7 +26,7 @@ define("physics/MaterialPoint", [
         updateWithPrecision: function (delta, precision) {
             // Calculate number Of iterations to be made at this update depending
             // on maxPossible_dt And dt (chop off fractional part and add 1)
-            var numIterations = ((delta / precision) >> 0) + 1;
+            const numIterations = ((delta / precision) >> 0) + 1;
 
             // update delta based on num of iterations
             if (numIterations != 0) {
@@ -34,7 +34,7 @@ define("physics/MaterialPoint", [
                 delta = delta / numIterations;
             }
 
-            for (var i = 0; i < numIterations; i++) {
+            for (let i = 0; i < numIterations; i++) {
                 this.update(delta);
             }
         },
@@ -50,7 +50,7 @@ define("physics/MaterialPoint", [
                 }
             }
 
-            var adjustedDelta = delta / Constants.TIME_SCALE;
+            const adjustedDelta = delta / Constants.TIME_SCALE;
             this.totalForce.multiply(this.invWeight);
             this.a = Vector.multiply(this.totalForce, adjustedDelta);
             this.v.add(this.a);
@@ -60,7 +60,7 @@ define("physics/MaterialPoint", [
         },
         applyImpulse: function (impulse, delta) {
             if (!impulse.isZero()) {
-                var im = Vector.multiply(impulse, delta / Constants.TIME_SCALE);
+                const im = Vector.multiply(impulse, delta / Constants.TIME_SCALE);
                 this.pos.add(im);
             }
         },

@@ -6,14 +6,14 @@ define("ui/SocialHelper", [
     "utils/PubSub",
     "analytics",
 ], function (platform, edition, Lang, MenuStringId, PubSub, analytics) {
-    var SocialHelper = new (function () {
+    const SocialHelper = new (function () {
         this.siteUrl = edition.siteUrl;
 
         // cuttherope.ie and cuttherope.net
         this.appId = "278847552173744";
 
         // check for test domain (seperate FB app ids)
-        var host = window.location.host || "";
+        const host = window.location.host || "";
         if (host.indexOf("thinkpixellab") >= 0) {
             // thinkpixellab.com
             this.appId = "239041062884795";
@@ -23,7 +23,7 @@ define("ui/SocialHelper", [
         }
 
         // listen to language changes
-        var self = this;
+        const self = this;
         PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
             self.siteDescription = Lang.menuText(MenuStringId.SITE_DESC);
             self.siteName = Lang.menuText(MenuStringId.SITE_TITLE);
@@ -37,7 +37,7 @@ define("ui/SocialHelper", [
 
         this.initFB = function () {
             // NOTE: must create settings this way to prevent obfuscation
-            var fbInitSettings = {};
+            const fbInitSettings = {};
             fbInitSettings["appId"] = self.appId;
             fbInitSettings["status"] = true;
             fbInitSettings["cookie"] = true;
@@ -61,7 +61,7 @@ define("ui/SocialHelper", [
                 // otherwise, we'll default to using facebook
 
                 // NOTE: must create settings this way to prevent obfuscation
-                var publish = {};
+                const publish = {};
                 publish["method"] = "feed";
                 publish["name"] = self.siteName;
                 publish["caption"] = caption;

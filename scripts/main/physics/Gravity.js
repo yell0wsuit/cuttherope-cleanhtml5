@@ -1,5 +1,5 @@
 define("physics/Gravity", ["core/Vector", "utils/Constants"], function (Vector, Constants) {
-    var GCONST = 9.8 * Constants.PIXEL_TO_SI_METERS_K;
+    const GCONST = 9.8 * Constants.PIXEL_TO_SI_METERS_K;
 
     var Gravity = {
         /**

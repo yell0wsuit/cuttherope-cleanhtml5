@@ -21,7 +21,7 @@ define("ui/TimePasswordPanel", [
     edition,
     QueryStrings
 ) {
-    var TimePasswordPanel = new Panel(PanelId.PASSWORD, "codePanel", "levelBackground", false),
+    let TimePasswordPanel = new Panel(PanelId.PASSWORD, "codePanel", "levelBackground", false),
         $message = null,
         $codeText = null,
         $okButton = null,
@@ -38,7 +38,7 @@ define("ui/TimePasswordPanel", [
 
     // dom ready events
     $(function () {
-        var validating = false;
+        let validating = false;
 
         $message = $("#codeMessage");
         $codeText = $("#codeText");
@@ -50,12 +50,12 @@ define("ui/TimePasswordPanel", [
 
             // for some reason, chrome isn't rendering the text when its first set
             // we need to do something to trigger layout, so its shown properly
-            var width = $message.width();
+            const width = $message.width();
             $message.width(width + 1);
             $message.width(width - 1);
         }
 
-        var showValidatingMessage = false;
+        let showValidatingMessage = false;
         function pulseWhileValidating() {
             if (!validating) {
                 showValidatingMessage = false;
@@ -108,7 +108,7 @@ define("ui/TimePasswordPanel", [
             }
 
             // make sure the code is a integer within the valid range
-            var numBoxes = edition.boxes.length,
+            const numBoxes = edition.boxes.length,
                 codeString = $codeText.val() || "",
                 firstDigit = codeString.length > 0 ? parseInt(codeString[0], 10) || 0 : 0,
                 code = parseInt(codeString, 10);
@@ -129,7 +129,7 @@ define("ui/TimePasswordPanel", [
             }
 
             // codes start with the box number
-            var codeIndex = firstDigit - 1;
+            const codeIndex = firstDigit - 1;
             if (codeIndex <= lastUnlockedIndex) {
                 setMessageHtml(
                     "Levels for that code have already been unlocked! <br/>" +
@@ -176,7 +176,7 @@ define("ui/TimePasswordPanel", [
         });
     });
 
-    var im;
+    let im;
     TimePasswordPanel.init = function (interfaceManager) {
         im = interfaceManager;
     };

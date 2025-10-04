@@ -5,7 +5,7 @@ define("resolution", [
     "config/resolutions/768x432",
 ], function (settings, scaleResolution, res480, res768) {
     // decide which resolution to target
-    var resolution;
+    let resolution;
 
     // Use 480px (for testing in desktop browser)
     resolution = res480;

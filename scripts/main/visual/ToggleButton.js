@@ -3,12 +3,12 @@ define("visual/ToggleButton", [
     "visual/GenericButton",
     "core/Alignment",
 ], function (BaseElement, GenericButton, Alignment) {
-    var ToggleButtonId = {
+    const ToggleButtonId = {
         FACE1: 0,
         FACE2: 1,
     };
 
-    var ToggleButton = BaseElement.extend({
+    const ToggleButton = BaseElement.extend({
         init: function (up1, down1, up2, down2, id) {
             this._super();
 

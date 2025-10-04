@@ -4,9 +4,9 @@ define("utils/Constants", ["core/Vector"], function (Vector) {
      * @const
      * @type {number}
      */
-    var PIXEL_TO_SI_METERS_K = 80;
+    const PIXEL_TO_SI_METERS_K = 80;
 
-    var Constants = {
+    const Constants = {
         /**
          * @const
          * @type {number}

@@ -23,7 +23,7 @@ define("resources/PreLoader", [
     ResourceMgr,
     ResourcePacks
 ) {
-    var menuImagesLoadComplete = false,
+    let menuImagesLoadComplete = false,
         menuSoundLoadComplete = false,
         completeCallback = null,
         checkMenuLoadComplete = function () {
@@ -46,8 +46,8 @@ define("resources/PreLoader", [
             checkMenuLoadComplete = function () {};
         };
 
-    var loadImages = function () {
-        var pxLoader = new PxLoader({ noProgressTimeout: 30 * 1000 }), // stop waiting after 30 secs
+    const loadImages = function () {
+        let pxLoader = new PxLoader({ noProgressTimeout: 30 * 1000 }), // stop waiting after 30 secs
             gameBaseUrl = platform.imageBaseUrl + resolution.CANVAS_WIDTH + "/game/",
             MENU_TAG = "MENU",
             FONT_TAG = "FONT",
@@ -57,7 +57,7 @@ define("resources/PreLoader", [
             imageUrl;
 
         // first menu images
-        var queueMenuImages = function (imageFilenames, menuBaseUrl) {
+        const queueMenuImages = function (imageFilenames, menuBaseUrl) {
             if (!imageFilenames) {
                 return;
             }
@@ -73,10 +73,10 @@ define("resources/PreLoader", [
         };
 
         // queue page images first, the game can wait (we have a load animation)
-        var passwordPath = platform.imageBaseUrl + (editionUI.passwordDirectory || "");
+        const passwordPath = platform.imageBaseUrl + (editionUI.passwordDirectory || "");
         queueMenuImages(editionUI.passwordImageNames, passwordPath);
 
-        var passwordResolutionPath =
+        const passwordResolutionPath =
             platform.resolutionBaseUrl + (editionUI.passwordResolutionDirectory || "");
         queueMenuImages(editionUI.passwordResolutionImageNames, passwordResolutionPath);
 
@@ -89,13 +89,13 @@ define("resources/PreLoader", [
 
         queueMenuImages(edition.drawingImageNames);
 
-        var editionBaseUrl = platform.resolutionBaseUrl + (edition.editionImageDirectory || "");
+        const editionBaseUrl = platform.resolutionBaseUrl + (edition.editionImageDirectory || "");
         queueMenuImages(edition.editionImages, editionBaseUrl);
 
         // only report progress on the menu images and fonts
         pxLoader.addProgressListener(
             function (e) {
-                var p = 100 * (e.completedCount / e.totalCount);
+                const p = 100 * (e.completedCount / e.totalCount);
                 if (LoadAnimation) {
                     LoadAnimation.notifyLoadProgress(p);
                 }
@@ -109,11 +109,11 @@ define("resources/PreLoader", [
         );
 
         // next fonts and game images
-        var queueForResMgr = function (ids, tag) {
-            var i, len, imageId;
+        const queueForResMgr = function (ids, tag) {
+            let i, len, imageId;
             for (i = 0, len = ids.length; i < len; i++) {
                 imageId = ids[i];
-                var pxImage = new PxLoaderImage(gameBaseUrl + resData[imageId].path, tag);
+                const pxImage = new PxLoaderImage(gameBaseUrl + resData[imageId].path, tag);
 
                 // add the resId so we can find it upon completion
                 pxImage.resId = imageId;
@@ -136,7 +136,7 @@ define("resources/PreLoader", [
         pxLoader.start();
     };
 
-    var PreLoader = {
+    const PreLoader = {
         init: function () {
             ResourceMgr.init();
 

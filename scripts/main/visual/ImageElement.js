@@ -14,7 +14,7 @@ define("visual/ImageElement", [
     /**
      * Texture container with the ability to calculate and draw quads
      */
-    var ImageElement = BaseElement.extend({
+    const ImageElement = BaseElement.extend({
         init: function () {
             this._super();
         },
@@ -32,7 +32,7 @@ define("visual/ImageElement", [
         getTexture: function (resId) {
             // using the resMgr would create a circular dependency,
             // so we'll assume its been loaded and fetch directly
-            var texture = RES_DATA[resId].texture;
+            const texture = RES_DATA[resId].texture;
             if (!texture) {
                 Log.debug("Image not loaded: " + RES_DATA[resId].path);
             }
@@ -47,7 +47,7 @@ define("visual/ImageElement", [
 
             // don't set width / height to quad size if we cut transparency from each quad
             if (!this.restoreCutTransparency) {
-                var rect = this.texture.rects[n];
+                const rect = this.texture.rects[n];
                 this.width = rect.w;
                 this.height = rect.h;
             }
@@ -70,7 +70,7 @@ define("visual/ImageElement", [
             // only draw if the image is non-transparent
             if (this.color.a !== 0 && this.texture) {
                 if (this.quadToDraw === Constants.UNDEFINED) {
-                    var qx = this.drawX,
+                    const qx = this.drawX,
                         qy = this.drawY;
 
                     Canvas.context.drawImage(this.texture.image, qx, qy);
@@ -82,14 +82,14 @@ define("visual/ImageElement", [
             this.postDraw();
         },
         drawQuad: function (n) {
-            var rect = this.texture.rects[n],
+            let rect = this.texture.rects[n],
                 quadWidth = rect.w,
                 quadHeight = rect.h,
                 qx = this.drawX,
                 qy = this.drawY;
 
             if (this.restoreCutTransparency) {
-                var offset = this.texture.offsets[n];
+                const offset = this.texture.offsets[n];
                 if (offset) {
                     qx += offset.x;
                     qy += offset.y;
@@ -137,7 +137,7 @@ define("visual/ImageElement", [
             ); // destination coordinates
         },
         drawTiled: function (q, x, y, width, height) {
-            var ctx = Canvas.context,
+            let ctx = Canvas.context,
                 qx = 0,
                 qy = 0,
                 qw,
@@ -159,7 +159,7 @@ define("visual/ImageElement", [
                 qh = rect.h;
             }
 
-            var xInc = qw | 0,
+            let xInc = qw | 0,
                 yInc = qh | 0,
                 ceilW,
                 ceilH;
@@ -214,12 +214,12 @@ define("visual/ImageElement", [
                     this.texture.height
                 );
             } else {
-                var rect = this.texture.rects[this.quadToDraw],
+                let rect = this.texture.rects[this.quadToDraw],
                     qx = this.drawX,
                     qy = this.drawY;
 
                 if (this.restoreCutTransparency) {
-                    var offset = this.texture.offsets[this.quadToDraw];
+                    const offset = this.texture.offsets[this.quadToDraw];
                     qx += offset.x;
                     qy += offset.y;
                 }
@@ -246,13 +246,13 @@ define("visual/ImageElement", [
             return true;
         },
         setElementPositionWithOffset: function (resId, index) {
-            var texture = this.getTexture(resId),
+            const texture = this.getTexture(resId),
                 offset = texture.offsets[index];
             this.x = offset.x;
             this.y = offset.y;
         },
         setElementPositionWithCenter: function (resId, index) {
-            var texture = this.getTexture(resId),
+            const texture = this.getTexture(resId),
                 rect = texture.rects[index],
                 offset = texture.offsets[index];
             this.x = offset.x + rect.w / 2;
@@ -261,7 +261,7 @@ define("visual/ImageElement", [
     });
 
     ImageElement.create = function (resId, drawQuad) {
-        var image = new ImageElement();
+        const image = new ImageElement();
         image.initTextureWithId(resId);
 
         if (drawQuad != null) image.setTextureQuad(drawQuad);

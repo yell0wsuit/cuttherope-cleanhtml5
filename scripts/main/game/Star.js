@@ -23,13 +23,13 @@ define("game/Star", [
     Mover,
     resolution
 ) {
-    var IMG_OBJ_STAR_IDLE_glow = 0;
-    var IMG_OBJ_STAR_IDLE_idle_start = 1;
-    var IMG_OBJ_STAR_IDLE_idle_end = 18;
-    var IMG_OBJ_STAR_IDLE_timed_start = 19;
-    var IMG_OBJ_STAR_IDLE_timed_end = 55;
+    const IMG_OBJ_STAR_IDLE_glow = 0;
+    const IMG_OBJ_STAR_IDLE_idle_start = 1;
+    const IMG_OBJ_STAR_IDLE_idle_end = 18;
+    const IMG_OBJ_STAR_IDLE_timed_start = 19;
+    const IMG_OBJ_STAR_IDLE_timed_end = 55;
 
-    var Star = CTRGameObject.extend({
+    const Star = CTRGameObject.extend({
         init: function () {
             this._super();
 
@@ -44,13 +44,13 @@ define("game/Star", [
             this.drawPosIncrement = 0.0001;
         },
         createAnimations: function () {
-            var t;
+            let t;
             if (this.timeout > 0) {
                 // create animation
                 this.timedAnim = new Animation();
                 this.timedAnim.initTextureWithId(ResourceId.IMG_OBJ_STAR_IDLE);
                 this.timedAnim.anchor = this.timedAnim.parentAnchor = Alignment.CENTER;
-                var delay =
+                const delay =
                     this.timeout /
                     (IMG_OBJ_STAR_IDLE_timed_end - IMG_OBJ_STAR_IDLE_timed_start + 1);
                 this.timedAnim.addAnimationEndpoints(
@@ -68,7 +68,7 @@ define("game/Star", [
                 this.addChild(this.timedAnim);
 
                 // timeline for animation color fade
-                var tt = new Timeline();
+                const tt = new Timeline();
                 tt.addKeyFrame(
                     KeyFrame.makeColor(
                         RGBAColor.solidOpaque.copy(),
@@ -125,7 +125,7 @@ define("game/Star", [
             t.update(MathHelper.randomRange(0, 20) / 10);
 
             // idle star animation
-            var sr = new Animation();
+            const sr = new Animation();
             sr.initTextureWithId(ResourceId.IMG_OBJ_STAR_IDLE);
             sr.doRestoreCutTransparency();
             sr.addAnimationDelay(

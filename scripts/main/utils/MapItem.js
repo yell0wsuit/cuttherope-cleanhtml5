@@ -2,7 +2,7 @@ define("utils/MapItem", [], function () {
     /**
      * @enum {number}
      */
-    var MapItem = {
+    const MapItem = {
         MAP: 0,
         GAME_DESIGN: 1,
         TARGET: 2,

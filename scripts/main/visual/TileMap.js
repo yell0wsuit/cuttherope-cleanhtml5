@@ -34,9 +34,9 @@ define("visual/TileMap", [
             this.tiles = [];
 
             this.matrix = [];
-            for (var i = 0; i < columns; i++) {
-                var column = (this.matrix[i] = []);
-                for (var k = 0; k < rows; k++) {
+            for (let i = 0; i < columns; i++) {
+                const column = (this.matrix[i] = []);
+                for (let k = 0; k < rows; k++) {
                     column[k] = Constants.UNDEFINED;
                 }
             }
@@ -53,15 +53,15 @@ define("visual/TileMap", [
                 this.tileWidth = texture.imageWidth;
                 this.tileHeight = texture.imageHeight;
             } else {
-                var rect = texture.rects[quadIndex];
+                const rect = texture.rects[quadIndex];
                 this.tileWidth = rect.w;
                 this.tileHeight = rect.h;
             }
 
             this.updateVars();
 
-            var drawerId = Constants.UNDEFINED;
-            for (var i = 0, len = this.drawers.length; i < len; i++) {
+            let drawerId = Constants.UNDEFINED;
+            for (let i = 0, len = this.drawers.length; i < len; i++) {
                 if (this.drawers[i].texture === texture) {
                     drawerId = i;
                     break;
@@ -69,12 +69,12 @@ define("visual/TileMap", [
             }
 
             if (drawerId === Constants.UNDEFINED) {
-                var d = new ImageMultiDrawer(texture);
+                const d = new ImageMultiDrawer(texture);
                 drawerId = this.drawers.length;
                 this.drawers.push(d);
             }
 
-            var entry = new TileEntry(drawerId, quadIndex);
+            const entry = new TileEntry(drawerId, quadIndex);
             this.tiles.push(entry);
         },
         updateVars: function () {
@@ -101,8 +101,8 @@ define("visual/TileMap", [
          * @param tileIndex {number}
          */
         fill: function (startRow, startCol, numRows, numCols, tileIndex) {
-            for (var i = startCol, colEnd = startCol + numCols; i < colEnd; i++) {
-                for (var k = startRow, rowEnd = startRow + numRows; k < rowEnd; k++) {
+            for (let i = startCol, colEnd = startCol + numCols; i < colEnd; i++) {
+                for (let k = startRow, rowEnd = startRow + numRows; k < rowEnd; k++) {
                     this.matrix[i][k] = tileIndex;
                 }
             }
@@ -126,7 +126,7 @@ define("visual/TileMap", [
          * @param pos {Vector}
          */
         updateWithCameraPos: function (pos) {
-            var mx = Math.round(pos.x / this.parallaxRatio),
+            let mx = Math.round(pos.x / this.parallaxRatio),
                 my = Math.round(pos.y / this.parallaxRatio),
                 tileMapStartX = this.x,
                 tileMapStartY = this.y,
@@ -136,7 +136,7 @@ define("visual/TileMap", [
                 v;
 
             if (this.repeatedVertically !== TileMap.RepeatType.NONE) {
-                var ys = tileMapStartY - my;
+                const ys = tileMapStartY - my;
                 a = ~~ys % this.tileMapHeight;
                 if (ys < 0) {
                     tileMapStartY = a + my;
@@ -146,7 +146,7 @@ define("visual/TileMap", [
             }
 
             if (this.repeatedHorizontally !== TileMap.RepeatType.NONE) {
-                var xs = tileMapStartX - mx;
+                const xs = tileMapStartX - mx;
                 a = ~~xs % this.tileMapWidth;
                 if (xs < 0) {
                     tileMapStartX = a + mx;
@@ -171,7 +171,7 @@ define("visual/TileMap", [
                 return;
             }
 
-            var cameraInTilemap = Rectangle.rectInRectIntersection(
+            const cameraInTilemap = Rectangle.rectInRectIntersection(
                 tileMapStartX,
                 tileMapStartY,
                 this.tileMapWidth,
@@ -182,18 +182,18 @@ define("visual/TileMap", [
                 this.cameraViewHeight
             ); // camera rect
 
-            var checkPoint = new Vector(
+            const checkPoint = new Vector(
                 Math.max(0, cameraInTilemap.x),
                 Math.max(0, cameraInTilemap.y)
             );
 
             //noinspection JSSuspiciousNameCombination
-            var startPos = new Vector(
+            const startPos = new Vector(
                 ~~(~~checkPoint.x / this.tileWidth),
                 ~~(~~checkPoint.y / this.tileHeight)
             );
 
-            var highestQuadY = tileMapStartY + startPos.y * this.tileHeight,
+            const highestQuadY = tileMapStartY + startPos.y * this.tileHeight,
                 currentQuadPos = new Vector(
                     tileMapStartX + startPos.x * this.tileWidth,
                     highestQuadY
@@ -204,7 +204,7 @@ define("visual/TileMap", [
                 this.drawers[i].numberOfQuadsToDraw = 0;
             }
 
-            var maxColumn = startPos.x + this.maxColsOnScreen - 1,
+            let maxColumn = startPos.x + this.maxColsOnScreen - 1,
                 maxRow = startPos.y + this.maxRowsOnScreen - 1;
 
             if (this.repeatedVertically === TileMap.RepeatType.NONE) {
@@ -216,14 +216,14 @@ define("visual/TileMap", [
 
             for (i = startPos.x; i <= maxColumn; i++) {
                 currentQuadPos.y = highestQuadY;
-                for (var j = startPos.y; j <= maxRow; j++) {
+                for (let j = startPos.y; j <= maxRow; j++) {
                     if (currentQuadPos.y >= my + this.cameraViewHeight) {
                         break;
                     }
 
                     // find intersection rectangle between camera rectangle and every tiled
                     // texture rectangle
-                    var resScreen = Rectangle.rectInRectIntersection(
+                    const resScreen = Rectangle.rectInRectIntersection(
                         mx,
                         my,
                         this.cameraViewWidth,
@@ -234,14 +234,14 @@ define("visual/TileMap", [
                         this.tileHeight
                     );
 
-                    var resTexture = new Rectangle(
+                    const resTexture = new Rectangle(
                         mx - currentQuadPos.x + resScreen.x,
                         my - currentQuadPos.y + resScreen.y,
                         resScreen.w,
                         resScreen.h
                     );
 
-                    var ri = Math.round(i),
+                    let ri = Math.round(i),
                         rj = Math.round(j);
 
                     if (this.repeatedVertically === TileMap.RepeatType.EDGES) {
@@ -278,19 +278,19 @@ define("visual/TileMap", [
                         rj = rj % this.rows;
                     }
 
-                    var tile = this.matrix[ri][rj];
+                    const tile = this.matrix[ri][rj];
                     if (tile >= 0) {
-                        var entry = this.tiles[tile],
+                        const entry = this.tiles[tile],
                             drawer = this.drawers[entry.drawerIndex],
                             texture = drawer.texture;
 
                         if (entry.quad !== Constants.UNDEFINED) {
-                            var rect = texture.rects[entry.quad];
+                            const rect = texture.rects[entry.quad];
                             resTexture.x += rect.x;
                             resTexture.y += rect.y;
                         }
 
-                        var vertRect = new Rectangle(
+                        const vertRect = new Rectangle(
                             pos.x + resScreen.x,
                             pos.y + resScreen.y,
                             resScreen.w,
@@ -310,7 +310,7 @@ define("visual/TileMap", [
         },
         draw: function () {
             this.preDraw();
-            for (var i = 0, len = this.drawers.length; i < len; i++) {
+            for (let i = 0, len = this.drawers.length; i < len; i++) {
                 this.drawers[i].draw();
             }
             this.postDraw();

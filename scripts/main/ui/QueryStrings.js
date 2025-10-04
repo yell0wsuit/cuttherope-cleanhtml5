@@ -1,9 +1,9 @@
 define("ui/QueryStrings", [], function () {
     // putting all query strings in a central location so that we can easily add/remove for ship
-    var QueryStrings = new (function () {
+    const QueryStrings = new (function () {
         // parse the query strings into a dictionary
         function getQueryStrings() {
-            var assoc = {},
+            let assoc = {},
                 queryString = location.search.substring(1) || "",
                 keyValues = queryString.split("&"),
                 i,
@@ -22,11 +22,11 @@ define("ui/QueryStrings", [], function () {
             return assoc;
         }
 
-        var qs = getQueryStrings();
+        const qs = getQueryStrings();
 
         // case insensitive lookup
-        var urlContains = function (val) {
-            var url = window.location.href.toLowerCase();
+        const urlContains = function (val) {
+            const url = window.location.href.toLowerCase();
             return url.indexOf(val.toLowerCase()) >= 0;
         };
 

@@ -1,5 +1,5 @@
 define("ui/PanelId", [], function () {
-    var PanelId = {
+    const PanelId = {
         MENU: 0,
         BOXES: 1,
         LEVELS: 2,

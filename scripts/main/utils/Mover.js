@@ -3,14 +3,14 @@ define("utils/Mover", ["utils/Class", "utils/MathHelper", "core/Vector"], functi
     MathHelper,
     Vector
 ) {
-    var Mover = Class.extend({
+    const Mover = Class.extend({
         init: function (pathCapacity, moveSpeed, rotateSpeed) {
             this.pathCapacity = pathCapacity;
             this.rotateSpeed = rotateSpeed || 0;
             this.path = [];
             if (pathCapacity > 0) {
                 this.moveSpeed = new Array(pathCapacity);
-                for (var i = 0; i < pathCapacity; i++) {
+                for (let i = 0; i < pathCapacity; i++) {
                     this.moveSpeed[i] = moveSpeed || 0;
                 }
             }
@@ -21,7 +21,7 @@ define("utils/Mover", ["utils/Class", "utils/MathHelper", "core/Vector"], functi
             this.overrun = 0;
         },
         setMoveSpeed: function (speed) {
-            for (var i = 0, len = this.pathCapacity; i < len; i++) {
+            for (let i = 0, len = this.pathCapacity; i < len; i++) {
                 this.moveSpeed[i] = speed;
             }
         },
@@ -31,7 +31,7 @@ define("utils/Mover", ["utils/Class", "utils/MathHelper", "core/Vector"], functi
          */
         setPathFromString: function (path, start) {
             if (path[0] === "R") {
-                var clockwise = path[1] === "C",
+                let clockwise = path[1] === "C",
                     rad = parseInt(path.substr(2), 10),
                     pointsCount = rad / 2,
                     kIncrement = (2 * Math.PI) / pointsCount,
@@ -40,7 +40,7 @@ define("utils/Mover", ["utils/Class", "utils/MathHelper", "core/Vector"], functi
                 if (!clockwise) kIncrement = -kIncrement;
 
                 for (var i = 0; i < pointsCount; ++i) {
-                    var nx = start.x + rad * Math.cos(theta),
+                    const nx = start.x + rad * Math.cos(theta),
                         ny = start.y + rad * Math.sin(theta);
 
                     this.addPathPoint(new Vector(nx, ny));
@@ -54,10 +54,10 @@ define("utils/Mover", ["utils/Class", "utils/MathHelper", "core/Vector"], functi
                     path = path.substr(0, path.length - 1);
                 }
 
-                var parts = path.split(","),
+                const parts = path.split(","),
                     len = parts.length;
                 for (i = 0; i < len; i += 2) {
-                    var xs = parseFloat(parts[i]),
+                    const xs = parseFloat(parts[i]),
                         ys = parseFloat(parts[i + 1]),
                         pathPoint = new Vector(start.x + xs, start.y + ys);
                     this.addPathPoint(pathPoint);
@@ -92,7 +92,7 @@ define("utils/Mover", ["utils/Class", "utils/MathHelper", "core/Vector"], functi
             this.calculateOffset();
         },
         calculateOffset: function () {
-            var target = this.path[this.targetPoint];
+            const target = this.path[this.targetPoint];
             this.offset = Vector.subtract(target, this.pos);
             this.offset.normalize();
             this.offset.multiply(this.moveSpeed[this.targetPoint]);
@@ -107,11 +107,11 @@ define("utils/Mover", ["utils/Class", "utils/MathHelper", "core/Vector"], functi
             if (this.paused) return;
 
             if (this.path.length > 0) {
-                var target = this.path[this.targetPoint],
+                let target = this.path[this.targetPoint],
                     switchPoint = false;
 
                 if (!this.pos.equals(target)) {
-                    var rdelta = delta;
+                    let rdelta = delta;
                     if (this.overrun !== 0) {
                         rdelta += this.overrun;
                         this.overrun = 0;
@@ -187,7 +187,7 @@ define("utils/Mover", ["utils/Class", "utils/MathHelper", "core/Vector"], functi
      * @return {Object}
      */
     Mover.moveToTargetWithStatus = function (v, t, speed, delta) {
-        var reachedZero = false;
+        let reachedZero = false;
         if (t !== v) {
             if (t > v) {
                 v += speed * delta;

@@ -1,5 +1,5 @@
 define("resources/MenuStrings", ["resources/MenuStringId"], function (MenuStringId) {
-    var locEntries = [
+    const locEntries = [
         {
             id: 0,
             en: "Play",

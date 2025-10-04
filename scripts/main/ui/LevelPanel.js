@@ -31,21 +31,21 @@ define("ui/LevelPanel", [
     Alignment,
     Dialogs
 ) {
-    var backgroundId = edition.levelBackgroundId || "levelBackground",
+    const backgroundId = edition.levelBackgroundId || "levelBackground",
         LevelPanel = new Panel(PanelId.LEVELS, "levelPanel", backgroundId, true);
 
     // cache interface manager reference
-    var im = null;
+    let im = null;
 
     LevelPanel.init = function (interfaceManager) {
         im = interfaceManager;
 
         // generate level elements
-        var levelCount = ScoreManager.levelCount(BoxManager.currentBoxIndex);
-        var $levelOptions = $("#levelOptions");
+        const levelCount = ScoreManager.levelCount(BoxManager.currentBoxIndex);
+        const $levelOptions = $("#levelOptions");
 
         // initialize for a 3x3 grid
-        var leftOffset = 0,
+        let leftOffset = 0,
             topOffset = 0,
             lineLength = resolution.uiScaledNumber(420),
             inc = resolution.uiScaledNumber(153),
@@ -69,11 +69,11 @@ define("ui/LevelPanel", [
             ((columns = 5), (lastRowCount = levelCount % 5));
         }
 
-        var curTop = topOffset,
+        let curTop = topOffset,
             curLeft = leftOffset,
             el;
 
-        var adLevel = function $addLevel(i, inc, extraPad) {
+        const adLevel = function $addLevel(i, inc, extraPad) {
             // create the level button
             $("<div/>")
                 .attr("id", "option" + (i + 1))
@@ -96,7 +96,7 @@ define("ui/LevelPanel", [
 
         if (lastRowCount > 0) {
             (function (j) {
-                var extraPad = ((columns - lastRowCount) * inc) / 2;
+                const extraPad = ((columns - lastRowCount) * inc) / 2;
                 for (; j < levelCount; j++) {
                     adLevel(j, inc, extraPad);
                 }
@@ -113,7 +113,7 @@ define("ui/LevelPanel", [
     };
 
     // listen to purchase event
-    var isPaid = false;
+    let isPaid = false;
     PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, function (paid) {
         isPaid = paid;
         updateLevelOptions();
@@ -137,7 +137,7 @@ define("ui/LevelPanel", [
     }
 
     function onLevelClick(event) {
-        var levelIndex = parseInt($(this).data("level"), 10);
+        const levelIndex = parseInt($(this).data("level"), 10);
         if (ScoreManager.isLevelUnlocked(BoxManager.currentBoxIndex, levelIndex)) {
             im.openLevel(levelIndex + 1);
         } else if (requiresPurchase(levelIndex)) {
@@ -152,7 +152,7 @@ define("ui/LevelPanel", [
 
     // draw the level options based on current scores and stars
     function updateLevelOptions() {
-        var boxIndex = BoxManager.currentBoxIndex,
+        let boxIndex = BoxManager.currentBoxIndex,
             levelCount = ScoreManager.levelCount(boxIndex),
             $level,
             stars,
@@ -197,7 +197,7 @@ define("ui/LevelPanel", [
 
         // update the scores
         // currently assuming each level has three stars
-        var text =
+        const text =
             ScoreManager.achievedStars(BoxManager.currentBoxIndex) +
             "/" +
             ScoreManager.levelCount(BoxManager.currentBoxIndex) * 3;

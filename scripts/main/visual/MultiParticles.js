@@ -5,7 +5,7 @@ define("visual/MultiParticles", [
     "visual/ImageMultiDrawer",
     "resolution",
 ], function (Particles, Rectangle, MathHelper, ImageMultiDrawer, resolution) {
-    var MultiParticles = Particles.extend({
+    const MultiParticles = Particles.extend({
         init: function (numParticles, texture) {
             this._super(numParticles);
 
@@ -15,7 +15,7 @@ define("visual/MultiParticles", [
             this.height = resolution.CANVAS_HEIGHT;
         },
         initParticle: function (particle) {
-            var texture = this.imageGrid,
+            const texture = this.imageGrid,
                 n = MathHelper.randomRange(0, texture.rects.length - 1),
                 tquad = texture.rects[n],
                 vquad = new Rectangle(0, 0, 0, 0); // don't draw initially

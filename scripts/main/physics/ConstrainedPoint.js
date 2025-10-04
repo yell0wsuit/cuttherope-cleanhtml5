@@ -11,7 +11,7 @@ define("physics/ConstrainedPoint", [
         this.type = type;
     }
 
-    var ConstrainedPoint = MaterialPoint.extend({
+    const ConstrainedPoint = MaterialPoint.extend({
         init: function () {
             this.prevPos = new Vector(Constants.INT_MAX, Constants.INT_MAX);
             this.pin = new Vector(Constants.UNDEFINED, Constants.UNDEFINED);
@@ -42,7 +42,7 @@ define("physics/ConstrainedPoint", [
          * @param type {ConstraintType}
          */
         addConstraint: function (cp, restLength, type) {
-            var ct = new Constraint(cp, restLength, type);
+            const ct = new Constraint(cp, restLength, type);
             this.constraints.push(ct);
         },
         /**
@@ -50,9 +50,9 @@ define("physics/ConstrainedPoint", [
          * @param cp {ConstrainedPoint}
          */
         removeConstraint: function (cp) {
-            var constraints = this.constraints,
+            const constraints = this.constraints,
                 len = constraints.length;
-            for (var i = 0; i < len; i++) {
+            for (let i = 0; i < len; i++) {
                 if (constraints[i].cp === cp) {
                     constraints.splice(i, 1);
                     return;
@@ -71,10 +71,10 @@ define("physics/ConstrainedPoint", [
          * @param toCp {ConstrainedPoint}
          */
         changeConstraint: function (fromCp, toCp) {
-            var constraints = this.constraints,
+            const constraints = this.constraints,
                 len = constraints.length;
-            for (var i = 0; i < len; i++) {
-                var constraint = constraints[i];
+            for (let i = 0; i < len; i++) {
+                const constraint = constraints[i];
                 if (constraint.cp === fromCp) {
                     constraint.cp = toCp;
                     return;
@@ -87,9 +87,9 @@ define("physics/ConstrainedPoint", [
          * @return {boolean}
          */
         hasConstraint: function (cp) {
-            var constraints = this.constraints,
+            const constraints = this.constraints,
                 len = constraints.length;
-            for (var i = 0; i < len; i++) {
+            for (let i = 0; i < len; i++) {
                 if (constraints[i].cp === cp) {
                     return true;
                 }
@@ -102,10 +102,10 @@ define("physics/ConstrainedPoint", [
          * @param restLength {number}
          */
         changeRestLength: function (cp, restLength) {
-            var constraints = this.constraints,
+            const constraints = this.constraints,
                 len = constraints.length;
-            for (var i = 0; i < len; i++) {
-                var constraint = constraints[i];
+            for (let i = 0; i < len; i++) {
+                const constraint = constraints[i];
                 if (constraint.cp === cp) {
                     constraint.restLength = restLength;
                     return;
@@ -118,10 +118,10 @@ define("physics/ConstrainedPoint", [
          * @param restLength {number}
          */
         changeConstraintAndLength: function (fromCp, toCp, restLength) {
-            var constraints = this.constraints,
+            const constraints = this.constraints,
                 len = constraints.length;
-            for (var i = 0; i < len; i++) {
-                var constraint = constraints[i];
+            for (let i = 0; i < len; i++) {
+                const constraint = constraints[i];
                 if (constraint.cp === fromCp) {
                     constraint.cp = toCp;
                     constraint.restLength = restLength;
@@ -134,10 +134,10 @@ define("physics/ConstrainedPoint", [
          * @return {number}
          */
         restLength: function (cp) {
-            var constraints = this.constraints,
+            const constraints = this.constraints,
                 len = constraints.length;
-            for (var i = 0; i < len; i++) {
-                var constraint = constraints[i];
+            for (let i = 0; i < len; i++) {
+                const constraint = constraints[i];
                 if (constraint.cp === cp) {
                     return constraint.restLength;
                 }
@@ -149,7 +149,7 @@ define("physics/ConstrainedPoint", [
          * @param delta {number}
          */
         update: function (delta) {
-            var totalForce = this.totalForce,
+            const totalForce = this.totalForce,
                 currentGravity = Gravity.current;
 
             if (!this.disableGravity) {
@@ -165,7 +165,7 @@ define("physics/ConstrainedPoint", [
                 totalForce.y = 0;
             }
 
-            var aMultiplier = ((delta / Constants.TIME_SCALE) * delta) / Constants.TIME_SCALE;
+            const aMultiplier = ((delta / Constants.TIME_SCALE) * delta) / Constants.TIME_SCALE;
             this.a.x = this.totalForce.x * aMultiplier;
             this.a.y = this.totalForce.y * aMultiplier;
 
@@ -178,7 +178,7 @@ define("physics/ConstrainedPoint", [
             this.posDelta.y = this.pos.y - this.prevPos.y + this.a.y;
 
             if (delta > 0) {
-                var vMultiplier = 1 / delta;
+                const vMultiplier = 1 / delta;
                 this.v.x = this.posDelta.x * vMultiplier;
                 this.v.y = this.posDelta.y * vMultiplier;
             }
@@ -191,7 +191,7 @@ define("physics/ConstrainedPoint", [
         },
         satisfyConstraints: function () {
             // NOTE: this method is a perf hotspot so be careful with changes
-            var pin = this.pin,
+            let pin = this.pin,
                 pos = this.pos,
                 invWeight = this.invWeight,
                 tmp1X,
@@ -205,11 +205,11 @@ define("physics/ConstrainedPoint", [
                 return;
             }
 
-            var constraints = this.constraints,
+            const constraints = this.constraints,
                 num = constraints.length;
 
-            for (var i = 0; i < num; i++) {
-                var c = constraints[i],
+            for (let i = 0; i < num; i++) {
+                const c = constraints[i],
                     cp = c.cp,
                     cpPos = cp.pos;
 
@@ -221,7 +221,7 @@ define("physics/ConstrainedPoint", [
                     tmp1Y = 1;
                 }
 
-                var sqrDeltaLength = tmp1X * tmp1X + tmp1Y * tmp1Y, // get dot product inline
+                const sqrDeltaLength = tmp1X * tmp1X + tmp1Y * tmp1Y, // get dot product inline
                     restLength = c.restLength,
                     sqrRestLength = restLength * restLength,
                     cType = c.type;
@@ -231,7 +231,7 @@ define("physics/ConstrainedPoint", [
                     if (sqrDeltaLength >= sqrRestLength) continue;
                 }
 
-                var pinUndefined = cp.pin.x === -1 /* Constants.UNDEFINED */,
+                const pinUndefined = cp.pin.x === -1 /* Constants.UNDEFINED */,
                     invWeight2 = cp.invWeight,
                     deltaLength = Math.sqrt(sqrDeltaLength),
                     minDeltaLength = deltaLength > 1 ? deltaLength : 1,
@@ -243,7 +243,7 @@ define("physics/ConstrainedPoint", [
                     tmp2Y = tmp1Y;
                 }
 
-                var tmp1Multiplier = invWeight * diff;
+                const tmp1Multiplier = invWeight * diff;
                 tmp1X *= tmp1Multiplier;
                 tmp1Y *= tmp1Multiplier;
 
@@ -251,7 +251,7 @@ define("physics/ConstrainedPoint", [
                 pos.y += tmp1Y;
 
                 if (pinUndefined) {
-                    var tmp2Multiplier = invWeight2 * diff;
+                    const tmp2Multiplier = invWeight2 * diff;
                     cpPos.x -= tmp2X * tmp2Multiplier;
                     cpPos.y -= tmp2Y * tmp2Multiplier;
                 }

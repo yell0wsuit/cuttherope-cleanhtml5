@@ -57,11 +57,11 @@ define("ui/Dialogs", [
 
         showSlowComputerPopup: function () {
             // remove the text images
-            var $slowComputer = $("#slowComputer");
+            const $slowComputer = $("#slowComputer");
             $slowComputer.children("img").remove();
 
             // add the title and text
-            var $titleImg = $(
+            const $titleImg = $(
                     Text.drawBig({
                         text: Lang.menuText(MenuStringId.SLOW_TITLE),
                         alignment: Alignment.CENTER,

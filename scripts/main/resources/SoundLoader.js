@@ -6,7 +6,7 @@ define("resources/SoundLoader", [
     "PxLoader",
     "PxLoaderSound",
 ], function (platform, edition, resData, Sounds, PxLoader, PxLoaderSound) {
-    var completeListeners = [],
+    let completeListeners = [],
         startRequested = false,
         soundManagerReady = false,
         startIfReady = function () {
@@ -15,7 +15,7 @@ define("resources/SoundLoader", [
                 return;
             }
 
-            var pxLoader = new PxLoader({ noProgressTimeout: 30 * 1000 }), // stop waiting after 30 secs
+            let pxLoader = new PxLoader({ noProgressTimeout: 30 * 1000 }), // stop waiting after 30 secs
                 baseUrl = platform.audioBaseUrl,
                 extension = platform.getAudioExtension(),
                 MENU_TAG = "MENU",
@@ -44,7 +44,7 @@ define("resources/SoundLoader", [
 
             // wait for all sounds before showing main menu
             pxLoader.addCompletionListener(function () {
-                for (var i = 0, len = completeListeners.length; i < len; i++) {
+                for (let i = 0, len = completeListeners.length; i < len; i++) {
                     completeListeners[i]();
                 }
             });
@@ -52,7 +52,7 @@ define("resources/SoundLoader", [
             pxLoader.start();
         };
 
-    var SoundLoader = {
+    const SoundLoader = {
         start: function () {
             startRequested = true;
             startIfReady();

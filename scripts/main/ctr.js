@@ -40,12 +40,12 @@ const GLOBAL_ZOOM = matchMedia("(min-width: 960px)").matches ? 2 : 1;
     document.addEventListener("mozvisibilitychange", function () {
         //console.log("VISIBILTY", document.mozHidden);
         if (document.mozHidden) {
-            for (let key in window.sounds__) {
+            for (const key in window.sounds__) {
                 window.sounds__[key]._wasPlaying = !window.sounds__[key].paused;
                 window.sounds__[key].pause();
             }
         } else {
-            for (let key in window.sounds__) {
+            for (const key in window.sounds__) {
                 window.sounds__[key]._wasPlaying && window.sounds__[key].play();
             }
         }

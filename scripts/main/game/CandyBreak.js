@@ -4,13 +4,13 @@ define("game/CandyBreak", [
     "utils/MathHelper",
     "core/Rectangle",
 ], function (RotateableMultiParticles, resolution, MathHelper, Rectangle) {
-    var IMG_OBJ_CANDY_01_piece_01 = 3;
-    var IMG_OBJ_CANDY_01_piece_02 = 4;
-    var IMG_OBJ_CANDY_01_piece_03 = 5;
-    var IMG_OBJ_CANDY_01_piece_04 = 6;
-    var IMG_OBJ_CANDY_01_piece_05 = 7;
+    const IMG_OBJ_CANDY_01_piece_01 = 3;
+    const IMG_OBJ_CANDY_01_piece_02 = 4;
+    const IMG_OBJ_CANDY_01_piece_03 = 5;
+    const IMG_OBJ_CANDY_01_piece_04 = 6;
+    const IMG_OBJ_CANDY_01_piece_05 = 7;
 
-    var CandyBreak = RotateableMultiParticles.extend({
+    const CandyBreak = RotateableMultiParticles.extend({
         init: function (numParticles, texture) {
             this._super(numParticles, texture);
 
@@ -79,7 +79,7 @@ define("game/CandyBreak", [
         initParticle: function (particle) {
             this._super(particle);
 
-            var texture = this.imageGrid,
+            const texture = this.imageGrid,
                 n = MathHelper.randomRange(IMG_OBJ_CANDY_01_piece_01, IMG_OBJ_CANDY_01_piece_05),
                 tquad = texture.rects[n],
                 vquad = new Rectangle(0, 0, 0, 0); // don't draw initially

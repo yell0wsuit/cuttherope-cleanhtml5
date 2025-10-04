@@ -26,7 +26,7 @@ define("ui/PinnedBox", [
     /**
      * @enum {number}
      */
-    var PinnedStates = {
+    const PinnedStates = {
         UNDEFINED: -1, // unknown pinned state
         HIDDEN: 0, // hidden, probably because the OS d
         VISIBLE: 1, // visible and completely playable
@@ -34,14 +34,14 @@ define("ui/PinnedBox", [
         PROMPT_PIN: 3, // visible but with a prompt to pin the game
     };
 
-    var PinnedBox = Box.extend({
+    const PinnedBox = Box.extend({
         init: function (boxIndex, bgimg, reqstars, islocked, type) {
             this._super(boxIndex, bgimg, reqstars, islocked, type);
             this.pinnedState = PinnedStates.UNDEFINED;
             this.promptId = null;
 
             // dom ready init
-            var self = this;
+            const self = this;
             $(document).ready(function () {
                 $("#showMeBtn").click(function () {
                     if (analytics.onShowPinning) {
@@ -53,7 +53,7 @@ define("ui/PinnedBox", [
                 // We'll only get download links for vista and win7. For win8
                 // the url is null and we will hide the button (since the user
                 // already has IE10 installed)
-                var $getIeButton = $("#installieBtn"),
+                const $getIeButton = $("#installieBtn"),
                     ieDownload = getIE9DownloadUrl();
                 if (ieDownload) {
                     $getIeButton.on("click", function (e) {
@@ -87,14 +87,14 @@ define("ui/PinnedBox", [
 
         initPinnedState: function () {
             // returns the version of Internet Explorer or a -1 if another browser
-            var getIEVersion = function () {
-                var rv = -1; // Return value assumes failure.
+            const getIEVersion = function () {
+                let rv = -1; // Return value assumes failure.
                 return rv;
                 if (
                     navigator.appName == "Microsoft Internet Explorer" ||
                     navigator.appName == "MSAppHost/1.0"
                 ) {
-                    var ua = navigator.userAgent,
+                    const ua = navigator.userAgent,
                         re = new RegExp("MSIE ([0-9]?[0-9]{1,}[\.0-9]{0,})"),
                         matches = re.exec(ua);
                     if (matches != null && matches.length > 1) {
@@ -107,12 +107,12 @@ define("ui/PinnedBox", [
             };
 
             // returns a bool indiciating whether IE can run on the current OS
-            var getIECapableOS = function () {
+            const getIECapableOS = function () {
                 return false;
                 try {
-                    var u = navigator.userAgent;
-                    var isWindows = u.indexOf("Windows NT") != -1;
-                    var majVersion = isWindows ? parseInt(u[u.indexOf("Windows NT") + 11]) : -1;
+                    const u = navigator.userAgent;
+                    const isWindows = u.indexOf("Windows NT") != -1;
+                    const majVersion = isWindows ? parseInt(u[u.indexOf("Windows NT") + 11]) : -1;
                     if (isWindows && majVersion >= 6) return true;
                 } catch (ex) {
                     return false;
@@ -121,14 +121,14 @@ define("ui/PinnedBox", [
             };
 
             // what version of IE are we running (or -1 for non-IE)
-            var ieVer = getIEVersion();
+            const ieVer = getIEVersion();
 
             // are we using an OS (Vista or up) that supports IE
-            var ieCan = getIECapableOS();
+            const ieCan = getIECapableOS();
 
             // are we in IE9 or greater
             if (ieVer >= 9 || QueryStrings.forcePinnedBox) {
-                var localStorageIsPinned =
+                let localStorageIsPinned =
                         platform.ENABLE_PINNED_MODE ||
                         SettingStorage.get("msIsSiteModeActivated") == "true",
                     msIsSiteMode = platform.ENABLE_PINNED_MODE === true;
@@ -162,7 +162,7 @@ define("ui/PinnedBox", [
                     this.opacity = 0.35;
                     this.promptId = "pinPrompt";
 
-                    var self = this;
+                    const self = this;
 
                     PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
                         Text.drawBig({
@@ -209,11 +209,11 @@ define("ui/PinnedBox", [
 
         // runs (and the resets) the "show me" animation for the pinned box
         showMePinning: function () {
-            var cursor = $("#pinCursor");
-            var omnom = $("#pinOmNom");
-            var shadow = $("#pinChairShadow");
-            var button = $("#showMeBtn");
-            var taskbar = $("#pinTaskBar");
+            const cursor = $("#pinCursor");
+            const omnom = $("#pinOmNom");
+            const shadow = $("#pinChairShadow");
+            const button = $("#showMeBtn");
+            const taskbar = $("#pinTaskBar");
             button.fadeOut().delay(5500).fadeIn(1000);
             shadow.delay(500).fadeOut().delay(6000).fadeIn(300);
             cursor

@@ -24,7 +24,7 @@ define("ui/BoxManager", [
     BoxPanel
 ) {
     var BoxManager = new (function () {
-        var self = this,
+        const self = this,
             boxes = [];
 
         PubSub.subscribe(PubSub.ChannelId.SelectedBoxChanged, function (boxIndex) {
@@ -32,7 +32,7 @@ define("ui/BoxManager", [
             BoxManager.currentLevelIndex = 1;
         });
 
-        var appIsReady = false;
+        let appIsReady = false;
         this.appReady = function () {
             appIsReady = true;
             loadBoxes();
@@ -44,7 +44,7 @@ define("ui/BoxManager", [
         self.currentLevelIndex = 1;
 
         // listen to purchase event
-        var isPaid = false;
+        let isPaid = false;
         PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, function (paid) {
             isPaid = paid;
         });
@@ -87,8 +87,8 @@ define("ui/BoxManager", [
 
         // returns the number of boxes required to win the game
         this.requiredCount = function () {
-            var count = 0;
-            for (var i = 0, len = boxes.length; i < len; i++) {
+            let count = 0;
+            for (let i = 0, len = boxes.length; i < len; i++) {
                 if (boxes[i].isRequired()) {
                     count++;
                 }
@@ -97,9 +97,9 @@ define("ui/BoxManager", [
         };
 
         this.possibleStars = function () {
-            var count = 0,
+            let count = 0,
                 len = boxes.length;
-            for (var i = 0; i < len; i++) {
+            for (let i = 0; i < len; i++) {
                 // we'll count every box except for the hidden pinned box
                 if (boxes[i].isRequired()) {
                     count += ScoreManager.possibleStarsForBox(i);
@@ -109,7 +109,7 @@ define("ui/BoxManager", [
         };
 
         this.visibleGameBoxes = function () {
-            var count = 0,
+            let count = 0,
                 i,
                 len,
                 box;
@@ -126,7 +126,7 @@ define("ui/BoxManager", [
         };
 
         this.resetLocks = function () {
-            var i, len, box;
+            let i, len, box;
 
             // don't lock the first box
             for (i = 1, len = boxes.length; i < len; i++) {
@@ -142,7 +142,7 @@ define("ui/BoxManager", [
         };
 
         this.updateBoxLocks = function () {
-            var numBoxes = boxes.length,
+            let numBoxes = boxes.length,
                 shouldRedraw = false,
                 boxIndex,
                 box;
@@ -164,7 +164,7 @@ define("ui/BoxManager", [
         };
 
         function createBoxes() {
-            var images = edition.boxImages,
+            let images = edition.boxImages,
                 boxtypes = edition.boxTypes,
                 i,
                 len,
@@ -210,7 +210,7 @@ define("ui/BoxManager", [
         }
 
         function updateVisibleBoxes() {
-            var visibleBoxes = [],
+            let visibleBoxes = [],
                 i,
                 box,
                 len;
@@ -228,7 +228,7 @@ define("ui/BoxManager", [
         function onPaidBoxesChange(paid) {
             paid = paid || QueryStrings.unlockAllBoxes === true;
 
-            var requiresPurchase =
+            let requiresPurchase =
                     edition.levelRequiresPurchase ||
                     function () {
                         return false;

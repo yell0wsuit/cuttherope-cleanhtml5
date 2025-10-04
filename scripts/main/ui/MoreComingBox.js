@@ -1,5 +1,5 @@
 define("ui/MoreComingBox", ["ui/Box"], function (Box) {
-    var MoreComingBox = Box.extend({
+    const MoreComingBox = Box.extend({
         init: function (boxIndex, bgimg, reqstars, islocked, type) {
             this._super(boxIndex, bgimg, reqstars, islocked, type);
             this.includeBoxNumberInTitle = false;

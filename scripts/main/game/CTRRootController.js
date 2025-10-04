@@ -8,14 +8,14 @@ define("game/CTRRootController", [
     /**
      * @enum {number}
      */
-    var ChildController = {
+    const ChildController = {
         START: 0,
         MENU: 1,
         LOADING: 2,
         GAME: 3,
     };
 
-    var CTRRootController = RootControllerBase.extend({
+    const CTRRootController = RootControllerBase.extend({
         init: function (parent) {
             this._super(parent);
         },
@@ -28,7 +28,7 @@ define("game/CTRRootController", [
             }
 
             // deactivate any existing game that is running
-            var gameController = this.getChild(ChildController.GAME);
+            let gameController = this.getChild(ChildController.GAME);
             if (gameController) {
                 gameController.deactivateImmediately();
             }
@@ -39,19 +39,19 @@ define("game/CTRRootController", [
             this.activateChild(ChildController.GAME);
         },
         pauseLevel: function () {
-            var gameController = this.getChild(ChildController.GAME);
+            const gameController = this.getChild(ChildController.GAME);
             if (gameController) {
                 gameController.pauseLevel();
             }
         },
         resumeLevel: function () {
-            var gameController = this.getChild(ChildController.GAME);
+            const gameController = this.getChild(ChildController.GAME);
             if (gameController) {
                 gameController.resumeLevel();
             }
         },
         restartLevel: function () {
-            var gameController = this.getChild(ChildController.GAME);
+            const gameController = this.getChild(ChildController.GAME);
             if (gameController) {
                 gameController.restartLevel();
             }
@@ -64,7 +64,7 @@ define("game/CTRRootController", [
             if (this.controllerState === ViewController.StateType.INACTIVE) return false;
 
             // see if the game controller exists
-            var gameController = this.getChild(ChildController.GAME);
+            const gameController = this.getChild(ChildController.GAME);
             if (!gameController) return false;
 
             // is the game controller active?

@@ -8,7 +8,7 @@ define("visual/BaseElement", [
     "visual/Timeline",
     "utils/Radians",
 ], function (Class, RGBAColor, Alignment, Constants, Canvas, ActionType, Timeline, Radians) {
-    var BaseElement = Class.extend({
+    const BaseElement = Class.extend({
         init: function () {
             /** @type {BaseElement} */
             this.parent = null;
@@ -104,7 +104,7 @@ define("visual/BaseElement", [
          * @private
          */
         calculateTopLeft: function () {
-            var parentAnchor = this.parentAnchor,
+            const parentAnchor = this.parentAnchor,
                 parent = this.parent,
                 anchor = this.anchor;
 
@@ -142,7 +142,7 @@ define("visual/BaseElement", [
         preDraw: function () {
             this.calculateTopLeft();
 
-            var changeScale =
+            const changeScale =
                     this.scaleX !== 0 &&
                     this.scaleY !== 0 &&
                     (this.scaleX !== 1 || this.scaleY !== 1),
@@ -155,7 +155,7 @@ define("visual/BaseElement", [
 
             // apply transformations
             if (changeScale || changeRotation) {
-                var rotationOffsetX = ~~(this.drawX + this.width / 2 + this.rotationCenterX),
+                const rotationOffsetX = ~~(this.drawX + this.width / 2 + this.rotationCenterX),
                     rotationOffsetY = ~~(this.drawY + this.height / 2 + this.rotationCenterY),
                     translatedRotation = rotationOffsetX !== 0 || rotationOffsetY !== 0;
 
@@ -192,17 +192,17 @@ define("visual/BaseElement", [
             this.postDraw();
         },
         drawBB: function () {
-            var ctx = Canvas.context;
+            const ctx = Canvas.context;
             ctx.strokeStyle = "red";
             ctx.strokeRect(this.drawX, this.drawY, this.width, this.height);
         },
         postDraw: function () {
-            var ctx = Canvas.context,
+            const ctx = Canvas.context,
                 alphaChanged = this.color.a !== 1 && this.color.a !== this.previousAlpha;
 
             // for debugging, draw vector from the origin towards 0 degrees
             if (this.drawZeroDegreesLine) {
-                var originX = this.drawX + (this.width >> 1) + this.rotationCenterX,
+                const originX = this.drawX + (this.width >> 1) + this.rotationCenterX,
                     originY = this.drawY + (this.height >> 1) + this.rotationCenterY;
 
                 ctx.save();
@@ -236,10 +236,10 @@ define("visual/BaseElement", [
             }
 
             // draw children
-            var children = this.children,
+            const children = this.children,
                 numChildren = children.length;
-            for (var i = 0; i < numChildren; i++) {
-                var child = children[i];
+            for (let i = 0; i < numChildren; i++) {
+                const child = children[i];
                 if (child.visible) child.draw();
             }
 
@@ -260,10 +260,10 @@ define("visual/BaseElement", [
          * @param delta {number}
          */
         update: function (delta) {
-            var children = this.children,
+            const children = this.children,
                 numChildren = children.length;
-            for (var i = 0; i < numChildren; i++) {
-                var child = children[i];
+            for (let i = 0; i < numChildren; i++) {
+                const child = children[i];
                 if (child.updateable) child.update(delta);
             }
 
@@ -276,13 +276,13 @@ define("visual/BaseElement", [
          * @return {BaseElement}
          */
         getChildWithName: function (name) {
-            var children = this.children,
+            const children = this.children,
                 numChildren = children.length;
-            for (var i = 0; i < numChildren; i++) {
-                var child = children[i];
+            for (let i = 0; i < numChildren; i++) {
+                const child = children[i];
                 if (child.name === name) return child;
 
-                var descendant = child.getChildWithName(name);
+                const descendant = child.getChildWithName(name);
                 if (descendant !== null) return descendant;
             }
 
@@ -291,21 +291,21 @@ define("visual/BaseElement", [
         setSizeToChildsBounds: function () {
             this.calculateTopLeft();
 
-            var minX = this.drawX,
+            let minX = this.drawX,
                 minY = this.drawY,
                 maxX = this.drawX + this.width,
                 maxY = this.drawY + this.height,
                 children = this.children,
                 numChildren = children.length;
 
-            for (var i = 0; i < numChildren; i++) {
-                var child = children[i];
+            for (let i = 0; i < numChildren; i++) {
+                const child = children[i];
                 child.calculateTopLeft();
 
                 if (child.drawX < minX) minX = child.drawX;
                 if (child.drawY < minY) minY = child.drawY;
 
-                var childMaxX = child.drawX + child.width,
+                const childMaxX = child.drawX + child.width,
                     childMaxY = child.drawY + child.height;
                 if (childMaxX > maxX) maxX = childMaxX;
                 if (childMaxY > maxY) maxY = childMaxY;
@@ -365,7 +365,7 @@ define("visual/BaseElement", [
          * @param i {number} index of the child to remove
          */
         removeChildWithID: function (i) {
-            var child = this.children.splice(i, 1);
+            const child = this.children.splice(i, 1);
             child.parent = null;
         },
         removeAllChildren: function () {
@@ -375,10 +375,10 @@ define("visual/BaseElement", [
          * @param c {BaseElement} child to remove
          */
         removeChild: function (c) {
-            var children = this.children,
+            const children = this.children,
                 numChildren = children.length;
-            for (var i = 0; i < numChildren; i++) {
-                var child = children[i];
+            for (let i = 0; i < numChildren; i++) {
+                const child = children[i];
                 if (c === child) {
                     this.removeChildWithID(i);
                     return;
@@ -405,7 +405,7 @@ define("visual/BaseElement", [
             return this.children;
         },
         addTimeline: function (timeline) {
-            var index = this.timelines.length;
+            const index = this.timelines.length;
             this.addTimelineWithID(timeline, index);
             return index;
         },
@@ -451,10 +451,10 @@ define("visual/BaseElement", [
          * @return {boolean} true if event was handled
          */
         onTouchDown: function (x, y) {
-            var ret = false,
+            let ret = false,
                 count = this.children.length;
-            for (var i = count - 1; i >= 0; i--) {
-                var child = this.children[i];
+            for (let i = count - 1; i >= 0; i--) {
+                const child = this.children[i];
                 if (child && child.touchable) {
                     if (child.onTouchDown(x, y) && ret === false) {
                         ret = true;
@@ -472,10 +472,10 @@ define("visual/BaseElement", [
          * @return {boolean} true if event was handled
          */
         onTouchUp: function (x, y) {
-            var ret = false,
+            let ret = false,
                 count = this.children.length;
-            for (var i = count - 1; i >= 0; i--) {
-                var child = this.children[i];
+            for (let i = count - 1; i >= 0; i--) {
+                const child = this.children[i];
                 if (child && child.touchable) {
                     if (child.onTouchUp(x, y) && ret === false) {
                         ret = true;
@@ -493,10 +493,10 @@ define("visual/BaseElement", [
          * @return {boolean} true if event was handled
          */
         onTouchMove: function (x, y) {
-            var ret = false,
+            let ret = false,
                 count = this.children.length;
-            for (var i = count - 1; i >= 0; i--) {
-                var child = this.children[i];
+            for (let i = count - 1; i >= 0; i--) {
+                const child = this.children[i];
                 if (child && child.touchable) {
                     if (child.onTouchMove(x, y) && ret === false) {
                         ret = true;
@@ -514,10 +514,10 @@ define("visual/BaseElement", [
          * @return {boolean} true if event was handled
          */
         onDoubleClick: function (x, y) {
-            var ret = false,
+            let ret = false,
                 count = this.children.length;
-            for (var i = count - 1; i >= 0; i--) {
-                var child = this.children[i];
+            for (let i = count - 1; i >= 0; i--) {
+                const child = this.children[i];
                 if (child && child.touchable) {
                     if (child.onDoubleClick(x, y) && ret === false) {
                         ret = true;
@@ -544,18 +544,18 @@ define("visual/BaseElement", [
             return this.visible && this.touchable && this.updateable;
         },
         show: function () {
-            var children = this.children,
+            const children = this.children,
                 numChildren = children.length;
-            for (var i = 0; i < numChildren; i++) {
-                var child = children[i];
+            for (let i = 0; i < numChildren; i++) {
+                const child = children[i];
                 if (child.visible) child.show();
             }
         },
         hide: function () {
-            var children = this.children,
+            const children = this.children,
                 numChildren = children.length;
-            for (var i = 0; i < numChildren; i++) {
-                var child = children[i];
+            for (let i = 0; i < numChildren; i++) {
+                const child = children[i];
                 if (child.visible) child.hide();
             }
         },

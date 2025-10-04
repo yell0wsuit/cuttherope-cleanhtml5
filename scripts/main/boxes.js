@@ -1,5 +1,5 @@
 define("boxes", [], function () {
-    var boxes = [
+    const boxes = [
         {
             levels: [
                 {

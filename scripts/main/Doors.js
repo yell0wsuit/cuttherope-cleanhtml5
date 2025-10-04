@@ -7,11 +7,11 @@ define("Doors", [
     "utils/PubSub",
     "utils/Canvas",
 ], function (resolution, edition, platform, BoxManager, Easing, PubSub, Canvas) {
-    var doorImages = [],
+    const doorImages = [],
         tapeImgL = new Image(),
         tapeImgR = new Image();
 
-    var BoxDoors = {};
+    const BoxDoors = {};
 
     $(function () {
         BoxDoors.canvasLeft = document.getElementById("levelCanvasLeft");
@@ -29,8 +29,8 @@ define("Doors", [
 
     BoxDoors.appReady = function () {
         // cache the door and tape images (which have already been preloaded)
-        for (var i = 0, len = edition.boxDoors.length; i < len; i++) {
-            var doorImg = new Image();
+        for (let i = 0, len = edition.boxDoors.length; i < len; i++) {
+            const doorImg = new Image();
             doorImg.src = platform.uiImageBaseUrl + edition.boxDoors[i];
             doorImages[i] = doorImg;
         }
@@ -42,9 +42,9 @@ define("Doors", [
     };
 
     BoxDoors.preRenderDoors = function () {
-        var doorImg = doorImages[BoxManager.currentBoxIndex];
-        var leftCtx = BoxDoors.canvasLeft.getContext("2d");
-        var rightCtx = BoxDoors.canvasRight.getContext("2d");
+        const doorImg = doorImages[BoxManager.currentBoxIndex];
+        const leftCtx = BoxDoors.canvasLeft.getContext("2d");
+        const rightCtx = BoxDoors.canvasRight.getContext("2d");
 
         leftCtx.drawImage(doorImg, 0, 0);
 
@@ -78,7 +78,7 @@ define("Doors", [
         }
 
         //calculations
-        var p = percentOpen || 0.0,
+        const p = percentOpen || 0.0,
             dw = BoxDoors.canvasLeft.width, //door width
             offset = dw - dw * (1 - p); //512 - (512 * (1 - 0.1))
 
@@ -88,16 +88,16 @@ define("Doors", [
     };
 
     BoxDoors.openDoors = function (showTape, callback, runInReverse) {
-        var r = runInReverse != null ? runInReverse : false;
+        const r = runInReverse != null ? runInReverse : false;
 
-        var begin = Date.now();
-        var dur = 750;
+        const begin = Date.now();
+        const dur = 750;
         // Draw the door animation on the main game canvas
-        var ctx = document.getElementById("c").getContext("2d");
-        var easing = runInReverse ? Easing.easeOutCubic : Easing.easeInOutCubic;
+        const ctx = document.getElementById("c").getContext("2d");
+        const easing = runInReverse ? Easing.easeOutCubic : Easing.easeInOutCubic;
 
         function openBoxDoors() {
-            var now = Date.now(),
+            const now = Date.now(),
                 p = now - begin,
                 v = easing(p, 0, 1, dur);
 
@@ -127,24 +127,24 @@ define("Doors", [
     BoxDoors.closeBoxAnimation = function (callback) {
         // animating to level select
         // box already closed, just needs to be taped and then redirected
-        var tapeRoll = $("#tapeRoll");
-        var tapeSlice = $("#levelTape");
+        const tapeRoll = $("#tapeRoll");
+        const tapeSlice = $("#levelTape");
 
         $("#levelResults").fadeOut(400);
         tapeRoll.css("top", resolution.uiScaledNumber(0));
         tapeRoll.delay(400).fadeIn(200, function () {
-            var offset = resolution.uiScaledNumber(650);
-            var offsetH = resolution.uiScaledNumber(553);
-            var b = Date.now();
-            var from = parseInt(tapeRoll.css("top"), 10);
-            var fromH = resolution.uiScaledNumber(63);
-            var d = 1000;
+            const offset = resolution.uiScaledNumber(650);
+            const offsetH = resolution.uiScaledNumber(553);
+            const b = Date.now();
+            const from = parseInt(tapeRoll.css("top"), 10);
+            const fromH = resolution.uiScaledNumber(63);
+            const d = 1000;
 
             tapeSlice.css("height", fromH);
             tapeSlice.show();
 
             function rollTape() {
-                var now = Date.now(),
+                const now = Date.now(),
                     diff = now - b,
                     v = Easing.easeInOutCubic(diff, from, offset - from, d),
                     vH = Easing.easeInOutCubic(diff, fromH, offset - fromH, d);
@@ -178,16 +178,16 @@ define("Doors", [
         BoxDoors.hideGradient();
 
         //cut box open with boxCutter
-        var boxCutter = $("#boxCutter");
+        const boxCutter = $("#boxCutter");
         boxCutter.css("top", resolution.uiScaledNumber(371));
         boxCutter.delay(200).fadeIn(200, function () {
-            var offset = resolution.uiScaledNumber(-255);
-            var b = Date.now();
-            var from = parseInt(boxCutter.css("top"), 10);
-            var d = 1000;
+            const offset = resolution.uiScaledNumber(-255);
+            const b = Date.now();
+            const from = parseInt(boxCutter.css("top"), 10);
+            const d = 1000;
 
             function cutBox() {
-                var now = Date.now(),
+                const now = Date.now(),
                     diff = now - b,
                     v = Easing.easeInOutCubic(diff, from, offset - from, d);
 

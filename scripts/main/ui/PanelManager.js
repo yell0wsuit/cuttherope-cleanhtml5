@@ -21,8 +21,8 @@ define("ui/PanelManager", [
     PubSub,
     edition
 ) {
-    var PanelManager = new (function () {
-        var _this = this,
+    const PanelManager = new (function () {
+        const _this = this,
             panels = [];
 
         this.onShowPanel = null;
@@ -44,15 +44,15 @@ define("ui/PanelManager", [
 
             // initialize each of the panels
             if (onInitializePanel) {
-                for (var i = 0, len = panels.length; i < len; i++) {
+                for (let i = 0, len = panels.length; i < len; i++) {
                     onInitializePanel(panels[i].id);
                 }
             }
         };
 
         // get a panel by id
-        var getPanelById = (this.getPanelById = function (panelId) {
-            for (var i = 0; i < panels.length; i++) {
+        const getPanelById = (this.getPanelById = function (panelId) {
+            for (let i = 0; i < panels.length; i++) {
                 if (panels[i].id == panelId) return panels[i];
             }
             return null;
@@ -80,8 +80,8 @@ define("ui/PanelManager", [
         this.showPanel = function (panelId, skipFade) {
             _this.currentPanelId = panelId;
 
-            var panel = getPanelById(panelId);
-            var skip = skipFade == null ? false : skipFade;
+            const panel = getPanelById(panelId);
+            const skip = skipFade == null ? false : skipFade;
 
             // enable / disable the shadow animation
             // if (panel.showShadow) {
@@ -92,7 +92,7 @@ define("ui/PanelManager", [
             // }
 
             // we always use a timeout, even if we skip the animation, to keep the code clean
-            var timeout = skip ? 0 : fadeInDur + fadePause;
+            const timeout = skip ? 0 : fadeInDur + fadePause;
             setTimeout(function () {
                 // show the panel
                 if (panel.bgDivId) {
@@ -103,8 +103,8 @@ define("ui/PanelManager", [
                 }
 
                 // hide other panels
-                for (var i = 0; i < panels.length; i++) {
-                    var otherPanel = panels[i];
+                for (let i = 0; i < panels.length; i++) {
+                    const otherPanel = panels[i];
 
                     if (
                         otherPanel.panelDivId != null &&
@@ -138,14 +138,14 @@ define("ui/PanelManager", [
         // fade parameters
         var fadeInDur = 100;
         var fadePause = 50;
-        var fadeOutDur = 100;
-        var fadeTo = 1.0;
-        var fadeToBlack;
-        var isFading = false;
+        const fadeOutDur = 100;
+        const fadeTo = 1.0;
+        let fadeToBlack;
+        let isFading = false;
 
         this.runBlackFadeIn = function (callback) {
             isFading = true;
-            var b = Date.now();
+            const b = Date.now();
 
             // reset the overlay
             fadeToBlack.css("opacity", 0);
@@ -153,7 +153,7 @@ define("ui/PanelManager", [
 
             // our loop
             function loop() {
-                var now = Date.now(),
+                const now = Date.now(),
                     diff = now - b,
                     v = Easing.noEase(diff, 0, fadeTo, fadeInDur);
 
@@ -172,11 +172,11 @@ define("ui/PanelManager", [
 
         this.runBlackFadeOut = function () {
             if (!isFading) return;
-            var b = Date.now();
+            const b = Date.now();
 
             // our loop
             function loop() {
-                var now = Date.now(),
+                const now = Date.now(),
                     diff = now - b,
                     v = fadeTo - Easing.noEase(diff, 0, fadeTo, fadeInDur);
 
@@ -194,18 +194,18 @@ define("ui/PanelManager", [
             window.requestAnimationFrame(loop);
         };
 
-        var shadowIsRotating = false;
-        var shadowAngle = 15.0;
-        var shadowCanvas = null;
+        let shadowIsRotating = false;
+        let shadowAngle = 15.0;
+        const shadowCanvas = null;
         var shadowImage = null;
-        var shadowOpacity = 1.0;
-        var shadowIsVisible = false;
-        var shadowSpeedup = edition.shadowSpeedup || 1;
+        let shadowOpacity = 1.0;
+        let shadowIsVisible = false;
+        const shadowSpeedup = edition.shadowSpeedup || 1;
 
-        var showShadow = function () {
+        const showShadow = function () {
             if (!shadowIsVisible) {
                 if (shadowCanvas != null) {
-                    var ctx = shadowCanvas.getContext("2d");
+                    const ctx = shadowCanvas.getContext("2d");
                     ctx.save();
                     ctx.setTransform(1, 0, 0, 1, 0, 0);
                     ctx.clearRect(0, 0, shadowCanvas.width, shadowCanvas.height);
@@ -222,7 +222,7 @@ define("ui/PanelManager", [
             }
         };
 
-        var hideShadow = function () {
+        const hideShadow = function () {
             shadowIsVisible = false;
             shadowIsRotating = false;
             $("#shadowPanel").hide();
@@ -230,7 +230,7 @@ define("ui/PanelManager", [
 
         // starts the shadow animation
         var beginRotateShadow = function () {
-            var ctx = shadowCanvas.getContext("2d"),
+            let ctx = shadowCanvas.getContext("2d"),
                 requestAnimationFrame = window["requestAnimationFrame"],
                 lastRotateTime = Date.now(),
                 renderShadow = function () {
@@ -239,7 +239,7 @@ define("ui/PanelManager", [
                     }
 
                     // move .1 radians every 25 msec
-                    var now = Date.now(),
+                    const now = Date.now(),
                         delta = now - lastRotateTime;
                     shadowAngle += ((delta * 0.1) / 25) * shadowSpeedup;
                     lastRotateTime = now;
@@ -275,7 +275,7 @@ define("ui/PanelManager", [
     })();
 
     PubSub.subscribe(PubSub.ChannelId.BoxesUnlocked, function (isFirstUnlock) {
-        var nextPanelId = isFirstUnlock ? PanelId.MENU : PanelId.BOXES;
+        const nextPanelId = isFirstUnlock ? PanelId.MENU : PanelId.BOXES;
 
         // switch back to the boxes panel after a short delay
         setTimeout(function () {

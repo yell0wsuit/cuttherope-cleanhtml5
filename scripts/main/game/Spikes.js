@@ -29,12 +29,12 @@ define("game/Spikes", [
     Canvas,
     resolution
 ) {
-    var Spikes = CTRGameObject.extend({
+    const Spikes = CTRGameObject.extend({
         init: function (px, py, width, angle, t) {
             this._super();
 
             // select and load the spikes image
-            var imageId;
+            let imageId;
             if (t !== Constants.UNDEFINED) {
                 imageId = ResourceId.IMG_OBJ_ROTATABLE_SPIKES_01 + width - 1;
             } else {
@@ -60,7 +60,7 @@ define("game/Spikes", [
 
             if (t > 0) {
                 this.doRestoreCutTransparency();
-                var normalQuad = IMG_OBJ_ROTATABLE_SPIKES_BUTTON_button_1 + (t - 1) * 2,
+                const normalQuad = IMG_OBJ_ROTATABLE_SPIKES_BUTTON_button_1 + (t - 1) * 2,
                     pressedQuad = IMG_OBJ_ROTATABLE_SPIKES_BUTTON_button_1_pressed + (t - 1) * 2,
                     bup = ImageElement.create(
                         ResourceId.IMG_OBJ_ROTATABLE_SPIKES_BUTTON,
@@ -81,7 +81,7 @@ define("game/Spikes", [
                 this.addChild(this.rotateButton);
 
                 // restore bounding box without alpha
-                var buttonTexture = bup.texture,
+                const buttonTexture = bup.texture,
                     vo = buttonTexture.offsets[normalQuad],
                     vr = buttonTexture.rects[normalQuad],
                     vs = new Vector(vr.w, vr.h),
@@ -140,7 +140,7 @@ define("game/Spikes", [
             this.touchIndex = Constants.UNDEFINED;
         },
         updateRotation: function () {
-            var pWidth = this.electro
+            let pWidth = this.electro
                 ? this.width - 400 * resolution.CANVAS_SCALE
                 : this.texture.rects[this.quadToDraw].w;
 
@@ -204,7 +204,7 @@ define("game/Spikes", [
             this.spikesNormal = !this.spikesNormal;
             this.removeTimeline(SpikeAnimation.ROTATION_ADJUSTED);
 
-            var rDelta = this.spikesNormal ? 90 : 0,
+            const rDelta = this.spikesNormal ? 90 : 0,
                 adjustedRotation = this.originalRotation + rDelta,
                 tl = new Timeline();
             tl.addKeyFrame(KeyFrame.makeRotation(this.rotation, KeyFrame.TransitionType.LINEAR, 0));
@@ -241,7 +241,7 @@ define("game/Spikes", [
             }
         },
         drawBB: function () {
-            var ctx = Canvas.context;
+            const ctx = Canvas.context;
             ctx.beginPath();
             ctx.strokeStyle = "red";
             ctx.moveTo(this.t1.x, this.t1.y);
@@ -266,14 +266,14 @@ define("game/Spikes", [
 
     var SPIKES_ROTATION_BUTTON = 0;
 
-    var IMG_OBJ_ROTATABLE_SPIKES_01_Shape_3 = 0;
-    var IMG_OBJ_ROTATABLE_SPIKES_02_size_2 = 0;
-    var IMG_OBJ_ROTATABLE_SPIKES_03_size_3 = 0;
-    var IMG_OBJ_ROTATABLE_SPIKES_04_size_4 = 0;
+    const IMG_OBJ_ROTATABLE_SPIKES_01_Shape_3 = 0;
+    const IMG_OBJ_ROTATABLE_SPIKES_02_size_2 = 0;
+    const IMG_OBJ_ROTATABLE_SPIKES_03_size_3 = 0;
+    const IMG_OBJ_ROTATABLE_SPIKES_04_size_4 = 0;
     var IMG_OBJ_ROTATABLE_SPIKES_BUTTON_button_1 = 0;
     var IMG_OBJ_ROTATABLE_SPIKES_BUTTON_button_1_pressed = 1;
-    var IMG_OBJ_ROTATABLE_SPIKES_BUTTON_button_2 = 2;
-    var IMG_OBJ_ROTATABLE_SPIKES_BUTTON_button_2_pressed = 3;
+    const IMG_OBJ_ROTATABLE_SPIKES_BUTTON_button_2 = 2;
+    const IMG_OBJ_ROTATABLE_SPIKES_BUTTON_button_2_pressed = 3;
 
     var SpikeAnimation = {
         ELECTRODES_BASE: 0,

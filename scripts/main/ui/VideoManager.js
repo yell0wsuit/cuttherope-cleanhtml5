@@ -19,8 +19,8 @@ define("ui/VideoManager", [
     PubSub,
     ScoreManager
 ) {
-    var ensureVideoElement = function () {
-        var vid = document.getElementById("vid");
+    const ensureVideoElement = function () {
+        let vid = document.getElementById("vid");
         if (!vid) {
             try {
                 vid = document.createElement("video");
@@ -35,14 +35,14 @@ define("ui/VideoManager", [
         return vid;
     };
 
-    var closeIntroCallback = null;
+    let closeIntroCallback = null;
 
     var VideoManager = {
         loadIntroVideo: function () {
             // only load the video if the first level hasn't been played
-            var firstLevelStars = ScoreManager.getStars(0, 0) || 0;
+            const firstLevelStars = ScoreManager.getStars(0, 0) || 0;
             if (firstLevelStars === 0) {
-                var vid = ensureVideoElement(),
+                const vid = ensureVideoElement(),
                     size = resolution.VIDEO_WIDTH,
                     extension = platform.getVideoExtension(),
                     baseUrl = platform.videoBaseUrl;
@@ -60,7 +60,7 @@ define("ui/VideoManager", [
         removeIntroVideo: function () {
             // we want to remove the video element to free up resources
             // as suggested by the IE team
-            var firstLevelStars = ScoreManager.getStars(0, 0) || 0;
+            const firstLevelStars = ScoreManager.getStars(0, 0) || 0;
             if (firstLevelStars > 0) {
                 $("#vid").remove();
             }
@@ -68,7 +68,7 @@ define("ui/VideoManager", [
 
         playIntroVideo: function (callback) {
             // always show the intro video if the 1st level hasn't been played
-            var firstLevelStars = ScoreManager.getStars(0, 0) || 0,
+            const firstLevelStars = ScoreManager.getStars(0, 0) || 0,
                 // the video might not exist if the user just reset the game
                 // (we don't want to replay it during the same app session)
                 vid = document.getElementById("vid");
@@ -77,7 +77,7 @@ define("ui/VideoManager", [
 
             if (firstLevelStars === 0 && vid) {
                 // make sure we can play the video
-                var readyState = vid["readyState"];
+                const readyState = vid["readyState"];
                 if (
                     readyState === 2 || // HAVE_CURRENT_DATA (loadeddata)
                     readyState === 3 || // HAVE_FUTURE_DATA  (canplay)
@@ -99,7 +99,7 @@ define("ui/VideoManager", [
         },
 
         closeIntroVideo: function () {
-            var vid = document.getElementById("vid");
+            const vid = document.getElementById("vid");
             $(vid).fadeOut(500, function () {
                 vid.pause();
                 vid.seek = 0;
@@ -115,7 +115,7 @@ define("ui/VideoManager", [
             // because we only show the intro video once per session.
 
             // get the size and supported format extension
-            var vid = ensureVideoElement(),
+            const vid = ensureVideoElement(),
                 size = resolution.VIDEO_WIDTH,
                 extension = platform.getVideoExtension(),
                 baseUrl = platform.videoBaseUrl;
@@ -132,10 +132,10 @@ define("ui/VideoManager", [
         },
 
         playOutroVideo: function () {
-            var vid = document.getElementById("vid");
+            const vid = document.getElementById("vid");
             if (vid) {
                 // make sure we can play the video
-                var readyState = vid["readyState"];
+                const readyState = vid["readyState"];
                 if (
                     readyState === 2 || // HAVE_CURRENT_DATA (loadeddata)
                     readyState === 3 || // HAVE_FUTURE_DATA  (canplay)
@@ -161,7 +161,7 @@ define("ui/VideoManager", [
 
         closeOutroVideo: function () {
             PanelManager.showPanel(PanelId.GAMECOMPLETE, true);
-            var $vid = $("#vid");
+            const $vid = $("#vid");
             $vid.fadeOut(500, function () {
                 $vid[0].pause();
                 $vid[0].seek = 0;

@@ -1,5 +1,5 @@
 define("game/TutorialText", ["visual/TextImage"], function (TextImage) {
-    var TutorialText = TextImage.extend({
+    const TutorialText = TextImage.extend({
         init: function () {
             this._super();
             this.special = 0;

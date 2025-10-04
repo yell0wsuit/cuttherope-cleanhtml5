@@ -1,5 +1,5 @@
 define("utils/MathHelper", ["utils/Constants"], function (Constants) {
-    var MathHelper = {
+    const MathHelper = {
         /**
          * Fits value v to [minV, maxV]
          * @param v {number} value
@@ -77,7 +77,7 @@ define("utils/MathHelper", ["utils/Constants"], function (Constants) {
          * @return {boolean}
          */
         lineInLine: function (x1, y1, x2, y2, x3, y3, x4, y4) {
-            var DPx, DPy, QAx, QAy, QBx, QBy, d, la, lb;
+            let DPx, DPy, QAx, QAy, QBx, QBy, d, la, lb;
 
             DPx = x3 - x1 + x4 - x2;
             DPy = y3 - y1 + y4 - y2;
@@ -90,13 +90,13 @@ define("utils/MathHelper", ["utils/Constants"], function (Constants) {
             la = QBx * DPy - QBy * DPx;
             lb = QAx * DPy - QAy * DPx;
 
-            var absD = Math.abs(d);
+            const absD = Math.abs(d);
             return Math.abs(la) <= absD && Math.abs(lb) <= absD;
         },
 
         // round to arbitrary precision
         roundPrecision: function (value, precision) {
-            var scalar = Math.pow(10, precision);
+            const scalar = Math.pow(10, precision);
             return Math.round(value * scalar) / scalar;
         },
 

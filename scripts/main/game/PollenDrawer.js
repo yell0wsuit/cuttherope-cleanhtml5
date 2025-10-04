@@ -39,11 +39,11 @@ define("game/PollenDrawer", [
         this.endAlpha = 1;
     }
 
-    var PollenDrawer = BaseElement.extend({
+    const PollenDrawer = BaseElement.extend({
         init: function () {
             this._super();
 
-            var pollen = ResourceMgr.getTexture(ResourceId.IMG_OBJ_POLLEN_HD);
+            const pollen = ResourceMgr.getTexture(ResourceId.IMG_OBJ_POLLEN_HD);
 
             this.qw = pollen.imageWidth;
             this.qh = pollen.imageHeight;
@@ -54,7 +54,7 @@ define("game/PollenDrawer", [
             this.pollens = [];
         },
         addPollen: function (v, pi) {
-            var sX = 1,
+            let sX = 1,
                 sY = 1,
                 size = [0.3, 0.3, 0.5, 0.5, 0.6],
                 sizeCounts = size.length,
@@ -70,7 +70,7 @@ define("game/PollenDrawer", [
             sX *= rx;
             sY *= ry;
 
-            var w = this.qw * sX,
+            const w = this.qw * sX,
                 h = this.qh * sY,
                 maxScale = 1,
                 d = Math.min(maxScale - sX, maxScale - sY),
@@ -90,14 +90,14 @@ define("game/PollenDrawer", [
             pollen.startAlpha = 1;
             pollen.alpha = 0.7 * delta + 0.3;
 
-            var tquad = this.drawer.texture.rects[IMG_OBJ_POLLEN_HD_obj_pollen],
+            const tquad = this.drawer.texture.rects[IMG_OBJ_POLLEN_HD_obj_pollen],
                 vquad = new Rectangle(v.x - w / 2, v.y - h / 2, w, h);
 
             this.drawer.setTextureQuad(this.pollens.length, tquad, vquad, pollen.alpha);
             this.pollens.push(pollen);
         },
         fillWithPollenFromPath: function (fromIndex, toIndex, grab) {
-            var MIN_DISTANCE = resolution.POLLEN_MIN_DISTANCE,
+            let MIN_DISTANCE = resolution.POLLEN_MIN_DISTANCE,
                 v1 = grab.mover.path[fromIndex],
                 v2 = grab.mover.path[toIndex],
                 v = Vector.subtract(v2, v1),
@@ -120,7 +120,7 @@ define("game/PollenDrawer", [
             this._super(delta);
             this.drawer.update(delta);
 
-            var len = this.pollens.length,
+            let len = this.pollens.length,
                 i,
                 pollen,
                 temp,
