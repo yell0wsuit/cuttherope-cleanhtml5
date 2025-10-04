@@ -1,5 +1,5 @@
 define("platform", ["config/platforms/platform-web"], function (WebPlatform) {
-    var GeckoPlatform = WebPlatform;
+    const GeckoPlatform = WebPlatform;
 
     // override audio and video format choices
 
