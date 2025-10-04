@@ -275,11 +275,7 @@ define("ui/InterfaceManager", [
                     $("#optionSd").addClass("ctrPointer");
                     $("#optionSd").hover(
                         function () {
-                            showMiniOptionMessage(
-                                "optionMsg",
-                                Lang.menuText(MenuStringId.RELOAD_SD),
-                                4000
-                            );
+                            showMiniOptionMessage("optionMsg", Lang.menuText(MenuStringId.RELOAD_SD), 4000);
                         },
                         function () {
                             $("#optionMsg").stop(true, true).fadeOut(500);
@@ -292,11 +288,7 @@ define("ui/InterfaceManager", [
                     $("#optionHd").addClass("ctrPointer");
                     $("#optionHd").hover(
                         function () {
-                            showMiniOptionMessage(
-                                "optionMsg",
-                                Lang.menuText(MenuStringId.RELOAD_HD),
-                                4000
-                            );
+                            showMiniOptionMessage("optionMsg", Lang.menuText(MenuStringId.RELOAD_HD), 4000);
                         },
                         function () {
                             $("#optionMsg").stop(true, true).fadeOut(500);
@@ -394,11 +386,7 @@ define("ui/InterfaceManager", [
                     closeLevelMenu();
                     //unlock next level
                     if (BoxManager.isNextLevelPlayable()) {
-                        ScoreManager.setStars(
-                            BoxManager.currentBoxIndex,
-                            BoxManager.currentLevelIndex,
-                            0
-                        );
+                        ScoreManager.setStars(BoxManager.currentBoxIndex, BoxManager.currentLevelIndex, 0);
                         openLevel(BoxManager.currentLevelIndex + 1, false, true);
                     } else {
                         $("#gameBtnTray").hide();
@@ -501,29 +489,29 @@ define("ui/InterfaceManager", [
             } else if (panelId == PanelId.OPTIONS) {
                 // sound effects
                 const updateSoundOption = platform.updateSoundOption,
-                    $soundBtn = $("#soundBtn"),
+                    soundBtn = document.getElementById("soundBtn"),
                     onSoundButtonChange = function () {
                         const isSoundOn = !settings.getSoundEnabled();
                         SoundMgr.setSoundEnabled(isSoundOn);
                         SoundMgr.playSound(ResourceId.SND_TAP);
-                        updateSoundOption($soundBtn, isSoundOn);
+                        updateSoundOption(soundBtn, isSoundOn);
                         updateMiniSoundButton(false, "gameSound");
                         updateMiniSoundButton(false, "optionSound");
                     };
-                platform.setSoundButtonChange($soundBtn, onSoundButtonChange);
+                platform.setSoundButtonChange(soundBtn, onSoundButtonChange);
 
                 // game music
                 const updateMusicOption = platform.updateMusicOption,
-                    $musicBtn = $("#musicBtn"),
+                    musicBtn = document.getElementById("musicBtn"),
                     onMusicButtonChange = function () {
                         SoundMgr.playSound(ResourceId.SND_TAP);
                         const isMusicOn = !settings.getMusicEnabled();
                         SoundMgr.setMusicEnabled(isMusicOn);
-                        updateMusicOption($musicBtn, isMusicOn);
+                        updateMusicOption(musicBtn, isMusicOn);
                         updateMiniSoundButton(false, "gameSound");
                         updateMiniSoundButton(false, "optionSound");
                     };
-                platform.setMusicButtonChange($musicBtn, onMusicButtonChange);
+                platform.setMusicButtonChange(musicBtn, onMusicButtonChange);
 
                 // change language
                 const updateLangOption = platform.updateLangSetting;
@@ -534,8 +522,7 @@ define("ui/InterfaceManager", [
                     // the next language (so we cycle through as user clicks)
                     if (newLangId == null) {
                         const currentIndex = edition.languages.indexOf(settings.getLangId());
-                        newLangId =
-                            edition.languages[(currentIndex + 1) % edition.languages.length];
+                        newLangId = edition.languages[(currentIndex + 1) % edition.languages.length];
                     }
 
                     settings.setLangId(newLangId);
@@ -554,7 +541,8 @@ define("ui/InterfaceManager", [
                 });
 
                 // reset button
-                const $resetBtn = $("#resetBtn").click(function () {
+                const resetBtn = document.getElementById("resetBtn");
+                resetBtn.addEventListener("click", function () {
                     // create localized text images
                     const resetTextImg = Text.drawBig({
                             text: Lang.menuText(MenuStringId.RESET_TEXT),
@@ -579,7 +567,7 @@ define("ui/InterfaceManager", [
                     Dialogs.showPopup("resetGame");
                 });
 
-                $("#optionsBack").click(function () {
+                document.getElementById("optionsBack").addEventListener("click", function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.MENU);
                 });
@@ -590,11 +578,11 @@ define("ui/InterfaceManager", [
                 // update options menu when the language changes
                 const refreshOptionsButtons = function () {
                     setImageBigText("#optionsTitle img", MenuStringId.OPTIONS);
-                    updateSoundOption($soundBtn, settings.getSoundEnabled());
-                    updateMusicOption($musicBtn, settings.getMusicEnabled());
+                    updateSoundOption(soundBtn, settings.getSoundEnabled());
+                    updateMusicOption(musicBtn, settings.getMusicEnabled());
                     updateLangOption();
                     updateCutOption(settings.getClickToCut());
-                    platform.setResetText($resetBtn, Lang.menuText(MenuStringId.RESET));
+                    platform.setResetText(resetBtn, Lang.menuText(MenuStringId.RESET));
 
                     // apply a lang-{code} class to a language layer for css styles
                     const langId = settings.getLangId();
@@ -1020,10 +1008,7 @@ define("ui/InterfaceManager", [
                 const renderCount = function () {
                     const now = Date.now(),
                         timeDelta = now - lastRender,
-                        pointDelta = Math.min(
-                            Math.round((from * timeDelta) / duration),
-                            countDownPoints
-                        );
+                        pointDelta = Math.min(Math.round((from * timeDelta) / duration), countDownPoints);
 
                     lastRender = now;
 
@@ -1135,32 +1120,20 @@ define("ui/InterfaceManager", [
                             canvas: true,
                         });
                         valdiv.fadeIn(300, function () {
-                            doTimeCountdown(
-                                Math.ceil(levelTime),
-                                score - currentPoints,
-                                function () {
-                                    msgdiv.fadeIn(300);
-                                    // show the improved result stamp
-                                    if (prevScore != null && prevScore > 0 && score > prevScore) {
-                                        if ($.browser.msie) {
-                                            stamp.show();
-                                        } else {
-                                            stamp.animate(
-                                                { scale: 2.5, opacity: 0.0 },
-                                                0,
-                                                function () {
-                                                    stamp.css("display", "block");
-                                                    stamp.animate(
-                                                        { scale: 1.0, opacity: 1.0 },
-                                                        600,
-                                                        "easeInCubic"
-                                                    );
-                                                }
-                                            );
-                                        }
+                            doTimeCountdown(Math.ceil(levelTime), score - currentPoints, function () {
+                                msgdiv.fadeIn(300);
+                                // show the improved result stamp
+                                if (prevScore != null && prevScore > 0 && score > prevScore) {
+                                    if ($.browser.msie) {
+                                        stamp.show();
+                                    } else {
+                                        stamp.animate({ scale: 2.5, opacity: 0.0 }, 0, function () {
+                                            stamp.css("display", "block");
+                                            stamp.animate({ scale: 1.0, opacity: 1.0 }, 600, "easeInCubic");
+                                        });
                                     }
                                 }
-                            );
+                            });
                         });
                     });
                 });
@@ -1178,10 +1151,7 @@ define("ui/InterfaceManager", [
             ScoreManager.setStars(boxIndex, levelIndex - 1, stars);
 
             // unlock next level
-            if (
-                ScoreManager.levelCount(boxIndex) > levelIndex &&
-                BoxManager.isNextLevelPlayable()
-            ) {
+            if (ScoreManager.levelCount(boxIndex) > levelIndex && BoxManager.isNextLevelPlayable()) {
                 ScoreManager.setStars(boxIndex, levelIndex, 0);
             }
 
@@ -1214,10 +1184,7 @@ define("ui/InterfaceManager", [
                     isDevLinkVisible = false;
                 });
                 $("#zenbox_tab").fadeOut();
-            } else if (
-                $(window).width() > resolution.uiScaledNumber(1024) + 120 &&
-                !isDevLinkVisible
-            ) {
+            } else if ($(window).width() > resolution.uiScaledNumber(1024) + 120 && !isDevLinkVisible) {
                 $("#moreLink").fadeIn(function () {
                     isDevLinkVisible = true;
                 });

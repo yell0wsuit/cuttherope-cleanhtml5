@@ -56,37 +56,52 @@ define("config/platforms/platform-web", [
                 baseUrl = loc.protocol + "//" + loc.host;
             return baseUrl + "/images/scores/";
         },
-        setSoundButtonChange: function ($button, callback) {
-            $button.click(callback);
+        setSoundButtonChange: function (button, callback) {
+            button.addEventListener("click", callback);
         },
-        setMusicButtonChange: function ($button, callback) {
-            $button.click(callback);
+        setMusicButtonChange: function (button, callback) {
+            button.addEventListener("click", callback);
         },
-        updateSoundOption: function ($el, isSoundOn) {
-            $el.toggleClass("disabled", !isSoundOn);
+        updateSoundOption: function (el, isSoundOn) {
+            el.classList.toggle("disabled", !isSoundOn);
         },
-        updateMusicOption: function ($el, isMusicOn) {
-            $el.toggleClass("disabled", !isMusicOn);
+        updateMusicOption: function (el, isMusicOn) {
+            el.classList.toggle("disabled", !isMusicOn);
         },
         toggleLangUI: function (show) {
-            $("#langBtn").toggle(show);
+            const langBtn = document.getElementById("langBtn");
+            if (langBtn) {
+                langBtn.style.display = show ? "" : "none";
+            }
         },
         setLangOptionClick: function (callback) {
-            $("#langBtn").click(function (e) {
-                const langId = null; // just advance to next supported language
-                callback(langId);
-            });
+            const langBtn = document.getElementById("langBtn");
+            if (langBtn) {
+                langBtn.addEventListener("click", function (e) {
+                    const langId = null; // just advance to next supported language
+                    callback(langId);
+                });
+            }
         },
         updateLangSetting: function () {
-            WebPlatform.setOptionText($("#langBtn"), Lang.menuText(MenuStringId.LANGUAGE) + ":");
+            const langBtn = document.getElementById("langBtn");
+            if (langBtn) {
+                WebPlatform.setOptionText(langBtn, Lang.menuText(MenuStringId.LANGUAGE) + ":");
+            }
 
             // Chrome has a layout bug where the css offset on the flag
             // icon is not changed immediately. Retrieving the offset
             // forces the browser to query location which fixes layout.
-            $("#flag").offset();
+            const flag = document.getElementById("flag");
+            if (flag) {
+                flag.offsetTop; // Force layout recalculation
+            }
         },
         setCutOptionClick: function (callback) {
-            $("#cutBtn").click(callback);
+            const cutBtn = document.getElementById("cutBtn");
+            if (cutBtn) {
+                cutBtn.addEventListener("click", callback);
+            }
         },
         updateCutSetting: function (isClickToCut) {
             // fonts use game sized assets based on canvas size
@@ -113,22 +128,26 @@ define("config/platforms/platform-web", [
                 scale: scale,
                 alignment: alignment,
             });
-            $("#cutBtn").toggleClass("disabled", !isClickToCut);
+            const cutBtn = document.getElementById("cutBtn");
+            if (cutBtn) {
+                cutBtn.classList.toggle("disabled", !isClickToCut);
+            }
         },
-        setResetText: function ($el, text) {
-            WebPlatform.setOptionText($el, text);
+        setResetText: function (el, text) {
+            WebPlatform.setOptionText(el, text);
         },
-        setOptionText: function ($button, text) {
-            Text.drawBig({
-                text: text,
-                img: $button.find("img")[0],
-                scaleToUI: true,
-            });
+        setOptionText: function (button, text) {
+            const img = button.querySelector("img");
+            if (img) {
+                Text.drawBig({
+                    text: text,
+                    img: img,
+                    scaleToUI: true,
+                });
+            }
         },
         getGameCompleteShareText: function (totalStars, possibleStars) {
-            const text = Lang.getText(locEntries.GAME_COMPLETE)
-                .replace("%d", totalStars)
-                .replace("%d", possibleStars);
+            const text = Lang.getText(locEntries.GAME_COMPLETE).replace("%d", totalStars).replace("%d", possibleStars);
             return text;
         },
         meetsRequirements: function () {
@@ -151,9 +170,19 @@ define("config/platforms/platform-web", [
                 });
 
                 // remove youtube video if it exists
-                $(function () {
-                    $("#yt-video").remove();
-                });
+                if (document.readyState === "loading") {
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const ytVideo = document.getElementById("yt-video");
+                        if (ytVideo) {
+                            ytVideo.remove();
+                        }
+                    });
+                } else {
+                    const ytVideo = document.getElementById("yt-video");
+                    if (ytVideo) {
+                        ytVideo.remove();
+                    }
+                }
 
                 // track views of the ugprade page
                 _gaq.push(["_trackEvent", "Upgrade", "View"]);
