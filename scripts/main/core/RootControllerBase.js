@@ -55,31 +55,31 @@ define("core/RootControllerBase", [
 
             PubSub.subscribe(
                 PubSub.ChannelId.ControllerActivated,
-                $.proxy(this.onControllerActivated, this)
+                this.onControllerActivated.bind(this)
             );
             PubSub.subscribe(
                 PubSub.ChannelId.ControllerDeactivateRequested,
-                $.proxy(this.onControllerDeactivationRequest, this)
+                this.onControllerDeactivationRequest.bind(this)
             );
             PubSub.subscribe(
                 PubSub.ChannelId.ControllerDeactivated,
-                $.proxy(this.onControllerDeactivated, this)
+                this.onControllerDeactivated.bind(this)
             );
             PubSub.subscribe(
                 PubSub.ChannelId.ControllerPaused,
-                $.proxy(this.onControllerPaused, this)
+                this.onControllerPaused.bind(this)
             );
             PubSub.subscribe(
                 PubSub.ChannelId.ControllerUnpaused,
-                $.proxy(this.onControllerUnpaused, this)
+                this.onControllerUnpaused.bind(this)
             );
             PubSub.subscribe(
                 PubSub.ChannelId.ControllerViewHidden,
-                $.proxy(this.onControllerViewHide, this)
+                this.onControllerViewHide.bind(this)
             );
             PubSub.subscribe(
                 PubSub.ChannelId.ControllerViewShow,
-                $.proxy(this.onControllerViewShow, this)
+                this.onControllerViewShow.bind(this)
             );
         },
 
@@ -128,10 +128,10 @@ define("core/RootControllerBase", [
             if (!this.pointerCapture) {
                 this.pointerCapture = new PointerCapture({
                     element: Canvas.element,
-                    onStart: $.proxy(this.mouseDown, this),
-                    onMove: $.proxy(this.mouseMove, this),
-                    onEnd: $.proxy(this.mouseUp, this),
-                    onOut: $.proxy(this.mouseOut, this),
+                    onStart: this.mouseDown.bind(this),
+                    onMove: this.mouseMove.bind(this),
+                    onEnd: this.mouseUp.bind(this),
+                    onOut: this.mouseOut.bind(this),
                     getZoom: function () {
                         return ZoomManager.getCanvasZoom();
                     },
