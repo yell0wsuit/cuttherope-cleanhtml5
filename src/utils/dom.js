@@ -101,7 +101,7 @@ function show(target, displayValue) {
         return;
     }
     element.style.removeProperty("display");
-    let computedDisplay = window.getComputedStyle(element).display;
+    const computedDisplay = window.getComputedStyle(element).display;
     if (computedDisplay === "none") {
         element.style.display = displayValue || getDefaultDisplay(element.nodeName);
     }
