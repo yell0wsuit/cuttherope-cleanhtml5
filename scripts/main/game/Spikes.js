@@ -76,7 +76,7 @@ define("game/Spikes", [
 
                 this.rotateButton = new GenericButton(SPIKES_ROTATION_BUTTON);
                 this.rotateButton.initWithElements(bup, bdown);
-                this.rotateButton.onButtonPressed = $.proxy(this.onButtonPressed, this);
+                this.rotateButton.onButtonPressed = this.onButtonPressed.bind(this);
                 this.rotateButton.anchor = this.rotateButton.parentAnchor = Alignment.CENTER;
                 this.addChild(this.rotateButton);
 
@@ -215,7 +215,7 @@ define("game/Spikes", [
                     (Math.abs(adjustedRotation - this.rotation) / 90) * 0.3
                 )
             );
-            tl.onFinished = $.proxy(this.timelineFinished, this);
+            tl.onFinished = this.timelineFinished.bind(this);
 
             this.addTimelineWithID(tl, SpikeAnimation.ROTATION_ADJUSTED);
             this.playTimeline(SpikeAnimation.ROTATION_ADJUSTED);
