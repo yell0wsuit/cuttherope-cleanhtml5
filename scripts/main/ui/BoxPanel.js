@@ -51,7 +51,7 @@ define("ui/BoxPanel", [
     const BoxPanel = new Panel(PanelId.BOXES, "boxPanel", "menuBackground", true);
 
     // dom ready events
-    $(function () {
+    function initializeDOMElements() {
         canvas = document.getElementById("boxCanvas");
         ctx = canvas.getContext("2d");
 
@@ -60,29 +60,36 @@ define("ui/BoxPanel", [
         canvas.height = resolution.uiScaledNumber(576);
 
         // handles clicking on the prev box button
-        $navBack = $("#boxNavBack").click(
-            $.proxy(function () {
-                if (currentBoxIndex > 0) {
-                    slideToBox(currentBoxIndex - 1);
-                    SoundMgr.playSound(ResourceId.SND_TAP);
-                }
-            }, this)
-        );
+        $navBack = document.getElementById("boxNavBack");
+        $navBack.addEventListener("click", function () {
+            if (currentBoxIndex > 0) {
+                slideToBox(currentBoxIndex - 1);
+                SoundMgr.playSound(ResourceId.SND_TAP);
+            }
+        });
 
         // handles clicking on the next box button
-        $navForward = $("#boxNavForward").click(
-            $.proxy(function () {
-                if (currentBoxIndex < boxes.length - 1) {
-                    slideToBox(currentBoxIndex + 1);
-                    SoundMgr.playSound(ResourceId.SND_TAP);
-                }
-            }, this)
-        );
-
-        $("#boxUpgradePlate").click(function () {
-            boxClicked(currentBoxIndex);
+        $navForward = document.getElementById("boxNavForward");
+        $navForward.addEventListener("click", function () {
+            if (currentBoxIndex < boxes.length - 1) {
+                slideToBox(currentBoxIndex + 1);
+                SoundMgr.playSound(ResourceId.SND_TAP);
+            }
         });
-    });
+
+        const boxUpgradePlate = document.getElementById("boxUpgradePlate");
+        if (boxUpgradePlate) {
+            boxUpgradePlate.addEventListener("click", function () {
+                boxClicked(currentBoxIndex);
+            });
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initializeDOMElements);
+    } else {
+        initializeDOMElements();
+    }
 
     PubSub.subscribe(PubSub.ChannelId.UpdateVisibleBoxes, function (visibleBoxes) {
         boxes = visibleBoxes;
@@ -198,12 +205,8 @@ define("ui/BoxPanel", [
 
             if (box.visible) {
                 // calculate location of omnom if the box in the middle
-                if (
-                    relboxoffset > resolution.uiScaledNumber(-100) &&
-                    relboxoffset < resolution.uiScaledNumber(100)
-                ) {
-                    omnomoffset =
-                        (centeroffset + offset) * -1 - boxoffset + resolution.uiScaledNumber(452);
+                if (relboxoffset > resolution.uiScaledNumber(-100) && relboxoffset < resolution.uiScaledNumber(100)) {
+                    omnomoffset = (centeroffset + offset) * -1 - boxoffset + resolution.uiScaledNumber(452);
                 }
 
                 ctx.translate(boxoffset, 0);
@@ -276,8 +279,20 @@ define("ui/BoxPanel", [
         renderSlide();
 
         // update the back/forward buttons
-        $navBack.find("div").toggleClass("boxNavDisabled", index <= 0);
-        $navForward.find("div").toggleClass("boxNavDisabled", index >= boxes.length - 1);
+        const navBackDiv = $navBack.querySelector("div");
+        const navForwardDiv = $navForward.querySelector("div");
+
+        if (index <= 0) {
+            navBackDiv.classList.add("boxNavDisabled");
+        } else {
+            navBackDiv.classList.remove("boxNavDisabled");
+        }
+
+        if (index >= boxes.length - 1) {
+            navForwardDiv.classList.add("boxNavDisabled");
+        } else {
+            navForwardDiv.classList.remove("boxNavDisabled");
+        }
     }
 
     // cancels any current animations
@@ -336,7 +351,11 @@ define("ui/BoxPanel", [
                 render(downoffset + delta);
             }
         } else {
-            $(canvas).toggleClass("ctrPointer", isMouseOverBox(x, y));
+            if (isMouseOverBox(x, y)) {
+                canvas.classList.add("ctrPointer");
+            } else {
+                canvas.classList.remove("ctrPointer");
+            }
         }
     }
 
@@ -358,11 +377,7 @@ define("ui/BoxPanel", [
                 const max = resolution.uiScaledNumber(30),
                     min = max * -1,
                     targetBoxIndex =
-                        delta > max
-                            ? currentBoxIndex - 1
-                            : delta < min
-                              ? currentBoxIndex + 1
-                              : currentBoxIndex;
+                        delta > max ? currentBoxIndex - 1 : delta < min ? currentBoxIndex + 1 : currentBoxIndex;
 
                 //console.log('box canvas flick to box: ' + targetBoxIndex);
                 slideToBox(targetBoxIndex);
@@ -396,10 +411,10 @@ define("ui/BoxPanel", [
         if (!this.pointerCapture) {
             this.pointerCapture = new PointerCapture({
                 element: canvas,
-                onStart: $.proxy(pointerDown, this),
-                onMove: $.proxy(pointerMove, this),
-                onEnd: $.proxy(pointerUp, this),
-                onOut: $.proxy(pointerOut, this),
+                onStart: pointerDown.bind(this),
+                onMove: pointerMove.bind(this),
+                onEnd: pointerUp.bind(this),
+                onOut: pointerOut.bind(this),
                 getZoom: function () {
                     return ZoomManager.getUIZoom();
                 },
