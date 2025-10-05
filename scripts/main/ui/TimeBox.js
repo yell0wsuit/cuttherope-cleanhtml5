@@ -78,9 +78,10 @@ define("ui/TimeBox", [
             SettingStorage.set(key, value);
         };
 
-    let $enterCodeButton = null;
-    $(document).ready(function () {
-        $enterCodeButton = $("#boxEnterCodeButton").hide();
+    let enterCodeButton = null;
+    document.addEventListener("DOMContentLoaded", function () {
+        enterCodeButton = document.getElementById("boxEnterCodeButton");
+        hideElement(enterCodeButton);
     });
 
     // cache text images shared between boxes
@@ -110,8 +111,7 @@ define("ui/TimeBox", [
             this.lockedBoxImg = new Image();
             this.lockedBoxImg.src = this.boxImg.src.replace(".png", "_locked.png");
             this.isBkCodeLocked = isLocked(boxIndex);
-            this.isTimeLocked =
-                QueryStrings.unlockAllBoxes !== true && Date.now() < BoxOpenDates[boxIndex];
+            this.isTimeLocked = QueryStrings.unlockAllBoxes !== true && Date.now() < BoxOpenDates[boxIndex];
             this.dateImg = null;
         },
 
@@ -121,12 +121,12 @@ define("ui/TimeBox", [
 
         onSelected: function () {
             if (!this.isTimeLocked && this.isBkCodeLocked) {
-                $enterCodeButton.fadeIn();
+                enterCodeButton.fadeIn();
             }
         },
 
         onUnselected: function () {
-            $enterCodeButton.hide();
+            enterCodeButton.hide();
         },
 
         render: function (ctx, omnomoffset) {
@@ -199,11 +199,7 @@ define("ui/TimeBox", [
                 }
 
                 if (bkCodeTextImg.complete) {
-                    ctx.drawImage(
-                        bkCodeTextImg,
-                        resolution.uiScaledNumber(50),
-                        resolution.uiScaledNumber(90)
-                    );
+                    ctx.drawImage(bkCodeTextImg, resolution.uiScaledNumber(50), resolution.uiScaledNumber(90));
                 }
             } else if (this.islocked) {
                 // text label for "Collect"
@@ -216,18 +212,16 @@ define("ui/TimeBox", [
                     });
                 }
                 if (collectTextImg.complete) {
-                    ctx.drawImage(
-                        collectTextImg,
-                        resolution.uiScaledNumber(143),
-                        resolution.uiScaledNumber(108)
-                    );
+                    ctx.drawImage(collectTextImg, resolution.uiScaledNumber(143), resolution.uiScaledNumber(108));
                 }
 
                 // prefer css dimensions (scaled) for text
-                const textWidth = ($(this.reqImg).width() || this.reqImg.width) * 1.2,
-                    textHeight = ($(this.reqImg).height() || this.reqImg.height) * 1.2,
+                const reqImgWidth = this.reqImg ? this.reqImg.offsetWidth || this.reqImg.width || 0 : 0,
+                    reqImgHeight = this.reqImg ? this.reqImg.offsetHeight || this.reqImg.height || 0 : 0,
+                    textWidth = reqImgWidth * 1.2,
+                    textHeight = reqImgHeight * 1.2,
                     // ok to use raw image width for star (image already scaled)
-                    starWidth = this.starImg.width || $(this.starImg).width(),
+                    starWidth = this.starImg ? this.starImg.offsetWidth || this.starImg.width || 0 : 0,
                     starMargin = resolution.uiScaledNumber(-4),
                     // center the text and star label
                     labelWidth = textWidth + starMargin + starWidth,
@@ -237,13 +231,7 @@ define("ui/TimeBox", [
                     labelX = labelMinX + labelOffsetX;
 
                 ctx.drawImage(this.starImg, labelX, resolution.uiScaledNumber(160));
-                ctx.drawImage(
-                    this.reqImg,
-                    labelX + starWidth,
-                    resolution.uiScaledNumber(150),
-                    textWidth,
-                    textHeight
-                );
+                ctx.drawImage(this.reqImg, labelX + starWidth, resolution.uiScaledNumber(150), textWidth, textHeight);
 
                 // text label for "to unlock"
                 if (!toUnlockTextImg) {
@@ -255,11 +243,7 @@ define("ui/TimeBox", [
                     });
                 }
                 if (toUnlockTextImg.complete) {
-                    ctx.drawImage(
-                        toUnlockTextImg,
-                        resolution.uiScaledNumber(130),
-                        resolution.uiScaledNumber(204)
-                    );
+                    ctx.drawImage(toUnlockTextImg, resolution.uiScaledNumber(130), resolution.uiScaledNumber(204));
                 }
             }
         },
