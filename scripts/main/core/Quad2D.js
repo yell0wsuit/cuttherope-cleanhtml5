@@ -8,7 +8,7 @@ define("core/Quad2D", [], function () {
      * @param h {number} height
      */
     function Quad2D(x, y, w, h) {
-        var rightX = x + w,
+        const rightX = x + w,
             bottomY = y + h;
 
         // top left

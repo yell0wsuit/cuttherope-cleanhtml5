@@ -5,7 +5,7 @@ define("config/editions/net-edition", [
     "ui/BoxType",
     "resources/LangId",
 ], function (boxes, ResourcePacks, ResourceId, BoxType, LangId) {
-    var netEdition = {
+    const netEdition = {
         siteUrl: "http://www.cuttherope.net",
 
         // no hidden drawings yet

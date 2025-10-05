@@ -1,5 +1,5 @@
 define("game/Bubble", ["visual/GameObject"], function (GameObject) {
-    var Bubble = GameObject.extend({
+    const Bubble = GameObject.extend({
         init: function () {
             this._super();
             this.popped = false;

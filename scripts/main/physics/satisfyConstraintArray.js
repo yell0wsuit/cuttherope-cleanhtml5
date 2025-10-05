@@ -3,17 +3,17 @@ define("physics/satisfyConstraintArray", [], function () {
         // NOTE: this method is a perf hotspot so be careful with changes
         n = n || 1;
 
-        var len = arr.length;
-        var cons;
+        const len = arr.length;
+        let cons;
 
         if (!len) return;
 
         //loop over the rest length
         while (n--) {
-            for (var cIndex = 0; cIndex < len; ++cIndex) {
+            for (let cIndex = 0; cIndex < len; ++cIndex) {
                 cons = arr[cIndex];
 
-                var constraints = cons.constraints,
+                const constraints = cons.constraints,
                     num = constraints.length;
 
                 var pin = cons.pin,
@@ -30,8 +30,8 @@ define("physics/satisfyConstraintArray", [], function () {
                     continue;
                 }
 
-                for (var i = 0; i < num; i++) {
-                    var c = constraints[i],
+                for (let i = 0; i < num; i++) {
+                    const c = constraints[i],
                         cp = c.cp,
                         cpPos = cp.pos;
 
@@ -43,7 +43,7 @@ define("physics/satisfyConstraintArray", [], function () {
                         tmp1Y = 1;
                     }
 
-                    var sqrDeltaLength = tmp1X * tmp1X + tmp1Y * tmp1Y, // get dot product inline
+                    const sqrDeltaLength = tmp1X * tmp1X + tmp1Y * tmp1Y, // get dot product inline
                         restLength = c.restLength,
                         sqrRestLength = restLength * restLength,
                         cType = c.type;
@@ -54,7 +54,7 @@ define("physics/satisfyConstraintArray", [], function () {
                         if (sqrDeltaLength >= sqrRestLength) continue;
                     }
 
-                    var pinUndefined = cp.pin.x === -1 /* Constants.UNDEFINED */,
+                    const pinUndefined = cp.pin.x === -1 /* Constants.UNDEFINED */,
                         invWeight2 = cp.invWeight,
                         deltaLength = Math.sqrt(sqrDeltaLength),
                         minDeltaLength = deltaLength > 1 ? deltaLength : 1,
@@ -68,7 +68,7 @@ define("physics/satisfyConstraintArray", [], function () {
                         tmp2Y = tmp1Y;
                     }
 
-                    var tmp1Multiplier = invWeight * diff;
+                    const tmp1Multiplier = invWeight * diff;
                     tmp1X *= tmp1Multiplier;
                     tmp1Y *= tmp1Multiplier;
 
@@ -76,7 +76,7 @@ define("physics/satisfyConstraintArray", [], function () {
                     pos.y += tmp1Y;
 
                     if (pinUndefined) {
-                        var tmp2Multiplier = invWeight2 * diff;
+                        const tmp2Multiplier = invWeight2 * diff;
                         cpPos.x -= tmp2X * tmp2Multiplier;
                         cpPos.y -= tmp2Y * tmp2Multiplier;
                     }

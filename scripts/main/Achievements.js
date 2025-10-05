@@ -1,5 +1,5 @@
 define("Achievements", [], function () {
-    var NoAchievements = {
+    const NoAchievements = {
         increment: function (achievementId) {
             // no-op
         },

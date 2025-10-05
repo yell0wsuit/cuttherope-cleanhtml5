@@ -1,11 +1,11 @@
 define("utils/PointerCapture", [], function () {
-    var singleTouch = false;
+    let singleTouch = false;
 
     function PointerCapture(settings) {
         this.el = settings.element;
         this.getZoom = settings.getZoom;
 
-        var self = this;
+        const self = this;
 
         // save references to the event handlers so they can be removed
         this.startHandler = function (event) {
@@ -23,8 +23,7 @@ define("utils/PointerCapture", [], function () {
         this.moveHandler = function (event) {
             self.preventPanning(event);
 
-            if (event.changedTouches && event.changedTouches[0].identifier !== singleTouch)
-                return false;
+            if (event.changedTouches && event.changedTouches[0].identifier !== singleTouch) return false;
 
             if (settings.onMove) return self.translatePosition(event, settings.onMove);
             else return false; // not handled
@@ -46,7 +45,7 @@ define("utils/PointerCapture", [], function () {
     PointerCapture.prototype.translatePosition = function (event, callback) {
         // get the mouse coordinate relative to the page
         // http://www.quirksmode.org/js/events_properties.html
-        var posx = 0,
+        let posx = 0,
             posy = 0;
         if (!event) {
             event = window.event;
@@ -68,10 +67,15 @@ define("utils/PointerCapture", [], function () {
             posy = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
         }
 
-        var offset = $(this.el).offset(), // get mouse coordinates relative to the element
-            zoom = this.getZoom ? this.getZoom() : 1, // adjust coordinates if the game is zoomed
-            mouseX = Math.round((posx - offset.left) / zoom),
-            mouseY = Math.round((posy - offset.top) / zoom);
+        const rect = this.el.getBoundingClientRect();
+        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const offsetLeft = rect.left + scrollLeft;
+        const offsetTop = rect.top + scrollTop;
+
+        const zoom = this.getZoom ? this.getZoom() : 1;
+        const mouseX = Math.round((posx - offsetLeft) / zoom);
+        const mouseY = Math.round((posy - offsetTop) / zoom);
 
         return callback(mouseX, mouseY);
     };
@@ -103,24 +107,24 @@ define("utils/PointerCapture", [], function () {
     PointerCapture.useMSPointerEvents = window.navigator["msPointerEnabled"];
 
     // We are not using Modernizr in win8, but sometimes we debug in other browsers
-    PointerCapture.useTouchEvents = typeof Modernizr !== "undefined" && Modernizr.touch;
+    PointerCapture.useTouchEvents = "ontouchstart" in window || navigator.maxTouchPoints > 0;
 
     // cache the correct event names to use
     PointerCapture.startEventName = PointerCapture.useMSPointerEvents
         ? "MSPointerDown"
         : PointerCapture.useTouchEvents
-          ? "touchstart"
-          : "mousedown";
+        ? "touchstart"
+        : "mousedown";
     PointerCapture.moveEventName = PointerCapture.useMSPointerEvents
         ? "MSPointerMove"
         : PointerCapture.useTouchEvents
-          ? "touchmove"
-          : "mousemove";
+        ? "touchmove"
+        : "mousemove";
     PointerCapture.endEventName = PointerCapture.useMSPointerEvents
         ? "MSPointerUp"
         : PointerCapture.useTouchEvents
-          ? "touchend"
-          : "mouseup";
+        ? "touchend"
+        : "mouseup";
 
     // Unfortunately there is no touchleave event
     PointerCapture.outEventName = PointerCapture.useMSPointerEvents ? "MSPointerOut" : "mouseout";

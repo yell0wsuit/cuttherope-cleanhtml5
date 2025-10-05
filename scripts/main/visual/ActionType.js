@@ -2,7 +2,7 @@ define("visual/ActionType", [], function () {
     /**
      * @enum {string}
      */
-    var ActionType = {
+    const ActionType = {
         SET_VISIBLE: "ACTION_SET_VISIBLE",
         SET_TOUCHABLE: "ACTION_SET_TOUCHABLE",
         SET_UPDATEABLE: "ACTION_SET_UPDATEABLE",

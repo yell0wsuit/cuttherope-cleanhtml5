@@ -4,7 +4,7 @@ define("visual/Font", [
     "utils/Constants",
     "utils/Log",
 ], function (ImageElement, Canvas, Constants, Log) {
-    var Font = ImageElement.extend({
+    const Font = ImageElement.extend({
         init: function () {
             this._super();
 
@@ -25,7 +25,7 @@ define("visual/Font", [
             this.spaceWidth = spaceWidth;
         },
         getCharQuad: function (c) {
-            var charIndex = this.chars.indexOf(c);
+            const charIndex = this.chars.indexOf(c);
             if (charIndex >= 0) {
                 return charIndex;
             }
@@ -36,7 +36,7 @@ define("visual/Font", [
             return this.chars.indexOf(".");
         },
         drawQuadWOBind: function (index, x, y) {
-            var rect = this.texture.rects[index],
+            const rect = this.texture.rects[index],
                 quadWidth = Math.ceil(rect.w),
                 quadHeight = Math.ceil(rect.h);
 
@@ -53,16 +53,16 @@ define("visual/Font", [
             ); // destination coordinates
         },
         stringWidth: function (str) {
-            var strWidth = 0,
+            let strWidth = 0,
                 len = str.length,
                 lastOffset = 0;
-            for (var c = 0; c < len; c++) {
+            for (let c = 0; c < len; c++) {
                 lastOffset = this.getCharOffset(str, c);
 
                 if (str[c] === " ") {
                     strWidth += this.spaceWidth + lastOffset;
                 } else {
-                    var quadIndex = this.getCharQuad(str[c]),
+                    const quadIndex = this.getCharQuad(str[c]),
                         itemWidth = this.texture.rects[quadIndex].w;
                     strWidth += itemWidth + lastOffset;
                 }
@@ -85,7 +85,7 @@ define("visual/Font", [
             }
 
             // see if kerning is specified for char pair or use the default offset
-            var chars = str[charIndex] + str[charIndex + 1],
+            const chars = str[charIndex] + str[charIndex + 1],
                 v = this.kerning[chars];
             if (v != null) {
                 return v;

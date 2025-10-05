@@ -56,7 +56,7 @@ define("core/Rectangle", ["core/Vector"], function (Vector) {
      * @return {Rectangle}
      */
     Rectangle.rectInRectIntersection = function (r1x, r1y, r1w, r1h, r2x, r2y, r2w, r2h) {
-        var res = new Rectangle(r2x - r1x, r2y - r1y, r2w, r2h);
+        const res = new Rectangle(r2x - r1x, r2y - r1y, r2w, r2h);
 
         if (res.x < 0) {
             res.w += res.x;
@@ -84,24 +84,24 @@ define("core/Rectangle", ["core/Vector"], function (Vector) {
      * @const
      * @type {number}
      */
-    var COHEN_LEFT = 1;
+    const COHEN_LEFT = 1;
 
     /**
      * @const
      * @type {number}
      */
-    var COHEN_RIGHT = 2;
+    const COHEN_RIGHT = 2;
 
     /**
      * @const
      * @type {number}
      */
-    var COHEN_BOT = 4;
+    const COHEN_BOT = 4;
     /**
      * @const
      * @type {number}
      */
-    var COHEN_TOP = 8;
+    const COHEN_TOP = 8;
 
     /**
      * @param x_min {number}
@@ -133,13 +133,13 @@ define("core/Rectangle", ["core/Vector"], function (Vector) {
      * @return {boolean}
      */
     Rectangle.lineInRect = function (x1, y1, x2, y2, rx, ry, w, h) {
-        var code_a, code_b, code;
-        var a = new Vector(x1, y1),
+        let code_a, code_b, code;
+        let a = new Vector(x1, y1),
             b = new Vector(x2, y2),
             c;
 
         //noinspection UnnecessaryLocalVariableJS
-        var x_min = rx,
+        const x_min = rx,
             y_min = ry,
             x_max = rx + w,
             y_max = ry + h;

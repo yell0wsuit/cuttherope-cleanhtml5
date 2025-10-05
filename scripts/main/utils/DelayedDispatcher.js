@@ -1,5 +1,5 @@
 define("utils/DelayedDispatcher", [], function () {
-    var Dispatch = function (object, callback, param, delay) {
+    const Dispatch = function (object, callback, param, delay) {
         this.object = object;
         this.callback = callback;
         this.param = param;
@@ -13,18 +13,18 @@ define("utils/DelayedDispatcher", [], function () {
         );
     };
 
-    var DelayedDispatcher = {
+    const DelayedDispatcher = {
         dispatchers: [],
         callObject: function (object, callback, param, delay) {
-            var dp = new Dispatch(object, callback, param, delay);
+            const dp = new Dispatch(object, callback, param, delay);
             this.dispatchers.push(dp);
         },
         cancelAllDispatches: function () {
             this.dispatchers.length = 0;
         },
         cancelDispatch: function (object, callback, param) {
-            for (var i = 0, count = this.dispatchers.length; i < count; i--) {
-                var dp = this.dispatchers[i];
+            for (let i = 0, count = this.dispatchers.length; i < count; i--) {
+                const dp = this.dispatchers[i];
                 if (dp.object === object && dp.callback === callback && dp.param === param) {
                     this.dispatchers.splice(i, 1);
                     return;
@@ -34,15 +34,15 @@ define("utils/DelayedDispatcher", [], function () {
         update: function (delta) {
             // take a snapshot of the current dispatchers since
             // the queue may be modified during our update
-            var currentDps = this.dispatchers.slice(0);
+            const currentDps = this.dispatchers.slice(0);
 
             // update each of the dispatchers
-            for (var i = 0, len = currentDps.length; i < len; i++) {
-                var dp = currentDps[i];
+            for (let i = 0, len = currentDps.length; i < len; i++) {
+                const dp = currentDps[i];
 
                 // a previous dispatch may have cleared the queue,
                 // so make sure it still exists
-                var dpIndex = this.dispatchers.indexOf(dp);
+                const dpIndex = this.dispatchers.indexOf(dp);
                 if (dpIndex < 0) {
                     continue;
                 }

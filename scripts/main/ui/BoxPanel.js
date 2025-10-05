@@ -33,7 +33,7 @@ define("ui/BoxPanel", [
 ) {
     // BoxPanel displays the set of visible boxes (which may not include all boxes)
 
-    var boxes = [],
+    let boxes = [],
         currentBoxIndex = 0,
         currentOffset = 0,
         cancelSlideFlag = false,
@@ -48,10 +48,10 @@ define("ui/BoxPanel", [
         $navBack,
         $navForward;
 
-    var BoxPanel = new Panel(PanelId.BOXES, "boxPanel", "menuBackground", true);
+    const BoxPanel = new Panel(PanelId.BOXES, "boxPanel", "menuBackground", true);
 
     // dom ready events
-    $(function () {
+    function initializeDOMElements() {
         canvas = document.getElementById("boxCanvas");
         ctx = canvas.getContext("2d");
 
@@ -60,29 +60,36 @@ define("ui/BoxPanel", [
         canvas.height = resolution.uiScaledNumber(576);
 
         // handles clicking on the prev box button
-        $navBack = $("#boxNavBack").click(
-            $.proxy(function () {
-                if (currentBoxIndex > 0) {
-                    slideToBox(currentBoxIndex - 1);
-                    SoundMgr.playSound(ResourceId.SND_TAP);
-                }
-            }, this)
-        );
+        $navBack = document.getElementById("boxNavBack");
+        $navBack.addEventListener("click", function () {
+            if (currentBoxIndex > 0) {
+                slideToBox(currentBoxIndex - 1);
+                SoundMgr.playSound(ResourceId.SND_TAP);
+            }
+        });
 
         // handles clicking on the next box button
-        $navForward = $("#boxNavForward").click(
-            $.proxy(function () {
-                if (currentBoxIndex < boxes.length - 1) {
-                    slideToBox(currentBoxIndex + 1);
-                    SoundMgr.playSound(ResourceId.SND_TAP);
-                }
-            }, this)
-        );
-
-        $("#boxUpgradePlate").click(function () {
-            boxClicked(currentBoxIndex);
+        $navForward = document.getElementById("boxNavForward");
+        $navForward.addEventListener("click", function () {
+            if (currentBoxIndex < boxes.length - 1) {
+                slideToBox(currentBoxIndex + 1);
+                SoundMgr.playSound(ResourceId.SND_TAP);
+            }
         });
-    });
+
+        const boxUpgradePlate = document.getElementById("boxUpgradePlate");
+        if (boxUpgradePlate) {
+            boxUpgradePlate.addEventListener("click", function () {
+                boxClicked(currentBoxIndex);
+            });
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initializeDOMElements);
+    } else {
+        initializeDOMElements();
+    }
 
     PubSub.subscribe(PubSub.ChannelId.UpdateVisibleBoxes, function (visibleBoxes) {
         boxes = visibleBoxes;
@@ -117,7 +124,7 @@ define("ui/BoxPanel", [
         }
 
         // we have to translate from visible box index to edition box index
-        var box = boxes[visibleBoxIndex],
+        const box = boxes[visibleBoxIndex],
             editionBoxIndex = box.index;
 
         // make sure the box is clickable
@@ -185,25 +192,21 @@ define("ui/BoxPanel", [
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        var offsetX = centeroffset + offset,
+        const offsetX = centeroffset + offset,
             offsetY = resolution.uiScaledNumber(130);
         ctx.translate(offsetX, offsetY);
 
-        var boxoffset = 0;
+        let boxoffset = 0;
 
-        for (var i = 0; i < boxes.length; i++) {
-            var omnomoffset = null,
+        for (let i = 0; i < boxes.length; i++) {
+            let omnomoffset = null,
                 relboxoffset = offset + boxoffset,
                 box = boxes[i];
 
             if (box.visible) {
                 // calculate location of omnom if the box in the middle
-                if (
-                    relboxoffset > resolution.uiScaledNumber(-100) &&
-                    relboxoffset < resolution.uiScaledNumber(100)
-                ) {
-                    omnomoffset =
-                        (centeroffset + offset) * -1 - boxoffset + resolution.uiScaledNumber(452);
+                if (relboxoffset > resolution.uiScaledNumber(-100) && relboxoffset < resolution.uiScaledNumber(100)) {
+                    omnomoffset = (centeroffset + offset) * -1 - boxoffset + resolution.uiScaledNumber(452);
                 }
 
                 ctx.translate(boxoffset, 0);
@@ -217,7 +220,7 @@ define("ui/BoxPanel", [
         ctx.translate(-offsetX, -offsetY);
     }
 
-    var slideInProgress = false,
+    let slideInProgress = false,
         from,
         to,
         startTime;
@@ -228,7 +231,7 @@ define("ui/BoxPanel", [
         if (index > boxes.length - 1) index = boxes.length - 1;
 
         // if we don't need to move the boxes, we still render them but only one frame
-        var duration = index == currentBoxIndex ? 0 : 550;
+        const duration = index == currentBoxIndex ? 0 : 550;
 
         if (bouncebox && bouncebox != boxes[index] && bouncebox.onUnselected) {
             bouncebox.onUnselected();
@@ -244,18 +247,18 @@ define("ui/BoxPanel", [
         to = -1.0 * spacing * index;
         startTime = Date.now();
 
-        var renderSlide = function () {
+        const renderSlide = function () {
             if (!slideInProgress) {
                 return;
             }
 
-            var elapsed = Date.now() - startTime;
+            const elapsed = Date.now() - startTime;
             currentOffset = Easing.easeOutExpo(elapsed, from, to - from, duration);
             render(currentOffset);
 
             // We need to detect whether the box animation has completed for hit testing. If we
             // wait until the animaiton is completely done, though, it feels unresponsive
-            var d = Math.abs(currentOffset - to);
+            const d = Math.abs(currentOffset - to);
             if (d < 5) isBoxCentered = true;
 
             if (elapsed >= duration) {
@@ -276,8 +279,20 @@ define("ui/BoxPanel", [
         renderSlide();
 
         // update the back/forward buttons
-        $navBack.find("div").toggleClass("boxNavDisabled", index <= 0);
-        $navForward.find("div").toggleClass("boxNavDisabled", index >= boxes.length - 1);
+        const navBackDiv = $navBack.querySelector("div");
+        const navForwardDiv = $navForward.querySelector("div");
+
+        if (index <= 0) {
+            navBackDiv.classList.add("boxNavDisabled");
+        } else {
+            navBackDiv.classList.remove("boxNavDisabled");
+        }
+
+        if (index >= boxes.length - 1) {
+            navForwardDiv.classList.add("boxNavDisabled");
+        } else {
+            navForwardDiv.classList.remove("boxNavDisabled");
+        }
     }
 
     // cancels any current animations
@@ -303,7 +318,7 @@ define("ui/BoxPanel", [
         return false;
     }
 
-    var ismousedown = false,
+    let ismousedown = false,
         imousedragging = false,
         upoffset = 0,
         downoffset = 0,
@@ -336,7 +351,11 @@ define("ui/BoxPanel", [
                 render(downoffset + delta);
             }
         } else {
-            $(canvas).toggleClass("ctrPointer", isMouseOverBox(x, y));
+            if (isMouseOverBox(x, y)) {
+                canvas.classList.add("ctrPointer");
+            } else {
+                canvas.classList.remove("ctrPointer");
+            }
         }
     }
 
@@ -349,26 +368,22 @@ define("ui/BoxPanel", [
             if (Math.abs(delta) > spacing / 2) {
                 // if we've passed the rounding threshold then snap to the nearest box (this is for drags)
                 upoffset = currentOffset;
-                var index = Math.round((-1 * upoffset) / spacing);
+                const index = Math.round((-1 * upoffset) / spacing);
 
                 //console.log('box canvas drag to box: ' + index);
                 slideToBox(index);
             } else if (Math.abs(delta) > 5) {
                 // otherwise, we look for an action more like a flick and go to the next box
-                var max = resolution.uiScaledNumber(30),
+                const max = resolution.uiScaledNumber(30),
                     min = max * -1,
                     targetBoxIndex =
-                        delta > max
-                            ? currentBoxIndex - 1
-                            : delta < min
-                              ? currentBoxIndex + 1
-                              : currentBoxIndex;
+                        delta > max ? currentBoxIndex - 1 : delta < min ? currentBoxIndex + 1 : currentBoxIndex;
 
                 //console.log('box canvas flick to box: ' + targetBoxIndex);
                 slideToBox(targetBoxIndex);
             } else {
                 //console.log('box click: ' + currentBoxIndex);
-                var currentBox = boxes[currentBoxIndex];
+                const currentBox = boxes[currentBoxIndex];
                 if (currentBox.isClickable()) {
                     if (!currentBox.islocked) {
                         slideToBox(currentBoxIndex);
@@ -396,10 +411,10 @@ define("ui/BoxPanel", [
         if (!this.pointerCapture) {
             this.pointerCapture = new PointerCapture({
                 element: canvas,
-                onStart: $.proxy(pointerDown, this),
-                onMove: $.proxy(pointerMove, this),
-                onEnd: $.proxy(pointerUp, this),
-                onOut: $.proxy(pointerOut, this),
+                onStart: pointerDown.bind(this),
+                onMove: pointerMove.bind(this),
+                onEnd: pointerUp.bind(this),
+                onOut: pointerOut.bind(this),
                 getZoom: function () {
                     return ZoomManager.getUIZoom();
                 },

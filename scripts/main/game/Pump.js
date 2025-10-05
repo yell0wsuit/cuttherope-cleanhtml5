@@ -3,7 +3,7 @@ define("game/Pump", ["visual/GameObject", "core/Vector", "utils/Radians"], funct
     Vector,
     Radians
 ) {
-    var Pump = GameObject.extend({
+    const Pump = GameObject.extend({
         init: function () {
             this._super();
             this.angle = 0;
@@ -13,7 +13,7 @@ define("game/Pump", ["visual/GameObject", "core/Vector", "utils/Radians"], funct
             this.touch = 0;
         },
         updateRotation: function () {
-            var bbHalfWidth = this.bb.w / 2;
+            const bbHalfWidth = this.bb.w / 2;
 
             this.t1.x = this.x - bbHalfWidth;
             this.t2.x = this.x + bbHalfWidth;

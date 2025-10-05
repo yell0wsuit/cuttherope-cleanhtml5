@@ -3,7 +3,7 @@ define("visual/HorizontallyTiledImage", [
     "utils/Canvas",
     "core/Alignment",
 ], function (ImageElement, Canvas, Alignment) {
-    var HorizontallyTiledImage = ImageElement.extend({
+    const HorizontallyTiledImage = ImageElement.extend({
         init: function () {
             this._super();
         },
@@ -23,7 +23,7 @@ define("visual/HorizontallyTiledImage", [
             this.tiles[1] = center;
             this.tiles[2] = right;
 
-            var h1 = this.texture.rects[left].h,
+            const h1 = this.texture.rects[left].h,
                 h2 = this.texture.rects[center].h,
                 h3 = this.texture.rects[right].h;
 
@@ -42,7 +42,7 @@ define("visual/HorizontallyTiledImage", [
         draw: function () {
             this.preDraw();
 
-            var left = this.texture.rects[this.tiles[0]],
+            const left = this.texture.rects[this.tiles[0]],
                 center = this.texture.rects[this.tiles[1]],
                 right = this.texture.rects[this.tiles[2]],
                 tileWidth = this.width - (~~left.w + ~~right.w),
@@ -85,7 +85,7 @@ define("visual/HorizontallyTiledImage", [
                     rightCeilH
                 );
             } else {
-                var p1 = left.copy(),
+                const p1 = left.copy(),
                     p2 = right.copy();
                 p1.w = Math.min(p1.w, this.width / 2);
                 p2.w = Math.min(p2.w, this.width - p1.w);
@@ -123,26 +123,26 @@ define("visual/HorizontallyTiledImage", [
          */
         getImage: function () {
             // save the existing canvas id and switch to the hidden canvas
-            var existingCanvas = Canvas.element;
+            const existingCanvas = Canvas.element;
 
             // create a temporary canvas to use
             Canvas.setTarget(document.createElement("canvas"));
 
             // set the canvas width and height
-            var canvas = Canvas.element,
+            const canvas = Canvas.element,
                 imgWidth = Math.ceil(this.width),
                 imgHeight = Math.ceil(this.height);
             canvas.width = imgWidth;
             canvas.height = imgHeight;
 
             this.draw();
-            var imageData = canvas.toDataURL("image/png"),
+            const imageData = canvas.toDataURL("image/png"),
                 img = new Image();
 
             img.src = imageData;
 
-            // NOTE: important to use jQuery to avoid intermittent dimension issues
-            $(img).width(imgWidth).height(imgHeight);
+            img.width = imgWidth;
+            img.height = imgHeight;
 
             // restore the original canvas for the App
             if (existingCanvas) {

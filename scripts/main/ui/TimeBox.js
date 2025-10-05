@@ -14,6 +14,7 @@ define("ui/TimeBox", [
     "edition",
     "utils/MathHelper",
     "core/SettingStorage",
+    "utils/dom",
 ], function (
     Class,
     Box,
@@ -29,12 +30,13 @@ define("ui/TimeBox", [
     QueryStrings,
     edition,
     MathHelper,
-    SettingStorage
+    SettingStorage,
+    dom
 ) {
     // promotion runs from March 4 - April 14
     // using ticks makes finding hacking more difficult because
     // you can't search the code for well known dates
-    var BoxOpenDates = [
+    let BoxOpenDates = [
         1362384000000, // Mar 4
         1362985200000, // Mar 11
         1363590000000, // Mar 18
@@ -57,39 +59,42 @@ define("ui/TimeBox", [
 
     // The random seeds that will be XOR'd with the user's unique value
     // to create the keys used to store the status of each box unlock
-    var BoxKeySeeds = [9240, 7453, 3646, 7305, 5093, 3829];
+    const BoxKeySeeds = [9240, 7453, 3646, 7305, 5093, 3829];
 
-    var LOCK_KEY_PREFIX = String.fromCharCode(98, 107), // prefix is 'bk'
+    const LOCK_KEY_PREFIX = String.fromCharCode(98, 107), // prefix is 'bk'
         XOR_VALUE = ScoreManager.getXorValue(),
         getLockKey = function (boxIndex) {
             return LOCK_KEY_PREFIX + (BoxKeySeeds[boxIndex] ^ XOR_VALUE);
         },
         isLocked = function (boxIndex) {
-            var key = getLockKey(boxIndex),
+            const key = getLockKey(boxIndex),
                 value = SettingStorage.getIntOrDefault(key, 0),
                 correctValue = (BoxKeySeeds[boxIndex] - 1000) ^ XOR_VALUE;
 
             return value !== correctValue && !QueryStrings.unlockAllBoxes;
         },
         unlockBox = function (boxIndex) {
-            var key = getLockKey(boxIndex),
+            const key = getLockKey(boxIndex),
                 value = (BoxKeySeeds[boxIndex] - 1000) ^ XOR_VALUE;
 
             SettingStorage.set(key, value);
         };
 
-    var $enterCodeButton = null;
-    $(document).ready(function () {
-        $enterCodeButton = $("#boxEnterCodeButton").hide();
+    let enterCodeButton = null;
+    document.addEventListener("DOMContentLoaded", function () {
+        enterCodeButton = document.getElementById("boxEnterCodeButton");
+        if (enterCodeButton) {
+            dom.hide(enterCodeButton);
+        }
     });
 
     // cache text images shared between boxes
-    var availableTextImg = null,
+    let availableTextImg = null,
         collectTextImg = null,
         toUnlockTextImg = null,
         bkCodeTextImg = null;
 
-    var MonthNames = [
+    const MonthNames = [
         "January",
         "February",
         "March",
@@ -104,14 +109,13 @@ define("ui/TimeBox", [
         "December",
     ];
 
-    var TimeBox = Box.extend({
+    const TimeBox = Box.extend({
         init: function (boxIndex, bgimg, reqstars, islocked, type) {
             this._super(boxIndex, bgimg, reqstars, islocked, type);
             this.lockedBoxImg = new Image();
             this.lockedBoxImg.src = this.boxImg.src.replace(".png", "_locked.png");
             this.isBkCodeLocked = isLocked(boxIndex);
-            this.isTimeLocked =
-                QueryStrings.unlockAllBoxes !== true && Date.now() < BoxOpenDates[boxIndex];
+            this.isTimeLocked = QueryStrings.unlockAllBoxes !== true && Date.now() < BoxOpenDates[boxIndex];
             this.dateImg = null;
         },
 
@@ -120,17 +124,19 @@ define("ui/TimeBox", [
         },
 
         onSelected: function () {
-            if (!this.isTimeLocked && this.isBkCodeLocked) {
-                $enterCodeButton.fadeIn();
+            if (!this.isTimeLocked && this.isBkCodeLocked && enterCodeButton) {
+                dom.fadeIn(enterCodeButton);
             }
         },
 
         onUnselected: function () {
-            $enterCodeButton.hide();
+            if (enterCodeButton) {
+                dom.hide(enterCodeButton);
+            }
         },
 
         render: function (ctx, omnomoffset) {
-            var locked = this.islocked || this.isTimeLocked || this.isBkCodeLocked;
+            const locked = this.islocked || this.isTimeLocked || this.isBkCodeLocked;
 
             // draw the base box image
             ctx.drawImage(
@@ -163,7 +169,7 @@ define("ui/TimeBox", [
                 // draw date the box will open
                 if (!this.dateImg) {
                     this.dateImg = new Image();
-                    var openDate = new Date(BoxOpenDates[this.index]);
+                    const openDate = new Date(BoxOpenDates[this.index]);
                     Text.drawBig({
                         text: MonthNames[openDate.getMonth()] + " " + openDate.getDate(),
                         img: this.dateImg,
@@ -199,11 +205,7 @@ define("ui/TimeBox", [
                 }
 
                 if (bkCodeTextImg.complete) {
-                    ctx.drawImage(
-                        bkCodeTextImg,
-                        resolution.uiScaledNumber(50),
-                        resolution.uiScaledNumber(90)
-                    );
+                    ctx.drawImage(bkCodeTextImg, resolution.uiScaledNumber(50), resolution.uiScaledNumber(90));
                 }
             } else if (this.islocked) {
                 // text label for "Collect"
@@ -216,18 +218,16 @@ define("ui/TimeBox", [
                     });
                 }
                 if (collectTextImg.complete) {
-                    ctx.drawImage(
-                        collectTextImg,
-                        resolution.uiScaledNumber(143),
-                        resolution.uiScaledNumber(108)
-                    );
+                    ctx.drawImage(collectTextImg, resolution.uiScaledNumber(143), resolution.uiScaledNumber(108));
                 }
 
                 // prefer css dimensions (scaled) for text
-                var textWidth = ($(this.reqImg).width() || this.reqImg.width) * 1.2,
-                    textHeight = ($(this.reqImg).height() || this.reqImg.height) * 1.2,
+                const reqImgWidth = this.reqImg ? this.reqImg.offsetWidth || this.reqImg.width || 0 : 0,
+                    reqImgHeight = this.reqImg ? this.reqImg.offsetHeight || this.reqImg.height || 0 : 0,
+                    textWidth = reqImgWidth * 1.2,
+                    textHeight = reqImgHeight * 1.2,
                     // ok to use raw image width for star (image already scaled)
-                    starWidth = this.starImg.width || $(this.starImg).width(),
+                    starWidth = this.starImg ? this.starImg.offsetWidth || this.starImg.width || 0 : 0,
                     starMargin = resolution.uiScaledNumber(-4),
                     // center the text and star label
                     labelWidth = textWidth + starMargin + starWidth,
@@ -237,13 +237,7 @@ define("ui/TimeBox", [
                     labelX = labelMinX + labelOffsetX;
 
                 ctx.drawImage(this.starImg, labelX, resolution.uiScaledNumber(160));
-                ctx.drawImage(
-                    this.reqImg,
-                    labelX + starWidth,
-                    resolution.uiScaledNumber(150),
-                    textWidth,
-                    textHeight
-                );
+                ctx.drawImage(this.reqImg, labelX + starWidth, resolution.uiScaledNumber(150), textWidth, textHeight);
 
                 // text label for "to unlock"
                 if (!toUnlockTextImg) {
@@ -255,11 +249,7 @@ define("ui/TimeBox", [
                     });
                 }
                 if (toUnlockTextImg.complete) {
-                    ctx.drawImage(
-                        toUnlockTextImg,
-                        resolution.uiScaledNumber(130),
-                        resolution.uiScaledNumber(204)
-                    );
+                    ctx.drawImage(toUnlockTextImg, resolution.uiScaledNumber(130), resolution.uiScaledNumber(204));
                 }
             }
         },

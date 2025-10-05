@@ -5,13 +5,13 @@ define("game/PumpDirt", [
     "core/Rectangle",
     "utils/MathHelper",
 ], function (MultiParticles, resolution, Vector, Rectangle, MathHelper) {
-    var IMG_OBJ_PUMP_pump_start = 0,
+    const IMG_OBJ_PUMP_pump_start = 0,
         IMG_OBJ_PUMP_pump_end = 5,
         IMG_OBJ_PUMP_particle_1 = 6,
         IMG_OBJ_PUMP_particle_2 = 7,
         IMG_OBJ_PUMP_particle_3 = 8;
 
-    var PumpDirt = MultiParticles.extend({
+    const PumpDirt = MultiParticles.extend({
         init: function (numParticles, texture, angle) {
             this._super(numParticles, texture);
 
@@ -45,20 +45,20 @@ define("game/PumpDirt", [
         initParticle: function (particle) {
             this._super(particle);
 
-            var texture = this.imageGrid,
+            const texture = this.imageGrid,
                 n = MathHelper.randomRange(IMG_OBJ_PUMP_particle_1, IMG_OBJ_PUMP_particle_3),
                 tquad = texture.rects[n],
                 vquad = new Rectangle(0, 0, 0, 0); // don't draw initially
 
             this.drawer.setTextureQuad(this.particles.length, tquad, vquad, 1);
 
-            var particleSize = resolution.PUMP_DIRT_PARTICLE_SIZE;
+            const particleSize = resolution.PUMP_DIRT_PARTICLE_SIZE;
             particle.width = particleSize;
             particle.height = particleSize;
         },
         updateParticleLocation: function (p, delta) {
             p.dir.multiply(0.9);
-            var tmp = Vector.multiply(p.dir, delta);
+            const tmp = Vector.multiply(p.dir, delta);
             tmp.add(this.gravity);
             p.pos.add(tmp);
         },

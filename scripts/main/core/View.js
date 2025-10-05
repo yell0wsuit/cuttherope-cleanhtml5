@@ -1,5 +1,5 @@
 define("core/View", ["visual/BaseElement", "resolution"], function (BaseElement, resolution) {
-    var View = BaseElement.extend({
+    const View = BaseElement.extend({
         init: function () {
             this._super();
             this.width = resolution.CANVAS_WIDTH;

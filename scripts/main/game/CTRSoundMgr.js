@@ -4,7 +4,7 @@ define("game/CTRSoundMgr", [
     "resources/ResourceId",
     "resources/Sounds",
 ], function (settings, Log, ResourceId, Sounds) {
-    var SoundMgr = {
+    const SoundMgr = {
         audioPaused: false,
         soundEnabled: settings.getSoundEnabled(),
         musicEnabled: settings.getMusicEnabled(),
@@ -25,7 +25,7 @@ define("game/CTRSoundMgr", [
             }
         },
         playLoopedSound: function (soundId) {
-            var self = this;
+            const self = this;
             if (this.soundEnabled && !Sounds.isPlaying(soundId)) {
                 Sounds.play(soundId, function () {
                     if (!self.audioPaused && self.soundEnabled) {
@@ -43,7 +43,7 @@ define("game/CTRSoundMgr", [
                 this.stopMusic(soundId);
             }
 
-            var self = this;
+            const self = this;
             if (this.musicEnabled && !Sounds.isPlaying(soundId)) {
                 this.musicId = soundId;
                 Sounds.setVolume(soundId, 70);

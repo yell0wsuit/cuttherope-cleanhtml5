@@ -28,6 +28,7 @@ define("ui/InterfaceManager", [
     "analytics",
     "Doors",
     "ui/Dialogs",
+    "utils/dom",
 ], function (
     edition,
     resolution,
@@ -57,16 +58,40 @@ define("ui/InterfaceManager", [
     GameBorder,
     analytics,
     Doors,
-    Dialogs
+    Dialogs,
+    dom
 ) {
-    var menuMusicId = edition.menuMusicId || ResourceId.SND_MENU_MUSIC;
+    const {
+        addClass,
+        append,
+        delay,
+        empty,
+        fadeIn,
+        fadeOut,
+        find,
+        getElement,
+        hide,
+        hover,
+        on,
+        removeClass,
+        setStyle,
+        show,
+        stopAnimations,
+        text,
+        toggleClass,
+        width,
+    } = dom;
+
+    const isMsieBrowser = /MSIE|Trident/.test(window.navigator.userAgent);
+
+    const menuMusicId = edition.menuMusicId || ResourceId.SND_MENU_MUSIC;
 
     var InterfaceManager = new (function () {
         // ------------------------------------------------------------------------
         // Locals Variables
         // ------------------------------------------------------------------------
 
-        var _this = this;
+        const _this = this;
         this.useHDVersion = resolution.isHD;
 
         this.isInLevelSelectMode = false;
@@ -76,10 +101,10 @@ define("ui/InterfaceManager", [
         this.isTransitionActive = false;
 
         // warn the user if the frame rate is low after the first level
-        var MIN_FPS = QueryStrings.minFps || 30;
+        const MIN_FPS = QueryStrings.minFps || 30;
 
         // sets scaled menu text for the image specified by the selector query
-        var setImageBigText = function (selector, menuStringId) {
+        const setImageBigText = function (selector, menuStringId) {
             return Text.drawBig({
                 text: Lang.menuText(menuStringId),
                 imgSel: selector,
@@ -91,10 +116,10 @@ define("ui/InterfaceManager", [
         // Initialize Panels (called once for each panel)
         // ------------------------------------------------------------------------
 
-        var updateMiniSoundButton = function (doToggle, buttonId, msgId) {
-            var className;
-            var isSoundOn = SoundMgr.soundEnabled;
-            var isMusicOn = SoundMgr.musicEnabled;
+        const updateMiniSoundButton = function (doToggle, buttonId, msgId) {
+            let className;
+            let isSoundOn = SoundMgr.soundEnabled;
+            let isMusicOn = SoundMgr.musicEnabled;
 
             if (doToggle) {
                 if (isSoundOn && isMusicOn) {
@@ -121,20 +146,22 @@ define("ui/InterfaceManager", [
                 className = "allSound";
             }
 
-            var allClassNames = "effectsOnly noSound allSound";
-            $("#optionSound").removeClass(allClassNames).addClass(className);
-            $("#gameSound").removeClass(allClassNames).addClass(className);
+            const allClassNames = "effectsOnly noSound allSound";
+            removeClass("#optionSound", allClassNames);
+            addClass("#optionSound", className);
+            removeClass("#gameSound", allClassNames);
+            addClass("#gameSound", className);
 
             // option panel screen
-            $("#soundBtn .options-x").css("display", !isSoundOn ? "block" : "none");
-            $("#musicBtn .options-x").css("display", !isMusicOn ? "block" : "none");
+            setStyle("#soundBtn .options-x", "display", !isSoundOn ? "block" : "none");
+            setStyle("#musicBtn .options-x", "display", !isMusicOn ? "block" : "none");
 
             // get the localized text for the new audio setting
-            var text;
+            let text;
             if (!isMusicOn && !isSoundOn) {
                 text = Lang.menuText(MenuStringId.EVERYTHING_OFF);
             } else {
-                var musicId = isMusicOn ? MenuStringId.MUSIC_ON : MenuStringId.MUSIC_OFF,
+                const musicId = isMusicOn ? MenuStringId.MUSIC_ON : MenuStringId.MUSIC_OFF,
                     soundId = isSoundOn ? MenuStringId.SOUNDS_ON : MenuStringId.SOUNDS_OFF,
                     template = Lang.menuText(MenuStringId.AND_TEMPLATE);
                 text = template
@@ -145,36 +172,44 @@ define("ui/InterfaceManager", [
             showMiniOptionMessage(msgId, text);
         };
 
-        var showMiniOptionMessage = function (msgId, text, delay) {
+        var showMiniOptionMessage = function (msgId, messageText, delayDuration) {
             if (msgId != undefined) {
-                var showDelay = delay || 500,
-                    $msg = $("#" + msgId),
-                    $img = $msg.find("img");
-
-                // make sure the image exists
-                if ($img.length === 0) {
-                    $img = $("<img/>").appendTo($msg);
+                const showDelay = delayDuration || 500;
+                const msg = document.getElementById(msgId);
+                if (!msg) {
+                    return;
                 }
 
-                // render the text
+                let img = msg.querySelector("img");
+                if (!img) {
+                    img = document.createElement("img");
+                    msg.appendChild(img);
+                }
+
                 Text.drawSmall({
-                    text: text,
-                    img: $img[0],
+                    text: messageText,
+                    img: img,
                     scaleToUI: true,
                     alpha: 0.6,
                     alignment: Alignment.LEFT,
                 });
 
-                // stop any in-progress animations and queue fade in and out
-                $msg.stop(true, true).fadeIn(500).delay(showDelay).fadeOut(750);
+                stopAnimations(msg);
+                fadeIn(msg, 500)
+                    .then(function () {
+                        return delay(msg, showDelay);
+                    })
+                    .then(function () {
+                        return fadeOut(msg, 750);
+                    });
             }
         };
 
         // only enable achievements and leaderboard for signed-in users
-        var signedIn = false,
+        let signedIn = false,
             updateSignInControls = function () {
-                $("#achievementsBtn").toggleClass("disabled", !signedIn);
-                $("#leaderboardsBtn").toggleClass("disabled", !signedIn);
+                toggleClass("#achievementsBtn", "disabled", !signedIn);
+                toggleClass("#leaderboardsBtn", "disabled", !signedIn);
             };
         PubSub.subscribe(PubSub.ChannelId.SignIn, function () {
             signedIn = true;
@@ -185,10 +220,10 @@ define("ui/InterfaceManager", [
             updateSignInControls();
         });
 
-        var onInitializePanel = function (panelId) {
+        const onInitializePanel = function (panelId) {
             // initialize the MENU panel
             if (panelId == PanelId.MENU) {
-                $("#playBtn").click(function () {
+                on("#playBtn", "click", function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
 
                     if (analytics.onPlayClicked) {
@@ -196,18 +231,18 @@ define("ui/InterfaceManager", [
                     }
 
                     VideoManager.playIntroVideo(function () {
-                        var firstLevelStars = ScoreManager.getStars(0, 0) || 0;
+                        const firstLevelStars = ScoreManager.getStars(0, 0) || 0;
                         if (firstLevelStars === 0) {
                             // start the first level immediately
                             _this.noMenuStartLevel(0, 0);
                         } else {
-                            var panelId = edition.disableBoxMenu ? PanelId.LEVELS : PanelId.BOXES;
+                            const panelId = edition.disableBoxMenu ? PanelId.LEVELS : PanelId.BOXES;
                             PanelManager.showPanel(panelId, true);
                         }
                     });
                 });
 
-                $("#optionsBtn").click(function () {
+                on("#optionsBtn", "click", function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     // see if there is a custom settings panel we should trigger
                     if (platform.customOptions) {
@@ -217,95 +252,94 @@ define("ui/InterfaceManager", [
                     }
                 });
 
-                $("#achievementsBtn")
-                    .click(function () {
-                        if (signedIn) {
-                            SoundMgr.playSound(ResourceId.SND_TAP);
-                            PanelManager.showPanel(PanelId.ACHIEVEMENTS);
-                        }
-                    })
-                    .toggleClass("disabled", !signedIn);
+                on("#achievementsBtn", "click", function () {
+                    if (signedIn) {
+                        SoundMgr.playSound(ResourceId.SND_TAP);
+                        PanelManager.showPanel(PanelId.ACHIEVEMENTS);
+                    }
+                });
+                toggleClass("#achievementsBtn", "disabled", !signedIn);
 
-                $("#leaderboardsBtn")
-                    .click(function () {
-                        if (signedIn) {
-                            SoundMgr.playSound(ResourceId.SND_TAP);
-                            PanelManager.showPanel(PanelId.LEADERBOARDS);
-                        }
-                    })
-                    .toggleClass("disabled", !signedIn);
+                on("#leaderboardsBtn", "click", function () {
+                    if (signedIn) {
+                        SoundMgr.playSound(ResourceId.SND_TAP);
+                        PanelManager.showPanel(PanelId.LEADERBOARDS);
+                    }
+                });
+                toggleClass("#leaderboardsBtn", "disabled", !signedIn);
 
                 // reset popup buttons
-                var resetTimer = null;
-                $("#resetYesBtn")
-                    .on(PointerCapture.startEventName, function () {
-                        SoundMgr.playSound(ResourceId.SND_TAP);
-                        resetTimer = setTimeout(function () {
-                            Dialogs.closePopup();
-                            resetTimer = null;
+                let resetTimer = null;
+                on("#resetYesBtn", PointerCapture.startEventName, function () {
+                    SoundMgr.playSound(ResourceId.SND_TAP);
+                    resetTimer = setTimeout(function () {
+                        Dialogs.closePopup();
+                        resetTimer = null;
 
-                            settings.clear();
+                        settings.clear();
 
-                            //reset scores
-                            ScoreManager.resetGame();
+                        //reset scores
+                        ScoreManager.resetGame();
 
-                            // lock all the boxes
-                            BoxManager.resetLocks();
+                        // lock all the boxes
+                        BoxManager.resetLocks();
 
-                            PubSub.publish(PubSub.ChannelId.LoadIntroVideo);
-                        }, 3000); // wait 3 seconds in case user changes their mind
-                    })
-                    .on(PointerCapture.endEventName, function () {
-                        if (resetTimer != null) {
-                            clearTimeout(resetTimer);
-                        }
-                    });
+                        PubSub.publish(PubSub.ChannelId.LoadIntroVideo);
+                    }, 3000); // wait 3 seconds in case user changes their mind
+                });
+                on("#resetYesBtn", PointerCapture.endEventName, function () {
+                    if (resetTimer != null) {
+                        clearTimeout(resetTimer);
+                    }
+                });
 
                 // mini options panel
 
                 updateMiniSoundButton(false, "optionSound");
-                $("#optionSound").click(function () {
+                on("#optionSound", "click", function () {
                     updateMiniSoundButton(true, "optionSound", "optionMsg");
                 });
 
-                var hdtoggle;
+                let hdtoggle;
                 if (_this.useHDVersion) {
-                    $("#optionHd").addClass("activeResolution");
-                    $("#optionSd").addClass("inActiveResolution");
-                    $("#optionSd").addClass("ctrPointer");
-                    $("#optionSd").hover(
+                    addClass("#optionHd", "activeResolution");
+                    addClass("#optionSd", "inActiveResolution");
+                    addClass("#optionSd", "ctrPointer");
+                    hover(
+                        "#optionSd",
                         function () {
-                            showMiniOptionMessage(
-                                "optionMsg",
-                                Lang.menuText(MenuStringId.RELOAD_SD),
-                                4000
-                            );
+                            showMiniOptionMessage("optionMsg", Lang.menuText(MenuStringId.RELOAD_SD), 4000);
                         },
                         function () {
-                            $("#optionMsg").stop(true, true).fadeOut(500);
+                            const optionMsg = getElement("#optionMsg");
+                            if (optionMsg) {
+                                stopAnimations(optionMsg);
+                                fadeOut(optionMsg, 500);
+                            }
                         }
                     );
                     hdtoggle = "optionSd";
                 } else {
-                    $("#optionSd").addClass("activeResolution");
-                    $("#optionHd").addClass("inActiveResolution");
-                    $("#optionHd").addClass("ctrPointer");
-                    $("#optionHd").hover(
+                    addClass("#optionSd", "activeResolution");
+                    addClass("#optionHd", "inActiveResolution");
+                    addClass("#optionHd", "ctrPointer");
+                    hover(
+                        "#optionHd",
                         function () {
-                            showMiniOptionMessage(
-                                "optionMsg",
-                                Lang.menuText(MenuStringId.RELOAD_HD),
-                                4000
-                            );
+                            showMiniOptionMessage("optionMsg", Lang.menuText(MenuStringId.RELOAD_HD), 4000);
                         },
                         function () {
-                            $("#optionMsg").stop(true, true).fadeOut(500);
+                            const optionMsg = getElement("#optionMsg");
+                            if (optionMsg) {
+                                stopAnimations(optionMsg);
+                                fadeOut(optionMsg, 500);
+                            }
                         }
                     );
                     hdtoggle = "optionHd";
                 }
 
-                $("#" + hdtoggle).click(function (e) {
+                on("#" + hdtoggle, "click", function () {
                     settings.setIsHD(!_this.useHDVersion);
                     window.location.reload(); // refresh the page
                 });
@@ -334,7 +368,7 @@ define("ui/InterfaceManager", [
             // initialize the BOXES panel
             else if (panelId == PanelId.BOXES) {
                 // handles clicking on the circular back button
-                $("#boxBack").click(function () {
+                on("#boxBack", "click", function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.MENU);
                 });
@@ -342,13 +376,13 @@ define("ui/InterfaceManager", [
                 var panel = PanelManager.getPanelById(panelId);
                 panel.init(InterfaceManager);
             } else if (panelId == PanelId.PASSWORD) {
-                $("#boxEnterCodeButton").click(function () {
+                on("#boxEnterCodeButton", "click", function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.PASSWORD);
                 });
 
                 // handles clicking on the circular back button
-                $("#codeBack").click(function () {
+                on("#codeBack", "click", function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.BOXES);
                 });
@@ -359,9 +393,9 @@ define("ui/InterfaceManager", [
 
             // initialize the LEVELS panel
             else if (panelId == PanelId.LEVELS) {
-                $("#levelBack").click(function () {
+                on("#levelBack", "click", function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    var panelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
+                    const panelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
                     PanelManager.showPanel(panelId);
                 });
 
@@ -371,42 +405,38 @@ define("ui/InterfaceManager", [
                 var panel = PanelManager.getPanelById(panelId);
                 panel.init(InterfaceManager);
             } else if (panelId == PanelId.GAME) {
-                $("#gameRestartBtn").click(function () {
+                on("#gameRestartBtn", "click", function () {
                     if (_this.isTransitionActive) return;
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     openLevel(BoxManager.currentLevelIndex, true); // is a restart
                 });
 
-                $("#gameMenuBtn").click(function () {
+                on("#gameMenuBtn", "click", function () {
                     if (_this.isTransitionActive) return;
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     openLevelMenu();
                 });
             } else if (panelId == PanelId.GAMEMENU) {
-                $("#continueBtn").click(function () {
+                on("#continueBtn", "click", function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     closeLevelMenu();
                     RootController.resumeLevel();
                 });
 
-                $("#skipBtn").click(function () {
+                on("#skipBtn", "click", function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     closeLevelMenu();
                     //unlock next level
                     if (BoxManager.isNextLevelPlayable()) {
-                        ScoreManager.setStars(
-                            BoxManager.currentBoxIndex,
-                            BoxManager.currentLevelIndex,
-                            0
-                        );
+                        ScoreManager.setStars(BoxManager.currentBoxIndex, BoxManager.currentLevelIndex, 0);
                         openLevel(BoxManager.currentLevelIndex + 1, false, true);
                     } else {
-                        $("#gameBtnTray").hide();
+                        hide("#gameBtnTray");
                         completeBox();
                     }
                 });
 
-                $("#selectBtn").click(function () {
+                on("#selectBtn", "click", function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     closeLevelMenu();
                     closeLevel();
@@ -415,7 +445,7 @@ define("ui/InterfaceManager", [
                     _this.closeBox();
                 });
 
-                $("#menuBtn").click(function () {
+                on("#menuBtn", "click", function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     closeLevelMenu();
                     closeLevel();
@@ -426,7 +456,7 @@ define("ui/InterfaceManager", [
 
                 // mini options panel
                 updateMiniSoundButton(false, "gameSound");
-                $("#gameSound").click(function () {
+                on("#gameSound", "click", function () {
                     updateMiniSoundButton(true, "gameSound", "gameMsg");
                 });
 
@@ -438,7 +468,7 @@ define("ui/InterfaceManager", [
                     setImageBigText("#menuBtn img", MenuStringId.MAIN_MENU);
                 });
             } else if (panelId == PanelId.LEVELCOMPLETE) {
-                $("#nextBtn").click(function () {
+                on("#nextBtn", "click", function () {
                     if (_this.isTransitionActive) return;
                     notifyBeginTransition(1000, "next level");
                     SoundMgr.playSound(ResourceId.SND_TAP);
@@ -450,14 +480,14 @@ define("ui/InterfaceManager", [
                     }
                 });
 
-                $("#replayBtn").click(function () {
+                on("#replayBtn", "click", function () {
                     if (_this.isTransitionActive) return;
                     notifyBeginTransition(1000, "replay");
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     openLevel(BoxManager.currentLevelIndex);
                 });
 
-                $("#lrMenuBtn").click(function () {
+                on("#lrMenuBtn", "click", function () {
                     if (_this.isTransitionActive) return;
                     notifyBeginTransition(1000, "level menu");
                     SoundMgr.playSound(ResourceId.SND_TAP);
@@ -479,14 +509,14 @@ define("ui/InterfaceManager", [
                     });
                 });
             } else if (panelId == PanelId.GAMECOMPLETE) {
-                $("#gameCompleteBack").click(function () {
+                on("#gameCompleteBack", "click", function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.MENU);
                     GameBorder.hide();
                 });
 
-                $("#finalShareBtn").click(function () {
-                    var possibleStars = BoxManager.possibleStars(),
+                on("#finalShareBtn", "click", function () {
+                    const possibleStars = BoxManager.possibleStars(),
                         totalStars = ScoreManager.totalStars();
 
                     SocialHelper.postToFeed(
@@ -500,42 +530,41 @@ define("ui/InterfaceManager", [
                 });
             } else if (panelId == PanelId.OPTIONS) {
                 // sound effects
-                var updateSoundOption = platform.updateSoundOption,
-                    $soundBtn = $("#soundBtn"),
+                const updateSoundOption = platform.updateSoundOption,
+                    soundBtn = document.getElementById("soundBtn"),
                     onSoundButtonChange = function () {
-                        var isSoundOn = !settings.getSoundEnabled();
+                        const isSoundOn = !settings.getSoundEnabled();
                         SoundMgr.setSoundEnabled(isSoundOn);
                         SoundMgr.playSound(ResourceId.SND_TAP);
-                        updateSoundOption($soundBtn, isSoundOn);
+                        updateSoundOption(soundBtn, isSoundOn);
                         updateMiniSoundButton(false, "gameSound");
                         updateMiniSoundButton(false, "optionSound");
                     };
-                platform.setSoundButtonChange($soundBtn, onSoundButtonChange);
+                platform.setSoundButtonChange(soundBtn, onSoundButtonChange);
 
                 // game music
-                var updateMusicOption = platform.updateMusicOption,
-                    $musicBtn = $("#musicBtn"),
+                const updateMusicOption = platform.updateMusicOption,
+                    musicBtn = document.getElementById("musicBtn"),
                     onMusicButtonChange = function () {
                         SoundMgr.playSound(ResourceId.SND_TAP);
-                        var isMusicOn = !settings.getMusicEnabled();
+                        const isMusicOn = !settings.getMusicEnabled();
                         SoundMgr.setMusicEnabled(isMusicOn);
-                        updateMusicOption($musicBtn, isMusicOn);
+                        updateMusicOption(musicBtn, isMusicOn);
                         updateMiniSoundButton(false, "gameSound");
                         updateMiniSoundButton(false, "optionSound");
                     };
-                platform.setMusicButtonChange($musicBtn, onMusicButtonChange);
+                platform.setMusicButtonChange(musicBtn, onMusicButtonChange);
 
                 // change language
-                var updateLangOption = platform.updateLangSetting;
+                const updateLangOption = platform.updateLangSetting;
                 platform.setLangOptionClick(function (newLangId) {
                     SoundMgr.playSound(ResourceId.SND_TAP);
 
                     // if not specified we'll assume that we should advance to
                     // the next language (so we cycle through as user clicks)
                     if (newLangId == null) {
-                        var currentIndex = edition.languages.indexOf(settings.getLangId());
-                        newLangId =
-                            edition.languages[(currentIndex + 1) % edition.languages.length];
+                        const currentIndex = edition.languages.indexOf(settings.getLangId());
+                        newLangId = edition.languages[(currentIndex + 1) % edition.languages.length];
                     }
 
                     settings.setLangId(newLangId);
@@ -545,18 +574,19 @@ define("ui/InterfaceManager", [
                 });
 
                 // click or drag to cut
-                var updateCutOption = platform.updateCutSetting;
+                const updateCutOption = platform.updateCutSetting;
                 platform.setCutOptionClick(function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    var isClickToCut = !settings.getClickToCut();
+                    const isClickToCut = !settings.getClickToCut();
                     settings.setClickToCut(isClickToCut);
                     updateCutOption(isClickToCut);
                 });
 
                 // reset button
-                var $resetBtn = $("#resetBtn").click(function () {
+                const resetBtn = document.getElementById("resetBtn");
+                resetBtn.addEventListener("click", function () {
                     // create localized text images
-                    var resetTextImg = Text.drawBig({
+                    const resetTextImg = Text.drawBig({
                             text: Lang.menuText(MenuStringId.RESET_TEXT),
                             alignment: Alignment.CENTER,
 
@@ -572,14 +602,23 @@ define("ui/InterfaceManager", [
                         });
 
                     // clear existing text image and append to placeholder divs
-                    $("#resetText").empty().append($(resetTextImg));
-                    $("#resetHoldYes").empty().append($(resetHoldYesImg));
+                    const resetTextContainer = getElement("#resetText");
+                    if (resetTextContainer) {
+                        empty(resetTextContainer);
+                        append(resetTextContainer, resetTextImg);
+                    }
+
+                    const resetHoldYesContainer = getElement("#resetHoldYes");
+                    if (resetHoldYesContainer) {
+                        empty(resetHoldYesContainer);
+                        append(resetHoldYesContainer, resetHoldYesImg);
+                    }
 
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     Dialogs.showPopup("resetGame");
                 });
 
-                $("#optionsBack").click(function () {
+                document.getElementById("optionsBack").addEventListener("click", function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.MENU);
                 });
@@ -588,37 +627,40 @@ define("ui/InterfaceManager", [
                 platform.toggleLangUI(!edition.disableLanguageOption);
 
                 // update options menu when the language changes
-                var refreshOptionsButtons = function () {
+                const refreshOptionsButtons = function () {
                     setImageBigText("#optionsTitle img", MenuStringId.OPTIONS);
-                    updateSoundOption($soundBtn, settings.getSoundEnabled());
-                    updateMusicOption($musicBtn, settings.getMusicEnabled());
+                    updateSoundOption(soundBtn, settings.getSoundEnabled());
+                    updateMusicOption(musicBtn, settings.getMusicEnabled());
                     updateLangOption();
                     updateCutOption(settings.getClickToCut());
-                    platform.setResetText($resetBtn, Lang.menuText(MenuStringId.RESET));
+                    platform.setResetText(resetBtn, Lang.menuText(MenuStringId.RESET));
 
                     // apply a lang-{code} class to a language layer for css styles
-                    var langId = settings.getLangId();
+                    const langId = settings.getLangId();
                     // !LANG
-                    $("#lang")
-                        .removeClass(
+                    const langElement = getElement("#lang");
+                    if (langElement) {
+                        removeClass(
+                            langElement,
                             "lang-system lang-en lang-de lang-ru lang-fr lang-ca lang-br lang-es lang-it lang-nl lang-ko lang-ja lang-zh"
-                        )
-                        .addClass("lang-" + LangId.toCountryCode(langId));
+                        );
+                        addClass(langElement, "lang-" + LangId.toCountryCode(langId));
 
-                    if (langId >= 4 && langId <= 9) {
-                        $("#lang").addClass("lang-system");
+                        if (langId >= 4 && langId <= 9) {
+                            addClass(langElement, "lang-system");
+                        }
                     }
                 };
 
                 PubSub.subscribe(PubSub.ChannelId.LanguageChanged, refreshOptionsButtons);
                 PubSub.subscribe(PubSub.ChannelId.ShowOptionsPage, refreshOptionsButtons);
             } else if (panelId === PanelId.LEADERBOARDS) {
-                $("#leaderboardBack").click(function () {
+                on("#leaderboardBack", "click", function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.MENU);
                 });
             } else if (panelId === PanelId.ACHIEVEMENTS) {
-                $("#achievementsBack").click(function () {
+                on("#achievementsBack", "click", function () {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.MENU);
                 });
@@ -630,9 +672,9 @@ define("ui/InterfaceManager", [
         // Show Panels (called for each panel when it's shown)
         // ------------------------------------------------------------------------
 
-        var bounceTimeOut = null;
-        var onShowPanel = function (panelId) {
-            var panel = PanelManager.getPanelById(panelId);
+        let bounceTimeOut = null;
+        const onShowPanel = function (panelId) {
+            const panel = PanelManager.getPanelById(panelId);
 
             if (panelId == PanelId.MENU || panelId == PanelId.BOXES || panelId == PanelId.OPTIONS) {
                 GameBorder.fadeOut(300);
@@ -651,7 +693,7 @@ define("ui/InterfaceManager", [
                 SoundMgr.playMusic(menuMusicId);
             }
 
-            var boxPanel = PanelManager.getPanelById(PanelId.BOXES);
+            const boxPanel = PanelManager.getPanelById(PanelId.BOXES);
             if (panelId == PanelId.BOXES) {
                 BoxManager.updateBoxLocks();
                 ScoreManager.updateTotalScoreText();
@@ -660,7 +702,7 @@ define("ui/InterfaceManager", [
                 if (_this.isInAdvanceBoxMode) {
                     _this.isInAdvanceBoxMode = false;
                     setTimeout(function () {
-                        $("#levelResults").hide();
+                        hide("#levelResults");
                         boxPanel.slideToNextBox();
 
                         // if next level is not playable, show the purchase prompt
@@ -678,7 +720,7 @@ define("ui/InterfaceManager", [
                 boxPanel.onHide();
             }
 
-            var codePanel = PanelManager.getPanelById(PanelId.PASSWORD);
+            const codePanel = PanelManager.getPanelById(PanelId.PASSWORD);
             if (codePanel) {
                 if (panelId === PanelId.PASSWORD) {
                     codePanel.onShow();
@@ -696,11 +738,11 @@ define("ui/InterfaceManager", [
             //else if (panelId == PanelId.GAMEMENU) { }
             //else if (panelId == PanelId.LEVELCOMPLETE) { }
             else if (panelId === PanelId.GAMECOMPLETE) {
-                $("#levelResults").hide();
+                hide("#levelResults");
 
                 GameBorder.setGameCompleteBorder();
 
-                var gameWonText = Lang.menuText(MenuStringId.GAME_FINISHED_TEXT).replace(
+                const gameWonText = Lang.menuText(MenuStringId.GAME_FINISHED_TEXT).replace(
                     "%d",
                     ScoreManager.totalStars()
                 );
@@ -711,14 +753,17 @@ define("ui/InterfaceManager", [
                     alignment: 1,
                 });
 
-                $("#congrats")
-                    .empty()
-                    .append(
+                const congratsElement = getElement("#congrats");
+                if (congratsElement) {
+                    empty(congratsElement);
+                    append(
+                        congratsElement,
                         Text.drawBig({
                             text: Lang.menuText(MenuStringId.CONGRATULATIONS),
                             scale: 1.2 * resolution.UI_TEXT_SCALE,
                         })
                     );
+                }
 
                 Text.drawBig({
                     text: Lang.menuText(MenuStringId.SHARE_ELLIPSIS),
@@ -750,7 +795,7 @@ define("ui/InterfaceManager", [
         // reason for using a timer here is to ensure that we always clear the flag since some UI
         // will be disabled until the flag gets cleared. This is an attempt to prevent new bugs.
 
-        var transitionTimeout = null;
+        let transitionTimeout = null;
         var notifyBeginTransition = function (timeout, name) {
             _this.isTransitionActive = true;
             if (transitionTimeout != null) clearTimeout(transitionTimeout);
@@ -760,9 +805,9 @@ define("ui/InterfaceManager", [
             }, timeout);
         };
 
-        var runScoreTicker = function () {
+        const runScoreTicker = function () {
             //$('#resultTicker').text(resultTopLines[currentResultLine]);
-            $("#resultScore").text(resultBottomLines[currentResultLine]);
+            text("#resultScore", resultBottomLines[currentResultLine]);
             currentResultLine++;
             if (currentResultLine < resultTopLines.length) {
                 if (currentResultLine < resultTimeShiftIndex) {
@@ -803,13 +848,13 @@ define("ui/InterfaceManager", [
 
         var isLastLevel = function () {
             // see if we are on the last box
-            var lastPlayableBoxIndex = BoxManager.requiredCount() - 1;
+            const lastPlayableBoxIndex = BoxManager.requiredCount() - 1;
             if (BoxManager.currentBoxIndex !== lastPlayableBoxIndex) {
                 return false;
             }
 
             // on the last level?
-            var numLevels = ScoreManager.levelCount(BoxManager.currentBoxIndex);
+            const numLevels = ScoreManager.levelCount(BoxManager.currentBoxIndex);
             // unfortunately the currentLevelIndex is not zero-based
             if (BoxManager.currentLevelIndex !== numLevels) {
                 return false;
@@ -820,10 +865,10 @@ define("ui/InterfaceManager", [
 
         var completeBox = function () {
             //attempt to move to the next box
-            var boxIndex = BoxManager.currentBoxIndex;
+            const boxIndex = BoxManager.currentBoxIndex;
 
             // check for game complete
-            var requiredIndex = BoxManager.requiredCount() - 1,
+            const requiredIndex = BoxManager.requiredCount() - 1,
                 isGameComplete = boxIndex >= requiredIndex;
 
             if (isGameComplete) {
@@ -831,18 +876,18 @@ define("ui/InterfaceManager", [
                 VideoManager.playOutroVideo();
             } else {
                 _this.isInAdvanceBoxMode = true;
-                var panelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
+                const panelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
                 PanelManager.showPanel(panelId, false);
             }
         };
 
         var openLevelMenu = function () {
             RootController.pauseLevel();
-            $("#levelMenu").show();
+            show("#levelMenu");
         };
 
         var closeLevelMenu = function () {
-            $("#levelMenu").hide();
+            hide("#levelMenu");
         };
 
         this.tapeBox = function () {
@@ -863,17 +908,17 @@ define("ui/InterfaceManager", [
         };
 
         this.openBox = function openboxFunc(skip) {
-            var timeout = PanelManager.currentPanelId == PanelId.LEVELS ? 400 : 0;
+            const timeout = PanelManager.currentPanelId == PanelId.LEVELS ? 400 : 0;
 
             //fade out options elements
-            $("#levelScore").fadeOut();
-            $("#levelBack").fadeOut();
+            fadeOut("#levelScore");
+            fadeOut("#levelBack");
 
             RootController.startLevel(BoxManager.currentBoxIndex + 1, BoxManager.currentLevelIndex);
 
-            $("#levelOptions").fadeOut(timeout, function () {
+            fadeOut("#levelOptions", timeout).then(function () {
                 if (_this.isBoxOpen) {
-                    $("#levelResults").fadeOut(800);
+                    fadeOut("#levelResults", 800);
 
                     setTimeout(function () {
                         if (skip) {
@@ -902,7 +947,12 @@ define("ui/InterfaceManager", [
             setTimeout(function () {
                 // animating from game to results
                 if (!_this.isInLevelSelectMode) {
-                    $("#levelResults").delay(750).fadeIn(250);
+                    const levelResults = getElement("#levelResults");
+                    if (levelResults) {
+                        delay(levelResults, 750).then(function () {
+                            return fadeIn(levelResults, 250);
+                        });
+                    }
                 }
 
                 // close the doors
@@ -919,20 +969,20 @@ define("ui/InterfaceManager", [
             }, 250);
         };
 
-        var showLevelBackground = function () {
-            $("#levelBackground").show();
+        const showLevelBackground = function () {
+            show("#levelBackground");
         };
 
-        var hideLevelBackground = function () {
-            $("#levelBackground").hide();
+        const hideLevelBackground = function () {
+            hide("#levelBackground");
         };
 
         this.showGameUI = function () {
             hideLevelBackground();
             if (QueryStrings.showBoxBackgrounds && edition.enableBoxBackgroundEasterEgg) {
-                $("#bg").show();
+                show("#bg");
             }
-            $("#gameBtnTray").fadeIn();
+            fadeIn("#gameBtnTray");
         };
 
         this.closeGameUI = function () {
@@ -940,9 +990,9 @@ define("ui/InterfaceManager", [
             notifyBeginTransition(1000, "close game ui");
             showLevelBackground();
             if (QueryStrings.showBoxBackgrounds && edition.enableBoxBackgroundEasterEgg) {
-                $("#bg").hide();
+                hide("#bg");
             }
-            $("#gameBtnTray").fadeOut();
+            fadeOut("#gameBtnTray");
         };
 
         var resultTopLines = [],
@@ -951,41 +1001,53 @@ define("ui/InterfaceManager", [
             resultTimeShiftIndex = 0;
 
         this.onLevelWon = function (info) {
-            var stars = info.stars,
+            const stars = info.stars,
                 score = info.score,
                 levelTime = info.time;
 
             //show level results
-            var resultStatusText;
-            var currentPoints = 0;
-            var index = 0;
-            var totalStarPoints = stars * 1000;
-            var currentTime = 1;
-            var timeSlicePoints = Math.round((score - stars * 1000) / levelTime);
+            let resultStatusText;
+            let currentPoints = 0;
+            const index = 0;
+            const totalStarPoints = stars * 1000;
+            const currentTime = 1;
+            const timeSlicePoints = Math.round((score - stars * 1000) / levelTime);
 
             switch (stars) {
                 case 3:
-                    $("#resultStar1").removeClass("starEmpty").addClass("star");
-                    $("#resultStar2").removeClass("starEmpty").addClass("star");
-                    $("#resultStar3").removeClass("starEmpty").addClass("star");
+                    removeClass("#resultStar1", "starEmpty");
+                    addClass("#resultStar1", "star");
+                    removeClass("#resultStar2", "starEmpty");
+                    addClass("#resultStar2", "star");
+                    removeClass("#resultStar3", "starEmpty");
+                    addClass("#resultStar3", "star");
                     resultStatusText = Lang.menuText(MenuStringId.LEVEL_CLEARED4);
                     break;
                 case 2:
-                    $("#resultStar1").removeClass("starEmpty").addClass("star");
-                    $("#resultStar2").removeClass("starEmpty").addClass("star");
-                    $("#resultStar3").removeClass("star").addClass("starEmpty");
+                    removeClass("#resultStar1", "starEmpty");
+                    addClass("#resultStar1", "star");
+                    removeClass("#resultStar2", "starEmpty");
+                    addClass("#resultStar2", "star");
+                    removeClass("#resultStar3", "star");
+                    addClass("#resultStar3", "starEmpty");
                     resultStatusText = Lang.menuText(MenuStringId.LEVEL_CLEARED3);
                     break;
                 case 1:
-                    $("#resultStar1").removeClass("starEmpty").addClass("star");
-                    $("#resultStar2").removeClass("star").addClass("starEmpty");
-                    $("#resultStar3").removeClass("star").addClass("starEmpty");
+                    removeClass("#resultStar1", "starEmpty");
+                    addClass("#resultStar1", "star");
+                    removeClass("#resultStar2", "star");
+                    addClass("#resultStar2", "starEmpty");
+                    removeClass("#resultStar3", "star");
+                    addClass("#resultStar3", "starEmpty");
                     resultStatusText = Lang.menuText(MenuStringId.LEVEL_CLEARED2);
                     break;
                 default:
-                    $("#resultStar1").removeClass("star").addClass("starEmpty");
-                    $("#resultStar2").removeClass("star").addClass("starEmpty");
-                    $("#resultStar3").removeClass("star").addClass("starEmpty");
+                    removeClass("#resultStar1", "star");
+                    addClass("#resultStar1", "starEmpty");
+                    removeClass("#resultStar2", "star");
+                    addClass("#resultStar2", "starEmpty");
+                    removeClass("#resultStar3", "star");
+                    addClass("#resultStar3", "starEmpty");
                     resultStatusText = Lang.menuText(MenuStringId.LEVEL_CLEARED1);
                     break;
             }
@@ -997,33 +1059,39 @@ define("ui/InterfaceManager", [
             });
 
             // set stuff up
-            var valdiv = $("#resultTickerValue").hide();
-            var lbldiv = $("#resultTickerLabel").hide();
-            var resdiv = $("#resultScore").empty().hide();
-            var stamp = $("#resultImproved").hide();
-            var msgdiv = $("#resultTickerMessage").hide();
+            const valdiv = getElement("#resultTickerValue");
+            const lbldiv = getElement("#resultTickerLabel");
+            const resdiv = getElement("#resultScore");
+            const stamp = getElement("#resultImproved");
+            const msgdiv = getElement("#resultTickerMessage");
+
+            hide(valdiv);
+            hide(lbldiv);
+            if (resdiv) {
+                empty(resdiv);
+                hide(resdiv);
+            }
+            hide(stamp);
+            hide(msgdiv);
 
             // HELPER FUNCTIONS
 
-            var secondsToMin = function (sec) {
-                var m = (sec / 60) | 0,
+            const secondsToMin = function (sec) {
+                const m = (sec / 60) | 0,
                     s = Math.round(sec % 60);
                 return m + ":" + (s < 10 ? "0" + s : s);
             };
 
-            var doStarCountdown = function (from, callback) {
-                var countDownPoints = from,
+            const doStarCountdown = function (from, callback) {
+                let countDownPoints = from,
                     duration = 1000,
                     lastRender = Date.now(),
                     requestAnimationFrame = window["requestAnimationFrame"];
 
-                var renderCount = function () {
-                    var now = Date.now(),
+                const renderCount = function () {
+                    const now = Date.now(),
                         timeDelta = now - lastRender,
-                        pointDelta = Math.min(
-                            Math.round((from * timeDelta) / duration),
-                            countDownPoints
-                        );
+                        pointDelta = Math.min(Math.round((from * timeDelta) / duration), countDownPoints);
 
                     lastRender = now;
 
@@ -1032,15 +1100,15 @@ define("ui/InterfaceManager", [
                     if (countDownPoints <= 0) {
                         countDownPoints = 0;
                         currentPoints = from;
-                        lbldiv.fadeOut(400);
-                        valdiv.fadeOut(400, callback);
+                        fadeOut(lbldiv, 400);
+                        fadeOut(valdiv, 400).then(callback);
                     } else {
                         requestAnimationFrame(renderCount);
                     }
 
                     Text.drawSmall({
                         text: countDownPoints,
-                        img: valdiv[0],
+                        img: valdiv,
                         scaleToUI: true,
                         canvas: true,
                     });
@@ -1055,16 +1123,16 @@ define("ui/InterfaceManager", [
                 renderCount();
             };
 
-            var doTimeCountdown = function (fromsec, frompoints, callback) {
-                var finalPoints = currentPoints + frompoints,
+            const doTimeCountdown = function (fromsec, frompoints, callback) {
+                let finalPoints = currentPoints + frompoints,
                     countDownSecs = fromsec,
                     // between 1 and 2 secs depending on time
                     duration = Math.max(1000, 2000 - fromsec * 50),
                     lastRender = Date.now(),
                     requestAnimationFrame = window["requestAnimationFrame"];
 
-                var renderScore = function () {
-                    var now = Date.now(),
+                const renderScore = function () {
+                    const now = Date.now(),
                         percentElapsed = (now - lastRender) / duration;
 
                     lastRender = now;
@@ -1074,15 +1142,15 @@ define("ui/InterfaceManager", [
                     if (countDownSecs <= 0) {
                         countDownSecs = 0;
                         currentPoints = finalPoints;
-                        lbldiv.fadeOut(400);
-                        valdiv.fadeOut(400, callback);
+                        fadeOut(lbldiv, 400);
+                        fadeOut(valdiv, 400).then(callback);
                     } else {
                         requestAnimationFrame(renderScore);
                     }
 
                     Text.drawSmall({
                         text: secondsToMin(countDownSecs),
-                        img: valdiv[0],
+                        img: valdiv,
                         scaleToUI: true,
                         canvas: true,
                     });
@@ -1102,72 +1170,74 @@ define("ui/InterfaceManager", [
             // set up the star bonus countdown
             Text.drawSmall({
                 text: Lang.menuText(MenuStringId.STAR_BONUS),
-                img: lbldiv[0],
+                img: lbldiv,
                 scaleToUI: true,
                 canvas: true,
             });
             Text.drawSmall({
                 text: totalStarPoints,
-                img: valdiv[0],
+                img: valdiv,
                 scaleToUI: true,
                 canvas: true,
             });
-            $("#resultScore img").remove();
-            $("#resultScore canvas").remove();
+            if (resdiv) {
+                resdiv.querySelectorAll("img").forEach(function (node) {
+                    node.remove();
+                });
+                resdiv.querySelectorAll("canvas").forEach(function (node) {
+                    node.remove();
+                });
+            }
 
             // run the animation sequence
             setTimeout(function () {
-                lbldiv.fadeIn(300);
-                valdiv.fadeIn(300);
-                resdiv.fadeIn(300, function () {
+                fadeIn(lbldiv, 300);
+                fadeIn(valdiv, 300);
+                fadeIn(resdiv, 300).then(function () {
                     doStarCountdown(totalStarPoints, function () {
                         Text.drawSmall({
                             text: Lang.menuText(MenuStringId.TIME),
-                            img: lbldiv[0],
+                            img: lbldiv,
                             scaleToUI: true,
                             canvas: true,
                         });
-                        lbldiv.fadeIn(300);
+                        fadeIn(lbldiv, 300);
                         Text.drawSmall({
                             text: secondsToMin(Math.ceil(levelTime)),
-                            img: valdiv[0],
+                            img: valdiv,
                             scaleToUI: true,
                             canvas: true,
                         });
-                        valdiv.fadeIn(300, function () {
-                            doTimeCountdown(
-                                Math.ceil(levelTime),
-                                score - currentPoints,
-                                function () {
-                                    msgdiv.fadeIn(300);
-                                    // show the improved result stamp
-                                    if (prevScore != null && prevScore > 0 && score > prevScore) {
-                                        if ($.browser.msie) {
-                                            stamp.show();
-                                        } else {
-                                            stamp.animate(
-                                                { scale: 2.5, opacity: 0.0 },
-                                                0,
-                                                function () {
-                                                    stamp.css("display", "block");
-                                                    stamp.animate(
-                                                        { scale: 1.0, opacity: 1.0 },
-                                                        600,
-                                                        "easeInCubic"
-                                                    );
-                                                }
-                                            );
-                                        }
+                        fadeIn(valdiv, 300).then(function () {
+                            doTimeCountdown(Math.ceil(levelTime), score - currentPoints, function () {
+                                fadeIn(msgdiv, 300);
+                                // show the improved result stamp
+                                if (prevScore != null && prevScore > 0 && score > prevScore) {
+                                    if (isMsieBrowser) {
+                                        show(stamp);
+                                    } else if (stamp) {
+                                        stamp.style.display = "block";
+                                        stamp.style.transform = "scale(2.5)";
+                                        stamp.style.opacity = "0";
+                                        stamp.style.transition = "none";
+                                        requestAnimationFrame(function () {
+                                            stamp.style.transition = "transform 600ms ease-in, opacity 600ms ease-in";
+                                            stamp.style.transform = "scale(1)";
+                                            stamp.style.opacity = "1";
+                                            setTimeout(function () {
+                                                stamp.style.transition = "";
+                                            }, 600);
+                                        });
                                     }
                                 }
-                            );
+                            });
                         });
                     });
                 });
             }, 1000);
 
             // TODO: right now boxIndex is zero based and levelIndex starts at 1?
-            var boxIndex = BoxManager.currentBoxIndex,
+            const boxIndex = BoxManager.currentBoxIndex,
                 levelIndex = BoxManager.currentLevelIndex;
 
             // save the prev score
@@ -1178,10 +1248,7 @@ define("ui/InterfaceManager", [
             ScoreManager.setStars(boxIndex, levelIndex - 1, stars);
 
             // unlock next level
-            if (
-                ScoreManager.levelCount(boxIndex) > levelIndex &&
-                BoxManager.isNextLevelPlayable()
-            ) {
+            if (ScoreManager.levelCount(boxIndex) > levelIndex && BoxManager.isNextLevelPlayable()) {
                 ScoreManager.setStars(boxIndex, levelIndex, 0);
             }
 
@@ -1207,21 +1274,18 @@ define("ui/InterfaceManager", [
         };
 
         // show hide the "behind the scenes" link and the feedback tab when the screen changes size
-        var isDevLinkVisible = true;
+        let isDevLinkVisible = true;
         this.updateDevLink = function () {
-            if ($(window).width() < resolution.uiScaledNumber(1024) + 120 && isDevLinkVisible) {
-                $("#moreLink").fadeOut(function () {
+            if (width(window) < resolution.uiScaledNumber(1024) + 120 && isDevLinkVisible) {
+                fadeOut("#moreLink").then(function () {
                     isDevLinkVisible = false;
                 });
-                $("#zenbox_tab").fadeOut();
-            } else if (
-                $(window).width() > resolution.uiScaledNumber(1024) + 120 &&
-                !isDevLinkVisible
-            ) {
-                $("#moreLink").fadeIn(function () {
+                fadeOut("#zenbox_tab");
+            } else if (width(window) > resolution.uiScaledNumber(1024) + 120 && !isDevLinkVisible) {
+                fadeIn("#moreLink").then(function () {
                     isDevLinkVisible = true;
                 });
-                $("#zenbox_tab").fadeIn();
+                fadeIn("#zenbox_tab");
             }
         };
 
@@ -1263,13 +1327,13 @@ define("ui/InterfaceManager", [
             GameBorder.domReady();
 
             // pause game / music when the user switches tabs
-            $(window).blur(_this.pauseGame);
+            window.addEventListener("blur", _this.pauseGame);
 
             // when returning to the tab, resume music (except when on game menu - no music there)
-            $(window).focus(_this.resumeGame);
+            window.addEventListener("focus", _this.resumeGame);
 
             // hide behind the scenes when we update the page
-            $(window).resize(function () {
+            window.addEventListener("resize", function () {
                 _this.updateDevLink();
             });
         };
@@ -1290,7 +1354,7 @@ define("ui/InterfaceManager", [
                 this.noMenuStartLevel(QueryStrings.box - 1, QueryStrings.level - 1);
             } else if (settings.showMenu) {
                 // make sure the game is not password locked
-                var passwordPanel = PanelManager.getPanelById(PanelId.PASSWORD);
+                const passwordPanel = PanelManager.getPanelById(PanelId.PASSWORD);
                 if (passwordPanel && passwordPanel.isGameLocked && passwordPanel.isGameLocked()) {
                     Doors.renderDoors(true, 0);
                     PanelManager.showPanel(PanelId.PASSWORD, true);
@@ -1299,7 +1363,7 @@ define("ui/InterfaceManager", [
                 }
             }
 
-            var im = this;
+            const im = this;
             PubSub.subscribe(PubSub.ChannelId.PauseGame, function () {
                 im.pauseGame();
             });

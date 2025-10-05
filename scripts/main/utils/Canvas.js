@@ -1,5 +1,5 @@
 define("utils/Canvas", ["core/RGBAColor"], function (RGBAColor) {
-    var Canvas = {
+    const Canvas = {
         domReady: function (elementId) {
             this.setTarget(document.getElementById(elementId));
         },
@@ -14,7 +14,7 @@ define("utils/Canvas", ["core/RGBAColor"], function (RGBAColor) {
          * @param color {RGBAColor}
          */
         setStyleColor: function (color) {
-            var rgba = color.rgbaStyle();
+            const rgba = color.rgbaStyle();
             this.context.fillStyle = rgba;
             this.context.strokeStyle = rgba;
             //console.log('Color changed to: ' + rgba);
@@ -32,7 +32,7 @@ define("utils/Canvas", ["core/RGBAColor"], function (RGBAColor) {
          * @param style
          */
         fillTriangleStrip: function (points, style) {
-            var ctx = this.context,
+            let ctx = this.context,
                 point = points[0];
             ctx.fillStyle = style;
             ctx.beginPath();

@@ -2,7 +2,7 @@ define("resources/MenuStringId", [], function () {
     /**
      * @enum {number}
      */
-    var MenuId = {
+    const MenuId = {
         // extracted from ios sources
         PLAY: 0,
         OPTIONS: 1,

@@ -6,7 +6,7 @@ define("resources/Lang", [
     "utils/Log",
 ], function (edition, settings, LangId, menuStrings, Log) {
     // helper to return the correct string from a loc entry
-    var getLocalizedText = function (locEntry) {
+    const getLocalizedText = function (locEntry) {
         // note: we default to english if entry is blank
         // !LANG
         switch (settings.getLangId()) {
@@ -38,9 +38,9 @@ define("resources/Lang", [
         }
     };
 
-    var Lang = {
+    const Lang = {
         boxText: function (boxIndex, includeNumber) {
-            var locEntry = edition.boxText[boxIndex],
+            let locEntry = edition.boxText[boxIndex],
                 text = getLocalizedText(locEntry);
 
             // all boxes except last one get prepended numbers
@@ -51,7 +51,7 @@ define("resources/Lang", [
             return text;
         },
         menuText: function (menuStringId) {
-            var locEntry,
+            let locEntry,
                 i,
                 len = menuStrings.length;
             for (i = 0; i < len; i++) {

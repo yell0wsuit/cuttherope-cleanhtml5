@@ -1,7 +1,7 @@
 define("achievements/AchievementId", [], function () {
     // This is the internal CTR id for achievements. XBOX and other
     // game centers may use different ids.
-    var AchievementId = {
+    const AchievementId = {
         BRONZE_SCISSORS: 0,
         SILVER_SCISSORS: 1,
         GOLDEN_SCISSORS: 2,

@@ -4,7 +4,7 @@ define("physics/ConstraintSystem", [
     "utils/Log",
     "physics/satisfyConstraintArray",
 ], function (Class, Vector, Log, satisfyConstraintArray) {
-    var ConstraintSystem = Class.extend({
+    const ConstraintSystem = Class.extend({
         init: function () {
             this.relaxationTimes = 1;
 
@@ -20,12 +20,12 @@ define("physics/ConstraintSystem", [
         },
         log: function () {
             Log.debug("Constraint System Log:");
-            for (var i = 0, partsLen = this.parts.length; i < partsLen; i++) {
-                var cp = this.parts[i];
+            for (let i = 0, partsLen = this.parts.length; i < partsLen; i++) {
+                const cp = this.parts[i];
                 Log.debug("-- Point: " + cp.posString());
-                for (var j = 0, constraintsLen = cp.constraints.length; j < constraintsLen; j++) {
-                    var c = cp.constraints[j];
-                    var cInfo = "---- Constraint: " + c.cp.posString() + " len: " + c.restLength;
+                for (let j = 0, constraintsLen = cp.constraints.length; j < constraintsLen; j++) {
+                    const c = cp.constraints[j];
+                    const cInfo = "---- Constraint: " + c.cp.posString() + " len: " + c.restLength;
                     Log.debug(cInfo);
                 }
             }
@@ -34,12 +34,12 @@ define("physics/ConstraintSystem", [
             this.parts.splice(index, 1);
         },
         update: function (delta) {
-            var parts = this.parts,
+            const parts = this.parts,
                 numParts = parts.length,
                 relaxationTimes = this.relaxationTimes;
 
             // update each part
-            for (var i = 0; i < numParts; i++) {
+            for (let i = 0; i < numParts; i++) {
                 parts[i].update(delta);
             }
 

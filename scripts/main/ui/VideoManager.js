@@ -8,19 +8,9 @@ define("ui/VideoManager", [
     "game/CTRSoundMgr",
     "utils/PubSub",
     "ui/ScoreManager",
-], function (
-    edition,
-    resolution,
-    platform,
-    PanelId,
-    PanelManager,
-    settings,
-    SoundMgr,
-    PubSub,
-    ScoreManager
-) {
-    var ensureVideoElement = function () {
-        var vid = document.getElementById("vid");
+], function (edition, resolution, platform, PanelId, PanelManager, settings, SoundMgr, PubSub, ScoreManager) {
+    const ensureVideoElement = function () {
+        let vid = document.getElementById("vid");
         if (!vid) {
             try {
                 vid = document.createElement("video");
@@ -30,19 +20,55 @@ define("ui/VideoManager", [
             }
             vid.id = "vid";
             vid.className = "ctrPointer";
-            $("#video").append(vid);
+            document.getElementById("video").appendChild(vid);
         }
         return vid;
     };
 
-    var closeIntroCallback = null;
+    const fadeIn = function (element, duration, callback) {
+        element.style.opacity = 0;
+        element.style.display = "block";
+        let start = null;
+        const animate = (timestamp) => {
+            if (!start) start = timestamp;
+            const progress = timestamp - start;
+            element.style.opacity = Math.min(progress / duration, 1);
+            if (progress < duration) {
+                requestAnimationFrame(animate);
+            } else if (callback) {
+                callback();
+            }
+        };
+        requestAnimationFrame(animate);
+    };
+
+    const fadeOut = function (element, duration, callback) {
+        element.style.opacity = 1;
+        let start = null;
+        const animate = (timestamp) => {
+            if (!start) start = timestamp;
+            const progress = timestamp - start;
+            element.style.opacity = Math.max(1 - progress / duration, 0);
+            if (progress < duration) {
+                requestAnimationFrame(animate);
+            } else {
+                element.style.display = "none";
+                if (callback) {
+                    callback();
+                }
+            }
+        };
+        requestAnimationFrame(animate);
+    };
+
+    let closeIntroCallback = null;
 
     var VideoManager = {
         loadIntroVideo: function () {
             // only load the video if the first level hasn't been played
-            var firstLevelStars = ScoreManager.getStars(0, 0) || 0;
+            const firstLevelStars = ScoreManager.getStars(0, 0) || 0;
             if (firstLevelStars === 0) {
-                var vid = ensureVideoElement(),
+                const vid = ensureVideoElement(),
                     size = resolution.VIDEO_WIDTH,
                     extension = platform.getVideoExtension(),
                     baseUrl = platform.videoBaseUrl;
@@ -60,15 +86,18 @@ define("ui/VideoManager", [
         removeIntroVideo: function () {
             // we want to remove the video element to free up resources
             // as suggested by the IE team
-            var firstLevelStars = ScoreManager.getStars(0, 0) || 0;
+            const firstLevelStars = ScoreManager.getStars(0, 0) || 0;
             if (firstLevelStars > 0) {
-                $("#vid").remove();
+                const vid = document.getElementById("vid");
+                if (vid) {
+                    vid.remove();
+                }
             }
         },
 
         playIntroVideo: function (callback) {
             // always show the intro video if the 1st level hasn't been played
-            var firstLevelStars = ScoreManager.getStars(0, 0) || 0,
+            const firstLevelStars = ScoreManager.getStars(0, 0) || 0,
                 // the video might not exist if the user just reset the game
                 // (we don't want to replay it during the same app session)
                 vid = document.getElementById("vid");
@@ -77,7 +106,7 @@ define("ui/VideoManager", [
 
             if (firstLevelStars === 0 && vid) {
                 // make sure we can play the video
-                var readyState = vid["readyState"];
+                const readyState = vid["readyState"];
                 if (
                     readyState === 2 || // HAVE_CURRENT_DATA (loadeddata)
                     readyState === 3 || // HAVE_FUTURE_DATA  (canplay)
@@ -86,7 +115,7 @@ define("ui/VideoManager", [
                     // HAVE_ENOUGH_DATA  (canplaythrough)
 
                     SoundMgr.pauseMusic();
-                    $(vid).fadeIn(300, function () {
+                    fadeIn(vid, 300, function () {
                         vid.play();
                     });
                     vid.addEventListener("ended", VideoManager.closeIntroVideo);
@@ -99,11 +128,13 @@ define("ui/VideoManager", [
         },
 
         closeIntroVideo: function () {
-            var vid = document.getElementById("vid");
-            $(vid).fadeOut(500, function () {
-                vid.pause();
-                vid.seek = 0;
-            });
+            const vid = document.getElementById("vid");
+            if (vid) {
+                fadeOut(vid, 500, function () {
+                    vid.pause();
+                    vid.currentTime = 0;
+                });
+            }
 
             if (closeIntroCallback) {
                 closeIntroCallback();
@@ -115,7 +146,7 @@ define("ui/VideoManager", [
             // because we only show the intro video once per session.
 
             // get the size and supported format extension
-            var vid = ensureVideoElement(),
+            const vid = ensureVideoElement(),
                 size = resolution.VIDEO_WIDTH,
                 extension = platform.getVideoExtension(),
                 baseUrl = platform.videoBaseUrl;
@@ -132,10 +163,10 @@ define("ui/VideoManager", [
         },
 
         playOutroVideo: function () {
-            var vid = document.getElementById("vid");
+            const vid = document.getElementById("vid");
             if (vid) {
                 // make sure we can play the video
-                var readyState = vid["readyState"];
+                const readyState = vid["readyState"];
                 if (
                     readyState === 2 || // HAVE_CURRENT_DATA (loadeddata)
                     readyState === 3 || // HAVE_FUTURE_DATA  (canplay)
@@ -147,13 +178,13 @@ define("ui/VideoManager", [
                     if (!SoundMgr.musicEnabled) {
                         vid.volume = 0;
                     }
-                    $(vid).fadeIn(300, function () {
+                    fadeIn(vid, 300, function () {
                         vid.play();
                     });
                     vid.addEventListener("ended", VideoManager.closeOutroVideo);
                     vid.addEventListener("mousedown", VideoManager.closeOutroVideo);
                 } else {
-                    $(vid).remove();
+                    vid.remove();
                     PanelManager.showPanel(PanelId.GAMECOMPLETE, false);
                 }
             }
@@ -161,12 +192,14 @@ define("ui/VideoManager", [
 
         closeOutroVideo: function () {
             PanelManager.showPanel(PanelId.GAMECOMPLETE, true);
-            var $vid = $("#vid");
-            $vid.fadeOut(500, function () {
-                $vid[0].pause();
-                $vid[0].seek = 0;
-                $vid.remove();
-            });
+            const vid = document.getElementById("vid");
+            if (vid) {
+                fadeOut(vid, 500, function () {
+                    vid.pause();
+                    vid.currentTime = 0;
+                    vid.remove();
+                });
+            }
         },
 
         domReady: function () {

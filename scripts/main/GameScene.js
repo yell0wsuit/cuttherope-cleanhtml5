@@ -122,12 +122,12 @@ define("GameScene", [
      * @const
      * @type {number}
      */
-    var LEVEL1_ARROW_SPECIAL_ID = 2;
+    const LEVEL1_ARROW_SPECIAL_ID = 2;
 
     /**
      * @enum {number}
      */
-    var RestartState = {
+    const RestartState = {
         FADE_IN: 0,
         FADE_OUT: 1,
     };
@@ -135,7 +135,7 @@ define("GameScene", [
     /**
      * @enum {number}
      */
-    var CameraMove = {
+    const CameraMove = {
         TO_CANDY_PART: 0,
         TO_CANDY: 1,
     };
@@ -143,7 +143,7 @@ define("GameScene", [
     /**
      * @enum {number}
      */
-    var ButtonMode = {
+    const ButtonMode = {
         GRAVITY: 0,
         SPIKES: 1,
     };
@@ -151,7 +151,7 @@ define("GameScene", [
     /**
      * @enum {number}
      */
-    var PartsType = {
+    const PartsType = {
         SEPARATE: 0,
         DISTANCE: 1,
         NONE: 2,
@@ -161,63 +161,63 @@ define("GameScene", [
      * @const
      * @type {number}
      */
-    var SCOMBO_TIMEOUT = 0.2;
+    const SCOMBO_TIMEOUT = 0.2;
 
     /**
      * @const
      * @type {number}
      */
-    var SCUT_SCORE = 10;
+    const SCUT_SCORE = 10;
 
     /**
      * @const
      * @type {number}
      */
-    var MAX_LOST_CANDIES = 3;
+    const MAX_LOST_CANDIES = 3;
 
     /**
      * @const
      * @type {number}
      */
-    var ROPE_CUT_AT_ONCE_TIMEOUT = 0.1;
+    const ROPE_CUT_AT_ONCE_TIMEOUT = 0.1;
 
     // Candy Juggler: keep candy without ropes or bubbles for 30 secs
-    var CANDY_JUGGLER_TIME = 30;
+    const CANDY_JUGGLER_TIME = 30;
 
     /**
      * @const
      * @type {number}
      */
-    var BLINK_SKIP = 3;
+    const BLINK_SKIP = 3;
 
     /**
      * @const
      * @type {number}
      */
-    var MOUTH_OPEN_TIME = 1;
+    const MOUTH_OPEN_TIME = 1;
 
     /**
      * @const
      * @type {number}
      */
-    var PUMP_TIMEOUT = 0.05;
+    const PUMP_TIMEOUT = 0.05;
 
     /**
      * @const
      * @type {number}
      */
-    var SOCK_SPEED_K = 0.9;
+    const SOCK_SPEED_K = 0.9;
 
     /**
      * @const
      * @type {number}
      */
-    var SOCK_COLLISION_Y_OFFSET = 25;
+    const SOCK_COLLISION_Y_OFFSET = 25;
 
     /**
      * @enum {number}
      */
-    var CandyBlink = {
+    const CandyBlink = {
         INITIAL: 0,
         STAR: 1,
     };
@@ -225,7 +225,7 @@ define("GameScene", [
     /**
      * @enum {number}
      */
-    var TutorialAnimation = {
+    const TutorialAnimation = {
         SHOW: 0,
         HIDE: 1,
     };
@@ -233,7 +233,7 @@ define("GameScene", [
     /**
      * @enum {number}
      */
-    var EarthAnimation = {
+    const EarthAnimation = {
         NORMAL: 0,
         UPSIDE_DOWN: 1,
     };
@@ -242,7 +242,7 @@ define("GameScene", [
      * Animations for Om-nom character
      * @enum {number}
      */
-    var CharAnimation = {
+    const CharAnimation = {
         IDLE: 0,
         IDLE2: 1,
         IDLE3: 2,
@@ -260,35 +260,35 @@ define("GameScene", [
      * @const
      * @type {number}
      */
-    var HUD_STARS_COUNT = 3;
+    const HUD_STARS_COUNT = 3;
 
     /**
      * @const
      * @type {number}
      */
-    var HUD_CANDIES_COUNT = 3;
+    const HUD_CANDIES_COUNT = 3;
 
     /**
      * @const
      * @type {number}
      */
-    var IMG_BGR_01_bgr = 0;
+    const IMG_BGR_01_bgr = 0;
     /**
      * @const
      * @type {number}
      */
-    var IMG_BGR_01_P2_vert_transition = 0;
-    var IMG_BGR_02_vert_transition = 1;
+    const IMG_BGR_01_P2_vert_transition = 0;
+    const IMG_BGR_02_vert_transition = 1;
 
-    var starDisappearPool = [];
-    var bubbleDisappear;
+    let starDisappearPool = [];
+    let bubbleDisappear;
 
     function applyStarImpulse(star, rd, yImpulse, delta) {
         star.applyImpulse(new Vector(-star.v.x / rd, -star.v.y / rd + yImpulse), delta);
     }
 
     function isCandyHit(bouncer, star, bouncer_radius) {
-        var bouncer_radius_double = bouncer_radius * 2;
+        const bouncer_radius_double = bouncer_radius * 2;
         return (
             Rectangle.lineInRect(
                 bouncer.t1.x,
@@ -313,9 +313,9 @@ define("GameScene", [
         );
     }
 
-    var currentPack = -1;
+    let currentPack = -1;
 
-    var GameScene = BaseElement.extend({
+    const GameScene = BaseElement.extend({
         init: function () {
             this._super();
 
@@ -340,15 +340,10 @@ define("GameScene", [
             starDisappearPool = [];
 
             for (var i = 0; i < HUD_STARS_COUNT; i++) {
-                var hs = (this.hudStars[i] = new Animation());
+                const hs = (this.hudStars[i] = new Animation());
                 hs.initTextureWithId(ResourceId.IMG_HUD_STAR);
                 hs.doRestoreCutTransparency();
-                hs.addAnimationDelay(
-                    0.05,
-                    Timeline.LoopType.NO_LOOP,
-                    IMG_HUD_STAR_Frame_1,
-                    IMG_HUD_STAR_Frame_10
-                );
+                hs.addAnimationDelay(0.05, Timeline.LoopType.NO_LOOP, IMG_HUD_STAR_Frame_1, IMG_HUD_STAR_Frame_10);
                 hs.setPause(IMG_HUD_STAR_Frame_10 - IMG_HUD_STAR_Frame_1, 0);
                 //TODO: + canvas.xOffsetScaled on next line?
                 hs.x = 10 + (hs.width + 5) * i;
@@ -391,7 +386,7 @@ define("GameScene", [
          * @return {boolean}
          */
         pointOutOfScreen: function (p) {
-            var bottomY = this.mapHeight + resolution.OUT_OF_SCREEN_ADJUSTMENT_BOTTOM,
+            const bottomY = this.mapHeight + resolution.OUT_OF_SCREEN_ADJUSTMENT_BOTTOM,
                 topY = resolution.OUT_OF_SCREEN_ADJUSTMENT_TOP,
                 outOfScreen = p.pos.y > bottomY || p.pos.y < topY;
             return outOfScreen;
@@ -404,7 +399,7 @@ define("GameScene", [
             this.target.playTimeline(CharAnimation.GREETING);
         },
         shouldSkipTutorialElement: function (element) {
-            var langId = settings.getLangId(),
+            const langId = settings.getLangId(),
                 tl = element.locale;
 
             if (LangId.fromString(tl) !== langId) {
@@ -422,7 +417,7 @@ define("GameScene", [
             bubbleDisappear.doRestoreCutTransparency();
             bubbleDisappear.anchor = Alignment.CENTER;
 
-            var a = bubbleDisappear.addAnimationDelay(
+            const a = bubbleDisappear.addAnimationDelay(
                 0.05,
                 Timeline.LoopType.NO_LOOP,
                 IMG_OBJ_BUBBLE_POP_Frame_1,
@@ -438,16 +433,14 @@ define("GameScene", [
             this.juggleTimer = 0;
 
             // load the background image and overlay
-            var bgrID = edition.levelBackgroundIds[LevelState.pack],
+            const bgrID = edition.levelBackgroundIds[LevelState.pack],
                 overlayId = edition.levelOverlayIds[LevelState.pack];
 
             if (currentPack != LevelState.pack) {
                 this.bgTexture = ResourceMgr.getTexture(bgrID);
-                $("#canvasBackground")
-                    .css({
-                        background: "url('" + this.bgTexture.image.src + "')",
-                    })
-                    .show();
+                const canvasBackground = document.getElementById("canvasBackground");
+                canvasBackground.style.background = "url('" + this.bgTexture.image.src + "')";
+                canvasBackground.style.display = "block";
 
                 currentPack = LevelState.pack;
             }
@@ -544,17 +537,9 @@ define("GameScene", [
                 2, // count
                 [IMG_OBJ_CANDY_01_glow, IMG_OBJ_CANDY_01_glow]
             );
-            var gt = this.candyBlink.getTimeline(CandyBlink.STAR);
-            gt.addKeyFrame(
-                KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0)
-            );
-            gt.addKeyFrame(
-                KeyFrame.makeColor(
-                    RGBAColor.transparent.copy(),
-                    KeyFrame.TransitionType.LINEAR,
-                    0.2
-                )
-            );
+            const gt = this.candyBlink.getTimeline(CandyBlink.STAR);
+            gt.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0));
+            gt.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.2));
             this.candyBlink.visible = false;
             this.candyBlink.anchor = this.candyBlink.parentAnchor = Alignment.CENTER;
             this.candyBlink.scaleX = this.candyBlink.scaleY = 0.71;
@@ -566,8 +551,7 @@ define("GameScene", [
             this.candyBubbleAnimation.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
             this.candyBubbleAnimation.x = this.candy.x;
             this.candyBubbleAnimation.y = this.candy.y;
-            this.candyBubbleAnimation.parentAnchor = this.candyBubbleAnimation.anchor =
-                Alignment.CENTER;
+            this.candyBubbleAnimation.parentAnchor = this.candyBubbleAnimation.anchor = Alignment.CENTER;
             this.candyBubbleAnimation.addAnimationDelay(
                 0.05,
                 Timeline.LoopType.REPLAY,
@@ -580,22 +564,21 @@ define("GameScene", [
             this.candyBubbleAnimation.drawPosIncrement = 0.0001;
 
             for (var i = 0; i < HUD_STARS_COUNT; i++) {
-                var hs = this.hudStars[i];
+                const hs = this.hudStars[i];
                 if (hs.currentTimeline) {
                     hs.currentTimeline.stop();
                 }
                 hs.setTextureQuad(IMG_HUD_STAR_Frame_1);
             }
 
-            var map = LevelState.loadedMap;
+            const map = LevelState.loadedMap;
             this.loadMap(map);
 
             // add the animations for the bubbles
             if (this.twoParts !== PartsType.NONE) {
                 this.candyBubbleAnimationL = new Animation();
                 this.candyBubbleAnimationL.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
-                this.candyBubbleAnimationL.parentAnchor = this.candyBubbleAnimationL.anchor =
-                    Alignment.CENTER;
+                this.candyBubbleAnimationL.parentAnchor = this.candyBubbleAnimationL.anchor = Alignment.CENTER;
                 this.candyBubbleAnimationL.addAnimationDelay(
                     0.05,
                     Timeline.LoopType.REPLAY,
@@ -609,8 +592,7 @@ define("GameScene", [
 
                 this.candyBubbleAnimationR = new Animation();
                 this.candyBubbleAnimationR.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
-                this.candyBubbleAnimationR.parentAnchor = this.candyBubbleAnimationR.anchor =
-                    Alignment.CENTER;
+                this.candyBubbleAnimationR.parentAnchor = this.candyBubbleAnimationR.anchor = Alignment.CENTER;
                 this.candyBubbleAnimationR.addAnimationDelay(
                     0.05,
                     Timeline.LoopType.REPLAY,
@@ -623,7 +605,7 @@ define("GameScene", [
                 this.candyBubbleAnimationR.drawPosIncrement = 0.0001;
             }
 
-            var len = this.rotatedCircles.length,
+            let len = this.rotatedCircles.length,
                 r;
             for (i = 0; i < len; i++) {
                 r = this.rotatedCircles[i];
@@ -660,14 +642,14 @@ define("GameScene", [
             // delay start candy blink
             this.dd.callObject(this, this.doCandyBlink, null, 1);
 
-            var levelLabel = new TextImage(),
+            const levelLabel = new TextImage(),
                 levelText = LevelState.pack + 1 + " - " + (LevelState.level + 1);
             levelLabel.setText(ResourceId.FNT_BIG_FONT, levelText);
             levelLabel.anchor = Alignment.BOTTOM | Alignment.LEFT;
             levelLabel.x = 37 * resolution.CANVAS_SCALE;
             levelLabel.y = resolution.CANVAS_HEIGHT - 5 * resolution.CANVAS_SCALE;
 
-            var levelLabelTitle = new TextImage();
+            const levelLabelTitle = new TextImage();
             levelLabelTitle.setText(ResourceId.FNT_BIG_FONT, Lang.menuText(MenuStringId.LEVEL));
             levelLabelTitle.anchor = Alignment.BOTTOM | Alignment.LEFT;
             levelLabelTitle.parentAnchor = Alignment.TOP | Alignment.LEFT;
@@ -676,34 +658,12 @@ define("GameScene", [
             levelLabelTitle.scaleX = levelLabelTitle.scaleY = 0.7;
             levelLabel.addChild(levelLabelTitle);
 
-            var tl = new Timeline();
-            tl.addKeyFrame(
-                KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0)
-            );
-            tl.addKeyFrame(
-                KeyFrame.makeColor(
-                    RGBAColor.transparent.copy(),
-                    KeyFrame.TransitionType.LINEAR,
-                    0.5
-                )
-            );
-            tl.addKeyFrame(
-                KeyFrame.makeColor(
-                    RGBAColor.solidOpaque.copy(),
-                    KeyFrame.TransitionType.LINEAR,
-                    0.5
-                )
-            );
-            tl.addKeyFrame(
-                KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1)
-            );
-            tl.addKeyFrame(
-                KeyFrame.makeColor(
-                    RGBAColor.transparent.copy(),
-                    KeyFrame.TransitionType.LINEAR,
-                    0.5
-                )
-            );
+            const tl = new Timeline();
+            tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0));
+            tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5));
+            tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0.5));
+            tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1));
+            tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5));
             levelLabel.addTimelineWithID(tl, 0);
             levelLabel.playTimeline(0);
             tl.onFinished = this.staticAniPool.timelineFinishedDelegate();
@@ -714,7 +674,7 @@ define("GameScene", [
             }
         },
         startCamera: function () {
-            var SCREEN_WIDTH = resolution.CANVAS_WIDTH,
+            const SCREEN_WIDTH = resolution.CANVAS_WIDTH,
                 SCREEN_HEIGHT = resolution.CANVAS_HEIGHT;
 
             if (this.mapWidth > SCREEN_WIDTH || this.mapHeight > SCREEN_HEIGHT) {
@@ -724,7 +684,7 @@ define("GameScene", [
                 this.camera.speed = 10;
                 this.cameraMoveMode = CameraMove.TO_CANDY_PART;
 
-                var startX,
+                let startX,
                     startY,
                     cameraTarget = this.twoParts !== PartsType.NONE ? this.starL : this.star;
 
@@ -746,20 +706,14 @@ define("GameScene", [
                     }
                 }
 
-                var xScroll = cameraTarget.pos.x - SCREEN_WIDTH / 2,
+                const xScroll = cameraTarget.pos.x - SCREEN_WIDTH / 2,
                     yScroll = cameraTarget.pos.y - SCREEN_HEIGHT / 2,
                     targetX = MathHelper.fitToBoundaries(xScroll, 0, this.mapWidth - SCREEN_WIDTH),
-                    targetY = MathHelper.fitToBoundaries(
-                        yScroll,
-                        0,
-                        this.mapHeight - SCREEN_HEIGHT
-                    );
+                    targetY = MathHelper.fitToBoundaries(yScroll, 0, this.mapHeight - SCREEN_HEIGHT);
 
                 this.camera.moveTo(startX, startY, true);
 
-                this.initialCameraToStarDistance = this.camera.pos.distance(
-                    new Vector(targetX, targetY)
-                );
+                this.initialCameraToStarDistance = this.camera.pos.distance(new Vector(targetX, targetY));
             } else {
                 this.ignoreTouches = false;
                 this.camera.moveTo(0, 0, true);
@@ -774,11 +728,11 @@ define("GameScene", [
          * @param map {Object}
          */
         loadMap: function (map) {
-            var layers = [],
+            const layers = [],
                 self = this;
 
             // get all the layers for this map
-            for (var layerName in map) {
+            for (const layerName in map) {
                 if (map.hasOwnProperty(layerName)) {
                     layers.push(map[layerName]);
                 }
@@ -923,7 +877,7 @@ define("GameScene", [
             this.ropePhysicsSpeed *= resolution.PHYSICS_SPEED_MULTIPLIER;
         },
         loadGrab: function (item) {
-            var gx = item.x * this.PM + this.PMX,
+            let gx = item.x * this.PM + this.PMX,
                 gy = item.y * this.PM + this.PMY,
                 l = item.length * this.PM,
                 r = item.radius,
@@ -952,7 +906,7 @@ define("GameScene", [
                 g.setBee();
 
                 if (!hidePath) {
-                    var d = 3,
+                    const d = 3,
                         isCircle = item.path[0] === "R";
 
                     // create pollen drawer if needed
@@ -960,7 +914,7 @@ define("GameScene", [
                         this.pollenDrawer = new PollenDrawer();
                     }
 
-                    for (var i = 0, len = g.mover.path.length - 1; i < len; i++) {
+                    for (let i = 0, len = g.mover.path.length - 1; i < len; i++) {
                         if (!isCircle || i % d === 0) {
                             this.pollenDrawer.fillWithPollenFromPath(i, i + 1, g);
                         }
@@ -975,12 +929,12 @@ define("GameScene", [
             if (r !== Constants.UNDEFINED) r *= this.PM;
 
             if (r === Constants.UNDEFINED && !gun) {
-                var tail = this.star;
+                let tail = this.star;
                 if (this.twoParts !== PartsType.NONE) {
                     tail = left ? this.starL : this.starR;
                 }
 
-                var b = new Bungee(null, gx, gy, tail, tail.pos.x, tail.pos.y, l);
+                const b = new Bungee(null, gx, gy, tail, tail.pos.x, tail.pos.y, l);
                 b.bungeeAnchor.pin.copyFrom(b.bungeeAnchor.pos);
                 g.setRope(b);
                 this.attachCandy();
@@ -1027,7 +981,7 @@ define("GameScene", [
         },
         loadGravitySwitch: function (item) {
             this.gravityButton = new GravityButton();
-            this.gravityButton.onButtonPressed = $.proxy(this.onButtonPressed, this);
+            this.gravityButton.onButtonPressed = this.onButtonPressed.bind(this);
             this.gravityButton.visible = false;
             this.gravityButton.touchable = false;
             this.addChild(this.gravityButton);
@@ -1036,7 +990,7 @@ define("GameScene", [
             this.gravityButton.anchor = Alignment.CENTER;
         },
         loadStar: function (item) {
-            var s = new Star();
+            const s = new Star();
             s.initTextureWithId(ResourceId.IMG_OBJ_STAR_IDLE);
             s.x = item.x * this.PM + this.PMX;
             s.y = item.y * this.PM + this.PMY;
@@ -1049,10 +1003,10 @@ define("GameScene", [
             // let stars move the starting position of mover
             s.update(0);
 
-            var l = this.stars.push(s);
+            const l = this.stars.push(s);
 
             //init the star disappear animations
-            var sd = (starDisappearPool[l - 1] = new Animation());
+            const sd = (starDisappearPool[l - 1] = new Animation());
             sd.initTextureWithId(ResourceId.IMG_OBJ_STAR_DISAPPEAR);
             sd.doRestoreCutTransparency();
             sd.anchor = Alignment.CENTER;
@@ -1074,7 +1028,7 @@ define("GameScene", [
                 return;
             }
 
-            var t = new TutorialText();
+            const t = new TutorialText();
             t.x = item.x * this.PM + this.PMX;
             t.y = item.y * this.PM + this.PMY;
             t.special = item.special || 0;
@@ -1082,33 +1036,19 @@ define("GameScene", [
             //t.scaleX = 1.3;
             //t.scaleY = 1.3;
 
-            var text = item.text,
+            const text = item.text,
                 textWidth = Math.ceil(item.width * this.PM);
             t.setText(ResourceId.FNT_SMALL_FONT, text, textWidth, Alignment.HCENTER);
             t.color = RGBAColor.transparent.copy();
 
-            var tl = new Timeline(),
+            const tl = new Timeline(),
                 isFirstLevel = LevelState.pack === 0 && LevelState.level === 0;
+            tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0));
+            tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1));
             tl.addKeyFrame(
-                KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0)
+                KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, isFirstLevel ? 10 : 5)
             );
-            tl.addKeyFrame(
-                KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1)
-            );
-            tl.addKeyFrame(
-                KeyFrame.makeColor(
-                    RGBAColor.solidOpaque.copy(),
-                    KeyFrame.TransitionType.LINEAR,
-                    isFirstLevel ? 10 : 5
-                )
-            );
-            tl.addKeyFrame(
-                KeyFrame.makeColor(
-                    RGBAColor.transparent.copy(),
-                    KeyFrame.TransitionType.LINEAR,
-                    0.5
-                )
-            );
+            tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5));
             t.addTimelineWithID(tl, 0);
 
             if (t.special === 0) {
@@ -1122,7 +1062,7 @@ define("GameScene", [
                 return;
             }
 
-            var v = item.name - MapItem.TUTORIAL_01, // gets the tutorial number
+            const v = item.name - MapItem.TUTORIAL_01, // gets the tutorial number
                 s = new CTRGameObject();
 
             s.initTextureWithId(ResourceId.IMG_TUTORIAL_SIGNS);
@@ -1134,80 +1074,28 @@ define("GameScene", [
             s.special = item.special || 0;
             s.parseMover(item);
 
-            var tl = new Timeline();
-            tl.addKeyFrame(
-                KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0)
-            );
-            tl.addKeyFrame(
-                KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1)
-            );
+            const tl = new Timeline();
+            tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0));
+            tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1));
 
             if (LevelState.pack === 0 && LevelState.level === 0) {
-                tl.addKeyFrame(
-                    KeyFrame.makeColor(
-                        RGBAColor.solidOpaque.copy(),
-                        KeyFrame.TransitionType.LINEAR,
-                        10
-                    )
-                );
+                tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 10));
             } else {
-                tl.addKeyFrame(
-                    KeyFrame.makeColor(
-                        RGBAColor.solidOpaque.copy(),
-                        KeyFrame.TransitionType.LINEAR,
-                        5.2
-                    )
-                );
+                tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 5.2));
             }
 
-            tl.addKeyFrame(
-                KeyFrame.makeColor(
-                    RGBAColor.transparent.copy(),
-                    KeyFrame.TransitionType.LINEAR,
-                    0.5
-                )
-            );
+            tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5));
             s.addTimelineWithID(tl, 0);
 
             if (s.special === 0) {
                 s.playTimeline(0);
             } else if (s.special === LEVEL1_ARROW_SPECIAL_ID) {
-                var tl2 = new Timeline();
-                tl2.addKeyFrame(
-                    KeyFrame.makeColor(
-                        RGBAColor.transparent.copy(),
-                        KeyFrame.TransitionType.LINEAR,
-                        0
-                    )
-                );
-                tl2.addKeyFrame(
-                    KeyFrame.makeColor(
-                        RGBAColor.solidOpaque.copy(),
-                        KeyFrame.TransitionType.LINEAR,
-                        0.5
-                    )
-                );
-                tl2.addKeyFrame(
-                    KeyFrame.makeColor(
-                        RGBAColor.solidOpaque.copy(),
-                        KeyFrame.TransitionType.LINEAR,
-                        1
-                    )
-                );
-                tl2.addKeyFrame(
-                    KeyFrame.makeColor(
-                        RGBAColor.solidOpaque.copy(),
-                        KeyFrame.TransitionType.LINEAR,
-                        1.1
-                    )
-                );
-                tl2.addKeyFrame(
-                    KeyFrame.makeColor(
-                        RGBAColor.transparent.copy(),
-                        KeyFrame.TransitionType.LINEAR,
-                        0.5
-                    )
-                );
+                const tl2 = new Timeline();
+                tl2.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0));
+                tl2.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0.5));
+                tl2.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1));
+                tl2.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1.1));
+                tl2.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5));
 
                 tl2.addKeyFrame(KeyFrame.makePos(s.x, s.y, KeyFrame.TransitionType.LINEAR, 0));
                 tl2.addKeyFrame(KeyFrame.makePos(s.x, s.y, KeyFrame.TransitionType.LINEAR, 0.5));
@@ -1240,12 +1128,12 @@ define("GameScene", [
         },
         loadHidden: function (item) {
             // get the hidden image index
-            var v = item.name - MapItem.HIDDEN_01,
+            const v = item.name - MapItem.HIDDEN_01,
                 drawingId = item.drawing - 1;
 
-            var alreadyUnlocked = false;
+            const alreadyUnlocked = false;
             if (!alreadyUnlocked && !edition.disableHiddenDrawings) {
-                var s = new Drawing(v, drawingId);
+                const s = new Drawing(v, drawingId);
                 s.x = item.x * this.PM + this.PMX;
                 s.y = item.y * this.PM + this.PMY;
                 s.rotation = item.angle || 0;
@@ -1253,10 +1141,7 @@ define("GameScene", [
             }
         },
         loadBubble: function (item) {
-            var at = MathHelper.randomRange(
-                    IMG_OBJ_BUBBLE_ATTACHED_stain_01,
-                    IMG_OBJ_BUBBLE_ATTACHED_stain_03
-                ),
+            const at = MathHelper.randomRange(IMG_OBJ_BUBBLE_ATTACHED_stain_01, IMG_OBJ_BUBBLE_ATTACHED_stain_03),
                 s = new Bubble();
             s.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_ATTACHED);
             s.setTextureQuad(at);
@@ -1268,7 +1153,7 @@ define("GameScene", [
             s.anchor = Alignment.CENTER;
             s.popped = false;
 
-            var bubble = new ImageElement();
+            const bubble = new ImageElement();
             bubble.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_ATTACHED);
             bubble.setTextureQuad(IMG_OBJ_BUBBLE_ATTACHED_bubble);
             bubble.doRestoreCutTransparency();
@@ -1277,7 +1162,7 @@ define("GameScene", [
             this.bubbles.push(s);
         },
         loadPump: function (item) {
-            var s = new Pump();
+            const s = new Pump();
             s.initTextureWithId(ResourceId.IMG_OBJ_PUMP);
             s.doRestoreCutTransparency();
             s.addAnimationWithDelay(0.05, Timeline.LoopType.NO_LOOP, 4, [1, 2, 3, 0]);
@@ -1291,7 +1176,7 @@ define("GameScene", [
             this.pumps.push(s);
         },
         loadSock: function (item) {
-            var s = new Sock();
+            const s = new Sock();
             s.initTextureWithId(ResourceId.IMG_OBJ_SOCKS);
             s.scaleX = s.scaleY = 0.7;
             s.createAnimations();
@@ -1304,9 +1189,7 @@ define("GameScene", [
             s.anchor = Alignment.TOP | Alignment.HCENTER;
             s.rotationCenterY -= s.height / 2 - SOCK_COLLISION_Y_OFFSET;
 
-            s.setTextureQuad(
-                s.group === 0 ? Sock.Quads.IMG_OBJ_SOCKS_hat_01 : Sock.Quads.IMG_OBJ_SOCKS_hat_02
-            );
+            s.setTextureQuad(s.group === 0 ? Sock.Quads.IMG_OBJ_SOCKS_hat_01 : Sock.Quads.IMG_OBJ_SOCKS_hat_02);
 
             s.state = Sock.StateType.IDLE;
             s.parseMover(item);
@@ -1319,19 +1202,16 @@ define("GameScene", [
             this.socks.push(s);
         },
         loadSpike: function (item) {
-            var px = item.x * this.PM + this.PMX,
+            const px = item.x * this.PM + this.PMX,
                 py = item.y * this.PM + this.PMY,
                 w = item.size,
                 a = parseFloat(item.angle) || 0,
-                tg =
-                    item.toggled === false
-                        ? Constants.UNDEFINED
-                        : item.toggled || Constants.UNDEFINED,
+                tg = item.toggled === false ? Constants.UNDEFINED : item.toggled || Constants.UNDEFINED,
                 s = new Spikes(px, py, w, a, tg);
             s.parseMover(item);
 
             if (tg) {
-                s.onRotateButtonPressed = $.proxy(this.rotateAllSpikesWithId, this);
+                s.onRotateButtonPressed = this.rotateAllSpikesWithId.bind(this);
             }
 
             if (item.name === MapItem.ELECTRO) {
@@ -1350,7 +1230,7 @@ define("GameScene", [
             this.spikes.push(s);
         },
         loadRotatedCircle: function (item) {
-            var px = item.x * this.PM + this.PMX,
+            const px = item.x * this.PM + this.PMX,
                 py = item.y * this.PM + this.PMY,
                 size = item.size,
                 handleAngle = parseFloat(item.handleAngle) || 0,
@@ -1374,7 +1254,7 @@ define("GameScene", [
             this.rotatedCircles.push(l);
         },
         loadBouncer: function (item) {
-            var px = item.x * this.PM + this.PMX,
+            const px = item.x * this.PM + this.PMX,
                 py = item.y * this.PM + this.PMY,
                 w = item.size,
                 a = item.angle,
@@ -1383,7 +1263,7 @@ define("GameScene", [
             this.bouncers.push(bouncer);
         },
         loadTarget: function (item) {
-            var target = new GameObject();
+            const target = new GameObject();
             this.target = target;
 
             target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATIONS);
@@ -1419,8 +1299,8 @@ define("GameScene", [
                 Timeline.LoopType.NO_LOOP,
                 (IMG_CHAR_ANIMATIONS_idle3_end - IMG_CHAR_ANIMATIONS_idle3_start + 1) * 2,
                 [
-                    109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124,
-                    109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124,
+                    109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 109, 110, 111, 112,
+                    113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124,
                 ]
             );
             target.addAnimationEndpoints(
@@ -1488,8 +1368,8 @@ define("GameScene", [
 
             target.playTimeline(CharAnimation.IDLE);
 
-            var idle = target.getTimeline(CharAnimation.IDLE);
-            idle.onKeyFrame = $.proxy(this.onIdleOmNomKeyFrame, this);
+            const idle = target.getTimeline(CharAnimation.IDLE);
+            idle.onKeyFrame = this.onIdleOmNomKeyFrame.bind(this);
 
             target.setPause(
                 IMG_CHAR_ANIMATIONS_mouth_open_end - IMG_CHAR_ANIMATIONS_mouth_open_start,
@@ -1512,12 +1392,12 @@ define("GameScene", [
             this.blink.doRestoreCutTransparency();
             target.addChild(this.blink);
 
-            var supportQuadID = edition.supports[LevelState.pack];
+            const supportQuadID = edition.supports[LevelState.pack];
             this.support = ImageElement.create(ResourceId.IMG_CHAR_SUPPORTS, supportQuadID);
             this.support.doRestoreCutTransparency();
             this.support.anchor = Alignment.CENTER;
 
-            var sx = item.x,
+            const sx = item.x,
                 sy = item.y;
 
             this.target.x = this.support.x = (sx * this.PM + this.PMX) | 0;
@@ -1548,7 +1428,7 @@ define("GameScene", [
             }
         },
         onRotatedCircleTimelineFinished: function (t) {
-            var circleToRemove = t.element;
+            const circleToRemove = t.element;
             circleToRemove.removeOnNextUpdate = true;
         },
         update: function (delta) {
@@ -1565,12 +1445,12 @@ define("GameScene", [
             }
 
             for (i = 0; i < Constants.MAX_TOUCHES; i++) {
-                var cuts = this.fingerCuts[i],
+                let cuts = this.fingerCuts[i],
                     numCuts = cuts.length,
                     k = 0;
 
                 while (k < numCuts) {
-                    var fc = cuts[k];
+                    const fc = cuts[k];
                     moveResult = Mover.moveToTargetWithStatus(fc.color.a, 0, 10, delta);
                     fc.color.a = moveResult.value;
                     if (moveResult.reachedZero) {
@@ -1600,7 +1480,7 @@ define("GameScene", [
                 }
             }
 
-            var SCREEN_WIDTH = resolution.CANVAS_WIDTH,
+            const SCREEN_WIDTH = resolution.CANVAS_WIDTH,
                 SCREEN_HEIGHT = resolution.CANVAS_HEIGHT,
                 cameraTarget = this.twoParts != PartsType.NONE ? this.starL : this.star,
                 xScroll = cameraTarget.pos.x - SCREEN_WIDTH / 2,
@@ -1616,13 +1496,13 @@ define("GameScene", [
             }
 
             if (this.camera.type === Camera2D.SpeedType.PIXELS) {
-                var IGNORE_TOUCHES_DISTANCE = resolution.IGNORE_TOUCHES_DISTANCE,
+                const IGNORE_TOUCHES_DISTANCE = resolution.IGNORE_TOUCHES_DISTANCE,
                     PREVIEW_CAMERA_SPEED = resolution.PREVIEW_CAMERA_SPEED,
                     PREVIEW_CAMERA_SPEED2 = resolution.PREVIEW_CAMERA_SPEED2,
                     MAX_PREVIEW_CAMERA_SPEED = resolution.MAX_PREVIEW_CAMERA_SPEED,
                     MIN_PREVIEW_CAMERA_SPEED = resolution.MIN_PREVIEW_CAMERA_SPEED;
 
-                var starDistance = this.camera.pos.distance(new Vector(targetX, targetY));
+                const starDistance = this.camera.pos.distance(new Vector(targetX, targetY));
                 if (starDistance < IGNORE_TOUCHES_DISTANCE) {
                     this.ignoreTouches = false;
                 }
@@ -1641,10 +1521,7 @@ define("GameScene", [
                     }
                 }
 
-                if (
-                    Math.abs(this.camera.pos.x - targetX) < 1 &&
-                    Math.abs(this.camera.pos.y - targetY) < 1
-                ) {
+                if (Math.abs(this.camera.pos.x - targetX) < 1 && Math.abs(this.camera.pos.y - targetY) < 1) {
                     this.camera.type = Camera2D.SpeedType.DELAY;
                     this.camera.speed = resolution.CAMERA_SPEED;
                 }
@@ -1652,9 +1529,9 @@ define("GameScene", [
                 this.time += delta;
             }
 
-            var numGrabs = this.bungees.length;
+            const numGrabs = this.bungees.length;
             if (numGrabs > 0) {
-                var handledRotation = false,
+                let handledRotation = false,
                     handledRotationL = false,
                     handledRotationR = false;
 
@@ -1683,10 +1560,7 @@ define("GameScene", [
                         b.update(delta * this.ropePhysicsSpeed);
 
                         if (g.hasSpider) {
-                            if (
-                                this.camera.type != Camera2D.SpeedType.PIXELS ||
-                                !this.ignoreTouches
-                            ) {
+                            if (this.camera.type != Camera2D.SpeedType.PIXELS || !this.ignoreTouches) {
                                 g.updateSpider(delta);
                             }
 
@@ -1700,10 +1574,10 @@ define("GameScene", [
                     if (g.radius !== Constants.UNDEFINED && !g.rope) {
                         // shared code for creating a rope with a star
                         var STAR_RADIUS = resolution.STAR_RADIUS,
-                            createRope = $.proxy(function (star) {
-                                var l = new Vector(g.x, g.y).distance(star.pos);
+                            createRope = function (star) {
+                                const l = new Vector(g.x, g.y).distance(star.pos);
                                 if (l <= g.radius + STAR_RADIUS) {
-                                    var b = new Bungee(
+                                    const b = new Bungee(
                                         null,
                                         g.x,
                                         g.y, // head
@@ -1723,7 +1597,7 @@ define("GameScene", [
                                         SoundMgr.playSound(ResourceId.SND_BUZZ);
                                     }
                                 }
-                            }, this);
+                            }.bind(this);
 
                         if (this.twoParts !== PartsType.NONE) {
                             if (!this.noCandyL) {
@@ -1747,11 +1621,7 @@ define("GameScene", [
                             if (this.twoParts !== PartsType.NONE) {
                                 if (tail === this.starL && !this.noCandyL && !handledRotationL) {
                                     hasCandy = true;
-                                } else if (
-                                    tail === this.starR &&
-                                    !this.noCandyR &&
-                                    !handledRotationR
-                                ) {
+                                } else if (tail === this.starR && !this.noCandyR && !handledRotationR) {
                                     hasCandy = true;
                                 }
                             } else if (!this.noCandy && !handledRotation) {
@@ -1762,18 +1632,16 @@ define("GameScene", [
                         if (b.relaxed !== 0 && b.cut === Constants.UNDEFINED && hasCandy) {
                             var a = Radians.toDegrees(v.normalizedAngle());
                             if (this.twoParts !== PartsType.NONE) {
-                                var candyPart = tail === this.starL ? this.candyL : this.candyR;
+                                const candyPart = tail === this.starL ? this.candyL : this.candyR;
                                 if (!b.chosenOne) {
                                     b.initialCandleAngle = candyPart.rotation - a;
                                 }
 
                                 if (tail === this.starL) {
-                                    this.lastCandyRotateDeltaL =
-                                        a + b.initialCandleAngle - candyPart.rotation;
+                                    this.lastCandyRotateDeltaL = a + b.initialCandleAngle - candyPart.rotation;
                                     handledRotationL = true;
                                 } else {
-                                    this.lastCandyRotateDeltaR =
-                                        a + b.initialCandleAngle - candyPart.rotation;
+                                    this.lastCandyRotateDeltaR = a + b.initialCandleAngle - candyPart.rotation;
                                     handledRotationR = true;
                                 }
                                 candyPart.rotation = a + b.initialCandleAngle;
@@ -1781,8 +1649,7 @@ define("GameScene", [
                                 if (!b.chosenOne) {
                                     b.initialCandleAngle = this.candyMain.rotation - a;
                                 }
-                                this.lastCandyRotateDelta =
-                                    a + b.initialCandleAngle - this.candyMain.rotation;
+                                this.lastCandyRotateDelta = a + b.initialCandleAngle - this.candyMain.rotation;
                                 this.candyMain.rotation = a + b.initialCandleAngle;
                                 handledRotation = true;
                             }
@@ -1817,7 +1684,7 @@ define("GameScene", [
             }
 
             if (this.twoParts !== PartsType.NONE) {
-                var ropeDelta = delta * this.ropePhysicsSpeed;
+                const ropeDelta = delta * this.ropePhysicsSpeed;
                 this.candyL.update(delta);
                 this.starL.update(ropeDelta);
                 this.candyR.update(delta);
@@ -1841,9 +1708,7 @@ define("GameScene", [
                         //Achievements.increment(AchievementId.ROMANTIC_SOUL);
 
                         if (this.candyBubbleL || this.candyBubbleR) {
-                            this.candyBubble = this.candyBubbleL
-                                ? this.candyBubbleL
-                                : this.candyBubbleR;
+                            this.candyBubble = this.candyBubbleL ? this.candyBubbleL : this.candyBubbleR;
                             this.candyBubbleAnimation.visible = true;
                         }
 
@@ -1857,7 +1722,7 @@ define("GameScene", [
                         this.candy.y = this.star.pos.y;
                         this.candy.calculateTopLeft();
 
-                        var lv = Vector.subtract(this.starL.pos, this.starL.prevPos),
+                        const lv = Vector.subtract(this.starL.pos, this.starL.prevPos),
                             rv = Vector.subtract(this.starR.pos, this.starR.prevPos),
                             sv = new Vector((lv.x + rv.x) / 2, (lv.y + rv.y) / 2);
                         this.star.prevPos.copyFrom(this.star.pos);
@@ -1866,11 +1731,7 @@ define("GameScene", [
                         for (var i = 0, count = this.bungees.length; i < count; i++) {
                             var g = this.bungees[i],
                                 b = g.rope;
-                            if (
-                                b &&
-                                b.cut !== b.parts.length - 3 &&
-                                (b.tail === this.starL || b.tail === this.starR)
-                            ) {
+                            if (b && b.cut !== b.parts.length - 3 && (b.tail === this.starL || b.tail === this.starR)) {
                                 var prev = b.parts[b.parts.length - 2],
                                     heroRestLen = b.tail.restLength(prev);
                                 this.star.addConstraint(prev, heroRestLen, ConstraintType.DISTANCE);
@@ -1881,7 +1742,7 @@ define("GameScene", [
                             }
                         }
 
-                        var transform = new Animation();
+                        const transform = new Animation();
                         transform.initTextureWithId(ResourceId.IMG_OBJ_CANDY_01);
                         transform.doRestoreCutTransparency();
                         transform.x = this.candy.x;
@@ -1893,8 +1754,7 @@ define("GameScene", [
                             IMG_OBJ_CANDY_01_part_fx_start,
                             IMG_OBJ_CANDY_01_part_fx_end
                         );
-                        transform.getTimeline(a).onFinished =
-                            this.aniPool.timelineFinishedDelegate();
+                        transform.getTimeline(a).onFinished = this.aniPool.timelineFinishedDelegate();
                         transform.playTimeline(0);
                         this.aniPool.addChild(transform);
                     } else {
@@ -1911,16 +1771,8 @@ define("GameScene", [
                 ) {
                     this.twoParts = PartsType.DISTANCE;
                     this.partsDist = this.starL.pos.distance(this.starR.pos);
-                    this.starL.addConstraint(
-                        this.starR,
-                        this.partsDist,
-                        ConstraintType.NOT_MORE_THAN
-                    );
-                    this.starR.addConstraint(
-                        this.starL,
-                        this.partsDist,
-                        ConstraintType.NOT_MORE_THAN
-                    );
+                    this.starL.addConstraint(this.starR, this.partsDist, ConstraintType.NOT_MORE_THAN);
+                    this.starR.addConstraint(this.starL, this.partsDist, ConstraintType.NOT_MORE_THAN);
                 }
             }
 
@@ -1940,7 +1792,7 @@ define("GameScene", [
                         s.playTimeline(1);
                         break;
                     } else {
-                        var hits = false;
+                        let hits = false;
                         if (this.twoParts !== PartsType.NONE) {
                             hits =
                                 (GameObject.intersect(this.candyL, s) && !this.noCandyL) ||
@@ -1954,7 +1806,7 @@ define("GameScene", [
                             this.starsCollected++;
                             this.hudStars[this.starsCollected - 1].playTimeline(0);
 
-                            var starDisappear = starDisappearPool[i];
+                            const starDisappear = starDisappearPool[i];
                             starDisappear.x = s.x;
                             starDisappear.y = s.y;
 
@@ -1982,12 +1834,7 @@ define("GameScene", [
                     if (this.twoParts != PartsType.NONE) {
                         if (
                             !this.noCandyL &&
-                            this.isBubbleCapture(
-                                b,
-                                this.candyL,
-                                this.candyBubbleL,
-                                this.candyBubbleAnimationL
-                            )
+                            this.isBubbleCapture(b, this.candyL, this.candyBubbleL, this.candyBubbleAnimationL)
                         ) {
                             this.candyBubbleL = b;
                             break;
@@ -1995,12 +1842,7 @@ define("GameScene", [
 
                         if (
                             !this.noCandyR &&
-                            this.isBubbleCapture(
-                                b,
-                                this.candyR,
-                                this.candyBubbleR,
-                                this.candyBubbleAnimationR
-                            )
+                            this.isBubbleCapture(b, this.candyR, this.candyBubbleR, this.candyBubbleAnimationR)
                         ) {
                             this.candyBubbleR = b;
                             break;
@@ -2008,12 +1850,7 @@ define("GameScene", [
                     } else {
                         if (
                             !this.noCandy &&
-                            this.isBubbleCapture(
-                                b,
-                                this.candy,
-                                this.candyBubble,
-                                this.candyBubbleAnimation
-                            )
+                            this.isBubbleCapture(b, this.candy, this.candyBubble, this.candyBubbleAnimation)
                         ) {
                             this.candyBubble = b;
                             break;
@@ -2022,7 +1859,7 @@ define("GameScene", [
                 }
 
                 if (!b.withoutShadow) {
-                    var numRotatedCircles = this.rotatedCircles.length;
+                    const numRotatedCircles = this.rotatedCircles.length;
                     for (j = 0; j < numRotatedCircles; j++) {
                         var rc = this.rotatedCircles[j],
                             distanceToCircle = Vector.distance(b.x, b.y, rc.x, rc.y);
@@ -2045,7 +1882,7 @@ define("GameScene", [
                 t.update(delta);
             }
 
-            var removeCircleIndex = -1;
+            let removeCircleIndex = -1;
             for (i = 0, len = this.rotatedCircles.length; i < len; i++) {
                 rc = this.rotatedCircles[i];
 
@@ -2063,7 +1900,7 @@ define("GameScene", [
                     }
                 }
 
-                var numBubbles = this.bubbles.length;
+                const numBubbles = this.bubbles.length;
                 for (j = 0; j < numBubbles; j++) {
                     var b = this.bubbles[j],
                         distance = Vector.distance(b.x, b.y, rc.x, rc.y),
@@ -2106,15 +1943,15 @@ define("GameScene", [
                     s.state = Sock.StateType.IDLE;
                 }
 
-                var savedRotation = s.rotation;
+                const savedRotation = s.rotation;
                 s.rotation = 0;
                 s.updateRotation();
-                var rs = this.star.posDelta.copy();
+                const rs = this.star.posDelta.copy();
                 rs.rotate(Radians.fromDegrees(-savedRotation));
                 s.rotation = savedRotation;
                 s.updateRotation();
 
-                var bbX = this.star.pos.x - resolution.STAR_SOCK_RADIUS,
+                const bbX = this.star.pos.x - resolution.STAR_SOCK_RADIUS,
                     bbY = this.star.pos.y - resolution.STAR_SOCK_RADIUS,
                     bbW = resolution.STAR_SOCK_RADIUS * 2,
                     bbH = bbW;
@@ -2135,16 +1972,14 @@ define("GameScene", [
                     if (s.state === Sock.StateType.IDLE) {
                         // look for a recieving sock
                         for (var j = 0; j < len; j++) {
-                            var n = this.socks[j];
+                            const n = this.socks[j];
                             if (n !== s && n.group === s.group) {
                                 s.state = Sock.StateType.RECEIVING;
                                 n.state = Sock.StateType.THROWING;
                                 this.releaseAllRopes(false);
 
                                 this.savedSockSpeed =
-                                    SOCK_SPEED_K *
-                                    this.star.v.getLength() *
-                                    resolution.PHYSICS_SPEED_MULTIPLIER;
+                                    SOCK_SPEED_K * this.star.v.getLength() * resolution.PHYSICS_SPEED_MULTIPLIER;
                                 this.targetSock = n;
 
                                 s.light.playTimeline(0);
@@ -2165,7 +2000,7 @@ define("GameScene", [
 
             // pumps
             for (i = 0, len = this.pumps.length; i < len; i++) {
-                var p = this.pumps[i];
+                const p = this.pumps[i];
                 p.update(delta);
 
                 var moveStatus = Mover.moveToTargetWithStatus(p.touchTimer, 0, 1, delta);
@@ -2183,7 +2018,7 @@ define("GameScene", [
             }
 
             // spikes
-            var star_spike_radius = resolution.STAR_SPIKE_RADIUS,
+            const star_spike_radius = resolution.STAR_SPIKE_RADIUS,
                 star_spike_radius_double = star_spike_radius * 2;
             // isCandyHit = function (spike, star) {
             //     return (
@@ -2215,8 +2050,7 @@ define("GameScene", [
                         if (candyHits) {
                             left = true;
                         } else {
-                            candyHits =
-                                !this.noCandyR && isCandyHit(s, this.starR, star_spike_radius);
+                            candyHits = !this.noCandyR && isCandyHit(s, this.starR, star_spike_radius);
                         }
                     } else {
                         candyHits = !this.noCandy && isCandyHit(s, this.star, star_spike_radius);
@@ -2277,11 +2111,11 @@ define("GameScene", [
             }
 
             // bouncers
-            var bouncer_radius = resolution.BOUNCER_RADIUS,
+            const bouncer_radius = resolution.BOUNCER_RADIUS,
                 bouncer_radius_double = bouncer_radius * 2;
 
             for (i = 0, len = this.bouncers.length; i < len; i++) {
-                var bouncer = this.bouncers[i];
+                const bouncer = this.bouncers[i];
                 //if (bouncer.mover) {
                 bouncer.update(delta);
                 //}
@@ -2293,8 +2127,7 @@ define("GameScene", [
                     if (candyHits) {
                         left = true;
                     } else {
-                        candyHits =
-                            !this.noCandyR && isCandyHit(bouncer, this.starR, bouncer_radius);
+                        candyHits = !this.noCandyR && isCandyHit(bouncer, this.starR, bouncer_radius);
                     }
                 } else {
                     candyHits = !this.noCandy && isCandyHit(bouncer, this.star, bouncer_radius);
@@ -2318,7 +2151,7 @@ define("GameScene", [
             }
 
             // apply force to bubbles
-            var gravityMultiplier = this.gravityButton && !this.gravityNormal ? -1 : 1,
+            const gravityMultiplier = this.gravityButton && !this.gravityNormal ? -1 : 1,
                 yImpulse = resolution.BUBBLE_IMPULSE_Y * gravityMultiplier,
                 rd = resolution.BUBBLE_IMPULSE_RD;
 
@@ -2342,9 +2175,9 @@ define("GameScene", [
                 }
             }
 
-            var targetVector;
+            let targetVector;
             if (!this.noCandy) {
-                var MOUTH_OPEN_RADIUS = resolution.MOUTH_OPEN_RADIUS;
+                const MOUTH_OPEN_RADIUS = resolution.MOUTH_OPEN_RADIUS;
                 if (!this.mouthOpen) {
                     targetVector = new Vector(this.target.x, this.target.y);
                     if (this.star.pos.distance(targetVector) < MOUTH_OPEN_RADIUS) {
@@ -2355,12 +2188,7 @@ define("GameScene", [
                     }
                 } else {
                     if (this.mouthCloseTimer > 0) {
-                        this.mouthCloseTimer = Mover.moveToTarget(
-                            this.mouthCloseTimer,
-                            0,
-                            1,
-                            delta
-                        );
+                        this.mouthCloseTimer = Mover.moveToTarget(this.mouthCloseTimer, 0, 1, delta);
 
                         if (this.mouthCloseTimer <= 0) {
                             targetVector = new Vector(this.target.x, this.target.y);
@@ -2388,18 +2216,9 @@ define("GameScene", [
                 }
             }
 
-            var outOfScreen =
-                    this.twoParts === PartsType.NONE &&
-                    this.pointOutOfScreen(this.star) &&
-                    !this.noCandy,
-                outOfScreenL =
-                    this.twoParts !== PartsType.NONE &&
-                    this.pointOutOfScreen(this.starL) &&
-                    !this.noCandyL,
-                outOfScreenR =
-                    this.twoParts !== PartsType.NONE &&
-                    this.pointOutOfScreen(this.starR) &&
-                    !this.noCandyR;
+            const outOfScreen = this.twoParts === PartsType.NONE && this.pointOutOfScreen(this.star) && !this.noCandy,
+                outOfScreenL = this.twoParts !== PartsType.NONE && this.pointOutOfScreen(this.starL) && !this.noCandyL,
+                outOfScreenR = this.twoParts !== PartsType.NONE && this.pointOutOfScreen(this.starR) && !this.noCandyR;
 
             if (outOfScreen || outOfScreenL || outOfScreenR) {
                 if (outOfScreen) {
@@ -2458,16 +2277,16 @@ define("GameScene", [
                 this.resetBungeeHighlight();
 
                 // first see if there is a nearby bungee
-                var cv = new Vector(0, 0),
+                const cv = new Vector(0, 0),
                     pos = Vector.add(this.slastTouch, this.camera.pos),
                     grab = this.getNearestBungeeGrabByBezierPoints(cv, pos.x, pos.y);
                 b = grab ? grab.rope : null;
                 if (b) {
                     // now see if there is an active element that would override
                     // bungee selection
-                    var activeElement = false;
+                    let activeElement = false;
                     if (this.gravityButton) {
-                        var c = this.gravityButton.getChild(this.gravityButton.isOn() ? 1 : 0);
+                        const c = this.gravityButton.getChild(this.gravityButton.isOn() ? 1 : 0);
                         if (c.isInTouchZone(pos.x, pos.y, true)) {
                             activeElement = true;
                         }
@@ -2475,8 +2294,7 @@ define("GameScene", [
 
                     if (
                         this.candyBubble ||
-                        (this.twoParts != PartsType.NONE &&
-                            (this.candyBubbleL || this.candyBubbleR))
+                        (this.twoParts != PartsType.NONE && (this.candyBubbleL || this.candyBubbleR))
                     ) {
                         for (i = 0, len = this.bubbles.length; i < len; i++) {
                             var s = this.bubbles[i],
@@ -2556,8 +2374,7 @@ define("GameScene", [
                         if (
                             Vector.distance(pos.x, pos.y, rc.handle2.x, rc.handle2.y) <=
                                 resolution.RC_CONTROLLER_RADIUS ||
-                            Vector.distance(pos.x, pos.y, rc.handle2.x, rc.handle2.y) <=
-                                resolution.RC_CONTROLLER_RADIUS
+                            Vector.distance(pos.x, pos.y, rc.handle2.x, rc.handle2.y) <= resolution.RC_CONTROLLER_RADIUS
                         ) {
                             activeElement = true;
                             break;
@@ -2621,7 +2438,7 @@ define("GameScene", [
         },
 
         isBubbleCapture: function (b, candy, candyBubble, candyBubbleAnimation) {
-            var bubbleSize = resolution.BUBBLE_SIZE,
+            const bubbleSize = resolution.BUBBLE_SIZE,
                 bubbleSizeDouble = bubbleSize * 2;
 
             if (
@@ -2658,7 +2475,7 @@ define("GameScene", [
             this.targetSock.light.playTimeline(0);
             this.targetSock.light.visible = true;
 
-            var off = new Vector(0, resolution.SOCK_TELEPORT_Y);
+            const off = new Vector(0, resolution.SOCK_TELEPORT_Y);
             off.rotate(Radians.fromDegrees(this.targetSock.rotation));
 
             this.star.pos.x = this.targetSock.x;
@@ -2688,15 +2505,13 @@ define("GameScene", [
             return this.restartState === RestartState.FADE_IN;
         },
         releaseAllRopes: function (left) {
-            for (var l = 0, len = this.bungees.length; l < len; l++) {
-                var g = this.bungees[l],
+            for (let l = 0, len = this.bungees.length; l < len; l++) {
+                const g = this.bungees[l],
                     b = g.rope;
 
                 if (
                     b &&
-                    (b.tail === this.star ||
-                        (b.tail === this.starL && left) ||
-                        (b.tail === this.starR && !left))
+                    (b.tail === this.star || (b.tail === this.starL && left) || (b.tail === this.starR && !left))
                 ) {
                     if (b.cut === Constants.UNDEFINED) {
                         b.setCut(b.parts.length - 2);
@@ -2743,30 +2558,13 @@ define("GameScene", [
             this.candyMain.scaleX = this.candyMain.scaleY = 1;
             this.candyTop.scaleX = this.candyTop.scaleY = 1;
 
-            var tl = new Timeline();
-            tl.addKeyFrame(
-                KeyFrame.makePos(this.candy.x, this.candy.y, KeyFrame.TransitionType.LINEAR, 0)
-            );
-            tl.addKeyFrame(
-                KeyFrame.makePos(
-                    this.target.x,
-                    this.target.y + 10,
-                    KeyFrame.TransitionType.LINEAR,
-                    0.1
-                )
-            );
+            const tl = new Timeline();
+            tl.addKeyFrame(KeyFrame.makePos(this.candy.x, this.candy.y, KeyFrame.TransitionType.LINEAR, 0));
+            tl.addKeyFrame(KeyFrame.makePos(this.target.x, this.target.y + 10, KeyFrame.TransitionType.LINEAR, 0.1));
             tl.addKeyFrame(KeyFrame.makeScale(0.71, 0.71, KeyFrame.TransitionType.LINEAR, 0));
             tl.addKeyFrame(KeyFrame.makeScale(0, 0, KeyFrame.TransitionType.LINEAR, 0.1));
-            tl.addKeyFrame(
-                KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0)
-            );
-            tl.addKeyFrame(
-                KeyFrame.makeColor(
-                    RGBAColor.transparent.copy(),
-                    KeyFrame.TransitionType.LINEAR,
-                    0.1
-                )
-            );
+            tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0));
+            tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.1));
             this.candy.addTimelineWithID(tl, 0);
             this.candy.playTimeline(0);
             tl.onFinished = this.aniPool.timelineFinishedDelegate();
@@ -2775,7 +2573,7 @@ define("GameScene", [
             this.calculateScore();
             this.releaseAllRopes(false);
 
-            var self = this,
+            const self = this,
                 onLevelWonAppCallback = function () {
                     PubSub.publish(PubSub.ChannelId.LevelWon, {
                         stars: self.starsCollected,
@@ -2803,7 +2601,7 @@ define("GameScene", [
             );
 
             // fire level won callback after 2 secs
-            var onLevelWon = function () {
+            const onLevelWon = function () {
                 this.gameController.onLevelWon.call(this.gameController);
             };
             this.dd.callObject(this, onLevelWon, null, 1.8);
@@ -2814,7 +2612,7 @@ define("GameScene", [
             SoundMgr.playSound(ResourceId.SND_MONSTER_SAD);
 
             // fire level lost callback after 1 sec
-            var onLevelLost = function () {
+            const onLevelLost = function () {
                 this.gameController.onLevelLost.call(this.gameController);
                 PubSub.publish(PubSub.ChannelId.LevelLost, { time: this.time });
             };
@@ -2822,7 +2620,7 @@ define("GameScene", [
         },
         draw: function () {
             // reset any canvas transformations and clear everything
-            var ctx = Canvas.context;
+            const ctx = Canvas.context;
             ctx.clearRect(0, 0, resolution.CANVAS_WIDTH, resolution.CANVAS_HEIGHT);
 
             this.preDraw();
@@ -2831,7 +2629,7 @@ define("GameScene", [
             //console.log('back x:' + this.back.x + ' y:' + this.back.y);
             //this.back.draw();
 
-            var overlayCut = 2,
+            let overlayCut = 2,
                 q,
                 overlayRect,
                 off;
@@ -2853,7 +2651,7 @@ define("GameScene", [
                 );
             }
 
-            var i, len;
+            let i, len;
             for (i = 0, len = this.drawings.length; i < len; i++) {
                 this.drawings[i].draw();
             }
@@ -2912,13 +2710,13 @@ define("GameScene", [
             }
 
             for (i = 0, len = this.socks.length; i < len; i++) {
-                var sock = this.socks[i];
+                const sock = this.socks[i];
                 sock.y -= SOCK_COLLISION_Y_OFFSET;
                 sock.draw();
                 sock.y += SOCK_COLLISION_Y_OFFSET;
             }
 
-            var bungees = this.bungees;
+            const bungees = this.bungees;
             for (i = 0, len = bungees.length; i < len; i++) {
                 bungees[i].drawBack();
             }
@@ -2955,7 +2753,7 @@ define("GameScene", [
             }
 
             for (i = 0, len = bungees.length; i < len; i++) {
-                var g = bungees[i];
+                const g = bungees[i];
                 if (g.hasSpider) {
                     g.drawSpider();
                 }
@@ -2977,12 +2775,12 @@ define("GameScene", [
             this.postDraw();
         },
         drawCuts: function () {
-            var maxSize = resolution.CUT_MAX_SIZE;
-            for (var i = 0; i < Constants.MAX_TOUCHES; i++) {
-                var cuts = this.fingerCuts[i],
+            const maxSize = resolution.CUT_MAX_SIZE;
+            for (let i = 0; i < Constants.MAX_TOUCHES; i++) {
+                const cuts = this.fingerCuts[i],
                     count = cuts.length;
                 if (count > 0) {
-                    var perpSize = 1,
+                    let perpSize = 1,
                         v = 0,
                         fc = null,
                         pts = [],
@@ -2996,7 +2794,7 @@ define("GameScene", [
                         pts[pc++] = fc.end;
                     }
 
-                    var p = null,
+                    let p = null,
                         points = 2,
                         numVertices = count * points,
                         vertices = [],
@@ -3018,30 +2816,30 @@ define("GameScene", [
                         a += bstep;
                     }
 
-                    var step = maxSize / numVertices,
+                    const step = maxSize / numVertices,
                         verts = [];
                     for (var k = 0, lenMinusOne = numVertices - 1; k < lenMinusOne; k++) {
-                        var startSize = perpSize,
+                        const startSize = perpSize,
                             endSize = k === numVertices - 1 ? 1 : perpSize + step,
                             start = vertices[k],
                             end = vertices[k + 1];
 
                         // n is the normalized arrow
-                        var n = Vector.subtract(end, start);
+                        const n = Vector.subtract(end, start);
                         n.normalize();
 
-                        var rp = Vector.rPerpendicular(n),
+                        const rp = Vector.rPerpendicular(n),
                             lp = Vector.perpendicular(n);
 
                         if (v === 0) {
-                            var srp = Vector.add(start, Vector.multiply(rp, startSize)),
+                            const srp = Vector.add(start, Vector.multiply(rp, startSize)),
                                 slp = Vector.add(start, Vector.multiply(lp, startSize));
 
                             verts.push(slp);
                             verts.push(srp);
                         }
 
-                        var erp = Vector.add(end, Vector.multiply(rp, endSize)),
+                        const erp = Vector.add(end, Vector.multiply(rp, endSize)),
                             elp = Vector.add(end, Vector.multiply(lp, endSize));
 
                         verts.push(elp);
@@ -3056,16 +2854,9 @@ define("GameScene", [
             }
         },
         handlePumpFlow: function (p, s, c, delta) {
-            var powerRadius = resolution.PUMP_POWER_RADIUS;
-            if (
-                c.rectInObject(
-                    p.x - powerRadius,
-                    p.y - powerRadius,
-                    p.x + powerRadius,
-                    p.y + powerRadius
-                )
-            ) {
-                var tn1 = new Vector(0, 0),
+            const powerRadius = resolution.PUMP_POWER_RADIUS;
+            if (c.rectInObject(p.x - powerRadius, p.y - powerRadius, p.x + powerRadius, p.y + powerRadius)) {
+                const tn1 = new Vector(0, 0),
                     tn2 = new Vector(0, 0),
                     h = new Vector(c.x, c.y);
 
@@ -3090,7 +2881,7 @@ define("GameScene", [
                         tn2.y
                     )
                 ) {
-                    var maxPower = powerRadius * 2.0,
+                    const maxPower = powerRadius * 2.0,
                         power = (maxPower * (powerRadius - (tn1.y - h.y))) / powerRadius,
                         pumpForce = new Vector(0, -power);
 
@@ -3104,16 +2895,16 @@ define("GameScene", [
                 return;
             }
 
-            var v = Vector.subtract(star.prevPos, star.pos),
+            const v = Vector.subtract(star.prevPos, star.pos),
                 spos = star.prevPos.copy();
 
-            var angle = bouncer.angle,
+            const angle = bouncer.angle,
                 x = bouncer.x,
                 y = bouncer.y;
 
             spos.rotateAround(-angle, x, y);
 
-            var fromTop = spos.y < bouncer.y,
+            const fromTop = spos.y < bouncer.y,
                 dir = fromTop ? -1 : 1,
                 a = v.getLength() * 40,
                 b = resolution.BOUNCER_MAX_MOVEMENT,
@@ -3136,14 +2927,14 @@ define("GameScene", [
         },
         operatePump: function (pump, delta) {
             pump.playTimeline(0);
-            var soundId = MathHelper.randomRange(ResourceId.SND_PUMP_1, ResourceId.SND_PUMP_4);
+            const soundId = MathHelper.randomRange(ResourceId.SND_PUMP_1, ResourceId.SND_PUMP_4);
             SoundMgr.playSound(soundId);
 
-            var dirtTexture = ResourceMgr.getTexture(ResourceId.IMG_OBJ_PUMP);
-            var b = new PumpDirt(5, dirtTexture, Radians.toDegrees(pump.angle) - 90);
+            const dirtTexture = ResourceMgr.getTexture(ResourceId.IMG_OBJ_PUMP);
+            const b = new PumpDirt(5, dirtTexture, Radians.toDegrees(pump.angle) - 90);
             b.onFinished = this.aniPool.particlesFinishedDelegate();
 
-            var v = new Vector(pump.x + resolution.PUMP_DIRT_OFFSET, pump.y);
+            const v = new Vector(pump.x + resolution.PUMP_DIRT_OFFSET, pump.y);
             v.rotateAround(pump.angle - Math.PI / 2, pump.x, pump.y);
             b.x = v.x;
             b.y = v.y;
@@ -3166,48 +2957,28 @@ define("GameScene", [
             }
         },
         cut: function (razor, v1, v2, immediate) {
-            var cutCount = 0;
-            for (var l = 0, len = this.bungees.length; l < len; l++) {
-                var g = this.bungees[l],
+            let cutCount = 0;
+            for (let l = 0, len = this.bungees.length; l < len; l++) {
+                const g = this.bungees[l],
                     b = g.rope;
 
                 if (!b || b.cut !== Constants.UNDEFINED) {
                     continue;
                 }
 
-                var GRAB_WHEEL_RADIUS = resolution.GRAB_WHEEL_RADIUS,
+                const GRAB_WHEEL_RADIUS = resolution.GRAB_WHEEL_RADIUS,
                     GRAB_WHEEL_DIAMETER = GRAB_WHEEL_RADIUS * 2;
-                for (var i = 0, iLimit = b.parts.length - 1; i < iLimit; i++) {
-                    var p1 = b.parts[i],
+                for (let i = 0, iLimit = b.parts.length - 1; i < iLimit; i++) {
+                    let p1 = b.parts[i],
                         p2 = b.parts[i + 1],
                         cut = false;
 
                     if (razor) {
                         if (p1.prevPos.x !== Constants.INT_MAX) {
-                            var minX = MathHelper.minOf4(
-                                    p1.pos.x,
-                                    p1.prevPos.x,
-                                    p2.pos.x,
-                                    p2.prevPos.x
-                                ),
-                                minY = MathHelper.minOf4(
-                                    p1.pos.y,
-                                    p1.prevPos.y,
-                                    p2.pos.y,
-                                    p2.prevPos.y
-                                ),
-                                maxX = MathHelper.maxOf4(
-                                    p1.pos.x,
-                                    p1.prevPos.x,
-                                    p2.pos.x,
-                                    p2.prevPos.x
-                                ),
-                                maxY = MathHelper.maxOf4(
-                                    p1.pos.y,
-                                    p1.prevPos.y,
-                                    p2.pos.y,
-                                    p2.prevPos.y
-                                );
+                            const minX = MathHelper.minOf4(p1.pos.x, p1.prevPos.x, p2.pos.x, p2.prevPos.x),
+                                minY = MathHelper.minOf4(p1.pos.y, p1.prevPos.y, p2.pos.y, p2.prevPos.y),
+                                maxX = MathHelper.maxOf4(p1.pos.x, p1.prevPos.x, p2.pos.x, p2.prevPos.x),
+                                maxY = MathHelper.maxOf4(p1.pos.y, p1.prevPos.y, p2.pos.y, p2.prevPos.y);
 
                             cut = Rectangle.rectInRect(
                                 minX,
@@ -3236,16 +3007,7 @@ define("GameScene", [
                         ) {
                             cut = false;
                         } else {
-                            cut = MathHelper.lineInLine(
-                                v1.x,
-                                v1.y,
-                                v2.x,
-                                v2.y,
-                                p1.pos.x,
-                                p1.pos.y,
-                                p2.pos.x,
-                                p2.pos.y
-                            );
+                            cut = MathHelper.lineInLine(v1.x, v1.y, v2.x, v2.y, p1.pos.x, p1.pos.y, p2.pos.x, p2.pos.y);
                         }
                     }
 
@@ -3276,21 +3038,12 @@ define("GameScene", [
         spiderBusted: function (g) {
             SoundMgr.playSound(ResourceId.SND_SPIDER_FALL);
             g.hasSpider = false;
-            var s = ImageElement.create(ResourceId.IMG_OBJ_SPIDER, IMG_OBJ_SPIDER_busted);
+            const s = ImageElement.create(ResourceId.IMG_OBJ_SPIDER, IMG_OBJ_SPIDER_busted);
             s.doRestoreCutTransparency();
-            var tl = new Timeline();
+            const tl = new Timeline();
             if (this.gravityButton && !this.gravityNormal) {
-                tl.addKeyFrame(
-                    KeyFrame.makePos(g.spider.x, g.spider.y, KeyFrame.TransitionType.EASE_OUT, 0)
-                );
-                tl.addKeyFrame(
-                    KeyFrame.makePos(
-                        g.spider.x,
-                        g.spider.y + 50,
-                        KeyFrame.TransitionType.EASE_OUT,
-                        0.3
-                    )
-                );
+                tl.addKeyFrame(KeyFrame.makePos(g.spider.x, g.spider.y, KeyFrame.TransitionType.EASE_OUT, 0));
+                tl.addKeyFrame(KeyFrame.makePos(g.spider.x, g.spider.y + 50, KeyFrame.TransitionType.EASE_OUT, 0.3));
                 tl.addKeyFrame(
                     KeyFrame.makePos(
                         g.spider.x,
@@ -3300,17 +3053,8 @@ define("GameScene", [
                     )
                 );
             } else {
-                tl.addKeyFrame(
-                    KeyFrame.makePos(g.spider.x, g.spider.y, KeyFrame.TransitionType.EASE_OUT, 0)
-                );
-                tl.addKeyFrame(
-                    KeyFrame.makePos(
-                        g.spider.x,
-                        g.spider.y - 50,
-                        KeyFrame.TransitionType.EASE_OUT,
-                        0.3
-                    )
-                );
+                tl.addKeyFrame(KeyFrame.makePos(g.spider.x, g.spider.y, KeyFrame.TransitionType.EASE_OUT, 0));
+                tl.addKeyFrame(KeyFrame.makePos(g.spider.x, g.spider.y - 50, KeyFrame.TransitionType.EASE_OUT, 0.3));
                 tl.addKeyFrame(
                     KeyFrame.makePos(
                         g.spider.x,
@@ -3339,8 +3083,8 @@ define("GameScene", [
         spiderWon: function (sg) {
             SoundMgr.playSound(ResourceId.SND_SPIDER_WIN);
 
-            for (var i = 0, count = this.bungees.length; i < count; i++) {
-                var g = this.bungees[i],
+            for (let i = 0, count = this.bungees.length; i < count; i++) {
+                const g = this.bungees[i],
                     b = g.rope;
                 if (b && b.tail === this.star) {
                     if (b.cut !== Constants.UNDEFINED) {
@@ -3361,31 +3105,17 @@ define("GameScene", [
             this.spiderTookCandy = true;
             this.noCandy = true;
 
-            var s = ImageElement.create(ResourceId.IMG_OBJ_SPIDER, IMG_OBJ_SPIDER_stealing);
+            const s = ImageElement.create(ResourceId.IMG_OBJ_SPIDER, IMG_OBJ_SPIDER_stealing);
             s.doRestoreCutTransparency();
             this.candy.anchor = this.candy.parentAnchor = Alignment.CENTER;
             this.candy.x = 0;
             this.candy.y = -5;
 
             s.addChild(this.candy);
-            var tl = new Timeline();
+            const tl = new Timeline();
             if (this.gravityButton && !this.gravityNormal) {
-                tl.addKeyFrame(
-                    KeyFrame.makePos(
-                        sg.spider.x,
-                        sg.spider.y - 10,
-                        KeyFrame.TransitionType.EASE_OUT,
-                        0
-                    )
-                );
-                tl.addKeyFrame(
-                    KeyFrame.makePos(
-                        sg.spider.x,
-                        sg.spider.y + 70,
-                        KeyFrame.TransitionType.EASE_OUT,
-                        0.3
-                    )
-                );
+                tl.addKeyFrame(KeyFrame.makePos(sg.spider.x, sg.spider.y - 10, KeyFrame.TransitionType.EASE_OUT, 0));
+                tl.addKeyFrame(KeyFrame.makePos(sg.spider.x, sg.spider.y + 70, KeyFrame.TransitionType.EASE_OUT, 0.3));
                 tl.addKeyFrame(
                     KeyFrame.makePos(
                         sg.spider.x,
@@ -3395,22 +3125,8 @@ define("GameScene", [
                     )
                 );
             } else {
-                tl.addKeyFrame(
-                    KeyFrame.makePos(
-                        sg.spider.x,
-                        sg.spider.y - 10,
-                        KeyFrame.TransitionType.EASE_OUT,
-                        0
-                    )
-                );
-                tl.addKeyFrame(
-                    KeyFrame.makePos(
-                        sg.spider.x,
-                        sg.spider.y - 70,
-                        KeyFrame.TransitionType.EASE_OUT,
-                        0.3
-                    )
-                );
+                tl.addKeyFrame(KeyFrame.makePos(sg.spider.x, sg.spider.y - 10, KeyFrame.TransitionType.EASE_OUT, 0));
+                tl.addKeyFrame(KeyFrame.makePos(sg.spider.x, sg.spider.y - 70, KeyFrame.TransitionType.EASE_OUT, 0.3));
                 tl.addKeyFrame(
                     KeyFrame.makePos(
                         sg.spider.x,
@@ -3485,8 +3201,8 @@ define("GameScene", [
             return false;
         },
         resetBungeeHighlight: function () {
-            for (var i = 0, len = this.bungees.length; i < len; i++) {
-                var grab = this.bungees[i],
+            for (let i = 0, len = this.bungees.length; i < len; i++) {
+                const grab = this.bungees[i],
                     bungee = grab.rope;
                 if (!bungee || bungee.cut !== Constants.UNDEFINED) {
                     continue;
@@ -3495,18 +3211,18 @@ define("GameScene", [
             }
         },
         getNearestBungeeGrabByBezierPoints: function (s, tx, ty) {
-            var SEARCH_RADIUS = resolution.CLICK_TO_CUT_SEARCH_RADIUS,
+            let SEARCH_RADIUS = resolution.CLICK_TO_CUT_SEARCH_RADIUS,
                 grab = null,
                 md = SEARCH_RADIUS,
                 tv = new Vector(tx, ty);
 
-            for (var l = 0, numBungees = this.bungees.length; l < numBungees; l++) {
-                var g = this.bungees[l],
+            for (let l = 0, numBungees = this.bungees.length; l < numBungees; l++) {
+                const g = this.bungees[l],
                     b = g.rope;
 
                 if (b) {
-                    for (var i = 0, numParts = b.drawPts.length; i < numParts; i++) {
-                        var c1 = b.drawPts[i],
+                    for (let i = 0, numParts = b.drawPts.length; i < numParts; i++) {
+                        const c1 = b.drawPts[i],
                             d = c1.distance(tv);
                         if (d < SEARCH_RADIUS && d < md) {
                             md = d;
@@ -3520,7 +3236,7 @@ define("GameScene", [
             return grab;
         },
         getNearestBungeeSegmentByConstraints: function (s, g) {
-            var SEARCH_RADIUS = Number.MAX_VALUE,
+            let SEARCH_RADIUS = Number.MAX_VALUE,
                 nb = null,
                 md = SEARCH_RADIUS,
                 sOrig = s.copy(),
@@ -3530,10 +3246,10 @@ define("GameScene", [
                 return null;
             }
 
-            var GRAB_WHEEL_RADIUS = resolution.GRAB_WHEEL_RADIUS,
+            const GRAB_WHEEL_RADIUS = resolution.GRAB_WHEEL_RADIUS,
                 GRAB_WHEEL_DIAMETER = GRAB_WHEEL_RADIUS * 2;
-            for (var i = 0, numParts = b.parts.length - 1; i < numParts; i++) {
-                var p1 = b.parts[i],
+            for (let i = 0, numParts = b.parts.length - 1; i < numParts; i++) {
+                const p1 = b.parts[i],
                     d = p1.pos.distance(sOrig);
                 if (d < md) {
                     if (
@@ -3598,14 +3314,14 @@ define("GameScene", [
                 }
             }
 
-            var touch = new Vector(x, y);
+            const touch = new Vector(x, y);
             if (!this.dragging[touchIndex]) {
                 this.dragging[touchIndex] = true;
                 this.startPos[touchIndex].copyFrom(touch);
                 this.prevStartPos[touchIndex].copyFrom(touch);
             }
 
-            var i,
+            let i,
                 len,
                 cameraPos = this.camera.pos,
                 cameraAdjustedX = x + cameraPos.x,
@@ -3613,7 +3329,7 @@ define("GameScene", [
 
             // handle rotating spikes
             for (i = 0, len = this.spikes.length; i < len; i++) {
-                var spike = this.spikes[i];
+                const spike = this.spikes[i];
                 if (
                     spike.rotateButton &&
                     spike.touchIndex === Constants.UNDEFINED &&
@@ -3626,7 +3342,7 @@ define("GameScene", [
 
             // handle pump touches
             for (i = 0, len = this.pumps.length; i < len; i++) {
-                var pump = this.pumps[i];
+                const pump = this.pumps[i];
                 if (pump.pointInObject(cameraAdjustedX, cameraAdjustedY)) {
                     pump.touchTimer = PUMP_TIMEOUT;
                     pump.touch = touchIndex;
@@ -3634,30 +3350,20 @@ define("GameScene", [
                 }
             }
 
-            var activeCircle = null,
+            let activeCircle = null,
                 hasCircleInside = false,
                 intersectsAnotherCircle = false;
             for (i = 0, len = this.rotatedCircles.length; i < len; i++) {
-                var r = this.rotatedCircles[i],
-                    d1 = Vector.distance(
-                        cameraAdjustedX,
-                        cameraAdjustedY,
-                        r.handle1.x,
-                        r.handle1.y
-                    ),
-                    d2 = Vector.distance(
-                        cameraAdjustedX,
-                        cameraAdjustedY,
-                        r.handle2.x,
-                        r.handle2.y
-                    );
+                const r = this.rotatedCircles[i],
+                    d1 = Vector.distance(cameraAdjustedX, cameraAdjustedY, r.handle1.x, r.handle1.y),
+                    d2 = Vector.distance(cameraAdjustedX, cameraAdjustedY, r.handle2.x, r.handle2.y);
                 if (
                     (d1 < resolution.RC_CONTROLLER_RADIUS && !r.hasOneHandle()) ||
                     d2 < resolution.RC_CONTROLLER_RADIUS
                 ) {
                     //check for overlapping
-                    for (var j = i + 1; j < len; j++) {
-                        var r2 = this.rotatedCircles[j],
+                    for (let j = i + 1; j < len; j++) {
+                        const r2 = this.rotatedCircles[j],
                             d3 = Vector.distance(r2.x, r2.y, r.x, r.y);
 
                         if (d3 + r2.sizeInPixels <= r.sizeInPixels) {
@@ -3685,39 +3391,21 @@ define("GameScene", [
             }
 
             // circle fading
-            var activeCircleIndex = this.rotatedCircles.indexOf(activeCircle);
-            if (
-                activeCircleIndex != this.rotatedCircles.length - 1 &&
-                intersectsAnotherCircle &&
-                !hasCircleInside
-            ) {
-                var fadeIn = new Timeline();
+            const activeCircleIndex = this.rotatedCircles.indexOf(activeCircle);
+            if (activeCircleIndex != this.rotatedCircles.length - 1 && intersectsAnotherCircle && !hasCircleInside) {
+                const fadeIn = new Timeline();
+                fadeIn.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0));
                 fadeIn.addKeyFrame(
-                    KeyFrame.makeColor(
-                        RGBAColor.transparent.copy(),
-                        KeyFrame.TransitionType.LINEAR,
-                        0
-                    )
-                );
-                fadeIn.addKeyFrame(
-                    KeyFrame.makeColor(
-                        RGBAColor.solidOpaque.copy(),
-                        KeyFrame.TransitionType.LINEAR,
-                        0.2
-                    )
+                    KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0.2)
                 );
 
-                var fadeOut = new Timeline();
+                const fadeOut = new Timeline();
                 fadeOut.addKeyFrame(
-                    KeyFrame.makeColor(
-                        RGBAColor.solidOpaque.copy(),
-                        KeyFrame.TransitionType.LINEAR,
-                        0.2
-                    )
+                    KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0.2)
                 );
-                fadeOut.onFinished = $.proxy(this.onRotatedCircleTimelineFinished, this);
+                fadeOut.onFinished = this.onRotatedCircleTimelineFinished.bind(this);
 
-                var fadingOutCircle = activeCircle.copy();
+                const fadingOutCircle = activeCircle.copy();
                 fadingOutCircle.addTimeline(fadeOut);
                 fadingOutCircle.playTimeline(0);
 
@@ -3729,7 +3417,7 @@ define("GameScene", [
                 activeCircle = null;
             }
 
-            var GRAB_WHEEL_RADIUS = resolution.GRAB_WHEEL_RADIUS,
+            const GRAB_WHEEL_RADIUS = resolution.GRAB_WHEEL_RADIUS,
                 GRAB_WHEEL_DIAMETER = GRAB_WHEEL_RADIUS * 2,
                 GRAB_MOVE_RADIUS = resolution.GRAB_MOVE_RADIUS,
                 GRAB_MOVE_DIAMETER = GRAB_MOVE_RADIUS * 2;
@@ -3770,11 +3458,7 @@ define("GameScene", [
 
             if (this.clickToCut) {
                 var cutPos = Vector.newZero(),
-                    grab = this.getNearestBungeeGrabByBezierPoints(
-                        cutPos,
-                        cameraAdjustedX,
-                        cameraAdjustedY
-                    ),
+                    grab = this.getNearestBungeeGrabByBezierPoints(cutPos, cameraAdjustedX, cameraAdjustedY),
                     bungee = grab ? grab.rope : null;
                 if (bungee && bungee.highlighted) {
                     if (this.getNearestBungeeSegmentByConstraints(cutPos, grab)) {
@@ -3813,7 +3497,7 @@ define("GameScene", [
                 this.overOmNom = false;
             }
 
-            var i,
+            let i,
                 len,
                 cameraPos = this.camera.pos,
                 cameraAdjustedX = x + cameraPos.x,
@@ -3821,7 +3505,7 @@ define("GameScene", [
 
             // drawings
             for (i = 0, len = this.drawings.length; i < len; i++) {
-                var drawing = this.drawings[i];
+                const drawing = this.drawings[i];
                 if (drawing.pointInObject(cameraAdjustedX, cameraAdjustedY)) {
                     drawing.showDrawing();
 
@@ -3832,7 +3516,7 @@ define("GameScene", [
             }
 
             if (this.gravityButton && this.gravityTouchDown === touchIndex) {
-                var childIndex = this.gravityButton.isOn() ? 1 : 0,
+                const childIndex = this.gravityButton.isOn() ? 1 : 0,
                     child = this.gravityButton.getChild(childIndex);
                 if (child.isInTouchZone(x + this.camera.pos.x, y + this.camera.pos.y, true)) {
                     this.gravityButton.toggle();
@@ -3852,7 +3536,7 @@ define("GameScene", [
             // }
 
             for (i = 0, len = this.rotatedCircles.length; i < len; i++) {
-                var r = this.rotatedCircles[i];
+                const r = this.rotatedCircles[i];
                 if (r.operating === touchIndex) {
                     r.operating = Constants.UNDEFINED;
                     r.soundPlaying = Constants.UNDEFINED;
@@ -3862,7 +3546,7 @@ define("GameScene", [
             }
 
             for (i = 0, len = this.bungees.length; i < len; i++) {
-                var grab = this.bungees[i];
+                const grab = this.bungees[i];
                 if (grab.wheel && grab.wheelOperating === touchIndex) {
                     grab.wheelOperating = Constants.UNDEFINED;
                 }
@@ -3883,12 +3567,12 @@ define("GameScene", [
                 return true;
             }
 
-            var touch = new Vector(x, y),
+            let touch = new Vector(x, y),
                 i,
                 len;
             if (this.startPos[touchIndex].distance(touch) > 10) {
                 for (i = 0, len = this.pumps.length; i < len; i++) {
-                    var pump = this.pumps[i];
+                    const pump = this.pumps[i];
 
                     // cancel pump touch if we moved
                     if (pump.touch === touchIndex && pump.touchTimer !== 0) {
@@ -3899,17 +3583,17 @@ define("GameScene", [
 
             this.slastTouch.copyFrom(touch);
 
-            var cameraAdjustedTouch = new Vector(x + this.camera.pos.x, y + this.camera.pos.y);
+            const cameraAdjustedTouch = new Vector(x + this.camera.pos.x, y + this.camera.pos.y);
 
             for (i = 0, len = this.rotatedCircles.length; i < len; i++) {
-                var r = this.rotatedCircles[i];
+                const r = this.rotatedCircles[i];
                 if (r.operating === touchIndex) {
-                    var c = new Vector(r.x, r.y);
+                    const c = new Vector(r.x, r.y);
                     if (c.distance(cameraAdjustedTouch) < r.sizeInPixels / 10) {
                         r.lastTouch.copyFrom(cameraAdjustedTouch);
                     }
 
-                    var m1 = Vector.subtract(r.lastTouch, c),
+                    let m1 = Vector.subtract(r.lastTouch, c),
                         m2 = Vector.subtract(cameraAdjustedTouch, c),
                         a = m2.normalizedAngle() - m1.normalizedAngle();
 
@@ -3923,8 +3607,7 @@ define("GameScene", [
                     r.handle2.rotateAround(a, r.x, r.y);
                     r.rotation += Radians.toDegrees(a);
 
-                    var soundToPlay =
-                        a > 0 ? ResourceId.SND_SCRATCH_IN : ResourceId.SND_SCRATCH_OUT;
+                    let soundToPlay = a > 0 ? ResourceId.SND_SCRATCH_IN : ResourceId.SND_SCRATCH_OUT;
 
                     if (Math.abs(a) < 0.07) soundToPlay = Constants.UNDEFINED;
 
@@ -3997,7 +3680,7 @@ define("GameScene", [
             }
 
             for (i = 0, len = this.bungees.length; i < len; i++) {
-                var grab = this.bungees[i];
+                const grab = this.bungees[i];
                 if (!grab) {
                     continue;
                 }
@@ -4023,7 +3706,7 @@ define("GameScene", [
                     }
 
                     if (grab.rope) {
-                        var ba = grab.rope.bungeeAnchor;
+                        const ba = grab.rope.bungeeAnchor;
                         ba.pos.x = ba.pin.x = grab.x;
                         ba.pos.y = ba.pin.y = grab.y;
                     }
@@ -4033,7 +3716,7 @@ define("GameScene", [
             }
 
             if (this.dragging[touchIndex]) {
-                var fc = new FingerCut(
+                let fc = new FingerCut(
                         Vector.add(this.startPos[touchIndex], this.camera.pos),
                         Vector.add(touch, this.camera.pos),
                         5, // start size
@@ -4045,7 +3728,7 @@ define("GameScene", [
 
                 currentCuts.push(fc);
                 for (i = 0, len = currentCuts.length; i < len; i++) {
-                    var fcc = currentCuts[i];
+                    const fcc = currentCuts[i];
                     ropeCuts += this.cut(null, fcc.start, fcc.end, false);
                 }
 
@@ -4090,12 +3773,10 @@ define("GameScene", [
         onButtonPressed: function (n) {
             Gravity.toggle();
             this.gravityNormal = Gravity.isNormal();
-            SoundMgr.playSound(
-                this.gravityNormal ? ResourceId.SND_GRAVITY_OFF : ResourceId.SND_GRAVITY_ON
-            );
+            SoundMgr.playSound(this.gravityNormal ? ResourceId.SND_GRAVITY_OFF : ResourceId.SND_GRAVITY_ON);
 
-            for (var i = 0, len = this.earthAnims.length; i < len; i++) {
-                var earthImage = this.earthAnims[i];
+            for (let i = 0, len = this.earthAnims.length; i < len; i++) {
+                const earthImage = this.earthAnims[i];
                 if (Gravity.isNormal()) {
                     earthImage.playTimeline(EarthImage.TimelineId.NORMAL);
                 } else {
@@ -4104,7 +3785,7 @@ define("GameScene", [
             }
         },
         rotateAllSpikesWithId: function (sid) {
-            for (var i = 0, len = this.spikes.length; i < len; i++) {
+            for (let i = 0, len = this.spikes.length; i < len; i++) {
                 if (this.spikes[i].getToggled() === sid) {
                     this.spikes[i].rotateSpikes();
                 }
@@ -4128,63 +3809,63 @@ define("GameScene", [
     var IMG_OBJ_CANDY_01_part_fx_end = 25;
 
     var IMG_OBJ_STAR_DISAPPEAR_Frame_1 = 0;
-    var IMG_OBJ_STAR_DISAPPEAR_Frame_2 = 1;
-    var IMG_OBJ_STAR_DISAPPEAR_Frame_3 = 2;
-    var IMG_OBJ_STAR_DISAPPEAR_Frame_4 = 3;
-    var IMG_OBJ_STAR_DISAPPEAR_Frame_5 = 4;
-    var IMG_OBJ_STAR_DISAPPEAR_Frame_6 = 5;
-    var IMG_OBJ_STAR_DISAPPEAR_Frame_7 = 6;
-    var IMG_OBJ_STAR_DISAPPEAR_Frame_8 = 7;
-    var IMG_OBJ_STAR_DISAPPEAR_Frame_9 = 8;
-    var IMG_OBJ_STAR_DISAPPEAR_Frame_10 = 9;
-    var IMG_OBJ_STAR_DISAPPEAR_Frame_11 = 10;
-    var IMG_OBJ_STAR_DISAPPEAR_Frame_12 = 11;
+    const IMG_OBJ_STAR_DISAPPEAR_Frame_2 = 1;
+    const IMG_OBJ_STAR_DISAPPEAR_Frame_3 = 2;
+    const IMG_OBJ_STAR_DISAPPEAR_Frame_4 = 3;
+    const IMG_OBJ_STAR_DISAPPEAR_Frame_5 = 4;
+    const IMG_OBJ_STAR_DISAPPEAR_Frame_6 = 5;
+    const IMG_OBJ_STAR_DISAPPEAR_Frame_7 = 6;
+    const IMG_OBJ_STAR_DISAPPEAR_Frame_8 = 7;
+    const IMG_OBJ_STAR_DISAPPEAR_Frame_9 = 8;
+    const IMG_OBJ_STAR_DISAPPEAR_Frame_10 = 9;
+    const IMG_OBJ_STAR_DISAPPEAR_Frame_11 = 10;
+    const IMG_OBJ_STAR_DISAPPEAR_Frame_12 = 11;
     var IMG_OBJ_STAR_DISAPPEAR_Frame_13 = 12;
 
     var IMG_OBJ_BUBBLE_FLIGHT_Frame_1 = 0;
-    var IMG_OBJ_BUBBLE_FLIGHT_Frame_2 = 1;
-    var IMG_OBJ_BUBBLE_FLIGHT_Frame_3 = 2;
-    var IMG_OBJ_BUBBLE_FLIGHT_Frame_4 = 3;
-    var IMG_OBJ_BUBBLE_FLIGHT_Frame_5 = 4;
-    var IMG_OBJ_BUBBLE_FLIGHT_Frame_6 = 5;
-    var IMG_OBJ_BUBBLE_FLIGHT_Frame_7 = 6;
-    var IMG_OBJ_BUBBLE_FLIGHT_Frame_8 = 7;
-    var IMG_OBJ_BUBBLE_FLIGHT_Frame_9 = 8;
-    var IMG_OBJ_BUBBLE_FLIGHT_Frame_10 = 9;
-    var IMG_OBJ_BUBBLE_FLIGHT_Frame_11 = 10;
-    var IMG_OBJ_BUBBLE_FLIGHT_Frame_12 = 11;
+    const IMG_OBJ_BUBBLE_FLIGHT_Frame_2 = 1;
+    const IMG_OBJ_BUBBLE_FLIGHT_Frame_3 = 2;
+    const IMG_OBJ_BUBBLE_FLIGHT_Frame_4 = 3;
+    const IMG_OBJ_BUBBLE_FLIGHT_Frame_5 = 4;
+    const IMG_OBJ_BUBBLE_FLIGHT_Frame_6 = 5;
+    const IMG_OBJ_BUBBLE_FLIGHT_Frame_7 = 6;
+    const IMG_OBJ_BUBBLE_FLIGHT_Frame_8 = 7;
+    const IMG_OBJ_BUBBLE_FLIGHT_Frame_9 = 8;
+    const IMG_OBJ_BUBBLE_FLIGHT_Frame_10 = 9;
+    const IMG_OBJ_BUBBLE_FLIGHT_Frame_11 = 10;
+    const IMG_OBJ_BUBBLE_FLIGHT_Frame_12 = 11;
     var IMG_OBJ_BUBBLE_FLIGHT_Frame_13 = 12;
-    var IMG_OBJ_BUBBLE_FLIGHT_Frame_14 = 13;
+    const IMG_OBJ_BUBBLE_FLIGHT_Frame_14 = 13;
 
     var IMG_OBJ_BUBBLE_POP_Frame_1 = 0;
-    var IMG_OBJ_BUBBLE_POP_Frame_2 = 1;
-    var IMG_OBJ_BUBBLE_POP_Frame_3 = 2;
-    var IMG_OBJ_BUBBLE_POP_Frame_4 = 3;
-    var IMG_OBJ_BUBBLE_POP_Frame_5 = 4;
-    var IMG_OBJ_BUBBLE_POP_Frame_6 = 5;
-    var IMG_OBJ_BUBBLE_POP_Frame_7 = 6;
-    var IMG_OBJ_BUBBLE_POP_Frame_8 = 7;
-    var IMG_OBJ_BUBBLE_POP_Frame_9 = 8;
-    var IMG_OBJ_BUBBLE_POP_Frame_10 = 9;
-    var IMG_OBJ_BUBBLE_POP_Frame_11 = 10;
+    const IMG_OBJ_BUBBLE_POP_Frame_2 = 1;
+    const IMG_OBJ_BUBBLE_POP_Frame_3 = 2;
+    const IMG_OBJ_BUBBLE_POP_Frame_4 = 3;
+    const IMG_OBJ_BUBBLE_POP_Frame_5 = 4;
+    const IMG_OBJ_BUBBLE_POP_Frame_6 = 5;
+    const IMG_OBJ_BUBBLE_POP_Frame_7 = 6;
+    const IMG_OBJ_BUBBLE_POP_Frame_8 = 7;
+    const IMG_OBJ_BUBBLE_POP_Frame_9 = 8;
+    const IMG_OBJ_BUBBLE_POP_Frame_10 = 9;
+    const IMG_OBJ_BUBBLE_POP_Frame_11 = 10;
     var IMG_OBJ_BUBBLE_POP_Frame_12 = 11;
 
     var IMG_OBJ_BUBBLE_ATTACHED_bubble = 0;
     var IMG_OBJ_BUBBLE_ATTACHED_stain_01 = 1;
-    var IMG_OBJ_BUBBLE_ATTACHED_stain_02 = 2;
+    const IMG_OBJ_BUBBLE_ATTACHED_stain_02 = 2;
     var IMG_OBJ_BUBBLE_ATTACHED_stain_03 = 3;
 
     var IMG_HUD_STAR_Frame_1 = 0;
-    var IMG_HUD_STAR_Frame_2 = 1;
-    var IMG_HUD_STAR_Frame_3 = 2;
-    var IMG_HUD_STAR_Frame_4 = 3;
-    var IMG_HUD_STAR_Frame_5 = 4;
-    var IMG_HUD_STAR_Frame_6 = 5;
-    var IMG_HUD_STAR_Frame_7 = 6;
-    var IMG_HUD_STAR_Frame_8 = 7;
-    var IMG_HUD_STAR_Frame_9 = 8;
+    const IMG_HUD_STAR_Frame_2 = 1;
+    const IMG_HUD_STAR_Frame_3 = 2;
+    const IMG_HUD_STAR_Frame_4 = 3;
+    const IMG_HUD_STAR_Frame_5 = 4;
+    const IMG_HUD_STAR_Frame_6 = 5;
+    const IMG_HUD_STAR_Frame_7 = 6;
+    const IMG_HUD_STAR_Frame_8 = 7;
+    const IMG_HUD_STAR_Frame_9 = 8;
     var IMG_HUD_STAR_Frame_10 = 9;
-    var IMG_HUD_STAR_Frame_11 = 10;
+    const IMG_HUD_STAR_Frame_11 = 10;
 
     var IMG_CHAR_ANIMATIONS_idle_start = 8;
     var IMG_CHAR_ANIMATIONS_idle_end = 26;

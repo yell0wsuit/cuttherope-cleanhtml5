@@ -3,7 +3,7 @@ define("resources/ResData", [
     "resources/ResourceType",
     "resources/ResourceId",
 ], function (ResEntry, ResourceType, ResourceId) {
-    var RES_DATA = [];
+    const RES_DATA = [];
 
     RES_DATA[ResourceId.IMG_DEFAULT] = new ResEntry("zeptolab.png", ResourceType.IMAGE);
     RES_DATA[ResourceId.IMG_LOADERBAR_FULL] = new ResEntry(

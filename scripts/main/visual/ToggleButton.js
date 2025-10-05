@@ -3,12 +3,12 @@ define("visual/ToggleButton", [
     "visual/GenericButton",
     "core/Alignment",
 ], function (BaseElement, GenericButton, Alignment) {
-    var ToggleButtonId = {
+    const ToggleButtonId = {
         FACE1: 0,
         FACE2: 1,
     };
 
-    var ToggleButton = BaseElement.extend({
+    const ToggleButton = BaseElement.extend({
         init: function (up1, down1, up2, down2, id) {
             this._super();
 
@@ -28,8 +28,8 @@ define("visual/ToggleButton", [
             this.addChildWithID(this.b2, ToggleButtonId.FACE2);
 
             this.b2.setEnabled(false);
-            this.b1.onButtonPressed = $.proxy(this.onButtonPressed, this);
-            this.b2.onButtonPressed = $.proxy(this.onButtonPressed, this);
+            this.b1.onButtonPressed = this.onButtonPressed.bind(this);
+            this.b2.onButtonPressed = this.onButtonPressed.bind(this);
         },
         onButtonPressed: function (n) {
             switch (n) {

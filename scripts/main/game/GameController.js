@@ -9,7 +9,7 @@ define("game/GameController", [
     /**
      * @enum {number}
      */
-    var GameButton = {
+    const GameButton = {
         PAUSE_RESUME: 0,
         PAUSE_RESTART: 1,
         PAUSE_SKIP: 2,
@@ -25,13 +25,13 @@ define("game/GameController", [
     /**
      * @enum {number}
      */
-    var ExitCodeFrom = {
+    const ExitCodeFrom = {
         PAUSE_MENU: 0,
         PAUSE_MENU_LEVEL_SELECT: 1,
         PAUSE_MENU_LEVEL_SELECT_NEXT_PACK: 2,
     };
 
-    var GameController = ViewController.extend({
+    const GameController = ViewController.extend({
         init: function (parent) {
             this._super(parent);
             this.animateRestart = false;
@@ -44,8 +44,8 @@ define("game/GameController", [
             this.showView(0);
         },
         createGameView: function () {
-            var view = new GameView();
-            var sc = new GameScene();
+            const view = new GameView();
+            const sc = new GameScene();
             sc.gameController = this;
             sc.animateRestartDim = this.animateRestart;
             this.animateRestart = false;
@@ -74,9 +74,9 @@ define("game/GameController", [
         setPaused: function (paused) {
             this.isGamePaused = paused;
 
-            var view = this.getView(0);
+            const view = this.getView(0);
             if (view) {
-                var gs = view.getChild(GameView.ElementType.GAME_SCENE);
+                const gs = view.getChild(GameView.ElementType.GAME_SCENE);
                 if (gs) {
                     gs.touchable = !paused;
                     gs.updateable = !paused;
@@ -90,9 +90,9 @@ define("game/GameController", [
             }
         },
         pauseLevel: function () {
-            var view = this.getView(0);
+            const view = this.getView(0);
             if (view) {
-                var gs = view.getChild(GameView.ElementType.GAME_SCENE);
+                const gs = view.getChild(GameView.ElementType.GAME_SCENE);
                 if (gs) {
                     gs.dimTime = 0.0;
                     this.setPaused(true);
@@ -115,15 +115,15 @@ define("game/GameController", [
          */
         mouseDown: function (x, y) {
             // see if the event was handled by the base class
-            var res = this._super(x, y);
+            const res = this._super(x, y);
             if (res) {
                 return true;
             }
 
             // see if the game scene is touchable
-            var view = this.getView(0);
+            const view = this.getView(0);
             if (view) {
-                var gs = view.getChild(GameView.ElementType.GAME_SCENE);
+                const gs = view.getChild(GameView.ElementType.GAME_SCENE);
                 if (gs && gs.touchable) {
                     gs.touchDown(x, y, 0);
                     return true;
@@ -139,15 +139,15 @@ define("game/GameController", [
          */
         mouseDragged: function (x, y) {
             // see if the event was handled by the base class
-            var res = this._super(x, y);
+            const res = this._super(x, y);
             if (res) {
                 return true;
             }
 
             // see if the game scene is touchable
-            var view = this.getView(0);
+            const view = this.getView(0);
             if (view) {
-                var gs = view.getChild(GameView.ElementType.GAME_SCENE);
+                const gs = view.getChild(GameView.ElementType.GAME_SCENE);
                 if (gs && gs.touchable) {
                     gs.touchDragged(x, y, 0);
                     return true;
@@ -163,15 +163,15 @@ define("game/GameController", [
          */
         mouseMoved: function (x, y) {
             // see if the event was handled by the base class
-            var res = this._super(x, y);
+            const res = this._super(x, y);
             if (res) {
                 return true;
             }
 
             // see if the game scene is touchable
-            var view = this.getView(0);
+            const view = this.getView(0);
             if (view) {
-                var gs = view.getChild(GameView.ElementType.GAME_SCENE);
+                const gs = view.getChild(GameView.ElementType.GAME_SCENE);
                 if (gs && gs.touchable) {
                     gs.touchMove(x, y, 0);
                     return true;
@@ -187,15 +187,15 @@ define("game/GameController", [
          */
         mouseUp: function (x, y) {
             // see if the event was handled by the base class
-            var res = this._super(x, y);
+            const res = this._super(x, y);
             if (res) {
                 return true;
             }
 
             // see if the game scene is touchable
-            var view = this.getView(0);
+            const view = this.getView(0);
             if (view) {
-                var gs = view.getChild(GameView.ElementType.GAME_SCENE);
+                const gs = view.getChild(GameView.ElementType.GAME_SCENE);
                 if (gs && gs.touchable) {
                     gs.touchUp(x, y, 0);
                     return true;
@@ -211,14 +211,14 @@ define("game/GameController", [
          */
         doubleClick: function (x, y) {
             // see if the event was handled by the base class
-            var res = this._super(x, y);
+            const res = this._super(x, y);
             if (res) {
                 return true;
             }
 
-            var view = this.getView(0);
+            const view = this.getView(0);
             if (view) {
-                var gs = view.getChild(GameView.ElementType.GAME_SCENE);
+                const gs = view.getChild(GameView.ElementType.GAME_SCENE);
                 if (gs && gs.touchable) {
                     gs.doubleClick(x, y, 0);
                     return true;

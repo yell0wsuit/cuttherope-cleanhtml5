@@ -7,12 +7,12 @@ define("visual/TimelineTrack", [
     /**
      * @enum {number}
      */
-    var TrackState = {
+    const TrackState = {
         NOT_ACTIVE: 0,
         ACTIVE: 1,
     };
 
-    var TimelineTrack = Class.extend({
+    const TimelineTrack = Class.extend({
         init: function (timeline, trackType) {
             this.type = trackType;
             this.state = TrackState.NOT_ACTIVE;
@@ -50,8 +50,8 @@ define("visual/TimelineTrack", [
             }
         },
         getFrameTime: function (frameIndex) {
-            var total = 0;
-            for (var i = 0; i <= frameIndex; i++) {
+            let total = 0;
+            for (let i = 0; i <= frameIndex; i++) {
                 total += this.keyFrames[i].timeOffset;
             }
             return total;
@@ -123,14 +123,14 @@ define("visual/TimelineTrack", [
                         );
                     } else {
                         this.nextKeyFrame--;
-                        var kf = this.keyFrames[this.nextKeyFrame + 1];
+                        const kf = this.keyFrames[this.nextKeyFrame + 1];
                         this.initActionKeyFrame(kf, kf.timeOffset);
                     }
                 }
             }
         },
         updateNonActionTrack: function (delta) {
-            var t = this.t,
+            let t = this.t,
                 kf;
             if (this.state === TrackState.NOT_ACTIVE) {
                 if (t.time >= this.startTime && t.time <= this.endTime) {
@@ -226,7 +226,7 @@ define("visual/TimelineTrack", [
                         break;
                 }
             } else if (kf.transitionType === KeyFrame.TransitionType.LINEAR) {
-                var elem = t.element,
+                const elem = t.element,
                     spsValue = this.currentStepPerSecond.value;
                 switch (this.type) {
                     case TrackType.POSITION:
@@ -306,7 +306,7 @@ define("visual/TimelineTrack", [
                         elem.x = kfPos.x;
                         elem.y = kfPos.y;
                     } else {
-                        var prevPos = this.elementPrevState.value.pos;
+                        const prevPos = this.elementPrevState.value.pos;
                         elem.x = prevPos.x + kfPos.x;
                         elem.y = prevPos.y + kfPos.y;
                     }
@@ -318,7 +318,7 @@ define("visual/TimelineTrack", [
                         elem.scaleX = kfScale.x;
                         elem.scaleY = kfScale.y;
                     } else {
-                        var prevScale = this.elementPrevState.value.scale;
+                        const prevScale = this.elementPrevState.value.scale;
                         elem.scaleX = prevScale.x + kfScale.x;
                         elem.scaleY = prevScale.y + kfScale.y;
                     }
@@ -337,7 +337,7 @@ define("visual/TimelineTrack", [
                     if (!this.relative) {
                         elemColor.copyFrom(kfColor);
                     } else {
-                        var prevColor = this.elementPrevState.value.color;
+                        const prevColor = this.elementPrevState.value.color;
                         elemColor.r = prevColor.r + kfColor.r;
                         elemColor.g = prevColor.g + kfColor.g;
                         elemColor.b = prevColor.b + kfColor.b;
@@ -346,15 +346,15 @@ define("visual/TimelineTrack", [
                     break;
                 case TrackType.ACTION:
                     var actionSet = kf.value.actionSet;
-                    for (var i = 0, len = actionSet.length; i < len; i++) {
-                        var action = actionSet[i];
+                    for (let i = 0, len = actionSet.length; i < len; i++) {
+                        const action = actionSet[i];
                         action.actionTarget.handleAction(action.data);
                     }
                     break;
             }
         },
         setKeyFrameFromElement: function (kf) {
-            var kfValue = kf.value,
+            const kfValue = kf.value,
                 elem = this.t.element;
             switch (this.type) {
                 case TrackType.POSITION:
@@ -381,7 +381,7 @@ define("visual/TimelineTrack", [
             this.setKeyFrameFromElement(this.elementPrevState);
             this.setElementFromKeyFrame(src);
 
-            var spsValue = this.currentStepPerSecond.value,
+            const spsValue = this.currentStepPerSecond.value,
                 saValue = this.currentStepAcceleration.value;
             switch (this.type) {
                 case TrackType.POSITION:
@@ -415,7 +415,7 @@ define("visual/TimelineTrack", [
                     break;
             }
 
-            var isEaseIn = dst.transitionType === KeyFrame.TransitionType.EASE_IN,
+            const isEaseIn = dst.transitionType === KeyFrame.TransitionType.EASE_IN,
                 isEaseOut = dst.transitionType == KeyFrame.TransitionType.EASE_OUT;
             if (isEaseIn || isEaseOut) {
                 switch (this.type) {

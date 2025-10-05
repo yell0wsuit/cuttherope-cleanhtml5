@@ -1,10 +1,10 @@
 define("game/RoamSettings", ["edition", "utils/PubSub"], function (edition, PubSub) {
-    var currentUserId = "";
+    let currentUserId = "";
     PubSub.subscribe(PubSub.ChannelId.UserIdChanged, function (userId) {
         currentUserId = userId;
     });
 
-    var roamingProvider = null;
+    let roamingProvider = null;
     PubSub.subscribe(PubSub.ChannelId.RoamingSettingProvider, function (provider) {
         // copy methods (which will be minified)
         if (provider) {
@@ -20,13 +20,13 @@ define("game/RoamSettings", ["edition", "utils/PubSub"], function (edition, PubS
         PubSub.publish(PubSub.ChannelId.RoamingDataChanged);
     });
 
-    var SCORES_PREFIX = "scores",
+    const SCORES_PREFIX = "scores",
         STARS_PREFIX = "stars",
         ACHIEVEMENTS_PREFIX = "achievements";
 
     // appends the current user's id to the key prefix
     function getFullKey(prefix, boxIndex) {
-        var key = prefix;
+        let key = prefix;
         if (currentUserId) {
             key += "-" + currentUserId;
         }
@@ -68,7 +68,7 @@ define("game/RoamSettings", ["edition", "utils/PubSub"], function (edition, PubS
             return null;
         }
 
-        var key = getFullKey(keyPrefix),
+        let key = getFullKey(keyPrefix),
             values = [],
             rawValues = (roamingProvider.get(key) || "").split(","), // split csv
             len = rawValues.length,
@@ -97,12 +97,12 @@ define("game/RoamSettings", ["edition", "utils/PubSub"], function (edition, PubS
             return null;
         }
 
-        var key = getFullKey(keyPrefix);
+        const key = getFullKey(keyPrefix);
 
         if (!values) {
             roamingProvider.remove(key);
         } else {
-            var rawValues = [],
+            let rawValues = [],
                 len = values.length,
                 i,
                 val;
@@ -128,7 +128,7 @@ define("game/RoamSettings", ["edition", "utils/PubSub"], function (edition, PubS
             return null;
         }
 
-        var values = getHexValues(keyPrefix);
+        const values = getHexValues(keyPrefix);
         return values.length > index ? values[index] : null;
     }
 
@@ -137,7 +137,7 @@ define("game/RoamSettings", ["edition", "utils/PubSub"], function (edition, PubS
             return;
         }
 
-        var values = getHexValues(keyPrefix),
+        const values = getHexValues(keyPrefix),
             prevValue = values[index];
 
         // only write if value has changed
@@ -147,7 +147,7 @@ define("game/RoamSettings", ["edition", "utils/PubSub"], function (edition, PubS
         }
     }
 
-    var RoamingSettings = {
+    const RoamingSettings = {
         // scores
         getScore: function (boxIndex, levelIndex) {
             return getValue(SCORES_PREFIX + "-" + boxIndex, levelIndex);

@@ -19,7 +19,7 @@ define("game/RotatedCircle", [
     Radians,
     Canvas
 ) {
-    var CONTOUR_ALPHA = 0.2,
+    const CONTOUR_ALPHA = 0.2,
         CONTROLLER_MIN_SCALE = 0.75,
         STICKER_MIN_SCALE = 0.4,
         CENTER_SCALE_FACTOR = 0.5,
@@ -31,7 +31,7 @@ define("game/RotatedCircle", [
         CONTROLLER_SHIFT_PARAM1 = 22.5 * resolution.PM,
         CONTROLLER_SHIFT_PARAM2 = 0.03 * resolution.PM;
 
-    var StickerImage = ImageElement.extend({
+    const StickerImage = ImageElement.extend({
         init: function () {
             this._super();
             this.initTextureWithId(ResourceId.IMG_OBJ_VINIL);
@@ -125,7 +125,7 @@ define("game/RotatedCircle", [
         setSize: function (value) {
             this.size = value;
 
-            var newScale = this.size / HUNDRED_PERCENT_SCALE_SIZE;
+            const newScale = this.size / HUNDRED_PERCENT_SCALE_SIZE;
             this.vinilHighlightL.scaleX =
                 this.vinilHighlightL.scaleY =
                 this.vinilHighlightR.scaleY =
@@ -134,14 +134,14 @@ define("game/RotatedCircle", [
 
             this.vinil.scaleX = this.vinil.scaleY = newScale;
 
-            var newStickerScale = newScale >= STICKER_MIN_SCALE ? newScale : STICKER_MIN_SCALE;
+            const newStickerScale = newScale >= STICKER_MIN_SCALE ? newScale : STICKER_MIN_SCALE;
             this.vinilStickerL.scaleX =
                 this.vinilStickerL.scaleY =
                 this.vinilStickerR.scaleY =
                     newStickerScale;
             this.vinilStickerR.scaleX = -newStickerScale;
 
-            var newControllerScale =
+            const newControllerScale =
                 newScale >= CONTROLLER_MIN_SCALE ? newScale : CONTROLLER_MIN_SCALE;
             this.vinilControllerL.scaleX =
                 this.vinilControllerL.scaleY =
@@ -181,7 +181,7 @@ define("game/RotatedCircle", [
             this.vinilActiveControllerR.visible = value;
         },
         containsSameObjectWithAnotherCircle: function () {
-            var len = this.circles.length,
+            let len = this.circles.length,
                 i,
                 anotherCircle;
             for (i = 0; i < len; i++) {
@@ -193,9 +193,9 @@ define("game/RotatedCircle", [
             return false;
         },
         draw: function () {
-            var ctx = Canvas.context;
+            const ctx = Canvas.context;
             if (this.isRightControllerActive() || this.isLeftControllerActive()) {
-                var lineWidth =
+                const lineWidth =
                         (ACTIVE_CIRCLE_WIDTH + resolution.PM) * this.vinilControllerL.scaleX,
                     radius = this.sizeInPixels + ~~(lineWidth / 2);
                 ctx.beginPath();
@@ -211,7 +211,7 @@ define("game/RotatedCircle", [
             this.vinil.color = this.color;
             this.vinil.draw();
 
-            var len = this.circles.length,
+            let len = this.circles.length,
                 i,
                 anotherCircle,
                 selfIndex = this.circles.indexOf(this),
@@ -252,13 +252,13 @@ define("game/RotatedCircle", [
             this.vinilCenter.draw();
         },
         drawCircleIntersection: function (cx1, cy1, radius1, cx2, cy2, radius2, width) {
-            var circleDistance = Vector.distance(cx1, cy1, cx2, cy2);
+            const circleDistance = Vector.distance(cx1, cy1, cx2, cy2);
             if (circleDistance >= radius1 + radius2 || radius1 >= circleDistance + radius2) {
                 return;
             }
 
             //circleDistance = a + b
-            var a =
+            let a =
                     (radius1 * radius1 - radius2 * radius2 + circleDistance * circleDistance) /
                     (2 * circleDistance),
                 b = circleDistance - a,
@@ -273,7 +273,7 @@ define("game/RotatedCircle", [
                 endAngle += Math.PI;
             }
 
-            var ctx = Canvas.context;
+            const ctx = Canvas.context;
             ctx.beginPath();
             ctx.lineWidth = width;
             ctx.arc(cx2, cy2, radius2, startAngle, endAngle, false);
@@ -283,7 +283,7 @@ define("game/RotatedCircle", [
             this.vinil.x = this.vinilCenter.x = this.x;
             this.vinil.y = this.vinilCenter.y = this.y;
 
-            var highlightDeltaX =
+            const highlightDeltaX =
                     (this.vinilHighlightL.width / 2) * (1.0 - this.vinilHighlightL.scaleX),
                 highlightDeltaY =
                     (this.vinilHighlightL.height / 2) * (1.0 - this.vinilHighlightL.scaleY),
@@ -315,7 +315,7 @@ define("game/RotatedCircle", [
                 return false;
             }
 
-            var len = this.containedObjects.length,
+            let len = this.containedObjects.length,
                 i,
                 object;
             for (i = 0; i < len; i++) {
@@ -326,7 +326,7 @@ define("game/RotatedCircle", [
             return false;
         },
         copy: function (zone) {
-            var copiedCircle = new RotatedCircle();
+            const copiedCircle = new RotatedCircle();
             copiedCircle.zone = zone;
             copiedCircle.x = this.x;
             copiedCircle.y = this.y;
@@ -335,7 +335,7 @@ define("game/RotatedCircle", [
             copiedCircle.containedObjects = this.containedObjects;
             copiedCircle.operating = Constants.UNDEFINED;
 
-            var copiedSize = this.size * resolution.PM,
+            const copiedSize = this.size * resolution.PM,
                 copiedRadians = Radians.fromDegrees(copiedCircle.rotation);
             copiedCircle.handle1 = new Vector(copiedCircle.x - copiedSize, copiedCircle.y);
             copiedCircle.handle2 = new Vector(copiedCircle.x + copiedSize, copiedCircle.y);

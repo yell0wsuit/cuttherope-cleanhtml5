@@ -22,9 +22,11 @@ define("visual/Text", [
     settings
 ) {
     //settings.getLangId()
-    function FormattedString(str, width) {
-        this.string = str;
-        this.width = width;
+    class FormattedString {
+        constructor(str, width) {
+            this.string = str;
+            this.width = width;
+        }
     }
 
     Text = BaseElement.extend({
@@ -53,7 +55,7 @@ define("visual/Text", [
             }
         },
         updateDrawerValues: function () {
-            var dx = 0,
+            let dx = 0,
                 dy = 0,
                 itemHeight = this.font.fontHeight(),
                 n = 0,
@@ -62,14 +64,11 @@ define("visual/Text", [
                 linesToDraw =
                     this.maxHeight === Constants.UNDEFINED
                         ? this.formattedStrings.length
-                        : Math.min(
-                              this.formattedStrings.length,
-                              this.maxHeight / itemHeight + this.font.lineOffset
-                          ),
+                        : Math.min(this.formattedStrings.length, this.maxHeight / itemHeight + this.font.lineOffset),
                 drawEllipsis = linesToDraw !== this.formattedStrings.length;
 
-            for (var i = 0; i < linesToDraw; i++) {
-                var fs = this.formattedStrings[i],
+            for (let i = 0; i < linesToDraw; i++) {
+                const fs = this.formattedStrings[i],
                     s = fs.string,
                     len = s.length;
 
@@ -83,24 +82,22 @@ define("visual/Text", [
                     dx = 0;
                 }
 
-                for (var c = 0; c < len; c++) {
+                for (let c = 0; c < len; c++) {
                     if (s[c] === " ") {
                         dx += this.font.spaceWidth + this.font.getCharOffset(s, c);
                     } else {
-                        var quadIndex = this.font.getCharQuad(s[c]),
+                        const quadIndex = this.font.getCharQuad(s[c]),
                             itemWidth = this.font.texture.rects[quadIndex].w;
                         this.d.mapTextureQuad(quadIndex, Math.round(dx), Math.round(dy), n++);
                         dx += itemWidth + this.font.getCharOffset(s, c);
                     }
 
                     if (drawEllipsis && i === linesToDraw - 1) {
-                        var dotIndex = this.font.getCharQuad(".");
-                        var dotWidth = this.font.texture.rects[dotIndex].w;
+                        const dotIndex = this.font.getCharQuad(".");
+                        const dotWidth = this.font.texture.rects[dotIndex].w;
                         if (
                             c === len - 1 ||
-                            (c === len - 2 &&
-                                dx + 3 * (dotWidth + dotsOffset) + this.font.spaceWidth >
-                                    this.wrapWidth)
+                            (c === len - 2 && dx + 3 * (dotWidth + dotsOffset) + this.font.spaceWidth > this.wrapWidth)
                         ) {
                             this.d.mapTextureQuad(dotIndex, Math.round(dx), Math.round(dy), n++);
                             dx += dotWidth + dotsOffset;
@@ -134,7 +131,7 @@ define("visual/Text", [
 
             // only draw if the image is non-transparent
             if (this.color.a !== 0) {
-                var len = this.string.length,
+                const len = this.string.length,
                     ctx = Canvas.context;
                 if (len > 0) {
                     ctx.translate(this.drawX, this.drawY);
@@ -146,7 +143,7 @@ define("visual/Text", [
             this.postDraw();
         },
         formatText: function () {
-            var strIdx = [],
+            let strIdx = [],
                 s = this.string,
                 len = s.length,
                 idx = 0,
@@ -158,7 +155,7 @@ define("visual/Text", [
                 dx = 0;
 
             while (dx < len) {
-                var c = s[dx++];
+                const c = s[dx++];
 
                 if (c == " " || c == "\n") {
                     wp += wc;
@@ -171,12 +168,12 @@ define("visual/Text", [
                         wc = this.font.spaceWidth + this.font.getCharOffset(s, dx - 1);
                     }
                 } else {
-                    var quadIndex = this.font.getCharQuad(c),
+                    const quadIndex = this.font.getCharQuad(c),
                         charWidth = this.font.texture.rects[quadIndex].w;
                     wc += charWidth + this.font.getCharOffset(s, dx - 1);
                 }
 
-                var tooLong = MathHelper.roundP2(wp + wc) > this.wrapWidth;
+                const tooLong = MathHelper.roundP2(wp + wc) > this.wrapWidth;
 
                 if (this.wrapLongWords && tooLong && xpe == xp) {
                     wp += wc;
@@ -204,11 +201,11 @@ define("visual/Text", [
                 strIdx[idx++] = dx;
             }
 
-            var strCount = idx >> 1;
+            const strCount = idx >> 1;
 
             this.formattedStrings = [];
-            for (var i = 0; i < strCount; i++) {
-                var start = strIdx[i << 1],
+            for (let i = 0; i < strCount; i++) {
+                const start = strIdx[i << 1],
                     end = strIdx[(i << 1) + 1],
                     str = this.string.substring(start, end),
                     wd = this.font.stringWidth(str),
@@ -217,7 +214,7 @@ define("visual/Text", [
             }
         },
         createFromXml: function (xml) {
-            var resId = Xml.attrInt(xml, "font"),
+            const resId = Xml.attrInt(xml, "font"),
                 font = ResourceMgr.getFont(resId),
                 element = new Text(font);
 
@@ -226,11 +223,9 @@ define("visual/Text", [
             }
 
             if (xml.hasAttribute("string")) {
-                var strId = Xml.attrInt("string"),
+                const strId = Xml.attrInt("string"),
                     str = ResourceMgr.getString(strId),
-                    strWidth = xml.hasAttribute("width")
-                        ? Xml.attrFloat(xml, "width")
-                        : Constants.UNDEFINED;
+                    strWidth = xml.hasAttribute("width") ? Xml.attrFloat(xml, "width") : Constants.UNDEFINED;
 
                 element.setString(str, strWidth);
             }
@@ -245,7 +240,7 @@ define("visual/Text", [
 
     function stringToArray(ctx, string, width) {
         // convert string to array of lines then words
-        var input = string.split("\n");
+        const input = string.split("\n");
         for (var i = 0; i < input.length; ++i) {
             input[i] = input[i].split(" ");
         }
@@ -253,8 +248,8 @@ define("visual/Text", [
         var i = 0,
             j = 0,
             output = [];
-        var runningWidth = 0;
-        var line = 0;
+        let runningWidth = 0;
+        let line = 0;
 
         while (i < input.length) {
             while (j < input[i].length) {
@@ -262,8 +257,8 @@ define("visual/Text", [
                     output[line] = "";
                 }
 
-                var text = input[i][j] + " ";
-                var w = ctx.measureText(text).width;
+                const text = input[i][j] + " ";
+                const w = ctx.measureText(text).width;
 
                 // overflow to a newline
                 if (runningWidth + w > width && runningWidth > 0) {
@@ -287,7 +282,7 @@ define("visual/Text", [
     }
 
     function setupFont(ctx, options) {
-        var color = options.fontId === 5 ? "#000" : "#fff";
+        const color = options.fontId === 5 ? "#000" : "#fff";
         if (options.alignment !== 1) {
             ctx.textAlign = "center";
         }
@@ -306,13 +301,13 @@ define("visual/Text", [
     }
 
     Text.drawSystem = function (options) {
-        var lineHeight = 22;
-        var cnv = options.canvas ? options.img : document.createElement("canvas");
+        const lineHeight = 22;
+        const cnv = options.canvas ? options.img : document.createElement("canvas");
         cnv.width = options.width || options.maxScaleWidth || options.text.length * 16;
         cnv.height = lineHeight;
 
-        var ctx = cnv.getContext("2d");
-        var x = cnv.width / 2;
+        const ctx = cnv.getContext("2d");
+        let x = cnv.width / 2;
 
         if (options.alignment === 1) {
             x = 0;
@@ -321,14 +316,14 @@ define("visual/Text", [
         setupFont(ctx, options);
 
         // detect overflow by measuring or newline character
-        var metric = ctx.measureText(options.text);
+        const metric = ctx.measureText(options.text);
         if (options.text.indexOf("\n") > 0 || (options.width && metric.width > options.width)) {
-            var text = stringToArray(ctx, options.text, options.width);
+            const text = stringToArray(ctx, options.text, options.width);
             cnv.height = lineHeight * text.length + 5;
 
             setupFont(ctx, options);
 
-            for (var i = 0; i < text.length; ++i) {
+            for (let i = 0; i < text.length; ++i) {
                 if (options.fontId === 4) {
                     ctx.strokeText(text[i], x, (i + 1) * lineHeight);
                 }
@@ -360,35 +355,38 @@ define("visual/Text", [
 
     Text.drawImg = function (options) {
         // get or create the image element
-        var img = options.img;
+        let img = options.img;
         if (!img && options.imgId) {
             img = document.getElementById(options.imgId);
         }
         if (!img && options.imgSel) {
-            img = $(options.imgSel)[0];
+            img = document.querySelector(options.imgSel);
         }
         if (!img && options.imgParentId) {
-            // obbtains img child or prepends new Image if necessary
-            var $parent = $("#" + options.imgParentId),
-                $img = $parent.find(options.canvas ? "canvas" : "img");
-            if ($img.length === 0) {
-                $img = $(options.canvas ? "<canvas>" : "<img>").prependTo($parent);
+            // obtains img child or prepends new Image if necessary
+            const parent = document.getElementById(options.imgParentId);
+            if (parent) {
+                let imgElement = parent.querySelector(options.canvas ? "canvas" : "img");
+                if (!imgElement) {
+                    imgElement = document.createElement(options.canvas ? "canvas" : "img");
+                    parent.insertBefore(imgElement, parent.firstChild);
+                }
+                img = imgElement;
             }
-            img = $img[0];
         }
         if (!img) {
             img = new Image();
         }
 
-        var lang = settings.getLangId();
+        const lang = settings.getLangId();
         if (lang >= 4 && lang <= 9) {
-            $("#lang").addClass("lang-system");
+            document.getElementById("lang").classList.add("lang-system");
             options.img = img;
             options.text = options.text.toString();
             return Text.drawSystem(options);
         }
 
-        var fontId = options.fontId,
+        const fontId = options.fontId,
             width = options.width,
             alignment = options.alignment,
             scaleToUI = options.scaleToUI,
@@ -398,14 +396,14 @@ define("visual/Text", [
             text = options.text.toString();
 
         // save the existing canvas id and switch to the hidden canvas
-        var existingCanvas = Canvas.element;
+        const existingCanvas = Canvas.element;
 
         // create a temporary canvas to use
         Canvas.setTarget(options.canvas ? img : document.createElement("canvas"));
 
-        var font = ResourceMgr.getFont(fontId);
-        var t = new Text(font);
-        var padding = 24 * resolution.CANVAS_SCALE; // add padding to each side
+        const font = ResourceMgr.getFont(fontId);
+        const t = new Text(font);
+        const padding = 24 * resolution.CANVAS_SCALE; // add padding to each side
 
         // set the text parameters
         t.x = Math.ceil(padding / 2);
@@ -414,14 +412,14 @@ define("visual/Text", [
         t.setString(text, width);
 
         // set the canvas width and height
-        var canvas = Canvas.element,
+        const canvas = Canvas.element,
             ctx = Canvas.context,
             imgWidth = (width || Math.ceil(t.width)) + Math.ceil(t.x * 2),
             imgHeight = Math.ceil(t.height);
         canvas.width = imgWidth;
         canvas.height = imgHeight;
 
-        var previousAlpha = ctx.globalAlpha;
+        const previousAlpha = ctx.globalAlpha;
         if (alpha !== previousAlpha) {
             ctx.globalAlpha = alpha;
         }
@@ -439,7 +437,7 @@ define("visual/Text", [
             Canvas.setTarget(existingCanvas);
         }
 
-        var finalWidth = imgWidth * scale,
+        let finalWidth = imgWidth * scale,
             finalHeight = imgHeight * scale,
             maxScaleWidth = options.maxScaleWidth,
             topPadding,
@@ -455,11 +453,13 @@ define("visual/Text", [
 
         // When the src is set using image data, the height and width are
         // not immediately available so we'll explicitly set them
-        var $img = $(img).width(finalWidth).height(finalHeight).css("padding-top", 0);
+        img.style.width = finalWidth + "px";
+        img.style.height = finalHeight + "px";
+        img.style.paddingTop = "0px";
 
         // adjust the top padding if we scaled the image for width
         if (topPadding) {
-            $img.css("padding-top", topPadding);
+            img.style.paddingTop = topPadding + "px";
         }
 
         return img;

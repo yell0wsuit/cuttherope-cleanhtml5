@@ -14,6 +14,7 @@ define("ui/LevelPanel", [
     "edition",
     "core/Alignment",
     "ui/Dialogs",
+    "utils/dom",
 ], function (
     PanelId,
     Panel,
@@ -29,23 +30,26 @@ define("ui/LevelPanel", [
     MenuStringId,
     edition,
     Alignment,
-    Dialogs
+    Dialogs,
+    dom
 ) {
-    var backgroundId = edition.levelBackgroundId || "levelBackground",
+    const { addClass, append, delay, fadeIn, fadeOut, getElement, hide, removeClass, show, toggleClass, empty } = dom;
+
+    const backgroundId = edition.levelBackgroundId || "levelBackground",
         LevelPanel = new Panel(PanelId.LEVELS, "levelPanel", backgroundId, true);
 
     // cache interface manager reference
-    var im = null;
+    let im = null;
 
     LevelPanel.init = function (interfaceManager) {
         im = interfaceManager;
 
         // generate level elements
-        var levelCount = ScoreManager.levelCount(BoxManager.currentBoxIndex);
-        var $levelOptions = $("#levelOptions");
+        const levelCount = ScoreManager.levelCount(BoxManager.currentBoxIndex);
+        const levelOptions = getElement("#levelOptions");
 
         // initialize for a 3x3 grid
-        var leftOffset = 0,
+        let leftOffset = 0,
             topOffset = 0,
             lineLength = resolution.uiScaledNumber(420),
             inc = resolution.uiScaledNumber(153),
@@ -66,22 +70,26 @@ define("ui/LevelPanel", [
             topOffset = -40;
             inc = resolution.uiScaledNumber(101);
             modClass = "option-small";
-            ((columns = 5), (lastRowCount = levelCount % 5));
+            (columns = 5), (lastRowCount = levelCount % 5);
         }
 
-        var curTop = topOffset,
+        let curTop = topOffset,
             curLeft = leftOffset,
             el;
 
-        var adLevel = function $addLevel(i, inc, extraPad) {
-            // create the level button
-            $("<div/>")
-                .attr("id", "option" + (i + 1))
-                .data("level", i)
-                .addClass("option locked ctrPointer " + modClass)
-                .css({ left: curLeft + (extraPad || 0), top: curTop })
-                .click(onLevelClick)
-                .appendTo($levelOptions);
+        const adLevel = function $addLevel(i, inc, extraPad) {
+            if (!levelOptions) {
+                return;
+            }
+
+            const levelButton = document.createElement("div");
+            levelButton.id = "option" + (i + 1);
+            levelButton.dataset.level = i;
+            levelButton.className = "option locked ctrPointer " + modClass;
+            levelButton.style.left = curLeft + (extraPad || 0) + "px";
+            levelButton.style.top = curTop + "px";
+            levelButton.addEventListener("click", onLevelClick);
+            levelOptions.appendChild(levelButton);
 
             curLeft += inc;
             if (curLeft > lineLength) {
@@ -96,7 +104,7 @@ define("ui/LevelPanel", [
 
         if (lastRowCount > 0) {
             (function (j) {
-                var extraPad = ((columns - lastRowCount) * inc) / 2;
+                const extraPad = ((columns - lastRowCount) * inc) / 2;
                 for (; j < levelCount; j++) {
                     adLevel(j, inc, extraPad);
                 }
@@ -106,14 +114,35 @@ define("ui/LevelPanel", [
 
     LevelPanel.onShow = function () {
         updateLevelOptions();
-        $("#levelScore").delay(200).fadeIn(700);
-        $("#levelBack").delay(200).fadeIn(700);
-        $("#levelOptions").delay(200).fadeIn(700);
-        $("#levelResults").delay(200).fadeOut(700);
+        const levelScore = getElement("#levelScore");
+        const levelBack = getElement("#levelBack");
+        const levelOptions = getElement("#levelOptions");
+        const levelResults = getElement("#levelResults");
+
+        if (levelScore) {
+            delay(levelScore, 200).then(function () {
+                return fadeIn(levelScore, 700);
+            });
+        }
+        if (levelBack) {
+            delay(levelBack, 200).then(function () {
+                return fadeIn(levelBack, 700);
+            });
+        }
+        if (levelOptions) {
+            delay(levelOptions, 200).then(function () {
+                return fadeIn(levelOptions, 700);
+            });
+        }
+        if (levelResults) {
+            delay(levelResults, 200).then(function () {
+                return fadeOut(levelResults, 700);
+            });
+        }
     };
 
     // listen to purchase event
-    var isPaid = false;
+    let isPaid = false;
     PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, function (paid) {
         isPaid = paid;
         updateLevelOptions();
@@ -137,7 +166,7 @@ define("ui/LevelPanel", [
     }
 
     function onLevelClick(event) {
-        var levelIndex = parseInt($(this).data("level"), 10);
+        const levelIndex = parseInt(event.currentTarget.dataset.level, 10);
         if (ScoreManager.isLevelUnlocked(BoxManager.currentBoxIndex, levelIndex)) {
             im.openLevel(levelIndex + 1);
         } else if (requiresPurchase(levelIndex)) {
@@ -152,52 +181,55 @@ define("ui/LevelPanel", [
 
     // draw the level options based on current scores and stars
     function updateLevelOptions() {
-        var boxIndex = BoxManager.currentBoxIndex,
+        let boxIndex = BoxManager.currentBoxIndex,
             levelCount = ScoreManager.levelCount(boxIndex),
-            $level,
             stars,
-            $levelInfo,
+            levelInfo,
             i,
             levelRequiresPurchase;
 
         for (i = 0; i < levelCount; i++) {
             // get a reference to the level button
-            $level = $("#option" + (i + 1));
-            if ($level) {
+            const levelElement = document.getElementById("option" + (i + 1));
+            if (levelElement) {
                 // show and prepare the element, otherwise hide it
                 if (i < levelCount) {
-                    $level.show();
+                    show(levelElement);
 
                     levelRequiresPurchase = requiresPurchase(i);
 
                     // if the level has a score show it, otherwise make it locked
                     stars = ScoreManager.getStars(boxIndex, i);
                     if (stars != null) {
-                        $levelInfo = $("<div class='txt'/>")
-                            .append($(Text.drawBig({ text: i + 1, scaleToUI: true })))
-                            .append($("<div>").addClass("stars" + stars));
+                        levelInfo = document.createElement("div");
+                        levelInfo.className = "txt";
+                        append(levelInfo, Text.drawBig({ text: i + 1, scaleToUI: true }));
+                        const starsElement = document.createElement("div");
+                        addClass(starsElement, "stars" + stars);
+                        levelInfo.appendChild(starsElement);
 
-                        $level
-                            .removeClass("locked purchase")
-                            .addClass("open ctrPointer")
-                            .empty()
-                            .append($levelInfo);
+                        removeClass(levelElement, "locked");
+                        removeClass(levelElement, "purchase");
+                        addClass(levelElement, "open");
+                        addClass(levelElement, "ctrPointer");
+                        empty(levelElement);
+                        levelElement.appendChild(levelInfo);
                     } else {
-                        $level
-                            .removeClass("open")
-                            .addClass("locked")
-                            .toggleClass("purchase ctrPointer", levelRequiresPurchase)
-                            .empty();
+                        removeClass(levelElement, "open");
+                        addClass(levelElement, "locked");
+                        toggleClass(levelElement, "purchase", levelRequiresPurchase);
+                        toggleClass(levelElement, "ctrPointer", levelRequiresPurchase);
+                        empty(levelElement);
                     }
                 } else {
-                    $level.hide();
+                    hide(levelElement);
                 }
             }
         }
 
         // update the scores
         // currently assuming each level has three stars
-        var text =
+        const text =
             ScoreManager.achievedStars(BoxManager.currentBoxIndex) +
             "/" +
             ScoreManager.levelCount(BoxManager.currentBoxIndex) * 3;

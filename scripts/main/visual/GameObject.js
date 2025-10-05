@@ -9,7 +9,7 @@ define("visual/GameObject", [
     "utils/Canvas",
     "core/RGBAColor",
 ], function (Animation, Mover, Rectangle, Quad2D, Alignment, Vector, Radians, Canvas, RGBAcolor) {
-    var GameObject = Animation.extend({
+    const GameObject = Animation.extend({
         init: function () {
             this._super();
             this.isDrawBB = false;
@@ -24,7 +24,7 @@ define("visual/GameObject", [
             this.topLeftCalculated = false;
         },
         setBBFromFirstQuad: function () {
-            var firstOffset = this.texture.offsets[0],
+            const firstOffset = this.texture.offsets[0],
                 firstRect = this.texture.rects[0];
             //noinspection JSSuspiciousNameCombination
             this.bb = new Rectangle(
@@ -38,15 +38,15 @@ define("visual/GameObject", [
         parseMover: function (item) {
             this.rotation = item.angle || 0;
 
-            var path = item.path;
+            const path = item.path;
             if (path) {
-                var moverCapacity = Mover.MAX_CAPACITY;
+                let moverCapacity = Mover.MAX_CAPACITY;
                 if (path[0] === "R") {
-                    var rad = parseInt(path.substr(2), 10);
+                    const rad = parseInt(path.substr(2), 10);
                     moverCapacity = Math.round(rad / 2 + 1);
                 }
 
-                var mover = new Mover(moverCapacity, item.moveSpeed, item.rotateSpeed);
+                const mover = new Mover(moverCapacity, item.moveSpeed, item.rotateSpeed);
                 mover.angle = this.rotation;
                 mover.setPathFromString(path, new Vector(this.x, this.y));
                 this.setMover(mover);
@@ -83,14 +83,14 @@ define("visual/GameObject", [
             }
             this.rotation = angle;
 
-            var bb = this.bb,
+            const bb = this.bb,
                 tl = new Vector(bb.x, bb.y),
                 tr = new Vector(bb.x + bb.w, bb.y),
                 br = new Vector(tr.x, bb.y + bb.h),
                 bl = new Vector(bb.x, br.y);
 
             // calculate the angle and offset for rotation
-            var rad = Radians.fromDegrees(angle),
+            const rad = Radians.fromDegrees(angle),
                 offsetX = this.width / 2 + this.rotationCenterX,
                 offsetY = this.height / 2 + this.rotationCenterY;
 
@@ -99,7 +99,7 @@ define("visual/GameObject", [
             br.rotateAround(rad, offsetX, offsetY);
             tl.rotateAround(rad, offsetX, offsetY);
 
-            var rbb = this.rbb;
+            const rbb = this.rbb;
             rbb.tlX = tl.x;
             rbb.tlY = tl.y;
             rbb.trX = tr.x;
@@ -110,7 +110,7 @@ define("visual/GameObject", [
             rbb.blY = bl.y;
         },
         drawBB: function () {
-            var ctx = Canvas.context,
+            const ctx = Canvas.context,
                 drawX = this.drawX,
                 drawY = this.drawY,
                 bb = this.bb,
@@ -136,7 +136,7 @@ define("visual/GameObject", [
          * @return {boolean}
          */
         pointInObject: function (x, y) {
-            var bb = this.bb,
+            const bb = this.bb,
                 ox = this.drawX + bb.x,
                 oy = this.drawY + bb.y;
 
@@ -149,7 +149,7 @@ define("visual/GameObject", [
          * @param r2y {number}
          */
         rectInObject: function (r1x, r1y, r2x, r2y) {
-            var ox = this.drawX + this.bb.x,
+            const ox = this.drawX + this.bb.x,
                 oy = this.drawY + this.bb.y;
 
             return Rectangle.rectInRect(r1x, r1y, r2x, r2y, ox, oy, ox + this.bb.w, oy + this.bb.h);
@@ -157,7 +157,7 @@ define("visual/GameObject", [
     });
 
     GameObject.intersect = function (o1, o2) {
-        var o1x = o1.drawX + o1.bb.x,
+        const o1x = o1.drawX + o1.bb.x,
             o1y = o1.drawY + o1.bb.y,
             o2x = o2.drawX + o2.bb.x,
             o2y = o2.drawY + o2.bb.y;

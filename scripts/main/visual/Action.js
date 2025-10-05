@@ -11,7 +11,7 @@ define("visual/Action", [], function () {
     }
 
     Action.create = function (target, actionName, param, subParam) {
-        var data = new ActionData(actionName, param, subParam);
+        const data = new ActionData(actionName, param, subParam);
         return new Action(target, data);
     };
 

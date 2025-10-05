@@ -3,7 +3,7 @@ define("game/Drawing", ["visual/GameObject", "resources/ResourceId", "utils/PubS
     ResourceId,
     PubSub
 ) {
-    var Drawing = GameObject.extend({
+    const Drawing = GameObject.extend({
         init: function (hiddenId, drawingIndex) {
             this._super();
             this.initTextureWithId(ResourceId.IMG_DRAWING_HIDDEN);

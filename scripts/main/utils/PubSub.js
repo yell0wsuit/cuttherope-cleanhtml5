@@ -1,5 +1,5 @@
 define("utils/PubSub", [], function () {
-    var PubSub = {},
+    const PubSub = {},
         subscriptions = [];
 
     PubSub.subscribe = function (name, callback) {
@@ -7,7 +7,7 @@ define("utils/PubSub", [], function () {
         return [name, callback];
     };
     PubSub.unsubscribe = function (name, callback) {
-        var i, sub;
+        let i, sub;
         for (i = subscriptions.length; i >= 0; i--) {
             sub = subscriptions[i];
             if (sub.name === name && sub.callback === callback) {
@@ -16,7 +16,7 @@ define("utils/PubSub", [], function () {
         }
     };
     PubSub.publish = function (name) {
-        var callbacks = [],
+        let callbacks = [],
             args = Array.prototype.slice.call(arguments, 1),
             i,
             len;

@@ -37,7 +37,7 @@ define("visual/Particles", [
         this.height = 0;
     }
 
-    var Particles = BaseElement.extend({
+    const Particles = BaseElement.extend({
         init: function (numParticles) {
             this._super();
             this.width = resolution.CANVAS_WIDTH;
@@ -130,7 +130,7 @@ define("visual/Particles", [
                 return false;
             }
 
-            var particle = new Particle();
+            const particle = new Particle();
             this.initParticle(particle);
             this.particles.push(particle);
             return true;
@@ -140,7 +140,7 @@ define("visual/Particles", [
             particle.pos.y = this.y + this.posVar.y * MathHelper.randomMinus1to1();
             particle.startPos.copyFrom(particle.pos);
 
-            var a = Radians.fromDegrees(this.angle + this.angleVar * MathHelper.randomMinus1to1()),
+            const a = Radians.fromDegrees(this.angle + this.angleVar * MathHelper.randomMinus1to1()),
                 v = new Vector(Math.cos(a), Math.sin(a)),
                 s = this.speed + this.speedVar * MathHelper.randomMinus1to1();
 
@@ -160,14 +160,14 @@ define("visual/Particles", [
             particle.life = this.life + this.lifeVar * MathHelper.randomMinus1to1();
 
             // color
-            var start = new RGBAColor(
+            const start = new RGBAColor(
                 this.startColor.r + this.startColorVar.r * MathHelper.randomMinus1to1(),
                 this.startColor.g + this.startColorVar.g * MathHelper.randomMinus1to1(),
                 this.startColor.b + this.startColorVar.b * MathHelper.randomMinus1to1(),
                 this.startColor.a + this.startColorVar.a * MathHelper.randomMinus1to1()
             );
 
-            var end = new RGBAColor(
+            const end = new RGBAColor(
                 this.endColor.r + this.endColorVar.r * MathHelper.randomMinus1to1(),
                 this.endColor.g + this.endColorVar.g * MathHelper.randomMinus1to1(),
                 this.endColor.b + this.endColorVar.b * MathHelper.randomMinus1to1(),
@@ -193,7 +193,7 @@ define("visual/Particles", [
             }
 
             if (this.active && this.emissionRate) {
-                var rate = 1 / this.emissionRate;
+                const rate = 1 / this.emissionRate;
                 this.emitCounter += delta;
                 while (this.particles.length < this.totalParticles && this.emitCounter > rate) {
                     this.addParticle();
@@ -208,7 +208,7 @@ define("visual/Particles", [
 
             this.particleIdx = 0;
             while (this.particleIdx < this.particles.length) {
-                var p = this.particles[this.particleIdx];
+                const p = this.particles[this.particleIdx];
                 if (p.life > 0) {
                     this.updateParticleLocation(p, delta);
 
@@ -228,7 +228,7 @@ define("visual/Particles", [
             }
         },
         updateParticleLocation: function (p, delta) {
-            var tmp, radial, tangential;
+            let tmp, radial, tangential;
 
             // radial acceleration
             if (p.pos.x || p.pos.y) {
@@ -241,7 +241,7 @@ define("visual/Particles", [
             radial.multiply(p.radialAccel);
 
             // tangential acceleration
-            var newy = tangential.x;
+            const newy = tangential.x;
             tangential.x = -tangential.y;
             tangential.y = newy;
             tangential.multiply(p.tangentialAccel);
@@ -270,7 +270,7 @@ define("visual/Particles", [
         },
         startSystem: function (initialParticles) {
             this.particles.length = 0;
-            for (var i = 0; i < initialParticles; i++) {
+            for (let i = 0; i < initialParticles; i++) {
                 this.addParticle();
             }
             this.active = true;
@@ -289,10 +289,10 @@ define("visual/Particles", [
 
             // only draw if the image is non-transparent
             if (this.color.a !== 0) {
-                var ctx = Canvas.context,
+                const ctx = Canvas.context,
                     image = this.texture.image;
-                for (var i = 0, len = this.particleIdx; i < len; i++) {
-                    var p = this.particles[i];
+                for (let i = 0, len = this.particleIdx; i < len; i++) {
+                    const p = this.particles[i];
                     ctx.drawImage(image, Math.round(p.x), Math.round(p.y));
                 }
             }

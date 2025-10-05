@@ -1,5 +1,5 @@
 define("core/SettingStorage", ["edition", "utils/PubSub"], function (edition, PubSub) {
-    var editionPrefix = edition.settingPrefix || "",
+    let editionPrefix = edition.settingPrefix || "",
         prefix = editionPrefix;
 
     PubSub.subscribe(PubSub.ChannelId.UserIdChanged, function (userId) {
@@ -10,9 +10,9 @@ define("core/SettingStorage", ["edition", "utils/PubSub"], function (edition, Pu
         }
     });
 
-    var settingCache = {};
+    const settingCache = {};
 
-    var SettingStorage = {
+    const SettingStorage = {
         get: function (key) {
             if (!window.localStorage) {
                 return null;
@@ -44,14 +44,14 @@ define("core/SettingStorage", ["edition", "utils/PubSub"], function (edition, Pu
             }
         },
         getBoolOrDefault: function (key, defaultValue) {
-            var val = this.get(key);
+            const val = this.get(key);
             if (val == null) {
                 return defaultValue;
             }
             return val === "true";
         },
         getIntOrDefault: function (key, defaultValue) {
-            var val = this.get(key);
+            const val = this.get(key);
             if (val == null) {
                 return defaultValue;
             }

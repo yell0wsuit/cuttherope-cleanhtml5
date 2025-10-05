@@ -29,7 +29,7 @@ window.addEventListener(
     true
 );
 
-var GLOBAL_ZOOM = matchMedia("(min-width: 960px)").matches ? 2 : 1;
+const GLOBAL_ZOOM = matchMedia("(min-width: 960px)").matches ? 2 : 1;
 
 (function () {
     requirejs.config({
@@ -40,12 +40,12 @@ var GLOBAL_ZOOM = matchMedia("(min-width: 960px)").matches ? 2 : 1;
     document.addEventListener("mozvisibilitychange", function () {
         //console.log("VISIBILTY", document.mozHidden);
         if (document.mozHidden) {
-            for (var key in window.sounds__) {
+            for (const key in window.sounds__) {
                 window.sounds__[key]._wasPlaying = !window.sounds__[key].paused;
                 window.sounds__[key].pause();
             }
         } else {
-            for (var key in window.sounds__) {
+            for (const key in window.sounds__) {
                 window.sounds__[key]._wasPlaying && window.sounds__[key].play();
             }
         }
@@ -61,12 +61,16 @@ var GLOBAL_ZOOM = matchMedia("(min-width: 960px)").matches ? 2 : 1;
         app.init();
 
         // wait until the DOM is loaded before wiring up events
-        $(document).ready(function () {
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", function () {
+                app.domReady();
+                app.run();
+            });
+        } else {
+            // DOM already loaded
             app.domReady();
-
-            // for now, we will immediately run the app
             app.run();
-        });
+        }
     });
 
     define("main", function () {});

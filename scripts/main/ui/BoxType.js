@@ -2,7 +2,7 @@ define("ui/BoxType", [], function () {
     /**
      * @enum {string}
      */
-    var BoxType = {
+    const BoxType = {
         NORMAL: "NORMAL",
         IEPINNED: "IEPINNED",
         MORECOMING: "MORECOMING",

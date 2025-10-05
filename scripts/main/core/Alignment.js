@@ -1,5 +1,5 @@
 define("core/Alignment", [], function () {
-    var Alignment = {
+    const Alignment = {
         /** @const
          *  @type {number}
          */
@@ -37,7 +37,7 @@ define("core/Alignment", [], function () {
          * @return {number}
          */
         parse: function (s) {
-            var a = this.UNDEFINED;
+            let a = this.UNDEFINED;
             if (s.indexOf("LEFT") > 0) a = this.LEFT;
             else if (s.indexOf("HCENTER") > 0 || s === "CENTER") a = this.HCENTER;
             else if (s.indexOf("RIGHT") > 0) a = this.RIGHT;

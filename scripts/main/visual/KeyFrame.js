@@ -13,7 +13,7 @@ define("visual/KeyFrame", [
     }
 
     KeyFrameValue.prototype.copy = function () {
-        var clone = new KeyFrameValue();
+        const clone = new KeyFrameValue();
         clone.pos = this.pos.copy();
         clone.scale = this.scale.copy();
         clone.rotationAngle = this.rotationAngle;
@@ -71,39 +71,39 @@ define("visual/KeyFrame", [
     };
 
     KeyFrame.makePos = function (x, y, transition, time) {
-        var v = new KeyFrameValue();
+        const v = new KeyFrameValue();
         v.pos.x = x;
         v.pos.y = y;
         return new KeyFrame(time, TrackType.POSITION, transition, v);
     };
 
     KeyFrame.makeScale = function (x, y, transition, time) {
-        var v = new KeyFrameValue();
+        const v = new KeyFrameValue();
         v.scale.x = x;
         v.scale.y = y;
         return new KeyFrame(time, TrackType.SCALE, transition, v);
     };
 
     KeyFrame.makeRotation = function (r, transition, time) {
-        var v = new KeyFrameValue();
+        const v = new KeyFrameValue();
         v.rotationAngle = r;
         return new KeyFrame(time, TrackType.ROTATION, transition, v);
     };
 
     KeyFrame.makeColor = function (color, transition, time) {
-        var v = new KeyFrameValue();
+        const v = new KeyFrameValue();
         v.color = color;
         return new KeyFrame(time, TrackType.COLOR, transition, v);
     };
 
     KeyFrame.makeAction = function (actions, time) {
-        var v = new KeyFrameValue();
+        const v = new KeyFrameValue();
         v.actionSet = actions;
         return new KeyFrame(time, TrackType.ACTION, KeyFrame.TransitionType.LINEAR, v);
     };
 
     KeyFrame.makeSingleAction = function (target, actionName, actionParam, actionSubParam, time) {
-        var v = new KeyFrameValue(),
+        const v = new KeyFrameValue(),
             action = Action.create(target, actionName, actionParam, actionSubParam);
         v.actionSet = [action];
         return new KeyFrame(time, TrackType.ACTION, KeyFrame.TransitionType.LINEAR, v);

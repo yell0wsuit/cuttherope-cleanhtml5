@@ -1,5 +1,5 @@
 define("platformLoc", ["resources/LangId"], function (LangId) {
-    var DefaultLoc = {
+    const DefaultLoc = {
         getDefaultLangId: function () {
             return LangId.EN;
         },

@@ -3,55 +3,54 @@ define("PxLoaderSound", ["PxLoader"], function (PxLoader) {
     window.backupSounds__ = {};
 
     /**
-     * PxLoader plugin to load sound using SoundManager2
+     * PxLoader plugin to load sound using Audio elements
      */
-    function PxLoaderSound(id, url, tags, priority) {
-        var self = this,
-            loader = null;
+    class PxLoaderSound {
+        constructor(id, url, tags, priority) {
+            this.tags = tags;
+            this.priority = priority;
+            this.sound = new Audio();
+            this.sound.mozAudioChannelType = "content";
+            this.src = url;
+            this.loader = null;
 
-        this.tags = tags;
-        this.priority = priority;
-        this.sound = new Audio();
-        this.sound.mozAudioChannelType = "content";
+            window.sounds__[id] = this.sound;
+        }
 
-        window.sounds__[id] = this.sound;
-        this.src = url;
+        start(pxLoader) {
+            this.loader = pxLoader;
 
-        this.start = function (pxLoader) {
-            // we need the loader ref so we can notify upon completion
-            loader = pxLoader;
+            this.sound.src = this.src;
+            this.sound.mozAudioChannelType = "content";
+            this.loader.onLoad(this);
+        }
 
-            self.sound["src"] = self.src;
-            self.sound.mozAudioChannelType = "content";
-            loader.onLoad(self);
-        };
-
-        this.checkStatus = function () {
-            switch (self.sound["readyState"]) {
+        checkStatus() {
+            switch (this.sound.readyState) {
                 case 0: // uninitialised
                 case 1: // loading
                     break;
                 case 2: // failed/error
-                    loader.onError(self);
+                    this.loader.onError(this);
                     break;
                 case 3: // loaded/success
-                    loader.onLoad(self);
+                    this.loader.onLoad(this);
                     break;
             }
-        };
+        }
 
-        this.onTimeout = function () {
-            loader.onTimeout(self);
-        };
+        onTimeout() {
+            this.loader.onTimeout(this);
+        }
 
-        this.getName = function () {
-            return url;
-        };
+        getName() {
+            return this.src;
+        }
     }
 
     // add a convenience method to PxLoader for adding a sound
     PxLoader.prototype.addSound = function (id, url, tags, priority) {
-        var soundLoader = new PxLoaderSound(id, url, tags, priority);
+        const soundLoader = new PxLoaderSound(id, url, tags, priority);
         this.add(soundLoader);
         return soundLoader.sound;
     };

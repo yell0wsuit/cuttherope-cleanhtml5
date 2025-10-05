@@ -10,7 +10,7 @@ define("config/resolutions/scale", ["core/Rectangle", "config/resolutions/2560x1
      * @param target
      */
     function initProfile(base, target) {
-        var scale = target.CANVAS_SCALE;
+        const scale = target.CANVAS_SCALE;
 
         target.BUNGEE_REST_LEN = base.BUNGEE_REST_LEN * scale;
         target.MOVER_SCALE = base.MOVER_SCALE * scale;

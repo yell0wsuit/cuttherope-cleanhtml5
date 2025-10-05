@@ -42,7 +42,7 @@ define("game/Grab", [
     /**
      * @enum {number}
      */
-    var SpiderState = {
+    const SpiderState = {
         START: 0,
         WALK: 1,
         BUSTER: 2,
@@ -52,14 +52,14 @@ define("game/Grab", [
     /**
      * @enum {number}
      */
-    var GunState = {
+    const GunState = {
         SHOW: 0,
         HIDE: 1,
     };
 
-    var grabCircleCache = [];
+    const grabCircleCache = [];
 
-    var Grab = CTRGameObject.extend({
+    const Grab = CTRGameObject.extend({
         init: function () {
             this._super();
             this.rope = null;
@@ -108,10 +108,10 @@ define("game/Grab", [
          * @param c {Vector} center
          */
         getRotateAngle: function (v1, v2, c) {
-            var m1 = Vector.subtract(v1, c);
-            var m2 = Vector.subtract(v2, c);
+            const m1 = Vector.subtract(v1, c);
+            const m2 = Vector.subtract(v2, c);
 
-            var a = m2.normalizedAngle() - m1.normalizedAngle();
+            const a = m2.normalizedAngle() - m1.normalizedAngle();
             return Radians.toDegrees(a);
         },
         /**
@@ -125,7 +125,7 @@ define("game/Grab", [
         handleWheelRotate: function (v) {
             SoundMgr.playSound(ResourceId.SND_WHEEL);
 
-            var center = new Vector(this.x, this.y),
+            let center = new Vector(this.x, this.y),
                 a = this.getRotateAngle(this.lastWheelTouch, v, center);
             if (a > 180) {
                 a -= 360;
@@ -160,7 +160,7 @@ define("game/Grab", [
             this._super(delta);
 
             if (this.launcher && this.rope) {
-                var anchor = this.rope.bungeeAnchor,
+                let anchor = this.rope.bungeeAnchor,
                     moveResult;
                 anchor.pos.x = this.x;
                 anchor.pos.y = this.y;
@@ -188,7 +188,7 @@ define("game/Grab", [
             }
 
             if (this.bee) {
-                var vt = this.mover.path[this.mover.targetPoint],
+                let vt = this.mover.path[this.mover.targetPoint],
                     vp = this.mover.pos,
                     v = Vector.subtract(vt, vp),
                     a = 0,
@@ -202,7 +202,7 @@ define("game/Grab", [
             }
 
             if (this.wheel && this.wheelDirty && this.rope) {
-                var len = this.rope.getLength() * 0.7;
+                const len = this.rope.getLength() * 0.7;
                 if (len === 0) {
                     this.wheelImage2.scaleX = this.wheelImage2.scaleY = 0;
                 } else {
@@ -226,15 +226,15 @@ define("game/Grab", [
                     this.spiderPos += delta * resolution.SPIDER_SPEED;
                 }
 
-                var checkingPos = 0,
+                let checkingPos = 0,
                     reachedCandy = false;
 
                 if (this.rope) {
-                    var drawPts = this.rope.drawPts,
+                    const drawPts = this.rope.drawPts,
                         BUNGEE_REST_LEN = resolution.BUNGEE_REST_LEN,
                         a = (2 * BUNGEE_REST_LEN) / 3;
-                    for (var i = 0, numPts = drawPts.length; i < numPts; i++) {
-                        var c1 = drawPts[i],
+                    for (let i = 0, numPts = drawPts.length; i < numPts; i++) {
+                        const c1 = drawPts[i],
                             c2 = drawPts[i + 1],
                             b = c1.distance(c2),
                             len = a > b ? a : b;
@@ -243,8 +243,8 @@ define("game/Grab", [
                             this.spiderPos >= checkingPos &&
                             (this.spiderPos < checkingPos + len || i > numPts - 3)
                         ) {
-                            var overlay = this.spiderPos - checkingPos;
-                            var c3 = Vector.subtract(c2, c1);
+                            const overlay = this.spiderPos - checkingPos;
+                            const c3 = Vector.subtract(c2, c1);
                             c3.multiply(overlay / len);
                             this.spider.x = c1.x + c3.x;
                             this.spider.y = c1.y + c3.y;
@@ -275,7 +275,7 @@ define("game/Grab", [
             if (this.gun) return;
 
             if (this.kickable && this.kicked && this.rope) {
-                var pos = this.rope.bungeeAnchor.pos;
+                const pos = this.rope.bungeeAnchor.pos;
                 this.x = pos.x;
                 this.y = pos.y;
             }
@@ -289,7 +289,7 @@ define("game/Grab", [
             }
 
             if (this.radius !== Constants.UNDEFINED || this.hideRadius) {
-                var color = new RGBAColor(0.2, 0.5, 0.9, this.radiusAlpha),
+                const color = new RGBAColor(0.2, 0.5, 0.9, this.radiusAlpha),
                     drawRadius =
                         this.radius !== Constants.UNDEFINED ? this.radius : this.previousRadius;
                 this.drawGrabCircle(this.x, this.y, drawRadius, color);
@@ -301,8 +301,8 @@ define("game/Grab", [
             }
 
             //generate a key for the cache
-            var key = radius.toString() + "|" + color.rgbaStyle();
-            var circleCnv;
+            const key = radius.toString() + "|" + color.rgbaStyle();
+            let circleCnv;
 
             //check the cache first
             if (grabCircleCache[key]) {
@@ -315,7 +315,7 @@ define("game/Grab", [
 
                 //document.body.appendChild(circleCnv)
 
-                var ctx = circleCnv.getContext("2d"),
+                let ctx = circleCnv.getContext("2d"),
                     totalRadians = 2 * Math.PI,
                     radiusScaleFactor = resolution.CANVAS_SCALE * 2,
                     scaledRadius = radius / radiusScaleFactor,
@@ -329,11 +329,11 @@ define("game/Grab", [
                 ctx.lineWidth = 2;
                 ctx.strokeStyle = color.rgbaStyle();
 
-                var segmentRadians = totalRadians / segments;
-                for (var i = 0; i < segments; i++) {
+                const segmentRadians = totalRadians / segments;
+                for (let i = 0; i < segments; i++) {
                     // only draw every other segment for dashed circle
                     if (i % 2 === 0) {
-                        var startRadians = (i / segments) * totalRadians;
+                        const startRadians = (i / segments) * totalRadians;
                         ctx.beginPath();
                         ctx.arc(
                             radius + 2,
@@ -352,7 +352,7 @@ define("game/Grab", [
                 //console.log("DRAW GRAB CIRCLE", circleCnv)
             }
 
-            var mainCtx = Canvas.context;
+            const mainCtx = Canvas.context;
             mainCtx.drawImage(circleCnv, x - radius - 2, y - radius - 2);
         },
         drawBB: function () {
@@ -367,7 +367,7 @@ define("game/Grab", [
             // of the back is adjusted. Otherwise the back can be offset
             // when there are large moves to position (grab is on DJ disc)
 
-            var b = this.rope;
+            const b = this.rope;
 
             if (this.wheel) {
                 this.wheelHighlight.visible = this.wheelOperating !== Constants.UNDEFINED;
@@ -420,7 +420,7 @@ define("game/Grab", [
             this.launcher = true;
             this.launcherIncreaseSpeed = true;
             this.launcherSpeed = 130;
-            var m = new Mover(100, this.launcherSpeed, 0);
+            const m = new Mover(100, this.launcherSpeed, 0);
             m.setPathFromString("RC30", new Vector(this.x, this.y));
             this.setMover(m);
             m.start();
@@ -432,7 +432,7 @@ define("game/Grab", [
             // TODO: handle gun
 
             if (radius === Constants.UNDEFINED || radius === Constants.CANDY2_FLAG) {
-                var imageId = MathHelper.randomRange(
+                const imageId = MathHelper.randomRange(
                     ResourceId.IMG_OBJ_HOOK_01,
                     ResourceId.IMG_OBJ_HOOK_02
                 );
@@ -557,7 +557,7 @@ define("game/Grab", [
             this.bee.doRestoreCutTransparency();
             this.bee.parentAnchor = Alignment.CENTER;
 
-            var wings = new Animation();
+            const wings = new Animation();
             wings.initTextureWithId(ResourceId.IMG_OBJ_BEE_HD);
             wings.parentAnchor = wings.anchor = Alignment.TOP | Alignment.LEFT;
             wings.doRestoreCutTransparency();
@@ -573,7 +573,7 @@ define("game/Grab", [
             );
             this.bee.addChild(wings);
 
-            var p = this.bee.texture.offsets[IMG_OBJ_BEE_HD__rotation_center];
+            const p = this.bee.texture.offsets[IMG_OBJ_BEE_HD__rotation_center];
             this.bee.x = -p.x;
             this.bee.y = -p.y;
 
@@ -633,8 +633,8 @@ define("game/Grab", [
     var IMG_OBJ_HOOK_01_bottom = 0;
     var IMG_OBJ_HOOK_01_top = 1;
 
-    var IMG_OBJ_HOOK_02_bottom = 0;
-    var IMG_OBJ_HOOK_02_top = 1;
+    const IMG_OBJ_HOOK_02_bottom = 0;
+    const IMG_OBJ_HOOK_02_top = 1;
 
     var IMG_OBJ_HOOK_REGULATED_bottom = 0;
     var IMG_OBJ_HOOK_REGULATED_rope = 1;

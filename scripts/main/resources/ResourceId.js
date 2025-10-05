@@ -3,7 +3,7 @@ define("resources/ResourceId", [], function () {
      * The resource id corresponds to the index of the entry in the RES_DATA array
      * @enum {number}
      */
-    var ResourceId = {
+    const ResourceId = {
         IMG_DEFAULT: 0,
         IMG_LOADERBAR_FULL: 1,
         IMG_CHILLINGO: 2,

@@ -2,7 +2,7 @@ define("utils/Radians", [], function () {
     /**
      * Helper class for dealing with radians
      */
-    var Radians = {
+    const Radians = {
         /**
          * @const
          * @type {number}

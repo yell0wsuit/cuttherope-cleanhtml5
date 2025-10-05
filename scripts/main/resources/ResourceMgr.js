@@ -21,13 +21,13 @@ define("resources/ResourceMgr", [
     Rectangle,
     Log
 ) {
-    var ResourceMgr = {
+    const ResourceMgr = {
         init: function () {
             // merge info into resource entries
-            var infos = ResInfo;
+            const infos = ResInfo;
             ResScaler.scaleResourceInfos(infos, resolution.CANVAS_SCALE);
-            for (var i = 0, len = infos.length; i < len; i++) {
-                var info = infos[i];
+            for (let i = 0, len = infos.length; i < len; i++) {
+                const info = infos[i];
                 delete info.originalRects;
                 delete info.offsetAdjustments;
 
@@ -36,7 +36,7 @@ define("resources/ResourceMgr", [
         },
         onResourceLoaded: function (resId, img) {
             // we store the resource id in the custom id
-            var resource = RES_DATA[resId];
+            const resource = RES_DATA[resId];
             switch (resource.type) {
                 case ResourceType.IMAGE:
                     resource.texture = new Texture2D(img);
@@ -58,7 +58,7 @@ define("resources/ResourceMgr", [
          * @param resource {ResEntry}
          */
         setQuads: function (resource) {
-            var t = resource.texture,
+            const t = resource.texture,
                 imageWidth = t.imageWidth,
                 imageHeight = t.imageHeight,
                 info = resource.info,
@@ -81,7 +81,7 @@ define("resources/ResourceMgr", [
 
             for (var i = 0, len = rects.length; i < len; i++) {
                 // convert it to a Rectangle object
-                var rawRect = rects[i],
+                const rawRect = rects[i],
                     rect = new Rectangle(rawRect.x, rawRect.y, rawRect.w, rawRect.h);
 
                 if (rect.w + t.adjustmentMaxX > imageWidth) {
@@ -96,9 +96,9 @@ define("resources/ResourceMgr", [
 
             if (offsets) {
                 // set the offsets inside the texture
-                var oCount = offsets.length;
+                const oCount = offsets.length;
                 for (i = 0; i < oCount; i++) {
-                    var offset = offsets[i];
+                    const offset = offsets[i];
                     t.setOffset(i, offset.x, offset.y);
                 }
             }
@@ -110,7 +110,7 @@ define("resources/ResourceMgr", [
             }
         },
         getTexture: function (resId) {
-            var resEntry = RES_DATA[resId];
+            const resEntry = RES_DATA[resId];
             if (resEntry.texture) {
                 return resEntry.texture;
             }
@@ -119,7 +119,7 @@ define("resources/ResourceMgr", [
             return null;
         },
         getFont: function (resId) {
-            var resEntry = RES_DATA[resId];
+            const resEntry = RES_DATA[resId];
             if (resEntry.font) {
                 return resEntry.font;
             }

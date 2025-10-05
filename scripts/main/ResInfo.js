@@ -1,5 +1,5 @@
 define("ResInfo", ["resources/ResourceId"], function (ResourceId) {
-    var RES_INFO_2560 = [
+    const RES_INFO_2560 = [
         { id: 0 },
         { id: 1 },
         { id: 2 },

@@ -1,5 +1,5 @@
 define("visual/BackgroundTileMap", ["visual/TileMap", "core/Vector"], function (TileMap, Vector) {
-    var BackgroundTileMap = TileMap.extend({
+    const BackgroundTileMap = TileMap.extend({
         init: function (rows, columns) {
             this._super(rows, columns);
             this.lastCameraPos = Vector.newUndefined();

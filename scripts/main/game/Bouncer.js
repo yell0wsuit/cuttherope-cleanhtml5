@@ -21,21 +21,21 @@ define("game/Bouncer", [
      * @const
      * @type {number}
      */
-    var BOUNCER_HEIGHT = 10;
+    const BOUNCER_HEIGHT = 10;
 
-    var IMG_OBJ_BOUNCER_01_start = 0;
-    var IMG_OBJ_BOUNCER_01_Frame_2 = 1;
-    var IMG_OBJ_BOUNCER_01_Frame_3 = 2;
-    var IMG_OBJ_BOUNCER_01_Frame_4 = 3;
-    var IMG_OBJ_BOUNCER_01_end = 4;
+    const IMG_OBJ_BOUNCER_01_start = 0;
+    const IMG_OBJ_BOUNCER_01_Frame_2 = 1;
+    const IMG_OBJ_BOUNCER_01_Frame_3 = 2;
+    const IMG_OBJ_BOUNCER_01_Frame_4 = 3;
+    const IMG_OBJ_BOUNCER_01_end = 4;
 
-    var IMG_OBJ_BOUNCER_02_start_ = 0;
-    var IMG_OBJ_BOUNCER_02_Frame_2 = 1;
-    var IMG_OBJ_BOUNCER_02_Frame_3 = 2;
-    var IMG_OBJ_BOUNCER_02_Frame_4 = 3;
-    var IMG_OBJ_BOUNCER_02_end = 4;
+    const IMG_OBJ_BOUNCER_02_start_ = 0;
+    const IMG_OBJ_BOUNCER_02_Frame_2 = 1;
+    const IMG_OBJ_BOUNCER_02_Frame_3 = 2;
+    const IMG_OBJ_BOUNCER_02_Frame_4 = 3;
+    const IMG_OBJ_BOUNCER_02_end = 4;
 
-    var Bouncer = CTRGameObject.extend({
+    const Bouncer = CTRGameObject.extend({
         init: function (x, y, width, angle) {
             this._super();
 
@@ -46,7 +46,7 @@ define("game/Bouncer", [
             this.b1 = Vector.newZero();
             this.b2 = Vector.newZero();
 
-            var imageId = Constants.UNDEFINED;
+            let imageId = Constants.UNDEFINED;
             if (width === 1) {
                 imageId = ResourceId.IMG_OBJ_BOUNCER_01;
             } else if (width === 2) {
@@ -59,7 +59,7 @@ define("game/Bouncer", [
             this.y = y;
 
             this.updateRotation();
-            var delay = 0.04,
+            const delay = 0.04,
                 k = this.addAnimationDelay(
                     delay,
                     Timeline.LoopType.NO_LOOP,
@@ -70,9 +70,9 @@ define("game/Bouncer", [
             t.addKeyFrame(KeyFrame.makeSingleAction(this, ActionType.SET_DRAWQUAD, 0, 0, delay));
         },
         updateRotation: function () {
-            var x = this.x;
-            var y = this.y;
-            var width = this.width / 2;
+            const x = this.x;
+            const y = this.y;
+            const width = this.width / 2;
 
             this.t1.x = x - width;
             this.t2.x = x + width;
@@ -82,7 +82,7 @@ define("game/Bouncer", [
             this.b2.x = this.t2.x;
             this.b1.y = this.b2.y = y + BOUNCER_HEIGHT / 2.0;
 
-            var angle = (this.angle = this.rotation * 0.017453292519943295);
+            const angle = (this.angle = this.rotation * 0.017453292519943295);
 
             this.t1.rotateAround(angle, x, y);
             this.t2.rotateAround(angle, x, y);

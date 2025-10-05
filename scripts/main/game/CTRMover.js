@@ -3,12 +3,12 @@ define("game/CTRMover", ["resolution", "utils/Mover", "core/Vector"], function (
     Mover,
     Vector
 ) {
-    var CTRMover = Mover.extend({
+    const CTRMover = Mover.extend({
         init: function (pathCapacity, moveSpeed, rotateSpeed) {
             this._super(pathCapacity, moveSpeed, rotateSpeed);
         },
         setPathAndStart: function (path, startX, startY) {
-            var i,
+            let i,
                 nx,
                 ny,
                 xs,
@@ -16,7 +16,7 @@ define("game/CTRMover", ["resolution", "utils/Mover", "core/Vector"], function (
                 MOVER_SCALE = resolution.MOVER_SCALE;
 
             if (path[0] === "R") {
-                var clockwise = path[1] === "C",
+                let clockwise = path[1] === "C",
                     rad = parseInt(path.substr(2), 10),
                     pointsCount = Math.round((rad * 3) / 2),
                     k_increment = (2 * Math.PI) / pointsCount,
@@ -40,7 +40,7 @@ define("game/CTRMover", ["resolution", "utils/Mover", "core/Vector"], function (
                 if (path[path.length - 1] === ",") {
                     path = path.substr(0, path.length - 1);
                 }
-                var parts = path.split(","),
+                const parts = path.split(","),
                     numParts = parts.length;
                 for (i = 0; i < numParts; i += 2) {
                     xs = parts[i];

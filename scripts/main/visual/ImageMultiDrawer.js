@@ -8,7 +8,7 @@ define("visual/ImageMultiDrawer", [
      * Holds the information necessary to draw multiple quads from a
      * shared source image texture
      */
-    var ImageMultiDrawer = BaseElement.extend({
+    const ImageMultiDrawer = BaseElement.extend({
         init: function (texture) {
             this._super();
 
@@ -40,7 +40,7 @@ define("visual/ImageMultiDrawer", [
         mapTextureQuad: function (quadIndex, dx, dy, index) {
             this.texCoordinates[index] = Rectangle.copy(this.texture.rects[quadIndex]);
 
-            var offset = this.texture.offsets[quadIndex],
+            const offset = this.texture.offsets[quadIndex],
                 rect = this.texture.rects[quadIndex];
             this.vertices[index] = new Rectangle(dx + offset.x, dy + offset.y, rect.w, rect.h);
             this.alphas[index] = 1;
@@ -51,9 +51,9 @@ define("visual/ImageMultiDrawer", [
             }
 
             //console.log("DRAW NO OF QUADS", n)
-            var ctx = Canvas.context;
-            for (var i = 0; i < n; i++) {
-                var source = this.texCoordinates[i],
+            const ctx = Canvas.context;
+            for (let i = 0; i < n; i++) {
+                let source = this.texCoordinates[i],
                     dest = this.vertices[i],
                     alpha = this.alphas[i],
                     previousAlpha = ctx.globalAlpha,
@@ -77,7 +77,7 @@ define("visual/ImageMultiDrawer", [
                 }
 
                 // rotate the image if requested
-                var checkRotation = this.rotationAngles && this.rotationAngles.length > i;
+                const checkRotation = this.rotationAngles && this.rotationAngles.length > i;
                 if (checkRotation) {
                     var rotationAngle = this.rotationAngles[i],
                         rotationPosition = this.rotationPositions[i],
@@ -146,14 +146,14 @@ define("visual/ImageMultiDrawer", [
 
             // only draw if the image is non-transparent
             if (this.color.a !== 0) {
-                var ctx = Canvas.context,
+                const ctx = Canvas.context,
                     shouldTranslate = this.drawX !== 0 || this.drawY !== 0;
 
                 if (shouldTranslate) {
                     ctx.translate(this.drawX, this.drawY);
                 }
 
-                var count =
+                const count =
                     this.numberOfQuadsToDraw === Constants.UNDEFINED
                         ? this.texCoordinates.length
                         : this.numberOfQuadsToDraw;
