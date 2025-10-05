@@ -1,3 +1,1 @@
-define("editionUI", [], function () {
-    return {};
-});
+export default {};

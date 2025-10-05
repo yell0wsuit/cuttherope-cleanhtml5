@@ -1,10 +1,8 @@
-define("physics/ConstraintType", [], function () {
-    /** @enum {number} */
-    const ConstraintType = {
-        DISTANCE: 0,
-        NOT_MORE_THAN: 1,
-        NOT_LESS_THAN: 2,
-    };
+/** @enum {number} */
+const ConstraintType = {
+    DISTANCE: 0,
+    NOT_MORE_THAN: 1,
+    NOT_LESS_THAN: 2,
+};
 
-    return ConstraintType;
-});
+export default ConstraintType;

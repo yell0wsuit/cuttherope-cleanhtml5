@@ -1,353 +1,336 @@
-define("ui/Box", [
-    "utils/Class",
-    "ui/Easing",
-    "visual/Text",
-    "resolution",
-    "platform",
-    "ui/BoxType",
-    "utils/PubSub",
-    "resources/Lang",
-    "core/Alignment",
-    "ui/ScoreManager",
-    "resources/MenuStringId",
-    "edition",
-    "game/CTRSettings",
-], function (
-    Class,
-    Easing,
-    Text,
-    resolution,
-    platform,
-    BoxType,
-    PubSub,
-    Lang,
-    Alignment,
-    ScoreManager,
-    MenuStringId,
-    edition,
-    settings
-) {
-    // cache upgrade UI elements
-    let upgradeButton;
+import Class from "utils/Class";
+import Easing from "ui/Easing";
+import Text from "visual/Text";
+import resolution from "resolution";
+import platform from "platform";
+import BoxType from "ui/BoxType";
+import PubSub from "utils/PubSub";
+import Lang from "resources/Lang";
+import Alignment from "core/Alignment";
+import ScoreManager from "ui/ScoreManager";
+import MenuStringId from "resources/MenuStringId";
+import edition from "edition";
+import settings from "game/CTRSettings";
+// cache upgrade UI elements
+let upgradeButton;
 
-    function initializeUpgradeButton() {
-        upgradeButton = document.getElementById("boxUpgradePlate");
-        if (upgradeButton) {
+function initializeUpgradeButton() {
+    upgradeButton = document.getElementById("boxUpgradePlate");
+    if (upgradeButton) {
+        upgradeButton.style.display = "none";
+    }
+}
+
+// Initialize when DOM is ready
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeUpgradeButton);
+} else {
+    initializeUpgradeButton();
+}
+
+function hidePurchaseButton() {
+    if (upgradeButton) {
+        // Vanilla fade out
+        upgradeButton.style.transition = "opacity 200ms";
+        upgradeButton.style.opacity = "0";
+        setTimeout(() => {
             upgradeButton.style.display = "none";
-        }
+            upgradeButton.style.opacity = "1"; // Reset for next time
+        }, 200);
     }
+}
 
-    // Initialize when DOM is ready
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initializeUpgradeButton);
-    } else {
-        initializeUpgradeButton();
+function showPurchaseButton() {
+    if (upgradeButton) {
+        upgradeButton.style.display = "";
+        upgradeButton.style.transition = "opacity 200ms";
+        upgradeButton.style.opacity = "0";
+        // Trigger reflow
+        upgradeButton.offsetHeight;
+        upgradeButton.style.opacity = "1";
     }
+}
 
-    function hidePurchaseButton() {
-        if (upgradeButton) {
-            // Vanilla fade out
-            upgradeButton.style.transition = "opacity 200ms";
-            upgradeButton.style.opacity = "0";
-            setTimeout(() => {
-                upgradeButton.style.display = "none";
-                upgradeButton.style.opacity = "1"; // Reset for next time
-            }, 200);
-        }
+PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, function (paid) {
+    if (paid) {
+        hidePurchaseButton();
     }
+});
 
-    function showPurchaseButton() {
-        if (upgradeButton) {
-            upgradeButton.style.display = "";
-            upgradeButton.style.transition = "opacity 200ms";
-            upgradeButton.style.opacity = "0";
-            // Trigger reflow
-            upgradeButton.offsetHeight;
-            upgradeButton.style.opacity = "1";
-        }
-    }
-
-    PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, function (paid) {
-        if (paid) {
-            hidePurchaseButton();
-        }
+// localize UI element text
+PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
+    Text.drawBig({
+        text: Lang.menuText(MenuStringId.BUY_FULL_GAME),
+        imgParentId: "boxUpgradePlate",
+        scale: 0.6 * resolution.UI_TEXT_SCALE,
     });
+});
 
-    // localize UI element text
-    PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
-        Text.drawBig({
-            text: Lang.menuText(MenuStringId.BUY_FULL_GAME),
-            imgParentId: "boxUpgradePlate",
-            scale: 0.6 * resolution.UI_TEXT_SCALE,
-        });
-    });
+const boxImageBase = platform.boxImageBaseUrl || platform.uiImageBaseUrl;
 
-    const boxImageBase = platform.boxImageBaseUrl || platform.uiImageBaseUrl;
+const Box = Class.extend({
+    init: function (boxIndex, bgimg, reqstars, islocked, type) {
+        this.index = boxIndex;
+        this.islocked = islocked;
+        this.visible = true;
 
-    const Box = Class.extend({
-        init: function (boxIndex, bgimg, reqstars, islocked, type) {
-            this.index = boxIndex;
-            this.islocked = islocked;
-            this.visible = true;
+        // initially we assume all boxes are included in the game
+        this.purchased = true;
 
-            // initially we assume all boxes are included in the game
-            this.purchased = true;
+        this.bounceStartTime = 0;
+        this.opacity = 1.0;
+        this.type = type;
 
-            this.bounceStartTime = 0;
-            this.opacity = 1.0;
-            this.type = type;
+        this.boxImg = new Image();
 
-            this.boxImg = new Image();
+        if (bgimg) {
+            this.boxImg.src = boxImageBase + bgimg;
+        }
 
-            if (bgimg) {
-                this.boxImg.src = boxImageBase + bgimg;
-            }
+        const textImg = (this.textImg = new Image()),
+            boxWidth = (this.boxWidth = resolution.uiScaledNumber(350)),
+            boxTextMargin = (this.boxTextMargin = resolution.uiScaledNumber(20)),
+            self = this;
 
-            const textImg = (this.textImg = new Image()),
-                boxWidth = (this.boxWidth = resolution.uiScaledNumber(350)),
-                boxTextMargin = (this.boxTextMargin = resolution.uiScaledNumber(20)),
-                self = this;
+        this.textRendered = false;
+        this.renderText = function () {
+            Text.drawBig({
+                text: Lang.boxText(boxIndex, self.includeBoxNumberInTitle),
+                img: textImg,
+                width: (boxWidth - boxTextMargin * 2) / resolution.UI_TEXT_SCALE,
+                alignment: Alignment.HCENTER,
+                scaleToUI: true,
+            });
 
-            this.textRendered = false;
-            this.renderText = function () {
-                Text.drawBig({
-                    text: Lang.boxText(boxIndex, self.includeBoxNumberInTitle),
-                    img: textImg,
-                    width: (boxWidth - boxTextMargin * 2) / resolution.UI_TEXT_SCALE,
-                    alignment: Alignment.HCENTER,
-                    scaleToUI: true,
-                });
+            self.textRendered = true;
+        };
 
-                self.textRendered = true;
-            };
+        PubSub.subscribe(PubSub.ChannelId.LanguageChanged, this.renderText);
 
-            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, this.renderText);
+        this.reqImg = Text.drawBig({ text: reqstars, scaleToUI: true });
 
-            this.reqImg = Text.drawBig({ text: reqstars, scaleToUI: true });
+        this.omNomImg = new Image();
+        this.omNomImg.src = platform.uiImageBaseUrl + "box_omnom.png";
 
-            this.omNomImg = new Image();
-            this.omNomImg.src = platform.uiImageBaseUrl + "box_omnom.png";
+        this.lockImg = new Image();
+        this.lockImg.src = platform.uiImageBaseUrl + "box_lock.png";
 
-            this.lockImg = new Image();
-            this.lockImg.src = platform.uiImageBaseUrl + "box_lock.png";
+        this.starImg = new Image();
+        this.starImg.src = platform.uiImageBaseUrl + "star_result_small.png";
 
-            this.starImg = new Image();
-            this.starImg.src = platform.uiImageBaseUrl + "star_result_small.png";
+        this.perfectMark = new Image();
+        this.perfectMark.src = platform.uiImageBaseUrl + "perfect_mark.png";
 
-            this.perfectMark = new Image();
-            this.perfectMark.src = platform.uiImageBaseUrl + "perfect_mark.png";
+        this.includeBoxNumberInTitle = true;
+    },
 
-            this.includeBoxNumberInTitle = true;
-        },
+    isRequired: function () {
+        return true;
+    },
 
-        isRequired: function () {
-            return true;
-        },
+    isGameBox: function () {
+        return true;
+    },
 
-        isGameBox: function () {
-            return true;
-        },
+    isClickable: function () {
+        return true;
+    },
 
-        isClickable: function () {
-            return true;
-        },
+    draw: function (ctx, omnomoffset) {
+        const prevAlpha = ctx.globalAlpha;
+        if (this.opacity !== prevAlpha) {
+            ctx.globalAlpha = this.opacity;
+        }
 
-        draw: function (ctx, omnomoffset) {
-            const prevAlpha = ctx.globalAlpha;
-            if (this.opacity !== prevAlpha) {
-                ctx.globalAlpha = this.opacity;
-            }
+        // render the box
+        this.render(ctx, omnomoffset);
 
-            // render the box
-            this.render(ctx, omnomoffset);
+        // restore alpha
+        if (this.opacity !== prevAlpha) {
+            ctx.globalAlpha = prevAlpha;
+        }
+    },
 
-            // restore alpha
-            if (this.opacity !== prevAlpha) {
-                ctx.globalAlpha = prevAlpha;
-            }
-        },
+    render: function (ctx, omnomoffset) {
+        const isGameBox = this.isGameBox();
+        if (isGameBox) {
+            // draw the black area
+            ctx.fillStyle = "rgb(45,45,53)";
+            ctx.fillRect(
+                resolution.uiScaledNumber(130),
+                resolution.uiScaledNumber(200),
+                resolution.uiScaledNumber(140),
+                resolution.uiScaledNumber(100)
+            );
 
-        render: function (ctx, omnomoffset) {
-            const isGameBox = this.isGameBox();
-            if (isGameBox) {
-                // draw the black area
-                ctx.fillStyle = "rgb(45,45,53)";
-                ctx.fillRect(
-                    resolution.uiScaledNumber(130),
-                    resolution.uiScaledNumber(200),
-                    resolution.uiScaledNumber(140),
-                    resolution.uiScaledNumber(100)
+            // draw omnom
+            if (omnomoffset != null) {
+                ctx.drawImage(
+                    this.omNomImg,
+                    omnomoffset + resolution.uiScaledNumber(4),
+                    resolution.uiScaledNumber(215)
                 );
+            }
+        }
 
-                // draw omnom
-                if (omnomoffset != null) {
+        // draw the box image
+        ctx.drawImage(this.boxImg, resolution.uiScaledNumber(25), resolution.uiScaledNumber(0));
+
+        if (isGameBox) {
+            // draw the lock
+            if (this.islocked) {
+                // Get dimensions - prefer naturalWidth/Height, fallback to width/height
+                const textWidth = this.reqImg.naturalWidth || this.reqImg.width || 0;
+                const textHeight = this.reqImg.naturalHeight || this.reqImg.height || 0;
+                const starWidth = this.starImg.naturalWidth || this.starImg.width || 0;
+
+                const starLeftMargin = resolution.uiScaledNumber(-6);
+                // center the text and star label
+                const labelWidth = textWidth + starLeftMargin + starWidth;
+                const labelMaxWidth = resolution.uiScaledNumber(125);
+                const labelOffsetX = (labelMaxWidth - labelWidth) / 2;
+                const labelMinX = resolution.uiScaledNumber(140);
+                const labelX = labelMinX + labelOffsetX;
+
+                // slightly scale the lock image (not quite big enough for our boxes)
+                // TODO: should resize lock images for every resolution and remove scaling
+                // TODO: also need to normalize the size of boxes (which vary)
+                ctx.scale(1.015, 1);
+                ctx.drawImage(this.lockImg, resolution.uiScaledNumber(23), resolution.uiScaledNumber(155));
+                ctx.scale(1 / 1.015, 1);
+
+                if (this.purchased) {
+                    ctx.drawImage(this.reqImg, labelX, resolution.uiScaledNumber(220), textWidth, textHeight);
                     ctx.drawImage(
-                        this.omNomImg,
-                        omnomoffset + resolution.uiScaledNumber(4),
-                        resolution.uiScaledNumber(215)
+                        this.starImg,
+                        labelX + textWidth + starLeftMargin,
+                        resolution.uiScaledNumber(225)
                     );
                 }
+
+                /*
+                     // DEBUG: draw red dots to show the label boundaries
+                     ctx.fillStyle= 'red';
+                     ctx.beginPath();
+                     ctx.arc(labelMinX, resolution.uiScaledNumber(220), 5, 0, 2*Math.PI, false);
+                     ctx.fill();
+
+                     ctx.beginPath();
+                     ctx.arc(labelMinX + labelMaxWidth, resolution.uiScaledNumber(220), 5, 0, 2*Math.PI, false);
+                     ctx.fill();
+                     */
             }
 
-            // draw the box image
-            ctx.drawImage(this.boxImg, resolution.uiScaledNumber(25), resolution.uiScaledNumber(0));
+            // draw the perfect mark if user got every star in the box
+            if (ScoreManager.achievedStars(this.index) === ScoreManager.possibleStarsForBox(this.index)) {
+                ctx.drawImage(this.perfectMark, resolution.uiScaledNumber(260), resolution.uiScaledNumber(250));
+            }
+        }
 
-            if (isGameBox) {
-                // draw the lock
-                if (this.islocked) {
-                    // Get dimensions - prefer naturalWidth/Height, fallback to width/height
-                    const textWidth = this.reqImg.naturalWidth || this.reqImg.width || 0;
-                    const textHeight = this.reqImg.naturalHeight || this.reqImg.height || 0;
-                    const starWidth = this.starImg.naturalWidth || this.starImg.width || 0;
+        // draw the text
+        if (!this.textRendered) {
+            this.renderText();
+        }
 
-                    const starLeftMargin = resolution.uiScaledNumber(-6);
-                    // center the text and star label
-                    const labelWidth = textWidth + starLeftMargin + starWidth;
-                    const labelMaxWidth = resolution.uiScaledNumber(125);
-                    const labelOffsetX = (labelMaxWidth - labelWidth) / 2;
-                    const labelMinX = resolution.uiScaledNumber(140);
-                    const labelX = labelMinX + labelOffsetX;
+        const textWidth = this.textImg.naturalWidth || this.textImg.width || 0;
+        const textHeight = this.textImg.naturalHeight || this.textImg.height || 0;
+        const x = ~~(
+            resolution.uiScaledNumber(25) +
+            this.boxTextMargin +
+            (this.boxWidth - this.boxTextMargin * 2 - textWidth) / 2
+        );
+        const y = resolution.uiScaledNumber(70);
 
-                    // slightly scale the lock image (not quite big enough for our boxes)
-                    // TODO: should resize lock images for every resolution and remove scaling
-                    // TODO: also need to normalize the size of boxes (which vary)
-                    ctx.scale(1.015, 1);
-                    ctx.drawImage(this.lockImg, resolution.uiScaledNumber(23), resolution.uiScaledNumber(155));
-                    ctx.scale(1 / 1.015, 1);
+        ctx.drawImage(this.textImg, x, y);
+    },
 
-                    if (this.purchased) {
-                        ctx.drawImage(this.reqImg, labelX, resolution.uiScaledNumber(220), textWidth, textHeight);
-                        ctx.drawImage(
-                            this.starImg,
-                            labelX + textWidth + starLeftMargin,
-                            resolution.uiScaledNumber(225)
-                        );
-                    }
+    bounce: function (ctx) {
+        if (!ctx) {
+            return;
+        }
 
-                    /*
-                         // DEBUG: draw red dots to show the label boundaries
-                         ctx.fillStyle= 'red';
-                         ctx.beginPath();
-                         ctx.arc(labelMinX, resolution.uiScaledNumber(220), 5, 0, 2*Math.PI, false);
-                         ctx.fill();
+        this.bounceStartTime = Date.now();
 
-                         ctx.beginPath();
-                         ctx.arc(labelMinX + labelMaxWidth, resolution.uiScaledNumber(220), 5, 0, 2*Math.PI, false);
-                         ctx.fill();
-                         */
+        // stage boundaries in msec
+        const s1 = 100,
+            s2 = 300,
+            s3 = 600,
+            w = resolution.uiScaledNumber(1024),
+            h = resolution.uiScaledNumber(576);
+
+        const self = this,
+            renderBounce = function () {
+                // get the elapsed time
+                const t = Date.now() - self.bounceStartTime;
+
+                let d, x, y;
+
+                if (t < s1) {
+                    d = Easing.easeOutSine(t, 0, 0.05, s1); // to 0.95
+                    x = 1.0 - d;
+                    y = 1.0 + d;
+                } else if (t < s2) {
+                    d = Easing.easeInOutCubic(t - s1, 0, 0.11, s2 - s1); // to 0.95
+                    x = 0.95 + d;
+                    y = 1.05 - d;
+                } else if (t < s3) {
+                    // intentionally not ending at 1.0 prevents the animation from "snapping" at the end.
+                    d = Easing.easeOutCubic(t - s2, 0, 0.05, s3 - s2); // to 0.95
+                    x = 1.06 - d;
+                    y = 0.94 + d;
                 }
 
-                // draw the perfect mark if user got every star in the box
-                if (ScoreManager.achievedStars(this.index) === ScoreManager.possibleStarsForBox(this.index)) {
-                    ctx.drawImage(this.perfectMark, resolution.uiScaledNumber(260), resolution.uiScaledNumber(250));
+                const tx = (w - w * x) / 2.0,
+                    ty = (h - h * y) / 2.0,
+                    sx = (w - 2.0 * tx) / w,
+                    sy = (h - 2.0 * ty) / h;
+
+                if (!isNaN(sx) && !isNaN(sy)) {
+                    ctx.save();
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    ctx.clearRect(
+                        resolution.uiScaledNumber(312),
+                        resolution.uiScaledNumber(100),
+                        resolution.uiScaledNumber(400),
+                        resolution.uiScaledNumber(460)
+                    );
+                    ctx.restore();
+
+                    ctx.save();
+                    ctx.scale(sx, sy);
+                    ctx.translate(tx, ty);
+                    ctx.translate(resolution.uiScaledNumber(312), resolution.uiScaledNumber(130));
+                    self.draw(ctx, resolution.uiScaledNumber(140));
+                    ctx.restore();
                 }
-            }
 
-            // draw the text
-            if (!this.textRendered) {
-                this.renderText();
-            }
-
-            const textWidth = this.textImg.naturalWidth || this.textImg.width || 0;
-            const textHeight = this.textImg.naturalHeight || this.textImg.height || 0;
-            const x = ~~(
-                resolution.uiScaledNumber(25) +
-                this.boxTextMargin +
-                (this.boxWidth - this.boxTextMargin * 2 - textWidth) / 2
-            );
-            const y = resolution.uiScaledNumber(70);
-
-            ctx.drawImage(this.textImg, x, y);
-        },
-
-        bounce: function (ctx) {
-            if (!ctx) {
-                return;
-            }
-
-            this.bounceStartTime = Date.now();
-
-            // stage boundaries in msec
-            const s1 = 100,
-                s2 = 300,
-                s3 = 600,
-                w = resolution.uiScaledNumber(1024),
-                h = resolution.uiScaledNumber(576);
-
-            const self = this,
-                renderBounce = function () {
-                    // get the elapsed time
-                    const t = Date.now() - self.bounceStartTime;
-
-                    let d, x, y;
-
-                    if (t < s1) {
-                        d = Easing.easeOutSine(t, 0, 0.05, s1); // to 0.95
-                        x = 1.0 - d;
-                        y = 1.0 + d;
-                    } else if (t < s2) {
-                        d = Easing.easeInOutCubic(t - s1, 0, 0.11, s2 - s1); // to 0.95
-                        x = 0.95 + d;
-                        y = 1.05 - d;
-                    } else if (t < s3) {
-                        // intentionally not ending at 1.0 prevents the animation from "snapping" at the end.
-                        d = Easing.easeOutCubic(t - s2, 0, 0.05, s3 - s2); // to 0.95
-                        x = 1.06 - d;
-                        y = 0.94 + d;
-                    }
-
-                    const tx = (w - w * x) / 2.0,
-                        ty = (h - h * y) / 2.0,
-                        sx = (w - 2.0 * tx) / w,
-                        sy = (h - 2.0 * ty) / h;
-
-                    if (!isNaN(sx) && !isNaN(sy)) {
-                        ctx.save();
-                        ctx.setTransform(1, 0, 0, 1, 0, 0);
-                        ctx.clearRect(
-                            resolution.uiScaledNumber(312),
-                            resolution.uiScaledNumber(100),
-                            resolution.uiScaledNumber(400),
-                            resolution.uiScaledNumber(460)
-                        );
-                        ctx.restore();
-
-                        ctx.save();
-                        ctx.scale(sx, sy);
-                        ctx.translate(tx, ty);
-                        ctx.translate(resolution.uiScaledNumber(312), resolution.uiScaledNumber(130));
-                        self.draw(ctx, resolution.uiScaledNumber(140));
-                        ctx.restore();
-                    }
-
-                    if (t > s3) {
-                        self.bounceStartTime = 0;
-                    } else {
-                        window.requestAnimationFrame(renderBounce);
-                    }
-                };
-
-            // start the animation
-            renderBounce();
-        },
-
-        cancelBounce: function () {
-            this.bounceStartTime = 0;
-        },
-
-        onSelected: function () {
-            if (!this.purchased) {
-                if (upgradeButton) {
-                    upgradeButton.classList.toggle("purchaseBox", this.isPurchaseBox || false);
-                    showPurchaseButton();
+                if (t > s3) {
+                    self.bounceStartTime = 0;
+                } else {
+                    window.requestAnimationFrame(renderBounce);
                 }
+            };
+
+        // start the animation
+        renderBounce();
+    },
+
+    cancelBounce: function () {
+        this.bounceStartTime = 0;
+    },
+
+    onSelected: function () {
+        if (!this.purchased) {
+            if (upgradeButton) {
+                upgradeButton.classList.toggle("purchaseBox", this.isPurchaseBox || false);
+                showPurchaseButton();
             }
-        },
+        }
+    },
 
-        onUnselected: function () {
-            hidePurchaseButton();
-        },
-    });
-
-    return Box;
+    onUnselected: function () {
+        hidePurchaseButton();
+    },
 });
+
+export default Box;

@@ -1,6 +1,5 @@
-define("edition", ["config/editions/net-edition"], function (netEdition) {
-    const mobileEdition = netEdition;
-    mobileEdition.siteUrl = "http://mozilla.cuttherope.net";
+import netEdition from "config/editions/net-edition";
+const mobileEdition = netEdition;
+mobileEdition.siteUrl = "http://mozilla.cuttherope.net";
 
-    return mobileEdition;
-});
+export default mobileEdition;

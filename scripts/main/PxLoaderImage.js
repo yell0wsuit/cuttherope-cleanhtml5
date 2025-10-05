@@ -1,70 +1,65 @@
-define("PxLoaderImage", ["PxLoader"], function (PxLoader) {
-    /**
-     * PxLoader plugin to load images
-     */
-    class PxLoaderImage {
-        constructor(url, tags, priority) {
-            this.img = new Image();
-            this.tags = tags;
-            this.priority = priority;
-            this.url = url;
-            this.loader = null;
-        }
+import PxLoader from "./PxLoader.js";
 
-        start(pxLoader) {
-            this.loader = pxLoader;
+export default class PxLoaderImage {
+    constructor(url, tags, priority) {
+        this.img = new Image();
+        this.tags = tags;
+        this.priority = priority;
+        this.url = url;
+        this.loader = null;
+    }
 
-            // NOTE: Must add event listeners before the src is set.
-            this.img.addEventListener("load", this.#onLoad);
-            this.img.addEventListener("error", this.#onError);
+    start(pxLoader) {
+        this.loader = pxLoader;
 
-            this.img.src = this.url;
-        }
+        // NOTE: Must add event listeners before the src is set.
+        this.img.addEventListener("load", this.#onLoad);
+        this.img.addEventListener("error", this.#onError);
 
-        checkStatus() {
-            if (this.img.complete) {
-                this.#removeEventHandlers();
-                this.loader.onLoad(this);
-            }
-        }
+        this.img.src = this.url;
+    }
 
-        onTimeout() {
-            this.#removeEventHandlers();
-            if (this.img.complete) {
-                this.loader.onLoad(this);
-            } else {
-                this.loader.onTimeout(this);
-            }
-        }
-
-        getName() {
-            return this.url;
-        }
-
-        #onLoad = () => {
+    checkStatus() {
+        if (this.img.complete) {
             this.#removeEventHandlers();
             this.loader.onLoad(this);
-        };
-
-        #onError = () => {
-            this.#removeEventHandlers();
-            this.loader.onError(this);
-        };
-
-        #removeEventHandlers() {
-            this.img.removeEventListener("load", this.#onLoad);
-            this.img.removeEventListener("error", this.#onError);
         }
     }
 
-    // add a convenience method to PxLoader for adding an image
-    PxLoader.prototype.addImage = function (url, tags, priority) {
-        const imageLoader = new PxLoaderImage(url, tags, priority);
-        this.add(imageLoader);
+    onTimeout() {
+        this.#removeEventHandlers();
+        if (this.img.complete) {
+            this.loader.onLoad(this);
+        } else {
+            this.loader.onTimeout(this);
+        }
+    }
 
-        // return the img element to the caller
-        return imageLoader.img;
+    getName() {
+        return this.url;
+    }
+
+    #onLoad = () => {
+        this.#removeEventHandlers();
+        this.loader.onLoad(this);
     };
 
-    return PxLoaderImage;
-});
+    #onError = () => {
+        this.#removeEventHandlers();
+        this.loader.onError(this);
+    };
+
+    #removeEventHandlers() {
+        this.img.removeEventListener("load", this.#onLoad);
+        this.img.removeEventListener("error", this.#onError);
+    }
+}
+
+// add a convenience method to PxLoader for adding an image
+PxLoader.prototype.addImage = function (url, tags, priority) {
+    const imageLoader = new PxLoaderImage(url, tags, priority);
+    this.add(imageLoader);
+
+    // return the img element to the caller
+    return imageLoader.img;
+};

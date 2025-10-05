@@ -1,9 +1,8 @@
-define("platformLoc", ["resources/LangId"], function (LangId) {
-    const DefaultLoc = {
-        getDefaultLangId: function () {
-            return LangId.EN;
-        },
-    };
+import LangId from "resources/LangId";
+const DefaultLoc = {
+    getDefaultLangId: function () {
+        return LangId.EN;
+    },
+};
 
-    return DefaultLoc;
-});
+export default DefaultLoc;

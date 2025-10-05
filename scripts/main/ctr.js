@@ -1,77 +1,48 @@
-// a fix for the rotation issue in v1.1
+import app from "./app.js";
+import platform from "./platform.js";
+import "./ctrExports.js";
 
-document.addEventListener(
-    "blur",
-    function () {
-        document.body.style.transform = "rotate(90deg)";
-        setTimeout(function () {
-            document.body.style.transform = "rotate(0deg)";
-        }, 1000);
-    },
-    false
-);
-
-document.addEventListener(
-    "focus",
-    function () {
+document.addEventListener("blur", () => {
+    document.body.style.transform = "rotate(90deg)";
+    setTimeout(() => {
         document.body.style.transform = "rotate(0deg)";
-    },
-    false
-);
+    }, 1000);
+});
 
-window.addEventListener(
-    "contextmenu",
-    function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
-    },
-    true
-);
+document.addEventListener("focus", () => {
+    document.body.style.transform = "rotate(0deg)";
+});
+
+window.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+});
 
 const GLOBAL_ZOOM = matchMedia("(min-width: 960px)").matches ? 2 : 1;
 
-(function () {
-    requirejs.config({
-        baseUrl: "scripts/main",
-    });
-
-    // manages sounds (SoundManager2 only for now, but eventually PhoneGap as well)
-    document.addEventListener("mozvisibilitychange", function () {
-        //console.log("VISIBILTY", document.mozHidden);
-        if (document.mozHidden) {
-            for (const key in window.sounds__) {
-                window.sounds__[key]._wasPlaying = !window.sounds__[key].paused;
-                window.sounds__[key].pause();
-            }
-        } else {
-            for (const key in window.sounds__) {
-                window.sounds__[key]._wasPlaying && window.sounds__[key].play();
-            }
+document.addEventListener("visibilitychange", () => {
+    if (!window.sounds__) return;
+    const hidden = document.hidden;
+    Object.values(window.sounds__).forEach((sound) => {
+        if (!sound) return;
+        if (hidden) {
+            sound._wasPlaying = !sound.paused;
+            sound.pause();
+        } else if (sound._wasPlaying) {
+            sound.play();
         }
     });
+});
 
-    require(["app", "platform", "ctrExports"], function (app, platform) {
-        // verify that the client meets platform requirements
-        if (!platform.meetsRequirements()) {
-            return;
-        }
+const boot = () => {
+    if (!platform.meetsRequirements()) return;
+    app.init();
+    app.domReady();
+    app.run();
+};
 
-        // initialize the application immediately
-        app.init();
-
-        // wait until the DOM is loaded before wiring up events
-        if (document.readyState === "loading") {
-            document.addEventListener("DOMContentLoaded", function () {
-                app.domReady();
-                app.run();
-            });
-        } else {
-            // DOM already loaded
-            app.domReady();
-            app.run();
-        }
-    });
-
-    define("main", function () {});
-})();
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+} else {
+    boot();
+}

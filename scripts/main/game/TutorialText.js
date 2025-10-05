@@ -1,10 +1,9 @@
-define("game/TutorialText", ["visual/TextImage"], function (TextImage) {
-    const TutorialText = TextImage.extend({
-        init: function () {
-            this._super();
-            this.special = 0;
-        },
-    });
-
-    return TutorialText;
+import TextImage from "visual/TextImage";
+const TutorialText = TextImage.extend({
+    init: function () {
+        this._super();
+        this.special = 0;
+    },
 });
+
+export default TutorialText;

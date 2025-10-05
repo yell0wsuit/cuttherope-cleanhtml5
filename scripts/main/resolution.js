@@ -1,17 +1,14 @@
-define("resolution", [
-    "game/CTRSettings",
-    "config/resolutions/scale",
-    "config/resolutions/480x270",
-    "config/resolutions/768x432",
-], function (settings, scaleResolution, res480, res768) {
-    // decide which resolution to target
-    let resolution;
+import settings from "game/CTRSettings";
+import scaleResolution from "config/resolutions/scale";
+import res480 from "config/resolutions/480x270";
+import res768 from "config/resolutions/768x432";
+// decide which resolution to target
+let resolution;
 
-    // Use 480px (for testing in desktop browser)
-    resolution = res480;
+// Use 480px (for testing in desktop browser)
+resolution = res480;
 
-    scaleResolution(resolution);
-    resolution.isHD = false;
+scaleResolution(resolution);
+resolution.isHD = false;
 
-    return resolution;
-});
+export default resolution;
