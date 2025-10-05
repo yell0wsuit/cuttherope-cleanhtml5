@@ -28,14 +28,42 @@ define("ui/Box", [
     settings
 ) {
     // cache upgrade UI elements
-    let $upgradeButton;
-    $(function () {
-        $upgradeButton = $("#boxUpgradePlate").hide();
-    });
+    let upgradeButton;
+
+    function initializeUpgradeButton() {
+        upgradeButton = document.getElementById("boxUpgradePlate");
+        if (upgradeButton) {
+            upgradeButton.style.display = "none";
+        }
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initializeUpgradeButton);
+    } else {
+        initializeUpgradeButton();
+    }
 
     function hidePurchaseButton() {
-        if ($upgradeButton) {
-            $upgradeButton.fadeOut(200);
+        if (upgradeButton) {
+            // Vanilla fade out
+            upgradeButton.style.transition = "opacity 200ms";
+            upgradeButton.style.opacity = "0";
+            setTimeout(() => {
+                upgradeButton.style.display = "none";
+                upgradeButton.style.opacity = "1"; // Reset for next time
+            }, 200);
+        }
+    }
+
+    function showPurchaseButton() {
+        if (upgradeButton) {
+            upgradeButton.style.display = "";
+            upgradeButton.style.transition = "opacity 200ms";
+            upgradeButton.style.opacity = "0";
+            // Trigger reflow
+            upgradeButton.offsetHeight;
+            upgradeButton.style.opacity = "1";
         }
     }
 
@@ -79,10 +107,6 @@ define("ui/Box", [
                 boxWidth = (this.boxWidth = resolution.uiScaledNumber(350)),
                 boxTextMargin = (this.boxTextMargin = resolution.uiScaledNumber(20)),
                 self = this;
-
-            //     console.log(boxTextMargin)
-            //     this.boxTextMargin = 100;
-            // }
 
             this.textRendered = false;
             this.renderText = function () {
@@ -171,38 +195,28 @@ define("ui/Box", [
             if (isGameBox) {
                 // draw the lock
                 if (this.islocked) {
-                    // prefer css dimensions (scaled) for text
-                    var textWidth = $(this.reqImg).width() || this.reqImg.width,
-                        textHeight = $(this.reqImg).height() || this.reqImg.height,
-                        // ok to use raw image width for star (image already scaled)
-                        starWidth = this.starImg.width || $(this.starImg).width(),
-                        starLeftMargin = resolution.uiScaledNumber(-6),
-                        // center the text and star label
-                        labelWidth = textWidth + starLeftMargin + starWidth,
-                        labelMaxWidth = resolution.uiScaledNumber(125),
-                        labelOffsetX = (labelMaxWidth - labelWidth) / 2,
-                        labelMinX = resolution.uiScaledNumber(140),
-                        labelX = labelMinX + labelOffsetX;
+                    // Get dimensions - prefer naturalWidth/Height, fallback to width/height
+                    const textWidth = this.reqImg.naturalWidth || this.reqImg.width || 0;
+                    const textHeight = this.reqImg.naturalHeight || this.reqImg.height || 0;
+                    const starWidth = this.starImg.naturalWidth || this.starImg.width || 0;
+
+                    const starLeftMargin = resolution.uiScaledNumber(-6);
+                    // center the text and star label
+                    const labelWidth = textWidth + starLeftMargin + starWidth;
+                    const labelMaxWidth = resolution.uiScaledNumber(125);
+                    const labelOffsetX = (labelMaxWidth - labelWidth) / 2;
+                    const labelMinX = resolution.uiScaledNumber(140);
+                    const labelX = labelMinX + labelOffsetX;
 
                     // slightly scale the lock image (not quite big enough for our boxes)
                     // TODO: should resize lock images for every resolution and remove scaling
                     // TODO: also need to normalize the size of boxes (which vary)
                     ctx.scale(1.015, 1);
-                    ctx.drawImage(
-                        this.lockImg,
-                        resolution.uiScaledNumber(23),
-                        resolution.uiScaledNumber(155)
-                    );
+                    ctx.drawImage(this.lockImg, resolution.uiScaledNumber(23), resolution.uiScaledNumber(155));
                     ctx.scale(1 / 1.015, 1);
 
                     if (this.purchased) {
-                        ctx.drawImage(
-                            this.reqImg,
-                            labelX,
-                            resolution.uiScaledNumber(220),
-                            textWidth,
-                            textHeight
-                        );
+                        ctx.drawImage(this.reqImg, labelX, resolution.uiScaledNumber(220), textWidth, textHeight);
                         ctx.drawImage(
                             this.starImg,
                             labelX + textWidth + starLeftMargin,
@@ -224,15 +238,8 @@ define("ui/Box", [
                 }
 
                 // draw the perfect mark if user got every star in the box
-                if (
-                    ScoreManager.achievedStars(this.index) ===
-                    ScoreManager.possibleStarsForBox(this.index)
-                ) {
-                    ctx.drawImage(
-                        this.perfectMark,
-                        resolution.uiScaledNumber(260),
-                        resolution.uiScaledNumber(250)
-                    );
+                if (ScoreManager.achievedStars(this.index) === ScoreManager.possibleStarsForBox(this.index)) {
+                    ctx.drawImage(this.perfectMark, resolution.uiScaledNumber(260), resolution.uiScaledNumber(250));
                 }
             }
 
@@ -241,15 +248,14 @@ define("ui/Box", [
                 this.renderText();
             }
 
-            var $textImg = $(this.textImg),
-                textWidth = $textImg.width() || this.textImg.width,
-                textHeight = $textImg.height() || this.textImg.height,
-                x = ~~(
-                    resolution.uiScaledNumber(25) +
-                    this.boxTextMargin +
-                    (this.boxWidth - this.boxTextMargin * 2 - textWidth) / 2
-                ),
-                y = resolution.uiScaledNumber(70);
+            const textWidth = this.textImg.naturalWidth || this.textImg.width || 0;
+            const textHeight = this.textImg.naturalHeight || this.textImg.height || 0;
+            const x = ~~(
+                resolution.uiScaledNumber(25) +
+                this.boxTextMargin +
+                (this.boxWidth - this.boxTextMargin * 2 - textWidth) / 2
+            );
+            const y = resolution.uiScaledNumber(70);
 
             ctx.drawImage(this.textImg, x, y);
         },
@@ -271,7 +277,7 @@ define("ui/Box", [
             const self = this,
                 renderBounce = function () {
                     // get the elapsed time
-                    t = Date.now() - self.bounceStartTime;
+                    const t = Date.now() - self.bounceStartTime;
 
                     let d, x, y;
 
@@ -285,7 +291,6 @@ define("ui/Box", [
                         y = 1.05 - d;
                     } else if (t < s3) {
                         // intentionally not ending at 1.0 prevents the animation from "snapping" at the end.
-                        // it's not a great hack, but the animation ends up much smoother (esp. in IE)
                         d = Easing.easeOutCubic(t - s2, 0, 0.05, s3 - s2); // to 0.95
                         x = 1.06 - d;
                         y = 0.94 + d;
@@ -310,10 +315,7 @@ define("ui/Box", [
                         ctx.save();
                         ctx.scale(sx, sy);
                         ctx.translate(tx, ty);
-                        ctx.translate(
-                            resolution.uiScaledNumber(312),
-                            resolution.uiScaledNumber(130)
-                        );
+                        ctx.translate(resolution.uiScaledNumber(312), resolution.uiScaledNumber(130));
                         self.draw(ctx, resolution.uiScaledNumber(140));
                         ctx.restore();
                     }
@@ -335,7 +337,10 @@ define("ui/Box", [
 
         onSelected: function () {
             if (!this.purchased) {
-                $upgradeButton.toggleClass("purchaseBox", this.isPurchaseBox || false).fadeIn();
+                if (upgradeButton) {
+                    upgradeButton.classList.toggle("purchaseBox", this.isPurchaseBox || false);
+                    showPurchaseButton();
+                }
             }
         },
 
