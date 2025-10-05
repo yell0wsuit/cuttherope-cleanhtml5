@@ -14,6 +14,7 @@ define("ui/TimeBox", [
     "edition",
     "utils/MathHelper",
     "core/SettingStorage",
+    "utils/dom",
 ], function (
     Class,
     Box,
@@ -29,7 +30,8 @@ define("ui/TimeBox", [
     QueryStrings,
     edition,
     MathHelper,
-    SettingStorage
+    SettingStorage,
+    dom
 ) {
     // promotion runs from March 4 - April 14
     // using ticks makes finding hacking more difficult because
@@ -81,7 +83,9 @@ define("ui/TimeBox", [
     let enterCodeButton = null;
     document.addEventListener("DOMContentLoaded", function () {
         enterCodeButton = document.getElementById("boxEnterCodeButton");
-        hideElement(enterCodeButton);
+        if (enterCodeButton) {
+            dom.hide(enterCodeButton);
+        }
     });
 
     // cache text images shared between boxes
@@ -120,13 +124,15 @@ define("ui/TimeBox", [
         },
 
         onSelected: function () {
-            if (!this.isTimeLocked && this.isBkCodeLocked) {
-                enterCodeButton.fadeIn();
+            if (!this.isTimeLocked && this.isBkCodeLocked && enterCodeButton) {
+                dom.fadeIn(enterCodeButton);
             }
         },
 
         onUnselected: function () {
-            enterCodeButton.hide();
+            if (enterCodeButton) {
+                dom.hide(enterCodeButton);
+            }
         },
 
         render: function (ctx, omnomoffset) {
