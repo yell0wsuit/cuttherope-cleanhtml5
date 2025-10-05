@@ -1,3 +1,0 @@
-define("editionUI", [], function () {
-    return {};
-});

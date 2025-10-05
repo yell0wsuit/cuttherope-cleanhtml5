@@ -7,7 +7,7 @@
             name="description"
             content="Play Cut the Rope! A mysterious package has arrived, and the little monster inside has only one request… CANDY!" />
 
-        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 
         <meta property="og:title" content="Cut the Rope" />
         <meta property="og:type" content="game" />
@@ -17,16 +17,12 @@
 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <link href="css/ctr.css" rel="stylesheet" type="text/css" />
+        <link href="/css/ctr.css" rel="stylesheet" type="text/css" />
 
-        <!--Libraries-->
-        <script src="scripts/libraries/require.min.js" type="text/javascript"></script>
+        <script src="/src/ctr.js" type="module"></script>
 
-        <script src="scripts/ie9download.js" type="text/javascript"></script>
-
-        <script src="scripts/main/ctr.js" type="text/javascript"></script>
         <noscript>
-            <link href="css/nojavascript.css" rel="stylesheet" type="text/css" />
+            <link href="/css/nojavascript.css" rel="stylesheet" type="text/css" />
         </noscript>
     </head>
     <body class="ctrCursor">
@@ -193,7 +189,7 @@
 
                 <div id="loaderWindow">
                     <div id="loaderBubbles">
-                        <img id="loaderLogo" src="images/page/loader-logo.png" />
+                        <img id="loaderLogo" src="/images/page/loader-logo.png" />
                         <div id="loaderCanvasHost">
                             <canvas id="loaderCanvas"></canvas>
                         </div>
