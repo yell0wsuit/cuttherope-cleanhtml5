@@ -1,0 +1,105 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 640,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 52,
+            "x": 231,
+            "y": 196
+        },
+        {
+            "name": 55,
+            "x": 129,
+            "y": 193,
+            "angle": 0
+        },
+        {
+            "name": 55,
+            "x": 651,
+            "y": 187,
+            "angle": 180
+        },
+        {
+            "name": 82,
+            "x": 336,
+            "y": 260,
+            "angle": 0,
+            "size": 2
+        },
+        {
+            "name": 82,
+            "x": 445,
+            "y": 260,
+            "angle": 0,
+            "size": 2
+        },
+        {
+            "name": 82,
+            "x": 548,
+            "y": 260,
+            "angle": 0,
+            "size": 2
+        },
+        {
+            "name": 3,
+            "x": 575,
+            "y": 71,
+            "path": "0,150",
+            "moveSpeed": 30,
+            "timeout": 10
+        },
+        {
+            "name": 3,
+            "x": 385,
+            "y": 69,
+            "path": "0,150",
+            "moveSpeed": 20,
+            "timeout": 15
+        },
+        {
+            "name": 3,
+            "x": 481,
+            "y": 71,
+            "path": "0,150",
+            "moveSpeed": 10,
+            "timeout": 20
+        },
+        {
+            "name": 2,
+            "x": 55,
+            "y": 422
+        },
+        {
+            "name": 82,
+            "x": 225,
+            "y": 260,
+            "angle": 0,
+            "size": 2
+        },
+        {
+            "name": 100,
+            "x": 57,
+            "y": 308,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": 70,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        }
+    ]
+}

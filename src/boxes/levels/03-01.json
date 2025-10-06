@@ -1,0 +1,332 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 640,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 2,
+            "x": 314,
+            "y": 372
+        },
+        {
+            "name": 82,
+            "x": 176,
+            "y": 397,
+            "angle": 25,
+            "size": 2
+        },
+        {
+            "name": 82,
+            "x": 454,
+            "y": 396,
+            "angle": -25,
+            "size": 2
+        },
+        {
+            "name": 100,
+            "x": 320,
+            "y": 14,
+            "length": 160,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 52,
+            "x": 159,
+            "y": 123
+        },
+        {
+            "name": 82,
+            "x": 86,
+            "y": 352,
+            "angle": 25,
+            "size": 2
+        },
+        {
+            "name": 82,
+            "x": 548,
+            "y": 351,
+            "angle": -25,
+            "size": 2
+        },
+        {
+            "name": 3,
+            "x": 165,
+            "y": 350,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 471,
+            "y": 350,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 320,
+            "y": 319,
+            "moveSpeed": 35,
+            "timeout": -1
+        },
+        {
+            "name": 82,
+            "x": -6,
+            "y": 306,
+            "angle": 25,
+            "size": 2
+        },
+        {
+            "name": 82,
+            "x": 643,
+            "y": 304,
+            "angle": -25,
+            "size": 2
+        },
+        {
+            "name": 82,
+            "x": 360,
+            "y": 440,
+            "angle": -25,
+            "size": 2
+        },
+        {
+            "name": 82,
+            "x": 267,
+            "y": 440,
+            "angle": 25,
+            "size": 2
+        }
+    ],
+    "en": [
+        {
+            "name": 4,
+            "x": 210,
+            "y": 155,
+            "locale": "en",
+            "text": "Candy will bounce away from this platform",
+            "width": 300
+        },
+        {
+            "name": 13,
+            "x": 207,
+            "y": 230,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ru": [
+        {
+            "name": 4,
+            "x": 200,
+            "y": 152,
+            "locale": "ru",
+            "text": "Леденец отскакивает от таких платформ",
+            "width": 300
+        },
+        {
+            "name": 13,
+            "x": 206,
+            "y": 220,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "de": [
+        {
+            "name": 4,
+            "x": 210,
+            "y": 150,
+            "locale": "de",
+            "text": "Die Süßigkeit wird von der Plattform hüpfen",
+            "width": 270
+        },
+        {
+            "name": 13,
+            "x": 210,
+            "y": 219,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "fr": [
+        {
+            "name": 4,
+            "x": 218,
+            "y": 140,
+            "locale": "fr",
+            "text": "Le bonbon rebondira hors de cette plate-forme",
+            "width": 280
+        },
+        {
+            "name": 13,
+            "x": 209,
+            "y": 218,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "es": [
+        {
+            "name": 4,
+            "x": 218,
+            "y": 130,
+            "locale": "es",
+            "text": "El caramelo rebota al tocar esta plataforma.",
+            "width": 290
+        },
+        {
+            "name": 13,
+            "x": 190,
+            "y": 185,
+            "locale": "es",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "br": [
+        {
+            "name": 4,
+            "x": 200,
+            "y": 130,
+            "locale": "br",
+            "text": "Doces quicarão para longe desta plataforma.",
+            "width": 290
+        },
+        {
+            "name": 13,
+            "x": 190,
+            "y": 185,
+            "locale": "br",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ca": [
+        {
+            "name": 4,
+            "x": 190,
+            "y": 130,
+            "locale": "ca",
+            "text": "Les llaminadures rebotaran des d'aquesta plataforma",
+            "width": 290
+        },
+        {
+            "name": 13,
+            "x": 190,
+            "y": 185,
+            "locale": "ca",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "it": [
+        {
+            "name": 4,
+            "x": 190,
+            "y": 130,
+            "locale": "it",
+            "text": "Il bonbon rimbalzerà fuori dalla piattaforma",
+            "width": 290
+        },
+        {
+            "name": 13,
+            "x": 240,
+            "y": 180,
+            "locale": "it",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "nl": [
+        {
+            "name": 4,
+            "x": 190,
+            "y": 130,
+            "locale": "nl",
+            "text": "Het snoepje stuitert tegen dit oppervlak",
+            "width": 290
+        },
+        {
+            "name": 13,
+            "x": 190,
+            "y": 185,
+            "locale": "nl",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ko": [
+        {
+            "name": 4,
+            "x": 190,
+            "y": 150,
+            "locale": "ko",
+            "text": "여기에서는 사탕이 *튕겨요.",
+            "width": 290
+        },
+        {
+            "name": 13,
+            "x": 190,
+            "y": 185,
+            "locale": "ko",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "zh": [
+        {
+            "name": 4,
+            "x": 180,
+            "y": 140,
+            "locale": "zh",
+            "text": "糖果将从 这个平台上弹走",
+            "width": 290
+        },
+        {
+            "name": 13,
+            "x": 190,
+            "y": 185,
+            "locale": "zh",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ja": [
+        {
+            "name": 4,
+            "x": 190,
+            "y": 100,
+            "locale": "ja",
+            "text": "この プラットホームに 乗った キャンディは 弾んで 跳ね返ります",
+            "width": 290
+        },
+        {
+            "name": 13,
+            "x": 190,
+            "y": 185,
+            "locale": "ja",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ]
+}

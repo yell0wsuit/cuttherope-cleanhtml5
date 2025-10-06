@@ -1,0 +1,300 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 2,
+            "x": 290,
+            "y": 384
+        },
+        {
+            "name": 56,
+            "x": 15,
+            "y": 367,
+            "group": 0,
+            "angle": -90
+        },
+        {
+            "name": 56,
+            "x": 290,
+            "y": 114,
+            "group": 0,
+            "angle": 90
+        },
+        {
+            "name": 52,
+            "x": 15,
+            "y": 150
+        },
+        {
+            "name": 100,
+            "x": 15,
+            "y": 69,
+            "length": 90,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": 0,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 4,
+            "x": 46,
+            "y": 50,
+            "locale": "en",
+            "text": "Drop the candy into the magic hat and it will fall out from the other one",
+            "width": 200
+        },
+        {
+            "name": 8,
+            "x": 100,
+            "y": 360,
+            "locale": "en",
+            "angle": 0,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 3,
+            "x": 15,
+            "y": 328,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 290,
+            "y": 177,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 290,
+            "y": 319,
+            "timeout": -1
+        }
+    ],
+    "fr": [
+        {
+            "name": 8,
+            "x": 118,
+            "y": 347,
+            "locale": "fr",
+            "angle": 0,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 46,
+            "y": 10,
+            "locale": "fr",
+            "text": "Dépose le bonbon dans le chapeau magique et il tombera de l'autre chapeau",
+            "width": 200
+        }
+    ],
+    "de": [
+        {
+            "name": 8,
+            "x": 118,
+            "y": 348,
+            "locale": "de",
+            "angle": 0,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 32,
+            "y": 37,
+            "locale": "de",
+            "text": "Wirf den Bonbon in den magischen Hut und er kommt aus einem anderen wieder raus",
+            "width": 220
+        }
+    ],
+    "ru": [
+        {
+            "name": 8,
+            "x": 122,
+            "y": 354,
+            "locale": "ru",
+            "angle": 0,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 40,
+            "y": 30,
+            "locale": "ru",
+            "text": "Киньте конфету в одну из волшебных шляп, и она вылетит из другой",
+            "width": 200
+        }
+    ],
+    "es": [
+        {
+            "name": 8,
+            "x": 118,
+            "y": 348,
+            "locale": "es",
+            "angle": 0,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 32,
+            "y": 37,
+            "locale": "es",
+            "text": "Al caer en una chistera mágica, el caramelo saldrá por la otra.",
+            "width": 210
+        }
+    ],
+    "br": [
+        {
+            "name": 8,
+            "x": 118,
+            "y": 348,
+            "locale": "br",
+            "angle": 0,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 32,
+            "y": 37,
+            "locale": "br",
+            "text": "Jogue os doces no chapéu mágico e eles cairão do outro chapéu",
+            "width": 210
+        }
+    ],
+    "ca": [
+        {
+            "name": 8,
+            "x": 118,
+            "y": 358,
+            "locale": "ca",
+            "angle": 0,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 32,
+            "y": 7,
+            "locale": "ca",
+            "text": "Deixa caure les llaminadures en el barret màgic i tornaran a caure des de l'altre",
+            "width": 210
+        }
+    ],
+    "it": [
+        {
+            "name": 8,
+            "x": 118,
+            "y": 358,
+            "locale": "it",
+            "angle": 0,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 32,
+            "y": 7,
+            "locale": "it",
+            "text": "Butta il bonbon nel cappello magico e cadrà dall'altro cappello",
+            "width": 210
+        }
+    ],
+    "nl": [
+        {
+            "name": 8,
+            "x": 118,
+            "y": 358,
+            "locale": "nl",
+            "angle": 0,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 32,
+            "y": 7,
+            "locale": "nl",
+            "text": "Laat het snoepje in de toverhoed vallen en het komt er bij de andere weer uit",
+            "width": 210
+        }
+    ],
+    "ko": [
+        {
+            "name": 8,
+            "x": 118,
+            "y": 358,
+            "locale": "ko",
+            "angle": 0,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 32,
+            "y": 135,
+            "locale": "ko",
+            "text": "마술 모자에 사탕을 넣으면 *다른 마술 모자에서 *튀어나와요.",
+            "width": 210
+        }
+    ],
+    "zh": [
+        {
+            "name": 8,
+            "x": 118,
+            "y": 358,
+            "locale": "zh",
+            "angle": 0,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 0,
+            "y": 220,
+            "locale": "zh",
+            "text": "将糖果丢入魔术帽。 它会从另一个魔术帽中掉出",
+            "width": 380
+        }
+    ],
+    "ja": [
+        {
+            "name": 8,
+            "x": 118,
+            "y": 358,
+            "locale": "ja",
+            "angle": 0,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 12,
+            "y": 200,
+            "locale": "ja",
+            "text": "魔法の帽子にキャンディを\n入れると、 他の帽子から\n出てきます",
+            "width": 380
+        }
+    ]
+}
