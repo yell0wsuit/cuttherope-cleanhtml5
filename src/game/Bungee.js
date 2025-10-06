@@ -445,16 +445,20 @@ const Bungee = ConstraintSystem.extend({
             d2.r *= f;
         }
 
-        const useC1 = false, // ropes have alternating color segments
+        let useC1 = true, // ropes have alternating color segments
             numVertices = (count - 1) * points;
 
         // // colors
         // //noinspection UnnecessaryLocalVariableJS
-        const b1 = d1,
+        const b1 = new RGBAColor(d1.r, d1.g, d1.b, d1.a),
+            b2 = new RGBAColor(d2.r, d2.g, d2.b, d2.a),
             colorDivisor = numVertices - 1,
             b1rf = (c1.r - d1.r) / colorDivisor,
             b1gf = (c1.g - d1.g) / colorDivisor,
-            b1bf = (c1.b - d1.b) / colorDivisor;
+            b1bf = (c1.b - d1.b) / colorDivisor,
+            b2rf = (c2.r - d2.r) / colorDivisor,
+            b2gf = (c2.g - d2.g) / colorDivisor,
+            b2bf = (c2.b - d2.b) / colorDivisor;
 
         const numSegments = this.BUNGEE_BEZIER_POINTS - 1,
             lastSegmentIndex = numSegments - 1,
@@ -495,18 +499,18 @@ const Bungee = ConstraintSystem.extend({
             // see if we have all the points for this color section
             const segmentIndex = (vertex - 1) % numSegments;
             if (segmentIndex === lastSegmentIndex || vertex === numVertices) {
-                // decide which color to use for this section
-                // if (this.forceWhite) {
-                //     currentColor = RGBAColor.styles.SOLID_OPAQUE;
-                // }
-                // else if (useC1) {
-                //     currentColor = b1.rgbaStyle();
-                // }
-                // else {
-                //     currentColor = b2.rgbaStyle();
-                // }
+                ctx.beginPath();
 
-                //ctx.strokeStyle = currentColor;
+                // decide which color to use for this section
+                if (this.forceWhite) {
+                    currentColor = RGBAColor.styles.SOLID_OPAQUE;
+                } else if (useC1) {
+                    currentColor = b1.rgbaStyle();
+                } else {
+                    currentColor = b2.rgbaStyle();
+                }
+
+                ctx.strokeStyle = currentColor;
 
                 // move to the beginning of the color section
                 let currentIndex = vertex - segmentIndex - 1;
@@ -517,18 +521,20 @@ const Bungee = ConstraintSystem.extend({
                 for (; currentIndex <= vertex; currentIndex++) {
                     point = drawPts[currentIndex];
                     ctx.lineTo(point.x, point.y);
-                    //Log.debug('Segment to [' + point.x + ', ' + point.y + '] color: ' + currentColor );
                 }
 
-                //ctx.stroke();
-                //useC1 = !useC1;
+                ctx.stroke();
+                useC1 = !useC1;
 
                 const colorMultiplier = segmentIndex + 1;
 
-                // adjust colors
+                // adjust colors for both b1 and b2
                 b1.r += b1rf * colorMultiplier;
                 b1.g += b1gf * colorMultiplier;
                 b1.b += b1bf * colorMultiplier;
+                b2.r += b2rf * colorMultiplier;
+                b2.g += b2gf * colorMultiplier;
+                b2.b += b2bf * colorMultiplier;
             }
         }
 
