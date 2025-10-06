@@ -377,7 +377,7 @@ const GameScene = BaseElement.extend({
 
         if (currentPack != LevelState.pack) {
             this.bgTexture = ResourceMgr.getTexture(bgrID);
-            const canvasBackground = document.getElementById("canvasBackground");
+            const canvasBackground = document.getElementById("c");
             canvasBackground.style.background = "url('" + this.bgTexture.image.src + "')";
             canvasBackground.style.display = "block";
 
