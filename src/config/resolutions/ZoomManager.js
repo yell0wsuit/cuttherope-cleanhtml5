@@ -1,4 +1,4 @@
-const GLOBAL_ZOOM = matchMedia("(min-width: 960px)").matches ? 2 : 1;
+const GLOBAL_ZOOM = matchMedia("(min-width: 960px)").matches ? 1 : 1;
 
 class ZoomManager {
     constructor() {
