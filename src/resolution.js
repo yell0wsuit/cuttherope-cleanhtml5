@@ -2,13 +2,14 @@ import settings from "@/game/CTRSettings";
 import scaleResolution from "@/config/resolutions/scale";
 import res480 from "@/config/resolutions/480x270";
 import res768 from "@/config/resolutions/768x432";
+import res1024 from "@/config/resolutions/1024x576";
+
 // decide which resolution to target
 let resolution;
 
-// Use 480px (for testing in desktop browser)
-resolution = res480;
+resolution = res1024;
 
 scaleResolution(resolution);
-resolution.isHD = false;
+resolution.isHD = true;
 
 export default resolution;
