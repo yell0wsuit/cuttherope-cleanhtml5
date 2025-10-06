@@ -1,0 +1,100 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "special": 1,
+            "ropePhysicsSpeed": 1
+        }
+    ],
+    "objects": [
+        {
+            "name": 52,
+            "x": 215,
+            "y": 210
+        },
+        {
+            "name": 2,
+            "x": 190,
+            "y": 322
+        },
+        {
+            "name": 55,
+            "x": 284,
+            "y": 208,
+            "angle": -180
+        },
+        {
+            "name": 100,
+            "x": 222,
+            "y": 82,
+            "length": 90,
+            "wheel": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false
+        },
+        {
+            "name": 100,
+            "x": 101,
+            "y": 209,
+            "length": 95,
+            "wheel": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false
+        },
+        {
+            "name": 3,
+            "x": 99,
+            "y": 253,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 98,
+            "y": 345,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 98,
+            "y": 82,
+            "timeout": -1
+        },
+        {
+            "name": 55,
+            "x": 37,
+            "y": 343,
+            "angle": 0
+        },
+        {
+            "name": 57,
+            "x": 37,
+            "y": 257,
+            "angle": 0,
+            "size": 1
+        },
+        {
+            "name": 54,
+            "x": 97,
+            "y": 144
+        },
+        {
+            "name": 60,
+            "x": 220,
+            "y": 256,
+            "angle": 0,
+            "size": 4
+        }
+    ]
+}

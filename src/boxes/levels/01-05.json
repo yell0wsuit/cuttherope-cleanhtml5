@@ -1,0 +1,301 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 52,
+            "x": 266,
+            "y": 161
+        },
+        {
+            "name": 100,
+            "x": 155,
+            "y": 250,
+            "length": 95,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 153,
+            "y": 110,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 2,
+            "x": 155,
+            "y": 430
+        },
+        {
+            "name": 3,
+            "x": 37,
+            "y": 264,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 152,
+            "y": 70,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 276,
+            "y": 264,
+            "timeout": -1
+        },
+        {
+            "name": 54,
+            "x": 252,
+            "y": 367
+        },
+        {
+            "name": 4,
+            "x": -100,
+            "y": 280,
+            "locale": "en",
+            "text": "You can restart the level by pressing the",
+            "width": 220
+        },
+        {
+            "name": 12,
+            "x": -30,
+            "y": 485,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -15,
+            "y": 430,
+            "locale": "en",
+            "text": "button",
+            "width": 100
+        }
+    ],
+    "ru": [
+        {
+            "name": 4,
+            "x": -100,
+            "y": 304,
+            "locale": "ru",
+            "text": "Вы можете перезапустить уровень, нажав кнопку",
+            "width": 200
+        },
+        {
+            "name": 12,
+            "x": 85,
+            "y": 436,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "fr": [
+        {
+            "name": 4,
+            "x": -100,
+            "y": 280,
+            "locale": "fr",
+            "text": "Tu peux recommencer le niveau en touchant le bouton",
+            "width": 180
+        },
+        {
+            "name": 12,
+            "x": -70,
+            "y": 481,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "de": [
+        {
+            "name": 12,
+            "x": -90,
+            "y": 440,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -100,
+            "y": 282,
+            "locale": "de",
+            "text": "Lass den Bonbon nicht aus der Schachtel",
+            "width": 200
+        }
+    ],
+    "es": [
+        {
+            "name": 12,
+            "x": -52,
+            "y": 423,
+            "locale": "es",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -100,
+            "y": 282,
+            "locale": "es",
+            "text": "Puedes reinciar el nivel tocando el   botón",
+            "width": 200
+        }
+    ],
+    "br": [
+        {
+            "name": 12,
+            "x": -52,
+            "y": 466,
+            "locale": "br",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -100,
+            "y": 282,
+            "locale": "br",
+            "text": "Você pode reiniciar o nível, pressionando o    botão",
+            "width": 200
+        }
+    ],
+    "ca": [
+        {
+            "name": 12,
+            "x": -60,
+            "y": 390,
+            "locale": "ca",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -130,
+            "y": 282,
+            "locale": "ca",
+            "text": "Pots reiniciar el nivell prement el     botó",
+            "width": 240
+        }
+    ],
+    "it": [
+        {
+            "name": 12,
+            "x": -32,
+            "y": 445,
+            "locale": "it",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -130,
+            "y": 282,
+            "locale": "it",
+            "text": "Puoi ricominciare il livello premendo il   tasto",
+            "width": 240
+        }
+    ],
+    "nl": [
+        {
+            "name": 12,
+            "x": -62,
+            "y": 485,
+            "locale": "nl",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -130,
+            "y": 282,
+            "locale": "nl",
+            "text": "Je kunt het level opnieuw opstarten met een druk op de      knop",
+            "width": 240
+        }
+    ],
+    "ko": [
+        {
+            "name": 12,
+            "x": -90,
+            "y": 425,
+            "locale": "ko",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -130,
+            "y": 282,
+            "locale": "ko",
+            "text": "버튼을 누르면 *해당 레벨을 처음부터 *다시 시작해요.",
+            "width": 240
+        }
+    ],
+    "zh": [
+        {
+            "name": 12,
+            "x": -28,
+            "y": 385,
+            "locale": "zh",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -130,
+            "y": 282,
+            "locale": "zh",
+            "text": "按下这个按钮 就可以重新开始这一关",
+            "width": 350
+        }
+    ],
+    "ja": [
+        {
+            "name": 12,
+            "x": -80,
+            "y": 430,
+            "locale": "ja",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -130,
+            "y": 282,
+            "locale": "ja",
+            "text": "このボタンで ステージを やり直す ことが できます",
+            "width": 240
+        }
+    ]
+}

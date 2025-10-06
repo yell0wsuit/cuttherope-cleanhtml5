@@ -1,0 +1,122 @@
+[
+    {
+        "id": "cardboardbox",
+        "boxText": {
+            "en": "Cardboard Box",
+            "ko": "골판지 상자",
+            "zh": "纸板盒",
+            "ja": "ダンボール箱",
+            "nl": "Karton",
+            "it": "Cartone",
+            "ca": "Cartró",
+            "br": "Papelão",
+            "es": "Cartón",
+            "fr": "Carton",
+            "de": "Pappkiste",
+            "ru": "Картонная"
+        },
+        "boxImage": "box1_bgd.png",
+        "boxDoor": "levelbg1.jpg",
+        "boxType": "NORMAL",
+        "unlockStars": 0,
+        "support": 0,
+        "showEarth": false,
+        "levelBackgroundId": "IMG_BGR_01_P1"
+    },
+    {
+        "id": "fabricbox",
+        "boxText": {
+            "en": "Fabric Box",
+            "ko": "천 상자",
+            "zh": "布盒",
+            "ja": "布の箱",
+            "nl": "Stof",
+            "it": "Tessuto",
+            "ca": "Tela",
+            "br": "Tecido",
+            "es": "Tela",
+            "fr": "Tissu",
+            "de": "Stoffkiste",
+            "ru": "Тканевая"
+        },
+        "boxImage": "box2_bgd.png",
+        "boxDoor": "levelbg2.jpg",
+        "boxType": "NORMAL",
+        "unlockStars": 20,
+        "support": 1,
+        "showEarth": false,
+        "levelBackgroundId": "IMG_BGR_02_P1"
+    },
+    {
+        "id": "toybox",
+        "boxText": {
+            "en": "Toy Box",
+            "ko": "장난감 상자",
+            "zh": "玩具盒",
+            "ja": "おもちゃ箱",
+            "nl": "Speelgoed",
+            "it": "Giochi",
+            "ca": "Joguines",
+            "br": "Brinquedos",
+            "es": "Juguetes",
+            "fr": "Jouets",
+            "de": "Spielzeugkiste",
+            "ru": "Игрушечная"
+        },
+        "boxImage": "box6_bgd.png",
+        "boxDoor": "levelbg6.jpg",
+        "boxType": "NORMAL",
+        "unlockStars": 40,
+        "support": 5,
+        "showEarth": false,
+        "levelBackgroundId": "IMG_BGR_06_P1"
+    },
+    {
+        "id": "magicbox",
+        "boxText": {
+            "en": "Magic Box",
+            "ko": "마술 상자",
+            "zh": "魔盒",
+            "ja": "魔法の箱",
+            "nl": "Tover",
+            "it": "Magica",
+            "ca": "Magica",
+            "br": "Mágica",
+            "es": "Magia",
+            "fr": "Magique",
+            "de": "Magiekiste",
+            "ru": "Волшебная"
+        },
+        "boxImage": "box4_bgd.png",
+        "boxDoor": "levelbg4.jpg",
+        "boxType": "NORMAL",
+        "unlockStars": 60,
+        "support": 3,
+        "showEarth": false,
+        "levelBackgroundId": "IMG_BGR_04_P1"
+    },
+    {
+        "id": "morecoming",
+        "boxText": {
+            "en": "New levels\ncoming soon!",
+            "ko": "새 레벨들이 곧 추가됩니다!",
+            "zh": "新关卡 即将到来！",
+            "ja": "次の*レベル まで もう すこし!",
+            "nl": "Er komen binnenkort nieuwe levels aan!",
+            "it": "Nuovi livelli in arrivo!",
+            "ca": "Nous nivells pròximament!",
+            "br": "Novos níveis em breve!",
+            "es": "¡Más niveles próximamente!",
+            "fr": "De nouveaux niveaux bientôt disponibles!",
+            "de": "Neue Level\nkommen bald!",
+            "ru": "Новые уровни\nна подходе!"
+        },
+        "boxImage": "boxmore_bgd.png",
+        "boxDoor": null,
+        "boxType": "MORECOMING",
+        "unlockStars": null,
+        "support": null,
+        "showEarth": false,
+        "levelBackgroundId": null
+    }
+]

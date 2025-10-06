@@ -1,0 +1,304 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 52,
+            "x": 161,
+            "y": 220
+        },
+        {
+            "name": 2,
+            "x": 254,
+            "y": 416
+        },
+        {
+            "name": 3,
+            "x": 299,
+            "y": 89,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 20,
+            "y": 89,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 161,
+            "y": 171,
+            "timeout": -1
+        },
+        {
+            "name": 55,
+            "x": 42,
+            "y": 237,
+            "angle": 0
+        },
+        {
+            "name": 55,
+            "x": 277,
+            "y": 233,
+            "angle": 180
+        },
+        {
+            "name": 100,
+            "x": 162,
+            "y": 88,
+            "length": 110,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 55,
+            "x": 161,
+            "y": 334,
+            "angle": -90
+        },
+        {
+            "name": 4,
+            "x": 0,
+            "y": 357,
+            "locale": "en",
+            "text": "Tap the Air Cushion to blow objects",
+            "width": 200
+        },
+        {
+            "name": 8,
+            "x": 101,
+            "y": 347,
+            "locale": "en",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ru": [
+        {
+            "name": 8,
+            "x": 104,
+            "y": 350,
+            "locale": "ru",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 12,
+            "y": 337,
+            "locale": "ru",
+            "text": "Нажмите на подушку, чтобы подуть на леденец",
+            "width": 200
+        }
+    ],
+    "fr": [
+        {
+            "name": 8,
+            "x": 101,
+            "y": 347,
+            "locale": "fr",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 10,
+            "y": 347,
+            "locale": "fr",
+            "text": "Touche le coussin d'air pour qu'il souffle sur les objets",
+            "width": 200
+        }
+    ],
+    "de": [
+        {
+            "name": 8,
+            "x": 102,
+            "y": 354,
+            "locale": "de",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -15,
+            "y": 350,
+            "locale": "de",
+            "text": "Berühre den Luftballon, um Objekte wegzupusten",
+            "width": 210
+        }
+    ],
+    "es": [
+        {
+            "name": 8,
+            "x": 102,
+            "y": 354,
+            "locale": "es",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -25,
+            "y": 360,
+            "locale": "es",
+            "text": "Aprieta el fuelle para soplar aire y mover objetos.",
+            "width": 210
+        }
+    ],
+    "br": [
+        {
+            "name": 8,
+            "x": 102,
+            "y": 354,
+            "locale": "br",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -25,
+            "y": 360,
+            "locale": "br",
+            "text": "Toque a almofada de ar para soprar objetos",
+            "width": 210
+        }
+    ],
+    "ca": [
+        {
+            "name": 8,
+            "x": 102,
+            "y": 354,
+            "locale": "ca",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -25,
+            "y": 360,
+            "locale": "ca",
+            "text": "Prem el coixinet inflable per llançar aire",
+            "width": 210
+        }
+    ],
+    "it": [
+        {
+            "name": 8,
+            "x": 102,
+            "y": 354,
+            "locale": "it",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -25,
+            "y": 330,
+            "locale": "it",
+            "text": "Tocca il cuscino d'aria per soffiare sugli oggetti e spostarli",
+            "width": 210
+        }
+    ],
+    "nl": [
+        {
+            "name": 8,
+            "x": 102,
+            "y": 354,
+            "locale": "nl",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -55,
+            "y": 335,
+            "locale": "nl",
+            "text": "Tik op het luchtkussen om voorwerpen weg te blazen",
+            "width": 250
+        }
+    ],
+    "ko": [
+        {
+            "name": 8,
+            "x": 102,
+            "y": 354,
+            "locale": "ko",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -75,
+            "y": 375,
+            "locale": "ko",
+            "text": "공기 주머니를 터치하면 *물건을 날려 보내요.",
+            "width": 250
+        }
+    ],
+    "zh": [
+        {
+            "name": 8,
+            "x": 102,
+            "y": 354,
+            "locale": "zh",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -65,
+            "y": 370,
+            "locale": "zh",
+            "text": "触按气垫以吹起物品",
+            "width": 290
+        }
+    ],
+    "ja": [
+        {
+            "name": 8,
+            "x": 102,
+            "y": 354,
+            "locale": "ja",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": -90,
+            "y": 325,
+            "locale": "ja",
+            "text": "エアー クッションを タップ して いろいろな ものを 吹き飛ばし ましょう",
+            "width": 250
+        }
+    ]
+}
