@@ -16,10 +16,10 @@ With this source, however, we can modernize and expand the game's functionality.
 - [x] **Codebase refactor**: Decouple monolithic scripts (done in [PR #1](https://github.com/yell0wsuit/cuttherope-cleanhtml5/pull/1))
 - [x] **Remove outdated dependencies**: Replace jQuery with vanilla JS, remove outdated libraries (done in [PR #2](https://github.com/yell0wsuit/cuttherope-cleanhtml5/pull/2))
 - [x] **Module conversion**: Convert from AMD to ES modules and use Vite bundler (done in [PR #3](https://github.com/yell0wsuit/cuttherope-cleanhtml5/pull/3))
-- [ ] **Level data separation**: Extract JSON levels into folders instead of embedding in the JS
+- [x] **Level data separation**: Extract JSON levels into folders instead of embedding in the JS  (done in [PR #4](https://github.com/yell0wsuit/cuttherope-cleanhtml5/pull/4))
 - [ ] **Asset tweaks and additions**: Add more sprites and audio assets, tweak sprite slices for uniformity with other ports
   - [ ] **HD support**: Upgrade rendering to 1024x576 as base, then later 1920x1080 for HD
 - [ ] **Level expansion**: Add levels up to the DJ Box
 - [ ] **Final testing and polish**: Ensure everything works smoothly
-- [ ] **Deployment**: Host on GitHub Pages
+- [x] **Deployment**: Host on GitHub Pages (PR #3)
 - [ ] **Optional goals**: Add new features like level editor, custom levels, etc.
