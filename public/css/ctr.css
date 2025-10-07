@@ -1693,6 +1693,11 @@ body {
     background-position: -1000px 0;
 }
 
+.ui-1024 .lang-system #flag {
+    position: static;
+    top: auto;
+}
+
 .ui-1024 #loaderWindow {
     height: 576px;
 }
@@ -2947,6 +2952,11 @@ body {
 
 .ui-768 .lang-ru #gameMenuBtn {
     background-position: -750px 0;
+}
+
+.ui-768 .lang-system #flag {
+    position: static;
+    top: auto;
 }
 
 .ui-768 #loaderWindow {
