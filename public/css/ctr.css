@@ -3058,3 +3058,1216 @@ body {
 .ui-768 #loaderWindow {
     height: 432px;
 }
+
+.ui-1920 #c {
+    position: relative;
+    width: 1920;
+    height: 1080;
+    background-color: #000;
+}
+
+.ui-1920 #e {
+    width: 1920;
+    height: 1080;
+}
+
+.ui-1920 #gameContainer {
+    position: relative;
+    margin: 40px auto 0;
+    width: 1920px;
+    height: 1369px;
+    padding: 0;
+}
+
+.ui-1920 #gameBorder {
+    top: -17px;
+    left: -23px;
+    position: absolute;
+    background-repeat: no-repeat;
+    width: 1963px;
+    height: 1121px;
+    display: none;
+}
+
+.ui-1920 #gameArea {
+    margin: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+}
+
+.ui-1920 .panel {
+    width: 1920px;
+    height: 1080px;
+}
+
+.ui-1920 #startBackground {
+    display: none;
+    background: url(../images/1920/ui/startbg.jpg);
+}
+
+.ui-1920 #menuBackground {
+    display: none;
+    background: url(../images/1920/ui/menubg.jpg);
+}
+
+.ui-1920 .seethrough {
+    background: transparent;
+}
+
+.ui-1920 .panelContent {
+    position: absolute;
+    top: 0;
+}
+
+.ui-1920 #shadowCanvas {
+    position: absolute;
+    top: 0;
+    width: 1920px;
+    height: 1080px;
+}
+
+.ui-1920 .panelShadow img {
+    position: relative;
+    left: -563px;
+    position: relative;
+    top: -938px;
+}
+
+.ui-1920 .fBtnVBox {
+    width: 568px;
+    margin: 0 auto;
+}
+
+.ui-1920 .fBtn {
+    width: 568px;
+    height: 131px;
+    background-image: url(../images/1920/ui/fBtn_bgd.png);
+    background-repeat: no-repeat;
+    text-align: center;
+    margin-bottom: 19px;
+    cursor: url(../cursors/handcursor.cur), url(../cursors/handcursor.png), auto;
+}
+
+.ui-1920 .fBtn:hover {
+    background-position: left -133px;
+}
+
+.ui-1920 .fBtn.disabled {
+    background-position: 0 0;
+    cursor: inherit;
+}
+
+.ui-1920 .fBtn.disabled img,
+.ui-1920 .fBtn.disabled div {
+    opacity: 0.6;
+}
+
+.ui-1920 .fBtn img {
+    margin-top: 4px;
+}
+
+.ui-1920 .mBtn {
+    width: 441px;
+    height: 131px;
+    background-image: url(../images/1920/ui/mBtn_bgd.png);
+    background-repeat: no-repeat;
+    text-align: center;
+    margin-bottom: 19px;
+    cursor: url(../cursors/handcursor.cur), url(../cursors/handcursor.png), auto;
+}
+
+.ui-1920 .mBtn img {
+    margin-top: 4px;
+}
+
+.ui-1920 .mBtn:hover {
+    background-position: left -133px;
+}
+
+.ui-1920 .lBtn {
+    width: 793px;
+    height: 131px;
+    background-image: url(../images/1920/ui/lBtn_bgd.png);
+    background-repeat: no-repeat;
+    text-align: center;
+    margin-bottom: 19px;
+    cursor: url(../cursors/handcursor.cur), url(../cursors/handcursor.png), auto;
+}
+
+.ui-1920 .lBtn img {
+    margin-top: 4px;
+}
+
+.ui-1920 .lBtn:hover {
+    background-position: left -133px;
+}
+
+.ui-1920 .sBtn {
+    width: 321px;
+    height: 122px;
+    background-image: url(../images/1920/ui/sBtn_bgd.png);
+    background-repeat: no-repeat;
+    text-align: center;
+    margin-bottom: 19px;
+    cursor: url(../cursors/handcursor.cur), url(../cursors/handcursor.png), auto;
+}
+
+.ui-1920 .sBtn img {
+    margin-top: 4px;
+}
+
+.ui-1920 .sBtn:hover {
+    background-position: left -124px;
+}
+
+.ui-1920 .bBtn {
+    position: absolute;
+    top: 923px;
+    left: 26px;
+    width: 148px;
+    height: 141px;
+    background-image: url(../images/1920/ui/bBtn_bgd.png);
+    background-repeat: no-repeat;
+    cursor: url(../cursors/handcursor.cur), url(../cursors/handcursor.png), auto;
+}
+
+.ui-1920 .bBtn:hover {
+    background-position: left -141px;
+}
+
+.ui-1920 .iconBtn {
+    position: absolute;
+}
+
+.ui-1920 #loadingPanel {
+    display: none;
+}
+
+.ui-1920 #loadingPanel img {
+    margin-top: 188px;
+    margin-left: 788px;
+}
+
+.ui-1920 #boxScore,
+.ui-1920 #levelScore {
+    position: absolute;
+    top: 41px;
+    right: 69px;
+    height: 88px;
+    padding-right: 94px;
+    background-image: url(../images/1920/ui/star_result_small.png);
+    background-position: right top;
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #boxes {
+    position: absolute;
+    top: 225px;
+    left: 583px;
+}
+
+.ui-1920 .boxOption {
+    width: 750px;
+    height: 750px;
+}
+
+.ui-1920 .boxCanvas {
+    position: absolute;
+    width: 750px;
+    height: 750px;
+    left: 0;
+    top: 0;
+}
+
+.ui-1920 .boxOption .boxTitle {
+    position: absolute;
+    top: 20px;
+    left: 28px;
+}
+
+.ui-1920 .boxOmNom {
+    background-color: #2d2d35;
+    background-image: url(../images/1920/ui/box_omnom.png);
+    width: 563px;
+    height: 263px;
+    position: absolute;
+    top: 343px;
+    left: 30px;
+    background-position: 173px 75px;
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #boxNavBack,
+.ui-1920 #boxNavForward {
+    position: absolute;
+    top: 480px;
+    left: 384px;
+    cursor: url(../cursors/handcursor.cur), url(../cursors/handcursor.png), auto;
+}
+
+.ui-1920 #boxNavBack div,
+.ui-1920 #boxNavForward div {
+    width: 111px;
+    height: 133px;
+    background-image: url(../images/1920/ui/box_nav_menu.png);
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #boxNavBack .boxNavDisabled {
+    cursor: url(../cursors/cursor.cur), url(../cursors/cursor.png), auto;
+    background-position: left -133px;
+    opacity: 0.25;
+}
+
+.ui-1920 #boxNavForward {
+    left: 1449px;
+}
+
+.ui-1920 #boxNavForward div {
+    background-position: -111px top;
+}
+
+.ui-1920 #boxNavForward .boxNavDisabled {
+    cursor: url(../cursors/cursor.cur), url(../cursors/cursor.png), auto;
+    background-position: -111px -133px;
+    opacity: 0.25;
+}
+
+.ui-1920 .hideFromMouse {
+    pointer-events: none;
+}
+
+.ui-1920 #levelBackground {
+    display: none;
+}
+
+.ui-1920 .levelTape {
+    width: 98px;
+    height: 1037px;
+    position: absolute;
+    left: 911px;
+    top: 19px;
+    background-image: url(../images/1920/ui/leveltape.png);
+    background-repeat: no-repeat;
+    display: none;
+}
+
+.ui-1920 #levelOptions {
+    position: absolute;
+    top: 118px;
+    left: 563px;
+    width: 10px;
+    height: 10px;
+}
+
+.ui-1920 #levelPanel .option {
+    position: absolute;
+    width: 227px;
+    height: 264px;
+}
+
+.ui-1920 #levelPanel .option .txt {
+    margin-top: 41px;
+    width: 227px;
+    text-align: center;
+}
+
+.ui-1920 #levelPanel .stars0,
+.ui-1920 #levelPanel .stars1,
+.ui-1920 #levelPanel .stars2,
+.ui-1920 #levelPanel .stars3 {
+    position: absolute;
+    top: 152px;
+    left: 64px;
+    width: 165px;
+    height: 90px;
+    background-image: url(../images/1920/ui/options_stars_bgd.png);
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #levelPanel .stars1 {
+    background-position: left -90px;
+}
+
+.ui-1920 #levelPanel .stars2 {
+    background-position: left -180px;
+}
+
+.ui-1920 #levelPanel .stars3 {
+    background-position: left -270px;
+}
+
+.ui-1920 #levelPanel .open {
+    background-image: url(../images/1920/ui/level_bgd.png);
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #levelPanel .locked {
+    background-image: url(../images/1920/ui/level_bgd.png);
+    background-position: left -264px;
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #levelPanel .purchase {
+    opacity: 0.4;
+}
+
+.ui-1920 #levelPanel .option-small .stars0,
+.ui-1920 #levelPanel .option-small .stars1,
+.ui-1920 #levelPanel .option-small .stars2,
+.ui-1920 #levelPanel .option-small .stars3 {
+    position: absolute;
+    top: 99px;
+    left: 41px;
+    width: 109px;
+    height: 56px;
+    background-image: url(../images/1920/ui/options_stars_bgd_small.png);
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #levelPanel .option-small .stars1 {
+    background-position: left -60px;
+}
+
+.ui-1920 #levelPanel .option-small .stars2 {
+    background-position: left -120px;
+}
+
+.ui-1920 #levelPanel .option-small .stars3 {
+    background-position: left -180px;
+}
+
+.ui-1920 #levelPanel .option.option-small {
+    position: absolute;
+    width: 150px;
+    height: 159px;
+    margin-top: 28px;
+    text-align: center;
+}
+
+.ui-1920 #levelPanel .open.option-small {
+    background-image: url(../images/1920/ui/level_bgd_small.png);
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #levelPanel .locked.option-small {
+    background-image: url(../images/1920/ui/level_bgd_small.png);
+    background-position: left -174px;
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #levelPanel .option.option-small .txt {
+    margin-top: 13px;
+    width: 156px;
+    text-align: center;
+}
+
+.ui-1920 #gameBtnTray {
+    display: none;
+    position: absolute;
+    width: 338px;
+    height: 79px;
+    right: 0;
+    top: 8px;
+}
+
+.ui-1920 #gameBtnTray > div {
+    opacity: 0.7;
+}
+
+.ui-1920 #gameBtnTray > div:hover {
+    opacity: 1;
+}
+
+.ui-1920 #gameRestartBtn {
+    width: 79px;
+    height: 79px;
+    background: url(../images/1920/ui/buttonsprite.png);
+    background-repeat: no-repeat;
+    background-position: -188px 0;
+    position: absolute;
+    top: 0;
+    left: 83px;
+}
+
+.ui-1920 #gameMenuBtn {
+    position: absolute;
+    width: 165px;
+    height: 79px;
+    background: url(../images/1920/ui/buttonsprite.png);
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    top: 0;
+    left: 165px;
+}
+
+.ui-1920 #gameSound {
+    width: 79px;
+    height: 79px;
+    background: url(../images/1920/ui/buttonsprite.png);
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.ui-1920 #gameSound.allSound {
+    background-position: -1125px 0;
+}
+
+.ui-1920 #gameSound.effectsOnly {
+    background-position: -1313px 0;
+}
+
+.ui-1920 #gameSound.noSound {
+    background-position: -1500px 0;
+}
+
+.ui-1920 #gameMsg {
+    width: 750px;
+    height: 53px;
+    position: absolute;
+    right: 356px;
+    top: -23px;
+    display: none;
+    text-align: right;
+}
+
+.ui-1920 #levelMenu {
+    position: absolute;
+    top: 0;
+    width: 1920px;
+    height: 836px;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none;
+    text-align: center;
+    padding-top: 244px;
+}
+
+.ui-1920 #levelResults {
+    display: none;
+    width: 1069px;
+    height: 848px;
+    margin: 113px auto 0;
+    text-align: center;
+    font-family: gooddogplain;
+    font-size: 60px;
+    color: #3c2110;
+    position: relative;
+}
+
+.ui-1920 #resultStatus {
+    position: absolute;
+    width: 1069px;
+    top: 56px;
+    left: 0;
+    text-align: center;
+}
+
+.ui-1920 #levelResults .starCase {
+    width: 527px;
+    height: 174px;
+    margin: 0 auto;
+    position: relative;
+    top: 178px;
+}
+
+.ui-1920 #resultTicker {
+    position: absolute;
+    top: 375px;
+    left: 0;
+    width: 1069px;
+    text-align: center;
+}
+
+.ui-1920 #resultTickerLabel {
+    display: none;
+}
+
+.ui-1920 #resultTickerValue {
+    padding-left: 20px;
+    display: none;
+}
+
+.ui-1920 #resultTickerMessage {
+    display: none;
+}
+
+.ui-1920 #levelResults .star,
+.ui-1920 #levelResults .starEmpty {
+    float: left;
+    width: 174px;
+    height: 174px;
+    background-image: url(../images/1920/ui/star_result.png);
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #levelResults .starEmpty {
+    background-position: left -174px;
+}
+
+.ui-1920 #levelResults .line {
+    position: absolute;
+    top: 469px;
+    left: 188px;
+    width: 692px;
+    height: 13px;
+    background-image: url(../images/1920/ui/result_line.png);
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #resultScore {
+    font-size: 113px;
+    position: absolute;
+    top: 469px;
+    width: 1069px;
+    display: none;
+}
+
+.ui-1920 #levelResults .btnCase {
+    width: 1031px;
+    height: 141px;
+    position: absolute;
+    top: 656px;
+    left: 19px;
+}
+
+.ui-1920 #resultImproved {
+    width: 219px;
+    height: 219px;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 356px;
+    left: 769px;
+    display: none;
+}
+
+.ui-1920 #levelResults .btnCase .sBtn {
+    float: left;
+}
+
+.ui-1920 #lrMenuBtn {
+    margin: 0 28px;
+}
+
+.ui-1920 #boxCutter {
+    background-image: url(../images/1920/ui/boxcutter.png);
+    background-repeat: no-repeat;
+    display: none;
+    position: absolute;
+    top: 527px;
+    left: 334px;
+    width: 636px;
+    height: 602px;
+}
+
+.ui-1920 #tapeRoll {
+    background-image: url(../images/1920/ui/taperoll.png);
+    background-repeat: no-repeat;
+    display: none;
+    position: absolute;
+    top: -26px;
+    left: 818px;
+    width: 244px;
+    height: 328px;
+}
+
+.ui-1920 #gameCompletePanel {
+    background-image: url(../images/1920/ui/gamecomplete.jpg);
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #finalShareBtn {
+    position: absolute;
+    top: 806px;
+    left: 300px;
+}
+
+.ui-1920 #finalShareBtn img {
+    position: relative;
+    left: 19px;
+    top: 13px;
+}
+
+.ui-1920 #ffb {
+    position: absolute;
+    top: -15px;
+    left: -47px;
+    width: 156px;
+    height: 156px;
+    background: url(../images/1920/ui/fb.png);
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #gameBorder.gameComplete {
+    top: -53px;
+    left: -62px;
+    position: absolute;
+    background-repeat: no-repeat;
+    width: 2044px;
+    height: 1191px;
+    display: none;
+    background-image: url(../images/1920/ui/gamecomplete_border.png);
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #finalScore {
+    position: absolute;
+    top: 638px;
+    height: 88px;
+    width: 1920px;
+}
+
+.ui-1920 #finalScore img {
+    margin: 0 auto;
+    display: block;
+}
+
+.ui-1920 #finalFunBtn {
+    position: absolute;
+    top: 806px;
+    left: 863px;
+    display: block;
+}
+
+.ui-1920 #finalFunBtn img {
+    position: relative;
+    left: 28px;
+    top: 13px;
+}
+
+.ui-1920 #funOmNom {
+    width: 191px;
+    height: 189px;
+    background-image: url(../images/1920/ui/fun-omnom.png);
+    background-repeat: no-repeat;
+    position: absolute;
+    top: -41px;
+    left: -56px;
+}
+
+.ui-1920 #congrats {
+    position: absolute;
+    top: 188px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.ui-1920 #optionsPanel {
+    padding-top: 38px;
+}
+
+.ui-1920 #optionsTitle {
+    position: relative;
+    width: 943px;
+    left: -188px;
+    height: 131px;
+}
+
+.ui-1920 #optionsTitle img {
+    margin: 0 auto;
+    display: block;
+}
+
+.ui-1920 #creditsBtn {
+    display: none;
+}
+
+.ui-1920 .mini-button {
+    background-image: url(../images/1920/ui/menu-options.png);
+    background-repeat: no-repeat;
+    width: 268px;
+    height: 128px;
+    display: inline-block;
+    margin-bottom: 15px;
+    margin-right: 9px;
+    text-align: center;
+    position: relative;
+}
+
+.ui-1920 .mini-button:hover {
+    background-position: 0 -131px;
+}
+
+.ui-1920 .options-x {
+    background-image: url(../images/1920/ui/menu-options.png);
+    background-repeat: no-repeat;
+    background-position: -283px -131px;
+    width: 56px;
+    height: 56px;
+}
+
+.ui-1920 .options-check {
+    background-image: url(../images/1920/ui/menu-options.png);
+    background-repeat: no-repeat;
+    background-position: -146px -283px;
+    width: 66px;
+    height: 66px;
+}
+
+.ui-1920 .options-check-disabled {
+    background-image: url(../images/1920/ui/menu-options.png);
+    background-repeat: no-repeat;
+    background-position: -281px -191px;
+    width: 66px;
+    height: 66px;
+}
+
+.ui-1920 #options-speaker {
+    background-image: url(../images/1920/ui/menu-options.png);
+    background-repeat: no-repeat;
+    background-position: 0 -263px;
+    width: 122px;
+    height: 107px;
+    position: absolute;
+    left: 75px;
+    top: 11px;
+}
+
+.ui-1920 #soundBtn .options-x {
+    position: absolute;
+    bottom: 9px;
+    left: 131px;
+    display: none;
+}
+
+.ui-1920 #soundBtn.disabled #options-speaker {
+    opacity: 0.6;
+}
+
+.ui-1920 #soundBtn.disabled .options-x {
+    display: block;
+}
+
+.ui-1920 #options-note {
+    background-image: url(../images/1920/ui/menu-options.png);
+    background-repeat: no-repeat;
+    background-position: -281px 0;
+    width: 103px;
+    height: 116px;
+    position: absolute;
+    left: 84px;
+    top: 4px;
+}
+
+.ui-1920 #musicBtn .options-x {
+    position: absolute;
+    bottom: 8px;
+    left: 135px;
+    display: none;
+}
+
+.ui-1920 #musicBtn.disabled #options-note {
+    opacity: 0.6;
+}
+
+.ui-1920 #musicBtn.disabled .options-x {
+    display: block;
+}
+
+.ui-1920 #dragBtn,
+.ui-1920 #cutBtn {
+    background-image: url(../images/1920/ui/menu-options.png);
+    background-repeat: no-repeat;
+    width: 169px;
+    height: 375px;
+    display: inline-block;
+    position: relative;
+    margin-left: 71px;
+}
+
+.ui-1920 #dragBtn {
+    background-position: 0 -371px;
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #dragBtn .options-check-disabled {
+    position: absolute;
+    bottom: 32px;
+    left: 53px;
+}
+
+.ui-1920 #cutBtn {
+    background-position: -197px -371px;
+}
+
+.ui-1920 #cutBtn .options-check {
+    position: absolute;
+    bottom: 28px;
+    left: 58px;
+}
+
+.ui-1920 #cutBtn.disabled .options-check {
+    display: none;
+}
+
+.ui-1920 #dragText,
+.ui-1920 #cutText {
+    margin-top: 216px;
+    margin-left: -43px;
+}
+
+.ui-1920 #vid {
+    display: none;
+    width: 1920px;
+    height: 1080px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: transparent;
+}
+
+.ui-1920 #fadeToBlack {
+    display: none;
+    width: 1920px;
+    height: 1080px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #000;
+}
+
+.ui-1920 #menuLogo {
+    position: absolute;
+    left: 606px;
+    top: 75px;
+    width: 636px;
+    height: 564px;
+    background-image: url(../images/1920/ui/ph_logo.png);
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #menuBtnVbox {
+    position: absolute;
+    left: 671px;
+    top: 675px;
+}
+
+.ui-1920 #dmsg {
+    display: block;
+    position: relative;
+    margin: 56px auto 0;
+}
+
+.ui-1920 #dframe {
+    position: relative;
+    width: 563px;
+    height: 733px;
+    background-image: url(../images/1920/ui/drawing-bg.png);
+    background-repeat: no-repeat;
+    margin: -19px auto 0 auto;
+}
+
+.ui-1920 #dpic {
+    position: absolute;
+    width: 448px;
+    height: 630px;
+    top: 45px;
+    left: 53px;
+}
+
+.ui-1920 .drawing1 {
+    background: url(../images/1920/ui/drawing1.jpg) no-repeat;
+}
+.drawing2 {
+    background: url(../images/1920/ui/drawing2.jpg) no-repeat;
+}
+.drawing3 {
+    background: url(../images/1920/ui/drawing3.jpg) no-repeat;
+}
+.drawing4 {
+    background: url(../images/1920/ui/drawing4.jpg) no-repeat;
+}
+.drawing5 {
+    background: url(../images/1920/ui/drawing5.jpg) no-repeat;
+}
+.drawing6 {
+    background: url(../images/1920/ui/drawing6.jpg) no-repeat;
+}
+.drawing7 {
+    background: url(../images/1920/ui/drawing7.jpg) no-repeat;
+}
+.drawing8 {
+    background: url(../images/1920/ui/drawing8.jpg) no-repeat;
+}
+.drawing9 {
+    background: url(../images/1920/ui/drawing9.jpg) no-repeat;
+}
+.drawing10 {
+    background: url(../images/1920/ui/drawing10.jpg) no-repeat;
+}
+.drawing11 {
+    background: url(../images/1920/ui/drawing11.jpg) no-repeat;
+}
+.drawing12 {
+    background: url(../images/1920/ui/drawing12.jpg) no-repeat;
+}
+.drawing13 {
+    background: url(../images/1920/ui/drawing13.jpg) no-repeat;
+}
+.drawing14 {
+    background: url(../images/1920/ui/drawing14.jpg) no-repeat;
+}
+.drawing15 {
+    background: url(../images/1920/ui/drawing15.jpg) no-repeat;
+}
+.drawing16 {
+    background: url(../images/1920/ui/drawing16.jpg) no-repeat;
+}
+.ui-1920 #dshareBtn {
+    position: relative;
+    margin: 5px auto 0;
+}
+
+.ui-1920 #dfb {
+    position: absolute;
+    top: -15px;
+    left: -9px;
+    width: 156px;
+    height: 156px;
+    /*background-image: url(../images/1920/ui/fb.png);*/
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #gameFooterContainer {
+    width: 1920px;
+}
+
+.ui-1920 #miniOptionsMenu {
+    width: 750px;
+    height: 94px;
+    position: absolute;
+    left: 28px;
+    top: 975px;
+}
+
+.ui-1920 #optionHd.activeResolution {
+    background: url(../images/1920/ui/buttonsprite.png);
+    background-repeat: no-repeat;
+    background-position: -563px -94px;
+    opacity: 0.8;
+}
+
+.ui-1920 #optionHd.inActiveResolution {
+    background: url(../images/1920/ui/buttonsprite.png);
+    background-repeat: no-repeat;
+    background-position: -563px 0;
+    opacity: 0.6;
+    cursor: url(../cursors/handcursor.cur), url(../cursors/handcursor.png), auto;
+}
+
+.ui-1920 #optionHd.inActiveResolution:hover {
+    opacity: 0.8;
+}
+
+.ui-1920 #optionSd.activeResolution {
+    background: url(../images/1920/ui/buttonsprite.png);
+    background-repeat: no-repeat;
+    background-position: -375px -94px;
+    opacity: 0.8;
+}
+
+.ui-1920 #optionSd.inActiveResolution {
+    background: url(../images/1920/ui/buttonsprite.png);
+    background-repeat: no-repeat;
+    background-position: -375px 0;
+    opacity: 0.6;
+    cursor: url(../cursors/handcursor.cur), url(../cursors/handcursor.png), auto;
+}
+
+.ui-1920 #optionSd.inActiveResolution:hover {
+    opacity: 0.8;
+}
+
+.ui-1920 #optionSound {
+    width: 79px;
+    height: 79px;
+    background-image: url(../images/1920/ui/buttonsprite.png);
+    background-repeat: no-repeat;
+    position: absolute;
+    left: 0;
+    opacity: 0.6;
+}
+
+.ui-1920 #optionSound.allSound {
+    background-position: -1125px 0;
+}
+
+.ui-1920 #optionSound.effectsOnly {
+    background-position: -1313px 0;
+}
+
+.ui-1920 #optionSound.noSound {
+    background-position: -1500px 0;
+}
+
+.ui-1920 #optionSound:hover {
+    opacity: 0.7;
+}
+
+.ui-1920 #optionMsg {
+    width: 394px;
+    height: 53px;
+    position: absolute;
+    left: 253px;
+    top: -23px;
+    display: none;
+}
+
+.ui-1920 #popupWindow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 2;
+}
+
+.ui-1920 #popupWindow .popupOuterFrame {
+    margin: 98px auto 0;
+    background-image: url(../images/1920/ui/popupouter.png);
+    background-repeat: no-repeat;
+    width: 1194px;
+    height: 866px;
+    position: relative;
+}
+
+.ui-1920 #popupWindow .popupInnerFrame {
+    position: absolute;
+    background-image: url(../images/1920/ui/popupinner.jpg);
+    background-repeat: no-repeat;
+    width: 1082px;
+    height: 683px;
+    left: 34px;
+    top: 43px;
+    display: none;
+}
+
+.ui-1920 #popupWindow .bottomright {
+    position: absolute;
+    bottom: 19px;
+    right: 19px;
+}
+
+.ui-1920 #popupWindow #slowComputer {
+    background-image: url(../images/1920/ui/popupinner-slow.jpg);
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #slowComputerBtn {
+    position: absolute;
+    bottom: 19px;
+    left: 94px;
+}
+
+.ui-1920 #slowComputerBtn img {
+    margin-top: 15px;
+}
+
+.ui-1920 #resetGame {
+    text-align: center;
+}
+
+.ui-1920 #resetText {
+    margin-top: 47px;
+}
+
+.ui-1920 #resetYesBtn {
+    position: absolute;
+    bottom: 178px;
+    left: 94px;
+}
+
+.ui-1920 #resetNoBtn {
+    position: absolute;
+    bottom: 178px;
+    left: 544px;
+}
+
+.ui-1920 #resetHoldYes {
+    position: absolute;
+    bottom: 38px;
+    width: 1088px;
+    text-align: center;
+}
+
+.ui-1920 #missingStars {
+    text-align: center;
+}
+
+.ui-1920 #missingLine1 {
+    margin-top: 38px;
+}
+
+.ui-1920 #missingStar {
+    background-image: url(../images/1920/ui/star_result_small.png);
+    background-repeat: no-repeat;
+    width: 96px;
+    height: 88px;
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 6px;
+}
+
+.ui-1920 #missingOkBtn {
+    display: inline-block;
+}
+
+.ui-1920 #flag {
+    background-image: url(../images/1920/ui/flags.png);
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    display: inline-block;
+    width: 94px;
+    height: 71px;
+    position: relative;
+    top: -23px;
+    margin-left: 19px;
+}
+
+.ui-1920 #resultImproved {
+    background-image: url(../images/1920/ui/menu_result_en.png);
+    background-repeat: no-repeat;
+}
+
+.ui-1920 .lang-fr #resultImproved {
+    background-image: url(../images/1920/ui/menu_result_fr.png);
+}
+
+.ui-1920 .lang-fr #flag {
+    background-position: 0 -75px;
+}
+
+.ui-1920 .lang-de #resultImproved {
+    background-image: url(../images/1920/ui/menu_result_gr.png);
+}
+
+.ui-1920 .lang-de #flag {
+    background-position: 0 -150px;
+}
+
+.ui-1920 .lang-de #gameMenuBtn {
+    background-position: -1603px 0;
+}
+
+.ui-1920 .lang-ru #resultImproved {
+    background-image: url(../images/1920/ui/menu_result_ru.png);
+}
+
+.ui-1920 .lang-ru #flag {
+    background-position: 0 -225px;
+}
+
+.ui-1920 .lang-ru #gameMenuBtn {
+    background-position: -1875px 0;
+}
+
+.ui-1920 #loaderWindow {
+    height: 1080px;
+}
