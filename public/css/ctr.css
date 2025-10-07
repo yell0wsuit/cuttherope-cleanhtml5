@@ -393,9 +393,7 @@ th {
 
 body {
     -ms-touch-action: pan-y;
-    background: #fff;
     overflow: hidden;
-    background-image: none;
 }
 
 #loaderWindow {
