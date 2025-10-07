@@ -58,7 +58,7 @@ class EasterEggManager {
         this.domReady = function () {
             canvas = document.getElementById("e");
             canvas.width = resolution.uiScaledNumber(1024);
-            canvas.height = 576;
+            canvas.height = resolution.uiScaledNumber(576);
 
             devCanvas = document.getElementById("moreCanvas");
             if (devCanvas) {
