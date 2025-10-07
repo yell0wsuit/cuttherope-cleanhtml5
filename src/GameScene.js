@@ -1267,7 +1267,7 @@ const GameScene = BaseElement.extend({
             IMG_CHAR_ANIMATIONS2_puzzled_start,
             IMG_CHAR_ANIMATIONS2_puzzled_end,
             undefined,
-            ResourceId.IMG_CHAR_ANIMATIONS_
+            ResourceId.IMG_CHAR_ANIMATIONS2
         );
         target.addAnimationEndpoints(
             CharAnimation.FAIL,
