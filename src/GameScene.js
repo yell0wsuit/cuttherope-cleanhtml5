@@ -1287,28 +1287,36 @@ const GameScene = BaseElement.extend({
             0.05,
             Timeline.LoopType.NO_LOOP,
             IMG_CHAR_ANIMATIONS_mouth_close_start,
-            IMG_CHAR_ANIMATIONS_mouth_close_end
+            IMG_CHAR_ANIMATIONS_mouth_close_end,
+            undefined,
+            ResourceId.IMG_CHAR_ANIMATIONS
         );
         target.addAnimationEndpoints(
             CharAnimation.MOUTH_OPEN,
             0.05,
             Timeline.LoopType.NO_LOOP,
             IMG_CHAR_ANIMATIONS_mouth_open_start,
-            IMG_CHAR_ANIMATIONS_mouth_open_end
+            IMG_CHAR_ANIMATIONS_mouth_open_end,
+            undefined,
+            ResourceId.IMG_CHAR_ANIMATIONS
         );
         target.addAnimationEndpoints(
             CharAnimation.MOUTH_CLOSE,
             0.05,
             Timeline.LoopType.NO_LOOP,
             IMG_CHAR_ANIMATIONS_mouth_close_start,
-            IMG_CHAR_ANIMATIONS_mouth_close_end
+            IMG_CHAR_ANIMATIONS_mouth_close_end,
+            undefined,
+            ResourceId.IMG_CHAR_ANIMATIONS
         );
         target.addAnimationEndpoints(
             CharAnimation.CHEW,
             0.05,
             Timeline.LoopType.REPLAY,
             IMG_CHAR_ANIMATIONS_chew_start,
-            IMG_CHAR_ANIMATIONS_chew_end
+            IMG_CHAR_ANIMATIONS_chew_end,
+            undefined,
+            ResourceId.IMG_CHAR_ANIMATIONS
         );
         target.switchToAnimation(CharAnimation.CHEW, CharAnimation.WIN, 0.05);
         target.switchToAnimation(CharAnimation.PUZZLED, CharAnimation.MOUTH_CLOSE, 0.05);
