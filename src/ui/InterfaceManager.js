@@ -565,7 +565,7 @@ var InterfaceManager = new (function () {
                     resetHoldYesImg = Text.drawSmall({
                         text: Lang.menuText(MenuStringId.RESET_HOLD_YES),
                         scaleToUI: true,
-                        width: resolution.uiScaledNumber(550),
+                        // width: resolution.uiScaledNumber(550),
                     });
 
                 // clear existing text image and append to placeholder divs
