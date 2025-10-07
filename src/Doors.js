@@ -25,8 +25,8 @@ function initializeDoors() {
     BoxDoors.canvasLeft.width = (resolution.uiScaledNumber(1024) / 2) | 0;
     BoxDoors.canvasRight.width = (resolution.uiScaledNumber(1024) / 2) | 0;
 
-    BoxDoors.canvasLeft.height = 320;
-    BoxDoors.canvasRight.height = 320;
+    BoxDoors.canvasLeft.height = resolution.uiScaledNumber(576);
+    BoxDoors.canvasRight.height = resolution.uiScaledNumber(576);
 
     BoxDoors.currentIndex = BoxManager.currentBoxIndex;
     BoxDoors.showTape = true;

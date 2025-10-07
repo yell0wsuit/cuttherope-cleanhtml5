@@ -59,7 +59,40 @@ const App = {
 
     run: function () {
         // Called by the loader when the app is ready to run
+
+        // Set up progress tracking before loading starts
+        const progressBar = document.getElementById("progress");
+        const betterLoader = document.getElementById("betterLoader");
+
+        // Subscribe to preloader progress updates
+        const progressSubscription = PubSub.subscribe(PubSub.ChannelId.PreloaderProgress, function (data) {
+            if (progressBar && data && typeof data.progress === "number") {
+                const progress = Math.min(100, Math.max(0, data.progress));
+                progressBar.style.transition = "width 0.3s ease-out";
+                progressBar.style.width = progress + "%";
+            }
+        });
+
         preloader.run(function () {
+            // Unsubscribe from progress updates
+            PubSub.unsubscribe(progressSubscription);
+
+            // Ensure progress bar is at 100%
+            if (progressBar) {
+                progressBar.style.width = "100%";
+            }
+
+            // Hide the loader after a brief delay
+            setTimeout(function () {
+                if (betterLoader) {
+                    betterLoader.style.transition = "opacity 0.5s";
+                    betterLoader.style.opacity = "0";
+                    setTimeout(function () {
+                        betterLoader.style.display = "none";
+                    }, 500);
+                }
+            }, 200);
+
             im.appReady();
             PubSub.publish(PubSub.ChannelId.AppRun);
 
@@ -83,29 +116,6 @@ const App = {
                 el.offsetHeight;
                 el.style.opacity = "1";
             });
-
-            let start = 10;
-            let inc;
-            const progressBar = document.getElementById("progress");
-            const betterLoader = document.getElementById("betterLoader");
-
-            const interval = setInterval(function () {
-                inc = (Math.random() * 15) | 0;
-                start += inc;
-
-                if (start > 100) {
-                    start = 100;
-                    betterLoader.style.transition = "opacity 0.5s";
-                    betterLoader.style.opacity = "0";
-                    setTimeout(function () {
-                        betterLoader.style.display = "none";
-                    }, 500);
-                    clearInterval(interval);
-                }
-
-                progressBar.style.transition = "width 0.05s";
-                progressBar.style.width = start + "%";
-            }, 100);
 
             // show hide behind the scenes when we first load
             im.updateDevLink();

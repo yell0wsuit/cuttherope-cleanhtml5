@@ -172,7 +172,10 @@ const ResourceId = {
     SND_TIME_MENU_MUSIC: 179,
     IMG_TIME_STANDS: 180,
 
-    RESOURCES_COUNT: 180,
+    IMG_CHAR_ANIMATIONS2: 181,
+    IMG_CHAR_ANIMATIONS3: 182,
+
+    RESOURCES_COUNT: 182,
 };
 
 export default ResourceId;

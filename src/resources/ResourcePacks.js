@@ -8,6 +8,8 @@ ResourcePacks.TimeMenuSounds = [ResourceId.SND_TIME_MENU_MUSIC, ResourceId.SND_B
 // game element images
 ResourcePacks.StandardGameImages = [
     ResourceId.IMG_CHAR_ANIMATIONS,
+    ResourceId.IMG_CHAR_ANIMATIONS2,
+    ResourceId.IMG_CHAR_ANIMATIONS3,
     ResourceId.IMG_OBJ_HOOK_01,
     ResourceId.IMG_OBJ_HOOK_02,
     ResourceId.IMG_OBJ_HOOK_AUTO,

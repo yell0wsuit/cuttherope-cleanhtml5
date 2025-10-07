@@ -29,12 +29,12 @@ const Animation = ImageElement.extend({
         const index = this.timelines.length;
         this.addAnimationSequence(index, delay, loopType, count, sequence);
     },
-    addAnimationSequence: function (animationId, delay, loopType, count, sequence) {
-        this.addAnimation(animationId, delay, loopType, count, sequence[0], Constants.UNDEFINED, sequence);
+    addAnimationSequence: function (animationId, delay, loopType, count, sequence, resourceId) {
+        this.addAnimation(animationId, delay, loopType, count, sequence[0], Constants.UNDEFINED, sequence, resourceId);
     },
-    addAnimationEndpoints: function (animationId, delay, loopType, start, end, argumentList) {
+    addAnimationEndpoints: function (animationId, delay, loopType, start, end, argumentList, resourceId) {
         const count = end - start + 1;
-        this.addAnimation(animationId, delay, loopType, count, start, end, argumentList);
+        this.addAnimation(animationId, delay, loopType, count, start, end, argumentList, resourceId);
     },
     /**
      * @param animationId {number}
@@ -45,11 +45,13 @@ const Animation = ImageElement.extend({
      * @param end {number}
      * @param argumentList
      */
-    addAnimation: function (animationId, delay, loopType, count, start, end, argumentList) {
+    addAnimation: function (animationId, delay, loopType, count, start, end, argumentList, resourceId) {
         let t = new Timeline(),
             as = [Action.create(this, ActionType.SET_DRAWQUAD, start, 0)];
 
         t.addKeyFrame(KeyFrame.makeAction(as, 0));
+
+        resourceId = (resourceId !== undefined) ? resourceId : this.resId;
 
         let si = start;
         for (let i = 1; i < count; i++) {
@@ -72,6 +74,8 @@ const Animation = ImageElement.extend({
         }
 
         this.addTimelineWithID(t, animationId);
+
+        t.resourceId = resourceId;
     },
     setDelay: function (delay, index, animationId) {
         const timeline = this.getTimeline(animationId),

@@ -419,7 +419,18 @@ const BaseElement = Class.extend({
         }
         this.currentTimelineIndex = index;
         this.currentTimeline = this.timelines[index];
-        this.currentTimeline.play();
+        if (this.currentTimeline) {
+            var timelineResource = this.currentTimeline.resourceId;
+            if (timelineResource !== undefined && timelineResource !== this.resId) {
+                var shouldRestoreCut = this.restoreCutTransparency;
+                this.initTextureWithId(timelineResource);
+                if (shouldRestoreCut) {
+                    this.doRestoreCutTransparency();
+                }
+            }
+
+            this.currentTimeline.play();
+        }
     },
     pauseCurrentTimeline: function () {
         this.currentTimeline.pause();

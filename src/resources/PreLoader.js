@@ -9,9 +9,14 @@ import PxLoaderImage from "@/PxLoaderImage";
 import LoadAnimation from "@/LoadAnimation";
 import ResourceMgr from "@/resources/ResourceMgr";
 import ResourcePacks from "@/resources/ResourcePacks";
+import PubSub from "@/utils/PubSub";
+
 let menuImagesLoadComplete = false,
     menuSoundLoadComplete = false,
     completeCallback = null,
+    totalResources = 0,
+    loadedImages = 0,
+    loadedSounds = 0,
     checkMenuLoadComplete = function () {
         if (!menuImagesLoadComplete || !menuSoundLoadComplete) {
             return;
@@ -30,6 +35,15 @@ let menuImagesLoadComplete = false,
 
         // ensure the completion is only run once
         checkMenuLoadComplete = function () {};
+    },
+    updateProgress = function () {
+        if (totalResources === 0) return;
+        const progress = ((loadedImages + loadedSounds) / totalResources) * 100;
+        PubSub.publish(PubSub.ChannelId.PreloaderProgress, { progress: progress });
+
+        if (LoadAnimation) {
+            LoadAnimation.notifyLoadProgress(progress);
+        }
     };
 
 const loadImages = function () {
@@ -40,7 +54,8 @@ const loadImages = function () {
         GAME_TAG = "GAME",
         i,
         len,
-        imageUrl;
+        imageUrl,
+        imageCount = 0;
 
     // first menu images
     const queueMenuImages = function (imageFilenames, menuBaseUrl) {
@@ -55,6 +70,7 @@ const loadImages = function () {
             }
             imageUrl = menuBaseUrl + imageFilenames[i];
             pxLoader.addImage(imageUrl, MENU_TAG);
+            imageCount++;
         }
     };
 
@@ -80,10 +96,8 @@ const loadImages = function () {
     // only report progress on the menu images and fonts
     pxLoader.addProgressListener(
         function (e) {
-            const p = 100 * (e.completedCount / e.totalCount);
-            if (LoadAnimation) {
-                LoadAnimation.notifyLoadProgress(p);
-            }
+            loadedImages = e.completedCount;
+            updateProgress();
 
             if (e.completedCount === e.totalCount) {
                 menuImagesLoadComplete = true;
@@ -103,6 +117,7 @@ const loadImages = function () {
             // add the resId so we can find it upon completion
             pxImage.resId = imageId;
             pxLoader.add(pxImage);
+            imageCount++;
         }
     };
     queueForResMgr(ResourcePacks.StandardFonts, FONT_TAG);
@@ -119,6 +134,8 @@ const loadImages = function () {
     );
 
     pxLoader.start();
+    // Return the image count so caller can set totalResources
+    return imageCount;
 };
 
 const PreLoader = {
@@ -129,27 +146,65 @@ const PreLoader = {
         if (LoadAnimation) {
             LoadAnimation.init();
         }
-
-        // next start the images
-        loadImages();
-
-        // now start the sounds
-        SoundLoader.onMenuComplete(function () {
-            menuSoundLoadComplete = true;
-            checkMenuLoadComplete();
-        });
-        SoundLoader.start();
     },
     domReady: function () {
         if (LoadAnimation) {
             LoadAnimation.domReady();
             LoadAnimation.show();
         }
+
+        // Wait for the loader background image to load before starting resource loading
+        const betterLoader = document.getElementById("betterLoader");
+        if (betterLoader) {
+            const loaderStyle = window.getComputedStyle(betterLoader);
+            const backgroundImage = loaderStyle.backgroundImage;
+
+            // Extract URL from background-image CSS property
+            const match = backgroundImage.match(/url\(["']?([^"']*)["']?\)/);
+            if (match && match[1]) {
+                const img = new Image();
+                img.onload = function () {
+                    // Start loading resources after loader image is ready
+                    startResourceLoading();
+                };
+                img.onerror = function () {
+                    // Start anyway if image fails to load
+                    startResourceLoading();
+                };
+                img.src = match[1];
+            } else {
+                // No background image found, start immediately
+                startResourceLoading();
+            }
+        } else {
+            // No loader element, start immediately
+            startResourceLoading();
+        }
     },
     run: function (onComplete) {
         completeCallback = onComplete;
         checkMenuLoadComplete();
     },
+};
+
+const startResourceLoading = function () {
+    // Start loading images and get the count
+    const imageCount = loadImages();
+
+    // Set total resources for progress calculation
+    totalResources = imageCount + SoundLoader.getSoundCount();
+
+    // Track sound loading progress
+    SoundLoader.onProgress(function (completed, total) {
+        loadedSounds = completed;
+        updateProgress();
+    });
+
+    SoundLoader.onMenuComplete(function () {
+        menuSoundLoadComplete = true;
+        checkMenuLoadComplete();
+    });
+    SoundLoader.start();
 };
 
 export default PreLoader;

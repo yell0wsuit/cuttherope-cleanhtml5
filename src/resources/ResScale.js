@@ -63,29 +63,51 @@ const ResScaler = {
     },
 
     scaleRects: function (originalRects, scale, id) {
-        let PADDING = 4,
+        let PADDING = 2, // Changed from 4 to 2 to match minified version
             newRects = [],
-            maxWidth = 0,
-            currentY = 0,
-            numRects = originalRects.length;
+            numRects = originalRects.length,
+            numColumns = Math.ceil(Math.sqrt(numRects)), // Calculate number of columns
+            columnIndex = 0,
+            currentX = 0,
+            currentY = 2, // Start Y at 2 (padding)
+            maxColumnWidth = 0;
 
-        if (id === 5) {
-            PADDING = 11.25;
-            scale *= 1.6;
-        }
+        // Special cases for specific IDs
+        //if (id === 5) { // small fonts
+        //    PADDING = 11.25;
+        //    scale *= 1.6;
+        //}
 
-        if (id === 68) {
-            PADDING = 2.78;
-            scale *= 1.5;
-        }
+        //if (id === 68) { // star HUD
+        //    PADDING = 2.78;
+        //    scale *= 1.5;
+        //}
 
         for (let j = 0; j < numRects; j++) {
-            const oldRect = originalRects[j],
-                newRect = new Rectangle(0, currentY, scaleNumber(oldRect.w, scale), scaleNumber(oldRect.h, scale));
+            const oldRect = originalRects[j];
+
+            // Move to next column when we've filled the current one
+            columnIndex = (columnIndex + 1) % numColumns;
+
+            if (columnIndex === 1) {
+                // Starting a new column
+                currentX += maxColumnWidth + PADDING;
+                currentY = PADDING;
+                maxColumnWidth = 0;
+            }
+
+            const newRect = new Rectangle(
+                currentX,
+                currentY,
+                scaleNumber(oldRect.w, scale),
+                scaleNumber(oldRect.h, scale)
+            );
 
             newRects.push(newRect);
             currentY += Math.ceil(newRect.h) + PADDING;
+            maxColumnWidth = Math.max(maxColumnWidth, Math.ceil(newRect.w));
         }
+
         return newRects;
     },
 

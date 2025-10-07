@@ -1,12 +1,10 @@
-const GLOBAL_ZOOM = matchMedia("(min-width: 960px)").matches ? 2 : 1;
-
 class ZoomManager {
     constructor() {
         // cache the target element
         this.$el = null;
 
         // no zoom by default
-        this.zoom = GLOBAL_ZOOM;
+        this.zoom = 1;
 
         this.transformOrigin = "top left";
 
@@ -86,25 +84,30 @@ class ZoomManager {
             coverBgs.forEach((el) => {
                 el.style.webkitTransform = "scale(" + this.bgZoom + ")";
                 el.style.mozTransform = "scale(" + this.bgZoom + ")";
+                el.style.transform = "scale(" + this.bgZoom + ")";
             });
 
             const scaleBgs = document.querySelectorAll(".scaleBg");
             scaleBgs.forEach((el) => {
                 el.style.webkitTransform = "scaleY(" + this.bgZoom + ")";
                 el.style.mozTransform = "scaleY(" + this.bgZoom + ")";
+                el.style.transform = "scaleY(" + this.bgZoom + ")";
             });
 
-            // center the game by setting the margin (using auto in css doesn't
-            // work because of zoom). Note: there are differences in how margin
-            // is applied. IE doesn't consider margin as part of the zoomed element
-            // while Chrome does. We can safely ignore this for now as full screen is
-            // only necessary in win8 (IE10).
-            const marginLeft = Math.round((vpWidth - canvasWidth * this.zoom) / 2),
-                marginTop = Math.round((vpHeight - canvasHeight * this.zoom) / 2);
+            // Calculate the actual scaled dimensions
+            const scaledWidth = canvasWidth * this.zoom;
+            const scaledHeight = canvasHeight * this.zoom;
+
+            // Center the game using absolute positioning
+            const left = Math.round((vpWidth - scaledWidth) / 2);
+            const top = Math.round((vpHeight - scaledHeight) / 2);
 
             this.updateCss({
-                marginTop: marginTop + "px",
-                marginLeft: marginLeft + "px",
+                position: "absolute",
+                left: left + "px",
+                top: top + "px",
+                width: canvasWidth + "px",
+                height: canvasHeight + "px",
             });
         };
     }

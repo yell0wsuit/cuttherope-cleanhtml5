@@ -274,11 +274,14 @@ function setupFont(ctx, options) {
     }
 
     ctx.fillStyle = color;
-    ctx.font = "normal 100 18px 'gooddognew', sans-serif";
-
+    
+    // Font ID 4 uses larger font size, Font ID 5 uses 22px
     if (options.fontId === 4) {
-        ctx.strokeStyle = "rgba(0,0,0,0.7)";
+        ctx.font = "bold 32px 'gooddognew', sans-serif";
+        ctx.strokeStyle = "rgba(0,0,0,1)";
         ctx.lineWidth = 3;
+    } else {
+        ctx.font = "normal 22px 'gooddognew', sans-serif";
     }
 
     if (options.alpha) {
@@ -287,10 +290,13 @@ function setupFont(ctx, options) {
 }
 
 Text.drawSystem = function (options) {
-    const lineHeight = 22;
+    // Use different line heights based on font ID
+    const lineHeight = options.fontId === 4 ? 28 : 22;
+    const topPadding = 8; // Add top padding to prevent text cutoff
+    
     const cnv = options.canvas ? options.img : document.createElement("canvas");
     cnv.width = options.width || options.maxScaleWidth || options.text.length * 16;
-    cnv.height = lineHeight;
+    cnv.height = lineHeight + topPadding;
 
     const ctx = cnv.getContext("2d");
     let x = cnv.width / 2;
@@ -305,15 +311,16 @@ Text.drawSystem = function (options) {
     const metric = ctx.measureText(options.text);
     if (options.text.indexOf("\n") > 0 || (options.width && metric.width > options.width)) {
         const text = stringToArray(ctx, options.text, options.width);
-        cnv.height = lineHeight * text.length + 5;
+        cnv.height = lineHeight * text.length + topPadding;
 
         setupFont(ctx, options);
 
         for (let i = 0; i < text.length; ++i) {
+            const yPos = topPadding + (i + 1) * lineHeight - (lineHeight - 18);
             if (options.fontId === 4) {
-                ctx.strokeText(text[i], x, (i + 1) * lineHeight);
+                ctx.strokeText(text[i], x, yPos);
             }
-            ctx.fillText(text[i], x, (i + 1) * lineHeight);
+            ctx.fillText(text[i], x, yPos);
         }
     } else {
         // use the measured width
@@ -322,15 +329,16 @@ Text.drawSystem = function (options) {
             setupFont(ctx, options);
             if (options.alignment !== 1) x = cnv.width / 2;
         }
+        const yPos = topPadding + lineHeight - (lineHeight - 18);
         if (options.fontId === 4) {
-            ctx.strokeText(options.text, x, 15);
+            ctx.strokeText(options.text, x, yPos);
         }
-        ctx.fillText(options.text, x, 15);
+        ctx.fillText(options.text, x, yPos);
     }
 
     if (!options.canvas) {
         options.img.src = cnv.toDataURL("image/png");
-        options.img.style.paddingTop = "4px";
+        options.img.style.paddingTop = "14px";
     }
 
     options.img.style.height = "auto";

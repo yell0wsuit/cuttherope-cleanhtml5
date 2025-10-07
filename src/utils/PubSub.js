@@ -5,15 +5,24 @@ PubSub.subscribe = function (name, callback) {
     subscriptions.push({ name: name, callback: callback });
     return [name, callback];
 };
-PubSub.unsubscribe = function (name, callback) {
-    let i, sub;
-    for (i = subscriptions.length; i >= 0; i--) {
-        sub = subscriptions[i];
+
+PubSub.unsubscribe = function (subscription) {
+    if (!subscription || !Array.isArray(subscription)) {
+        return;
+    }
+
+    const name = subscription[0];
+    const callback = subscription[1];
+
+    for (let i = subscriptions.length - 1; i >= 0; i--) {
+        const sub = subscriptions[i];
         if (sub.name === name && sub.callback === callback) {
             subscriptions.splice(i, 1);
+            break;
         }
     }
 };
+
 PubSub.publish = function (name) {
     let callbacks = [],
         args = Array.prototype.slice.call(arguments, 1),
@@ -72,6 +81,7 @@ PubSub.ChannelId = {
     RoamingSettingProvider: 33,
     RoamingDataChanged: 34,
     BoxesUnlocked: 35,
+    PreloaderProgress: 36,
 };
 
 export default PubSub;

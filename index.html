@@ -25,6 +25,7 @@
             <link href="/css/nojavascript.css" rel="stylesheet" type="text/css" />
         </noscript>
     </head>
+
     <body class="ctrCursor">
         <div id="lang">
             <div id="fb-root"></div>
@@ -36,7 +37,6 @@
                     display: none;
                 }
             </style>
-            <div style="font-family: 'gooddognew'; position: absolute">.</div>
             <div id="gameContainer">
                 <div id="betterLoader">
                     <div id="track">
@@ -44,19 +44,19 @@
                     </div>
                 </div>
                 <div id="gameArea" class="hideBeforeLoad">
-                    <div id="canvasBackground" class="realpanel"></div>
+                    <div id="canvasBackground" class="panel"></div>
                     <canvas id="c"></canvas>
 
-                    <div id="loadingPanel" class="panel scaleBg"></div>
+                    <div id="loadingPanel" class="panel"></div>
 
-                    <div id="startBackground" class="realpanel"></div>
-                    <div id="menuBackground" class="realpanel"></div>
-                    <div id="levelBackground" class="realpanel">
+                    <div id="startBackground" class="panel"></div>
+                    <div id="menuBackground" class="panel"></div>
+                    <div id="levelBackground" class="panel">
                         <canvas id="levelCanvasLeft"></canvas>
                         <canvas id="levelCanvasRight"></canvas>
                         <div id="levelTape" class="levelTape"></div>
                     </div>
-                    <div id="shadowPanel" class="panel scaleBg">
+                    <div id="shadowPanel" class="panel">
                         <canvas id="shadowCanvas"></canvas>
                     </div>
                     <div id="menuPanel" class="panel seethrough">
@@ -76,7 +76,7 @@
                     </div>
 
                     <div id="boxPanel" class="panel seethrough">
-                        <canvas id="boxCanvas" width="1024" height="576"></canvas>
+                        <canvas id="boxCanvas"></canvas>
 
                         <div id="boxScore" class="hideFromMouse floatTop"><img src="" /></div>
 
@@ -88,7 +88,7 @@
                         </div>
                         <div id="boxBack" class="bBtn floatBottom"></div>
                     </div>
-                    <div id="levelPanel" class="realpanel">
+                    <div id="levelPanel" class="panel">
                         <div id="levelScore" class="floatTop">
                             <img src="" />
                         </div>
@@ -117,7 +117,7 @@
                         </div>
                     </div>
 
-                    <div id="gameCompletePanel" class="realpanel">
+                    <div id="gameCompletePanel" class="panel">
                         <div id="congrats"></div>
                         <div id="finalScore"><img src="" /></div>
                         <a
@@ -127,8 +127,8 @@
                             target="_blank"
                             rel="noopener"
                             ><img src="" />
-                            <div id="funOmNom"></div
-                        ></a>
+                            <div id="funOmNom"></div>
+                        </a>
                         <div id="gameCompleteBack" class="bBtn"></div>
                     </div>
 
@@ -149,8 +149,14 @@
                             </div>
                             <div id="resetBtn" class="fBtn"><img src="" /></div>
                             <div id="creditsBtn" class="fBtn"><img src="" /></div>
-                            <!---<div id="dragBtn"><img id="dragText" /><div class="options-check-disabled"></div></div>
-                    <div id="cutBtn" class="ctrCursor"><img id="cutText" /><div class="options-check"></div></div>-->
+                            <div id="dragBtn">
+                                <img id="dragText" />
+                                <div class="options-check-disabled"></div>
+                            </div>
+                            <div id="cutBtn" class="ctrCursor">
+                                <img id="cutText" />
+                                <div class="options-check"></div>
+                            </div>
                         </div>
                         <div id="optionsBack" class="bBtn"></div>
                     </div>
@@ -206,7 +212,9 @@
                         </div>
                         <div class="popupInnerFrame" id="missingStars">
                             <div id="missingLine1"></div>
-                            <div id="missingCount"><div id="missingStar"></div></div>
+                            <div id="missingCount">
+                                <div id="missingStar"></div>
+                            </div>
                             <div id="missingLine2"></div>
                             <div id="missingLine3"></div>
                             <div class="mBtn" id="missingOkBtn"></div>

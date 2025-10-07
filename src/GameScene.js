@@ -377,7 +377,7 @@ const GameScene = BaseElement.extend({
 
         if (currentPack != LevelState.pack) {
             this.bgTexture = ResourceMgr.getTexture(bgrID);
-            const canvasBackground = document.getElementById("canvasBackground");
+            const canvasBackground = document.getElementById("c");
             canvasBackground.style.background = "url('" + this.bgTexture.image.src + "')";
             canvasBackground.style.display = "block";
 
@@ -1196,90 +1196,130 @@ const GameScene = BaseElement.extend({
         this.target = target;
 
         target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATIONS);
+        target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATIONS2);
+        target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATIONS3);
+
         target.doRestoreCutTransparency();
 
         target.bb = Rectangle.copy(resolution.TARGET_BB);
+        target.bbOverride = Rectangle.copy(resolution.TARGET_BB);
+        var originalPlayTimeline = target.playTimeline;
+        target.playTimeline = function (index) {
+            originalPlayTimeline.call(this, index);
+            if (this.bbOverride) {
+                this.bb = Rectangle.copy(this.bbOverride);
+                if (this.rbb) {
+                    this.rbb = new this.rbb.constructor(this.bb.x, this.bb.y, this.bb.w, this.bb.h);
+                }
+            }
+        };
         target.drawPosIncrement = 0.0001;
 
         target.addAnimationEndpoints(
             CharAnimation.GREETING,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_CHAR_ANIMATIONS_greeting_start,
-            IMG_CHAR_ANIMATIONS_greeting_end
+            IMG_CHAR_ANIMATIONS2_greeting_start,
+            IMG_CHAR_ANIMATIONS2_greeting_end,
+            undefined,
+            ResourceId.IMG_CHAR_ANIMATIONS2
         );
         target.addAnimationEndpoints(
             CharAnimation.IDLE,
             0.05,
             Timeline.LoopType.REPLAY,
             IMG_CHAR_ANIMATIONS_idle_start,
-            IMG_CHAR_ANIMATIONS_idle_end
+            IMG_CHAR_ANIMATIONS_idle_end,
+            undefined,
+            ResourceId.IMG_CHAR_ANIMATIONS
         );
         target.addAnimationEndpoints(
             CharAnimation.IDLE2,
             0.05,
             Timeline.LoopType.NO_LOOP,
             IMG_CHAR_ANIMATIONS_idle2_start,
-            IMG_CHAR_ANIMATIONS_idle2_end
+            IMG_CHAR_ANIMATIONS_idle2_end,
+            undefined,
+            ResourceId.IMG_CHAR_ANIMATIONS
         );
+        var frame;
+        var idle3Sequence = [];
+        for (frame = IMG_CHAR_ANIMATIONS_idle3_start; frame <= IMG_CHAR_ANIMATIONS_idle3_end; frame++) {
+            idle3Sequence.push(frame);
+        }
+        for (frame = IMG_CHAR_ANIMATIONS_idle3_start; frame <= IMG_CHAR_ANIMATIONS_idle3_end; frame++) {
+            idle3Sequence.push(frame);
+        }
         target.addAnimationSequence(
             CharAnimation.IDLE3,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            (IMG_CHAR_ANIMATIONS_idle3_end - IMG_CHAR_ANIMATIONS_idle3_start + 1) * 2,
-            [
-                109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 109, 110, 111, 112, 113,
-                114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124,
-            ]
+            idle3Sequence.length,
+            idle3Sequence,
+            ResourceId.IMG_CHAR_ANIMATIONS
         );
         target.addAnimationEndpoints(
             CharAnimation.EXCITED,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_CHAR_ANIMATIONS_excited_start,
-            IMG_CHAR_ANIMATIONS_excited_end
+            IMG_CHAR_ANIMATIONS2_excited_start,
+            IMG_CHAR_ANIMATIONS2_excited_end,
+            undefined,
+            ResourceId.IMG_CHAR_ANIMATIONS2
         );
         target.addAnimationEndpoints(
             CharAnimation.PUZZLED,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_CHAR_ANIMATIONS_puzzled_start,
-            IMG_CHAR_ANIMATIONS_puzzled_end
+            IMG_CHAR_ANIMATIONS2_puzzled_start,
+            IMG_CHAR_ANIMATIONS2_puzzled_end,
+            undefined,
+            ResourceId.IMG_CHAR_ANIMATIONS2
         );
         target.addAnimationEndpoints(
             CharAnimation.FAIL,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_CHAR_ANIMATIONS_fail_start,
-            IMG_CHAR_ANIMATIONS_fail_end
+            IMG_CHAR_ANIMATIONS3_fail_start,
+            IMG_CHAR_ANIMATIONS3_fail_end,
+            undefined,
+            ResourceId.IMG_CHAR_ANIMATIONS3
         );
         target.addAnimationEndpoints(
             CharAnimation.WIN,
             0.05,
             Timeline.LoopType.NO_LOOP,
             IMG_CHAR_ANIMATIONS_mouth_close_start,
-            IMG_CHAR_ANIMATIONS_mouth_close_end
+            IMG_CHAR_ANIMATIONS_mouth_close_end,
+            undefined,
+            ResourceId.IMG_CHAR_ANIMATIONS
         );
         target.addAnimationEndpoints(
             CharAnimation.MOUTH_OPEN,
             0.05,
             Timeline.LoopType.NO_LOOP,
             IMG_CHAR_ANIMATIONS_mouth_open_start,
-            IMG_CHAR_ANIMATIONS_mouth_open_end
+            IMG_CHAR_ANIMATIONS_mouth_open_end,
+            undefined,
+            ResourceId.IMG_CHAR_ANIMATIONS
         );
         target.addAnimationEndpoints(
             CharAnimation.MOUTH_CLOSE,
             0.05,
             Timeline.LoopType.NO_LOOP,
             IMG_CHAR_ANIMATIONS_mouth_close_start,
-            IMG_CHAR_ANIMATIONS_mouth_close_end
+            IMG_CHAR_ANIMATIONS_mouth_close_end,
+            undefined,
+            ResourceId.IMG_CHAR_ANIMATIONS
         );
         target.addAnimationEndpoints(
             CharAnimation.CHEW,
             0.05,
             Timeline.LoopType.REPLAY,
             IMG_CHAR_ANIMATIONS_chew_start,
-            IMG_CHAR_ANIMATIONS_chew_end
+            IMG_CHAR_ANIMATIONS_chew_end,
+            undefined,
+            ResourceId.IMG_CHAR_ANIMATIONS
         );
         target.switchToAnimation(CharAnimation.CHEW, CharAnimation.WIN, 0.05);
         target.switchToAnimation(CharAnimation.PUZZLED, CharAnimation.MOUTH_CLOSE, 0.05);
@@ -1291,7 +1331,7 @@ const GameScene = BaseElement.extend({
 
         // delay greeting by Om-nom
         if (settings.showGreeting) {
-            this.dd.callObject(this, this.showGreeting, null, 2);
+            this.dd.callObject(this, this.showGreeting, null, 3);
             settings.showGreeting = false;
         }
 
@@ -3614,12 +3654,12 @@ const GameScene = BaseElement.extend({
 
         if (this.dragging[touchIndex]) {
             let fc = new FingerCut(
-                    Vector.add(this.startPos[touchIndex], this.camera.pos),
-                    Vector.add(touch, this.camera.pos),
-                    5, // start size
-                    5, // end size
-                    RGBAColor.white.copy()
-                ),
+                Vector.add(this.startPos[touchIndex], this.camera.pos),
+                Vector.add(touch, this.camera.pos),
+                5, // start size
+                5, // end size
+                RGBAColor.white.copy()
+            ),
                 currentCuts = this.fingerCuts[touchIndex],
                 ropeCuts = 0;
 
@@ -3764,6 +3804,8 @@ const IMG_HUD_STAR_Frame_9 = 8;
 var IMG_HUD_STAR_Frame_10 = 9;
 const IMG_HUD_STAR_Frame_11 = 10;
 
+/* 480p vertical frames */
+/*
 var IMG_CHAR_ANIMATIONS_idle_start = 8;
 var IMG_CHAR_ANIMATIONS_idle_end = 26;
 var IMG_CHAR_ANIMATIONS_fail_start = 27;
@@ -3786,5 +3828,30 @@ var IMG_CHAR_ANIMATIONS_puzzled_start = 125;
 var IMG_CHAR_ANIMATIONS_puzzled_end = 151;
 var IMG_CHAR_ANIMATIONS_greeting_start = 152;
 var IMG_CHAR_ANIMATIONS_greeting_end = 180;
+*/
 
+var IMG_CHAR_ANIMATIONS_idle_start = 0;
+var IMG_CHAR_ANIMATIONS_idle_end = 18;
+var IMG_CHAR_ANIMATIONS_mouth_open_start = 19;
+var IMG_CHAR_ANIMATIONS_mouth_open_end = 27;
+var IMG_CHAR_ANIMATIONS_mouth_close_start = 28;
+var IMG_CHAR_ANIMATIONS_mouth_close_end = 31;
+var IMG_CHAR_ANIMATIONS_chew_start = 32;
+var IMG_CHAR_ANIMATIONS_chew_end = 40;
+var IMG_CHAR_ANIMATIONS_blink_start = 41;
+var IMG_CHAR_ANIMATIONS_blink_end = 42;
+var IMG_CHAR_ANIMATIONS_idle2_start = 43;
+var IMG_CHAR_ANIMATIONS_idle2_end = 67;
+var IMG_CHAR_ANIMATIONS_idle3_start = 68;
+var IMG_CHAR_ANIMATIONS_idle3_end = 83;
+
+var IMG_CHAR_ANIMATIONS2_excited_start = 0;
+var IMG_CHAR_ANIMATIONS2_excited_end = 19;
+var IMG_CHAR_ANIMATIONS2_puzzled_start = 20;
+var IMG_CHAR_ANIMATIONS2_puzzled_end = 46;
+var IMG_CHAR_ANIMATIONS2_greeting_start = 47;
+var IMG_CHAR_ANIMATIONS2_greeting_end = 76;
+
+var IMG_CHAR_ANIMATIONS3_fail_start = 0;
+var IMG_CHAR_ANIMATIONS3_fail_end = 12;
 export default GameScene;
