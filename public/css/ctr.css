@@ -151,13 +151,13 @@ a:focus {
     color: #fff;
 }
 
-#betterLoader {
+.ui-1024 #betterLoader {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: url("../images/page/loader-logo.png") no-repeat;
+    background: url("../images/1024/page/loader-logo.jpg") no-repeat;
     z-index: 100;
     color: #fff;
 }
@@ -410,30 +410,15 @@ body {
     top: 0;
 }
 
-#track {
-    width: 200px;
+.ui-1024 #track {
+    width: 277px;
     height: 18px;
-
-    border: 2px solid #e7e7e7;
     border-radius: 20px;
     position: absolute;
     bottom: 0;
-    left: 140px;
-
-    background: #c6c6c6; /* Old browsers */
-    background: -moz-linear-gradient(top, #c6c6c6 0%, #d6d6d6 100%); /* FF3.6+ */
-    background: -webkit-gradient(
-        linear,
-        left top,
-        left bottom,
-        color-stop(0%, #c6c6c6),
-        color-stop(100%, #d6d6d6)
-    ); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, #c6c6c6 0%, #d6d6d6 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top, #c6c6c6 0%, #d6d6d6 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top, #c6c6c6 0%, #d6d6d6 100%); /* IE10+ */
+    left: 370px;
+    top: 528px;
     background: linear-gradient(to bottom, #c6c6c6 0%, #d6d6d6 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c6c6c6', endColorstr='#d6d6d6',GradientType=0 ); /* IE6-9 */
 }
 
 #progress {
