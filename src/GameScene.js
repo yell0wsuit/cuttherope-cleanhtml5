@@ -1196,6 +1196,9 @@ const GameScene = BaseElement.extend({
         this.target = target;
 
         target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATIONS);
+        target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATIONS2);
+        target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATIONS3);
+
         target.doRestoreCutTransparency();
 
         target.bb = Rectangle.copy(resolution.TARGET_BB);
@@ -1328,7 +1331,7 @@ const GameScene = BaseElement.extend({
 
         // delay greeting by Om-nom
         if (settings.showGreeting) {
-            this.dd.callObject(this, this.showGreeting, null, 2);
+            this.dd.callObject(this, this.showGreeting, null, 3);
             settings.showGreeting = false;
         }
 
