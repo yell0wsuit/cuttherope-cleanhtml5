@@ -1226,14 +1226,18 @@ const GameScene = BaseElement.extend({
             0.05,
             Timeline.LoopType.REPLAY,
             IMG_CHAR_ANIMATIONS_idle_start,
-            IMG_CHAR_ANIMATIONS_idle_end
+            IMG_CHAR_ANIMATIONS_idle_end,
+            undefined,
+            ResourceId.IMG_CHAR_ANIMATIONS
         );
         target.addAnimationEndpoints(
             CharAnimation.IDLE2,
             0.05,
             Timeline.LoopType.NO_LOOP,
             IMG_CHAR_ANIMATIONS_idle2_start,
-            IMG_CHAR_ANIMATIONS_idle2_end
+            IMG_CHAR_ANIMATIONS_idle2_end,
+            undefined,
+            ResourceId.IMG_CHAR_ANIMATIONS
         );
         var frame;
         var idle3Sequence = [];
