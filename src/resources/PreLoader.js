@@ -9,6 +9,8 @@ import PxLoaderImage from "@/PxLoaderImage";
 import LoadAnimation from "@/LoadAnimation";
 import ResourceMgr from "@/resources/ResourceMgr";
 import ResourcePacks from "@/resources/ResourcePacks";
+import PubSub from "@/utils/PubSub";
+
 let menuImagesLoadComplete = false,
     menuSoundLoadComplete = false,
     completeCallback = null,
@@ -81,6 +83,10 @@ const loadImages = function () {
     pxLoader.addProgressListener(
         function (e) {
             const p = 100 * (e.completedCount / e.totalCount);
+
+            // Publish progress updates for the UI
+            PubSub.publish(PubSub.ChannelId.PreloaderProgress, { progress: p });
+
             if (LoadAnimation) {
                 LoadAnimation.notifyLoadProgress(p);
             }
@@ -129,27 +135,58 @@ const PreLoader = {
         if (LoadAnimation) {
             LoadAnimation.init();
         }
-
-        // next start the images
-        loadImages();
-
-        // now start the sounds
-        SoundLoader.onMenuComplete(function () {
-            menuSoundLoadComplete = true;
-            checkMenuLoadComplete();
-        });
-        SoundLoader.start();
     },
     domReady: function () {
         if (LoadAnimation) {
             LoadAnimation.domReady();
             LoadAnimation.show();
         }
+
+        // Wait for the loader background image to load before starting resource loading
+        const betterLoader = document.getElementById("betterLoader");
+        if (betterLoader) {
+            const loaderStyle = window.getComputedStyle(betterLoader);
+            const backgroundImage = loaderStyle.backgroundImage;
+
+            // Extract URL from background-image CSS property
+            const match = backgroundImage.match(/url\(["']?([^"']*)["']?\)/);
+            if (match && match[1]) {
+                const img = new Image();
+                img.onload = function () {
+                    // Start loading resources after loader image is ready
+                    startResourceLoading();
+                };
+                img.onerror = function () {
+                    // Start anyway if image fails to load
+                    startResourceLoading();
+                };
+                img.src = match[1];
+            } else {
+                // No background image found, start immediately
+                startResourceLoading();
+            }
+        } else {
+            // No loader element, start immediately
+            startResourceLoading();
+        }
     },
     run: function (onComplete) {
         completeCallback = onComplete;
         checkMenuLoadComplete();
     },
+};
+
+// Move the resource loading logic to a separate function
+const startResourceLoading = function () {
+    // Start the images
+    loadImages();
+
+    // Now start the sounds
+    SoundLoader.onMenuComplete(function () {
+        menuSoundLoadComplete = true;
+        checkMenuLoadComplete();
+    });
+    SoundLoader.start();
 };
 
 export default PreLoader;
