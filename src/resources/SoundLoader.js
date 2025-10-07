@@ -4,7 +4,9 @@ import resData from "@/resources/ResData";
 import Sounds from "@/resources/Sounds";
 import PxLoader from "@/PxLoader";
 import PxLoaderSound from "@/PxLoaderSound";
+
 let completeListeners = [],
+    progressListeners = [],
     startRequested = false,
     soundManagerReady = false,
     startIfReady = function () {
@@ -20,7 +22,8 @@ let completeListeners = [],
             i,
             len,
             soundId,
-            soundUrl;
+            soundUrl,
+            soundCount = 0;
 
         // menu sounds first
         for (i = 0, len = edition.menuSoundIds.length; i < len; i++) {
@@ -29,6 +32,7 @@ let completeListeners = [],
 
             // SoundManager2 wants a sound id which a char prefix
             pxLoader.addSound("s" + soundId, soundUrl, MENU_TAG);
+            soundCount++;
         }
 
         // now game sounds
@@ -38,7 +42,15 @@ let completeListeners = [],
 
             // SoundManager2 wants a sound id which a char prefix
             pxLoader.addSound("s" + soundId, soundUrl);
+            soundCount++;
         }
+
+        // Track progress
+        pxLoader.addProgressListener(function (e) {
+            for (let i = 0, len = progressListeners.length; i < len; i++) {
+                progressListeners[i](e.completedCount, e.totalCount);
+            }
+        });
 
         // wait for all sounds before showing main menu
         pxLoader.addCompletionListener(function () {
@@ -57,6 +69,12 @@ const SoundLoader = {
     },
     onMenuComplete: function (callback) {
         completeListeners.push(callback);
+    },
+    onProgress: function (callback) {
+        progressListeners.push(callback);
+    },
+    getSoundCount: function () {
+        return edition.menuSoundIds.length + edition.gameSoundIds.length;
     },
 };
 

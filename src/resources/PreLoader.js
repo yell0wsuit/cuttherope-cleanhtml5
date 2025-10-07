@@ -14,6 +14,9 @@ import PubSub from "@/utils/PubSub";
 let menuImagesLoadComplete = false,
     menuSoundLoadComplete = false,
     completeCallback = null,
+    totalResources = 0,
+    loadedImages = 0,
+    loadedSounds = 0,
     checkMenuLoadComplete = function () {
         if (!menuImagesLoadComplete || !menuSoundLoadComplete) {
             return;
@@ -32,6 +35,15 @@ let menuImagesLoadComplete = false,
 
         // ensure the completion is only run once
         checkMenuLoadComplete = function () {};
+    },
+    updateProgress = function () {
+        if (totalResources === 0) return;
+        const progress = ((loadedImages + loadedSounds) / totalResources) * 100;
+        PubSub.publish(PubSub.ChannelId.PreloaderProgress, { progress: progress });
+
+        if (LoadAnimation) {
+            LoadAnimation.notifyLoadProgress(progress);
+        }
     };
 
 const loadImages = function () {
@@ -42,7 +54,8 @@ const loadImages = function () {
         GAME_TAG = "GAME",
         i,
         len,
-        imageUrl;
+        imageUrl,
+        imageCount = 0;
 
     // first menu images
     const queueMenuImages = function (imageFilenames, menuBaseUrl) {
@@ -57,6 +70,7 @@ const loadImages = function () {
             }
             imageUrl = menuBaseUrl + imageFilenames[i];
             pxLoader.addImage(imageUrl, MENU_TAG);
+            imageCount++;
         }
     };
 
@@ -82,14 +96,8 @@ const loadImages = function () {
     // only report progress on the menu images and fonts
     pxLoader.addProgressListener(
         function (e) {
-            const p = 100 * (e.completedCount / e.totalCount);
-
-            // Publish progress updates for the UI
-            PubSub.publish(PubSub.ChannelId.PreloaderProgress, { progress: p });
-
-            if (LoadAnimation) {
-                LoadAnimation.notifyLoadProgress(p);
-            }
+            loadedImages = e.completedCount;
+            updateProgress();
 
             if (e.completedCount === e.totalCount) {
                 menuImagesLoadComplete = true;
@@ -109,6 +117,7 @@ const loadImages = function () {
             // add the resId so we can find it upon completion
             pxImage.resId = imageId;
             pxLoader.add(pxImage);
+            imageCount++;
         }
     };
     queueForResMgr(ResourcePacks.StandardFonts, FONT_TAG);
@@ -125,6 +134,8 @@ const loadImages = function () {
     );
 
     pxLoader.start();
+    // Return the image count so caller can set totalResources
+    return imageCount;
 };
 
 const PreLoader = {
@@ -176,12 +187,19 @@ const PreLoader = {
     },
 };
 
-// Move the resource loading logic to a separate function
 const startResourceLoading = function () {
-    // Start the images
-    loadImages();
+    // Start loading images and get the count
+    const imageCount = loadImages();
 
-    // Now start the sounds
+    // Set total resources for progress calculation
+    totalResources = imageCount + SoundLoader.getSoundCount();
+
+    // Track sound loading progress
+    SoundLoader.onProgress(function (completed, total) {
+        loadedSounds = completed;
+        updateProgress();
+    });
+
     SoundLoader.onMenuComplete(function () {
         menuSoundLoadComplete = true;
         checkMenuLoadComplete();
