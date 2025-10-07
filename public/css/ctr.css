@@ -162,6 +162,17 @@ a:focus {
     color: #fff;
 }
 
+.ui-1920 #betterLoader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("../images/1920/page/loader-logo.jpg") no-repeat;
+    z-index: 100;
+    color: #fff;
+}
+
 #loaderLogo {
     display: none;
     position: relative;
@@ -421,11 +432,28 @@ body {
     background: linear-gradient(to bottom, #c6c6c6 0%, #d6d6d6 100%); /* W3C */
 }
 
-#progress {
+.ui-1024 #progress {
     background: url("../images/480/ui/load-repeat.png") repeat-x;
     width: 10%;
     height: 18px;
+    border-radius: 18px;
+}
 
+.ui-1920 #track {
+    width: 520px;
+    height: 35px;
+    border-radius: 20px;
+    position: absolute;
+    bottom: 0;
+    left: 694px;
+    top: 990px;
+    background: linear-gradient(to bottom, #c6c6c6 0%, #d6d6d6 100%); /* W3C */
+}
+
+.ui-1920 #progress {
+    background: url("../images/1920/ui/load-repeat.jpg") repeat-x;
+    width: 10%;
+    height: 35px;
     border-radius: 18px;
 }
 
