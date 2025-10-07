@@ -1219,7 +1219,7 @@ const GameScene = BaseElement.extend({
             IMG_CHAR_ANIMATIONS2_greeting_start,
             IMG_CHAR_ANIMATIONS2_greeting_end,
             undefined,
-            ResourceId.IMG_CHAR_ANIMATIONS_2
+            ResourceId.IMG_CHAR_ANIMATIONS2
         );
         target.addAnimationEndpoints(
             CharAnimation.IDLE,
@@ -1258,7 +1258,7 @@ const GameScene = BaseElement.extend({
             IMG_CHAR_ANIMATIONS2_excited_start,
             IMG_CHAR_ANIMATIONS2_excited_end,
             undefined,
-            ResourceId.IMG_CHAR_ANIMATIONS_2
+            ResourceId.IMG_CHAR_ANIMATIONS2
         );
         target.addAnimationEndpoints(
             CharAnimation.PUZZLED,
@@ -1276,7 +1276,7 @@ const GameScene = BaseElement.extend({
             IMG_CHAR_ANIMATIONS3_fail_start,
             IMG_CHAR_ANIMATIONS3_fail_end,
             undefined,
-            ResourceId.IMG_CHAR_ANIMATIONS_3
+            ResourceId.IMG_CHAR_ANIMATIONS3
         );
         target.addAnimationEndpoints(
             CharAnimation.WIN,
