@@ -145,7 +145,7 @@ function showLockDialog(boxIndex) {
     Text.drawSmall({
         text: Lang.menuText(MenuStringId.CANT_UNLOCK_TEXT3),
         imgParentId: "missingLine3",
-        width: 260,
+        // width: 260,
         scaleToUI: true,
     });
 
