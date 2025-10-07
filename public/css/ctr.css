@@ -1693,6 +1693,70 @@ body {
     background-position: -1000px 0;
 }
 
+.ui-1024 .lang-ko #flag {
+    background-position: 0 -400px;
+}
+
+.ui-1024 .lang-ko #resultImproved {
+    background-image: url(../images/1024/ui/menu_result_ko.png);
+}
+
+.ui-1024 .lang-zh #flag {
+    background-position: 0 -440px;
+}
+
+.ui-1024 .lang-zh #resultImproved {
+    background-image: url(../images/1024/ui/menu_result_zh.png);
+}
+
+.ui-1024 .lang-ja #flag {
+    background-position: 0 -360px;
+}
+
+.ui-1024 .lang-ja #resultImproved {
+    background-image: url(../images/1024/ui/menu_result_ja.png);
+}
+
+.ui-1024 .lang-es #flag {
+    background-position: 0 -200px;
+}
+
+.ui-1024 .lang-es #resultImproved {
+    background-image: url(../images/1024/ui/menu_result_es.png);
+}
+
+.ui-1024 .lang-ca #flag {
+    background-position: 0 -200px;
+}
+
+.ui-1024 .lang-ca #resultImproved {
+    background-image: url(../images/1024/ui/menu_result_es.png);
+}
+
+.ui-1024 .lang-br #flag {
+    background-position: 0 -160px;
+}
+
+.ui-1024 .lang-br #resultImproved {
+    background-image: url(../images/1024/ui/menu_result_br.png);
+}
+
+.ui-1024 .lang-it #flag {
+    background-position: 0 -280px;
+}
+
+.ui-1024 .lang-it #resultImproved {
+    background-image: url(../images/1024/ui/menu_result_it.png);
+}
+
+.ui-1024 .lang-nl #flag {
+    background-position: 0 -120px;
+}
+
+.ui-1024 .lang-nl #resultImproved {
+    background-image: url(../images/1024/ui/menu_result_nl.png);
+}
+
 .ui-1024 .lang-system #flag {
     position: static;
     top: auto;
@@ -2952,6 +3016,38 @@ body {
 
 .ui-768 .lang-ru #gameMenuBtn {
     background-position: -750px 0;
+}
+
+.ui-768 .lang-ko #flag {
+    background-position: 0 -120px;
+}
+
+.ui-768 .lang-zh #flag {
+    background-position: 0 -150px;
+}
+
+.ui-768 .lang-ja #flag {
+    background-position: 0 -180px;
+}
+
+.ui-768 .lang-es #flag {
+    background-position: 0 -210px;
+}
+
+.ui-768 .lang-ca #flag {
+    background-position: 0 -240px;
+}
+
+.ui-768 .lang-br #flag {
+    background-position: 0 -270px;
+}
+
+.ui-768 .lang-it #flag {
+    background-position: 0 -300px;
+}
+
+.ui-768 .lang-nl #flag {
+    background-position: 0 -330px;
 }
 
 .ui-768 .lang-system #flag {
