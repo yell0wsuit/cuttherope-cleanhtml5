@@ -52,9 +52,9 @@ const Text = BaseElement.extend({
                 this.maxHeight === Constants.UNDEFINED
                     ? this.formattedStrings.length
                     : Math.min(
-                        this.formattedStrings.length,
-                        this.maxHeight / itemHeight + this.font.lineOffset
-                    ),
+                          this.formattedStrings.length,
+                          this.maxHeight / itemHeight + this.font.lineOffset
+                      ),
             drawEllipsis = linesToDraw !== this.formattedStrings.length;
 
         for (let i = 0; i < linesToDraw; i++) {
@@ -89,7 +89,7 @@ const Text = BaseElement.extend({
                         c === len - 1 ||
                         (c === len - 2 &&
                             dx + 3 * (dotWidth + dotsOffset) + this.font.spaceWidth >
-                            this.wrapWidth)
+                                this.wrapWidth)
                     ) {
                         this.d.mapTextureQuad(dotIndex, Math.round(dx), Math.round(dy), n++);
                         dx += dotWidth + dotsOffset;
@@ -341,7 +341,8 @@ Text.drawSystem = function (options) {
         setupFont(ctx, options);
 
         for (let i = 0; i < text.length; ++i) {
-            const yPos = topPadding + (i + 1) * lineHeight - (lineHeight - Math.round(18 * scaleFactor));
+            const yPos =
+                topPadding + (i + 1) * lineHeight - (lineHeight - Math.round(18 * scaleFactor));
             if (options.fontId === 4) {
                 ctx.strokeText(text[i], x, yPos);
             }
