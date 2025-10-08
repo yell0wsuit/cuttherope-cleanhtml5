@@ -316,11 +316,18 @@ Text.drawSystem = function (options) {
     // Use different line heights based on font ID, scaled for resolution
     const baseLineHeight = options.fontId === 4 ? 28 : 22;
     const lineHeight = Math.round(baseLineHeight * scaleFactor);
-    const topPadding = Math.round(8 * scaleFactor); // Add top padding to prevent text cutoff
+
+    // Add top padding to prevent text cutoff, more for big font with CJK
+    const baseTopPadding = options.fontId === 4 ? 12 : 8;
+    const topPadding = Math.round(baseTopPadding * scaleFactor);
+
+    // Add bottom padding for small font to prevent cutoff for descenders like "g", "y", "p"
+    const baseBottomPadding = options.fontId === 4 ? 0 : 6;
+    const bottomPadding = Math.round(baseBottomPadding * scaleFactor);
 
     const cnv = options.canvas ? options.img : document.createElement("canvas");
     cnv.width = options.width || options.maxScaleWidth || options.text.length * 16 * scaleFactor;
-    cnv.height = lineHeight + topPadding;
+    cnv.height = lineHeight + topPadding + bottomPadding;
 
     const ctx = cnv.getContext("2d");
     let x = cnv.width / 2;
@@ -335,7 +342,7 @@ Text.drawSystem = function (options) {
     const metric = ctx.measureText(options.text);
     if (options.text.indexOf("\n") > 0 || (options.width && metric.width > options.width)) {
         const text = stringToArray(ctx, options.text, options.width);
-        cnv.height = lineHeight * text.length + topPadding;
+        cnv.height = lineHeight * text.length + topPadding + bottomPadding;
 
         setupFont(ctx, options);
 
