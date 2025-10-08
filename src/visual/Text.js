@@ -369,7 +369,7 @@ Text.drawSystem = function (options) {
 
     if (!options.canvas) {
         options.img.src = cnv.toDataURL("image/png");
-        options.img.style.paddingTop = Math.round(14 * scaleFactor) + "px";
+        options.img.style.paddingTop = "18px";
     }
 
     options.img.style.height = "auto";
