@@ -35,9 +35,9 @@ const PanelManager = new (function () {
         shadowCanvas = document.getElementById("shadowCanvas");
         shadowPanelElement = document.getElementById("shadowPanel");
 
-        // shadowCanvas = document.getElementById('shadowCanvas');
-        // shadowCanvas.width = resolution.uiScaledNumber(1024);
-        // shadowCanvas.height = resolution.uiScaledNumber(576);
+        shadowCanvas = document.getElementById("shadowCanvas");
+        shadowCanvas.width = resolution.uiScaledNumber(1024);
+        shadowCanvas.height = resolution.uiScaledNumber(576);
     };
 
     this.appReady = function (onInitializePanel) {
@@ -89,12 +89,12 @@ const PanelManager = new (function () {
         const skip = skipFade == null ? false : skipFade;
 
         // enable / disable the shadow animation
-        // if (panel.showShadow) {
-        //     showShadow();
-        // }
-        // else {
-        //     hideShadow();
-        // }
+        if (panel.showShadow) {
+             showShadow();
+        }
+        else {
+             hideShadow();
+        }
 
         // we always use a timeout, even if we skip the animation, to keep the code clean
         const timeout = skip ? 0 : fadeInDur + fadePause;
