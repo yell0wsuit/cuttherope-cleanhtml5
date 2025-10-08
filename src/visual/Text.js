@@ -52,9 +52,9 @@ const Text = BaseElement.extend({
                 this.maxHeight === Constants.UNDEFINED
                     ? this.formattedStrings.length
                     : Math.min(
-                          this.formattedStrings.length,
-                          this.maxHeight / itemHeight + this.font.lineOffset
-                      ),
+                        this.formattedStrings.length,
+                        this.maxHeight / itemHeight + this.font.lineOffset
+                    ),
             drawEllipsis = linesToDraw !== this.formattedStrings.length;
 
         for (let i = 0; i < linesToDraw; i++) {
@@ -89,7 +89,7 @@ const Text = BaseElement.extend({
                         c === len - 1 ||
                         (c === len - 2 &&
                             dx + 3 * (dotWidth + dotsOffset) + this.font.spaceWidth >
-                                this.wrapWidth)
+                            this.wrapWidth)
                     ) {
                         this.d.mapTextureQuad(dotIndex, Math.round(dx), Math.round(dy), n++);
                         dx += dotWidth + dotsOffset;
@@ -283,13 +283,19 @@ function setupFont(ctx, options) {
 
     ctx.fillStyle = color;
 
+    // Scale factor for 1920x1080 (1920/1024 = 1.875)
+    const scaleFactor = resolution.CANVAS_WIDTH / 1024;
+
     // Font ID 4 uses larger font size, Font ID 5 uses 22px
+    // Base sizes are for 1024x576, scale them for higher resolutions
     if (options.fontId === 4) {
-        ctx.font = "bold 32px 'gooddognew', sans-serif";
+        const fontSize = Math.round(32 * scaleFactor);
+        ctx.font = `bold ${fontSize}px 'gooddognew', sans-serif`;
         ctx.strokeStyle = "rgba(0,0,0,1)";
-        ctx.lineWidth = 3;
+        ctx.lineWidth = Math.round(3 * scaleFactor);
     } else {
-        ctx.font = "normal 22px 'gooddognew', sans-serif";
+        const fontSize = Math.round(22 * scaleFactor);
+        ctx.font = `normal ${fontSize}px 'gooddognew', sans-serif`;
     }
 
     if (options.alpha) {
@@ -298,12 +304,16 @@ function setupFont(ctx, options) {
 }
 
 Text.drawSystem = function (options) {
-    // Use different line heights based on font ID
-    const lineHeight = options.fontId === 4 ? 28 : 22;
-    const topPadding = 8; // Add top padding to prevent text cutoff
+    // Scale factor for 1920x1080 (1920/1024 = 1.875)
+    const scaleFactor = resolution.CANVAS_WIDTH / 1024;
+
+    // Use different line heights based on font ID, scaled for resolution
+    const baseLineHeight = options.fontId === 4 ? 28 : 22;
+    const lineHeight = Math.round(baseLineHeight * scaleFactor);
+    const topPadding = Math.round(8 * scaleFactor); // Add top padding to prevent text cutoff
 
     const cnv = options.canvas ? options.img : document.createElement("canvas");
-    cnv.width = options.width || options.maxScaleWidth || options.text.length * 16;
+    cnv.width = options.width || options.maxScaleWidth || options.text.length * 16 * scaleFactor;
     cnv.height = lineHeight + topPadding;
 
     const ctx = cnv.getContext("2d");
@@ -324,7 +334,7 @@ Text.drawSystem = function (options) {
         setupFont(ctx, options);
 
         for (let i = 0; i < text.length; ++i) {
-            const yPos = topPadding + (i + 1) * lineHeight - (lineHeight - 18);
+            const yPos = topPadding + (i + 1) * lineHeight - (lineHeight - Math.round(18 * scaleFactor));
             if (options.fontId === 4) {
                 ctx.strokeText(text[i], x, yPos);
             }
@@ -333,11 +343,11 @@ Text.drawSystem = function (options) {
     } else {
         // use the measured width
         if (!options.width || !options.maxScaleWidth) {
-            cnv.width = metric.width + 5;
+            cnv.width = metric.width + Math.round(5 * scaleFactor);
             setupFont(ctx, options);
             if (options.alignment !== 1) x = cnv.width / 2;
         }
-        const yPos = topPadding + lineHeight - (lineHeight - 18);
+        const yPos = topPadding + lineHeight - (lineHeight - Math.round(18 * scaleFactor));
         if (options.fontId === 4) {
             ctx.strokeText(options.text, x, yPos);
         }
@@ -346,7 +356,7 @@ Text.drawSystem = function (options) {
 
     if (!options.canvas) {
         options.img.src = cnv.toDataURL("image/png");
-        options.img.style.paddingTop = "14px";
+        options.img.style.paddingTop = Math.round(14 * scaleFactor) + "px";
     }
 
     options.img.style.height = "auto";
