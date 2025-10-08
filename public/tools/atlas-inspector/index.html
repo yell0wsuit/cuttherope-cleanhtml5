@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Cut the Rope Asset Inspector</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <header class="page-header">
+            <h1>Cut the Rope Asset Inspector</h1>
+            <p class="tagline">Visualize sprite sheets, inspect offsets, prototype rects, and test animations.</p>
+        </header>
+        <main class="layout">
+            <section class="control-panel" aria-label="Asset controls">
+                <div class="control-group">
+                    <label for="assetFilter">Filter assets</label>
+                    <input id="assetFilter" type="search" placeholder="Search by name or filename" />
+                </div>
+                <div class="control-group">
+                    <label for="assetSelect">Sprite sheet</label>
+                    <select id="assetSelect" size="12" aria-describedby="assetSummary"></select>
+                </div>
+                <div class="control-group">
+                    <label for="resolutionSelect">Resolution</label>
+                    <select id="resolutionSelect"></select>
+                </div>
+                <div class="control-group">
+                    <label for="zoomRange">Zoom</label>
+                    <input id="zoomRange" type="range" min="0.1" max="2.5" step="0.05" value="1" />
+                    <span id="zoomLabel" class="range-value">100%</span>
+                </div>
+                <div class="control-group">
+                    <button id="toggleOffsets" type="button" class="secondary">Toggle offset markers</button>
+                    <button id="toggleNumbers" type="button" class="secondary">Toggle numbering</button>
+                </div>
+                <div id="assetSummary" class="asset-summary" aria-live="polite"></div>
+            </section>
+            <section class="workspace" aria-label="Sprite inspection workspace">
+                <div class="canvas-wrapper">
+                    <div class="canvas-stage" id="canvasStage">
+                        <canvas id="spriteCanvas" width="1" height="1"></canvas>
+                    </div>
+                    <div class="canvas-actions">
+                        <span id="cursorPosition" aria-live="polite">Cursor: —</span>
+                        <span id="selectedRectLabel" aria-live="polite">Selected rect: —</span>
+                    </div>
+                </div>
+                <div class="details-columns">
+                    <section class="panel" aria-label="Existing rects">
+                        <header>
+                            <h2>Existing rects</h2>
+                            <p class="panel-description">Click a row or the canvas to focus a rect. Use “Add to animation” to queue frames.</p>
+                        </header>
+                        <div class="table-scroll">
+                            <table id="rectTable" class="rect-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>X</th>
+                                        <th>Y</th>
+                                        <th>W</th>
+                                        <th>H</th>
+                                        <th>Off&nbsp;X</th>
+                                        <th>Off&nbsp;Y</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="panel" aria-label="Create new asset">
+                        <header>
+                            <h2>Create new asset</h2>
+                            <p class="panel-description">Drag on the canvas or enter values to define new rects. Adjust offsets to preview alignment.</p>
+                        </header>
+                        <div class="new-asset-controls">
+                            <label class="checkbox">
+                                <input type="checkbox" id="drawModeToggle" />
+                                <span>Enable drag selection</span>
+                            </label>
+                            <div class="form-grid">
+                                <label>X<input type="number" id="newRectX" /></label>
+                                <label>Y<input type="number" id="newRectY" /></label>
+                                <label>Width<input type="number" id="newRectW" /></label>
+                                <label>Height<input type="number" id="newRectH" /></label>
+                                <label>Offset X<input type="number" id="newOffsetX" value="0" /></label>
+                                <label>Offset Y<input type="number" id="newOffsetY" value="0" /></label>
+                            </div>
+                            <div class="button-row">
+                                <button id="addRectButton" type="button">Add rect</button>
+                                <button id="updateRectButton" type="button" class="secondary" disabled>Update selected</button>
+                                <button id="clearRectsButton" type="button" class="secondary">Clear</button>
+                            </div>
+                        </div>
+                        <div class="table-scroll small">
+                            <table id="newRectTable" class="rect-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>X</th>
+                                        <th>Y</th>
+                                        <th>W</th>
+                                        <th>H</th>
+                                        <th>Off&nbsp;X</th>
+                                        <th>Off&nbsp;Y</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="output-block">
+                            <div class="button-row">
+                                <button id="copyRectOutput" type="button">Copy rect array</button>
+                                <button id="copyOffsetOutput" type="button" class="secondary">Copy offset array</button>
+                                <button id="copyJsonOutput" type="button" class="secondary">Copy JSON</button>
+                            </div>
+                            <textarea id="outputTextarea" readonly rows="6" aria-label="Export preview"></textarea>
+                        </div>
+                    </section>
+                    <section class="panel" aria-label="Animation tester">
+                        <header>
+                            <h2>Animation tester</h2>
+                            <p class="panel-description">Build sequences with per-frame durations and preview looping playback.</p>
+                        </header>
+                        <div class="animation-controls">
+                            <label>Loop<input type="checkbox" id="animationLoopToggle" /></label>
+                            <label>Background
+                                <input type="color" id="animationBg" value="#000000" />
+                            </label>
+                            <div class="button-row">
+                                <button id="playAnimation" type="button">Play</button>
+                                <button id="stopAnimation" type="button" class="secondary">Stop</button>
+                                <button id="clearAnimation" type="button" class="secondary">Clear</button>
+                            </div>
+                        </div>
+                        <div class="table-scroll small">
+                            <table id="animationTable" class="rect-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Rect</th>
+                                        <th>Duration (ms)</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="animation-preview">
+                            <canvas id="animationCanvas" width="256" height="256"></canvas>
+                        </div>
+                    </section>
+                </div>
+            </section>
+        </main>
+        <template id="rectRowTemplate">
+            <tr>
+                <td data-col="index"></td>
+                <td data-col="x"></td>
+                <td data-col="y"></td>
+                <td data-col="w"></td>
+                <td data-col="h"></td>
+                <td data-col="offsetX"></td>
+                <td data-col="offsetY"></td>
+                <td data-col="actions"></td>
+            </tr>
+        </template>
+        <script src="app.js" type="module"></script>
+    </body>
+</html>
