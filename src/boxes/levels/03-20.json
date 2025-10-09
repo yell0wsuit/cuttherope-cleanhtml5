@@ -1,0 +1,122 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 640,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 100,
+            "x": 253,
+            "y": 31,
+            "length": 80,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": 80,
+            "moveVertical": true,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 2,
+            "x": 319,
+            "y": 409
+        },
+        {
+            "name": 100,
+            "x": 386,
+            "y": 28,
+            "length": 80,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": 80,
+            "moveVertical": true,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 254,
+            "y": 268,
+            "length": 60,
+            "wheel": false,
+            "gun": false,
+            "radius": 70,
+            "moveLength": 80,
+            "moveVertical": true,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 386,
+            "y": 267,
+            "length": 60,
+            "wheel": false,
+            "gun": false,
+            "radius": 70,
+            "moveLength": 80,
+            "moveVertical": true,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 52,
+            "x": 319,
+            "y": 118
+        },
+        {
+            "name": 80,
+            "x": 317,
+            "y": 156,
+            "initialDelay": -2,
+            "offTime": 2,
+            "onTime": 2,
+            "angle": 0,
+            "size": 5
+        },
+        {
+            "name": 80,
+            "x": 321,
+            "y": 370,
+            "initialDelay": 0,
+            "offTime": 2,
+            "onTime": 2,
+            "angle": 0,
+            "size": 5
+        },
+        {
+            "name": 3,
+            "x": 317,
+            "y": 192,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 318,
+            "y": 332,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 319,
+            "y": 265,
+            "timeout": -1
+        }
+    ]
+}

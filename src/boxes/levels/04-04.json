@@ -3,7 +3,7 @@
         {
             "name": 0,
             "gridSize": 32,
-            "width": 640,
+            "width": 320,
             "height": 480
         },
         {
@@ -16,26 +16,34 @@
     "objects": [
         {
             "name": 2,
-            "x": 548,
-            "y": 117
+            "x": 163,
+            "y": 200
+        },
+        {
+            "name": 56,
+            "x": 229,
+            "y": 392,
+            "group": 0,
+            "angle": 180
+        },
+        {
+            "name": 56,
+            "x": 93,
+            "y": 152,
+            "group": 0,
+            "angle": 0
         },
         {
             "name": 52,
-            "x": 100,
-            "y": 315
-        },
-        {
-            "name": 54,
-            "x": 100,
-            "y": 316
+            "x": 161,
+            "y": 136
         },
         {
             "name": 100,
-            "x": 99,
-            "y": 442,
-            "length": 100,
+            "x": 220,
+            "y": 49,
+            "length": 76,
             "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
             "moveVertical": false,
@@ -44,75 +52,79 @@
             "part": "L"
         },
         {
-            "name": 82,
-            "x": 47,
-            "y": 213,
-            "angle": 90,
-            "size": 2
+            "name": 100,
+            "x": 103,
+            "y": 49,
+            "length": 76,
+            "wheel": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
         },
         {
-            "name": 55,
-            "x": 159,
-            "y": 209,
+            "name": 56,
+            "x": 95,
+            "y": 400,
+            "group": 1,
+            "angle": 0
+        },
+        {
+            "name": 56,
+            "x": 227,
+            "y": 148,
+            "group": 1,
             "angle": 180
         },
         {
-            "name": 56,
-            "x": 146,
-            "y": 51,
-            "group": 0,
-            "angle": 90
+            "name": 54,
+            "x": 160,
+            "y": 416
         },
         {
-            "name": 82,
-            "x": 272,
-            "y": 209,
-            "angle": 90,
-            "size": 2
+            "name": 100,
+            "x": 210,
+            "y": 298,
+            "length": 100,
+            "wheel": false,
+            "radius": 60,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
         },
         {
-            "name": 56,
-            "x": 322,
-            "y": 399,
-            "group": 0,
-            "angle": 270
-        },
-        {
-            "name": 55,
-            "x": 385,
-            "y": 206,
-            "angle": 180
-        },
-        {
-            "name": 56,
-            "x": 544,
-            "y": 398,
-            "group": 1,
-            "angle": 270
-        },
-        {
-            "name": 56,
-            "x": 371,
-            "y": 54,
-            "group": 1,
-            "angle": 90
+            "name": 100,
+            "x": 116,
+            "y": 301,
+            "length": 100,
+            "wheel": false,
+            "radius": 60,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
         },
         {
             "name": 3,
-            "x": 546,
-            "y": 210,
+            "x": 200,
+            "y": 146,
             "timeout": -1
         },
         {
             "name": 3,
-            "x": 96,
-            "y": 210,
+            "x": 121,
+            "y": 148,
             "timeout": -1
         },
         {
             "name": 3,
-            "x": 323,
-            "y": 207,
+            "x": 162,
+            "y": 418,
             "timeout": -1
         }
     ]

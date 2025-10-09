@@ -1,0 +1,177 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": true
+        }
+    ],
+    "objects": [
+        {
+            "name": 50,
+            "x": 101,
+            "y": 170
+        },
+        {
+            "name": 51,
+            "x": 232,
+            "y": 171
+        },
+        {
+            "name": 100,
+            "x": 164,
+            "y": 146,
+            "length": 150,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "R"
+        },
+        {
+            "name": 2,
+            "x": 165,
+            "y": 428
+        },
+        {
+            "name": 3,
+            "x": 187,
+            "y": 327,
+            "timeout": -1
+        },
+        {
+            "name": 100,
+            "x": 227,
+            "y": 58,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "R"
+        },
+        {
+            "name": 100,
+            "x": 98,
+            "y": 59,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 164,
+            "y": 146,
+            "length": 150,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 4,
+            "x": 79,
+            "y": 219,
+            "locale": "en",
+            "text": "Combine two pieces of candy before feeding it to Om Nom",
+            "width": 200
+        },
+        {
+            "name": 13,
+            "x": 55,
+            "y": 267,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 3,
+            "x": 139,
+            "y": 328,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 163,
+            "y": 369,
+            "timeout": -1
+        }
+    ],
+    "ru": [
+        {
+            "name": 4,
+            "x": 79,
+            "y": 219,
+            "locale": "ru",
+            "text": "Соедините половинки леденца прежде чем скормить его АмНяму",
+            "width": 200
+        },
+        {
+            "name": 13,
+            "x": 55,
+            "y": 267,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "fr": [
+        {
+            "name": 4,
+            "x": 78,
+            "y": 213,
+            "locale": "fr",
+            "text": "Associe deux morceaux de bonbon avant de le donner à Om Nom pour qu'il le mange",
+            "width": 230
+        },
+        {
+            "name": 13,
+            "x": 55,
+            "y": 267,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "de": [
+        {
+            "name": 4,
+            "x": 56,
+            "y": 219,
+            "locale": "de",
+            "text": "Bring zwei Bonbons zusammen, bevor Du sie an Om Nom verfütterst",
+            "width": 200
+        },
+        {
+            "name": 13,
+            "x": 39,
+            "y": 268,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ]
+}

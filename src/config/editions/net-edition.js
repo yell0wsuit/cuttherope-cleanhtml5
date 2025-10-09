@@ -8,8 +8,8 @@ import LangId from "@/resources/LangId";
 const normalizedBoxMetadata = boxMetadata.map((box) => ({
     ...box,
     boxType: BoxType[box.boxType] ?? box.boxType,
-    levelBackgroundId:
-        box.levelBackgroundId == null ? null : ResourceId[box.levelBackgroundId],
+    levelBackgroundId: box.levelBackgroundId == null ? null : ResourceId[box.levelBackgroundId],
+    levelOverlayId: box.levelOverlayId == null ? null : ResourceId[box.levelOverlayId],
 }));
 
 const netEdition = {
@@ -63,13 +63,13 @@ const netEdition = {
 
     menuSoundIds: ResourcePacks.StandardMenuSounds,
 
-    gameSoundIds: ResourcePacks.StandardGameSounds.concat(ResourcePacks.ChromeLiteAdditionalGameSounds),
+    gameSoundIds: ResourcePacks.StandardGameSounds.concat(ResourcePacks.FullGameAdditionalSounds),
 
     menuImageFilenames: ResourcePacks.StandardMenuImageFilenames,
 
     loaderPageImages: ["loader-bg.jpg", "loader-logo.png"],
 
-    gameImageIds: ResourcePacks.StandardGameImages.concat(ResourcePacks.ChromeLiteAdditionalGameImages),
+    gameImageIds: ResourcePacks.StandardGameImages.concat(ResourcePacks.FullGameAdditionalGameImages),
 
     boxes: boxes,
 
@@ -78,8 +78,9 @@ const netEdition = {
         // ensure we don't emit null entries for the "coming soon" card
         .filter((levelBackgroundId) => levelBackgroundId != null),
 
-    // none of the chrome lite levels scroll
-    levelOverlayIds: [],
+    levelOverlayIds: normalizedBoxMetadata
+        .map(({ levelOverlayId }) => levelOverlayId)
+        .filter((levelOverlayId) => levelOverlayId != null),
 
     // hidden drawings are disabled
     drawingImageNames: [],

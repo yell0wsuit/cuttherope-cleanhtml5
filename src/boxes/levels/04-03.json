@@ -15,34 +15,64 @@
     ],
     "objects": [
         {
+            "name": 4,
+            "x": 78,
+            "y": 32,
+            "locale": "en",
+            "text": "Candy maintains its speed when teleporting",
+            "width": 200
+        },
+        {
+            "name": 13,
+            "x": 59,
+            "y": 70,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
             "name": 2,
-            "x": 55,
-            "y": 333
+            "x": 253,
+            "y": 177
+        },
+        {
+            "name": 56,
+            "x": 241,
+            "y": 373,
+            "group": 0,
+            "angle": -180
+        },
+        {
+            "name": 56,
+            "x": 70,
+            "y": 235,
+            "group": 0,
+            "angle": -60
         },
         {
             "name": 52,
-            "x": 220,
-            "y": 340
-        },
-        {
-            "name": 81,
-            "x": 130,
-            "y": 405,
-            "angle": 0,
-            "size": 1
-        },
-        {
-            "name": 81,
-            "x": 210,
-            "y": 405,
-            "angle": 0,
-            "size": 1
+            "x": 191,
+            "y": 379
         },
         {
             "name": 100,
-            "x": 167,
-            "y": 310,
+            "x": 112,
+            "y": 378,
             "length": 50,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": 80,
+            "moveVertical": false,
+            "moveOffset": 80,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 266,
+            "y": 321,
+            "length": 55,
             "wheel": false,
             "gun": false,
             "radius": -1,
@@ -53,48 +83,13 @@
             "part": "L"
         },
         {
-            "name": 56,
-            "x": 260,
-            "y": 353,
-            "group": 0,
-            "angle": -180
-        },
-        {
-            "name": 56,
-            "x": 65,
-            "y": 165,
-            "group": 0,
-            "angle": 0
-        },
-        {
-            "name": 81,
-            "x": 280,
-            "y": 225,
-            "angle": 0,
-            "size": 1
-        },
-        {
-            "name": 81,
-            "x": 200,
-            "y": 225,
-            "angle": 0,
-            "size": 1
-        },
-        {
-            "name": 81,
-            "x": 120,
-            "y": 225,
-            "angle": 0,
-            "size": 1
-        },
-        {
             "name": 100,
-            "x": 198,
-            "y": 113,
-            "length": 100,
+            "x": 267,
+            "y": 432,
+            "length": 55,
             "wheel": false,
             "gun": false,
-            "radius": 65,
+            "radius": -1,
             "moveLength": -1,
             "moveVertical": false,
             "moveOffset": 0,
@@ -103,25 +98,81 @@
         },
         {
             "name": 3,
-            "x": 269,
-            "y": 183,
-            "path": "1,-110,",
-            "moveSpeed": 50,
+            "x": 113,
+            "y": 169,
+            "path": "RW30",
+            "moveSpeed": 70,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 148,
+            "y": 154,
+            "path": "RC30",
+            "moveSpeed": 80,
             "timeout": -1
         },
         {
             "name": 3,
             "x": 130,
-            "y": 84,
-            "path": "1,110,",
-            "moveSpeed": 50,
+            "y": 158,
+            "path": "RC20",
+            "moveSpeed": 80,
             "timeout": -1
+        }
+    ],
+    "fr": [
+        {
+            "name": 4,
+            "x": 78,
+            "y": 23,
+            "locale": "fr",
+            "text": "La vitesse du bonbon reste identique lorsqu'il est téléporté",
+            "width": 200
         },
         {
-            "name": 3,
-            "x": 198,
-            "y": 187,
-            "timeout": -1
+            "name": 13,
+            "x": 50,
+            "y": 73,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "de": [
+        {
+            "name": 4,
+            "x": 69,
+            "y": 28,
+            "locale": "de",
+            "text": "Beim Teleportieren behält der Bonbon seine Geschwindigkeit bei",
+            "width": 200
+        },
+        {
+            "name": 13,
+            "x": 54,
+            "y": 72,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ru": [
+        {
+            "name": 4,
+            "x": 62,
+            "y": 31,
+            "locale": "ru",
+            "text": "Конфета сохраняет свою скорость при телепортации",
+            "width": 240
+        },
+        {
+            "name": 13,
+            "x": 43,
+            "y": 69,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
         }
     ]
 }

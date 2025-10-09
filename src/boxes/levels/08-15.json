@@ -1,0 +1,109 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 640,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 2,
+            "x": 319,
+            "y": 404
+        },
+        {
+            "name": 52,
+            "x": 320,
+            "y": 286
+        },
+        {
+            "name": 100,
+            "x": 478,
+            "y": 266,
+            "length": 95,
+            "wheel": false,
+            "gun": false,
+            "radius": 28,
+            "moveLength": 145,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 3,
+            "x": 320,
+            "y": 153,
+            "timeout": 11
+        },
+        {
+            "name": 3,
+            "x": 545,
+            "y": 184,
+            "timeout": 8
+        },
+        {
+            "name": 3,
+            "x": 101,
+            "y": 189,
+            "timeout": 8
+        },
+        {
+            "name": 100,
+            "x": 168,
+            "y": 267,
+            "length": 95,
+            "wheel": false,
+            "gun": false,
+            "radius": 28,
+            "moveLength": 145,
+            "moveVertical": false,
+            "moveOffset": 145,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 322,
+            "y": 53,
+            "length": 208,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": true,
+            "part": "L"
+        },
+        {
+            "name": 55,
+            "x": 238,
+            "y": 269,
+            "angle": 0
+        },
+        {
+            "name": 55,
+            "x": 407,
+            "y": 272,
+            "angle": 180
+        },
+        {
+            "name": 58,
+            "x": 320,
+            "y": 214,
+            "angle": 0,
+            "size": 2,
+            "path": "0,0",
+            "rotateSpeed": 150
+        }
+    ]
+}

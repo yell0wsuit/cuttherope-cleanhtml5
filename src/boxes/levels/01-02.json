@@ -86,11 +86,11 @@
         },
         {
             "name": 4,
-            "x": 113,
-            "y": 245,
+            "x": 133,
+            "y": 285,
             "locale": "en",
             "text": "Collect as many stars as you can",
-            "width": 200
+            "width": 150
         },
         {
             "name": 13,
@@ -104,18 +104,18 @@
     "ru": [
         {
             "name": 13,
-            "x": 80,
-            "y": 290,
+            "x": 94,
+            "y": 315,
             "locale": "ru",
             "moveSpeed": 100,
             "rotateSpeed": 100
         },
         {
             "name": 4,
-            "x": 80,
-            "y": 228,
+            "x": 103,
+            "y": 278,
             "locale": "ru",
-            "text": "Старайтесь собрать как можно больше звезд",
+            "text": "Старайтесь собирать звезды леденцом",
             "width": 210
         }
     ],
@@ -123,10 +123,10 @@
         {
             "name": 4,
             "x": 137,
-            "y": 245,
+            "y": 285,
             "locale": "fr",
             "text": "Collecte autant d'étoiles que tu le peux",
-            "width": 230
+            "width": 200
         },
         {
             "name": 13,
@@ -140,161 +140,17 @@
     "de": [
         {
             "name": 4,
-            "x": 66,
-            "y": 265,
+            "x": 126,
+            "y": 285,
             "locale": "de",
             "text": "Sammle möglichst viele Sternchen",
             "width": 170
         },
         {
             "name": 13,
-            "x": 66,
+            "x": 106,
             "y": 321,
             "locale": "de",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        }
-    ],
-    "es": [
-        {
-            "name": 4,
-            "x": 66,
-            "y": 265,
-            "locale": "es",
-            "text": "Consigue tantas estrellas como puedas.",
-            "width": 170
-        },
-        {
-            "name": 13,
-            "x": 66,
-            "y": 321,
-            "locale": "es",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        }
-    ],
-    "br": [
-        {
-            "name": 4,
-            "x": 66,
-            "y": 265,
-            "locale": "br",
-            "text": "Colete o máximo de estrelas possível",
-            "width": 170
-        },
-        {
-            "name": 13,
-            "x": 66,
-            "y": 321,
-            "locale": "br",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        }
-    ],
-    "ca": [
-        {
-            "name": 4,
-            "x": 56,
-            "y": 265,
-            "locale": "ca",
-            "text": "Aconsegueix totes les estrelles que puguis",
-            "width": 170
-        },
-        {
-            "name": 13,
-            "x": 36,
-            "y": 321,
-            "locale": "ca",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        }
-    ],
-    "it": [
-        {
-            "name": 4,
-            "x": 56,
-            "y": 265,
-            "locale": "it",
-            "text": "Recupera più stelle possibili",
-            "width": 170
-        },
-        {
-            "name": 13,
-            "x": 36,
-            "y": 321,
-            "locale": "it",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        }
-    ],
-    "nl": [
-        {
-            "name": 4,
-            "x": 56,
-            "y": 265,
-            "locale": "nl",
-            "text": "Verzamel zoveel mogelijk sterren",
-            "width": 170
-        },
-        {
-            "name": 13,
-            "x": 36,
-            "y": 321,
-            "locale": "nl",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        }
-    ],
-    "ko": [
-        {
-            "name": 4,
-            "x": 56,
-            "y": 265,
-            "locale": "ko",
-            "text": "별을 최대한 *많이 모으세요.",
-            "width": 170
-        },
-        {
-            "name": 13,
-            "x": 36,
-            "y": 321,
-            "locale": "ko",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        }
-    ],
-    "zh": [
-        {
-            "name": 4,
-            "x": 56,
-            "y": 295,
-            "locale": "zh",
-            "text": "尽可能多地收集星星",
-            "width": 200
-        },
-        {
-            "name": 13,
-            "x": 36,
-            "y": 321,
-            "locale": "zh",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        }
-    ],
-    "ja": [
-        {
-            "name": 4,
-            "x": 46,
-            "y": 265,
-            "locale": "ja",
-            "text": "できるだけ 多くの スターを 獲得 しましょう",
-            "width": 220
-        },
-        {
-            "name": 13,
-            "x": 36,
-            "y": 321,
-            "locale": "ja",
             "moveSpeed": 100,
             "rotateSpeed": 100
         }
