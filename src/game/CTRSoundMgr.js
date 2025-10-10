@@ -8,6 +8,7 @@ const SoundMgr = {
     soundEnabled: settings.getSoundEnabled(),
     musicEnabled: settings.getMusicEnabled(),
     musicId: null,
+    musicResumeOffset: 0,
     loopingSounds: new Map(), // Track looping sound state by instance
 
     playSound: function (soundId) {
@@ -129,16 +130,25 @@ const SoundMgr = {
         const self = this;
         if (this.musicEnabled && !Sounds.isPlaying(soundId)) {
             this.musicId = soundId;
+            const offset = this.musicResumeOffset || 0;
+            this.musicResumeOffset = 0;
             Sounds.setVolume(soundId, 70);
-            Sounds.play(soundId, function () {
-                if (!self.audioPaused && self.musicEnabled) {
-                    self.playMusic(soundId);
-                }
-            });
+            Sounds.play(
+                soundId,
+                function () {
+                    if (!self.audioPaused && self.musicEnabled) {
+                        self.musicResumeOffset = 0;
+                        self.playMusic(soundId);
+                    }
+                },
+                { offset }
+            );
         }
     },
 
     pauseAudio: function () {
+        if (this.audioPaused) return; // Don't pause if already paused
+
         this.audioPaused = true;
         this.pauseMusic();
 
@@ -147,8 +157,9 @@ const SoundMgr = {
     },
 
     pauseMusic: function () {
-        if (this.musicId) {
+        if (this.musicId && Sounds.isPlaying(this.musicId)) {
             Sounds.pause(this.musicId);
+            this.musicResumeOffset = Sounds.getResumeOffset(this.musicId);
         }
     },
 
@@ -163,7 +174,7 @@ const SoundMgr = {
     },
 
     resumeMusic: function () {
-        if (this.musicId) {
+        if (this.musicId && !Sounds.isPlaying(this.musicId)) {
             this.playMusic(this.musicId);
         }
     },
@@ -171,6 +182,7 @@ const SoundMgr = {
     stopMusic: function () {
         if (this.musicId) {
             Sounds.stop(this.musicId);
+            this.musicResumeOffset = 0;
         }
     },
 

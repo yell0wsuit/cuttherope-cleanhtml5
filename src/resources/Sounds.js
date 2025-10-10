@@ -1,4 +1,4 @@
-import { resumeAudioContext } from "@/utils/audioContext";
+import { getAudioContext, resumeAudioContext } from "@/utils/audioContext";
 import { soundRegistry } from "@/utils/soundRegistry";
 
 const getSoundData = (soundId) => {
@@ -48,12 +48,40 @@ const stopAllSources = (soundData, shouldInvokeCallback = false) => {
     }
 };
 
+const calculateResumeOffset = (soundData) => {
+    if (!soundData || soundData.playingSources.size === 0) {
+        return soundData?.resumeOffset ?? 0;
+    }
+
+    const context = getAudioContext();
+    if (!context) {
+        return soundData.resumeOffset ?? 0;
+    }
+
+    const source = soundData.playingSources.values().next().value;
+
+    if (!source || typeof source.__startedAt !== "number") {
+        return soundData.resumeOffset ?? 0;
+    }
+
+    const elapsed = Math.max(0, context.currentTime - source.__startedAt);
+    const baseOffset = source.__startOffset || 0;
+    const duration = soundData.buffer?.duration || 0;
+    const totalOffset = baseOffset + elapsed;
+
+    if (duration > 0) {
+        return totalOffset % duration;
+    }
+
+    return totalOffset;
+};
+
 // export a singleton which manages audio using the Web Audio API
 const Sounds = {
     onReady: function (callback) {
         callback();
     },
-    play: function (soundId, onComplete) {
+    play: function (soundId, onComplete, options = {}) {
         const soundData = getSoundData(soundId);
         if (!soundData) return;
 
@@ -67,6 +95,15 @@ const Sounds = {
         source.buffer = soundData.buffer;
         source.__skipOnEnd = false;
         source.__onComplete = onComplete;
+
+        const duration = soundData.buffer?.duration || 0;
+        const rawOffset = Math.max(0, options.offset || 0);
+        const offset =
+            duration > 0
+                ? Math.min(rawOffset % duration, Math.max(0, duration - 0.0001))
+                : rawOffset;
+        source.__startOffset = offset;
+        source.__startedAt = context.currentTime;
 
         try {
             source.connect(soundData.gainNode);
@@ -92,6 +129,11 @@ const Sounds = {
 
             soundData.playingSources.delete(source);
 
+            if (!source.__skipOnEnd) {
+                soundData.resumeOffset = 0;
+                soundData.isPaused = false;
+            }
+
             if (!source.__skipOnEnd && typeof source.__onComplete === "function") {
                 try {
                     source.__onComplete();
@@ -103,12 +145,14 @@ const Sounds = {
 
         soundData.playingSources.add(source);
         soundData.isPaused = false;
+        soundData.resumeOffset = offset;
 
         try {
-            source.start(0);
+            source.start(0, offset);
         } catch (error) {
             window.console?.error?.("Failed to start audio source", error);
             soundData.playingSources.delete(source);
+            soundData.resumeOffset = 0;
 
             const callback = source.__onComplete;
             source.__onComplete = null;
@@ -146,6 +190,7 @@ const Sounds = {
         const soundData = getSoundData(soundId);
         if (!soundData) return;
 
+        soundData.resumeOffset = calculateResumeOffset(soundData);
         stopAllSources(soundData, false);
         soundData.isPaused = true;
     },
@@ -155,6 +200,13 @@ const Sounds = {
 
         stopAllSources(soundData, false);
         soundData.isPaused = false;
+        soundData.resumeOffset = 0;
+    },
+    getResumeOffset: function (soundId) {
+        const soundData = getSoundData(soundId);
+        if (!soundData) return 0;
+
+        return soundData.resumeOffset || 0;
     },
     setVolume: function (soundId, percent) {
         const soundData = getSoundData(soundId);

@@ -1321,7 +1321,7 @@ var InterfaceManager = new (function () {
         window.addEventListener("blur", _this.pauseGame);
 
         // when returning to the tab, resume music (except when on game menu - no music there)
-        window.addEventListener("focus", _this.resumeGame);
+        //window.addEventListener("focus", _this.resumeGame);
 
         // hide behind the scenes when we update the page
         window.addEventListener("resize", function () {
