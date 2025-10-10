@@ -54,20 +54,17 @@ const SoundMgr = {
             return;
         }
 
-        this.loopingSounds.set(instanceId, true);
-
         const loop = () => {
             // Check if this instance should still be looping
-            if (!self.loopingSounds.get(instanceId)) {
-                return;
-            }
+            const entry = self.loopingSounds.get(instanceId);
+            if (!entry || !entry.active) return;
 
             if (!self.audioPaused && self.soundEnabled) {
                 Sounds.play(soundId, loop);
-            } else {
-                self.loopingSounds.delete(instanceId);
             }
         };
+
+        this.loopingSounds.set(instanceId, { active: true, loopFn: loop });
 
         // Start with optional delay
         if (delayMs > 0) {
@@ -152,8 +149,8 @@ const SoundMgr = {
         this.audioPaused = true;
         this.pauseMusic();
 
-        // Stop all looping sounds
-        this.stopLoopedSound(ResourceId.SND_ELECTRIC);
+        // Pause the actual sound, but preserve loop state
+        Sounds.pause(ResourceId.SND_ELECTRIC);
     },
 
     pauseMusic: function () {
@@ -169,8 +166,14 @@ const SoundMgr = {
         this.audioPaused = false;
         this.resumeMusic();
 
-        // Note: Electric sounds should be restarted by game logic, not here
-        // as we don't know which sparks should be active
+        // Restart each active electric loop instance exactly once
+        if (this.soundEnabled) {
+            for (const [instanceId, entry] of this.loopingSounds) {
+                if (entry && entry.active && instanceId.startsWith(ResourceId.SND_ELECTRIC + "_")) {
+                    entry.loopFn();
+                }
+            }
+        }
     },
 
     resumeMusic: function () {
