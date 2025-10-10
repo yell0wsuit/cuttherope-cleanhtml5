@@ -127,11 +127,11 @@ const Dialogs = {
 
         // add the title and text
         const titleImg = Text.drawBig({
-                text: Lang.menuText(MenuStringId.SLOW_TITLE),
-                alignment: Alignment.CENTER,
-                width: 1200 * resolution.CANVAS_SCALE,
-                scale: 1.25 * resolution.UI_TEXT_SCALE,
-            }),
+            text: Lang.menuText(MenuStringId.SLOW_TITLE),
+            alignment: Alignment.CENTER,
+            width: 1200 * resolution.CANVAS_SCALE,
+            scale: 1.25 * resolution.UI_TEXT_SCALE,
+        }),
             textImg = Text.drawBig({
                 text: Lang.menuText(MenuStringId.SLOW_TEXT),
                 width: 1200 * resolution.CANVAS_SCALE,
