@@ -2583,6 +2583,7 @@ const GameScene = BaseElement.extend({
     draw: function () {
         // reset any canvas transformations and clear everything
         const ctx = Canvas.context;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, resolution.CANVAS_WIDTH, resolution.CANVAS_HEIGHT);
 
         this.preDraw();
@@ -2591,7 +2592,8 @@ const GameScene = BaseElement.extend({
         //console.log('back x:' + this.back.x + ' y:' + this.back.y);
         this.back.draw();
 
-        let overlayCut = 2,
+        // Scale overlayCut based on resolution to prevent visible seams at HD resolutions
+        let overlayCut = Math.ceil(2 * resolution.CANVAS_SCALE / 0.1875),
             q,
             overlayRect,
             off;
