@@ -554,14 +554,14 @@ var InterfaceManager = new (function () {
             resetBtn.addEventListener("click", function () {
                 // create localized text images
                 const resetTextImg = Text.drawBig({
-                        text: Lang.menuText(MenuStringId.RESET_TEXT),
-                        alignment: Alignment.CENTER,
+                    text: Lang.menuText(MenuStringId.RESET_TEXT),
+                    alignment: Alignment.CENTER,
 
-                        // we use canvas scale because text is draw at game scale and
-                        // scaled to UI dimensions by setting the img width & height
-                        width: 1250 * resolution.CANVAS_SCALE,
-                        scaleToUI: true,
-                    }),
+                    // we use canvas scale because text is draw at game scale and
+                    // scaled to UI dimensions by setting the img width & height
+                    width: 1250 * resolution.CANVAS_SCALE,
+                    scaleToUI: true,
+                }),
                     resetHoldYesImg = Text.drawSmall({
                         text: Lang.menuText(MenuStringId.RESET_HOLD_YES),
                         scaleToUI: true,
@@ -878,24 +878,26 @@ var InterfaceManager = new (function () {
         fadeOut("#levelScore");
         fadeOut("#levelBack");
 
-        RootController.startLevel(BoxManager.currentBoxIndex + 1, BoxManager.currentLevelIndex);
-
         fadeOut("#levelOptions", timeout).then(function () {
             if (_this.isBoxOpen) {
                 fadeOut("#levelResults", 800);
 
                 setTimeout(function () {
-                    if (skip) {
+                    //if (skip) {
+                    //    RootController.startLevel(BoxManager.currentBoxIndex + 1, BoxManager.currentLevelIndex);
+                    //    _this.showGameUI();
+                    //} else {
+                    RootController.startLevel(BoxManager.currentBoxIndex + 1, BoxManager.currentLevelIndex);
+                    Doors.openDoors(false, function () {
                         _this.showGameUI();
-                    } else {
-                        Doors.openDoors(false, function () {
-                            _this.showGameUI();
-                        });
-                    }
+                    });
+                    //}
                 }, 400);
             } else {
                 Doors.openBoxAnimation(function () {
                     _this.isBoxOpen = true;
+
+                    RootController.startLevel(BoxManager.currentBoxIndex + 1, BoxManager.currentLevelIndex);
 
                     Doors.openDoors(true, function () {
                         _this.showGameUI();
