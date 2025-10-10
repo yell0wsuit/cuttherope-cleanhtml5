@@ -311,7 +311,10 @@ var ScoreManager = new (function () {
     };
 
     this.updateTotalScoreText = function () {
-        const text = Lang.menuText(MenuStringId.TOTAL_STARS).replace("%d", ScoreManager.totalStars());
+        const text = Lang.menuText(MenuStringId.TOTAL_STARS).replace(
+            "%d",
+            ScoreManager.totalStars()
+        );
         Text.drawBig({ text: text, imgSel: "#boxScore img", scaleToUI: true });
     };
 

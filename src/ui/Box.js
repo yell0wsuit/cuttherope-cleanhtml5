@@ -196,12 +196,26 @@ const Box = Class.extend({
                 // TODO: should resize lock images for every resolution and remove scaling
                 // TODO: also need to normalize the size of boxes (which vary)
                 ctx.scale(1.015, 1);
-                ctx.drawImage(this.lockImg, resolution.uiScaledNumber(23), resolution.uiScaledNumber(155));
+                ctx.drawImage(
+                    this.lockImg,
+                    resolution.uiScaledNumber(23),
+                    resolution.uiScaledNumber(155)
+                );
                 ctx.scale(1 / 1.015, 1);
 
                 if (this.purchased) {
-                    ctx.drawImage(this.reqImg, labelX, resolution.uiScaledNumber(220), textWidth, textHeight);
-                    ctx.drawImage(this.starImg, labelX + textWidth + starLeftMargin, resolution.uiScaledNumber(225));
+                    ctx.drawImage(
+                        this.reqImg,
+                        labelX,
+                        resolution.uiScaledNumber(220),
+                        textWidth,
+                        textHeight
+                    );
+                    ctx.drawImage(
+                        this.starImg,
+                        labelX + textWidth + starLeftMargin,
+                        resolution.uiScaledNumber(225)
+                    );
                 }
 
                 /*
@@ -218,8 +232,15 @@ const Box = Class.extend({
             }
 
             // draw the perfect mark if user got every star in the box
-            if (ScoreManager.achievedStars(this.index) === ScoreManager.possibleStarsForBox(this.index)) {
-                ctx.drawImage(this.perfectMark, resolution.uiScaledNumber(260), resolution.uiScaledNumber(250));
+            if (
+                ScoreManager.achievedStars(this.index) ===
+                ScoreManager.possibleStarsForBox(this.index)
+            ) {
+                ctx.drawImage(
+                    this.perfectMark,
+                    resolution.uiScaledNumber(260),
+                    resolution.uiScaledNumber(250)
+                );
             }
         }
 

@@ -78,7 +78,8 @@ const loadImages = function () {
     const passwordPath = platform.imageBaseUrl + (editionUI.passwordDirectory || "");
     queueMenuImages(editionUI.passwordImageNames, passwordPath);
 
-    const passwordResolutionPath = platform.resolutionBaseUrl + (editionUI.passwordResolutionDirectory || "");
+    const passwordResolutionPath =
+        platform.resolutionBaseUrl + (editionUI.passwordResolutionDirectory || "");
     queueMenuImages(editionUI.passwordResolutionImageNames, passwordResolutionPath);
 
     queueMenuImages(editionUI.pageImageNames, platform.imageBaseUrl + "page/");

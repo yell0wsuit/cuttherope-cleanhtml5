@@ -57,9 +57,7 @@ function satisfyConstraintArray(arr, n) {
                     invWeight2 = cp.invWeight,
                     deltaLength = Math.sqrt(sqrDeltaLength),
                     minDeltaLength = deltaLength > 1 ? deltaLength : 1,
-                    diff =
-                        (deltaLength - restLength) /
-                        (minDeltaLength * (invWeight + invWeight2));
+                    diff = (deltaLength - restLength) / (minDeltaLength * (invWeight + invWeight2));
 
                 // copy the first position before modification
                 if (pinUndefined) {

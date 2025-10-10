@@ -46,7 +46,10 @@ const Spikes = CTRGameObject.extend({
             const normalQuad = IMG_OBJ_ROTATABLE_SPIKES_BUTTON_button_1 + (t - 1) * 2,
                 pressedQuad = IMG_OBJ_ROTATABLE_SPIKES_BUTTON_button_1_pressed + (t - 1) * 2,
                 bup = ImageElement.create(ResourceId.IMG_OBJ_ROTATABLE_SPIKES_BUTTON, normalQuad),
-                bdown = ImageElement.create(ResourceId.IMG_OBJ_ROTATABLE_SPIKES_BUTTON, pressedQuad);
+                bdown = ImageElement.create(
+                    ResourceId.IMG_OBJ_ROTATABLE_SPIKES_BUTTON,
+                    pressedQuad
+                );
 
             bup.doRestoreCutTransparency();
             bdown.doRestoreCutTransparency();
@@ -117,7 +120,9 @@ const Spikes = CTRGameObject.extend({
         this.touchIndex = Constants.UNDEFINED;
     },
     updateRotation: function () {
-        let pWidth = this.electro ? this.width - 400 * resolution.CANVAS_SCALE : this.texture.rects[this.quadToDraw].w;
+        let pWidth = this.electro
+            ? this.width - 400 * resolution.CANVAS_SCALE
+            : this.texture.rects[this.quadToDraw].w;
 
         pWidth /= 2;
 
