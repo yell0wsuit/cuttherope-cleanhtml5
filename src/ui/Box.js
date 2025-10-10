@@ -73,6 +73,7 @@ const Box = Class.extend({
         this.index = boxIndex;
         this.islocked = islocked;
         this.visible = true;
+        this.pubSubSubscriptions = [];
 
         // initially we assume all boxes are included in the game
         this.purchased = true;
@@ -105,7 +106,7 @@ const Box = Class.extend({
             self.textRendered = true;
         };
 
-        PubSub.subscribe(PubSub.ChannelId.LanguageChanged, this.renderText);
+        this.pubSubSubscriptions.push(PubSub.subscribe(PubSub.ChannelId.LanguageChanged, this.renderText));
 
         this.reqImg = Text.drawBig({ text: reqstars, scaleToUI: true });
 
@@ -347,6 +348,16 @@ const Box = Class.extend({
 
     onUnselected: function () {
         hidePurchaseButton();
+    },
+
+    destroy: function () {
+        if (!this.pubSubSubscriptions) {
+            return;
+        }
+
+        while (this.pubSubSubscriptions.length) {
+            PubSub.unsubscribe(this.pubSubSubscriptions.pop());
+        }
     },
 });
 
