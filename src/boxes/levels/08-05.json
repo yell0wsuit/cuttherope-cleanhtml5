@@ -1,0 +1,126 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 640,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 55,
+            "x": 40,
+            "y": 398,
+            "angle": 0
+        },
+        {
+            "name": 55,
+            "x": 157,
+            "y": 98,
+            "angle": 0
+        },
+        {
+            "name": 55,
+            "x": 324,
+            "y": 398,
+            "angle": 0
+        },
+        {
+            "name": 52,
+            "x": 158,
+            "y": 301
+        },
+        {
+            "name": 54,
+            "x": 161,
+            "y": 391
+        },
+        {
+            "name": 100,
+            "x": 162,
+            "y": 164,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 60,
+            "x": 281,
+            "y": 384,
+            "angle": 90,
+            "size": 4
+        },
+        {
+            "name": 60,
+            "x": 464,
+            "y": 96,
+            "angle": 90,
+            "size": 4
+        },
+        {
+            "name": 2,
+            "x": 551,
+            "y": 64
+        },
+        {
+            "name": 3,
+            "x": 286,
+            "y": 94,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 551,
+            "y": 166,
+            "timeout": 20
+        },
+        {
+            "name": 3,
+            "x": 468,
+            "y": 399,
+            "timeout": -1
+        },
+        {
+            "name": 53,
+            "x": 379,
+            "y": 228
+        },
+        {
+            "name": 80,
+            "x": 554,
+            "y": 243,
+            "initialDelay": -2,
+            "offTime": 3,
+            "onTime": 2,
+            "angle": 0,
+            "size": 5
+        },
+        {
+            "name": 58,
+            "x": 281,
+            "y": 245,
+            "angle": 90,
+            "size": 2
+        },
+        {
+            "name": 57,
+            "x": 464,
+            "y": 214,
+            "angle": 90,
+            "size": 1
+        }
+    ]
+}

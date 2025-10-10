@@ -16,286 +16,212 @@
     "objects": [
         {
             "name": 52,
-            "x": 266,
-            "y": 161
-        },
-        {
-            "name": 100,
-            "x": 155,
-            "y": 250,
-            "length": 95,
-            "wheel": false,
-            "gun": false,
-            "radius": -1,
-            "moveLength": -1,
-            "moveVertical": false,
-            "moveOffset": 0,
-            "spider": false,
-            "part": "L"
-        },
-        {
-            "name": 100,
-            "x": 153,
-            "y": 110,
-            "length": 100,
-            "wheel": false,
-            "gun": false,
-            "radius": -1,
-            "moveLength": -1,
-            "moveVertical": false,
-            "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "x": 101,
+            "y": 238
         },
         {
             "name": 2,
-            "x": 155,
-            "y": 430
+            "x": 219,
+            "y": 431
         },
         {
             "name": 3,
-            "x": 37,
-            "y": 264,
+            "x": 102,
+            "y": 326,
             "timeout": -1
         },
         {
             "name": 3,
-            "x": 152,
-            "y": 70,
+            "x": 217,
+            "y": 209,
             "timeout": -1
         },
         {
             "name": 3,
-            "x": 276,
-            "y": 264,
+            "x": 217,
+            "y": 74,
             "timeout": -1
+        },
+        {
+            "name": 100,
+            "x": 96,
+            "y": 139,
+            "length": 90,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L",
+            "hidePath": false
         },
         {
             "name": 54,
-            "x": 252,
-            "y": 367
+            "x": 99,
+            "y": 391
+        },
+        {
+            "name": 100,
+            "x": 219,
+            "y": 252,
+            "length": 140,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L",
+            "hidePath": false
         },
         {
             "name": 4,
-            "x": -100,
-            "y": 280,
+            "x": 43,
+            "y": 45,
             "locale": "en",
-            "text": "You can restart the level by pressing the",
-            "width": 220
+            "text": "Click to pop the bubble",
+            "width": 120,
+            "special": 1
         },
         {
-            "name": 12,
-            "x": -30,
-            "y": 485,
+            "name": 4,
+            "x": 157,
+            "y": 293,
             "locale": "en",
+            "text": "The bubble will lift the candy up",
+            "width": 120
+        },
+        {
+            "name": 8,
+            "x": 167,
+            "y": 391,
+            "locale": "en",
+            "angle": 15,
             "moveSpeed": 100,
             "rotateSpeed": 100
         },
         {
-            "name": 4,
-            "x": -15,
-            "y": 430,
+            "name": 9,
+            "x": 218,
+            "y": 78,
             "locale": "en",
-            "text": "button",
-            "width": 100
+            "moveSpeed": 100,
+            "rotateSpeed": 10,
+            "special": 1
         }
     ],
     "ru": [
         {
-            "name": 4,
-            "x": -100,
-            "y": 304,
+            "name": 8,
+            "x": 167,
+            "y": 391,
             "locale": "ru",
-            "text": "Вы можете перезапустить уровень, нажав кнопку",
-            "width": 200
-        },
-        {
-            "name": 12,
-            "x": 85,
-            "y": 436,
-            "locale": "ru",
+            "angle": 20,
             "moveSpeed": 100,
             "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 138,
+            "y": 315,
+            "locale": "ru",
+            "text": "Пузырь подымет леденец вверх",
+            "width": 160
+        },
+        {
+            "name": 4,
+            "x": 21,
+            "y": 44,
+            "locale": "ru",
+            "text": "Нажмите, чтобы лопнуть пузырь",
+            "width": 160,
+            "special": 1
+        },
+        {
+            "name": 9,
+            "x": 218,
+            "y": 78,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "special": 1
         }
     ],
     "fr": [
         {
             "name": 4,
-            "x": -100,
-            "y": 280,
+            "x": 121,
+            "y": 311,
             "locale": "fr",
-            "text": "Tu peux recommencer le niveau en touchant le bouton",
-            "width": 180
+            "text": "La bulle fera monter le bonbon",
+            "width": 150
         },
         {
-            "name": 12,
-            "x": -70,
-            "y": 481,
+            "name": 8,
+            "x": 167,
+            "y": 386,
             "locale": "fr",
+            "angle": 15,
             "moveSpeed": 100,
             "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 33,
+            "y": 46,
+            "locale": "fr",
+            "text": "Clique pour éclater la bulle",
+            "width": 130,
+            "special": 1
+        },
+        {
+            "name": 9,
+            "x": 217,
+            "y": 78,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "special": 1
         }
     ],
     "de": [
         {
-            "name": 12,
-            "x": -90,
-            "y": 440,
+            "name": 4,
+            "x": 17,
+            "y": 30,
+            "locale": "de",
+            "text": "Klicke, um die Seifenblase platzen zu lassen",
+            "width": 140,
+            "special": 1
+        },
+        {
+            "name": 9,
+            "x": 217,
+            "y": 77,
             "locale": "de",
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 10,
+            "special": 1
         },
         {
             "name": 4,
-            "x": -100,
-            "y": 282,
+            "x": 138,
+            "y": 308,
             "locale": "de",
-            "text": "Lass den Bonbon nicht aus der Schachtel",
-            "width": 200
-        }
-    ],
-    "es": [
-        {
-            "name": 12,
-            "x": -52,
-            "y": 423,
-            "locale": "es",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
+            "text": "Die Seifenblase lässt den Bonbon schweben",
+            "width": 170
         },
         {
-            "name": 4,
-            "x": -100,
-            "y": 282,
-            "locale": "es",
-            "text": "Puedes reinciar el nivel tocando el   botón",
-            "width": 200
-        }
-    ],
-    "br": [
-        {
-            "name": 12,
-            "x": -52,
-            "y": 466,
-            "locale": "br",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": -100,
-            "y": 282,
-            "locale": "br",
-            "text": "Você pode reiniciar o nível, pressionando o    botão",
-            "width": 200
-        }
-    ],
-    "ca": [
-        {
-            "name": 12,
-            "x": -60,
+            "name": 8,
+            "x": 166,
             "y": 390,
-            "locale": "ca",
+            "locale": "de",
+            "angle": 15,
             "moveSpeed": 100,
             "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": -130,
-            "y": 282,
-            "locale": "ca",
-            "text": "Pots reiniciar el nivell prement el     botó",
-            "width": 240
-        }
-    ],
-    "it": [
-        {
-            "name": 12,
-            "x": -32,
-            "y": 445,
-            "locale": "it",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": -130,
-            "y": 282,
-            "locale": "it",
-            "text": "Puoi ricominciare il livello premendo il   tasto",
-            "width": 240
-        }
-    ],
-    "nl": [
-        {
-            "name": 12,
-            "x": -62,
-            "y": 485,
-            "locale": "nl",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": -130,
-            "y": 282,
-            "locale": "nl",
-            "text": "Je kunt het level opnieuw opstarten met een druk op de      knop",
-            "width": 240
-        }
-    ],
-    "ko": [
-        {
-            "name": 12,
-            "x": -90,
-            "y": 425,
-            "locale": "ko",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": -130,
-            "y": 282,
-            "locale": "ko",
-            "text": "버튼을 누르면 *해당 레벨을 처음부터 *다시 시작해요.",
-            "width": 240
-        }
-    ],
-    "zh": [
-        {
-            "name": 12,
-            "x": -28,
-            "y": 385,
-            "locale": "zh",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": -130,
-            "y": 282,
-            "locale": "zh",
-            "text": "按下这个按钮 就可以重新开始这一关",
-            "width": 350
-        }
-    ],
-    "ja": [
-        {
-            "name": 12,
-            "x": -80,
-            "y": 430,
-            "locale": "ja",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": -130,
-            "y": 282,
-            "locale": "ja",
-            "text": "このボタンで ステージを やり直す ことが できます",
-            "width": 240
         }
     ]
 }

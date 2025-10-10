@@ -16,13 +16,13 @@
     "objects": [
         {
             "name": 52,
-            "x": 156,
-            "y": 139
+            "x": 158,
+            "y": 147
         },
         {
             "name": 100,
             "x": 159,
-            "y": 51,
+            "y": 45,
             "length": 90,
             "wheel": false,
             "gun": false,
@@ -31,7 +31,8 @@
             "moveVertical": false,
             "moveOffset": 0,
             "spider": false,
-            "part": "L"
+            "part": "L",
+            "hidePath": false
         },
         {
             "name": 2,
@@ -58,19 +59,19 @@
         },
         {
             "name": 4,
-            "x": 197,
-            "y": 41,
+            "x": 174,
+            "y": 46,
             "locale": "en",
             "text": "Slide across to cut the rope",
-            "width": 180
+            "width": 130
         },
         {
             "name": 4,
-            "x": 202,
-            "y": 290,
+            "x": 182,
+            "y": 335,
             "locale": "en",
             "text": "Deliver candy to Om Nom",
-            "width": 200
+            "width": 130
         },
         {
             "name": 5,
@@ -122,8 +123,8 @@
         },
         {
             "name": 14,
-            "x": 73,
-            "y": 145,
+            "x": 93,
+            "y": 149,
             "locale": "en",
             "moveSpeed": 100,
             "rotateSpeed": 100,
@@ -133,8 +134,8 @@
     "ru": [
         {
             "name": 14,
-            "x": 73,
-            "y": 153,
+            "x": 93,
+            "y": 156,
             "locale": "ru",
             "moveSpeed": 100,
             "rotateSpeed": 100,
@@ -143,7 +144,7 @@
         {
             "name": 5,
             "x": 109,
-            "y": 130,
+            "y": 126,
             "locale": "ru",
             "moveSpeed": 100,
             "rotateSpeed": 100
@@ -151,7 +152,7 @@
         {
             "name": 5,
             "x": 57,
-            "y": 130,
+            "y": 126,
             "locale": "ru",
             "moveSpeed": 100,
             "rotateSpeed": 100
@@ -159,7 +160,7 @@
         {
             "name": 5,
             "x": 161,
-            "y": 130,
+            "y": 126,
             "locale": "ru",
             "moveSpeed": 100,
             "rotateSpeed": 100
@@ -167,7 +168,7 @@
         {
             "name": 5,
             "x": 213,
-            "y": 130,
+            "y": 126,
             "locale": "ru",
             "moveSpeed": 100,
             "rotateSpeed": 100
@@ -175,7 +176,7 @@
         {
             "name": 5,
             "x": 265,
-            "y": 130,
+            "y": 126,
             "locale": "ru",
             "moveSpeed": 100,
             "rotateSpeed": 100
@@ -183,33 +184,33 @@
         {
             "name": 4,
             "x": 177,
-            "y": 40,
+            "y": 17,
             "locale": "ru",
-            "text": "Нажмите или проведите курсором, чтобы перерезать веревку",
-            "width": 300
+            "text": "Проведите или нажмите курсором, чтобы перерезать веревку",
+            "width": 160
         },
         {
             "name": 8,
             "x": 231,
-            "y": 415,
+            "y": 421,
             "locale": "ru",
             "moveSpeed": 100,
             "rotateSpeed": 100
         },
         {
             "name": 4,
-            "x": 216,
-            "y": 280,
+            "x": 196,
+            "y": 314,
             "locale": "ru",
             "text": "Доставьте леденец Ам Няму",
-            "width": 180
+            "width": 80
         }
     ],
     "fr": [
         {
             "name": 14,
-            "x": 73,
-            "y": 150,
+            "x": 92,
+            "y": 149,
             "locale": "fr",
             "moveSpeed": 100,
             "rotateSpeed": 100,
@@ -261,7 +262,7 @@
             "y": 31,
             "locale": "fr",
             "text": "Clique ou fais glisser pour couper la corde",
-            "width": 200
+            "width": 130
         },
         {
             "name": 8,
@@ -274,17 +275,17 @@
         {
             "name": 4,
             "x": 196,
-            "y": 290,
+            "y": 311,
             "locale": "fr",
             "text": "Donne un bonbon à Om Nom",
-            "width": 200
+            "width": 100
         }
     ],
     "de": [
         {
             "name": 14,
-            "x": 73,
-            "y": 155,
+            "x": 93,
+            "y": 156,
             "locale": "de",
             "moveSpeed": 100,
             "rotateSpeed": 100,
@@ -333,10 +334,10 @@
         {
             "name": 4,
             "x": 175,
-            "y": 15,
+            "y": 35,
             "locale": "de",
-            "text": "Klicke oder ziehe, um das Seil zu zerschneiden",
-            "width": 200
+            "text": "Klicke oder ziehe, um das Seil zu schneiden",
+            "width": 160
         },
         {
             "name": 8,
@@ -348,595 +349,11 @@
         },
         {
             "name": 4,
-            "x": 210,
-            "y": 312,
+            "x": 200,
+            "y": 317,
             "locale": "de",
             "text": "Versorg Om Nom mit Bonbons",
-            "width": 200
-        }
-    ],
-    "es": [
-        {
-            "name": 14,
-            "x": 73,
-            "y": 155,
-            "locale": "es",
-            "moveSpeed": 100,
-            "rotateSpeed": 100,
-            "special": 2
-        },
-        {
-            "name": 5,
-            "x": 109,
-            "y": 129,
-            "locale": "es",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 57,
-            "y": 129,
-            "locale": "es",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 161,
-            "y": 129,
-            "locale": "es",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 213,
-            "y": 129,
-            "locale": "es",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 265,
-            "y": 129,
-            "locale": "es",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 175,
-            "y": 45,
-            "locale": "es",
-            "text": "Haz clic o desliza para cortar la cuerda",
-            "width": 200
-        },
-        {
-            "name": 8,
-            "x": 231,
-            "y": 416,
-            "locale": "es",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 210,
-            "y": 312,
-            "locale": "es",
-            "text": "Haz llegar el caramelo hasta Om Nom.",
-            "width": 200
-        }
-    ],
-    "br": [
-        {
-            "name": 14,
-            "x": 73,
-            "y": 155,
-            "locale": "br",
-            "moveSpeed": 100,
-            "rotateSpeed": 100,
-            "special": 2
-        },
-        {
-            "name": 5,
-            "x": 109,
-            "y": 129,
-            "locale": "br",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 57,
-            "y": 129,
-            "locale": "br",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 161,
-            "y": 129,
-            "locale": "br",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 213,
-            "y": 129,
-            "locale": "br",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 265,
-            "y": 129,
-            "locale": "br",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 175,
-            "y": 45,
-            "locale": "br",
-            "text": "Deslize o dedo para cortar a corda",
-            "width": 200
-        },
-        {
-            "name": 8,
-            "x": 231,
-            "y": 416,
-            "locale": "br",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 200,
-            "y": 312,
-            "locale": "br",
-            "text": "Entregue os doces para Om Nom.",
-            "width": 200
-        }
-    ],
-    "ca": [
-        {
-            "name": 14,
-            "x": 73,
-            "y": 155,
-            "locale": "es",
-            "moveSpeed": 100,
-            "rotateSpeed": 100,
-            "special": 2
-        },
-        {
-            "name": 5,
-            "x": 109,
-            "y": 129,
-            "locale": "es",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 57,
-            "y": 129,
-            "locale": "ca",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 161,
-            "y": 129,
-            "locale": "ca",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 213,
-            "y": 129,
-            "locale": "ca",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 265,
-            "y": 129,
-            "locale": "ca",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 175,
-            "y": 45,
-            "locale": "ca",
-            "text": "Llisca el dit per tallar la corda",
-            "width": 200
-        }
-    ],
-    "it": [
-        {
-            "name": 14,
-            "x": 73,
-            "y": 155,
-            "locale": "it",
-            "moveSpeed": 100,
-            "rotateSpeed": 100,
-            "special": 2
-        },
-        {
-            "name": 5,
-            "x": 109,
-            "y": 129,
-            "locale": "it",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 57,
-            "y": 129,
-            "locale": "it",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 161,
-            "y": 129,
-            "locale": "it",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 213,
-            "y": 129,
-            "locale": "it",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 265,
-            "y": 129,
-            "locale": "it",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 175,
-            "y": 20,
-            "locale": "it",
-            "text": "Scorri per tagliare la corda",
-            "width": 200
-        },
-        {
-            "name": 8,
-            "x": 231,
-            "y": 436,
-            "locale": "it",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 200,
-            "y": 305,
-            "locale": "it",
-            "text": "Porta un bonbon a Om Nom",
-            "width": 200
-        }
-    ],
-    "nl": [
-        {
-            "name": 14,
-            "x": 73,
-            "y": 155,
-            "locale": "nl",
-            "moveSpeed": 100,
-            "rotateSpeed": 100,
-            "special": 2
-        },
-        {
-            "name": 5,
-            "x": 109,
-            "y": 129,
-            "locale": "nl",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 57,
-            "y": 129,
-            "locale": "nl",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 161,
-            "y": 129,
-            "locale": "nl",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 213,
-            "y": 129,
-            "locale": "nl",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 265,
-            "y": 129,
-            "locale": "nl",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 175,
-            "y": 25,
-            "locale": "nl",
-            "text": "Sleep om het touw door te snijden",
-            "width": 200
-        },
-        {
-            "name": 8,
-            "x": 231,
-            "y": 416,
-            "locale": "nl",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 230,
-            "y": 312,
-            "locale": "nl",
-            "text": "Lever het snoepje af bij Om Nom",
-            "width": 200
-        }
-    ],
-    "ko": [
-        {
-            "name": 14,
-            "x": 73,
-            "y": 155,
-            "locale": "ko",
-            "moveSpeed": 100,
-            "rotateSpeed": 100,
-            "special": 2
-        },
-        {
-            "name": 5,
-            "x": 109,
-            "y": 129,
-            "locale": "ko",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 57,
-            "y": 129,
-            "locale": "ko",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 161,
-            "y": 129,
-            "locale": "ko",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 213,
-            "y": 129,
-            "locale": "ko",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 265,
-            "y": 129,
-            "locale": "ko",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 175,
-            "y": 65,
-            "locale": "ko",
-            "text": "손가락으로 줄을 *자르세요.",
-            "width": 200
-        },
-        {
-            "name": 8,
-            "x": 231,
-            "y": 416,
-            "locale": "ko",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 230,
-            "y": 312,
-            "locale": "ko",
-            "text": "Om Nom에게 사탕을 *먹이세요.",
-            "width": 200
-        }
-    ],
-    "zh": [
-        {
-            "name": 14,
-            "x": 73,
-            "y": 155,
-            "locale": "zh",
-            "moveSpeed": 100,
-            "rotateSpeed": 100,
-            "special": 2
-        },
-        {
-            "name": 5,
-            "x": 109,
-            "y": 129,
-            "locale": "zh",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 57,
-            "y": 129,
-            "locale": "zh",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 161,
-            "y": 129,
-            "locale": "zh",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 213,
-            "y": 129,
-            "locale": "zh",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 265,
-            "y": 129,
-            "locale": "zh",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 175,
-            "y": 65,
-            "locale": "zh",
-            "text": "滑动你的手指 即可剪断绳索",
-            "width": 200
-        },
-        {
-            "name": 8,
-            "x": 231,
-            "y": 416,
-            "locale": "zh",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 230,
-            "y": 342,
-            "locale": "zh",
-            "text": "将糖果送给 Om Nom",
-            "width": 200
-        }
-    ],
-    "ja": [
-        {
-            "name": 14,
-            "x": 73,
-            "y": 155,
-            "locale": "ja",
-            "moveSpeed": 100,
-            "rotateSpeed": 100,
-            "special": 2
-        },
-        {
-            "name": 5,
-            "x": 109,
-            "y": 129,
-            "locale": "ja",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 57,
-            "y": 129,
-            "locale": "ja",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 161,
-            "y": 129,
-            "locale": "ja",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 213,
-            "y": 129,
-            "locale": "ja",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 5,
-            "x": 265,
-            "y": 129,
-            "locale": "ja",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 175,
-            "y": 60,
-            "locale": "ja",
-            "text": "指を スライド させて ロープを 切り しましょう",
-            "width": 200
-        },
-        {
-            "name": 8,
-            "x": 231,
-            "y": 416,
-            "locale": "ja",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 240,
-            "y": 342,
-            "locale": "ja",
-            "text": "Om Nomに キャンディを あげ ましょう",
-            "width": 200
+            "width": 100
         }
     ]
 }

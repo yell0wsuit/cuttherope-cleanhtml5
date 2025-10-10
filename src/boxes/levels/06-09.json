@@ -1,0 +1,127 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 2,
+            "x": 55,
+            "y": 333
+        },
+        {
+            "name": 52,
+            "x": 220,
+            "y": 340
+        },
+        {
+            "name": 81,
+            "x": 130,
+            "y": 405,
+            "angle": 0,
+            "size": 1
+        },
+        {
+            "name": 81,
+            "x": 210,
+            "y": 405,
+            "angle": 0,
+            "size": 1
+        },
+        {
+            "name": 100,
+            "x": 167,
+            "y": 310,
+            "length": 50,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 56,
+            "x": 260,
+            "y": 353,
+            "group": 0,
+            "angle": -180
+        },
+        {
+            "name": 56,
+            "x": 65,
+            "y": 165,
+            "group": 0,
+            "angle": 0
+        },
+        {
+            "name": 81,
+            "x": 280,
+            "y": 225,
+            "angle": 0,
+            "size": 1
+        },
+        {
+            "name": 81,
+            "x": 200,
+            "y": 225,
+            "angle": 0,
+            "size": 1
+        },
+        {
+            "name": 81,
+            "x": 120,
+            "y": 225,
+            "angle": 0,
+            "size": 1
+        },
+        {
+            "name": 100,
+            "x": 198,
+            "y": 113,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": 65,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 3,
+            "x": 269,
+            "y": 183,
+            "path": "1,-110,",
+            "moveSpeed": 50,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 130,
+            "y": 84,
+            "path": "1,110,",
+            "moveSpeed": 50,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 198,
+            "y": 187,
+            "timeout": -1
+        }
+    ]
+}

@@ -1,0 +1,107 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "twoParts": false,
+            "ropePhysicsSpeed": 1,
+            "water": 0,
+            "waterSpeed": 0
+        }
+    ],
+    "objects": [
+        {
+            "name": 2,
+            "x": 162,
+            "y": 431
+        },
+        {
+            "name": 120,
+            "x": 161,
+            "y": 214,
+            "size": 120,
+            "handleAngle": 25,
+            "oneHandle": false
+        },
+        {
+            "name": 52,
+            "x": 160,
+            "y": 210
+        },
+        {
+            "name": 100,
+            "x": 161,
+            "y": 50,
+            "length": 120,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "radius": -1,
+            "invisible": false,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "helicopter": false,
+            "part": "L",
+            "hidePath": false
+        },
+        {
+            "name": 54,
+            "x": 160,
+            "y": 309
+        },
+        {
+            "name": 54,
+            "x": 92,
+            "y": 282
+        },
+        {
+            "name": 54,
+            "x": 72,
+            "y": 213
+        },
+        {
+            "name": 54,
+            "x": 229,
+            "y": 284
+        },
+        {
+            "name": 3,
+            "x": 441,
+            "y": 114,
+            "path": "-313,2,",
+            "moveSpeed": 20,
+            "timeout": 15
+        },
+        {
+            "name": 3,
+            "x": 266,
+            "y": 115,
+            "path": "-144,0,",
+            "moveSpeed": 20,
+            "timeout": 7
+        },
+        {
+            "name": 3,
+            "x": 360,
+            "y": 281,
+            "path": "-235,1,",
+            "moveSpeed": 20,
+            "timeout": 10
+        }
+    ],
+    "layer 2": [
+        {
+            "name": 54,
+            "x": 254,
+            "y": 217
+        }
+    ]
+}

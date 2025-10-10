@@ -8,79 +8,128 @@
         },
         {
             "name": 1,
+            "ropePhysicsSpeed": 1,
             "special": 1,
-            "ropePhysicsSpeed": 1
+            "twoParts": false
         }
     ],
     "objects": [
         {
-            "name": 52,
+            "name": 3,
             "x": 161,
-            "y": 350
+            "y": 371,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 163,
+            "y": 293,
+            "timeout": -1
         },
         {
             "name": 2,
+            "x": 160,
+            "y": 432
+        },
+        {
+            "name": 52,
+            "x": 160,
+            "y": 217
+        },
+        {
+            "name": 100,
             "x": 163,
-            "y": 67
-        },
-        {
-            "name": 100,
-            "x": 243,
-            "y": 290,
-            "length": 120,
+            "y": 152,
+            "length": 50,
             "wheel": false,
+            "gun": false,
             "radius": -1,
             "moveLength": -1,
             "moveVertical": false,
             "moveOffset": 0,
-            "spider": false
-        },
-        {
-            "name": 100,
-            "x": 83,
-            "y": 401,
-            "length": 90,
-            "wheel": false,
-            "radius": -1,
-            "moveLength": -1,
-            "moveVertical": false,
-            "moveOffset": 0,
-            "spider": false
+            "spider": false,
+            "part": "L"
         },
         {
             "name": 54,
-            "x": 165,
-            "y": 421
-        },
-        {
-            "name": 100,
-            "x": 165,
-            "y": 123,
-            "length": 200,
-            "wheel": false,
-            "radius": -1,
-            "moveLength": -1,
-            "moveVertical": false,
-            "moveOffset": 0,
-            "spider": false
+            "x": 161,
+            "y": 293
         },
         {
             "name": 3,
-            "x": 97,
-            "y": 294,
+            "x": 161,
+            "y": 91,
             "timeout": -1
         },
         {
-            "name": 3,
-            "x": 166,
-            "y": 422,
-            "timeout": -1
+            "name": 4,
+            "x": 20,
+            "y": 80,
+            "locale": "en",
+            "text": "Don't let the candy leave the box",
+            "width": 120
         },
         {
-            "name": 3,
-            "x": 97,
-            "y": 228,
-            "timeout": -1
+            "name": 13,
+            "x": 79,
+            "y": 65,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ru": [
+        {
+            "name": 4,
+            "x": 20,
+            "y": 80,
+            "locale": "ru",
+            "text": "Не дайте леденцу вылететь за пределы коробки",
+            "width": 120
+        },
+        {
+            "name": 13,
+            "x": 79,
+            "y": 65,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "fr": [
+        {
+            "name": 4,
+            "x": 20,
+            "y": 80,
+            "locale": "fr",
+            "text": "Ne laissez pas le bonbon sortir de la boîte",
+            "width": 110
+        },
+        {
+            "name": 13,
+            "x": 79,
+            "y": 65,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "de": [
+        {
+            "name": 4,
+            "x": 14,
+            "y": 80,
+            "locale": "de",
+            "text": "Lass den Bonbon nicht aus der Schachtel",
+            "width": 140
+        },
+        {
+            "name": 13,
+            "x": 79,
+            "y": 65,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
         }
     ]
 }

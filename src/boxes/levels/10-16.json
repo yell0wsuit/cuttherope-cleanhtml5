@@ -1,0 +1,118 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "twoParts": false,
+            "ropePhysicsSpeed": 1,
+            "water": 0
+        }
+    ],
+    "objects": [
+        {
+            "name": 56,
+            "x": 118,
+            "y": 48,
+            "group": 0,
+            "angle": 90
+        },
+        {
+            "name": 56,
+            "x": 125,
+            "y": 429,
+            "group": 0,
+            "angle": -90
+        },
+        {
+            "name": 2,
+            "x": 275,
+            "y": 189
+        },
+        {
+            "name": 100,
+            "x": 56,
+            "y": 96,
+            "length": 50,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "radius": 50,
+            "invisible": false,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "helicopter": false,
+            "part": "L",
+            "path": "200,0,",
+            "moveSpeed": 50
+        },
+        {
+            "name": 100,
+            "x": 258,
+            "y": 288,
+            "length": 50,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "radius": 50,
+            "invisible": false,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "helicopter": false,
+            "part": "L",
+            "path": "-200,0,",
+            "moveSpeed": 40
+        },
+        {
+            "name": 100,
+            "x": 120,
+            "y": 288,
+            "length": 60,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "radius": -1,
+            "invisible": false,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "helicopter": false,
+            "part": "L"
+        },
+        {
+            "name": 52,
+            "x": 120,
+            "y": 375
+        },
+        {
+            "name": 3,
+            "x": 120,
+            "y": 79,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 34,
+            "y": 192,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 34,
+            "y": 382,
+            "timeout": -1
+        }
+    ]
+}

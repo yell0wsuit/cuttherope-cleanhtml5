@@ -1,0 +1,119 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "special": 1,
+            "ropePhysicsSpeed": 1
+        }
+    ],
+    "objects": [
+        {
+            "name": 52,
+            "x": 164,
+            "y": 146
+        },
+        {
+            "name": 2,
+            "x": 271,
+            "y": 428
+        },
+        {
+            "name": 100,
+            "x": 67,
+            "y": 46,
+            "length": 105,
+            "wheel": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false
+        },
+        {
+            "name": 100,
+            "x": 260,
+            "y": 45,
+            "length": 105,
+            "wheel": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false
+        },
+        {
+            "name": 100,
+            "x": 258,
+            "y": 149,
+            "length": 145,
+            "wheel": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false
+        },
+        {
+            "name": 100,
+            "x": 67,
+            "y": 229,
+            "length": 165,
+            "wheel": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false
+        },
+        {
+            "name": 100,
+            "x": 259,
+            "y": 230,
+            "length": 165,
+            "wheel": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false
+        },
+        {
+            "name": 57,
+            "x": 268,
+            "y": 384,
+            "angle": 0,
+            "size": 1
+        },
+        {
+            "name": 57,
+            "x": 159,
+            "y": 241,
+            "angle": 90,
+            "size": 1
+        },
+        {
+            "name": 3,
+            "x": 257,
+            "y": 183,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 256,
+            "y": 335,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 161,
+            "y": 419,
+            "timeout": -1
+        }
+    ]
+}

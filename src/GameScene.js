@@ -382,18 +382,18 @@ const GameScene = BaseElement.extend({
             canvasBackground.style.display = "block";
 
             currentPack = LevelState.pack;
+        } else if (!this.bgTexture) {
+            // Make sure bgTexture is initialized even if pack hasn't changed
+            this.bgTexture = ResourceMgr.getTexture(bgrID);
         }
 
-        // there may not be an overlay specified if none of the box levels scroll
-        // this.overlayTexture = overlayId
-        //     ? ResourceMgr.getTexture(overlayId)
-        //     : this.bgTexture;
+        this.overlayTexture = overlayId ? ResourceMgr.getTexture(overlayId) : this.bgTexture;
 
-        // this.back = new BackgroundTileMap(1, 1);
-        // this.back.setRepeatHorizontally(TileMap.RepeatType.NONE);
-        // this.back.setRepeatVertically(TileMap.RepeatType.ALL);
-        // this.back.addTile(this.bgTexture, IMG_BGR_01_bgr);
-        // this.back.fill(0, 0, 1, 1, 0);
+        this.back = new BackgroundTileMap(1, 1);
+        this.back.setRepeatHorizontally(TileMap.RepeatType.NONE);
+        this.back.setRepeatVertically(TileMap.RepeatType.ALL);
+        this.back.addTile(this.bgTexture, IMG_BGR_01_bgr);
+        this.back.fill(0, 0, 1, 1, 0);
 
         this.gravityButton = null;
         this.gravityTouchDown = Constants.UNDEFINED;
@@ -2583,15 +2583,17 @@ const GameScene = BaseElement.extend({
     draw: function () {
         // reset any canvas transformations and clear everything
         const ctx = Canvas.context;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, resolution.CANVAS_WIDTH, resolution.CANVAS_HEIGHT);
 
         this.preDraw();
         this.camera.applyCameraTransformation();
-        //this.back.updateWithCameraPos(this.camera.pos);
+        this.back.updateWithCameraPos(this.camera.pos);
         //console.log('back x:' + this.back.x + ' y:' + this.back.y);
-        //this.back.draw();
+        this.back.draw();
 
-        let overlayCut = 2,
+        // Scale overlayCut based on resolution to prevent visible seams at HD resolutions
+        let overlayCut = Math.ceil(2 * resolution.CANVAS_SCALE / 0.1875),
             q,
             overlayRect,
             off;
@@ -3238,14 +3240,14 @@ const GameScene = BaseElement.extend({
 
         this.overOmNom = false;
 
-        // if (this.gravityButton) {
-        //     var childIndex = this.gravityButton.isOn() ? 1 : 0,
-        //         child = this.gravityButton.getChild(childIndex);
-        //     if (child.isInTouchZone(x + this.camera.pos.x, y + this.camera.pos.y, true)) {
-        //         this.gravityTouchDown = touchIndex;
-        //         return true;
-        //     }
-        // }
+        if (this.gravityButton) {
+            var childIndex = this.gravityButton.isOn() ? 1 : 0,
+                child = this.gravityButton.getChild(childIndex);
+            if (child.isInTouchZone(x + this.camera.pos.x, y + this.camera.pos.y, true)) {
+                this.gravityTouchDown = touchIndex;
+                return true;
+            }
+        }
 
         if (this.candyBubble) {
             if (this.handleBubbleTouch(this.star, x, y)) {
@@ -3470,15 +3472,15 @@ const GameScene = BaseElement.extend({
             this.gravityTouchDown = Constants.UNDEFINED;
         }
 
-        // for (i = 0, len = this.spikes.length; i < len; i++) {
-        //     var spike = this.spikes[i];
-        //     if (spike.rotateButton && spike.touchIndex === touchIndex) {
-        //         spike.touchIndex = Constants.UNDEFINED;
-        //         if (spike.rotateButton.onTouchUp(x + this.camera.pos.x, y + this.camera.pos.y)) {
-        //             return true;
-        //         }
-        //     }
-        // }
+        for (i = 0, len = this.spikes.length; i < len; i++) {
+            var spike = this.spikes[i];
+            if (spike.rotateButton && spike.touchIndex === touchIndex) {
+                spike.touchIndex = Constants.UNDEFINED;
+                if (spike.rotateButton.onTouchUp(x + this.camera.pos.x, y + this.camera.pos.y)) {
+                    return true;
+                }
+            }
+        }
 
         for (i = 0, len = this.rotatedCircles.length; i < len; i++) {
             const r = this.rotatedCircles[i];
@@ -3654,12 +3656,12 @@ const GameScene = BaseElement.extend({
 
         if (this.dragging[touchIndex]) {
             let fc = new FingerCut(
-                Vector.add(this.startPos[touchIndex], this.camera.pos),
-                Vector.add(touch, this.camera.pos),
-                5, // start size
-                5, // end size
-                RGBAColor.white.copy()
-            ),
+                    Vector.add(this.startPos[touchIndex], this.camera.pos),
+                    Vector.add(touch, this.camera.pos),
+                    5, // start size
+                    5, // end size
+                    RGBAColor.white.copy()
+                ),
                 currentCuts = this.fingerCuts[touchIndex],
                 ropeCuts = 0;
 

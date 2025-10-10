@@ -1,0 +1,106 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 52,
+            "x": 74,
+            "y": 361
+        },
+        {
+            "name": 100,
+            "x": 77,
+            "y": 445,
+            "length": 50,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "radius": -1,
+            "invisible": false,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 3,
+            "x": 107,
+            "y": 209,
+            "timeout": -1
+        },
+        {
+            "name": 2,
+            "x": 257,
+            "y": 156
+        },
+        {
+            "name": 54,
+            "x": 74,
+            "y": 361
+        },
+        {
+            "name": 3,
+            "x": 132,
+            "y": 231,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 80,
+            "y": 187,
+            "timeout": -1
+        },
+        {
+            "name": 60,
+            "x": 127,
+            "y": 267,
+            "angle": 40,
+            "size": 4,
+            "toggled": 1
+        },
+        {
+            "name": 60,
+            "x": 192,
+            "y": 270,
+            "angle": -40,
+            "size": 4,
+            "toggled": 1
+        },
+        {
+            "name": 100,
+            "x": 156,
+            "y": 93,
+            "length": 60,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "radius": 70,
+            "invisible": false,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 61,
+            "x": 243,
+            "y": 378,
+            "gl": 0
+        }
+    ]
+}
