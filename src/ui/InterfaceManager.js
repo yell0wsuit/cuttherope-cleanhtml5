@@ -862,11 +862,24 @@ var InterfaceManager = new (function () {
 
     var openLevelMenu = function () {
         RootController.pauseLevel();
+        // Pause music when opening the game menu
+        SoundMgr.pauseMusic();
         show("#levelMenu");
     };
 
     var closeLevelMenu = function () {
         hide("#levelMenu");
+        // Resume music when closing the game menu only if:
+        // 1. We're currently in the game (not menu or level select)
+        // 2. Game is enabled
+        // 3. A level is currently active
+        if (
+            PanelManager.currentPanelId === PanelId.GAME &&
+            _this.gameEnabled &&
+            RootController.isLevelActive()
+        ) {
+            SoundMgr.resumeMusic();
+        }
     };
 
     this.tapeBox = function () {
@@ -1297,7 +1310,18 @@ var InterfaceManager = new (function () {
     };
 
     this.resumeGame = function () {
-        if (PanelManager.currentPanelId !== PanelId.GAMEMENU && _this.gameEnabled) {
+        // Don't resume music if:
+        // 1. Game menu (pause menu) is visible
+        // 2. Current panel is the standalone game menu panel
+        // 3. Game is disabled
+        const isLevelMenuVisible =
+            getElement("#levelMenu") && getElement("#levelMenu").style.display !== "none";
+
+        if (
+            !isLevelMenuVisible &&
+            PanelManager.currentPanelId !== PanelId.GAMEMENU &&
+            _this.gameEnabled
+        ) {
             SoundMgr.resumeMusic();
         }
     };
@@ -1318,10 +1342,19 @@ var InterfaceManager = new (function () {
         GameBorder.domReady();
 
         // pause game / music when the user switches tabs
-        window.addEventListener("blur", _this.pauseGame);
+        //window.addEventListener("blur", _this.pauseGame);
 
         // when returning to the tab, resume music (except when on game menu - no music there)
         //window.addEventListener("focus", _this.resumeGame);
+
+        const onVisibilityChange = function () {
+            if (document.hidden || document.visibilityState === "hidden") {
+                _this.pauseGame();
+            } else {
+                _this.resumeGame();
+            }
+        };
+        document.addEventListener("visibilitychange", onVisibilityChange);
 
         // hide behind the scenes when we update the page
         window.addEventListener("resize", function () {
