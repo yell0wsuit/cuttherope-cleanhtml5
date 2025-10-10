@@ -1331,7 +1331,7 @@ const GameScene = BaseElement.extend({
 
         // delay greeting by Om-nom
         if (settings.showGreeting) {
-            this.dd.callObject(this, this.showGreeting, null, 3);
+            this.dd.callObject(this, this.showGreeting, null, 2);
             settings.showGreeting = false;
         }
 
