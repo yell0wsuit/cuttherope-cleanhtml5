@@ -1,8 +1,9 @@
 import { resumeAudioContext } from "@/utils/audioContext";
+import { soundRegistry } from "@/utils/soundRegistry";
 
 const getSoundData = (soundId) => {
     const id = "s" + soundId;
-    const soundData = window.sounds__[id];
+    const soundData = soundRegistry.get(id);
 
     if (!soundData || !soundData.buffer) {
         window.console?.error?.("Sound not loaded", soundId);
@@ -23,23 +24,18 @@ const stopAllSources = (soundData, shouldInvokeCallback = false) => {
 
         source.__skipOnEnd = true;
         source.__onComplete = null;
-
-        const disconnectSource = () => {
-            try {
-                source.disconnect();
-            } catch (error) {
-                window.console?.warn?.("Failed to disconnect audio source", error);
-            }
-        };
-
         source.onended = null;
 
         try {
             source.stop();
         } catch (error) {
             window.console?.warn?.("Failed to stop audio source", error);
-        } finally {
-            disconnectSource();
+        }
+
+        try {
+            source.disconnect();
+        } catch (error) {
+            window.console?.warn?.("Failed to disconnect audio source", error);
         }
 
         if (typeof callback === "function") {
@@ -90,7 +86,10 @@ const Sounds = {
         }
 
         source.onended = () => {
-            source.disconnect();
+            try {
+                source.disconnect();
+            } catch (e) {}
+
             soundData.playingSources.delete(source);
 
             if (!source.__skipOnEnd && typeof source.__onComplete === "function") {

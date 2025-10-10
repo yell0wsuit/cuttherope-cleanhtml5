@@ -1,7 +1,6 @@
 import PxLoader from "@/PxLoader";
 import { getAudioContext } from "@/utils/audioContext";
-
-window.sounds__ = {};
+import { soundRegistry } from "@/utils/soundRegistry";
 
 const decodeAudioBuffer = (context, arrayBuffer) => {
     return new Promise((resolve, reject) => {
@@ -65,13 +64,14 @@ class PxLoaderSound {
             const gainNode = context.createGain();
             gainNode.connect(context.destination);
 
-            window.sounds__[this.id] = {
+            // Use soundRegistry instead of window.sounds__
+            soundRegistry.set(this.id, {
                 buffer: audioBuffer,
                 gainNode,
                 playingSources: new Set(),
                 isPaused: false,
                 volume: 1,
-            };
+            });
 
             this.isReady = true;
         } catch (error) {
@@ -83,29 +83,12 @@ class PxLoaderSound {
     }
 
     cleanup() {
-        const soundData = window.sounds__[this.id];
-        if (soundData) {
-            // Stop all playing sources
-            for (const source of soundData.playingSources) {
-                try {
-                    source.stop();
-                    source.disconnect();
-                } catch (e) {}
-            }
-            soundData.playingSources.clear();
-
-            // Disconnect gain node
-            try {
-                soundData.gainNode.disconnect();
-            } catch (e) {}
-
-            delete window.sounds__[this.id];
-        }
+        soundRegistry.delete(this.id);
     }
 
     checkStatus() {
         if (this.isLoading) {
-            return; // Still loading, don't report anything yet
+            return;
         }
 
         if (this.hasError) {
@@ -127,7 +110,6 @@ class PxLoaderSound {
     }
 }
 
-// add a convenience method to PxLoader for adding a sound
 PxLoader.prototype.addSound = function (id, url, tags, priority) {
     const soundLoader = new PxLoaderSound(id, url, tags, priority);
     this.add(soundLoader);
