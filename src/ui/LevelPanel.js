@@ -14,7 +14,19 @@ import edition from "@/edition";
 import Alignment from "@/core/Alignment";
 import Dialogs from "@/ui/Dialogs";
 import dom from "@/utils/dom";
-const { addClass, append, delay, fadeIn, fadeOut, getElement, hide, removeClass, show, toggleClass, empty } = dom;
+const {
+    addClass,
+    append,
+    delay,
+    fadeIn,
+    fadeOut,
+    getElement,
+    hide,
+    removeClass,
+    show,
+    toggleClass,
+    empty,
+} = dom;
 
 const backgroundId = edition.levelBackgroundId || "levelBackground",
     LevelPanel = new Panel(PanelId.LEVELS, "levelPanel", backgroundId, true);
@@ -51,7 +63,7 @@ LevelPanel.init = function (interfaceManager) {
         topOffset = -40;
         inc = resolution.uiScaledNumber(101);
         modClass = "option-small";
-        (columns = 5), (lastRowCount = levelCount % 5);
+        ((columns = 5), (lastRowCount = levelCount % 5));
     }
 
     let curTop = topOffset,

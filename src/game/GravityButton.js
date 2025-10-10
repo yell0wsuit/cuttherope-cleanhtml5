@@ -6,7 +6,10 @@ const IMG_OBJ_STAR_IDLE_gravity_up = 57;
 
 var GravityButton = ToggleButton.extend({
     init: function () {
-        const itn = ImageElement.create(ResourceId.IMG_OBJ_STAR_IDLE, IMG_OBJ_STAR_IDLE_gravity_down),
+        const itn = ImageElement.create(
+                ResourceId.IMG_OBJ_STAR_IDLE,
+                IMG_OBJ_STAR_IDLE_gravity_down
+            ),
             itp = ImageElement.create(ResourceId.IMG_OBJ_STAR_IDLE, IMG_OBJ_STAR_IDLE_gravity_down),
             itn2 = ImageElement.create(ResourceId.IMG_OBJ_STAR_IDLE, IMG_OBJ_STAR_IDLE_gravity_up),
             itp2 = ImageElement.create(ResourceId.IMG_OBJ_STAR_IDLE, IMG_OBJ_STAR_IDLE_gravity_up);

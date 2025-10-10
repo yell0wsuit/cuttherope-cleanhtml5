@@ -96,7 +96,8 @@ const TimeBox = Box.extend({
         this.lockedBoxImg = new Image();
         this.lockedBoxImg.src = this.boxImg.src.replace(".png", "_locked.png");
         this.isBkCodeLocked = isLocked(boxIndex);
-        this.isTimeLocked = QueryStrings.unlockAllBoxes !== true && Date.now() < BoxOpenDates[boxIndex];
+        this.isTimeLocked =
+            QueryStrings.unlockAllBoxes !== true && Date.now() < BoxOpenDates[boxIndex];
         this.dateImg = null;
     },
 
@@ -186,7 +187,11 @@ const TimeBox = Box.extend({
             }
 
             if (bkCodeTextImg.complete) {
-                ctx.drawImage(bkCodeTextImg, resolution.uiScaledNumber(50), resolution.uiScaledNumber(90));
+                ctx.drawImage(
+                    bkCodeTextImg,
+                    resolution.uiScaledNumber(50),
+                    resolution.uiScaledNumber(90)
+                );
             }
         } else if (this.islocked) {
             // text label for "Collect"
@@ -199,12 +204,18 @@ const TimeBox = Box.extend({
                 });
             }
             if (collectTextImg.complete) {
-                ctx.drawImage(collectTextImg, resolution.uiScaledNumber(143), resolution.uiScaledNumber(108));
+                ctx.drawImage(
+                    collectTextImg,
+                    resolution.uiScaledNumber(143),
+                    resolution.uiScaledNumber(108)
+                );
             }
 
             // prefer css dimensions (scaled) for text
             const reqImgWidth = this.reqImg ? this.reqImg.offsetWidth || this.reqImg.width || 0 : 0,
-                reqImgHeight = this.reqImg ? this.reqImg.offsetHeight || this.reqImg.height || 0 : 0,
+                reqImgHeight = this.reqImg
+                    ? this.reqImg.offsetHeight || this.reqImg.height || 0
+                    : 0,
                 textWidth = reqImgWidth * 1.2,
                 textHeight = reqImgHeight * 1.2,
                 // ok to use raw image width for star (image already scaled)
@@ -218,7 +229,13 @@ const TimeBox = Box.extend({
                 labelX = labelMinX + labelOffsetX;
 
             ctx.drawImage(this.starImg, labelX, resolution.uiScaledNumber(160));
-            ctx.drawImage(this.reqImg, labelX + starWidth, resolution.uiScaledNumber(150), textWidth, textHeight);
+            ctx.drawImage(
+                this.reqImg,
+                labelX + starWidth,
+                resolution.uiScaledNumber(150),
+                textWidth,
+                textHeight
+            );
 
             // text label for "to unlock"
             if (!toUnlockTextImg) {
@@ -230,7 +247,11 @@ const TimeBox = Box.extend({
                 });
             }
             if (toUnlockTextImg.complete) {
-                ctx.drawImage(toUnlockTextImg, resolution.uiScaledNumber(130), resolution.uiScaledNumber(204));
+                ctx.drawImage(
+                    toUnlockTextImg,
+                    resolution.uiScaledNumber(130),
+                    resolution.uiScaledNumber(204)
+                );
             }
         }
     },

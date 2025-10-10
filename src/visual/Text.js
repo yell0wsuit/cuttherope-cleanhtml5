@@ -51,7 +51,10 @@ Text = BaseElement.extend({
             linesToDraw =
                 this.maxHeight === Constants.UNDEFINED
                     ? this.formattedStrings.length
-                    : Math.min(this.formattedStrings.length, this.maxHeight / itemHeight + this.font.lineOffset),
+                    : Math.min(
+                          this.formattedStrings.length,
+                          this.maxHeight / itemHeight + this.font.lineOffset
+                      ),
             drawEllipsis = linesToDraw !== this.formattedStrings.length;
 
         for (let i = 0; i < linesToDraw; i++) {
@@ -84,7 +87,9 @@ Text = BaseElement.extend({
                     const dotWidth = this.font.texture.rects[dotIndex].w;
                     if (
                         c === len - 1 ||
-                        (c === len - 2 && dx + 3 * (dotWidth + dotsOffset) + this.font.spaceWidth > this.wrapWidth)
+                        (c === len - 2 &&
+                            dx + 3 * (dotWidth + dotsOffset) + this.font.spaceWidth >
+                                this.wrapWidth)
                     ) {
                         this.d.mapTextureQuad(dotIndex, Math.round(dx), Math.round(dy), n++);
                         dx += dotWidth + dotsOffset;
@@ -104,7 +109,8 @@ Text = BaseElement.extend({
             this.width = dx;
         } else {
             this.height =
-                (this.font.fontHeight() + this.font.lineOffset) * this.formattedStrings.length - this.font.lineOffset;
+                (this.font.fontHeight() + this.font.lineOffset) * this.formattedStrings.length -
+                this.font.lineOffset;
             this.width = this.wrapWidth;
         }
 
@@ -211,7 +217,9 @@ Text = BaseElement.extend({
         if (xml.hasAttribute("string")) {
             const strId = Xml.attrInt("string"),
                 str = ResourceMgr.getString(strId),
-                strWidth = xml.hasAttribute("width") ? Xml.attrFloat(xml, "width") : Constants.UNDEFINED;
+                strWidth = xml.hasAttribute("width")
+                    ? Xml.attrFloat(xml, "width")
+                    : Constants.UNDEFINED;
 
             element.setString(str, strWidth);
         }
@@ -274,7 +282,7 @@ function setupFont(ctx, options) {
     }
 
     ctx.fillStyle = color;
-    
+
     // Font ID 4 uses larger font size, Font ID 5 uses 22px
     if (options.fontId === 4) {
         ctx.font = "bold 32px 'gooddognew', sans-serif";
@@ -293,7 +301,7 @@ Text.drawSystem = function (options) {
     // Use different line heights based on font ID
     const lineHeight = options.fontId === 4 ? 28 : 22;
     const topPadding = 8; // Add top padding to prevent text cutoff
-    
+
     const cnv = options.canvas ? options.img : document.createElement("canvas");
     cnv.width = options.width || options.maxScaleWidth || options.text.length * 16;
     cnv.height = lineHeight + topPadding;

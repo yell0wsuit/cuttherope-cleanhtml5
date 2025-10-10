@@ -36,7 +36,13 @@ var ViewController = Class.extend({
         this.avgDelta = 1 / 60;
 
         // keep the last five deltas (init with target fps)
-        this.pastDeltas = [this.avgDelta, this.avgDelta, this.avgDelta, this.avgDelta, this.avgDelta];
+        this.pastDeltas = [
+            this.avgDelta,
+            this.avgDelta,
+            this.avgDelta,
+            this.avgDelta,
+            this.avgDelta,
+        ];
     },
     activate: function () {
         //Debug.log('View controller activated');

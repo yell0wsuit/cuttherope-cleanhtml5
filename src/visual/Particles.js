@@ -147,10 +147,12 @@ const Particles = BaseElement.extend({
         particle.dir = v;
 
         // radial acceleration
-        particle.radialAccel = this.radialAccel + this.radialAccelVar * MathHelper.randomMinus1to1();
+        particle.radialAccel =
+            this.radialAccel + this.radialAccelVar * MathHelper.randomMinus1to1();
 
         // tangential acceleration
-        particle.tangentialAccel = this.tangentialAccel + this.tangentialAccelVar * MathHelper.randomMinus1to1();
+        particle.tangentialAccel =
+            this.tangentialAccel + this.tangentialAccelVar * MathHelper.randomMinus1to1();
 
         // life
         particle.life = this.life + this.lifeVar * MathHelper.randomMinus1to1();
@@ -253,7 +255,11 @@ const Particles = BaseElement.extend({
         p.pos.add(tmp);
     },
     updateParticle: function (particle, index) {
-        this.vertices[this.particleIdx] = new PointSprite(particle.pos.x, particle.pos.y, particle.size);
+        this.vertices[this.particleIdx] = new PointSprite(
+            particle.pos.x,
+            particle.pos.y,
+            particle.size
+        );
 
         this.colors[this.particleIdx] = particle.color;
     },

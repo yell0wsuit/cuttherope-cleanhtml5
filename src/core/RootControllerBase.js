@@ -41,15 +41,24 @@ const RootController = ViewController.extend({
         // when the user holds down the mouse button while moving the mouse
         this.dragMode = false;
 
-        PubSub.subscribe(PubSub.ChannelId.ControllerActivated, this.onControllerActivated.bind(this));
+        PubSub.subscribe(
+            PubSub.ChannelId.ControllerActivated,
+            this.onControllerActivated.bind(this)
+        );
         PubSub.subscribe(
             PubSub.ChannelId.ControllerDeactivateRequested,
             this.onControllerDeactivationRequest.bind(this)
         );
-        PubSub.subscribe(PubSub.ChannelId.ControllerDeactivated, this.onControllerDeactivated.bind(this));
+        PubSub.subscribe(
+            PubSub.ChannelId.ControllerDeactivated,
+            this.onControllerDeactivated.bind(this)
+        );
         PubSub.subscribe(PubSub.ChannelId.ControllerPaused, this.onControllerPaused.bind(this));
         PubSub.subscribe(PubSub.ChannelId.ControllerUnpaused, this.onControllerUnpaused.bind(this));
-        PubSub.subscribe(PubSub.ChannelId.ControllerViewHidden, this.onControllerViewHide.bind(this));
+        PubSub.subscribe(
+            PubSub.ChannelId.ControllerViewHidden,
+            this.onControllerViewHide.bind(this)
+        );
         PubSub.subscribe(PubSub.ChannelId.ControllerViewShow, this.onControllerViewShow.bind(this));
     },
 

@@ -68,7 +68,9 @@ export default class PxLoader {
 
     isBusy() {
         return this.entries.some(
-            (entry) => entry.status === PxLoader.ResourceState.QUEUED || entry.status === PxLoader.ResourceState.WAITING
+            (entry) =>
+                entry.status === PxLoader.ResourceState.QUEUED ||
+                entry.status === PxLoader.ResourceState.WAITING
         );
     }
 
@@ -195,7 +197,8 @@ export default class PxLoader {
         this.progressChanged = Date.now();
 
         for (const listener of this.progressListeners) {
-            const shouldCall = listener.tags.length === 0 || this.#arraysIntersect(resource.tags, listener.tags);
+            const shouldCall =
+                listener.tags.length === 0 || this.#arraysIntersect(resource.tags, listener.tags);
 
             if (shouldCall) {
                 this.#sendProgress(entry, listener);
@@ -209,7 +212,8 @@ export default class PxLoader {
 
         for (const entry of this.entries) {
             const includeResource =
-                listener.tags.length === 0 || this.#arraysIntersect(entry.resource.tags, listener.tags);
+                listener.tags.length === 0 ||
+                this.#arraysIntersect(entry.resource.tags, listener.tags);
 
             if (includeResource) {
                 total++;

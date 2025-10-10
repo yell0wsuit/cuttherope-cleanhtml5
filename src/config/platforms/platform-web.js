@@ -145,7 +145,9 @@ var WebPlatform = {
         }
     },
     getGameCompleteShareText: function (totalStars, possibleStars) {
-        const text = Lang.getText(locEntries.GAME_COMPLETE).replace("%d", totalStars).replace("%d", possibleStars);
+        const text = Lang.getText(locEntries.GAME_COMPLETE)
+            .replace("%d", totalStars)
+            .replace("%d", possibleStars);
         return text;
     },
     meetsRequirements: function () {

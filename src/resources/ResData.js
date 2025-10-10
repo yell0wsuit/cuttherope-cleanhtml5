@@ -6,7 +6,10 @@ const RES_DATA = [];
 RES_DATA[ResourceId.IMG_DEFAULT] = new ResEntry("zeptolab.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_LOADERBAR_FULL] = new ResEntry("loaderbar_full.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_CHILLINGO] = new ResEntry("Default.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_MENU_BUTTON_DEFAULT] = new ResEntry("menu_button_default.png", ResourceType.IMAGE);
+RES_DATA[ResourceId.IMG_MENU_BUTTON_DEFAULT] = new ResEntry(
+    "menu_button_default.png",
+    ResourceType.IMAGE
+);
 RES_DATA[ResourceId.FNT_BIG_FONT] = new ResEntry("big_font.png", ResourceType.FONT);
 RES_DATA[ResourceId.FNT_SMALL_FONT] = new ResEntry("small_font.png", ResourceType.FONT);
 RES_DATA[ResourceId.IMG_MENU_LOADING] = new ResEntry("menu_loading.png", ResourceType.IMAGE);
@@ -44,30 +47,63 @@ RES_DATA[ResourceId.SND_GRAVITY_ON] = new ResEntry("gravity_on", ResourceType.SO
 RES_DATA[ResourceId.SND_CANDY_LINK] = new ResEntry("candy_link", ResourceType.SOUND);
 RES_DATA[ResourceId.SND_BOUNCER] = new ResEntry("bouncer", ResourceType.SOUND);
 RES_DATA[ResourceId.IMG_MENU_BGR] = new ResEntry("menu_bgr.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_MENU_BUTTON_CRYSTAL] = new ResEntry("menu_button_crystal.png", ResourceType.IMAGE);
+RES_DATA[ResourceId.IMG_MENU_BUTTON_CRYSTAL] = new ResEntry(
+    "menu_button_crystal.png",
+    ResourceType.IMAGE
+);
 RES_DATA[ResourceId.IMG_MENU_POPUP] = new ResEntry("menu_popup.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_MENU_BUTTON_CRYSTAL_ICON] = new ResEntry("menu_button_crystal_icon.png", ResourceType.IMAGE);
+RES_DATA[ResourceId.IMG_MENU_BUTTON_CRYSTAL_ICON] = new ResEntry(
+    "menu_button_crystal_icon.png",
+    ResourceType.IMAGE
+);
 RES_DATA[ResourceId.IMG_MENU_LOGO] = new ResEntry("menu_logo.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_MENU_LEVEL_SELECTION] = new ResEntry("menu_level_selection.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_MENU_PACK_SELECTION] = new ResEntry("menu_pack_selection.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_MENU_EXTRA_BUTTONS] = new ResEntry("menu_extra_buttons.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_MENU_EXTRA_BUTTONS_EN] = new ResEntry("menu_extra_buttons_en.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_MENU_BUTTON_SHORT] = new ResEntry("menu_button_short.png", ResourceType.IMAGE);
+RES_DATA[ResourceId.IMG_MENU_LEVEL_SELECTION] = new ResEntry(
+    "menu_level_selection.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_MENU_PACK_SELECTION] = new ResEntry(
+    "menu_pack_selection.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_MENU_EXTRA_BUTTONS] = new ResEntry(
+    "menu_extra_buttons.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_MENU_EXTRA_BUTTONS_EN] = new ResEntry(
+    "menu_extra_buttons_en.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_MENU_BUTTON_SHORT] = new ResEntry(
+    "menu_button_short.png",
+    ResourceType.IMAGE
+);
 RES_DATA[ResourceId.IMG_HUD_BUTTONS] = new ResEntry("hud_buttons.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_OBJ_CANDY_01] = new ResEntry("obj_candy_01.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_OBJ_SPIDER] = new ResEntry("obj_spider.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_CONFETTI_PARTICLES] = new ResEntry("confetti_particles.png", ResourceType.IMAGE);
+RES_DATA[ResourceId.IMG_CONFETTI_PARTICLES] = new ResEntry(
+    "confetti_particles.png",
+    ResourceType.IMAGE
+);
 RES_DATA[ResourceId.IMG_MENU_PAUSE] = new ResEntry("menu_pause.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_MENU_RESULT] = new ResEntry("menu_result.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.FNT_FONT_NUMBERS_BIG] = new ResEntry("font_numbers_big.png", ResourceType.FONT);
 RES_DATA[ResourceId.IMG_HUD_BUTTONS_EN] = new ResEntry("hud_buttons_en.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_MENU_RESULT_EN] = new ResEntry("menu_result_en.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_OBJ_STAR_DISAPPEAR] = new ResEntry("obj_star_disappear.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_OBJ_BUBBLE_FLIGHT] = new ResEntry("obj_bubble_flight.png", ResourceType.IMAGE);
+RES_DATA[ResourceId.IMG_OBJ_STAR_DISAPPEAR] = new ResEntry(
+    "obj_star_disappear.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_OBJ_BUBBLE_FLIGHT] = new ResEntry(
+    "obj_bubble_flight.png",
+    ResourceType.IMAGE
+);
 RES_DATA[ResourceId.IMG_OBJ_BUBBLE_POP] = new ResEntry("obj_bubble_pop.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_OBJ_HOOK_AUTO] = new ResEntry("obj_hook_auto.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_OBJ_SPIKES_04] = new ResEntry("obj_spikes_04.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_OBJ_BUBBLE_ATTACHED] = new ResEntry("obj_bubble_attached.png", ResourceType.IMAGE);
+RES_DATA[ResourceId.IMG_OBJ_BUBBLE_ATTACHED] = new ResEntry(
+    "obj_bubble_attached.png",
+    ResourceType.IMAGE
+);
 RES_DATA[ResourceId.IMG_OBJ_HOOK_01] = new ResEntry("obj_hook_01.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_OBJ_HOOK_02] = new ResEntry("obj_hook_02.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_OBJ_STAR_IDLE] = new ResEntry("obj_star_idle.png", ResourceType.IMAGE);
@@ -76,11 +112,23 @@ RES_DATA[ResourceId.IMG_OBJ_SPIKES_03] = new ResEntry("obj_spikes_03.png", Resou
 RES_DATA[ResourceId.IMG_OBJ_SPIKES_02] = new ResEntry("obj_spikes_02.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_OBJ_SPIKES_01] = new ResEntry("obj_spikes_01.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_CHAR_ANIMATIONS] = new ResEntry("char_animations.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_CHAR_ANIMATIONS2] = new ResEntry("char_animations2.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_CHAR_ANIMATIONS3] = new ResEntry("char_animations3.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_OBJ_HOOK_REGULATED] = new ResEntry("obj_hook_regulated.png", ResourceType.IMAGE);
+RES_DATA[ResourceId.IMG_CHAR_ANIMATIONS2] = new ResEntry(
+    "char_animations2.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_CHAR_ANIMATIONS3] = new ResEntry(
+    "char_animations3.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_OBJ_HOOK_REGULATED] = new ResEntry(
+    "obj_hook_regulated.png",
+    ResourceType.IMAGE
+);
 RES_DATA[ResourceId.IMG_OBJ_ELECTRODES] = new ResEntry("obj_electrodes.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_OBJ_HOOK_MOVABLE] = new ResEntry("obj_hook_movable.png", ResourceType.IMAGE);
+RES_DATA[ResourceId.IMG_OBJ_HOOK_MOVABLE] = new ResEntry(
+    "obj_hook_movable.png",
+    ResourceType.IMAGE
+);
 RES_DATA[ResourceId.IMG_OBJ_PUMP] = new ResEntry("obj_pump.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_TUTORIAL_SIGNS] = new ResEntry("tutorial_signs.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_OBJ_SOCKS] = new ResEntry("obj_hat.png", ResourceType.IMAGE);
@@ -89,11 +137,26 @@ RES_DATA[ResourceId.IMG_OBJ_BOUNCER_02] = new ResEntry("obj_bouncer_02.png", Res
 RES_DATA[ResourceId.SND_MENU_MUSIC] = new ResEntry("menu_music", ResourceType.SOUND);
 RES_DATA[ResourceId.SND_GAME_MUSIC] = new ResEntry("game_music", ResourceType.SOUND);
 RES_DATA[ResourceId.SND_GAME_MUSIC2] = new ResEntry("game_music2", ResourceType.SOUND);
-RES_DATA[ResourceId.IMG_DRAWING_HIDDEN] = new ResEntry("obj_drawing_hidden.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_OBJ_ROTATABLE_SPIKES_01] = new ResEntry("obj_rotatable_spikes_01.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_OBJ_ROTATABLE_SPIKES_02] = new ResEntry("obj_rotatable_spikes_02.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_OBJ_ROTATABLE_SPIKES_03] = new ResEntry("obj_rotatable_spikes_03.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_OBJ_ROTATABLE_SPIKES_04] = new ResEntry("obj_rotatable_spikes_04.png", ResourceType.IMAGE);
+RES_DATA[ResourceId.IMG_DRAWING_HIDDEN] = new ResEntry(
+    "obj_drawing_hidden.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_OBJ_ROTATABLE_SPIKES_01] = new ResEntry(
+    "obj_rotatable_spikes_01.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_OBJ_ROTATABLE_SPIKES_02] = new ResEntry(
+    "obj_rotatable_spikes_02.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_OBJ_ROTATABLE_SPIKES_03] = new ResEntry(
+    "obj_rotatable_spikes_03.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_OBJ_ROTATABLE_SPIKES_04] = new ResEntry(
+    "obj_rotatable_spikes_04.png",
+    ResourceType.IMAGE
+);
 RES_DATA[ResourceId.IMG_OBJ_ROTATABLE_SPIKES_BUTTON] = new ResEntry(
     "obj_rotatable_spikes_button.png",
     ResourceType.IMAGE
@@ -142,36 +205,120 @@ RES_DATA[ResourceId.IMG_TIME_BGR_4] = new ResEntry("bgr_time4.jpg", ResourceType
 RES_DATA[ResourceId.IMG_TIME_BGR_5] = new ResEntry("bgr_time5.jpg", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_TIME_BGR_6] = new ResEntry("bgr_time6.jpg", ResourceType.IMAGE);
 
-RES_DATA[ResourceId.IMG_CAESAR_ANIMATIONS_1] = new ResEntry("Caesar_animations_1_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_CAESAR_ANIMATIONS_2] = new ResEntry("Caesar_animations_2_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_CAESAR_ANIMATIONS_3] = new ResEntry("Caesar_animations_3_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_CAESAR_ANIMATIONS_4] = new ResEntry("Caesar_animations_4_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_PAINTER_ANIMATIONS_1] = new ResEntry("Painter_animations_1_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_PAINTER_ANIMATIONS_2] = new ResEntry("Painter_animations_2_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_PAINTER_ANIMATIONS_3] = new ResEntry("Painter_animations_3_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_PAINTER_ANIMATIONS_4] = new ResEntry("Painter_animations_4_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_PHARAOH_ANIMATIONS_1] = new ResEntry("Pharaoh_animations_1_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_PHARAOH_ANIMATIONS_2] = new ResEntry("Pharaoh_animations_2_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_PHARAOH_ANIMATIONS_3] = new ResEntry("Pharaoh_animations_3_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_PHARAOH_ANIMATIONS_4] = new ResEntry("Pharaoh_animations_4_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_PIRATE_ANIMATIONS_1] = new ResEntry("Pirate_animations_1_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_PIRATE_ANIMATIONS_2] = new ResEntry("Pirate_animations_2_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_PIRATE_ANIMATIONS_3] = new ResEntry("Pirate_animations_3_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_PIRATE_ANIMATIONS_4] = new ResEntry("Pirate_animations_4_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_PREHISTORIC_ANIMATIONS_1] = new ResEntry("Prehistoric_animations_1_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_PREHISTORIC_ANIMATIONS_2] = new ResEntry("Prehistoric_animations_2_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_PREHISTORIC_ANIMATIONS_3] = new ResEntry("Prehistoric_animations_3_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_PREHISTORIC_ANIMATIONS_4] = new ResEntry("Prehistoric_animations_4_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_VIKING_ANIMATIONS_1] = new ResEntry("Viking_animations_1_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_VIKING_ANIMATIONS_2] = new ResEntry("Viking_animations_2_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_VIKING_ANIMATIONS_3] = new ResEntry("Viking_animations_3_hd.png", ResourceType.IMAGE);
-RES_DATA[ResourceId.IMG_VIKING_ANIMATIONS_4] = new ResEntry("Viking_animations_4_hd.png", ResourceType.IMAGE);
+RES_DATA[ResourceId.IMG_CAESAR_ANIMATIONS_1] = new ResEntry(
+    "Caesar_animations_1_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_CAESAR_ANIMATIONS_2] = new ResEntry(
+    "Caesar_animations_2_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_CAESAR_ANIMATIONS_3] = new ResEntry(
+    "Caesar_animations_3_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_CAESAR_ANIMATIONS_4] = new ResEntry(
+    "Caesar_animations_4_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_PAINTER_ANIMATIONS_1] = new ResEntry(
+    "Painter_animations_1_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_PAINTER_ANIMATIONS_2] = new ResEntry(
+    "Painter_animations_2_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_PAINTER_ANIMATIONS_3] = new ResEntry(
+    "Painter_animations_3_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_PAINTER_ANIMATIONS_4] = new ResEntry(
+    "Painter_animations_4_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_PHARAOH_ANIMATIONS_1] = new ResEntry(
+    "Pharaoh_animations_1_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_PHARAOH_ANIMATIONS_2] = new ResEntry(
+    "Pharaoh_animations_2_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_PHARAOH_ANIMATIONS_3] = new ResEntry(
+    "Pharaoh_animations_3_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_PHARAOH_ANIMATIONS_4] = new ResEntry(
+    "Pharaoh_animations_4_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_PIRATE_ANIMATIONS_1] = new ResEntry(
+    "Pirate_animations_1_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_PIRATE_ANIMATIONS_2] = new ResEntry(
+    "Pirate_animations_2_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_PIRATE_ANIMATIONS_3] = new ResEntry(
+    "Pirate_animations_3_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_PIRATE_ANIMATIONS_4] = new ResEntry(
+    "Pirate_animations_4_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_PREHISTORIC_ANIMATIONS_1] = new ResEntry(
+    "Prehistoric_animations_1_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_PREHISTORIC_ANIMATIONS_2] = new ResEntry(
+    "Prehistoric_animations_2_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_PREHISTORIC_ANIMATIONS_3] = new ResEntry(
+    "Prehistoric_animations_3_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_PREHISTORIC_ANIMATIONS_4] = new ResEntry(
+    "Prehistoric_animations_4_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_VIKING_ANIMATIONS_1] = new ResEntry(
+    "Viking_animations_1_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_VIKING_ANIMATIONS_2] = new ResEntry(
+    "Viking_animations_2_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_VIKING_ANIMATIONS_3] = new ResEntry(
+    "Viking_animations_3_hd.png",
+    ResourceType.IMAGE
+);
+RES_DATA[ResourceId.IMG_VIKING_ANIMATIONS_4] = new ResEntry(
+    "Viking_animations_4_hd.png",
+    ResourceType.IMAGE
+);
 
 RES_DATA[ResourceId.SND_CANDY_HIT] = new ResEntry("candy_hit", ResourceType.SOUND);
-RES_DATA[ResourceId.SND_PREHISTORIC_MONSTER_CHEWING] = new ResEntry("prehistoric_monster_chewing", ResourceType.SOUND);
-RES_DATA[ResourceId.SND_PREHISTORIC_MONSTER_CLOSE] = new ResEntry("prehistoric_monster_close", ResourceType.SOUND);
-RES_DATA[ResourceId.SND_PREHISTORIC_MONSTER_OPEN] = new ResEntry("prehistoric_monster_open", ResourceType.SOUND);
-RES_DATA[ResourceId.SND_PREHISTORIC_MONSTER_SAD] = new ResEntry("prehistoric_monster_sad", ResourceType.SOUND);
+RES_DATA[ResourceId.SND_PREHISTORIC_MONSTER_CHEWING] = new ResEntry(
+    "prehistoric_monster_chewing",
+    ResourceType.SOUND
+);
+RES_DATA[ResourceId.SND_PREHISTORIC_MONSTER_CLOSE] = new ResEntry(
+    "prehistoric_monster_close",
+    ResourceType.SOUND
+);
+RES_DATA[ResourceId.SND_PREHISTORIC_MONSTER_OPEN] = new ResEntry(
+    "prehistoric_monster_open",
+    ResourceType.SOUND
+);
+RES_DATA[ResourceId.SND_PREHISTORIC_MONSTER_SAD] = new ResEntry(
+    "prehistoric_monster_sad",
+    ResourceType.SOUND
+);
 RES_DATA[ResourceId.SND_TIME_MENU_MUSIC] = new ResEntry("time_menu", ResourceType.SOUND);
 
 RES_DATA[ResourceId.IMG_TIME_STANDS] = new ResEntry("time-stands.png", ResourceType.IMAGE);
