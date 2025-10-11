@@ -1,6 +1,4 @@
 import settings from "@/game/CTRSettings";
-import Log from "@/utils/Log";
-import ResourceId from "@/resources/ResourceId";
 import Sounds from "@/resources/Sounds";
 
 const SoundMgr = {
@@ -10,6 +8,31 @@ const SoundMgr = {
     musicId: null,
     musicResumeOffset: 0,
     loopingSounds: new Map(), // Track looping sound state by instance
+    _getActiveLoopSoundIds: function () {
+        const soundIds = new Set();
+
+        for (const entry of this.loopingSounds.values()) {
+            if (entry?.active) {
+                soundIds.add(entry.soundId);
+            }
+        }
+
+        return soundIds;
+    },
+    _deactivateLoopEntry: function (instanceId, entry) {
+        if (!entry) {
+            return;
+        }
+
+        entry.active = false;
+
+        if (entry.timeoutId) {
+            clearTimeout(entry.timeoutId);
+            entry.timeoutId = null;
+        }
+
+        this.loopingSounds.delete(instanceId);
+    },
 
     playSound: function (soundId) {
         if (this.soundEnabled) {
@@ -55,20 +78,21 @@ const SoundMgr = {
         }
 
         const loop = () => {
-            // Check if this instance should still be looping
             const entry = self.loopingSounds.get(instanceId);
-            if (!entry || !entry.active) return;
+            if (!entry || !entry.active) {
+                return;
+            }
 
             if (!self.audioPaused && self.soundEnabled) {
-                Sounds.play(soundId, loop);
+                Sounds.play(soundId, loop, { instanceId });
             }
         };
 
-        this.loopingSounds.set(instanceId, { active: true, loopFn: loop });
+        const entry = { active: true, loopFn: loop, soundId, timeoutId: null };
+        this.loopingSounds.set(instanceId, entry);
 
-        // Start with optional delay
         if (delayMs > 0) {
-            setTimeout(loop, delayMs);
+            entry.timeoutId = setTimeout(loop, delayMs);
         } else {
             loop();
         }
@@ -82,15 +106,16 @@ const SoundMgr = {
      */
     stopLoopedSoundInstance: function (soundId, instanceKey) {
         const instanceId = `${soundId}_${instanceKey}`;
+        const entry = this.loopingSounds.get(instanceId);
 
-        if (this.loopingSounds.has(instanceId)) {
-            this.loopingSounds.delete(instanceId);
-        }
+        this._deactivateLoopEntry(instanceId, entry);
+
+        Sounds.stopInstance(soundId, instanceId);
 
         // Only stop the sound completely if no other instances are playing
         let hasOtherInstances = false;
-        for (const [id] of this.loopingSounds) {
-            if (id.startsWith(soundId + "_")) {
+        for (const loopEntry of this.loopingSounds.values()) {
+            if (loopEntry.soundId === soundId && loopEntry.active) {
                 hasOtherInstances = true;
                 break;
             }
@@ -105,18 +130,24 @@ const SoundMgr = {
      * Stop all looping instances of a sound
      */
     stopLoopedSound: function (soundId) {
-        // Stop all instances that match this soundId
-        for (const [instanceId] of this.loopingSounds) {
-            if (instanceId.startsWith(soundId + "_")) {
-                this.loopingSounds.delete(instanceId);
+        const matchingInstanceIds = [];
+
+        for (const [instanceId, entry] of this.loopingSounds) {
+            if (entry.soundId === soundId) {
+                matchingInstanceIds.push(instanceId);
             }
+        }
+
+        for (const id of matchingInstanceIds) {
+            const entry = this.loopingSounds.get(id);
+            this._deactivateLoopEntry(id, entry);
         }
 
         Sounds.stop(soundId);
     },
 
     stopSound: function (soundId) {
-        Sounds.stop(soundId);
+        this.stopLoopedSound(soundId);
     },
 
     playMusic: function (soundId) {
@@ -149,8 +180,9 @@ const SoundMgr = {
         this.audioPaused = true;
         this.pauseMusic();
 
-        // Pause the actual sound, but preserve loop state
-        Sounds.pause(ResourceId.SND_ELECTRIC);
+        for (const soundId of this._getActiveLoopSoundIds()) {
+            Sounds.pause(soundId);
+        }
     },
 
     pauseMusic: function () {
@@ -166,10 +198,10 @@ const SoundMgr = {
         this.audioPaused = false;
         this.resumeMusic();
 
-        // Restart each active electric loop instance exactly once
+        // Restart each active loop instance exactly once
         if (this.soundEnabled) {
-            for (const [instanceId, entry] of this.loopingSounds) {
-                if (entry && entry.active && instanceId.startsWith(ResourceId.SND_ELECTRIC + "_")) {
+            for (const entry of this.loopingSounds.values()) {
+                if (entry && entry.active) {
                     entry.loopFn();
                 }
             }
@@ -204,9 +236,11 @@ const SoundMgr = {
         settings.setSoundEnabled(soundEnabled);
 
         if (!soundEnabled) {
-            // Stop all looping sounds when disabled
-            this.loopingSounds.clear();
-            this.stopSound(ResourceId.SND_ELECTRIC);
+            const soundIds = Array.from(this._getActiveLoopSoundIds());
+
+            for (const soundId of soundIds) {
+                this.stopLoopedSound(soundId);
+            }
         }
     },
 };

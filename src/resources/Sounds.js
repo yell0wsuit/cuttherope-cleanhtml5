@@ -13,13 +13,27 @@ const getSoundData = (soundId) => {
     return soundData;
 };
 
-const stopAllSources = (soundData, shouldInvokeCallback = false) => {
-    if (!soundData) return;
+const stopSources = (soundData, shouldInvokeCallback = false, predicate = null) => {
+    if (!soundData) return 0;
 
     const sources = Array.from(soundData.playingSources);
-    soundData.playingSources.clear();
+    let stoppedCount = 0;
+
+    if (!predicate) {
+        soundData.playingSources.clear();
+    }
 
     for (const source of sources) {
+        if (predicate && !predicate(source)) {
+            continue;
+        }
+
+        stoppedCount += 1;
+
+        if (predicate) {
+            soundData.playingSources.delete(source);
+        }
+
         const callback = shouldInvokeCallback ? source.__onComplete : null;
 
         source.__skipOnEnd = true;
@@ -46,6 +60,8 @@ const stopAllSources = (soundData, shouldInvokeCallback = false) => {
             }
         }
     }
+
+    return stoppedCount;
 };
 
 const calculateResumeOffset = (soundData) => {
@@ -98,12 +114,14 @@ const Sounds = {
 
         const duration = soundData.buffer?.duration || 0;
         const rawOffset = Math.max(0, options.offset || 0);
+        const instanceId = options.instanceId || null;
         const offset =
             duration > 0
                 ? Math.min(rawOffset % duration, Math.max(0, duration - 0.0001))
                 : rawOffset;
         source.__startOffset = offset;
         source.__startedAt = context.currentTime;
+        source.__instanceId = instanceId;
 
         try {
             source.connect(soundData.gainNode);
@@ -191,16 +209,33 @@ const Sounds = {
         if (!soundData) return;
 
         soundData.resumeOffset = calculateResumeOffset(soundData);
-        stopAllSources(soundData, false);
+        stopSources(soundData, false);
         soundData.isPaused = true;
     },
     stop: function (soundId) {
         const soundData = getSoundData(soundId);
         if (!soundData) return;
 
-        stopAllSources(soundData, false);
+        stopSources(soundData, false);
         soundData.isPaused = false;
         soundData.resumeOffset = 0;
+    },
+    stopInstance: function (soundId, instanceId) {
+        if (!instanceId) return;
+
+        const soundData = getSoundData(soundId);
+        if (!soundData) return;
+
+        const stoppedCount = stopSources(
+            soundData,
+            false,
+            (source) => source.__instanceId === instanceId
+        );
+
+        if (stoppedCount > 0 && soundData.playingSources.size === 0) {
+            soundData.isPaused = false;
+            soundData.resumeOffset = 0;
+        }
     },
     getResumeOffset: function (soundId) {
         const soundData = getSoundData(soundId);
