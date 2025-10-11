@@ -8,9 +8,12 @@ const SoundMgr = {
     musicEnabled: settings.getMusicEnabled(),
     musicId: null,
     musicResumeOffset: 0,
-    gameMusicLibrary: [ResourceId.SND_GAME_MUSIC, ResourceId.SND_GAME_MUSIC2].filter(
-        (soundId) => typeof soundId === "number"
-    ),
+    gameMusicLibrary: [
+        ResourceId.SND_GAME_MUSIC,
+        ResourceId.SND_GAME_MUSIC2,
+        ResourceId.SND_GAME_MUSIC3,
+        ResourceId.SND_GAME_MUSIC4,
+    ].filter((soundId) => typeof soundId === "number"),
     currentGameMusicId: ResourceId.SND_GAME_MUSIC,
     loopingSounds: new Map(), // Track looping sound state by instance
     _getActiveLoopSoundIds: function () {

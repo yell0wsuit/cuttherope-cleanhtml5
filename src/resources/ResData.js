@@ -137,6 +137,9 @@ RES_DATA[ResourceId.IMG_OBJ_BOUNCER_02] = new ResEntry("obj_bouncer_02.png", Res
 RES_DATA[ResourceId.SND_MENU_MUSIC] = new ResEntry("menu_music", ResourceType.SOUND);
 RES_DATA[ResourceId.SND_GAME_MUSIC] = new ResEntry("game_music", ResourceType.SOUND);
 RES_DATA[ResourceId.SND_GAME_MUSIC2] = new ResEntry("game_music2", ResourceType.SOUND);
+RES_DATA[ResourceId.SND_GAME_MUSIC3] = new ResEntry("game_music3", ResourceType.SOUND);
+RES_DATA[ResourceId.SND_GAME_MUSIC4] = new ResEntry("game_music4", ResourceType.SOUND);
+
 RES_DATA[ResourceId.IMG_DRAWING_HIDDEN] = new ResEntry(
     "obj_drawing_hidden.png",
     ResourceType.IMAGE
