@@ -12,6 +12,7 @@ import Alignment from "@/core/Alignment";
 import KeyFrame from "@/visual/KeyFrame";
 import Canvas from "@/utils/Canvas";
 import resolution from "@/resolution";
+
 const Spikes = CTRGameObject.extend({
     init: function (px, py, width, angle, t) {
         this._super();
@@ -97,6 +98,10 @@ const Spikes = CTRGameObject.extend({
         this.x = px;
         this.y = py;
 
+        // Generate unique instance key for this spike's electric sound
+        // Using position ensures each spike has its own independent sound loop
+        this.electroInstanceKey = `${Math.round(px)}_${Math.round(py)}`;
+
         this.setToggled(t);
         this.updateRotation();
 
@@ -145,13 +150,21 @@ const Spikes = CTRGameObject.extend({
         this.electroOn = true;
         this.playTimeline(SpikeAnimation.ELECTRODES_ELECTRIC);
         this.electroTimer = this.onTime;
-        SoundMgr.playLoopedSound(ResourceId.SND_ELECTRIC);
+
+        // Use instance key and optional delay based on initialDelay
+        // Convert initialDelay (in seconds) to milliseconds
+        // Add small random offset (0-30ms) to prevent exact simultaneous playback
+        const delayMs = Math.max(0, this.initialDelay * 1000) + Math.random() * 30;
+
+        SoundMgr.playLoopedSound(ResourceId.SND_ELECTRIC, this.electroInstanceKey, delayMs);
     },
     turnElectroOff: function () {
         this.electroOn = false;
         this.playTimeline(SpikeAnimation.ELECTRODES_BASE);
         this.electroTimer = this.offTime;
-        SoundMgr.stopSound(ResourceId.SND_ELECTRIC);
+
+        // Stop only this spike's sound instance
+        SoundMgr.stopLoopedSoundInstance(ResourceId.SND_ELECTRIC, this.electroInstanceKey);
     },
     update: function (delta) {
         this._super(delta);

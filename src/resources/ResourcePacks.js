@@ -105,6 +105,9 @@ ResourcePacks.StandardFonts = [
 
 ResourcePacks.StandardGameSounds = [
     ResourceId.SND_GAME_MUSIC,
+    ResourceId.SND_GAME_MUSIC2,
+    ResourceId.SND_GAME_MUSIC3,
+    ResourceId.SND_GAME_MUSIC4,
     ResourceId.SND_BOUNCER,
     ResourceId.SND_BUBBLE,
     ResourceId.SND_BUBBLE_BREAK,

@@ -4,8 +4,6 @@ import editionUI from "@/editionUI";
 import resolution from "@/resolution";
 import resData from "@/resources/ResData";
 import SoundLoader from "@/resources/SoundLoader";
-import PxLoader from "@/PxLoader";
-import PxLoaderImage from "@/PxLoaderImage";
 import LoadAnimation from "@/LoadAnimation";
 import ResourceMgr from "@/resources/ResourceMgr";
 import ResourcePacks from "@/resources/ResourcePacks";
@@ -17,9 +15,18 @@ let menuImagesLoadComplete = false,
     totalResources = 0,
     loadedImages = 0,
     loadedSounds = 0,
+    failedImages = 0,
+    failedSounds = 0,
     checkMenuLoadComplete = function () {
         if (!menuImagesLoadComplete || !menuSoundLoadComplete) {
             return;
+        }
+
+        // Log any failures
+        if (failedImages > 0 || failedSounds > 0) {
+            window.console?.warn?.(
+                `Loading completed with failures - Images: ${failedImages}, Sounds: ${failedSounds}`
+            );
         }
 
         if (LoadAnimation) {
@@ -46,31 +53,94 @@ let menuImagesLoadComplete = false,
         }
     };
 
-const loadImages = function () {
-    let pxLoader = new PxLoader({ noProgressTimeout: 30 * 1000 }), // stop waiting after 30 secs
-        gameBaseUrl = platform.imageBaseUrl + resolution.CANVAS_WIDTH + "/game/",
-        MENU_TAG = "MENU",
-        FONT_TAG = "FONT",
-        GAME_TAG = "GAME",
-        i,
-        len,
-        imageUrl,
-        imageCount = 0;
+const MENU_TAG = "MENU";
+const FONT_TAG = "FONT";
+const GAME_TAG = "GAME";
 
-    // first menu images
+const loadImageElement = (url) => {
+    return new Promise((resolve) => {
+        const img = new Image();
+
+        const cleanup = () => {
+            img.removeEventListener("load", onLoad);
+            img.removeEventListener("error", onError);
+        };
+
+        const onLoad = () => {
+            cleanup();
+            resolve({ success: true, img });
+        };
+
+        const onError = () => {
+            cleanup();
+            resolve({ success: false, img: null });
+        };
+
+        img.addEventListener("load", onLoad);
+        img.addEventListener("error", onError);
+        img.src = url;
+    });
+};
+
+const loadImages = function () {
+    const gameBaseUrl = platform.imageBaseUrl + resolution.CANVAS_WIDTH + "/game/";
+
+    let menuResourceCount = 0;
+    let menuResourcesLoaded = 0;
+    let menuResourcesFailed = 0;
+
+    const queueResource = (url, tag, resId = null) => {
+        if (!url) {
+            return;
+        }
+
+        if (tag === MENU_TAG || tag === FONT_TAG) {
+            menuResourceCount++;
+        }
+
+        loadImageElement(url).then((result) => {
+            if (result.success) {
+                if ((tag === FONT_TAG || tag === GAME_TAG) && resId !== null) {
+                    ResourceMgr.onResourceLoaded(resId, result.img);
+                }
+
+                if (tag === MENU_TAG || tag === FONT_TAG) {
+                    menuResourcesLoaded++;
+                    loadedImages = menuResourcesLoaded;
+                }
+            } else {
+                window.console?.error?.("Failed to load image:", url);
+
+                if (tag === MENU_TAG || tag === FONT_TAG) {
+                    menuResourcesFailed++;
+                    failedImages = menuResourcesFailed;
+                }
+            }
+
+            if (tag === MENU_TAG || tag === FONT_TAG) {
+                updateProgress();
+
+                if (menuResourcesLoaded + menuResourcesFailed === menuResourceCount) {
+                    menuImagesLoadComplete = true;
+                    checkMenuLoadComplete();
+                }
+            }
+        });
+    };
+
     const queueMenuImages = function (imageFilenames, menuBaseUrl) {
         if (!imageFilenames) {
             return;
         }
 
         menuBaseUrl = menuBaseUrl || platform.uiImageBaseUrl;
-        for (i = 0, len = imageFilenames.length; i < len; i++) {
-            if (!imageFilenames[i]) {
+        for (let i = 0, len = imageFilenames.length; i < len; i++) {
+            const filename = imageFilenames[i];
+            if (!filename) {
                 continue;
             }
-            imageUrl = menuBaseUrl + imageFilenames[i];
-            pxLoader.addImage(imageUrl, MENU_TAG);
-            imageCount++;
+            const imageUrl = menuBaseUrl + filename;
+            queueResource(imageUrl, MENU_TAG);
         }
     };
 
@@ -94,31 +164,20 @@ const loadImages = function () {
     const editionBaseUrl = platform.resolutionBaseUrl + (edition.editionImageDirectory || "");
     queueMenuImages(edition.editionImages, editionBaseUrl);
 
-    // only report progress on the menu images and fonts
-    pxLoader.addProgressListener(
-        function (e) {
-            loadedImages = e.completedCount;
-            updateProgress();
-
-            if (e.completedCount === e.totalCount) {
-                menuImagesLoadComplete = true;
-                checkMenuLoadComplete();
-            }
-        },
-        [MENU_TAG, FONT_TAG]
-    );
-
-    // next fonts and game images
     const queueForResMgr = function (ids, tag) {
-        let i, len, imageId;
-        for (i = 0, len = ids.length; i < len; i++) {
-            imageId = ids[i];
-            const pxImage = new PxLoaderImage(gameBaseUrl + resData[imageId].path, tag);
+        if (!ids) {
+            return;
+        }
 
-            // add the resId so we can find it upon completion
-            pxImage.resId = imageId;
-            pxLoader.add(pxImage);
-            imageCount++;
+        for (let i = 0, len = ids.length; i < len; i++) {
+            const imageId = ids[i];
+            const resource = resData[imageId];
+            if (!resource) {
+                continue;
+            }
+
+            const imageUrl = gameBaseUrl + resource.path;
+            queueResource(imageUrl, tag, imageId);
         }
     };
     queueForResMgr(ResourcePacks.StandardFonts, FONT_TAG);
@@ -126,17 +185,14 @@ const loadImages = function () {
     queueForResMgr(edition.levelBackgroundIds, GAME_TAG);
     queueForResMgr(edition.levelOverlayIds, GAME_TAG);
 
-    // tell the resource manager about game images and fonts
-    pxLoader.addProgressListener(
-        function (e) {
-            ResourceMgr.onResourceLoaded(e.resource.resId, e.resource.img);
-        },
-        [FONT_TAG, GAME_TAG]
-    );
+    if (menuResourceCount === 0) {
+        menuImagesLoadComplete = true;
+        checkMenuLoadComplete();
+    }
 
-    pxLoader.start();
-    // Return the image count so caller can set totalResources
-    return imageCount;
+    return {
+        trackedResourceCount: menuResourceCount,
+    };
 };
 
 const PreLoader = {
@@ -189,11 +245,11 @@ const PreLoader = {
 };
 
 const startResourceLoading = function () {
-    // Start loading images and get the count
-    const imageCount = loadImages();
+    // Start loading images and get the count we track for progress
+    const { trackedResourceCount } = loadImages();
 
-    // Set total resources for progress calculation
-    totalResources = imageCount + SoundLoader.getSoundCount();
+    // Set total resources for progress calculation (menu images/fonts + sounds)
+    totalResources = trackedResourceCount + SoundLoader.getSoundCount();
 
     // Track sound loading progress
     SoundLoader.onProgress(function (completed, total) {
