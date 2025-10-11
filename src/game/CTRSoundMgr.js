@@ -151,13 +151,16 @@ const SoundMgr = {
     },
 
     playMusic: function (soundId) {
-        if (this.musicId && this.musicId !== soundId) {
+        const previousMusicId = this.musicId;
+
+        if (previousMusicId && previousMusicId !== soundId) {
             this.stopMusic();
         }
 
+        this.musicId = soundId;
+
         const self = this;
         if (this.musicEnabled && !Sounds.isPlaying(soundId)) {
-            this.musicId = soundId;
             const offset = this.musicResumeOffset || 0;
             this.musicResumeOffset = 0;
             Sounds.setVolume(soundId, 70);
