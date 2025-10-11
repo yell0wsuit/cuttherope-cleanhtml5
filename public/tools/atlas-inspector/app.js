@@ -1558,36 +1558,64 @@ function advanceAnimationFrame(timestamp) {
 }
 function drawAnimationFrame(rect, offsets) {
     const canvas = elements.animationCanvas;
-    if (canvas.width !== rect.w || canvas.height !== rect.h) {
-        canvas.width = rect.w || 1;
-        canvas.height = rect.h || 1;
+    const asset = state.currentAsset || {};
+    const offsetX = offsets ? offsets.x : 0;
+    const offsetY = offsets ? offsets.y : 0;
+
+    const minX = Math.min(0, offsetX);
+    const minY = Math.min(0, offsetY);
+    const maxX = Math.max(rect.w, offsetX + rect.w);
+    const maxY = Math.max(rect.h, offsetY + rect.h);
+
+    const computedWidth = Math.max(1, Math.ceil(maxX - minX));
+    const computedHeight = Math.max(1, Math.ceil(maxY - minY));
+
+    const preCutWidth = Number(asset.preCutWidth) || 0;
+    const preCutHeight = Number(asset.preCutHeight) || 0;
+
+    const usePreCutWidth = preCutWidth > 0;
+    const usePreCutHeight = preCutHeight > 0;
+
+    const canvasWidth = usePreCutWidth ? Math.max(1, Math.round(preCutWidth)) : computedWidth;
+    const canvasHeight = usePreCutHeight ? Math.max(1, Math.round(preCutHeight)) : computedHeight;
+
+    const originX = usePreCutWidth ? 0 : -minX;
+    const originY = usePreCutHeight ? 0 : -minY;
+
+    if (canvas.width !== canvasWidth || canvas.height !== canvasHeight) {
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
     }
+
     fillAnimationBackground();
+
+    const destX = originX + offsetX;
+    const destY = originY + offsetY;
+
     animationCtx.drawImage(
         state.currentImage,
         rect.x,
         rect.y,
         rect.w,
         rect.h,
-        0,
-        0,
+        destX,
+        destY,
         rect.w,
         rect.h
     );
+
     if (offsets) {
         animationCtx.save();
         animationCtx.strokeStyle = "rgba(14, 165, 233, 0.9)";
         animationCtx.lineWidth = 1.5;
-        const pivotX = offsets.x;
-        const pivotY = offsets.y;
         animationCtx.beginPath();
-        animationCtx.moveTo(pivotX - 6, pivotY);
-        animationCtx.lineTo(pivotX + 6, pivotY);
-        animationCtx.moveTo(pivotX, pivotY - 6);
-        animationCtx.lineTo(pivotX, pivotY + 6);
+        animationCtx.moveTo(originX - 6, originY);
+        animationCtx.lineTo(originX + 6, originY);
+        animationCtx.moveTo(originX, originY - 6);
+        animationCtx.lineTo(originX, originY + 6);
         animationCtx.stroke();
         animationCtx.beginPath();
-        animationCtx.arc(pivotX, pivotY, 2.5, 0, Math.PI * 2);
+        animationCtx.arc(originX, originY, 2.5, 0, Math.PI * 2);
         animationCtx.fillStyle = "rgba(14, 165, 233, 0.9)";
         animationCtx.fill();
         animationCtx.restore();
