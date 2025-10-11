@@ -36,7 +36,7 @@ const GameController = ViewController.extend({
     },
     activate: function () {
         this._super();
-        SoundMgr.playMusic(ResourceId.SND_GAME_MUSIC);
+        SoundMgr.playGameMusic();
         this.createGameView();
         this.initGameView();
         this.showView(0);

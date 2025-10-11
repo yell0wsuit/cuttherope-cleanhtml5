@@ -1,5 +1,6 @@
 import settings from "@/game/CTRSettings";
 import Sounds from "@/resources/Sounds";
+import ResourceId from "@/resources/ResourceId";
 
 const SoundMgr = {
     audioPaused: false,
@@ -7,6 +8,10 @@ const SoundMgr = {
     musicEnabled: settings.getMusicEnabled(),
     musicId: null,
     musicResumeOffset: 0,
+    gameMusicLibrary: [ResourceId.SND_GAME_MUSIC, ResourceId.SND_GAME_MUSIC2].filter(
+        (soundId) => typeof soundId === "number"
+    ),
+    currentGameMusicId: ResourceId.SND_GAME_MUSIC,
     loopingSounds: new Map(), // Track looping sound state by instance
     _getActiveLoopSoundIds: function () {
         const soundIds = new Set();
@@ -148,6 +153,49 @@ const SoundMgr = {
 
     stopSound: function (soundId) {
         this.stopLoopedSound(soundId);
+    },
+
+    _getAvailableGameMusic: function () {
+        if (!this.gameMusicLibrary || this.gameMusicLibrary.length === 0) {
+            return [];
+        }
+
+        return this.gameMusicLibrary;
+    },
+
+    selectRandomGameMusic: function () {
+        const availableTracks = this._getAvailableGameMusic();
+        if (availableTracks.length === 0) {
+            this.currentGameMusicId = null;
+            return null;
+        }
+
+        let pool = availableTracks;
+        if (pool.length > 1 && this.currentGameMusicId != null) {
+            pool = pool.filter((soundId) => soundId !== this.currentGameMusicId);
+            if (pool.length === 0) {
+                pool = availableTracks;
+            }
+        }
+
+        const nextId = pool[Math.floor(Math.random() * pool.length)];
+        this.currentGameMusicId = nextId;
+        return nextId;
+    },
+
+    playGameMusic: function () {
+        const availableTracks = this._getAvailableGameMusic();
+        if (availableTracks.length === 0) {
+            return;
+        }
+
+        const trackId =
+            this.currentGameMusicId != null && availableTracks.includes(this.currentGameMusicId)
+                ? this.currentGameMusicId
+                : availableTracks[0];
+
+        this.currentGameMusicId = trackId;
+        this.playMusic(trackId);
     },
 
     playMusic: function (soundId) {

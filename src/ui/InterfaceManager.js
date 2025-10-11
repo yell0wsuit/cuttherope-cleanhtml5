@@ -1409,6 +1409,7 @@ var InterfaceManager = new (function () {
         BoxManager.currentBoxIndex = boxIndex;
         BoxManager.currentLevelIndex = levelIndex + 1;
 
+        SoundMgr.selectRandomGameMusic();
         this.openBox();
     };
 
