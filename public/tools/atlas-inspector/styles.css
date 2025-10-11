@@ -332,6 +332,32 @@ button[disabled] {
     gap: 0.8rem;
 }
 
+.paste-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.85rem;
+    border-radius: 12px;
+    border: 1px dashed rgba(148, 163, 184, 0.35);
+    background: rgba(15, 23, 42, 0.45);
+}
+
+.paste-block label {
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.paste-block textarea {
+    min-height: 2.5rem;
+    font-family: "Fira Code", "SFMono-Regular", "Menlo", monospace;
+    resize: vertical;
+}
+
+.paste-block .button-row {
+    justify-content: flex-start;
+}
+
 .form-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));

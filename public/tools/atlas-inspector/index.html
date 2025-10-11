@@ -98,6 +98,23 @@
                                 <button id="updateRectButton" type="button" class="secondary" disabled>Update selected</button>
                                 <button id="clearRectsButton" type="button" class="secondary">Clear</button>
                             </div>
+                            <div class="paste-block">
+                                <label for="rectPasteTextarea">Paste rect values</label>
+                                <textarea
+                                    id="rectPasteTextarea"
+                                    rows="3"
+                                    placeholder="Rect values: 0, 0, 156, 157, …"
+                                ></textarea>
+                                <label for="offsetPasteTextarea">Paste offset values (optional)</label>
+                                <textarea
+                                    id="offsetPasteTextarea"
+                                    rows="2"
+                                    placeholder="Offset values: 0, 0, 0, 0"
+                                ></textarea>
+                                <div class="button-row">
+                                    <button id="parsePasteValues" type="button" class="secondary">Parse pasted values</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="table-scroll small">
                             <table id="newRectTable" class="rect-table">
