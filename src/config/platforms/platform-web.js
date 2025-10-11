@@ -36,7 +36,7 @@ var WebPlatform = {
 
     audioBaseUrl: "audio/",
     getAudioExtension: function () {
-        return ".mp3";
+        return ".ogg";
     },
 
     videoBaseUrl: "video/",

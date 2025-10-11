@@ -4,7 +4,7 @@ const GeckoPlatform = WebPlatform;
 // override audio and video format choices
 
 GeckoPlatform.getAudioExtension = function () {
-    return ".mp3";
+    return ".ogg";
 };
 
 GeckoPlatform.getVideoExtension = function () {
