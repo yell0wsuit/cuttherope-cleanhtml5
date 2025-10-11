@@ -160,7 +160,12 @@ var BoxManager = new (function () {
             isLocked;
 
         // clear any existing boxes
-        boxes.length = 0;
+        while (boxes.length) {
+            const existingBox = boxes.pop();
+            if (existingBox && typeof existingBox.destroy === "function") {
+                existingBox.destroy();
+            }
+        }
 
         // create each box
         for (i = 0, len = boxtypes.length; i < len; i++) {
