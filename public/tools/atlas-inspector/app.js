@@ -1,5 +1,6 @@
 const elements = {
     assetFilter: document.getElementById("assetFilter"),
+    assetUpload: document.getElementById("assetUpload"),
     assetSelect: document.getElementById("assetSelect"),
     resolutionSelect: document.getElementById("resolutionSelect"),
     zoomRange: document.getElementById("zoomRange"),
@@ -61,6 +62,7 @@ const state = {
     animationFrameIndex: 0,
     animationFrameStart: 0,
     animationRequestId: null,
+    customAssetCounter: 0,
 };
 
 const canvasCtx = elements.spriteCanvas.getContext("2d");
@@ -97,6 +99,9 @@ async function init() {
 
 function registerEventHandlers() {
     elements.assetFilter.addEventListener("input", handleAssetFilter);
+    if (elements.assetUpload) {
+        elements.assetUpload.addEventListener("change", handleCustomAssetUpload);
+    }
     elements.assetSelect.addEventListener("change", () => {
         const selected = getSelectedAsset();
         if (selected) {
@@ -315,6 +320,9 @@ function loadAsset(asset, keepSelection = false) {
 function resolveImagePath(asset) {
     if (!asset) {
         return null;
+    }
+    if (asset.inlineImage) {
+        return asset.inlineImage;
     }
     const selection = state.selectedResolution;
     const availablePaths = asset.availablePaths || {};
@@ -611,6 +619,9 @@ function updateAssetSummary(asset, imagePath, message = "") {
         `<div><strong>Available resolutions:</strong> ${resolutions}</div>`,
         `<div><strong>Global paths:</strong> ${globalPaths}</div>`,
     ];
+    if (asset.sourceNote) {
+        parts.push(`<div><strong>Source:</strong> ${asset.sourceNote}</div>`);
+    }
     if (state.scaleInfo) {
         const { scale, resolution, canvasScale, resScale, layout, coverage } = state.scaleInfo;
         const showScale = (typeof scale === "number" && scale !== 1) || (canvasScale && canvasScale !== 1) || (resScale && resScale !== 1);
@@ -639,7 +650,8 @@ function updateAssetSummary(asset, imagePath, message = "") {
         }
     }
     if (imagePath) {
-        parts.push(`<div><strong>Loaded path:</strong> ${imagePath.replace(/^\.\.\//, "")}</div>`);
+        const pathLabel = asset.inlineImage ? asset.file || "Uploaded image" : imagePath.replace(/^\.\.\//, "");
+        parts.push(`<div><strong>Loaded path:</strong> ${pathLabel}</div>`);
     }
     if (state.currentImage) {
         parts.push(
@@ -650,6 +662,54 @@ function updateAssetSummary(asset, imagePath, message = "") {
         parts.push(`<div class="error">${message}</div>`);
     }
     elements.assetSummary.innerHTML = parts.join("");
+}
+
+function handleCustomAssetUpload(event) {
+    const file = event?.target?.files?.[0];
+    if (!file) {
+        return;
+    }
+    if (!file.type.startsWith("image/")) {
+        updateAssetSummary(state.currentAsset, state.currentImagePath, "Custom uploads must be image files.");
+        event.target.value = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+        const dataUrl = reader.result;
+        if (typeof dataUrl !== "string") {
+            updateAssetSummary(state.currentAsset, state.currentImagePath, "Unable to read the selected file.");
+            return;
+        }
+
+        state.customAssetCounter += 1;
+        const baseName = file.name.replace(/\.[^.]+$/, "");
+        const newAsset = {
+            id: `custom-${Date.now()}-${state.customAssetCounter}`,
+            name: baseName || file.name,
+            file: file.name,
+            type: "IMAGE",
+            rects: [],
+            offsets: [],
+            inlineImage: dataUrl,
+            sourceNote: "Uploaded from local file (not saved)",
+        };
+
+        state.assets = [...state.assets, newAsset].sort((a, b) => assetLabel(a).localeCompare(assetLabel(b)));
+        elements.assetFilter.value = "";
+        state.filteredAssets = [...state.assets];
+        populateAssetSelect();
+
+        const key = assetKey(newAsset);
+        elements.assetSelect.value = key;
+        loadAsset(newAsset);
+    };
+    reader.onerror = () => {
+        updateAssetSummary(state.currentAsset, state.currentImagePath, "Failed to read the selected file.");
+    };
+    reader.readAsDataURL(file);
+    event.target.value = "";
 }
 
 function handleZoomChange() {
@@ -912,7 +972,7 @@ function renderRectTable() {
         addButton.textContent = "Add to animation";
         addButton.addEventListener("click", (event) => {
             event.stopPropagation();
-            addAnimationFrame(index);
+            addAnimationFrame(index, "existing");
         });
         actionCell.appendChild(addButton);
         row.addEventListener("click", () => setSelectedRect(index));
@@ -1026,7 +1086,18 @@ function renderNewRectTable() {
             event.stopPropagation();
             removeNewRect(index);
         });
-        actionCell.append(editButton, deleteButton);
+        const animateButton = document.createElement("button");
+        animateButton.type = "button";
+        animateButton.className = "secondary";
+        animateButton.textContent = "Add to animation";
+        animateButton.addEventListener("click", (event) => {
+            event.stopPropagation();
+            addAnimationFrame(index, "new");
+        });
+        const controls = document.createElement("div");
+        controls.className = "button-row";
+        controls.append(animateButton, editButton, deleteButton);
+        actionCell.appendChild(controls);
         row.addEventListener("click", () => selectNewRect(index));
         tbody.appendChild(row);
     });
@@ -1066,7 +1137,26 @@ function removeNewRect(index) {
     } else if (state.newRectSelectedIndex !== null && state.newRectSelectedIndex > index) {
         state.newRectSelectedIndex--;
     }
+    if (state.animationFrames.length) {
+        for (let i = state.animationFrames.length - 1; i >= 0; i--) {
+            const frame = state.animationFrames[i];
+            if (frame.source === "new") {
+                if (frame.rectIndex === index) {
+                    state.animationFrames.splice(i, 1);
+                    if (state.animationPlaying && i <= state.animationFrameIndex && state.animationFrameIndex > 0) {
+                        state.animationFrameIndex--;
+                    }
+                } else if (frame.rectIndex > index) {
+                    frame.rectIndex -= 1;
+                }
+            }
+        }
+        if (state.animationFrameIndex >= state.animationFrames.length) {
+            state.animationFrameIndex = Math.max(0, state.animationFrames.length - 1);
+        }
+    }
     renderNewRectTable();
+    renderAnimationTable();
     drawCanvas();
     updateOutputPreview();
 }
@@ -1136,8 +1226,17 @@ async function handleCopy(text) {
     }
 }
 
-function addAnimationFrame(rectIndex) {
-    state.animationFrames.push({ rectIndex, duration: 120 });
+function addAnimationFrame(rectIndex, source = "existing") {
+    if (typeof rectIndex !== "number" || rectIndex < 0) {
+        return;
+    }
+    if (source === "existing" && !getActiveRect(rectIndex)) {
+        return;
+    }
+    if (source === "new" && !state.newRects[rectIndex]) {
+        return;
+    }
+    state.animationFrames.push({ rectIndex, source, duration: 120 });
     renderAnimationTable();
 }
 
@@ -1160,7 +1259,14 @@ function renderAnimationTable() {
         if (state.animationPlaying && index === state.animationFrameIndex) {
             row.classList.add("is-playing");
         }
-        const rectLabel = `#${frame.rectIndex + 1}`;
+        let rectLabel = `#${frame.rectIndex + 1}`;
+        if (frame.source === "new") {
+            rectLabel = state.newRects[frame.rectIndex] ? `New #${frame.rectIndex + 1}` : "Missing new rect";
+        } else if (!getActiveRect(frame.rectIndex)) {
+            rectLabel = "Missing rect";
+        } else {
+            rectLabel = `Rect #${frame.rectIndex + 1}`;
+        }
         const durationInput = document.createElement("input");
         durationInput.type = "number";
         durationInput.min = "16";
@@ -1278,8 +1384,18 @@ function stepAnimation(timestamp) {
         return;
     }
     const frame = frames[state.animationFrameIndex];
-    const rect = getActiveRect(frame.rectIndex);
-    const offsets = getActiveOffset(frame.rectIndex);
+    let rect = null;
+    let offsets = null;
+    if (frame.source === "new") {
+        const newRect = state.newRects[frame.rectIndex];
+        if (newRect) {
+            rect = newRect;
+            offsets = newRect.offset || null;
+        }
+    } else {
+        rect = getActiveRect(frame.rectIndex);
+        offsets = getActiveOffset(frame.rectIndex);
+    }
     if (!rect) {
         advanceAnimationFrame(timestamp);
         state.animationRequestId = requestAnimationFrame(stepAnimation);
