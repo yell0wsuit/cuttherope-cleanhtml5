@@ -86,6 +86,7 @@ ResourcePacks.FullGameAdditionalGameImages = [
     ResourceId.IMG_OBJ_BEE_HD,
     ResourceId.IMG_OBJ_POLLEN_HD,
     ResourceId.IMG_OBJ_VINIL,
+    ResourceId.IMG_OBJ_GHOST,
 ];
 
 ResourcePacks.ChromeLiteAdditionalGameImages = [
@@ -147,6 +148,7 @@ ResourcePacks.FullGameAdditionalSounds = [
     ResourceId.SND_SCRATCH_OUT,
     ResourceId.SND_BUZZ,
     ResourceId.SND_TELEPORT,
+    ResourceId.SND_GHOST_PUFF,
 ];
 
 ResourcePacks.StandardMenuImageFilenames = [

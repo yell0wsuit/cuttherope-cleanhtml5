@@ -691,6 +691,18 @@ const RES_INFO_2560 = [
         preCutHeight: 1498,
     },
 
+    // ghost
+    {
+        id: ResourceId.IMG_OBJ_GHOST,
+        preCutWidth: 254,
+        preCutHeight: 333,
+        rects: [
+            0, 0, 166, 229, 167, 63, 72, 63, 167, 127, 71, 66, 167, 194, 67, 66, 134, 261, 101, 72,
+            0, 230, 133, 77, 167, 0, 87, 62,
+        ],
+        offsets: [2, 1, 91, 83, 92, 82, 94, 82, 77, 82, 57, 79, 41, 71],
+    },
+
     // background images
     {
         id: ResourceId.IMG_BGR_01_P1,

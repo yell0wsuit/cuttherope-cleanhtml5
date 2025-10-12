@@ -178,8 +178,11 @@ const ResourceId = {
     SND_GAME_MUSIC3: 183,
     SND_GAME_MUSIC4: 184,
 
+    IMG_OBJ_GHOST: 185,
+    SND_GHOST_PUFF: 186,
+
     // Total number of resources
-    RESOURCES_COUNT: 184,
+    RESOURCES_COUNT: 186,
 };
 
 export default ResourceId;

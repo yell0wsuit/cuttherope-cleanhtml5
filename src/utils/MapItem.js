@@ -52,6 +52,8 @@ const MapItem = {
     ROTATED_CIRCLE: 120,
     TARGET_2: 121,
     CANDY_2: 122,
+
+    GHOST: 130,
 };
 
 function getMapItem(name) {
@@ -138,6 +140,8 @@ function getMapItem(name) {
             return MapItem.HIDDEN_03;
         case "rotatedCircle":
             return MapItem.ROTATED_CIRCLE;
+        case "ghost":
+            return MapItem.GHOST;
         default:
             alert("Unknown map item:" + name);
             return null;
