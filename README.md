@@ -34,4 +34,6 @@ With this source, however, we can modernize and expand the game's functionality.
 ### Long-term goals
 - [ ] **Bugs fixing and polish**: Fix bugs, and ensure everything works smoothly.
 - [ ] **Code optimization and modernization**: Optimize performance-critical code, and modernize codebase.
-- [ ] **Optional goals**: Add new features like level editor, custom levels, etc.
+- [ ] **Optional goals**: Add new features like ~~level editor~~*, custom level manager, etc.
+
+  \* Go to https://adriandrummis.github.io/CutTheRopeEditor/ instead, level editor seems to be too complex to be added in this game engine.
