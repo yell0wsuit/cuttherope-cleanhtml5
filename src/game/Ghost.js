@@ -5,14 +5,14 @@ import ResourceId from "@/resources/ResourceId";
 import RGBAColor from "@/core/RGBAColor";
 import Timeline from "@/visual/Timeline";
 import KeyFrame from "@/visual/KeyFrame";
-import Bubble from "@/game/Bubble";
-import Grab from "@/game/Grab";
-import Bouncer from "@/game/Bouncer";
 import SoundMgr from "@/game/CTRSoundMgr";
 import MathHelper from "@/utils/MathHelper";
 import Vector from "@/core/Vector";
 import Constants from "@/utils/Constants";
-import Rectangle from "@/core/Rectangle";
+import GhostBubble from "@/game/GhostBubble";
+import GhostGrab from "@/game/GhostGrab";
+import GhostBouncer from "@/game/GhostBouncer";
+import GhostMorphingParticles from "@/game/GhostMorphingParticles";
 const GhostState = {
     BODY: 1,
     BUBBLE: 2,
@@ -24,10 +24,11 @@ const GhostTimeline = {
     FADE_OUT: 1,
 };
 const IMG_OBJ_GHOST_BODY = 0;
-const IMG_OBJ_GHOST_BUBBLE_START = 1;
-const IMG_OBJ_GHOST_BUBBLE_END = 5;
 const IMG_OBJ_GHOST_FACE = 6;
-const TOUCH_RADIUS = 40;
+const TRANSFORM_FRAME_START = 1;
+const TRANSFORM_FRAME_END = 5;
+const GHOST_TOUCH_RADIUS = 40;
+const GHOST_PARTICLE_COUNT = GhostMorphingParticles.PARTICLE_COUNT;
 function removeFromCollection(collection, item) {
     if (!collection) {
         return;
@@ -64,6 +65,7 @@ const Ghost = CTRGameObject.extend({
         this.bubble = null;
         this.grab = null;
         this.bouncer = null;
+        this.pendingFadeOuts = [];
         this.imageContainer = new CTRGameObject();
         this.imageContainer.anchor = Alignment.CENTER;
         this.imageContainer.parentAnchor = Alignment.CENTER;
@@ -76,6 +78,10 @@ const Ghost = CTRGameObject.extend({
         this.face.anchor = this.face.parentAnchor = Alignment.CENTER;
         this.face.doRestoreCutTransparency();
         this.imageContainer.addChild(this.face);
+        this.morphingBubbles = new GhostMorphingParticles();
+        this.morphingBubbles.x = this.x;
+        this.morphingBubbles.y = this.y;
+        this.addChild(this.morphingBubbles);
         this.setupTimelines();
         return this;
     },
@@ -116,18 +122,44 @@ const Ghost = CTRGameObject.extend({
         this.face.addTimelineWithID(bobFace, 0);
         this.face.playTimeline(0);
     },
-    spawnBubble: function () {
-        const bubble = new Bubble();
-        bubble.initTextureWithId(ResourceId.IMG_OBJ_GHOST);
-        bubble.setTextureQuad(
-            MathHelper.randomRange(IMG_OBJ_GHOST_BUBBLE_START, IMG_OBJ_GHOST_BUBBLE_END)
+    createFadeTimeline: function () {
+        const timeline = new Timeline();
+        timeline.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.IMMEDIATE, 0)
         );
-        bubble.doRestoreCutTransparency();
-        bubble.anchor = Alignment.CENTER;
-        bubble.x = this.x;
-        bubble.y = this.y;
-        bubble.bb = new Rectangle(-28, -28, 56, 56);
-        bubble.popped = false;
+        timeline.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.16)
+        );
+        return timeline;
+    },
+    fadeOutElement: function (element, collection, onBeforeFade, onCleanup) {
+        if (!element) {
+            return;
+        }
+        if (element.currentTimelineIndex === GhostTimeline.FADE_OUT) {
+            this.trackFadeOutElement(element, collection, onCleanup);
+            return;
+        }
+        if (onBeforeFade) {
+            onBeforeFade(element);
+        }
+        const timeline = this.createFadeTimeline();
+        element.addTimelineWithID(timeline, GhostTimeline.FADE_OUT);
+        element.playTimeline(GhostTimeline.FADE_OUT);
+        this.trackFadeOutElement(element, collection, onCleanup);
+    },
+    trackFadeOutElement: function (element, collection, onCleanup) {
+        if (!this.pendingFadeOuts) {
+            this.pendingFadeOuts = [];
+        }
+        const alreadyTracked = this.pendingFadeOuts.some((entry) => entry.element === element);
+        if (!alreadyTracked) {
+            this.pendingFadeOuts.push({ element, collection, onCleanup });
+        }
+    },
+    spawnBubble: function () {
+        const bubbleFrame = MathHelper.randomRange(TRANSFORM_FRAME_START, TRANSFORM_FRAME_END);
+        const bubble = new GhostBubble(this.x, this.y, bubbleFrame);
         this.gsBubbles.push(bubble);
         this.bubble = bubble;
         this.imageContainer.playTimeline(GhostTimeline.FADE_OUT);
@@ -136,14 +168,22 @@ const Ghost = CTRGameObject.extend({
         if (!this.bubble) {
             return;
         }
-        this.bubble.popped = true;
-        removeFromCollection(this.gsBubbles, this.bubble);
-        this.bubble = null;
+        const bubble = this.bubble;
+        this.fadeOutElement(
+            bubble,
+            this.gsBubbles,
+            (b) => {
+                b.popped = true;
+            },
+            (b) => {
+                if (this.bubble === b) {
+                    this.bubble = null;
+                }
+            }
+        );
     },
     spawnGrab: function () {
-        const grab = new Grab();
-        grab.x = this.x;
-        grab.y = this.y;
+        const grab = new GhostGrab(this.x, this.y);
         grab.setRadius(
             this.grabRadius !== Constants.UNDEFINED ? this.grabRadius : Constants.UNDEFINED
         );
@@ -158,14 +198,32 @@ const Ghost = CTRGameObject.extend({
         if (!this.grab) {
             return;
         }
-        if (this.grab.destroyRope) {
-            this.grab.destroyRope();
-        }
-        removeFromCollection(this.gsBungees, this.grab);
-        this.grab = null;
+        const grab = this.grab;
+        this.fadeOutElement(
+            grab,
+            this.gsBungees,
+            (g) => {
+                const rope = g.rope;
+                if (rope) {
+                    rope.forceWhite = true;
+                    rope.cutTime = 0.36;
+                    if (rope.cut === Constants.UNDEFINED) {
+                        rope.cut = 0;
+                    }
+                }
+            },
+            (g) => {
+                if (g.destroyRope) {
+                    g.destroyRope();
+                }
+                if (this.grab === g) {
+                    this.grab = null;
+                }
+            }
+        );
     },
     spawnBouncer: function () {
-        const bouncer = new Bouncer(this.x, this.y, 1, this.bouncerAngle || 0);
+        const bouncer = new GhostBouncer(this.x, this.y, 1, this.bouncerAngle || 0);
         this.gsBouncers.push(bouncer);
         this.bouncer = bouncer;
         this.imageContainer.playTimeline(GhostTimeline.FADE_OUT);
@@ -174,8 +232,45 @@ const Ghost = CTRGameObject.extend({
         if (!this.bouncer) {
             return;
         }
-        removeFromCollection(this.gsBouncers, this.bouncer);
-        this.bouncer = null;
+        const bouncer = this.bouncer;
+        this.fadeOutElement(bouncer, this.gsBouncers, null, (b) => {
+            if (this.bouncer === b) {
+                this.bouncer = null;
+            }
+        });
+    },
+    cleanupFadedElement: function (element, collection, onCleanup) {
+        if (!element || element.currentTimelineIndex !== GhostTimeline.FADE_OUT) {
+            return false;
+        }
+        const timeline = element.getTimeline(GhostTimeline.FADE_OUT);
+        if (!timeline || timeline.state !== Timeline.StateType.STOPPED) {
+            return false;
+        }
+        if (element._ghostRemovalScheduled) {
+            return false;
+        }
+        element._ghostRemovalScheduled = true;
+        element.visible = false;
+        element.touchable = false;
+        element.update = function () {};
+        const finalizeRemoval = () => {
+            if (collection) {
+                removeFromCollection(collection, element);
+            }
+            if (onCleanup) {
+                onCleanup(element);
+            }
+            element._ghostRemovalScheduled = false;
+        };
+        if (typeof Promise !== "undefined" && Promise.resolve) {
+            Promise.resolve().then(finalizeRemoval);
+        } else if (typeof setTimeout === "function") {
+            setTimeout(finalizeRemoval, 0);
+        } else {
+            finalizeRemoval();
+        }
+        return true;
     },
     resetToState: function (newState) {
         if ((newState & this.possibleStatesMask) === 0) {
@@ -205,6 +300,9 @@ const Ghost = CTRGameObject.extend({
                 this.spawnBouncer();
                 break;
         }
+        this.morphingBubbles.x = this.x;
+        this.morphingBubbles.y = this.y;
+        this.morphingBubbles.startSystem(GHOST_PARTICLE_COUNT);
         SoundMgr.playSound(ResourceId.SND_GHOST_PUFF);
     },
     resetToNextState: function () {
@@ -222,13 +320,32 @@ const Ghost = CTRGameObject.extend({
             return false;
         }
         const distance = Vector.distance(x, y, this.x, this.y);
-        if (distance < TOUCH_RADIUS * this.pixelMultiplier) {
+        if (distance < GHOST_TOUCH_RADIUS * this.pixelMultiplier) {
             this.resetToNextState();
             return true;
         }
         return false;
     },
     update: function (delta) {
+        if (this.pendingFadeOuts && this.pendingFadeOuts.length) {
+            this.pendingFadeOuts = this.pendingFadeOuts.filter((entry) => {
+                const removed = this.cleanupFadedElement(
+                    entry.element,
+                    entry.collection,
+                    entry.onCleanup
+                );
+                if (removed && entry.element === this.bubble) {
+                    this.bubble = null;
+                }
+                if (removed && entry.element === this.grab) {
+                    this.grab = null;
+                }
+                if (removed && entry.element === this.bouncer) {
+                    this.bouncer = null;
+                }
+                return !removed;
+            });
+        }
         this._super(delta);
         if (
             this.grab &&
