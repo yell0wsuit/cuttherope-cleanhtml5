@@ -282,7 +282,12 @@ const GameScene = BaseElement.extend({
             const hs = (this.hudStars[i] = new Animation());
             hs.initTextureWithId(ResourceId.IMG_HUD_STAR);
             hs.doRestoreCutTransparency();
-            hs.addAnimationDelay(0.05, Timeline.LoopType.NO_LOOP, IMG_HUD_STAR_Frame_1, IMG_HUD_STAR_Frame_10);
+            hs.addAnimationDelay(
+                0.05,
+                Timeline.LoopType.NO_LOOP,
+                IMG_HUD_STAR_Frame_1,
+                IMG_HUD_STAR_Frame_10
+            );
             hs.setPause(IMG_HUD_STAR_Frame_10 - IMG_HUD_STAR_Frame_1, 0);
             //TODO: + canvas.xOffsetScaled on next line?
             hs.x = 10 + (hs.width + 5) * i;
@@ -477,8 +482,12 @@ const GameScene = BaseElement.extend({
             [IMG_OBJ_CANDY_01_glow, IMG_OBJ_CANDY_01_glow]
         );
         const gt = this.candyBlink.getTimeline(CandyBlink.STAR);
-        gt.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0));
-        gt.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.2));
+        gt.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0)
+        );
+        gt.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.2)
+        );
         this.candyBlink.visible = false;
         this.candyBlink.anchor = this.candyBlink.parentAnchor = Alignment.CENTER;
         this.candyBlink.scaleX = this.candyBlink.scaleY = 0.71;
@@ -490,7 +499,8 @@ const GameScene = BaseElement.extend({
         this.candyBubbleAnimation.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
         this.candyBubbleAnimation.x = this.candy.x;
         this.candyBubbleAnimation.y = this.candy.y;
-        this.candyBubbleAnimation.parentAnchor = this.candyBubbleAnimation.anchor = Alignment.CENTER;
+        this.candyBubbleAnimation.parentAnchor = this.candyBubbleAnimation.anchor =
+            Alignment.CENTER;
         this.candyBubbleAnimation.addAnimationDelay(
             0.05,
             Timeline.LoopType.REPLAY,
@@ -517,7 +527,8 @@ const GameScene = BaseElement.extend({
         if (this.twoParts !== PartsType.NONE) {
             this.candyBubbleAnimationL = new Animation();
             this.candyBubbleAnimationL.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
-            this.candyBubbleAnimationL.parentAnchor = this.candyBubbleAnimationL.anchor = Alignment.CENTER;
+            this.candyBubbleAnimationL.parentAnchor = this.candyBubbleAnimationL.anchor =
+                Alignment.CENTER;
             this.candyBubbleAnimationL.addAnimationDelay(
                 0.05,
                 Timeline.LoopType.REPLAY,
@@ -531,7 +542,8 @@ const GameScene = BaseElement.extend({
 
             this.candyBubbleAnimationR = new Animation();
             this.candyBubbleAnimationR.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
-            this.candyBubbleAnimationR.parentAnchor = this.candyBubbleAnimationR.anchor = Alignment.CENTER;
+            this.candyBubbleAnimationR.parentAnchor = this.candyBubbleAnimationR.anchor =
+                Alignment.CENTER;
             this.candyBubbleAnimationR.addAnimationDelay(
                 0.05,
                 Timeline.LoopType.REPLAY,
@@ -598,11 +610,21 @@ const GameScene = BaseElement.extend({
         levelLabel.addChild(levelLabelTitle);
 
         const tl = new Timeline();
-        tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0));
-        tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5));
-        tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0.5));
-        tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1));
-        tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5));
+        tl.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0)
+        );
+        tl.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5)
+        );
+        tl.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0.5)
+        );
+        tl.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1)
+        );
+        tl.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5)
+        );
         levelLabel.addTimelineWithID(tl, 0);
         levelLabel.playTimeline(0);
         tl.onFinished = this.staticAniPool.timelineFinishedDelegate();
@@ -652,7 +674,9 @@ const GameScene = BaseElement.extend({
 
             this.camera.moveTo(startX, startY, true);
 
-            this.initialCameraToStarDistance = this.camera.pos.distance(new Vector(targetX, targetY));
+            this.initialCameraToStarDistance = this.camera.pos.distance(
+                new Vector(targetX, targetY)
+            );
         } else {
             this.ignoreTouches = false;
             this.camera.moveTo(0, 0, true);
@@ -982,12 +1006,22 @@ const GameScene = BaseElement.extend({
 
         const tl = new Timeline(),
             isFirstLevel = LevelState.pack === 0 && LevelState.level === 0;
-        tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0));
-        tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1));
         tl.addKeyFrame(
-            KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, isFirstLevel ? 10 : 5)
+            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0)
         );
-        tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5));
+        tl.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1)
+        );
+        tl.addKeyFrame(
+            KeyFrame.makeColor(
+                RGBAColor.solidOpaque.copy(),
+                KeyFrame.TransitionType.LINEAR,
+                isFirstLevel ? 10 : 5
+            )
+        );
+        tl.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5)
+        );
         t.addTimelineWithID(tl, 0);
 
         if (t.special === 0) {
@@ -1014,36 +1048,82 @@ const GameScene = BaseElement.extend({
         s.parseMover(item);
 
         const tl = new Timeline();
-        tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0));
-        tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1));
+        tl.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0)
+        );
+        tl.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1)
+        );
 
         if (LevelState.pack === 0 && LevelState.level === 0) {
-            tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 10));
+            tl.addKeyFrame(
+                KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 10)
+            );
         } else {
-            tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 5.2));
+            tl.addKeyFrame(
+                KeyFrame.makeColor(
+                    RGBAColor.solidOpaque.copy(),
+                    KeyFrame.TransitionType.LINEAR,
+                    5.2
+                )
+            );
         }
 
-        tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5));
+        tl.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5)
+        );
         s.addTimelineWithID(tl, 0);
 
         if (s.special === 0) {
             s.playTimeline(0);
         } else if (s.special === LEVEL1_ARROW_SPECIAL_ID) {
             const tl2 = new Timeline();
-            tl2.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0));
-            tl2.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0.5));
-            tl2.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1));
-            tl2.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1.1));
-            tl2.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5));
+            tl2.addKeyFrame(
+                KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0)
+            );
+            tl2.addKeyFrame(
+                KeyFrame.makeColor(
+                    RGBAColor.solidOpaque.copy(),
+                    KeyFrame.TransitionType.LINEAR,
+                    0.5
+                )
+            );
+            tl2.addKeyFrame(
+                KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1)
+            );
+            tl2.addKeyFrame(
+                KeyFrame.makeColor(
+                    RGBAColor.solidOpaque.copy(),
+                    KeyFrame.TransitionType.LINEAR,
+                    1.1
+                )
+            );
+            tl2.addKeyFrame(
+                KeyFrame.makeColor(
+                    RGBAColor.transparent.copy(),
+                    KeyFrame.TransitionType.LINEAR,
+                    0.5
+                )
+            );
 
             tl2.addKeyFrame(KeyFrame.makePos(s.x, s.y, KeyFrame.TransitionType.LINEAR, 0));
             tl2.addKeyFrame(KeyFrame.makePos(s.x, s.y, KeyFrame.TransitionType.LINEAR, 0.5));
             tl2.addKeyFrame(KeyFrame.makePos(s.x, s.y, KeyFrame.TransitionType.LINEAR, 1));
             tl2.addKeyFrame(
-                KeyFrame.makePos(s.x + resolution.TUTORIAL_HAND_TARGET_X_1, s.y, KeyFrame.TransitionType.LINEAR, 0.5)
+                KeyFrame.makePos(
+                    s.x + resolution.TUTORIAL_HAND_TARGET_X_1,
+                    s.y,
+                    KeyFrame.TransitionType.LINEAR,
+                    0.5
+                )
             );
             tl2.addKeyFrame(
-                KeyFrame.makePos(s.x + resolution.TUTORIAL_HAND_TARGET_X_2, s.y, KeyFrame.TransitionType.LINEAR, 0.5)
+                KeyFrame.makePos(
+                    s.x + resolution.TUTORIAL_HAND_TARGET_X_2,
+                    s.y,
+                    KeyFrame.TransitionType.LINEAR,
+                    0.5
+                )
             );
 
             tl2.loopsLimit = 2;
@@ -1070,7 +1150,10 @@ const GameScene = BaseElement.extend({
         }
     },
     loadBubble: function (item) {
-        const at = MathHelper.randomRange(IMG_OBJ_BUBBLE_ATTACHED_stain_01, IMG_OBJ_BUBBLE_ATTACHED_stain_03),
+        const at = MathHelper.randomRange(
+                IMG_OBJ_BUBBLE_ATTACHED_stain_01,
+                IMG_OBJ_BUBBLE_ATTACHED_stain_03
+            ),
             s = new Bubble();
         s.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_ATTACHED);
         s.setTextureQuad(at);
@@ -1118,7 +1201,9 @@ const GameScene = BaseElement.extend({
         s.anchor = Alignment.TOP | Alignment.HCENTER;
         s.rotationCenterY -= s.height / 2 - SOCK_COLLISION_Y_OFFSET;
 
-        s.setTextureQuad(s.group === 0 ? Sock.Quads.IMG_OBJ_SOCKS_hat_01 : Sock.Quads.IMG_OBJ_SOCKS_hat_02);
+        s.setTextureQuad(
+            s.group === 0 ? Sock.Quads.IMG_OBJ_SOCKS_hat_01 : Sock.Quads.IMG_OBJ_SOCKS_hat_02
+        );
 
         s.state = Sock.StateType.IDLE;
         s.parseMover(item);
@@ -1244,10 +1329,18 @@ const GameScene = BaseElement.extend({
         );
         var frame;
         var idle3Sequence = [];
-        for (frame = IMG_CHAR_ANIMATIONS_idle3_start; frame <= IMG_CHAR_ANIMATIONS_idle3_end; frame++) {
+        for (
+            frame = IMG_CHAR_ANIMATIONS_idle3_start;
+            frame <= IMG_CHAR_ANIMATIONS_idle3_end;
+            frame++
+        ) {
             idle3Sequence.push(frame);
         }
-        for (frame = IMG_CHAR_ANIMATIONS_idle3_start; frame <= IMG_CHAR_ANIMATIONS_idle3_end; frame++) {
+        for (
+            frame = IMG_CHAR_ANIMATIONS_idle3_start;
+            frame <= IMG_CHAR_ANIMATIONS_idle3_end;
+            frame++
+        ) {
             idle3Sequence.push(frame);
         }
         target.addAnimationSequence(
@@ -1490,7 +1583,10 @@ const GameScene = BaseElement.extend({
                 }
             }
 
-            if (Math.abs(this.camera.pos.x - targetX) < 1 && Math.abs(this.camera.pos.y - targetY) < 1) {
+            if (
+                Math.abs(this.camera.pos.x - targetX) < 1 &&
+                Math.abs(this.camera.pos.y - targetY) < 1
+            ) {
                 this.camera.type = Camera2D.SpeedType.DELAY;
                 this.camera.speed = resolution.CAMERA_SPEED;
             }
@@ -1607,10 +1703,12 @@ const GameScene = BaseElement.extend({
                             }
 
                             if (tail === this.starL) {
-                                this.lastCandyRotateDeltaL = a + b.initialCandleAngle - candyPart.rotation;
+                                this.lastCandyRotateDeltaL =
+                                    a + b.initialCandleAngle - candyPart.rotation;
                                 handledRotationL = true;
                             } else {
-                                this.lastCandyRotateDeltaR = a + b.initialCandleAngle - candyPart.rotation;
+                                this.lastCandyRotateDeltaR =
+                                    a + b.initialCandleAngle - candyPart.rotation;
                                 handledRotationR = true;
                             }
                             candyPart.rotation = a + b.initialCandleAngle;
@@ -1618,7 +1716,8 @@ const GameScene = BaseElement.extend({
                             if (!b.chosenOne) {
                                 b.initialCandleAngle = this.candyMain.rotation - a;
                             }
-                            this.lastCandyRotateDelta = a + b.initialCandleAngle - this.candyMain.rotation;
+                            this.lastCandyRotateDelta =
+                                a + b.initialCandleAngle - this.candyMain.rotation;
                             this.candyMain.rotation = a + b.initialCandleAngle;
                             handledRotation = true;
                         }
@@ -1677,7 +1776,9 @@ const GameScene = BaseElement.extend({
                     //Achievements.increment(AchievementId.ROMANTIC_SOUL);
 
                     if (this.candyBubbleL || this.candyBubbleR) {
-                        this.candyBubble = this.candyBubbleL ? this.candyBubbleL : this.candyBubbleR;
+                        this.candyBubble = this.candyBubbleL
+                            ? this.candyBubbleL
+                            : this.candyBubbleR;
                         this.candyBubbleAnimation.visible = true;
                     }
 
@@ -1700,7 +1801,11 @@ const GameScene = BaseElement.extend({
                     for (var i = 0, count = this.bungees.length; i < count; i++) {
                         var g = this.bungees[i],
                             b = g.rope;
-                        if (b && b.cut !== b.parts.length - 3 && (b.tail === this.starL || b.tail === this.starR)) {
+                        if (
+                            b &&
+                            b.cut !== b.parts.length - 3 &&
+                            (b.tail === this.starL || b.tail === this.starR)
+                        ) {
                             var prev = b.parts[b.parts.length - 2],
                                 heroRestLen = b.tail.restLength(prev);
                             this.star.addConstraint(prev, heroRestLen, ConstraintType.DISTANCE);
@@ -1803,7 +1908,12 @@ const GameScene = BaseElement.extend({
                 if (this.twoParts != PartsType.NONE) {
                     if (
                         !this.noCandyL &&
-                        this.isBubbleCapture(b, this.candyL, this.candyBubbleL, this.candyBubbleAnimationL)
+                        this.isBubbleCapture(
+                            b,
+                            this.candyL,
+                            this.candyBubbleL,
+                            this.candyBubbleAnimationL
+                        )
                     ) {
                         this.candyBubbleL = b;
                         break;
@@ -1811,7 +1921,12 @@ const GameScene = BaseElement.extend({
 
                     if (
                         !this.noCandyR &&
-                        this.isBubbleCapture(b, this.candyR, this.candyBubbleR, this.candyBubbleAnimationR)
+                        this.isBubbleCapture(
+                            b,
+                            this.candyR,
+                            this.candyBubbleR,
+                            this.candyBubbleAnimationR
+                        )
                     ) {
                         this.candyBubbleR = b;
                         break;
@@ -1819,7 +1934,12 @@ const GameScene = BaseElement.extend({
                 } else {
                     if (
                         !this.noCandy &&
-                        this.isBubbleCapture(b, this.candy, this.candyBubble, this.candyBubbleAnimation)
+                        this.isBubbleCapture(
+                            b,
+                            this.candy,
+                            this.candyBubble,
+                            this.candyBubbleAnimation
+                        )
                     ) {
                         this.candyBubble = b;
                         break;
@@ -1948,7 +2068,9 @@ const GameScene = BaseElement.extend({
                             this.releaseAllRopes(false);
 
                             this.savedSockSpeed =
-                                SOCK_SPEED_K * this.star.v.getLength() * resolution.PHYSICS_SPEED_MULTIPLIER;
+                                SOCK_SPEED_K *
+                                this.star.v.getLength() *
+                                resolution.PHYSICS_SPEED_MULTIPLIER;
                             this.targetSock = n;
 
                             s.light.playTimeline(0);
@@ -2185,9 +2307,18 @@ const GameScene = BaseElement.extend({
             }
         }
 
-        const outOfScreen = this.twoParts === PartsType.NONE && this.pointOutOfScreen(this.star) && !this.noCandy,
-            outOfScreenL = this.twoParts !== PartsType.NONE && this.pointOutOfScreen(this.starL) && !this.noCandyL,
-            outOfScreenR = this.twoParts !== PartsType.NONE && this.pointOutOfScreen(this.starR) && !this.noCandyR;
+        const outOfScreen =
+                this.twoParts === PartsType.NONE &&
+                this.pointOutOfScreen(this.star) &&
+                !this.noCandy,
+            outOfScreenL =
+                this.twoParts !== PartsType.NONE &&
+                this.pointOutOfScreen(this.starL) &&
+                !this.noCandyL,
+            outOfScreenR =
+                this.twoParts !== PartsType.NONE &&
+                this.pointOutOfScreen(this.starR) &&
+                !this.noCandyR;
 
         if (outOfScreen || outOfScreenL || outOfScreenR) {
             if (outOfScreen) {
@@ -2261,7 +2392,10 @@ const GameScene = BaseElement.extend({
                     }
                 }
 
-                if (this.candyBubble || (this.twoParts != PartsType.NONE && (this.candyBubbleL || this.candyBubbleR))) {
+                if (
+                    this.candyBubble ||
+                    (this.twoParts != PartsType.NONE && (this.candyBubbleL || this.candyBubbleR))
+                ) {
                     for (i = 0, len = this.bubbles.length; i < len; i++) {
                         var s = this.bubbles[i],
                             BUBBLE_RADIUS = resolution.BUBBLE_RADIUS,
@@ -2338,8 +2472,10 @@ const GameScene = BaseElement.extend({
                     }
 
                     if (
-                        Vector.distance(pos.x, pos.y, rc.handle2.x, rc.handle2.y) <= resolution.RC_CONTROLLER_RADIUS ||
-                        Vector.distance(pos.x, pos.y, rc.handle2.x, rc.handle2.y) <= resolution.RC_CONTROLLER_RADIUS
+                        Vector.distance(pos.x, pos.y, rc.handle2.x, rc.handle2.y) <=
+                            resolution.RC_CONTROLLER_RADIUS ||
+                        Vector.distance(pos.x, pos.y, rc.handle2.x, rc.handle2.y) <=
+                            resolution.RC_CONTROLLER_RADIUS
                     ) {
                         activeElement = true;
                         break;
@@ -2474,7 +2610,12 @@ const GameScene = BaseElement.extend({
             const g = this.bungees[l],
                 b = g.rope;
 
-            if (b && (b.tail === this.star || (b.tail === this.starL && left) || (b.tail === this.starR && !left))) {
+            if (
+                b &&
+                (b.tail === this.star ||
+                    (b.tail === this.starL && left) ||
+                    (b.tail === this.starR && !left))
+            ) {
                 if (b.cut === Constants.UNDEFINED) {
                     b.setCut(b.parts.length - 2);
                     this.detachCandy();
@@ -2521,12 +2662,20 @@ const GameScene = BaseElement.extend({
         this.candyTop.scaleX = this.candyTop.scaleY = 1;
 
         const tl = new Timeline();
-        tl.addKeyFrame(KeyFrame.makePos(this.candy.x, this.candy.y, KeyFrame.TransitionType.LINEAR, 0));
-        tl.addKeyFrame(KeyFrame.makePos(this.target.x, this.target.y + 10, KeyFrame.TransitionType.LINEAR, 0.1));
+        tl.addKeyFrame(
+            KeyFrame.makePos(this.candy.x, this.candy.y, KeyFrame.TransitionType.LINEAR, 0)
+        );
+        tl.addKeyFrame(
+            KeyFrame.makePos(this.target.x, this.target.y + 10, KeyFrame.TransitionType.LINEAR, 0.1)
+        );
         tl.addKeyFrame(KeyFrame.makeScale(0.71, 0.71, KeyFrame.TransitionType.LINEAR, 0));
         tl.addKeyFrame(KeyFrame.makeScale(0, 0, KeyFrame.TransitionType.LINEAR, 0.1));
-        tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0));
-        tl.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.1));
+        tl.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0)
+        );
+        tl.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.1)
+        );
         this.candy.addTimelineWithID(tl, 0);
         this.candy.playTimeline(0);
         tl.onFinished = this.aniPool.timelineFinishedDelegate();
@@ -2593,7 +2742,7 @@ const GameScene = BaseElement.extend({
         this.back.draw();
 
         // Scale overlayCut based on resolution to prevent visible seams at HD resolutions
-        let overlayCut = Math.ceil(2 * resolution.CANVAS_SCALE / 0.1875),
+        let overlayCut = Math.ceil((2 * resolution.CANVAS_SCALE) / 0.1875),
             q,
             overlayRect,
             off;
@@ -2819,7 +2968,14 @@ const GameScene = BaseElement.extend({
     },
     handlePumpFlow: function (p, s, c, delta) {
         const powerRadius = resolution.PUMP_POWER_RADIUS;
-        if (c.rectInObject(p.x - powerRadius, p.y - powerRadius, p.x + powerRadius, p.y + powerRadius)) {
+        if (
+            c.rectInObject(
+                p.x - powerRadius,
+                p.y - powerRadius,
+                p.x + powerRadius,
+                p.y + powerRadius
+            )
+        ) {
             const tn1 = new Vector(0, 0),
                 tn2 = new Vector(0, 0),
                 h = new Vector(c.x, c.y);
@@ -2939,10 +3095,30 @@ const GameScene = BaseElement.extend({
 
                 if (razor) {
                     if (p1.prevPos.x !== Constants.INT_MAX) {
-                        const minX = MathHelper.minOf4(p1.pos.x, p1.prevPos.x, p2.pos.x, p2.prevPos.x),
-                            minY = MathHelper.minOf4(p1.pos.y, p1.prevPos.y, p2.pos.y, p2.prevPos.y),
-                            maxX = MathHelper.maxOf4(p1.pos.x, p1.prevPos.x, p2.pos.x, p2.prevPos.x),
-                            maxY = MathHelper.maxOf4(p1.pos.y, p1.prevPos.y, p2.pos.y, p2.prevPos.y);
+                        const minX = MathHelper.minOf4(
+                                p1.pos.x,
+                                p1.prevPos.x,
+                                p2.pos.x,
+                                p2.prevPos.x
+                            ),
+                            minY = MathHelper.minOf4(
+                                p1.pos.y,
+                                p1.prevPos.y,
+                                p2.pos.y,
+                                p2.prevPos.y
+                            ),
+                            maxX = MathHelper.maxOf4(
+                                p1.pos.x,
+                                p1.prevPos.x,
+                                p2.pos.x,
+                                p2.prevPos.x
+                            ),
+                            maxY = MathHelper.maxOf4(
+                                p1.pos.y,
+                                p1.prevPos.y,
+                                p2.pos.y,
+                                p2.prevPos.y
+                            );
 
                         cut = Rectangle.rectInRect(
                             minX,
@@ -2971,7 +3147,16 @@ const GameScene = BaseElement.extend({
                     ) {
                         cut = false;
                     } else {
-                        cut = MathHelper.lineInLine(v1.x, v1.y, v2.x, v2.y, p1.pos.x, p1.pos.y, p2.pos.x, p2.pos.y);
+                        cut = MathHelper.lineInLine(
+                            v1.x,
+                            v1.y,
+                            v2.x,
+                            v2.y,
+                            p1.pos.x,
+                            p1.pos.y,
+                            p2.pos.x,
+                            p2.pos.y
+                        );
                     }
                 }
 
@@ -3006,16 +3191,34 @@ const GameScene = BaseElement.extend({
         s.doRestoreCutTransparency();
         const tl = new Timeline();
         if (this.gravityButton && !this.gravityNormal) {
-            tl.addKeyFrame(KeyFrame.makePos(g.spider.x, g.spider.y, KeyFrame.TransitionType.EASE_OUT, 0));
-            tl.addKeyFrame(KeyFrame.makePos(g.spider.x, g.spider.y + 50, KeyFrame.TransitionType.EASE_OUT, 0.3));
             tl.addKeyFrame(
-                KeyFrame.makePos(g.spider.x, g.spider.y - resolution.CANVAS_HEIGHT, KeyFrame.TransitionType.EASE_IN, 1)
+                KeyFrame.makePos(g.spider.x, g.spider.y, KeyFrame.TransitionType.EASE_OUT, 0)
+            );
+            tl.addKeyFrame(
+                KeyFrame.makePos(g.spider.x, g.spider.y + 50, KeyFrame.TransitionType.EASE_OUT, 0.3)
+            );
+            tl.addKeyFrame(
+                KeyFrame.makePos(
+                    g.spider.x,
+                    g.spider.y - resolution.CANVAS_HEIGHT,
+                    KeyFrame.TransitionType.EASE_IN,
+                    1
+                )
             );
         } else {
-            tl.addKeyFrame(KeyFrame.makePos(g.spider.x, g.spider.y, KeyFrame.TransitionType.EASE_OUT, 0));
-            tl.addKeyFrame(KeyFrame.makePos(g.spider.x, g.spider.y - 50, KeyFrame.TransitionType.EASE_OUT, 0.3));
             tl.addKeyFrame(
-                KeyFrame.makePos(g.spider.x, g.spider.y + resolution.CANVAS_HEIGHT, KeyFrame.TransitionType.EASE_IN, 1)
+                KeyFrame.makePos(g.spider.x, g.spider.y, KeyFrame.TransitionType.EASE_OUT, 0)
+            );
+            tl.addKeyFrame(
+                KeyFrame.makePos(g.spider.x, g.spider.y - 50, KeyFrame.TransitionType.EASE_OUT, 0.3)
+            );
+            tl.addKeyFrame(
+                KeyFrame.makePos(
+                    g.spider.x,
+                    g.spider.y + resolution.CANVAS_HEIGHT,
+                    KeyFrame.TransitionType.EASE_IN,
+                    1
+                )
             );
         }
 
@@ -3068,8 +3271,17 @@ const GameScene = BaseElement.extend({
         s.addChild(this.candy);
         const tl = new Timeline();
         if (this.gravityButton && !this.gravityNormal) {
-            tl.addKeyFrame(KeyFrame.makePos(sg.spider.x, sg.spider.y - 10, KeyFrame.TransitionType.EASE_OUT, 0));
-            tl.addKeyFrame(KeyFrame.makePos(sg.spider.x, sg.spider.y + 70, KeyFrame.TransitionType.EASE_OUT, 0.3));
+            tl.addKeyFrame(
+                KeyFrame.makePos(sg.spider.x, sg.spider.y - 10, KeyFrame.TransitionType.EASE_OUT, 0)
+            );
+            tl.addKeyFrame(
+                KeyFrame.makePos(
+                    sg.spider.x,
+                    sg.spider.y + 70,
+                    KeyFrame.TransitionType.EASE_OUT,
+                    0.3
+                )
+            );
             tl.addKeyFrame(
                 KeyFrame.makePos(
                     sg.spider.x,
@@ -3079,8 +3291,17 @@ const GameScene = BaseElement.extend({
                 )
             );
         } else {
-            tl.addKeyFrame(KeyFrame.makePos(sg.spider.x, sg.spider.y - 10, KeyFrame.TransitionType.EASE_OUT, 0));
-            tl.addKeyFrame(KeyFrame.makePos(sg.spider.x, sg.spider.y - 70, KeyFrame.TransitionType.EASE_OUT, 0.3));
+            tl.addKeyFrame(
+                KeyFrame.makePos(sg.spider.x, sg.spider.y - 10, KeyFrame.TransitionType.EASE_OUT, 0)
+            );
+            tl.addKeyFrame(
+                KeyFrame.makePos(
+                    sg.spider.x,
+                    sg.spider.y - 70,
+                    KeyFrame.TransitionType.EASE_OUT,
+                    0.3
+                )
+            );
             tl.addKeyFrame(
                 KeyFrame.makePos(
                     sg.spider.x,
@@ -3311,7 +3532,10 @@ const GameScene = BaseElement.extend({
             const r = this.rotatedCircles[i],
                 d1 = Vector.distance(cameraAdjustedX, cameraAdjustedY, r.handle1.x, r.handle1.y),
                 d2 = Vector.distance(cameraAdjustedX, cameraAdjustedY, r.handle2.x, r.handle2.y);
-            if ((d1 < resolution.RC_CONTROLLER_RADIUS && !r.hasOneHandle()) || d2 < resolution.RC_CONTROLLER_RADIUS) {
+            if (
+                (d1 < resolution.RC_CONTROLLER_RADIUS && !r.hasOneHandle()) ||
+                d2 < resolution.RC_CONTROLLER_RADIUS
+            ) {
                 //check for overlapping
                 for (let j = i + 1; j < len; j++) {
                     const r2 = this.rotatedCircles[j],
@@ -3343,13 +3567,31 @@ const GameScene = BaseElement.extend({
 
         // circle fading
         const activeCircleIndex = this.rotatedCircles.indexOf(activeCircle);
-        if (activeCircleIndex != this.rotatedCircles.length - 1 && intersectsAnotherCircle && !hasCircleInside) {
+        if (
+            activeCircleIndex != this.rotatedCircles.length - 1 &&
+            intersectsAnotherCircle &&
+            !hasCircleInside
+        ) {
             const fadeIn = new Timeline();
-            fadeIn.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0));
-            fadeIn.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0.2));
+            fadeIn.addKeyFrame(
+                KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0)
+            );
+            fadeIn.addKeyFrame(
+                KeyFrame.makeColor(
+                    RGBAColor.solidOpaque.copy(),
+                    KeyFrame.TransitionType.LINEAR,
+                    0.2
+                )
+            );
 
             const fadeOut = new Timeline();
-            fadeOut.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0.2));
+            fadeOut.addKeyFrame(
+                KeyFrame.makeColor(
+                    RGBAColor.solidOpaque.copy(),
+                    KeyFrame.TransitionType.LINEAR,
+                    0.2
+                )
+            );
             fadeOut.onFinished = this.onRotatedCircleTimelineFinished.bind(this);
 
             const fadingOutCircle = activeCircle.copy();
@@ -3405,7 +3647,11 @@ const GameScene = BaseElement.extend({
 
         if (this.clickToCut) {
             var cutPos = Vector.newZero(),
-                grab = this.getNearestBungeeGrabByBezierPoints(cutPos, cameraAdjustedX, cameraAdjustedY),
+                grab = this.getNearestBungeeGrabByBezierPoints(
+                    cutPos,
+                    cameraAdjustedX,
+                    cameraAdjustedY
+                ),
                 bungee = grab ? grab.rope : null;
             if (bungee && bungee.highlighted) {
                 if (this.getNearestBungeeSegmentByConstraints(cutPos, grab)) {
@@ -3639,9 +3885,17 @@ const GameScene = BaseElement.extend({
 
             if (grab.moveLength > 0 && grab.moverDragging === touchIndex) {
                 if (grab.moveVertical) {
-                    grab.y = MathHelper.fitToBoundaries(cameraAdjustedTouch.y, grab.minMoveValue, grab.maxMoveValue);
+                    grab.y = MathHelper.fitToBoundaries(
+                        cameraAdjustedTouch.y,
+                        grab.minMoveValue,
+                        grab.maxMoveValue
+                    );
                 } else {
-                    grab.x = MathHelper.fitToBoundaries(cameraAdjustedTouch.x, grab.minMoveValue, grab.maxMoveValue);
+                    grab.x = MathHelper.fitToBoundaries(
+                        cameraAdjustedTouch.x,
+                        grab.minMoveValue,
+                        grab.maxMoveValue
+                    );
                 }
 
                 if (grab.rope) {
@@ -3712,7 +3966,9 @@ const GameScene = BaseElement.extend({
     onButtonPressed: function (n) {
         Gravity.toggle();
         this.gravityNormal = Gravity.isNormal();
-        SoundMgr.playSound(this.gravityNormal ? ResourceId.SND_GRAVITY_OFF : ResourceId.SND_GRAVITY_ON);
+        SoundMgr.playSound(
+            this.gravityNormal ? ResourceId.SND_GRAVITY_OFF : ResourceId.SND_GRAVITY_ON
+        );
 
         for (let i = 0, len = this.earthAnims.length; i < len; i++) {
             const earthImage = this.earthAnims[i];

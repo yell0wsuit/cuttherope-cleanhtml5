@@ -69,7 +69,9 @@ const netEdition = {
 
     loaderPageImages: ["loader-bg.jpg", "loader-logo.png"],
 
-    gameImageIds: ResourcePacks.StandardGameImages.concat(ResourcePacks.FullGameAdditionalGameImages),
+    gameImageIds: ResourcePacks.StandardGameImages.concat(
+        ResourcePacks.FullGameAdditionalGameImages
+    ),
 
     boxes: boxes,
 

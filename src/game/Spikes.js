@@ -12,6 +12,7 @@ import Alignment from "@/core/Alignment";
 import KeyFrame from "@/visual/KeyFrame";
 import Canvas from "@/utils/Canvas";
 import resolution from "@/resolution";
+
 const Spikes = CTRGameObject.extend({
     init: function (px, py, width, angle, t) {
         this._super();
@@ -46,7 +47,10 @@ const Spikes = CTRGameObject.extend({
             const normalQuad = IMG_OBJ_ROTATABLE_SPIKES_BUTTON_button_1 + (t - 1) * 2,
                 pressedQuad = IMG_OBJ_ROTATABLE_SPIKES_BUTTON_button_1_pressed + (t - 1) * 2,
                 bup = ImageElement.create(ResourceId.IMG_OBJ_ROTATABLE_SPIKES_BUTTON, normalQuad),
-                bdown = ImageElement.create(ResourceId.IMG_OBJ_ROTATABLE_SPIKES_BUTTON, pressedQuad);
+                bdown = ImageElement.create(
+                    ResourceId.IMG_OBJ_ROTATABLE_SPIKES_BUTTON,
+                    pressedQuad
+                );
 
             bup.doRestoreCutTransparency();
             bdown.doRestoreCutTransparency();
@@ -94,6 +98,10 @@ const Spikes = CTRGameObject.extend({
         this.x = px;
         this.y = py;
 
+        // Generate unique instance key for this spike's electric sound
+        // Using position ensures each spike has its own independent sound loop
+        this.electroInstanceKey = `${Math.round(px)}_${Math.round(py)}`;
+
         this.setToggled(t);
         this.updateRotation();
 
@@ -117,7 +125,9 @@ const Spikes = CTRGameObject.extend({
         this.touchIndex = Constants.UNDEFINED;
     },
     updateRotation: function () {
-        let pWidth = this.electro ? this.width - 400 * resolution.CANVAS_SCALE : this.texture.rects[this.quadToDraw].w;
+        let pWidth = this.electro
+            ? this.width - 400 * resolution.CANVAS_SCALE
+            : this.texture.rects[this.quadToDraw].w;
 
         pWidth /= 2;
 
@@ -140,13 +150,21 @@ const Spikes = CTRGameObject.extend({
         this.electroOn = true;
         this.playTimeline(SpikeAnimation.ELECTRODES_ELECTRIC);
         this.electroTimer = this.onTime;
-        SoundMgr.playLoopedSound(ResourceId.SND_ELECTRIC);
+
+        // Use instance key and optional delay based on initialDelay
+        // Convert initialDelay (in seconds) to milliseconds
+        // Add small random offset (0-30ms) to prevent exact simultaneous playback
+        const delayMs = Math.max(0, this.initialDelay * 1000) + Math.random() * 30;
+
+        SoundMgr.playLoopedSound(ResourceId.SND_ELECTRIC, this.electroInstanceKey, delayMs);
     },
     turnElectroOff: function () {
         this.electroOn = false;
         this.playTimeline(SpikeAnimation.ELECTRODES_BASE);
         this.electroTimer = this.offTime;
-        SoundMgr.stopSound(ResourceId.SND_ELECTRIC);
+
+        // Stop only this spike's sound instance
+        SoundMgr.stopLoopedSoundInstance(ResourceId.SND_ELECTRIC, this.electroInstanceKey);
     },
     update: function (delta) {
         this._super(delta);

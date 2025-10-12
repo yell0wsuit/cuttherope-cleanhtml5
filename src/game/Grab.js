@@ -217,7 +217,10 @@ const Grab = CTRGameObject.extend({
                         b = c1.distance(c2),
                         len = a > b ? a : b;
 
-                    if (this.spiderPos >= checkingPos && (this.spiderPos < checkingPos + len || i > numPts - 3)) {
+                    if (
+                        this.spiderPos >= checkingPos &&
+                        (this.spiderPos < checkingPos + len || i > numPts - 3)
+                    ) {
                         const overlay = this.spiderPos - checkingPos;
                         const c3 = Vector.subtract(c2, c1);
                         c3.multiply(overlay / len);
@@ -264,7 +267,8 @@ const Grab = CTRGameObject.extend({
 
         if (this.radius !== Constants.UNDEFINED || this.hideRadius) {
             const color = new RGBAColor(0.2, 0.5, 0.9, this.radiusAlpha),
-                drawRadius = this.radius !== Constants.UNDEFINED ? this.radius : this.previousRadius;
+                drawRadius =
+                    this.radius !== Constants.UNDEFINED ? this.radius : this.previousRadius;
             this.drawGrabCircle(this.x, this.y, drawRadius, color);
         }
     },
@@ -308,7 +312,14 @@ const Grab = CTRGameObject.extend({
                 if (i % 2 === 0) {
                     const startRadians = (i / segments) * totalRadians;
                     ctx.beginPath();
-                    ctx.arc(radius + 2, radius + 2, radius, startRadians, startRadians + segmentRadians, false);
+                    ctx.arc(
+                        radius + 2,
+                        radius + 2,
+                        radius,
+                        startRadians,
+                        startRadians + segmentRadians,
+                        false
+                    );
                     ctx.stroke();
                     ctx.closePath();
                 }
@@ -398,7 +409,10 @@ const Grab = CTRGameObject.extend({
         // TODO: handle gun
 
         if (radius === Constants.UNDEFINED || radius === Constants.CANDY2_FLAG) {
-            const imageId = MathHelper.randomRange(ResourceId.IMG_OBJ_HOOK_01, ResourceId.IMG_OBJ_HOOK_02);
+            const imageId = MathHelper.randomRange(
+                ResourceId.IMG_OBJ_HOOK_01,
+                ResourceId.IMG_OBJ_HOOK_02
+            );
             this.back = ImageElement.create(imageId, IMG_OBJ_HOOK_01_bottom);
             this.back.doRestoreCutTransparency();
             this.back.anchor = this.back.parentAnchor = Alignment.CENTER;
@@ -424,19 +438,31 @@ const Grab = CTRGameObject.extend({
         }
 
         if (this.wheel) {
-            this.wheelImage = ImageElement.create(ResourceId.IMG_OBJ_HOOK_REGULATED, IMG_OBJ_HOOK_REGULATED_bottom);
+            this.wheelImage = ImageElement.create(
+                ResourceId.IMG_OBJ_HOOK_REGULATED,
+                IMG_OBJ_HOOK_REGULATED_bottom
+            );
             this.wheelImage.anchor = this.wheelImage.parentAnchor = Alignment.CENTER;
             this.addChild(this.wheelImage);
             this.wheelImage.visible = false;
 
-            this.wheelImage2 = ImageElement.create(ResourceId.IMG_OBJ_HOOK_REGULATED, IMG_OBJ_HOOK_REGULATED_rope);
+            this.wheelImage2 = ImageElement.create(
+                ResourceId.IMG_OBJ_HOOK_REGULATED,
+                IMG_OBJ_HOOK_REGULATED_rope
+            );
             this.wheelImage2.passTransformationsToChilds = false;
 
-            this.wheelHighlight = ImageElement.create(ResourceId.IMG_OBJ_HOOK_REGULATED, IMG_OBJ_HOOK_REGULATED_active);
+            this.wheelHighlight = ImageElement.create(
+                ResourceId.IMG_OBJ_HOOK_REGULATED,
+                IMG_OBJ_HOOK_REGULATED_active
+            );
             this.wheelHighlight.anchor = this.wheelHighlight.parentAnchor = Alignment.CENTER;
             this.wheelImage2.addChild(this.wheelHighlight);
 
-            this.wheelImage3 = ImageElement.create(ResourceId.IMG_OBJ_HOOK_REGULATED, IMG_OBJ_HOOK_REGULATED_top);
+            this.wheelImage3 = ImageElement.create(
+                ResourceId.IMG_OBJ_HOOK_REGULATED,
+                IMG_OBJ_HOOK_REGULATED_top
+            );
             this.wheelImage3.anchor =
                 this.wheelImage3.parentAnchor =
                 this.wheelImage2.anchor =
@@ -459,12 +485,19 @@ const Grab = CTRGameObject.extend({
                 -Math.round(this.moveBackground.width / 2) + resolution.GRAB_MOVE_BG_X_OFFSET;
             this.moveBackground.x = -resolution.GRAB_MOVE_BG_X_OFFSET;
 
-            this.grabMoverHighlight = ImageElement.create(ResourceId.IMG_OBJ_HOOK_MOVABLE, IMG_OBJ_HOOK_MOVABLE_active);
+            this.grabMoverHighlight = ImageElement.create(
+                ResourceId.IMG_OBJ_HOOK_MOVABLE,
+                IMG_OBJ_HOOK_MOVABLE_active
+            );
             this.grabMoverHighlight.visible = false;
-            this.grabMoverHighlight.anchor = this.grabMoverHighlight.parentAnchor = Alignment.CENTER;
+            this.grabMoverHighlight.anchor = this.grabMoverHighlight.parentAnchor =
+                Alignment.CENTER;
             this.addChild(this.grabMoverHighlight);
 
-            this.grabMover = ImageElement.create(ResourceId.IMG_OBJ_HOOK_MOVABLE, IMG_OBJ_HOOK_MOVABLE_top);
+            this.grabMover = ImageElement.create(
+                ResourceId.IMG_OBJ_HOOK_MOVABLE,
+                IMG_OBJ_HOOK_MOVABLE_top
+            );
             this.grabMover.visible = false;
             this.grabMover.anchor = this.grabMover.parentAnchor = Alignment.CENTER;
             this.addChild(this.grabMover);
@@ -506,7 +539,9 @@ const Grab = CTRGameObject.extend({
             IMG_OBJ_BEE_HD_wings_end
         );
         wings.playTimeline(0);
-        wings.jumpTo(MathHelper.randomRange(0, IMG_OBJ_BEE_HD_wings_end - IMG_OBJ_BEE_HD_wings_start));
+        wings.jumpTo(
+            MathHelper.randomRange(0, IMG_OBJ_BEE_HD_wings_end - IMG_OBJ_BEE_HD_wings_start)
+        );
         this.bee.addChild(wings);
 
         const p = this.bee.texture.offsets[IMG_OBJ_BEE_HD__rotation_center];

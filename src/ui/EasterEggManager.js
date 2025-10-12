@@ -22,14 +22,18 @@ class EasterEggManager {
             const animation = element.animate(keyframes, { fill: "forwards", ...options });
             return animation.finished.catch(() => {});
         };
-        const fadeElement = (element, { from = null, to = 1, duration = 200, delay = 0, display } = {}) => {
+        const fadeElement = (
+            element,
+            { from = null, to = 1, duration = 200, delay = 0, display } = {}
+        ) => {
             if (!element) {
                 return Promise.resolve();
             }
             if (display) {
                 element.style.display = display;
             }
-            const startOpacity = from !== null ? from : Number.parseFloat(getComputedStyle(element).opacity) || 0;
+            const startOpacity =
+                from !== null ? from : Number.parseFloat(getComputedStyle(element).opacity) || 0;
             if (from !== null) {
                 element.style.opacity = from;
             }
@@ -428,7 +432,12 @@ class EasterEggManager {
                         if (t > s1 + 100) {
                             l =
                                 -1 *
-                                Easing.easeOutExpo(t - (s1 + 100), 0, resolution.uiScaledNumber(10), s2 - (s1 + 100));
+                                Easing.easeOutExpo(
+                                    t - (s1 + 100),
+                                    0,
+                                    resolution.uiScaledNumber(10),
+                                    s2 - (s1 + 100)
+                                );
                             r = l;
                         }
                     } else if (t < s3) {
@@ -440,13 +449,23 @@ class EasterEggManager {
                         if (t > s3 + 100) {
                             l =
                                 resolution.uiScaledNumber(10) -
-                                Easing.easeInOutExpo(t - (s3 + 100), 0, resolution.uiScaledNumber(10), s4 - (s3 + 100));
+                                Easing.easeInOutExpo(
+                                    t - (s3 + 100),
+                                    0,
+                                    resolution.uiScaledNumber(10),
+                                    s4 - (s3 + 100)
+                                );
                             r = l;
                         }
                     } else if (t < s5) {
                         // intentional
                     } else if (t < s6) {
-                        ty = Easing.easeOutExpo(t - s5, tybegin, resolution.uiScaledNumber(300), s6 - s5);
+                        ty = Easing.easeOutExpo(
+                            t - s5,
+                            tybegin,
+                            resolution.uiScaledNumber(300),
+                            s6 - s5
+                        );
                         const shrink = Easing.easeOutExpo(t - s5, 0, scaleTo - 0.1, s6 - s5);
                         sx = scaleTo - shrink;
                         sy = scaleTo - shrink;
@@ -471,8 +490,14 @@ class EasterEggManager {
                         RootController.resumeLevel();
                     }
 
-                    const mx = tx + (resolution.uiScaledNumber(500) - (sx / scaleTo) * resolution.uiScaledNumber(200));
-                    const my = ty + (resolution.uiScaledNumber(600) - (sy / scaleTo) * resolution.uiScaledNumber(400));
+                    const mx =
+                        tx +
+                        (resolution.uiScaledNumber(500) -
+                            (sx / scaleTo) * resolution.uiScaledNumber(200));
+                    const my =
+                        ty +
+                        (resolution.uiScaledNumber(600) -
+                            (sy / scaleTo) * resolution.uiScaledNumber(400));
 
                     drawOmNom(ctx, sx, sy + mod, mx, my, l, r);
                 }
@@ -480,10 +505,20 @@ class EasterEggManager {
                 window.requestAnimationFrame(step);
             };
 
-            fadeElement(canvas, { from: 0, to: 1, duration: 200, display: "block" }).then(startAnimation);
+            fadeElement(canvas, { from: 0, to: 1, duration: 200, display: "block" }).then(
+                startAnimation
+            );
         };
 
-        var drawOmNom = function (ctx, scaleX, scaleY, translateX, translateY, leftEyeOffset, rightEyeOffset) {
+        var drawOmNom = function (
+            ctx,
+            scaleX,
+            scaleY,
+            translateX,
+            translateY,
+            leftEyeOffset,
+            rightEyeOffset
+        ) {
             // clear the canvas
             ctx.save();
             ctx.setTransform(1, 0, 0, 1, 0, 0);

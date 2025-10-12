@@ -29,7 +29,9 @@ let Class;
 
         for (const name in prop) {
             prototype[name] =
-                typeof prop[name] == "function" && typeof _super[name] == "function" && fnTest.test(prop[name])
+                typeof prop[name] == "function" &&
+                typeof _super[name] == "function" &&
+                fnTest.test(prop[name])
                     ? (function (name, fn) {
                           return function () {
                               const tmp = this._super;

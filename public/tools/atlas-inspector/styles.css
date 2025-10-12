@@ -73,6 +73,12 @@ body {
     gap: 0.4rem;
 }
 
+.control-help {
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
 .control-panel label {
     font-weight: 600;
     color: var(--text-muted);
@@ -91,6 +97,28 @@ textarea {
     color: inherit;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     font-size: 0.95rem;
+}
+
+input[type="file"] {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+input[type="file"]::file-selector-button {
+    border: none;
+    border-radius: 999px;
+    margin-right: 0.6rem;
+    padding: 0.45rem 0.9rem;
+    background: rgba(148, 163, 184, 0.25);
+    color: var(--text);
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+input[type="file"]::file-selector-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(148, 163, 184, 0.2);
 }
 
 input:focus,
@@ -302,6 +330,32 @@ button[disabled] {
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
+}
+
+.paste-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.85rem;
+    border-radius: 12px;
+    border: 1px dashed rgba(148, 163, 184, 0.35);
+    background: rgba(15, 23, 42, 0.45);
+}
+
+.paste-block label {
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.paste-block textarea {
+    min-height: 2.5rem;
+    font-family: "Fira Code", "SFMono-Regular", "Menlo", monospace;
+    resize: vertical;
+}
+
+.paste-block .button-row {
+    justify-content: flex-start;
 }
 
 .form-grid {

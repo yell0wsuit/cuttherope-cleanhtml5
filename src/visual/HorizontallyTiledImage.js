@@ -64,7 +64,13 @@ const HorizontallyTiledImage = ImageElement.extend({
                 leftCeilW,
                 leftCeilH
             );
-            this.drawTiled(this.tiles[1], dx + leftCeilW, dy + this.offsets[1], tileWidth, center.h);
+            this.drawTiled(
+                this.tiles[1],
+                dx + leftCeilW,
+                dy + this.offsets[1],
+                tileWidth,
+                center.h
+            );
             ctx.drawImage(
                 this.texture.image,
                 right.x,
@@ -83,8 +89,28 @@ const HorizontallyTiledImage = ImageElement.extend({
             p2.w = Math.min(p2.w, this.width - p1.w);
             p2.x += right.w - p2.w;
 
-            ctx.drawImage(this.texture.image, p1.x, p1.y, p1.w, p1.h, dx, dy + this.offsets[0], p1.w, p1.h);
-            ctx.drawImage(this.texture.image, p2.x, p2.y, p2.w, p2.h, dx + p1.w, dy + this.offsets[2], p2.w, p2.h);
+            ctx.drawImage(
+                this.texture.image,
+                p1.x,
+                p1.y,
+                p1.w,
+                p1.h,
+                dx,
+                dy + this.offsets[0],
+                p1.w,
+                p1.h
+            );
+            ctx.drawImage(
+                this.texture.image,
+                p2.x,
+                p2.y,
+                p2.w,
+                p2.h,
+                dx + p1.w,
+                dy + this.offsets[2],
+                p2.w,
+                p2.h
+            );
         }
 
         this.postDraw();

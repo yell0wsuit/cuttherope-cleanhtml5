@@ -160,7 +160,16 @@ GameObject.intersect = function (o1, o2) {
         o2x = o2.drawX + o2.bb.x,
         o2y = o2.drawY + o2.bb.y;
 
-    return Rectangle.rectInRect(o1x, o1y, o1x + o1.bb.w, o1y + o1.bb.h, o2x, o2y, o2x + o2.bb.w, o2y + o2.bb.h);
+    return Rectangle.rectInRect(
+        o1x,
+        o1y,
+        o1x + o1.bb.w,
+        o1y + o1.bb.h,
+        o2x,
+        o2y,
+        o2x + o2.bb.w,
+        o2y + o2.bb.h
+    );
 };
 
 export default GameObject;

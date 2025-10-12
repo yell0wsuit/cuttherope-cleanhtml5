@@ -187,8 +187,12 @@ function render(offset) {
 
         if (box.visible) {
             // calculate location of omnom if the box in the middle
-            if (relboxoffset > resolution.uiScaledNumber(-100) && relboxoffset < resolution.uiScaledNumber(100)) {
-                omnomoffset = (centeroffset + offset) * -1 - boxoffset + resolution.uiScaledNumber(452);
+            if (
+                relboxoffset > resolution.uiScaledNumber(-100) &&
+                relboxoffset < resolution.uiScaledNumber(100)
+            ) {
+                omnomoffset =
+                    (centeroffset + offset) * -1 - boxoffset + resolution.uiScaledNumber(452);
             }
 
             ctx.translate(boxoffset, 0);
@@ -359,7 +363,11 @@ function pointerUp(x, y) {
             const max = resolution.uiScaledNumber(30),
                 min = max * -1,
                 targetBoxIndex =
-                    delta > max ? currentBoxIndex - 1 : delta < min ? currentBoxIndex + 1 : currentBoxIndex;
+                    delta > max
+                        ? currentBoxIndex - 1
+                        : delta < min
+                          ? currentBoxIndex + 1
+                          : currentBoxIndex;
 
             //console.log('box canvas flick to box: ' + targetBoxIndex);
             slideToBox(targetBoxIndex);

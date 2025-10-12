@@ -65,13 +65,16 @@ const App = {
         const betterLoader = document.getElementById("betterLoader");
 
         // Subscribe to preloader progress updates
-        const progressSubscription = PubSub.subscribe(PubSub.ChannelId.PreloaderProgress, function (data) {
-            if (progressBar && data && typeof data.progress === "number") {
-                const progress = Math.min(100, Math.max(0, data.progress));
-                progressBar.style.transition = "width 0.3s ease-out";
-                progressBar.style.width = progress + "%";
+        const progressSubscription = PubSub.subscribe(
+            PubSub.ChannelId.PreloaderProgress,
+            function (data) {
+                if (progressBar && data && typeof data.progress === "number") {
+                    const progress = Math.min(100, Math.max(0, data.progress));
+                    progressBar.style.transition = "width 0.3s ease-out";
+                    progressBar.style.width = progress + "%";
+                }
             }
-        });
+        );
 
         preloader.run(function () {
             // Unsubscribe from progress updates

@@ -18,6 +18,11 @@
                     <input id="assetFilter" type="search" placeholder="Search by name or filename" />
                 </div>
                 <div class="control-group">
+                    <label for="assetUpload">Upload custom sprite sheet</label>
+                    <input id="assetUpload" type="file" accept="image/*" />
+                    <p class="control-help">Files stay in-memory only. Use the export panel to capture rect data.</p>
+                </div>
+                <div class="control-group">
                     <label for="assetSelect">Sprite sheet</label>
                     <select id="assetSelect" size="12" aria-describedby="assetSummary"></select>
                 </div>
@@ -92,6 +97,23 @@
                                 <button id="addRectButton" type="button">Add rect</button>
                                 <button id="updateRectButton" type="button" class="secondary" disabled>Update selected</button>
                                 <button id="clearRectsButton" type="button" class="secondary">Clear</button>
+                            </div>
+                            <div class="paste-block">
+                                <label for="rectPasteTextarea">Paste rect values</label>
+                                <textarea
+                                    id="rectPasteTextarea"
+                                    rows="3"
+                                    placeholder="Rect values: 0, 0, 156, 157, …"
+                                ></textarea>
+                                <label for="offsetPasteTextarea">Paste offset values (optional)</label>
+                                <textarea
+                                    id="offsetPasteTextarea"
+                                    rows="2"
+                                    placeholder="Offset values: 0, 0, 0, 0"
+                                ></textarea>
+                                <div class="button-row">
+                                    <button id="parsePasteValues" type="button" class="secondary">Parse pasted values</button>
+                                </div>
                             </div>
                         </div>
                         <div class="table-scroll small">

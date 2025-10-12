@@ -275,7 +275,11 @@ var InterfaceManager = new (function () {
                 hover(
                     "#optionSd",
                     function () {
-                        showMiniOptionMessage("optionMsg", Lang.menuText(MenuStringId.RELOAD_SD), 4000);
+                        showMiniOptionMessage(
+                            "optionMsg",
+                            Lang.menuText(MenuStringId.RELOAD_SD),
+                            4000
+                        );
                     },
                     function () {
                         const optionMsg = getElement("#optionMsg");
@@ -293,7 +297,11 @@ var InterfaceManager = new (function () {
                 hover(
                     "#optionHd",
                     function () {
-                        showMiniOptionMessage("optionMsg", Lang.menuText(MenuStringId.RELOAD_HD), 4000);
+                        showMiniOptionMessage(
+                            "optionMsg",
+                            Lang.menuText(MenuStringId.RELOAD_HD),
+                            4000
+                        );
                     },
                     function () {
                         const optionMsg = getElement("#optionMsg");
@@ -395,7 +403,11 @@ var InterfaceManager = new (function () {
                 closeLevelMenu();
                 //unlock next level
                 if (BoxManager.isNextLevelPlayable()) {
-                    ScoreManager.setStars(BoxManager.currentBoxIndex, BoxManager.currentLevelIndex, 0);
+                    ScoreManager.setStars(
+                        BoxManager.currentBoxIndex,
+                        BoxManager.currentLevelIndex,
+                        0
+                    );
                     openLevel(BoxManager.currentLevelIndex + 1, false, true);
                 } else {
                     hide("#gameBtnTray");
@@ -554,14 +566,14 @@ var InterfaceManager = new (function () {
             resetBtn.addEventListener("click", function () {
                 // create localized text images
                 const resetTextImg = Text.drawBig({
-                    text: Lang.menuText(MenuStringId.RESET_TEXT),
-                    alignment: Alignment.CENTER,
+                        text: Lang.menuText(MenuStringId.RESET_TEXT),
+                        alignment: Alignment.CENTER,
 
-                    // we use canvas scale because text is draw at game scale and
-                    // scaled to UI dimensions by setting the img width & height
-                    width: 1250 * resolution.CANVAS_SCALE,
-                    scaleToUI: true,
-                }),
+                        // we use canvas scale because text is draw at game scale and
+                        // scaled to UI dimensions by setting the img width & height
+                        width: 1250 * resolution.CANVAS_SCALE,
+                        scaleToUI: true,
+                    }),
                     resetHoldYesImg = Text.drawSmall({
                         text: Lang.menuText(MenuStringId.RESET_HOLD_YES),
                         scaleToUI: true,
@@ -709,7 +721,10 @@ var InterfaceManager = new (function () {
 
             GameBorder.setGameCompleteBorder();
 
-            const gameWonText = Lang.menuText(MenuStringId.GAME_FINISHED_TEXT).replace("%d", ScoreManager.totalStars());
+            const gameWonText = Lang.menuText(MenuStringId.GAME_FINISHED_TEXT).replace(
+                "%d",
+                ScoreManager.totalStars()
+            );
             Text.drawBig({
                 text: gameWonText,
                 imgSel: "#finalScore img",
@@ -847,11 +862,24 @@ var InterfaceManager = new (function () {
 
     var openLevelMenu = function () {
         RootController.pauseLevel();
+        // Pause music when opening the game menu
+        SoundMgr.pauseMusic();
         show("#levelMenu");
     };
 
     var closeLevelMenu = function () {
         hide("#levelMenu");
+        // Resume music when closing the game menu only if:
+        // 1. We're currently in the game (not menu or level select)
+        // 2. Game is enabled
+        // 3. A level is currently active
+        if (
+            PanelManager.currentPanelId === PanelId.GAME &&
+            _this.gameEnabled &&
+            RootController.isLevelActive()
+        ) {
+            SoundMgr.resumeMusic();
+        }
     };
 
     this.tapeBox = function () {
@@ -887,7 +915,10 @@ var InterfaceManager = new (function () {
                     //    RootController.startLevel(BoxManager.currentBoxIndex + 1, BoxManager.currentLevelIndex);
                     //    _this.showGameUI();
                     //} else {
-                    RootController.startLevel(BoxManager.currentBoxIndex + 1, BoxManager.currentLevelIndex);
+                    RootController.startLevel(
+                        BoxManager.currentBoxIndex + 1,
+                        BoxManager.currentLevelIndex
+                    );
                     Doors.openDoors(false, function () {
                         _this.showGameUI();
                     });
@@ -897,7 +928,10 @@ var InterfaceManager = new (function () {
                 Doors.openBoxAnimation(function () {
                     _this.isBoxOpen = true;
 
-                    RootController.startLevel(BoxManager.currentBoxIndex + 1, BoxManager.currentLevelIndex);
+                    RootController.startLevel(
+                        BoxManager.currentBoxIndex + 1,
+                        BoxManager.currentLevelIndex
+                    );
 
                     Doors.openDoors(true, function () {
                         _this.showGameUI();
@@ -1057,7 +1091,10 @@ var InterfaceManager = new (function () {
             const renderCount = function () {
                 const now = Date.now(),
                     timeDelta = now - lastRender,
-                    pointDelta = Math.min(Math.round((from * timeDelta) / duration), countDownPoints);
+                    pointDelta = Math.min(
+                        Math.round((from * timeDelta) / duration),
+                        countDownPoints
+                    );
 
                 lastRender = now;
 
@@ -1187,7 +1224,8 @@ var InterfaceManager = new (function () {
                                     stamp.style.opacity = "0";
                                     stamp.style.transition = "none";
                                     requestAnimationFrame(function () {
-                                        stamp.style.transition = "transform 600ms ease-in, opacity 600ms ease-in";
+                                        stamp.style.transition =
+                                            "transform 600ms ease-in, opacity 600ms ease-in";
                                         stamp.style.transform = "scale(1)";
                                         stamp.style.opacity = "1";
                                         setTimeout(function () {
@@ -1272,7 +1310,18 @@ var InterfaceManager = new (function () {
     };
 
     this.resumeGame = function () {
-        if (PanelManager.currentPanelId !== PanelId.GAMEMENU && _this.gameEnabled) {
+        // Don't resume music if:
+        // 1. Game menu (pause menu) is visible
+        // 2. Current panel is the standalone game menu panel
+        // 3. Game is disabled
+        const isLevelMenuVisible =
+            getElement("#levelMenu") && getElement("#levelMenu").style.display !== "none";
+
+        if (
+            !isLevelMenuVisible &&
+            PanelManager.currentPanelId !== PanelId.GAMEMENU &&
+            _this.gameEnabled
+        ) {
             SoundMgr.resumeMusic();
         }
     };
@@ -1293,10 +1342,19 @@ var InterfaceManager = new (function () {
         GameBorder.domReady();
 
         // pause game / music when the user switches tabs
-        window.addEventListener("blur", _this.pauseGame);
+        //window.addEventListener("blur", _this.pauseGame);
 
         // when returning to the tab, resume music (except when on game menu - no music there)
-        window.addEventListener("focus", _this.resumeGame);
+        //window.addEventListener("focus", _this.resumeGame);
+
+        const onVisibilityChange = function () {
+            if (document.hidden || document.visibilityState === "hidden") {
+                _this.pauseGame();
+            } else {
+                _this.resumeGame();
+            }
+        };
+        document.addEventListener("visibilitychange", onVisibilityChange);
 
         // hide behind the scenes when we update the page
         window.addEventListener("resize", function () {
@@ -1351,6 +1409,7 @@ var InterfaceManager = new (function () {
         BoxManager.currentBoxIndex = boxIndex;
         BoxManager.currentLevelIndex = levelIndex + 1;
 
+        SoundMgr.selectRandomGameMusic();
         this.openBox();
     };
 

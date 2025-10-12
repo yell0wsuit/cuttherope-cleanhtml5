@@ -1,18 +1,42 @@
 const PubSub = {},
     subscriptions = [];
 
+/**
+ * Subscribe to a channel and receive a handle that should be passed to
+ * {@link PubSub.unsubscribe} when the listener is no longer needed.
+ *
+ * @param {number} name Channel identifier.
+ * @param {Function} callback Listener that will receive all published values.
+ * @returns {{name: number, callback: Function}} Subscription handle.
+ */
 PubSub.subscribe = function (name, callback) {
-    subscriptions.push({ name: name, callback: callback });
-    return [name, callback];
+    if (typeof callback !== "function") {
+        throw new TypeError("PubSub.subscribe requires a callback function");
+    }
+
+    const handle = Object.freeze({ name: name, callback: callback });
+    subscriptions.push(handle);
+    return handle;
 };
 
+/**
+ * Remove a previously registered subscription. Both the handle returned from
+ * {@link PubSub.subscribe} and the legacy tuple form `[name, callback]` are
+ * supported to avoid breaking existing callers.
+ *
+ * @param {{name: number, callback: Function}|[number, Function]} subscription
+ */
 PubSub.unsubscribe = function (subscription) {
-    if (!subscription || !Array.isArray(subscription)) {
+    if (!subscription) {
         return;
     }
 
-    const name = subscription[0];
-    const callback = subscription[1];
+    const name = subscription.name ?? (Array.isArray(subscription) ? subscription[0] : undefined);
+    const callback = subscription.callback ?? (Array.isArray(subscription) ? subscription[1] : undefined);
+
+    if (typeof name !== "number" || typeof callback !== "function") {
+        return;
+    }
 
     for (let i = subscriptions.length - 1; i >= 0; i--) {
         const sub = subscriptions[i];

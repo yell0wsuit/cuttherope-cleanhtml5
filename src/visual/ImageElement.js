@@ -203,7 +203,14 @@ const ImageElement = BaseElement.extend({
      */
     pointInDrawQuad: function (x, y) {
         if (this.quadToDraw === Constants.UNDEFINED) {
-            return Rectangle.pointInRect(x, y, this.drawX, this.drawY, this.texture.width, this.texture.height);
+            return Rectangle.pointInRect(
+                x,
+                y,
+                this.drawX,
+                this.drawY,
+                this.texture.width,
+                this.texture.height
+            );
         } else {
             let rect = this.texture.rects[this.quadToDraw],
                 qx = this.drawX,

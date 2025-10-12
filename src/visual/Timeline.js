@@ -93,12 +93,14 @@ var Timeline = Class.extend({
 
         if (this.loopType === Timeline.LoopType.PING_PONG) {
             const reachedEnd =
-                this.timelineDirReverse === false && this.time >= this.length - Constants.FLOAT_PRECISION;
+                this.timelineDirReverse === false &&
+                this.time >= this.length - Constants.FLOAT_PRECISION;
             if (reachedEnd) {
                 this.time = Math.max(0, this.length - (this.time - this.length));
                 this.timelineDirReverse = true;
             } else {
-                const reachedStart = this.timelineDirReverse && this.time <= Constants.FLOAT_PRECISION;
+                const reachedStart =
+                    this.timelineDirReverse && this.time <= Constants.FLOAT_PRECISION;
                 if (reachedStart) {
                     if (this.loopsLimit > 0) {
                         this.loopsLimit--;

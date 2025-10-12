@@ -90,10 +90,9 @@ const PanelManager = new (function () {
 
         // enable / disable the shadow animation
         if (panel.showShadow) {
-             showShadow();
-        }
-        else {
-             hideShadow();
+            showShadow();
+        } else {
+            hideShadow();
         }
 
         // we always use a timeout, even if we skip the animation, to keep the code clean

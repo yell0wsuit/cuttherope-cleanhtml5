@@ -180,10 +180,16 @@ var TileMap = BaseElement.extend({
             this.cameraViewHeight
         ); // camera rect
 
-        const checkPoint = new Vector(Math.max(0, cameraInTilemap.x), Math.max(0, cameraInTilemap.y));
+        const checkPoint = new Vector(
+            Math.max(0, cameraInTilemap.x),
+            Math.max(0, cameraInTilemap.y)
+        );
 
         //noinspection JSSuspiciousNameCombination
-        const startPos = new Vector(~~(~~checkPoint.x / this.tileWidth), ~~(~~checkPoint.y / this.tileHeight));
+        const startPos = new Vector(
+            ~~(~~checkPoint.x / this.tileWidth),
+            ~~(~~checkPoint.y / this.tileHeight)
+        );
 
         const highestQuadY = tileMapStartY + startPos.y * this.tileHeight,
             currentQuadPos = new Vector(tileMapStartX + startPos.x * this.tileWidth, highestQuadY);
@@ -279,7 +285,12 @@ var TileMap = BaseElement.extend({
                         resTexture.y += rect.y;
                     }
 
-                    const vertRect = new Rectangle(pos.x + resScreen.x, pos.y + resScreen.y, resScreen.w, resScreen.h);
+                    const vertRect = new Rectangle(
+                        pos.x + resScreen.x,
+                        pos.y + resScreen.y,
+                        resScreen.w,
+                        resScreen.h
+                    );
 
                     drawer.setTextureQuad(drawer.numberOfQuadsToDraw++, resTexture, vertRect);
                 }

@@ -36,7 +36,8 @@ const Star = CTRGameObject.extend({
             this.timedAnim = new Animation();
             this.timedAnim.initTextureWithId(ResourceId.IMG_OBJ_STAR_IDLE);
             this.timedAnim.anchor = this.timedAnim.parentAnchor = Alignment.CENTER;
-            const delay = this.timeout / (IMG_OBJ_STAR_IDLE_timed_end - IMG_OBJ_STAR_IDLE_timed_start + 1);
+            const delay =
+                this.timeout / (IMG_OBJ_STAR_IDLE_timed_end - IMG_OBJ_STAR_IDLE_timed_start + 1);
             this.timedAnim.addAnimationEndpoints(
                 0,
                 delay,
@@ -53,16 +54,32 @@ const Star = CTRGameObject.extend({
 
             // timeline for animation color fade
             const tt = new Timeline();
-            tt.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0));
-            tt.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5));
+            tt.addKeyFrame(
+                KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0)
+            );
+            tt.addKeyFrame(
+                KeyFrame.makeColor(
+                    RGBAColor.transparent.copy(),
+                    KeyFrame.TransitionType.LINEAR,
+                    0.5
+                )
+            );
             this.timedAnim.addTimelineWithID(tt, 1);
 
             // timeline for element scale and color fade
             t = new Timeline();
             t.addKeyFrame(KeyFrame.makeScale(1, 1, KeyFrame.TransitionType.LINEAR, 0));
             t.addKeyFrame(KeyFrame.makeScale(0, 0, KeyFrame.TransitionType.LINEAR, 0.25));
-            t.addKeyFrame(KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0));
-            t.addKeyFrame(KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.25));
+            t.addKeyFrame(
+                KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0)
+            );
+            t.addKeyFrame(
+                KeyFrame.makeColor(
+                    RGBAColor.transparent.copy(),
+                    KeyFrame.TransitionType.LINEAR,
+                    0.25
+                )
+            );
             this.addTimelineWithID(t, 1);
         }
 
@@ -84,7 +101,12 @@ const Star = CTRGameObject.extend({
         const sr = new Animation();
         sr.initTextureWithId(ResourceId.IMG_OBJ_STAR_IDLE);
         sr.doRestoreCutTransparency();
-        sr.addAnimationDelay(0.05, Timeline.LoopType.REPLAY, IMG_OBJ_STAR_IDLE_idle_start, IMG_OBJ_STAR_IDLE_idle_end);
+        sr.addAnimationDelay(
+            0.05,
+            Timeline.LoopType.REPLAY,
+            IMG_OBJ_STAR_IDLE_idle_start,
+            IMG_OBJ_STAR_IDLE_idle_end
+        );
         sr.playTimeline(0);
         sr.getTimeline(0).update(MathHelper.randomRange(0, 20) / 10);
         sr.anchor = sr.parentAnchor = Alignment.CENTER;

@@ -11,6 +11,13 @@ This project attempts to revive the classic HTML5 version of Cut the Rope.
 Unfortunately, newer level packs were never added here. Famobi provides a complete but *minified* HTML5 port in 2024.  
 With this source, however, we can modernize and expand the game's functionality.
 
+## Features
+
+- Faster loading
+- More in-game music, randomized
+- HD 1080p, adapt to current screen's resolution
+- Fixed some audio/music bugs -- see [PR #9](https://github.com/yell0wsuit/cuttherope-cleanhtml5/pull/9) for more information
+
 ## Goals
 
 ### Short-term goals

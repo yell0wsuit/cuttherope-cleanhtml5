@@ -1,9 +1,17 @@
 import ResourceId from "@/resources/ResourceId";
 const ResourcePacks = {};
 
-ResourcePacks.StandardMenuSounds = [ResourceId.SND_MENU_MUSIC, ResourceId.SND_BUTTON, ResourceId.SND_TAP];
+ResourcePacks.StandardMenuSounds = [
+    ResourceId.SND_MENU_MUSIC,
+    ResourceId.SND_BUTTON,
+    ResourceId.SND_TAP,
+];
 
-ResourcePacks.TimeMenuSounds = [ResourceId.SND_TIME_MENU_MUSIC, ResourceId.SND_BUTTON, ResourceId.SND_TAP];
+ResourcePacks.TimeMenuSounds = [
+    ResourceId.SND_TIME_MENU_MUSIC,
+    ResourceId.SND_BUTTON,
+    ResourceId.SND_TAP,
+];
 
 // game element images
 ResourcePacks.StandardGameImages = [
@@ -33,9 +41,16 @@ ResourcePacks.StandardGameImages = [
     ResourceId.IMG_CHAR_SUPPORTS,
 ];
 
-ResourcePacks.Round5AdditionalGameImages = [ResourceId.IMG_OBJ_BEE_HD, ResourceId.IMG_OBJ_POLLEN_HD];
+ResourcePacks.Round5AdditionalGameImages = [
+    ResourceId.IMG_OBJ_BEE_HD,
+    ResourceId.IMG_OBJ_POLLEN_HD,
+];
 
-ResourcePacks.Round5AdditionalSounds = [ResourceId.SND_BUZZ, ResourceId.SND_GRAVITY_OFF, ResourceId.SND_GRAVITY_ON];
+ResourcePacks.Round5AdditionalSounds = [
+    ResourceId.SND_BUZZ,
+    ResourceId.SND_GRAVITY_OFF,
+    ResourceId.SND_GRAVITY_ON,
+];
 
 ResourcePacks.TimeEditionAdditionalGameImages = [
     ResourceId.IMG_OBJ_SOCKS,
@@ -82,10 +97,17 @@ ResourcePacks.ChromeLiteAdditionalGameImages = [
 ResourcePacks.ChromeLiteAdditionalGameSounds = [ResourceId.SND_TELEPORT, ResourceId.SND_ELECTRIC];
 
 // fonts
-ResourcePacks.StandardFonts = [ResourceId.FNT_SMALL_FONT, ResourceId.FNT_BIG_FONT, ResourceId.FNT_FONT_NUMBERS_BIG];
+ResourcePacks.StandardFonts = [
+    ResourceId.FNT_SMALL_FONT,
+    ResourceId.FNT_BIG_FONT,
+    ResourceId.FNT_FONT_NUMBERS_BIG,
+];
 
 ResourcePacks.StandardGameSounds = [
     ResourceId.SND_GAME_MUSIC,
+    ResourceId.SND_GAME_MUSIC2,
+    ResourceId.SND_GAME_MUSIC3,
+    ResourceId.SND_GAME_MUSIC4,
     ResourceId.SND_BOUNCER,
     ResourceId.SND_BUBBLE,
     ResourceId.SND_BUBBLE_BREAK,

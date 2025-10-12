@@ -13,54 +13,106 @@ import Text from "@/visual/Text";
 import MenuStringId from "@/resources/MenuStringId";
 import edition from "@/edition";
 import Alignment from "@/core/Alignment";
+
+const ACTIVE_ANIMATIONS = new WeakMap();
+const FADE_DURATION_MS = 200;
+
+function cancelAnimation(element, finalOpacity) {
+    const current = ACTIVE_ANIMATIONS.get(element);
+    if (current) {
+        cancelAnimationFrame(current.frameId);
+        ACTIVE_ANIMATIONS.delete(element);
+    }
+    if (typeof finalOpacity === "number") {
+        element.style.opacity = finalOpacity.toString();
+    }
+}
+
+function fadeElement(element, { from, to, duration, display }) {
+    cancelAnimation(element);
+
+    if (display !== undefined) {
+        element.style.display = display;
+    }
+
+    const startOpacity = typeof from === "number" ? from : parseFloat(getComputedStyle(element).opacity || "0") || 0;
+    const targetOpacity = to;
+    element.style.opacity = startOpacity.toString();
+
+    const startTimeRef = { value: null };
+
+    return new Promise((resolve) => {
+        function step(timestamp) {
+            if (startTimeRef.value === null) {
+                startTimeRef.value = timestamp;
+            }
+
+            const progress = Math.min((timestamp - startTimeRef.value) / duration, 1);
+            const currentOpacity = startOpacity + (targetOpacity - startOpacity) * progress;
+            element.style.opacity = currentOpacity.toString();
+
+            if (progress < 1) {
+                const frameId = requestAnimationFrame(step);
+                ACTIVE_ANIMATIONS.set(element, { frameId });
+            } else {
+                ACTIVE_ANIMATIONS.delete(element);
+                resolve();
+            }
+        }
+
+        const frameId = requestAnimationFrame(step);
+        ACTIVE_ANIMATIONS.set(element, { frameId });
+    });
+}
+
 // show a popup
 const Dialogs = {
     showPopup: function (contentDivId) {
         RootController.pauseLevel();
-        document.querySelectorAll(".popupOuterFrame").forEach((el) => (el.style.display = "none"));
+        document.querySelectorAll(".popupOuterFrame").forEach((el) => {
+            cancelAnimation(el, 0);
+            el.style.display = "none";
+        });
         document.querySelectorAll(".popupInnerFrame").forEach((el) => (el.style.display = "none"));
 
         const popupWindow = document.getElementById("popupWindow");
-        popupWindow.style.opacity = "0";
+        if (!popupWindow) {
+            return;
+        }
+
+        cancelAnimation(popupWindow);
+
         popupWindow.style.display = "block";
 
-        let opacity = 0;
-        const fadeIn = setInterval(() => {
-            opacity += 0.1;
-            popupWindow.style.opacity = opacity.toString();
-            if (opacity >= 1) {
-                clearInterval(fadeIn);
-                document.getElementById(contentDivId).style.display = "block";
+        fadeElement(popupWindow, { from: 0, to: 1, duration: FADE_DURATION_MS }).then(() => {
+            const content = document.getElementById(contentDivId);
+            if (!content) return;
+            content.style.display = "block";
 
-                document.querySelectorAll(".popupOuterFrame").forEach((el) => {
-                    el.style.opacity = "0";
-                    el.style.display = "block";
-                    let outerOpacity = 0;
-                    const fadeInOuter = setInterval(() => {
-                        outerOpacity += 0.1;
-                        el.style.opacity = outerOpacity.toString();
-                        if (outerOpacity >= 1) {
-                            clearInterval(fadeInOuter);
-                        }
-                    }, 50);
-                });
-            }
-        }, 50);
+            document.querySelectorAll(".popupOuterFrame").forEach((el) => {
+                cancelAnimation(el);
+                el.style.display = "block";
+                fadeElement(el, { from: 0, to: 1, duration: FADE_DURATION_MS });
+            });
+        });
     },
 
     closePopup: function () {
         SoundMgr.playSound(ResourceId.SND_TAP);
         const popupWindow = document.getElementById("popupWindow");
-        let opacity = 1;
-        const fadeOut = setInterval(() => {
-            opacity -= 0.1;
-            popupWindow.style.opacity = opacity.toString();
-            if (opacity <= 0) {
-                clearInterval(fadeOut);
-                popupWindow.style.display = "none";
-                RootController.resumeLevel();
-            }
-        }, 50);
+        if (!popupWindow) {
+            return;
+        }
+        cancelAnimation(popupWindow);
+
+        fadeElement(popupWindow, {
+            from: parseFloat(getComputedStyle(popupWindow).opacity || "1") || 1,
+            to: 0,
+            duration: FADE_DURATION_MS,
+        }).then(() => {
+            popupWindow.style.display = "none";
+            RootController.resumeLevel();
+        });
     },
 
     showPayDialog: function () {
@@ -75,11 +127,11 @@ const Dialogs = {
 
         // add the title and text
         const titleImg = Text.drawBig({
-                text: Lang.menuText(MenuStringId.SLOW_TITLE),
-                alignment: Alignment.CENTER,
-                width: 1200 * resolution.CANVAS_SCALE,
-                scale: 1.25 * resolution.UI_TEXT_SCALE,
-            }),
+            text: Lang.menuText(MenuStringId.SLOW_TITLE),
+            alignment: Alignment.CENTER,
+            width: 1200 * resolution.CANVAS_SCALE,
+            scale: 1.25 * resolution.UI_TEXT_SCALE,
+        }),
             textImg = Text.drawBig({
                 text: Lang.menuText(MenuStringId.SLOW_TEXT),
                 width: 1200 * resolution.CANVAS_SCALE,

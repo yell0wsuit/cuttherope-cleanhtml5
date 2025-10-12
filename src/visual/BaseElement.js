@@ -110,13 +110,17 @@ const BaseElement = Class.extend({
         if (parentAnchor !== 0 /*Alignment.UNDEFINED*/) {
             // calculate the x offset first
             if (parentAnchor & 1 /*Alignment.LEFT*/) this.drawX = parent.drawX + this.x;
-            else if (parentAnchor & 2 /*Alignment.HCENTER*/) this.drawX = parent.drawX + this.x + parent.width / 2;
-            else if (parentAnchor & 4 /*Alignment.RIGHT*/) this.drawX = parent.drawX + this.x + parent.width;
+            else if (parentAnchor & 2 /*Alignment.HCENTER*/)
+                this.drawX = parent.drawX + this.x + parent.width / 2;
+            else if (parentAnchor & 4 /*Alignment.RIGHT*/)
+                this.drawX = parent.drawX + this.x + parent.width;
 
             // now calculate y offset
             if (parentAnchor & 8 /*Alignment.TOP*/) this.drawY = parent.drawY + this.y;
-            else if (parentAnchor & 16 /*Alignment.VCENTER*/) this.drawY = parent.drawY + this.y + parent.height / 2;
-            else if (parentAnchor & 32 /*Alignment.BOTTOM*/) this.drawY = parent.drawY + this.y + parent.height;
+            else if (parentAnchor & 16 /*Alignment.VCENTER*/)
+                this.drawY = parent.drawY + this.y + parent.height / 2;
+            else if (parentAnchor & 32 /*Alignment.BOTTOM*/)
+                this.drawY = parent.drawY + this.y + parent.height;
         } else {
             this.drawX = this.x;
             this.drawY = this.y;
@@ -136,7 +140,8 @@ const BaseElement = Class.extend({
     preDraw: function () {
         this.calculateTopLeft();
 
-        const changeScale = this.scaleX !== 0 && this.scaleY !== 0 && (this.scaleX !== 1 || this.scaleY !== 1),
+        const changeScale =
+                this.scaleX !== 0 && this.scaleY !== 0 && (this.scaleX !== 1 || this.scaleY !== 1),
             changeRotation = this.rotation !== 0,
             changeTranslate = this.translateX !== 0 || this.translateY !== 0,
             ctx = Canvas.context;

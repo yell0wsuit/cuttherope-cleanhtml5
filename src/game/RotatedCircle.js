@@ -49,21 +49,36 @@ var RotatedCircle = BaseElement.extend({
         this.vinilStickerR.rotationCenterX = this.vinilStickerR.width / 2 - 0.5;
         this.vinilStickerR.drawPosIncrement = 0.001;
 
-        this.vinilCenter = ImageElement.create(ResourceId.IMG_OBJ_VINIL, IMG_OBJ_VINIL_obj_vinil_center);
+        this.vinilCenter = ImageElement.create(
+            ResourceId.IMG_OBJ_VINIL,
+            IMG_OBJ_VINIL_obj_vinil_center
+        );
         this.vinilCenter.anchor = Alignment.CENTER;
 
-        this.vinilHighlightL = ImageElement.create(ResourceId.IMG_OBJ_VINIL, IMG_OBJ_VINIL_obj_vinil_highlight);
+        this.vinilHighlightL = ImageElement.create(
+            ResourceId.IMG_OBJ_VINIL,
+            IMG_OBJ_VINIL_obj_vinil_highlight
+        );
         this.vinilHighlightL.anchor = Alignment.TOP | Alignment.RIGHT;
 
-        this.vinilHighlightR = ImageElement.create(ResourceId.IMG_OBJ_VINIL, IMG_OBJ_VINIL_obj_vinil_highlight);
+        this.vinilHighlightR = ImageElement.create(
+            ResourceId.IMG_OBJ_VINIL,
+            IMG_OBJ_VINIL_obj_vinil_highlight
+        );
         this.vinilHighlightR.scaleX = -1;
         this.vinilHighlightR.anchor = Alignment.TOP | Alignment.LEFT;
 
-        this.vinilControllerL = ImageElement.create(ResourceId.IMG_OBJ_VINIL, IMG_OBJ_VINIL_obj_controller);
+        this.vinilControllerL = ImageElement.create(
+            ResourceId.IMG_OBJ_VINIL,
+            IMG_OBJ_VINIL_obj_controller
+        );
         this.vinilControllerL.anchor = Alignment.CENTER;
         this.vinilControllerL.rotation = 90.0;
 
-        this.vinilControllerR = ImageElement.create(ResourceId.IMG_OBJ_VINIL, IMG_OBJ_VINIL_obj_controller);
+        this.vinilControllerR = ImageElement.create(
+            ResourceId.IMG_OBJ_VINIL,
+            IMG_OBJ_VINIL_obj_controller
+        );
         this.vinilControllerR.anchor = Alignment.CENTER;
         this.vinilControllerR.rotation = -90.0;
 
@@ -99,16 +114,23 @@ var RotatedCircle = BaseElement.extend({
         this.size = value;
 
         const newScale = this.size / HUNDRED_PERCENT_SCALE_SIZE;
-        this.vinilHighlightL.scaleX = this.vinilHighlightL.scaleY = this.vinilHighlightR.scaleY = newScale;
+        this.vinilHighlightL.scaleX =
+            this.vinilHighlightL.scaleY =
+            this.vinilHighlightR.scaleY =
+                newScale;
         this.vinilHighlightR.scaleX = -newScale;
 
         this.vinil.scaleX = this.vinil.scaleY = newScale;
 
         const newStickerScale = newScale >= STICKER_MIN_SCALE ? newScale : STICKER_MIN_SCALE;
-        this.vinilStickerL.scaleX = this.vinilStickerL.scaleY = this.vinilStickerR.scaleY = newStickerScale;
+        this.vinilStickerL.scaleX =
+            this.vinilStickerL.scaleY =
+            this.vinilStickerR.scaleY =
+                newStickerScale;
         this.vinilStickerR.scaleX = -newStickerScale;
 
-        const newControllerScale = newScale >= CONTROLLER_MIN_SCALE ? newScale : CONTROLLER_MIN_SCALE;
+        const newControllerScale =
+            newScale >= CONTROLLER_MIN_SCALE ? newScale : CONTROLLER_MIN_SCALE;
         this.vinilControllerL.scaleX =
             this.vinilControllerL.scaleY =
             this.vinilControllerR.scaleX =
@@ -223,7 +245,9 @@ var RotatedCircle = BaseElement.extend({
         }
 
         //circleDistance = a + b
-        let a = (radius1 * radius1 - radius2 * radius2 + circleDistance * circleDistance) / (2 * circleDistance),
+        let a =
+                (radius1 * radius1 - radius2 * radius2 + circleDistance * circleDistance) /
+                (2 * circleDistance),
             b = circleDistance - a,
             beta = Math.acos(b / radius2),
             diff = new Vector(cx1 - cx2, cy1 - cy2),
@@ -246,8 +270,10 @@ var RotatedCircle = BaseElement.extend({
         this.vinil.x = this.vinilCenter.x = this.x;
         this.vinil.y = this.vinilCenter.y = this.y;
 
-        const highlightDeltaX = (this.vinilHighlightL.width / 2) * (1.0 - this.vinilHighlightL.scaleX),
-            highlightDeltaY = (this.vinilHighlightL.height / 2) * (1.0 - this.vinilHighlightL.scaleY),
+        const highlightDeltaX =
+                (this.vinilHighlightL.width / 2) * (1.0 - this.vinilHighlightL.scaleX),
+            highlightDeltaY =
+                (this.vinilHighlightL.height / 2) * (1.0 - this.vinilHighlightL.scaleY),
             controllerDeltaX =
                 this.sizeInPixels -
                 (CONTROLLER_SHIFT_PARAM1 - CONTROLLER_SHIFT_PARAM2 * this.size) +
@@ -268,7 +294,11 @@ var RotatedCircle = BaseElement.extend({
     },
     containsSameObjectWithCircle: function (anotherCircle) {
         // check for copy of self
-        if (this.x === anotherCircle.x && this.y === anotherCircle.y && this.size === anotherCircle.size) {
+        if (
+            this.x === anotherCircle.x &&
+            this.y === anotherCircle.y &&
+            this.size === anotherCircle.size
+        ) {
             return false;
         }
 

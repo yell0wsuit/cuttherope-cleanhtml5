@@ -86,7 +86,9 @@ function animateProperty(element, props, duration, easing = "linear", delay = 0)
             // Get initial values
             for (let prop in props) {
                 if (prop === "scale") {
-                    startValues[prop] = parseFloat(element.style.transform?.match(/scale\(([^)]+)\)/)?.[1] || "1");
+                    startValues[prop] = parseFloat(
+                        element.style.transform?.match(/scale\(([^)]+)\)/)?.[1] || "1"
+                    );
                     endValues[prop] = parseFloat(props[prop]);
                 } else {
                     const computed = window.getComputedStyle(element);
@@ -102,7 +104,8 @@ function animateProperty(element, props, duration, easing = "linear", delay = 0)
                 const easedProgress = applyEasing(progress, easing);
 
                 for (let prop in props) {
-                    const value = startValues[prop] + (endValues[prop] - startValues[prop]) * easedProgress;
+                    const value =
+                        startValues[prop] + (endValues[prop] - startValues[prop]) * easedProgress;
                     if (prop === "scale") {
                         element.style.transform = `scale(${value})`;
                     } else {
@@ -210,7 +213,10 @@ const PinnedBox = Box.extend({
         const getIEVersion = function () {
             let rv = -1; // Return value assumes failure.
             return rv;
-            if (navigator.appName == "Microsoft Internet Explorer" || navigator.appName == "MSAppHost/1.0") {
+            if (
+                navigator.appName == "Microsoft Internet Explorer" ||
+                navigator.appName == "MSAppHost/1.0"
+            ) {
                 const ua = navigator.userAgent,
                     re = new RegExp("MSIE ([0-9]?[0-9]{1,}[.0-9]{0,})"),
                     matches = re.exec(ua);
@@ -246,7 +252,8 @@ const PinnedBox = Box.extend({
         // are we in IE9 or greater
         if (ieVer >= 9 || QueryStrings.forcePinnedBox) {
             let localStorageIsPinned =
-                    platform.ENABLE_PINNED_MODE || SettingStorage.get("msIsSiteModeActivated") == "true",
+                    platform.ENABLE_PINNED_MODE ||
+                    SettingStorage.get("msIsSiteModeActivated") == "true",
                 msIsSiteMode = platform.ENABLE_PINNED_MODE === true;
 
             // no way to check if this function exists, we have to use try/catch
@@ -355,7 +362,14 @@ const PinnedBox = Box.extend({
         if (cursor) {
             fadeIn(cursor, 400, 500)
                 .then(() => new Promise((resolve) => setTimeout(resolve, 2250)))
-                .then(() => animateProperty(cursor, { left: resolution.uiScaledNumber(200) }, 500, "easeInOutCirc"))
+                .then(() =>
+                    animateProperty(
+                        cursor,
+                        { left: resolution.uiScaledNumber(200) },
+                        500,
+                        "easeInOutCirc"
+                    )
+                )
                 .then(() => fadeOut(cursor, 400))
                 .then(() => {
                     cursor.style.top = resolution.uiScaledNumber(65) + "px";

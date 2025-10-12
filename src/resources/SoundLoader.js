@@ -2,64 +2,142 @@ import platform from "@/platform";
 import edition from "@/edition";
 import resData from "@/resources/ResData";
 import Sounds from "@/resources/Sounds";
-import PxLoader from "@/PxLoader";
-import PxLoaderSound from "@/PxLoaderSound";
+import { getAudioContext } from "@/utils/audioContext";
+import { soundRegistry } from "@/utils/soundRegistry";
+
+const decodeAudioBuffer = (context, arrayBuffer) => {
+    return new Promise((resolve, reject) => {
+        let decodePromise;
+
+        try {
+            decodePromise = context.decodeAudioData(
+                arrayBuffer,
+                (buffer) => resolve(buffer),
+                (error) => reject(error)
+            );
+        } catch (error) {
+            reject(error);
+            return;
+        }
+
+        if (decodePromise && typeof decodePromise.then === "function") {
+            decodePromise.then(resolve).catch(reject);
+        }
+    });
+};
 
 let completeListeners = [],
     progressListeners = [],
     startRequested = false,
     soundManagerReady = false,
+    hasStartedLoading = false,
+    currentCompleted = 0,
+    currentFailed = 0,
+    currentTotal = 0,
     startIfReady = function () {
-        // ensure start was requested and we are ready
-        if (!startRequested || !soundManagerReady) {
+        // ensure start was requested, we are ready, and we haven't already started
+        if (!startRequested || !soundManagerReady || hasStartedLoading) {
             return;
         }
 
-        let pxLoader = new PxLoader({ noProgressTimeout: 30 * 1000 }), // stop waiting after 30 secs
-            baseUrl = platform.audioBaseUrl,
-            extension = platform.getAudioExtension(),
-            MENU_TAG = "MENU",
-            i,
-            len,
-            soundId,
-            soundUrl,
-            soundCount = 0;
+        hasStartedLoading = true;
 
-        // menu sounds first
-        for (i = 0, len = edition.menuSoundIds.length; i < len; i++) {
-            soundId = edition.menuSoundIds[i];
-            soundUrl = baseUrl + resData[soundId].path + extension;
+        const baseUrl = platform.audioBaseUrl;
+        const extension = platform.getAudioExtension();
+        const context = getAudioContext();
 
-            // SoundManager2 wants a sound id which a char prefix
-            pxLoader.addSound("s" + soundId, soundUrl, MENU_TAG);
-            soundCount++;
+        const soundIds = [];
+
+        for (let i = 0; i < edition.menuSoundIds.length; i++) {
+            soundIds.push({ id: edition.menuSoundIds[i], tag: "MENU" });
         }
 
-        // now game sounds
-        for (i = 0, len = edition.gameSoundIds.length; i < len; i++) {
-            soundId = edition.gameSoundIds[i];
-            soundUrl = baseUrl + resData[soundId].path + extension;
-
-            // SoundManager2 wants a sound id which a char prefix
-            pxLoader.addSound("s" + soundId, soundUrl);
-            soundCount++;
+        for (let i = 0; i < edition.gameSoundIds.length; i++) {
+            soundIds.push({ id: edition.gameSoundIds[i], tag: "GAME" });
         }
 
-        // Track progress
-        pxLoader.addProgressListener(function (e) {
+        currentTotal = soundIds.length;
+        currentCompleted = 0;
+
+        const notifyProgress = () => {
             for (let i = 0, len = progressListeners.length; i < len; i++) {
-                progressListeners[i](e.completedCount, e.totalCount);
+                try {
+                    progressListeners[i](currentCompleted, currentTotal);
+                } catch (error) {
+                    window.console?.error?.("Sound progress listener failed", error);
+                }
             }
-        });
+        };
 
-        // wait for all sounds before showing main menu
-        pxLoader.addCompletionListener(function () {
+        const notifyComplete = () => {
             for (let i = 0, len = completeListeners.length; i < len; i++) {
-                completeListeners[i]();
+                try {
+                    completeListeners[i]();
+                } catch (error) {
+                    window.console?.error?.("Sound completion listener failed", error);
+                }
             }
-        });
+        };
 
-        pxLoader.start();
+        if (!context || currentTotal === 0) {
+            currentCompleted = currentTotal;
+            notifyProgress();
+            notifyComplete();
+            return;
+        }
+
+        const loadSound = async (soundDescriptor) => {
+            const soundId = soundDescriptor.id;
+            const resource = resData[soundId];
+            if (!resource) {
+                throw new Error(`Resource not found for sound ID: ${soundId}`);
+            }
+
+            const soundKey = "s" + soundId;
+            const soundUrl = baseUrl + resource.path + extension;
+
+            const response = await fetch(soundUrl);
+
+            if (!response.ok) {
+                throw new Error(`Failed to load audio: ${response.status} ${response.statusText}`);
+            }
+
+            const arrayBuffer = await response.arrayBuffer();
+            const audioBuffer = await decodeAudioBuffer(context, arrayBuffer);
+
+            const gainNode = context.createGain();
+            gainNode.connect(context.destination);
+
+            soundRegistry.set(soundKey, {
+                buffer: audioBuffer,
+                gainNode,
+                playingSources: new Set(),
+                isPaused: false,
+                volume: 1,
+            });
+        };
+
+        Promise.all(
+            soundIds.map((descriptor) =>
+                loadSound(descriptor)
+                    .then(() => {
+                        currentCompleted++;
+                        notifyProgress();
+                    })
+                    .catch((error) => {
+                        currentFailed++;
+                        window.console?.error?.("Failed to load audio", descriptor.id, error);
+                        notifyProgress();
+                    })
+            )
+        ).finally(() => {
+            if (currentFailed > 0) {
+                window.console?.warn?.(
+                    `Sound loading completed with ${currentFailed} failure(s) out of ${currentTotal} total`
+                );
+            }
+            notifyComplete();
+        });
     };
 
 const SoundLoader = {
@@ -72,6 +150,13 @@ const SoundLoader = {
     },
     onProgress: function (callback) {
         progressListeners.push(callback);
+        if (currentTotal > 0) {
+            try {
+                callback(currentCompleted, currentTotal);
+            } catch (error) {
+                window.console?.error?.("Sound progress listener failed", error);
+            }
+        }
     },
     getSoundCount: function () {
         return edition.menuSoundIds.length + edition.gameSoundIds.length;

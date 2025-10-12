@@ -73,6 +73,7 @@ const Box = Class.extend({
         this.index = boxIndex;
         this.islocked = islocked;
         this.visible = true;
+        this.pubSubSubscriptions = [];
 
         // initially we assume all boxes are included in the game
         this.purchased = true;
@@ -105,7 +106,7 @@ const Box = Class.extend({
             self.textRendered = true;
         };
 
-        PubSub.subscribe(PubSub.ChannelId.LanguageChanged, this.renderText);
+        this.pubSubSubscriptions.push(PubSub.subscribe(PubSub.ChannelId.LanguageChanged, this.renderText));
 
         this.reqImg = Text.drawBig({ text: reqstars, scaleToUI: true });
 
@@ -196,12 +197,26 @@ const Box = Class.extend({
                 // TODO: should resize lock images for every resolution and remove scaling
                 // TODO: also need to normalize the size of boxes (which vary)
                 ctx.scale(1.015, 1);
-                ctx.drawImage(this.lockImg, resolution.uiScaledNumber(23), resolution.uiScaledNumber(155));
+                ctx.drawImage(
+                    this.lockImg,
+                    resolution.uiScaledNumber(23),
+                    resolution.uiScaledNumber(155)
+                );
                 ctx.scale(1 / 1.015, 1);
 
                 if (this.purchased) {
-                    ctx.drawImage(this.reqImg, labelX, resolution.uiScaledNumber(220), textWidth, textHeight);
-                    ctx.drawImage(this.starImg, labelX + textWidth + starLeftMargin, resolution.uiScaledNumber(225));
+                    ctx.drawImage(
+                        this.reqImg,
+                        labelX,
+                        resolution.uiScaledNumber(220),
+                        textWidth,
+                        textHeight
+                    );
+                    ctx.drawImage(
+                        this.starImg,
+                        labelX + textWidth + starLeftMargin,
+                        resolution.uiScaledNumber(225)
+                    );
                 }
 
                 /*
@@ -218,8 +233,15 @@ const Box = Class.extend({
             }
 
             // draw the perfect mark if user got every star in the box
-            if (ScoreManager.achievedStars(this.index) === ScoreManager.possibleStarsForBox(this.index)) {
-                ctx.drawImage(this.perfectMark, resolution.uiScaledNumber(260), resolution.uiScaledNumber(250));
+            if (
+                ScoreManager.achievedStars(this.index) ===
+                ScoreManager.possibleStarsForBox(this.index)
+            ) {
+                ctx.drawImage(
+                    this.perfectMark,
+                    resolution.uiScaledNumber(260),
+                    resolution.uiScaledNumber(250)
+                );
             }
         }
 
@@ -326,6 +348,16 @@ const Box = Class.extend({
 
     onUnselected: function () {
         hidePurchaseButton();
+    },
+
+    destroy: function () {
+        if (!this.pubSubSubscriptions) {
+            return;
+        }
+
+        while (this.pubSubSubscriptions.length) {
+            PubSub.unsubscribe(this.pubSubSubscriptions.pop());
+        }
     },
 });
 

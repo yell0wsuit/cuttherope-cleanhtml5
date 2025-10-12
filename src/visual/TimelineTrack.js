@@ -138,7 +138,11 @@ const TimelineTrack = Class.extend({
                     this.overrun = t.time - this.startTime;
                     this.nextKeyFrame++;
                     kf = this.keyFrames[this.nextKeyFrame];
-                    this.initKeyFrameStepFrom(this.keyFrames[this.nextKeyFrame - 1], kf, kf.timeOffset);
+                    this.initKeyFrameStepFrom(
+                        this.keyFrames[this.nextKeyFrame - 1],
+                        kf,
+                        kf.timeOffset
+                    );
                 } else {
                     this.nextKeyFrame = this.keyFrames.length - 1;
                     this.overrun = this.endTime - t.time;
@@ -258,7 +262,11 @@ const TimelineTrack = Class.extend({
                 if (!t.timelineDirReverse) {
                     this.nextKeyFrame++;
                     kf = this.keyFrames[this.nextKeyFrame];
-                    this.initKeyFrameStepFrom(this.keyFrames[this.nextKeyFrame - 1], kf, kf.timeOffset);
+                    this.initKeyFrameStepFrom(
+                        this.keyFrames[this.nextKeyFrame - 1],
+                        kf,
+                        kf.timeOffset
+                    );
                 } else {
                     this.nextKeyFrame--;
                     kf = this.keyFrames[this.nextKeyFrame + 1];
@@ -309,7 +317,8 @@ const TimelineTrack = Class.extend({
                 if (!this.relative) {
                     this.t.element.rotation = kf.value.rotationAngle;
                 } else {
-                    this.t.element.rotation = this.elementPrevState.value.rotationAngle + kf.value.rotationAngle;
+                    this.t.element.rotation =
+                        this.elementPrevState.value.rotationAngle + kf.value.rotationAngle;
                 }
                 break;
             case TrackType.COLOR:
@@ -380,7 +389,8 @@ const TimelineTrack = Class.extend({
                 spsScale.y = (dstScale.y - srcScale.y) / this.keyFrameTimeLeft;
                 break;
             case TrackType.ROTATION:
-                spsValue.rotationAngle = (dst.value.rotationAngle - src.value.rotationAngle) / this.keyFrameTimeLeft;
+                spsValue.rotationAngle =
+                    (dst.value.rotationAngle - src.value.rotationAngle) / this.keyFrameTimeLeft;
                 break;
             case TrackType.COLOR:
                 var spsColor = spsValue.color,

@@ -22,7 +22,8 @@ function PointerCapture(settings) {
     this.moveHandler = function (event) {
         self.preventPanning(event);
 
-        if (event.changedTouches && event.changedTouches[0].identifier !== singleTouch) return false;
+        if (event.changedTouches && event.changedTouches[0].identifier !== singleTouch)
+            return false;
 
         if (settings.onMove) return self.translatePosition(event, settings.onMove);
         else return false; // not handled
@@ -112,18 +113,18 @@ PointerCapture.useTouchEvents = "ontouchstart" in window || navigator.maxTouchPo
 PointerCapture.startEventName = PointerCapture.useMSPointerEvents
     ? "MSPointerDown"
     : PointerCapture.useTouchEvents
-    ? "touchstart"
-    : "mousedown";
+      ? "touchstart"
+      : "mousedown";
 PointerCapture.moveEventName = PointerCapture.useMSPointerEvents
     ? "MSPointerMove"
     : PointerCapture.useTouchEvents
-    ? "touchmove"
-    : "mousemove";
+      ? "touchmove"
+      : "mousemove";
 PointerCapture.endEventName = PointerCapture.useMSPointerEvents
     ? "MSPointerUp"
     : PointerCapture.useTouchEvents
-    ? "touchend"
-    : "mouseup";
+      ? "touchend"
+      : "mouseup";
 
 // Unfortunately there is no touchleave event
 PointerCapture.outEventName = PointerCapture.useMSPointerEvents ? "MSPointerOut" : "mouseout";
