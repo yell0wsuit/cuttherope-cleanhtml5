@@ -5,9 +5,10 @@ import ResourceId from "@/resources/ResourceId";
 import Timeline from "@/visual/Timeline";
 import KeyFrame from "@/visual/KeyFrame";
 import Rectangle from "@/core/Rectangle";
+import Canvas from "@/utils/Canvas";
 const SUPPORTING_CLOUD_LARGE = 1;
-const SUPPORTING_CLOUD_SMALL = 6;
-const SUPPORTING_CLOUD_ROTATING = 4;
+const SUPPORTING_CLOUD_SMALL = 3;
+const SUPPORTING_CLOUD_ROTATING = 5;
 const GhostBubble = Bubble.extend({
     init: function (x, y, quadIndex) {
         this._super();
@@ -275,6 +276,30 @@ const GhostBubble = Bubble.extend({
         timeline5.addKeyFrame(KeyFrame.makeRotation(350, KeyFrame.TransitionType.IMMEDIATE, 0));
         frontCloud2.addTimelineWithID(timeline5, 0);
         frontCloud2.playTimeline(0);
+    },
+    draw: function () {
+        this.preDraw();
+
+        if (!this.withoutShadow) {
+            if (this.quadToDraw === -1) {
+                // Draw texture
+                Canvas.context.drawImage(this.texture.image, this.drawX, this.drawY);
+            } else {
+                this.drawQuad(this.quadToDraw);
+            }
+        }
+
+        if (!this.popped) {
+            this.postDraw();
+            return;
+        }
+
+        // When popped: restore alpha and canvas state WITHOUT drawing children
+        const ctx = Canvas.context;
+        if (this.color.a !== 1 && this.color.a !== this.previousAlpha) {
+            ctx.globalAlpha = this.previousAlpha;
+        }
+        ctx.restore();
     },
 });
 export default GhostBubble;
