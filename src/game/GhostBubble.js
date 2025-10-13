@@ -23,12 +23,12 @@ const GhostBubble = Bubble.extend({
         this.addSupportingClouds();
     },
     addSupportingClouds: function () {
-        this.passColorToChilds = true;
+        this.passTransformationsToChilds = true;
         const backCloud = ImageElement.create(ResourceId.IMG_OBJ_GHOST, SUPPORTING_CLOUD_LARGE);
         backCloud.anchor = backCloud.parentAnchor = Alignment.CENTER;
-        backCloud.doRestoreCutTransparency();
-        backCloud.x = this.x + 28;
-        backCloud.y = this.y + 8;
+        //backCloud.doRestoreCutTransparency();
+        backCloud.x = 28;
+        backCloud.y = 8;
         this.addChild(backCloud);
         const timeline = new Timeline();
         timeline.loopType = Timeline.LoopType.REPLAY;
@@ -68,9 +68,9 @@ const GhostBubble = Bubble.extend({
         backCloud.playTimeline(0);
         const backCloud2 = ImageElement.create(ResourceId.IMG_OBJ_GHOST, SUPPORTING_CLOUD_SMALL);
         backCloud2.anchor = backCloud2.parentAnchor = Alignment.CENTER;
-        backCloud2.doRestoreCutTransparency();
-        backCloud2.x = this.x + 22;
-        backCloud2.y = this.y + 16;
+        //backCloud2.doRestoreCutTransparency();
+        backCloud2.x = 22;
+        backCloud2.y = 16;
         this.addChild(backCloud2);
         const timeline2 = new Timeline();
         timeline2.loopType = Timeline.LoopType.REPLAY;
@@ -119,9 +119,9 @@ const GhostBubble = Bubble.extend({
         backCloud2.playTimeline(0);
         const backCloud3 = ImageElement.create(ResourceId.IMG_OBJ_GHOST, SUPPORTING_CLOUD_SMALL);
         backCloud3.anchor = backCloud3.parentAnchor = Alignment.CENTER;
-        backCloud3.doRestoreCutTransparency();
-        backCloud3.x = this.x - 28;
-        backCloud3.y = this.y + 5;
+        //backCloud3.doRestoreCutTransparency();
+        backCloud3.x = -28;
+        backCloud3.y = 5;
         this.addChild(backCloud3);
         const timeline3 = new Timeline();
         timeline3.loopType = Timeline.LoopType.REPLAY;
@@ -171,8 +171,8 @@ const GhostBubble = Bubble.extend({
         const frontCloud = ImageElement.create(ResourceId.IMG_OBJ_GHOST, SUPPORTING_CLOUD_LARGE);
         frontCloud.anchor = frontCloud.parentAnchor = Alignment.CENTER;
         frontCloud.doRestoreCutTransparency();
-        frontCloud.x = this.x - 23;
-        frontCloud.y = this.y + 16;
+        frontCloud.x = -23;
+        frontCloud.y = 16;
         this.addChild(frontCloud);
         const timeline4 = new Timeline();
         timeline4.loopType = Timeline.LoopType.REPLAY;
@@ -225,8 +225,8 @@ const GhostBubble = Bubble.extend({
         );
         frontCloud2.anchor = frontCloud2.parentAnchor = Alignment.CENTER;
         frontCloud2.doRestoreCutTransparency();
-        frontCloud2.x = this.x - 5;
-        frontCloud2.y = this.y + 25;
+        frontCloud2.x = -5;
+        frontCloud2.y = 25;
         this.addChild(frontCloud2);
         const timeline5 = new Timeline();
         timeline5.loopType = Timeline.LoopType.REPLAY;
@@ -276,6 +276,12 @@ const GhostBubble = Bubble.extend({
         timeline5.addKeyFrame(KeyFrame.makeRotation(350, KeyFrame.TransitionType.IMMEDIATE, 0));
         frontCloud2.addTimelineWithID(timeline5, 0);
         frontCloud2.playTimeline(0);
+    },
+    dealloc: function () {
+        this.backCloud = null;
+        this.backCloud2 = null;
+        this.backCloud3 = null;
+        this._super();
     },
     draw: function () {
         this.preDraw();
