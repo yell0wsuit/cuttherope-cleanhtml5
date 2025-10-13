@@ -4,6 +4,9 @@ import Alignment from "@/core/Alignment";
 import ResourceId from "@/resources/ResourceId";
 import Timeline from "@/visual/Timeline";
 import KeyFrame from "@/visual/KeyFrame";
+const LEFT_CLOUD_FRAME = 5;
+const RIGHT_CLOUD_FRAME = 4;
+const CENTER_CLOUD_FRAME = 0;
 const GhostGrab = Grab.extend({
     init: function (x, y) {
         this._super();
@@ -12,7 +15,7 @@ const GhostGrab = Grab.extend({
         this.addSupportingClouds();
     },
     addSupportingClouds: function () {
-        const leftCloud = ImageElement.create(ResourceId.IMG_OBJ_GHOST, 3);
+        const leftCloud = ImageElement.create(ResourceId.IMG_OBJ_GHOST, LEFT_CLOUD_FRAME);
         leftCloud.anchor = leftCloud.parentAnchor = Alignment.CENTER;
         leftCloud.doRestoreCutTransparency();
         leftCloud.x = this.x - 20;
@@ -58,7 +61,7 @@ const GhostGrab = Grab.extend({
         );
         leftCloud.addTimelineWithID(timeline, 0);
         leftCloud.playTimeline(0);
-        const rightCloud = ImageElement.create(ResourceId.IMG_OBJ_GHOST, 4);
+        const rightCloud = ImageElement.create(ResourceId.IMG_OBJ_GHOST, RIGHT_CLOUD_FRAME);
         rightCloud.anchor = rightCloud.parentAnchor = Alignment.CENTER;
         rightCloud.doRestoreCutTransparency();
         rightCloud.x = this.x + 18;
@@ -103,7 +106,7 @@ const GhostGrab = Grab.extend({
         );
         rightCloud.addTimelineWithID(timeline2, 0);
         rightCloud.playTimeline(0);
-        const centerCloud = ImageElement.create(ResourceId.IMG_OBJ_GHOST, 5);
+        const centerCloud = ImageElement.create(ResourceId.IMG_OBJ_GHOST, CENTER_CLOUD_FRAME);
         centerCloud.anchor = centerCloud.parentAnchor = Alignment.CENTER;
         centerCloud.doRestoreCutTransparency();
         centerCloud.x = this.x - 5;

@@ -25,8 +25,9 @@ const GhostTimeline = {
 };
 const IMG_OBJ_GHOST_BODY = 0;
 const IMG_OBJ_GHOST_FACE = 2;
-const TRANSFORM_FRAME_START = 3;
-const TRANSFORM_FRAME_END = 5;
+const GHOST_BUBBLE_FRAME_START = 1;
+const GHOST_BUBBLE_FRAME_END = 3;
+const GHOST_BUBBLE_BASE_FRAME = 0;
 const GHOST_TOUCH_RADIUS = 40;
 const GHOST_PARTICLE_COUNT = GhostMorphingParticles.PARTICLE_COUNT;
 function removeFromCollection(collection, item) {
@@ -158,8 +159,19 @@ const Ghost = CTRGameObject.extend({
         }
     },
     spawnBubble: function () {
-        const bubbleFrame = MathHelper.randomRange(TRANSFORM_FRAME_START, TRANSFORM_FRAME_END);
+        const bubbleFrame = MathHelper.randomRange(
+            GHOST_BUBBLE_FRAME_START,
+            GHOST_BUBBLE_FRAME_END
+        );
         const bubble = new GhostBubble(this.x, this.y, bubbleFrame);
+        const bubbleShell = ImageElement.create(
+            ResourceId.IMG_OBJ_BUBBLE_ATTACHED,
+            GHOST_BUBBLE_BASE_FRAME
+        );
+        bubbleShell.anchor = bubbleShell.parentAnchor = Alignment.CENTER;
+        bubbleShell.doRestoreCutTransparency();
+        bubble.addChild(bubbleShell);
+
         this.gsBubbles.push(bubble);
         this.bubble = bubble;
         this.imageContainer.playTimeline(GhostTimeline.FADE_OUT);

@@ -6,9 +6,9 @@ import KeyFrame from "@/visual/KeyFrame";
 import Alignment from "@/core/Alignment";
 import RGBAColor from "@/core/RGBAColor";
 const DEG_TO_RAD = Math.PI / 180;
-const CLOUD_RIGHT_FRAME = 5;
-const CLOUD_LEFT_FRAME = 1;
-const TRANSFORM_FRAME_2 = 2;
+const BACK_CLOUD_FRAME = 4;
+const FRONT_CLOUD_LEFT_FRAME = 1;
+const FRONT_CLOUD_RIGHT_FRAME = 6;
 const GhostBouncer = Bouncer.extend({
     init: function (x, y, width, angle) {
         this._super(x, y, width, angle);
@@ -17,7 +17,7 @@ const GhostBouncer = Bouncer.extend({
     addSupportingClouds: function (angle) {
         const radius = Math.sqrt(925);
         const offsetAngle = angle || 0;
-        this.backCloud2 = ImageElement.create(ResourceId.IMG_OBJ_GHOST, CLOUD_LEFT_FRAME);
+        this.backCloud2 = ImageElement.create(ResourceId.IMG_OBJ_GHOST, BACK_CLOUD_FRAME);
         this.backCloud2.doRestoreCutTransparency();
         this.backCloud2.anchor = this.backCloud2.parentAnchor = Alignment.CENTER;
         const angle2 = (170 + offsetAngle) * DEG_TO_RAD;
@@ -73,7 +73,7 @@ const GhostBouncer = Bouncer.extend({
         );
         this.backCloud2.addTimelineWithID(timeline, 0);
         this.backCloud2.playTimeline(0);
-        this.backCloud = ImageElement.create(ResourceId.IMG_OBJ_GHOST, CLOUD_RIGHT_FRAME);
+        this.backCloud = ImageElement.create(ResourceId.IMG_OBJ_GHOST, BACK_CLOUD_FRAME);
         this.backCloud.doRestoreCutTransparency();
         this.backCloud.anchor = this.backCloud.parentAnchor = Alignment.CENTER;
         const angle1 = (10 + offsetAngle) * DEG_TO_RAD;
@@ -129,7 +129,10 @@ const GhostBouncer = Bouncer.extend({
         );
         this.backCloud.addTimelineWithID(timeline2, 0);
         this.backCloud.playTimeline(0);
-        const frontCloudRight = ImageElement.create(ResourceId.IMG_OBJ_GHOST, TRANSFORM_FRAME_2);
+        const frontCloudRight = ImageElement.create(
+            ResourceId.IMG_OBJ_GHOST,
+            FRONT_CLOUD_RIGHT_FRAME
+        );
         frontCloudRight.doRestoreCutTransparency();
         frontCloudRight.anchor = frontCloudRight.parentAnchor = Alignment.CENTER;
         frontCloudRight.x = this.x + 20;
@@ -184,7 +187,10 @@ const GhostBouncer = Bouncer.extend({
         );
         frontCloudRight.addTimelineWithID(timeline3, 0);
         frontCloudRight.playTimeline(0);
-        const frontCloudLeft = ImageElement.create(ResourceId.IMG_OBJ_GHOST, CLOUD_LEFT_FRAME);
+        const frontCloudLeft = ImageElement.create(
+            ResourceId.IMG_OBJ_GHOST,
+            FRONT_CLOUD_LEFT_FRAME
+        );
         frontCloudLeft.doRestoreCutTransparency();
         frontCloudLeft.anchor = frontCloudLeft.parentAnchor = Alignment.CENTER;
         frontCloudLeft.x = this.x - 15;
