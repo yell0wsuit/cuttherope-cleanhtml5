@@ -4,7 +4,6 @@ import CandyBreak from "@/game/CandyBreak";
 import Drawing from "@/game/Drawing";
 import FingerCut from "@/game/FingerCut";
 import Grab from "@/game/Grab";
-import Ghost from "@/game/Ghost";
 import Pump from "@/game/Pump";
 import PumpDirt from "@/game/PumpDirt";
 import Sock from "@/game/Sock";
@@ -423,7 +422,6 @@ const GameScene = BaseElement.extend({
         this.tutorials = [];
         this.drawings = [];
         this.bouncers = [];
-        this.ghosts = [];
         this.rotatedCircles = [];
         this.pollenDrawer = null;
 
@@ -800,9 +798,6 @@ const GameScene = BaseElement.extend({
                         break;
                     case MapItem.GRAB:
                         this.loadGrab(child);
-                        break;
-                    case MapItem.GHOST:
-                        this.loadGhost(child);
                         break;
                     case MapItem.TARGET:
                         this.loadTarget(child);
@@ -1280,32 +1275,6 @@ const GameScene = BaseElement.extend({
             bouncer = new Bouncer(px, py, w, a);
         bouncer.parseMover(item);
         this.bouncers.push(bouncer);
-    },
-    loadGhost: function (item) {
-        const px = item.x * this.PM + this.PMX,
-            py = item.y * this.PM + this.PMY,
-            mask =
-                Ghost.State.BODY |
-                (item.bubble ? Ghost.State.BUBBLE : 0) |
-                (item.grab ? Ghost.State.GRAB : 0) |
-                (item.bouncer ? Ghost.State.BOUNCER : 0),
-            radius =
-                item.radius !== Constants.UNDEFINED && item.radius !== undefined
-                    ? item.radius * this.PM
-                    : Constants.UNDEFINED,
-            angle = item.angle || 0,
-            ghost = new Ghost().initWithConfig(
-                new Vector(px, py),
-                mask,
-                radius,
-                angle,
-                this.bubbles,
-                this.bungees,
-                this.bouncers,
-                this.PM
-            );
-
-        this.ghosts.push(ghost);
     },
     loadTarget: function (item) {
         const target = new GameObject();
@@ -1988,10 +1957,6 @@ const GameScene = BaseElement.extend({
                     }
                 }
             }
-        }
-
-        for (i = 0, len = this.ghosts.length; i < len; i++) {
-            this.ghosts[i].update(delta);
         }
 
         // tutorial text
@@ -2857,10 +2822,6 @@ const GameScene = BaseElement.extend({
             this.bouncers[i].draw();
         }
 
-        for (i = 0, len = this.ghosts.length; i < len; i++) {
-            this.ghosts[i].draw();
-        }
-
         for (i = 0, len = this.socks.length; i < len; i++) {
             const sock = this.socks[i];
             sock.y -= SOCK_COLLISION_Y_OFFSET;
@@ -3681,12 +3642,6 @@ const GameScene = BaseElement.extend({
                     grab.moverDragging = touchIndex;
                     return true;
                 }
-            }
-        }
-
-        for (i = 0, len = this.ghosts.length; i < len; i++) {
-            if (this.ghosts[i].onTouchDown(cameraAdjustedX, cameraAdjustedY)) {
-                return true;
             }
         }
 
