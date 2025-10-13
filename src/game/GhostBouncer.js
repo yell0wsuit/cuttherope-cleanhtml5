@@ -6,9 +6,9 @@ import KeyFrame from "@/visual/KeyFrame";
 import Alignment from "@/core/Alignment";
 import RGBAColor from "@/core/RGBAColor";
 const DEG_TO_RAD = Math.PI / 180;
-const BACK_CLOUD_FRAME = 4;
-const FRONT_CLOUD_LEFT_FRAME = 1;
-const FRONT_CLOUD_RIGHT_FRAME = 6;
+const BACK_CLOUD_FRAME = 1;
+const FRONT_CLOUD_LEFT_FRAME = 5;
+const FRONT_CLOUD_RIGHT_FRAME = 4;
 const GhostBouncer = Bouncer.extend({
     init: function (x, y, width, angle) {
         this._super(x, y, width, angle);
@@ -21,8 +21,9 @@ const GhostBouncer = Bouncer.extend({
         this.backCloud2.doRestoreCutTransparency();
         this.backCloud2.anchor = this.backCloud2.parentAnchor = Alignment.CENTER;
         const angle2 = (170 + offsetAngle) * DEG_TO_RAD;
-        this.backCloud2.x = this.x + radius * Math.cos(angle2);
-        this.backCloud2.y = this.y + radius * Math.sin(angle2);
+        this.backCloud2.x = Math.cos(angle2);
+        this.backCloud2.y = Math.sin(angle2);
+        this.backCloud2.visible = true;
         this.addChild(this.backCloud2);
         const timeline = new Timeline();
         timeline.loopType = Timeline.LoopType.REPLAY;
@@ -77,8 +78,9 @@ const GhostBouncer = Bouncer.extend({
         this.backCloud.doRestoreCutTransparency();
         this.backCloud.anchor = this.backCloud.parentAnchor = Alignment.CENTER;
         const angle1 = (10 + offsetAngle) * DEG_TO_RAD;
-        this.backCloud.x = this.x + radius * Math.cos(angle1);
-        this.backCloud.y = this.y + radius * Math.sin(angle1);
+        this.backCloud.x = Math.cos(angle1);
+        this.backCloud.y = Math.sin(angle1);
+        this.backCloud.visible = true;
         this.addChild(this.backCloud);
         const timeline2 = new Timeline();
         timeline2.loopType = Timeline.LoopType.REPLAY;
@@ -261,12 +263,8 @@ const GhostBouncer = Bouncer.extend({
         this._super(index);
     },
     draw: function () {
-        if (this.backCloud) {
-            this.backCloud.draw();
-        }
-        if (this.backCloud2) {
-            this.backCloud2.draw();
-        }
+        this.backCloud.draw();
+        this.backCloud2.draw();
         this._super();
     },
 });
