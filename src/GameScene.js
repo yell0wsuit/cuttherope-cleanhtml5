@@ -4,6 +4,8 @@ import CandyBreak from "@/game/CandyBreak";
 import Drawing from "@/game/Drawing";
 import FingerCut from "@/game/FingerCut";
 import Grab from "@/game/Grab";
+import Ghost from "@/game/Ghost";
+import GhostState from "@/game/GhostState";
 import Pump from "@/game/Pump";
 import PumpDirt from "@/game/PumpDirt";
 import Sock from "@/game/Sock";
@@ -422,8 +424,16 @@ const GameScene = BaseElement.extend({
         this.tutorials = [];
         this.drawings = [];
         this.bouncers = [];
+        this.ghosts = [];
         this.rotatedCircles = [];
         this.pollenDrawer = null;
+
+        this.isCandyInGhostBubbleAnimationLoaded = false;
+        this.isCandyInGhostBubbleAnimationLeftLoaded = false;
+        this.isCandyInGhostBubbleAnimationRightLoaded = false;
+        this.candyGhostBubbleAnimation = null;
+        this.candyGhostBubbleAnimationL = null;
+        this.candyGhostBubbleAnimationR = null;
 
         this.star = new ConstrainedPoint();
         this.star.setWeight(1);
@@ -795,6 +805,9 @@ const GameScene = BaseElement.extend({
                     case MapItem.BOUNCER1:
                     case MapItem.BOUNCER2:
                         this.loadBouncer(child);
+                        break;
+                    case MapItem.GHOST:
+                        this.loadGhost(child);
                         break;
                     case MapItem.GRAB:
                         this.loadGrab(child);
@@ -1275,6 +1288,35 @@ const GameScene = BaseElement.extend({
             bouncer = new Bouncer(px, py, w, a);
         bouncer.parseMover(item);
         this.bouncers.push(bouncer);
+    },
+    loadGhost: function (item) {
+        const px = item.x * this.PM + this.PMX,
+            py = item.y * this.PM + this.PMY,
+            grabRadius = item.radius || 0,
+            bouncerAngle = item.angle || 0;
+
+        let possibleStatesMask = 0;
+        if (item.bubble) {
+            possibleStatesMask |= GhostState.BUBBLE;
+        }
+        if (item.grab) {
+            possibleStatesMask |= GhostState.GRAB;
+        }
+        if (item.bouncer) {
+            possibleStatesMask |= GhostState.BOUNCER;
+        }
+
+        const ghost = new Ghost(
+            new Vector(px, py),
+            possibleStatesMask,
+            grabRadius,
+            bouncerAngle,
+            this.bubbles,
+            this.bungees,
+            this.bouncers
+        );
+
+        this.ghosts.push(ghost);
     },
     loadTarget: function (item) {
         const target = new GameObject();
