@@ -5,10 +5,10 @@ import ResourceId from "@/resources/ResourceId";
 import Timeline from "@/visual/Timeline";
 import KeyFrame from "@/visual/KeyFrame";
 import Rectangle from "@/core/Rectangle";
-const SUPPORTING_CLOUD_RIGHT = 4;
-const SUPPORTING_CLOUD_LEFT = 5;
-const TRANSFORM_CLOUD_START = 1;
-const TRANSFORM_CLOUD_END = 3;
+const SUPPORTING_CLOUD_RIGHT = 6;
+const SUPPORTING_CLOUD_LEFT = 1;
+const TRANSFORM_CLOUD_START = 3;
+const TRANSFORM_CLOUD_END = 5;
 const GhostBubble = Bubble.extend({
     init: function (x, y, quadIndex) {
         this._super();

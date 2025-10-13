@@ -6,8 +6,8 @@ import KeyFrame from "@/visual/KeyFrame";
 import Alignment from "@/core/Alignment";
 import RGBAColor from "@/core/RGBAColor";
 const DEG_TO_RAD = Math.PI / 180;
-const CLOUD_RIGHT_FRAME = 4;
-const CLOUD_LEFT_FRAME = 5;
+const CLOUD_RIGHT_FRAME = 5;
+const CLOUD_LEFT_FRAME = 1;
 const TRANSFORM_FRAME_2 = 2;
 const GhostBouncer = Bouncer.extend({
     init: function (x, y, width, angle) {

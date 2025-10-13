@@ -5,8 +5,8 @@ import MathHelper from "@/utils/MathHelper";
 import Rectangle from "@/core/Rectangle";
 import RGBAColor from "@/core/RGBAColor";
 const CLOUD_PARTICLES = 5;
-const TRANSFORM_FRAME_START = 1;
-const TRANSFORM_FRAME_END = 3;
+const TRANSFORM_FRAME_START = 3;
+const TRANSFORM_FRAME_END = 5;
 const GROWTH_MULTIPLIER = 1.025;
 const SHRINK_MULTIPLIER = 0.98;
 const GhostMorphingCloud = MultiParticles.extend({

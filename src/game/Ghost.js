@@ -24,8 +24,8 @@ const GhostTimeline = {
     FADE_OUT: 1,
 };
 const IMG_OBJ_GHOST_BODY = 0;
-const IMG_OBJ_GHOST_FACE = 6;
-const TRANSFORM_FRAME_START = 1;
+const IMG_OBJ_GHOST_FACE = 2;
+const TRANSFORM_FRAME_START = 3;
 const TRANSFORM_FRAME_END = 5;
 const GHOST_TOUCH_RADIUS = 40;
 const GHOST_PARTICLE_COUNT = GhostMorphingParticles.PARTICLE_COUNT;
