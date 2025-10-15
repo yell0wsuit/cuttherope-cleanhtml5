@@ -8,6 +8,7 @@ import Texture2D from "@/core/Texture2D";
 import Vector from "@/core/Vector";
 import Rectangle from "@/core/Rectangle";
 import Log from "@/utils/Log";
+import { parseTexturePackerAtlas } from "@/resources/TextureAtlasParser";
 const ResourceMgr = {
     init: function () {
         // merge info into resource entries
@@ -22,8 +23,63 @@ const ResourceMgr = {
         }
     },
     onResourceLoaded: function (resId, img) {
-        // we store the resource id in the custom id
         const resource = RES_DATA[resId];
+        if (!resource) {
+            return;
+        }
+
+        resource.pendingImage = img;
+        this._finalizeTextureResource(resId);
+    },
+    onAtlasLoaded: function (resId, atlasData) {
+        const resource = RES_DATA[resId];
+        if (!resource) {
+            return;
+        }
+
+        resource.info = this._parseAtlasForResource(resource, atlasData);
+        resource._atlasFailed = false;
+        this._finalizeTextureResource(resId);
+    },
+    onAtlasError: function (resId, error) {
+        const resource = RES_DATA[resId];
+        if (!resource) {
+            return;
+        }
+
+        globalThis.console?.error?.("Failed to load atlas for resource", resId, error);
+        resource._atlasFailed = true;
+        this._finalizeTextureResource(resId);
+    },
+    _parseAtlasForResource: function (resource, atlasData) {
+        const format = resource.atlasFormat || "texture-packer";
+        const existingInfo = resource.info || {};
+
+        switch (format) {
+            case "texture-packer":
+                return parseTexturePackerAtlas(atlasData, {
+                    existingInfo,
+                    frameOrder: resource.frameOrder,
+                    offsetNormalization: resource.offsetNormalization,
+                });
+            default:
+                globalThis.console?.warn?.("Unsupported atlas format", format);
+                return existingInfo;
+        }
+    },
+    _finalizeTextureResource: function (resId) {
+        const resource = RES_DATA[resId];
+        if (!resource || !resource.pendingImage) {
+            return;
+        }
+
+        if (resource.atlasPath && !resource.info && !resource._atlasFailed) {
+            return;
+        }
+
+        const img = resource.pendingImage;
+        delete resource.pendingImage;
+
         switch (resource.type) {
             case ResourceType.IMAGE:
                 resource.texture = new Texture2D(img);
@@ -32,11 +88,13 @@ const ResourceMgr = {
             case ResourceType.FONT:
                 resource.texture = new Texture2D(img);
                 this.setQuads(resource);
-                var font = new Font(),
-                    info = resource.info;
-                font.initWithVariableSizeChars(info.chars, resource.texture, info.kerning);
-                font.setOffsets(info.charOffset, info.lineOffset, info.spaceWidth);
-                resource.font = font;
+                if (resource.info) {
+                    var font = new Font(),
+                        info = resource.info;
+                    font.initWithVariableSizeChars(info.chars, resource.texture, info.kerning);
+                    font.setOffsets(info.charOffset, info.lineOffset, info.spaceWidth);
+                    resource.font = font;
+                }
                 break;
         }
     },
@@ -45,10 +103,14 @@ const ResourceMgr = {
      * @param resource {ResEntry}
      */
     setQuads: function (resource) {
+        if (!resource || !resource.texture) {
+            return;
+        }
+
         const t = resource.texture,
             imageWidth = t.imageWidth,
             imageHeight = t.imageHeight,
-            info = resource.info,
+            info = resource.info || {},
             rects = info.rects,
             offsets = info.offsets;
 
