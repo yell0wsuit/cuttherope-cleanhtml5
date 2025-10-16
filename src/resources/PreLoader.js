@@ -82,6 +82,16 @@ const loadImageElement = (url) => {
     });
 };
 
+const loadJson = (url) => {
+    return fetch(url).then((response) => {
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        return response.json();
+    });
+};
+
 const loadImages = function () {
     const gameBaseUrl = platform.imageBaseUrl + resolution.CANVAS_WIDTH + "/game/";
 
@@ -178,6 +188,17 @@ const loadImages = function () {
 
             const imageUrl = gameBaseUrl + resource.path;
             queueResource(imageUrl, tag, imageId);
+
+            if (resource.atlasPath) {
+                const atlasUrl = gameBaseUrl + resource.atlasPath;
+                loadJson(atlasUrl)
+                    .then((atlasData) => {
+                        ResourceMgr.onAtlasLoaded(imageId, atlasData);
+                    })
+                    .catch((error) => {
+                        ResourceMgr.onAtlasError(imageId, error);
+                    });
+            }
         }
     };
     queueForResMgr(ResourcePacks.StandardFonts, FONT_TAG);
