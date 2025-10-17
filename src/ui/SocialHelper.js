@@ -40,6 +40,7 @@ const SocialHelper = new (function () {
         fbInitSettings["status"] = true;
         fbInitSettings["cookie"] = true;
         fbInitSettings["xfbml"] = true;
+        let FB;
         FB.init(fbInitSettings);
 
         // report facebook likes
@@ -68,6 +69,7 @@ const SocialHelper = new (function () {
             publish["picture"] = imageurl;
             publish["actions"] = self.siteActions;
 
+            let FB;
             FB.ui(publish, callback);
         }
     };

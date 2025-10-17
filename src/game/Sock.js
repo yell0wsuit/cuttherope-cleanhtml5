@@ -8,7 +8,7 @@ import Vector from "@/core/Vector";
 import Mover from "@/utils/Mover";
 import Radians from "@/utils/Radians";
 import Canvas from "@/utils/Canvas";
-var Sock = CTRGameObject.extend({
+const Sock = CTRGameObject.extend({
     init: function () {
         this._super();
 
@@ -64,7 +64,7 @@ var Sock = CTRGameObject.extend({
     },
     drawBB: function () {
         // DEBUG: draw bounding lines for transport area
-        if (false) {
+        /*if (false) {
             const ctx = Canvas.context;
             ctx.lineWidth = 3;
 
@@ -79,7 +79,7 @@ var Sock = CTRGameObject.extend({
             ctx.moveTo(this.b1.x, this.b1.y);
             ctx.lineTo(this.b2.x, this.b2.y);
             ctx.stroke();
-        }
+        }*/
     },
     update: function (delta) {
         this._super(delta);

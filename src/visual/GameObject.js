@@ -40,7 +40,7 @@ const GameObject = Animation.extend({
         if (path) {
             let moverCapacity = Mover.MAX_CAPACITY;
             if (path[0] === "R") {
-                const rad = parseInt(path.substr(2), 10);
+                const rad = parseInt(path.slice(2), 10);
                 moverCapacity = Math.round(rad / 2 + 1);
             }
 

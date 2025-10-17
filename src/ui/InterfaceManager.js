@@ -53,7 +53,7 @@ const isMsieBrowser = /MSIE|Trident/.test(window.navigator.userAgent);
 
 const menuMusicId = edition.menuMusicId || ResourceId.SND_MENU_MUSIC;
 
-var InterfaceManager = new (function () {
+const InterfaceManager = new (function () {
     // ------------------------------------------------------------------------
     // Locals Variables
     // ------------------------------------------------------------------------
@@ -139,7 +139,7 @@ var InterfaceManager = new (function () {
         showMiniOptionMessage(msgId, text);
     };
 
-    var showMiniOptionMessage = function (msgId, messageText, delayDuration) {
+    const showMiniOptionMessage = function (msgId, messageText, delayDuration) {
         if (msgId != undefined) {
             const showDelay = delayDuration || 500;
             const msg = document.getElementById(msgId);
@@ -173,11 +173,11 @@ var InterfaceManager = new (function () {
     };
 
     // only enable achievements and leaderboard for signed-in users
-    let signedIn = false,
-        updateSignInControls = function () {
-            toggleClass("#achievementsBtn", "disabled", !signedIn);
-            toggleClass("#leaderboardsBtn", "disabled", !signedIn);
-        };
+    let signedIn = false;
+    const updateSignInControls = function () {
+        toggleClass("#achievementsBtn", "disabled", !signedIn);
+        toggleClass("#leaderboardsBtn", "disabled", !signedIn);
+    };
     PubSub.subscribe(PubSub.ChannelId.SignIn, function () {
         signedIn = true;
         updateSignInControls();
@@ -348,7 +348,7 @@ var InterfaceManager = new (function () {
                 PanelManager.showPanel(PanelId.MENU);
             });
 
-            var panel = PanelManager.getPanelById(panelId);
+            const panel = PanelManager.getPanelById(panelId);
             panel.init(InterfaceManager);
         } else if (panelId == PanelId.PASSWORD) {
             on("#boxEnterCodeButton", "click", function () {
@@ -362,7 +362,7 @@ var InterfaceManager = new (function () {
                 PanelManager.showPanel(PanelId.BOXES);
             });
 
-            var panel = PanelManager.getPanelById(panelId);
+            const panel = PanelManager.getPanelById(panelId);
             panel.init(InterfaceManager);
         }
 
@@ -377,7 +377,7 @@ var InterfaceManager = new (function () {
             // render the canvas all the way closed
             Doors.renderDoors(true, 0.0);
 
-            var panel = PanelManager.getPanelById(panelId);
+            const panel = PanelManager.getPanelById(panelId);
             panel.init(InterfaceManager);
         } else if (panelId == PanelId.GAME) {
             on("#gameRestartBtn", "click", function () {
@@ -775,7 +775,7 @@ var InterfaceManager = new (function () {
     // will be disabled until the flag gets cleared. This is an attempt to prevent new bugs.
 
     let transitionTimeout = null;
-    var notifyBeginTransition = function (timeout, name) {
+    const notifyBeginTransition = function (timeout, name) {
         _this.isTransitionActive = true;
         if (transitionTimeout != null) clearTimeout(transitionTimeout);
         transitionTimeout = setTimeout(function () {
@@ -802,7 +802,7 @@ var InterfaceManager = new (function () {
     };
 
     // play the level
-    var openLevel = (this.openLevel = function (level, isRestart, isSkip) {
+    const openLevel = (this.openLevel = function (level, isRestart, isSkip) {
         GameBorder.fadeIn(650, 100);
         BoxManager.currentLevelIndex = level;
 
@@ -821,11 +821,11 @@ var InterfaceManager = new (function () {
         }
     });
 
-    var closeLevel = function () {
+    const closeLevel = function () {
         RootController.stopLevel();
     };
 
-    var isLastLevel = function () {
+    const isLastLevel = function () {
         // see if we are on the last box
         const lastPlayableBoxIndex = BoxManager.requiredCount() - 1;
         if (BoxManager.currentBoxIndex !== lastPlayableBoxIndex) {
@@ -842,7 +842,7 @@ var InterfaceManager = new (function () {
         return true;
     };
 
-    var completeBox = function () {
+    const completeBox = function () {
         //attempt to move to the next box
         const boxIndex = BoxManager.currentBoxIndex;
 
@@ -860,14 +860,14 @@ var InterfaceManager = new (function () {
         }
     };
 
-    var openLevelMenu = function () {
+    const openLevelMenu = function () {
         RootController.pauseLevel();
         // Pause music when opening the game menu
         SoundMgr.pauseMusic();
         show("#levelMenu");
     };
 
-    var closeLevelMenu = function () {
+    const closeLevelMenu = function () {
         hide("#levelMenu");
         // Resume music when closing the game menu only if:
         // 1. We're currently in the game (not menu or level select)
@@ -995,10 +995,10 @@ var InterfaceManager = new (function () {
         fadeOut("#gameBtnTray");
     };
 
-    var resultTopLines = [],
-        resultBottomLines = [],
-        currentResultLine = 0,
-        resultTimeShiftIndex = 0;
+    const resultTopLines = [],
+        resultBottomLines = [];
+    let currentResultLine = 0;
+    const resultTimeShiftIndex = 0;
 
     this.onLevelWon = function (info) {
         const stars = info.stars,
@@ -1083,10 +1083,10 @@ var InterfaceManager = new (function () {
         };
 
         const doStarCountdown = function (from, callback) {
-            let countDownPoints = from,
-                duration = 1000,
-                lastRender = Date.now(),
-                requestAnimationFrame = window["requestAnimationFrame"];
+            let countDownPoints = from;
+            const duration = 1000;
+            let lastRender = Date.now();
+            const requestAnimationFrame = window["requestAnimationFrame"];
 
             const renderCount = function () {
                 const now = Date.now(),
@@ -1127,12 +1127,12 @@ var InterfaceManager = new (function () {
         };
 
         const doTimeCountdown = function (fromsec, frompoints, callback) {
-            let finalPoints = currentPoints + frompoints,
-                countDownSecs = fromsec,
-                // between 1 and 2 secs depending on time
-                duration = Math.max(1000, 2000 - fromsec * 50),
-                lastRender = Date.now(),
-                requestAnimationFrame = window["requestAnimationFrame"];
+            const finalPoints = currentPoints + frompoints;
+            let countDownSecs = fromsec;
+            // between 1 and 2 secs depending on time
+            const duration = Math.max(1000, 2000 - fromsec * 50);
+            let lastRender = Date.now();
+            const requestAnimationFrame = window["requestAnimationFrame"];
 
             const renderScore = function () {
                 const now = Date.now(),
@@ -1245,7 +1245,7 @@ var InterfaceManager = new (function () {
             levelIndex = BoxManager.currentLevelIndex;
 
         // save the prev score
-        var prevScore = ScoreManager.getScore(boxIndex, levelIndex - 1);
+        const prevScore = ScoreManager.getScore(boxIndex, levelIndex - 1);
 
         // Update score of the current level if there is a best result
         ScoreManager.setScore(boxIndex, levelIndex - 1, score);

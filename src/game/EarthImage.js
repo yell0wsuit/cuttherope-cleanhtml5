@@ -6,7 +6,7 @@ import ResourceId from "@/resources/ResourceId";
 const IMG_BGR_08_P1__position_window = 1;
 const IMG_OBJ_STAR_IDLE_window = 58;
 
-var EarthImage = ImageElement.extend({
+const EarthImage = ImageElement.extend({
     init: function (offsetX, offsetY) {
         this._super();
         this.initTextureWithId(ResourceId.IMG_OBJ_STAR_IDLE);

@@ -128,8 +128,8 @@ const TimelineTrack = Class.extend({
         }
     },
     updateNonActionTrack: function (delta) {
-        let t = this.t,
-            kf;
+        const t = this.t;
+        let kf;
         if (this.state === TrackState.NOT_ACTIVE) {
             if (t.time >= this.startTime && t.time <= this.endTime) {
                 this.state = TrackState.ACTIVE;
@@ -161,8 +161,8 @@ const TimelineTrack = Class.extend({
             kf.transitionType === KeyFrame.TransitionType.EASE_OUT
         ) {
             switch (this.type) {
-                case TrackType.POSITION:
-                    var saPos = this.currentStepAcceleration.value.pos,
+                case TrackType.POSITION: {
+                    const saPos = this.currentStepAcceleration.value.pos,
                         xPosDelta = saPos.x * delta,
                         yPosDelta = saPos.y * delta,
                         spsPos = this.currentStepPerSecond.value.pos,
@@ -173,8 +173,9 @@ const TimelineTrack = Class.extend({
                     t.element.x += (oldPosX + xPosDelta / 2) * delta;
                     t.element.y += (oldPosY + yPosDelta / 2) * delta;
                     break;
-                case TrackType.SCALE:
-                    var saScale = this.currentStepAcceleration.value.scale,
+                }
+                case TrackType.SCALE: {
+                    const saScale = this.currentStepAcceleration.value.scale,
                         xScaleDelta = saScale.x * delta,
                         yScaleDelta = saScale.y * delta,
                         spsScale = this.currentStepPerSecond.value.scale,
@@ -185,14 +186,16 @@ const TimelineTrack = Class.extend({
                     t.element.scaleX += (oldScaleX + xScaleDelta / 2) * delta;
                     t.element.scaleY += (oldScaleY + yScaleDelta / 2) * delta;
                     break;
-                case TrackType.ROTATION:
-                    var rDelta = this.currentStepAcceleration.value.rotationAngle * delta,
+                }
+                case TrackType.ROTATION: {
+                    const rDelta = this.currentStepAcceleration.value.rotationAngle * delta,
                         oldRotationAngle = this.currentStepPerSecond.value.rotationAngle;
                     this.currentStepPerSecond.value.rotationAngle += rDelta;
                     t.element.rotation += (oldRotationAngle + rDelta / 2) * delta;
                     break;
-                case TrackType.COLOR:
-                    var spsColor = this.currentStepPerSecond.value.color,
+                }
+                case TrackType.COLOR: {
+                    const spsColor = this.currentStepPerSecond.value.color,
                         oldColorR = spsColor.r,
                         oldColorG = spsColor.g,
                         oldColorB = spsColor.b,
@@ -210,12 +213,13 @@ const TimelineTrack = Class.extend({
                     spsColor.b += deltaB * 2;
                     spsColor.a += deltaA * 2;
 
-                    var elemColor = t.element.color;
+                    const elemColor = t.element.color;
                     elemColor.r += (oldColorR + deltaR / 2) * delta;
                     elemColor.g += (oldColorG + deltaG / 2) * delta;
                     elemColor.b += (oldColorB + deltaB / 2) * delta;
                     elemColor.a += (oldColorA + deltaA / 2) * delta;
                     break;
+                }
                 case TrackType.ACTION:
                     break;
             }
@@ -289,8 +293,8 @@ const TimelineTrack = Class.extend({
      */
     setElementFromKeyFrame: function (kf) {
         switch (this.type) {
-            case TrackType.POSITION:
-                var elem = this.t.element,
+            case TrackType.POSITION: {
+                const elem = this.t.element,
                     kfPos = kf.value.pos;
                 if (!this.relative) {
                     elem.x = kfPos.x;
@@ -301,9 +305,10 @@ const TimelineTrack = Class.extend({
                     elem.y = prevPos.y + kfPos.y;
                 }
                 break;
-            case TrackType.SCALE:
-                var kfScale = kf.value.scale;
-                elem = this.t.element;
+            }
+            case TrackType.SCALE: {
+                const kfScale = kf.value.scale;
+                const elem = this.t.element;
                 if (!this.relative) {
                     elem.scaleX = kfScale.x;
                     elem.scaleY = kfScale.y;
@@ -313,6 +318,7 @@ const TimelineTrack = Class.extend({
                     elem.scaleY = prevScale.y + kfScale.y;
                 }
                 break;
+            }
             case TrackType.ROTATION:
                 if (!this.relative) {
                     this.t.element.rotation = kf.value.rotationAngle;
@@ -321,8 +327,8 @@ const TimelineTrack = Class.extend({
                         this.elementPrevState.value.rotationAngle + kf.value.rotationAngle;
                 }
                 break;
-            case TrackType.COLOR:
-                var elemColor = this.t.element.color,
+            case TrackType.COLOR: {
+                const elemColor = this.t.element.color,
                     kfColor = kf.value.color;
                 if (!this.relative) {
                     elemColor.copyFrom(kfColor);
@@ -334,13 +340,15 @@ const TimelineTrack = Class.extend({
                     elemColor.a = prevColor.a + kfColor.a;
                 }
                 break;
-            case TrackType.ACTION:
-                var actionSet = kf.value.actionSet;
+            }
+            case TrackType.ACTION: {
+                const actionSet = kf.value.actionSet;
                 for (let i = 0, len = actionSet.length; i < len; i++) {
                     const action = actionSet[i];
                     action.actionTarget.handleAction(action.data);
                 }
                 break;
+            }
         }
     },
     setKeyFrameFromElement: function (kf) {
@@ -374,26 +382,28 @@ const TimelineTrack = Class.extend({
         const spsValue = this.currentStepPerSecond.value,
             saValue = this.currentStepAcceleration.value;
         switch (this.type) {
-            case TrackType.POSITION:
-                var spsPos = spsValue.pos,
+            case TrackType.POSITION: {
+                const spsPos = spsValue.pos,
                     dstPos = dst.value.pos,
                     srcPos = src.value.pos;
                 spsPos.x = (dstPos.x - srcPos.x) / this.keyFrameTimeLeft;
                 spsPos.y = (dstPos.y - srcPos.y) / this.keyFrameTimeLeft;
                 break;
-            case TrackType.SCALE:
-                var spsScale = spsValue.scale,
+            }
+            case TrackType.SCALE: {
+                const spsScale = spsValue.scale,
                     dstScale = dst.value.scale,
                     srcScale = src.value.scale;
                 spsScale.x = (dstScale.x - srcScale.x) / this.keyFrameTimeLeft;
                 spsScale.y = (dstScale.y - srcScale.y) / this.keyFrameTimeLeft;
                 break;
+            }
             case TrackType.ROTATION:
                 spsValue.rotationAngle =
                     (dst.value.rotationAngle - src.value.rotationAngle) / this.keyFrameTimeLeft;
                 break;
-            case TrackType.COLOR:
-                var spsColor = spsValue.color,
+            case TrackType.COLOR: {
+                const spsColor = spsValue.color,
                     dstColor = dst.value.color,
                     srcColor = src.value.color;
                 spsColor.r = (dstColor.r - srcColor.r) / this.keyFrameTimeLeft;
@@ -401,6 +411,7 @@ const TimelineTrack = Class.extend({
                 spsColor.b = (dstColor.b - srcColor.b) / this.keyFrameTimeLeft;
                 spsColor.a = (dstColor.a - srcColor.a) / this.keyFrameTimeLeft;
                 break;
+            }
             case TrackType.ACTION:
                 break;
         }
@@ -409,9 +420,9 @@ const TimelineTrack = Class.extend({
             isEaseOut = dst.transitionType == KeyFrame.TransitionType.EASE_OUT;
         if (isEaseIn || isEaseOut) {
             switch (this.type) {
-                case TrackType.POSITION:
-                    spsPos = spsValue.pos;
-                    var saPos = saValue.pos;
+                case TrackType.POSITION: {
+                    const spsPos = spsValue.pos;
+                    const saPos = saValue.pos;
                     spsPos.multiply(2);
                     saPos.x = spsPos.x / this.keyFrameTimeLeft;
                     saPos.y = spsPos.y / this.keyFrameTimeLeft;
@@ -422,9 +433,10 @@ const TimelineTrack = Class.extend({
                         saPos.multiply(-1);
                     }
                     break;
-                case TrackType.SCALE:
-                    spsScale = spsValue.scale;
-                    var saScale = saValue.scale;
+                }
+                case TrackType.SCALE: {
+                    const spsScale = spsValue.scale;
+                    const saScale = saValue.scale;
                     spsScale.multiply(2);
                     saScale.x = spsScale.x / this.keyFrameTimeLeft;
                     saScale.y = spsScale.y / this.keyFrameTimeLeft;
@@ -435,6 +447,7 @@ const TimelineTrack = Class.extend({
                         saScale.multiply(-1);
                     }
                     break;
+                }
                 case TrackType.ROTATION:
                     spsValue.rotationAngle *= 2;
                     saValue.rotationAngle = spsValue.rotationAngle / this.keyFrameTimeLeft;
@@ -444,9 +457,9 @@ const TimelineTrack = Class.extend({
                         saValue.rotationAngle *= -1;
                     }
                     break;
-                case TrackType.COLOR:
-                    spsColor = spsValue.color;
-                    var saColor = saValue.color;
+                case TrackType.COLOR: {
+                    const spsColor = spsValue.color;
+                    const saColor = saValue.color;
                     spsColor.multiply(2);
                     saColor.r = spsColor.r / this.keyFrameTimeLeft;
                     saColor.g = spsColor.g / this.keyFrameTimeLeft;
@@ -459,6 +472,7 @@ const TimelineTrack = Class.extend({
                     }
 
                     break;
+                }
                 case TrackType.ACTION:
                     break;
             }

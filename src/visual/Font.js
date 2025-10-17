@@ -51,9 +51,9 @@ const Font = ImageElement.extend({
         ); // destination coordinates
     },
     stringWidth: function (str) {
-        let strWidth = 0,
-            len = str.length,
-            lastOffset = 0;
+        let strWidth = 0;
+        const len = str.length;
+        let lastOffset = 0;
         for (let c = 0; c < len; c++) {
             lastOffset = this.getCharOffset(str, c);
 

@@ -6,19 +6,15 @@ const CTRMover = Mover.extend({
         this._super(pathCapacity, moveSpeed, rotateSpeed);
     },
     setPathAndStart: function (path, startX, startY) {
-        let i,
-            nx,
-            ny,
-            xs,
-            ys,
-            MOVER_SCALE = resolution.MOVER_SCALE;
+        let i, nx, ny, xs, ys;
+        const MOVER_SCALE = resolution.MOVER_SCALE;
 
         if (path[0] === "R") {
-            let clockwise = path[1] === "C",
-                rad = parseInt(path.substr(2), 10),
-                pointsCount = Math.round((rad * 3) / 2),
-                k_increment = (2 * Math.PI) / pointsCount,
-                theta = 0;
+            let rad = parseInt(path.slice(2), 10);
+            const pointsCount = Math.round((rad * 3) / 2);
+            let k_increment = (2 * Math.PI) / pointsCount;
+            let theta = 0;
+            const clockwise = path[1] === "C";
 
             // now that the number of points have been calculated we
             // can scale the radius to match the current resolution
@@ -36,7 +32,7 @@ const CTRMover = Mover.extend({
         } else {
             this.addPathPoint(new Vector(startX, startY));
             if (path[path.length - 1] === ",") {
-                path = path.substr(0, path.length - 1);
+                path = path.slice(0, path.length - 1);
             }
             const parts = path.split(","),
                 numParts = parts.length;

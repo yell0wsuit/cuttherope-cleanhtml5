@@ -18,17 +18,18 @@ import Dialogs from "@/ui/Dialogs";
 let boxes = [],
     currentBoxIndex = 0,
     currentOffset = 0,
-    cancelSlideFlag = false,
     isBoxCentered = true,
-    isAnimationActive = false,
-    spacing = resolution.uiScaledNumber(600),
-    centeroffset = resolution.uiScaledNumber(312),
     bouncebox = null,
     im = null,
     canvas,
     ctx,
     $navBack,
     $navForward;
+
+const cancelSlideFlag = false,
+    isAnimationActive = false,
+    spacing = resolution.uiScaledNumber(600),
+    centeroffset = resolution.uiScaledNumber(312);
 
 const BoxPanel = new Panel(PanelId.BOXES, "boxPanel", "menuBackground", true);
 
@@ -181,8 +182,8 @@ function render(offset) {
     let boxoffset = 0;
 
     for (let i = 0; i < boxes.length; i++) {
-        let omnomoffset = null,
-            relboxoffset = offset + boxoffset,
+        let omnomoffset = null;
+        const relboxoffset = offset + boxoffset,
             box = boxes[i];
 
         if (box.visible) {
@@ -305,12 +306,12 @@ function isMouseOverBox(x, y) {
 }
 
 let ismousedown = false,
-    imousedragging = false,
     upoffset = 0,
     downoffset = 0,
     delta = 0,
     downx = null,
     downy = null;
+const imousedragging = false;
 
 function pointerDown(x, y) {
     if (ismousedown) {

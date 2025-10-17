@@ -16,7 +16,7 @@ let menuImagesLoadComplete = false,
     loadedImages = 0,
     loadedSounds = 0,
     failedImages = 0,
-    failedSounds = 0,
+    failedSounds,
     checkMenuLoadComplete = function () {
         if (!menuImagesLoadComplete || !menuSoundLoadComplete) {
             return;
@@ -42,16 +42,17 @@ let menuImagesLoadComplete = false,
 
         // ensure the completion is only run once
         checkMenuLoadComplete = function () {};
-    },
-    updateProgress = function () {
-        if (totalResources === 0) return;
-        const progress = ((loadedImages + loadedSounds) / totalResources) * 100;
-        PubSub.publish(PubSub.ChannelId.PreloaderProgress, { progress: progress });
-
-        if (LoadAnimation) {
-            LoadAnimation.notifyLoadProgress(progress);
-        }
     };
+
+const updateProgress = function () {
+    if (totalResources === 0) return;
+    const progress = ((loadedImages + loadedSounds) / totalResources) * 100;
+    PubSub.publish(PubSub.ChannelId.PreloaderProgress, { progress: progress });
+
+    if (LoadAnimation) {
+        LoadAnimation.notifyLoadProgress(progress);
+    }
+};
 
 const MENU_TAG = "MENU";
 const FONT_TAG = "FONT";

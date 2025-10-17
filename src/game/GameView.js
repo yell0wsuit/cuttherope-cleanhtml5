@@ -3,7 +3,7 @@ import resolution from "@/resolution";
 import RGBAColor from "@/core/RGBAColor";
 import Canvas from "@/utils/Canvas";
 import Constants from "@/utils/Constants";
-var GameView = View.extend({
+const GameView = View.extend({
     init: function () {
         this._super();
     },

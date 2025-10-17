@@ -9,7 +9,7 @@ let Class;
 (function () {
     let initializing = false;
 
-    const fnTest = /var xyz/.test(function () {
+    const fnTest = /let xyz/.test(function () {
         //noinspection JSUnusedLocalSymbols
         let xyz;
     })

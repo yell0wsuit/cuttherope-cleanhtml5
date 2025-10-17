@@ -290,8 +290,8 @@ const BaseElement = Class.extend({
         let minX = this.drawX,
             minY = this.drawY,
             maxX = this.drawX + this.width,
-            maxY = this.drawY + this.height,
-            children = this.children,
+            maxY = this.drawY + this.height;
+        const children = this.children,
             numChildren = children.length;
 
         for (let i = 0; i < numChildren; i++) {
@@ -334,10 +334,11 @@ const BaseElement = Class.extend({
             case ActionType.STOP_TIMELINE:
                 this.stopCurrentTimeline();
                 break;
-            case ActionType.JUMP_TO_TIMELINE_FRAME:
-                var timeline = this.currentTimeline;
+            case ActionType.JUMP_TO_TIMELINE_FRAME: {
+                const timeline = this.currentTimeline;
                 timeline.jumpToTrack(a.actionParam, a.actionSubParam);
                 break;
+            }
             default:
                 return false;
         }
@@ -425,9 +426,9 @@ const BaseElement = Class.extend({
         this.currentTimelineIndex = index;
         this.currentTimeline = this.timelines[index];
         if (this.currentTimeline) {
-            var timelineResource = this.currentTimeline.resourceId;
+            const timelineResource = this.currentTimeline.resourceId;
             if (timelineResource !== undefined && timelineResource !== this.resId) {
-                var shouldRestoreCut = this.restoreCutTransparency;
+                const shouldRestoreCut = this.restoreCutTransparency;
                 this.initTextureWithId(timelineResource);
                 if (shouldRestoreCut) {
                     this.doRestoreCutTransparency();
@@ -458,8 +459,8 @@ const BaseElement = Class.extend({
      * @return {boolean} true if event was handled
      */
     onTouchDown: function (x, y) {
-        let ret = false,
-            count = this.children.length;
+        let ret = false;
+        const count = this.children.length;
         for (let i = count - 1; i >= 0; i--) {
             const child = this.children[i];
             if (child && child.touchable) {
@@ -479,8 +480,8 @@ const BaseElement = Class.extend({
      * @return {boolean} true if event was handled
      */
     onTouchUp: function (x, y) {
-        let ret = false,
-            count = this.children.length;
+        let ret = false;
+        const count = this.children.length;
         for (let i = count - 1; i >= 0; i--) {
             const child = this.children[i];
             if (child && child.touchable) {
@@ -500,8 +501,8 @@ const BaseElement = Class.extend({
      * @return {boolean} true if event was handled
      */
     onTouchMove: function (x, y) {
-        let ret = false,
-            count = this.children.length;
+        let ret = false;
+        const count = this.children.length;
         for (let i = count - 1; i >= 0; i--) {
             const child = this.children[i];
             if (child && child.touchable) {
@@ -521,8 +522,8 @@ const BaseElement = Class.extend({
      * @return {boolean} true if event was handled
      */
     onDoubleClick: function (x, y) {
-        let ret = false,
-            count = this.children.length;
+        let ret = false;
+        const count = this.children.length;
         for (let i = count - 1; i >= 0; i--) {
             const child = this.children[i];
             if (child && child.touchable) {

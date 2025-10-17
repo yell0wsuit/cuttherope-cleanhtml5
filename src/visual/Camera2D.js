@@ -2,7 +2,7 @@ import Class from "@/utils/Class";
 import Vector from "@/core/Vector";
 import Canvas from "@/utils/Canvas";
 import MathHelper from "@/utils/MathHelper";
-var Camera2D = Class.extend({
+const Camera2D = Class.extend({
     /**
      * Camera2D constructor
      * @param speed {number}

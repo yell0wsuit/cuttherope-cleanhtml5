@@ -6,9 +6,7 @@ import res1024 from "@/config/resolutions/1024x576";
 import res1920 from "@/config/resolutions/1920x1080";
 
 // decide which resolution to target
-let resolution;
-
-resolution = res1920;
+const resolution = res1920;
 
 scaleResolution(resolution);
 resolution.isHD = true;

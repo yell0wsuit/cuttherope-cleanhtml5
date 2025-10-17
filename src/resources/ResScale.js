@@ -52,8 +52,8 @@ const ResScaler = {
     },
 
     parseOriginalRects: function (rects) {
-        let i = 0,
-            len = rects.length,
+        let i = 0;
+        const len = rects.length,
             originalRects = [];
         while (i < len) {
             const rect = new Rectangle(rects[i++], rects[i++], rects[i++], rects[i++]);
@@ -63,11 +63,11 @@ const ResScaler = {
     },
 
     scaleRects: function (originalRects, scale, id) {
-        let PADDING = 2, // Changed from 4 to 2 to match minified version
+        const PADDING = 2, // Changed from 4 to 2 to match minified version
             newRects = [],
             numRects = originalRects.length,
-            numColumns = Math.ceil(Math.sqrt(numRects)), // Calculate number of columns
-            columnIndex = 0,
+            numColumns = Math.ceil(Math.sqrt(numRects)); // Calculate number of columns
+        let columnIndex = 0,
             currentX = 0,
             currentY = 2, // Start Y at 2 (padding)
             maxColumnWidth = 0;
@@ -112,8 +112,8 @@ const ResScaler = {
     },
 
     parseOriginalOffsets: function (offsets) {
-        let i = 0,
-            len = offsets.length,
+        let i = 0;
+        const len = offsets.length,
             originalOffsets = [];
         while (i < len) {
             const rect = new Vector(offsets[i++], offsets[i++]);
@@ -133,13 +133,10 @@ const ResScaler = {
         // of rounding) for moving and animated elements.
         const ALLOW_OFFSET_ADJUSTMENT = false;
 
-        let adjustments = [], // how much to offset the offsets :)
+        const adjustments = [], // how much to offset the offsets :)
             oldOffsets = info.originalOffsets,
-            newOffsets = [],
-            scaledOffset,
-            adjustment,
-            i,
-            len;
+            newOffsets = [];
+        let scaledOffset, adjustment, i, len;
         for (i = 0, len = oldOffsets.length; i < len; i++) {
             scaledOffset = oldOffsets[i].copy();
             scaledOffset.x = scaleNumber(scaledOffset.x, scale);

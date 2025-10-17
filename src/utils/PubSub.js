@@ -32,7 +32,8 @@ PubSub.unsubscribe = function (subscription) {
     }
 
     const name = subscription.name ?? (Array.isArray(subscription) ? subscription[0] : undefined);
-    const callback = subscription.callback ?? (Array.isArray(subscription) ? subscription[1] : undefined);
+    const callback =
+        subscription.callback ?? (Array.isArray(subscription) ? subscription[1] : undefined);
 
     if (typeof name !== "number" || typeof callback !== "function") {
         return;
@@ -48,10 +49,9 @@ PubSub.unsubscribe = function (subscription) {
 };
 
 PubSub.publish = function (name) {
-    let callbacks = [],
-        args = Array.prototype.slice.call(arguments, 1),
-        i,
-        len;
+    const callbacks = [],
+        args = Array.prototype.slice.call(arguments, 1);
+    let i, len;
     if (subscriptions.length > 0) {
         for (i = 0, len = subscriptions.length; i < len; i++) {
             if (subscriptions[i].name === name) {

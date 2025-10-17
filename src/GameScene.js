@@ -278,7 +278,7 @@ const GameScene = BaseElement.extend({
         this.hudStars = [];
         starDisappearPool = [];
 
-        for (var i = 0; i < HUD_STARS_COUNT; i++) {
+        for (let i = 0; i < HUD_STARS_COUNT; i++) {
             const hs = (this.hudStars[i] = new Animation());
             hs.initTextureWithId(ResourceId.IMG_HUD_STAR);
             hs.doRestoreCutTransparency();
@@ -297,6 +297,7 @@ const GameScene = BaseElement.extend({
 
         this.slastTouch = Vector.newZero();
         this.fingerCuts = [];
+        let i;
         for (i = 0; i < Constants.MAX_TOUCHES; i++) {
             this.fingerCuts[i] = [];
         }
@@ -512,7 +513,7 @@ const GameScene = BaseElement.extend({
         this.candyBubbleAnimation.visible = false;
         this.candyBubbleAnimation.drawPosIncrement = 0.0001;
 
-        for (var i = 0; i < HUD_STARS_COUNT; i++) {
+        for (let i = 0; i < HUD_STARS_COUNT; i++) {
             const hs = this.hudStars[i];
             if (hs.currentTimeline) {
                 hs.currentTimeline.stop();
@@ -556,8 +557,8 @@ const GameScene = BaseElement.extend({
             this.candyBubbleAnimationR.drawPosIncrement = 0.0001;
         }
 
-        let len = this.rotatedCircles.length,
-            r;
+        const len = this.rotatedCircles.length;
+        let r, i;
         for (i = 0; i < len; i++) {
             r = this.rotatedCircles[i];
             r.operating = Constants.UNDEFINED;
@@ -645,9 +646,8 @@ const GameScene = BaseElement.extend({
             this.camera.speed = 10;
             this.cameraMoveMode = CameraMove.TO_CANDY_PART;
 
-            let startX,
-                startY,
-                cameraTarget = this.twoParts !== PartsType.NONE ? this.starL : this.star;
+            let startX, startY;
+            const cameraTarget = this.twoParts !== PartsType.NONE ? this.starL : this.star;
 
             if (this.mapWidth > SCREEN_WIDTH) {
                 if (cameraTarget.pos.x > this.mapWidth / 2) {
@@ -696,17 +696,17 @@ const GameScene = BaseElement.extend({
 
         // get all the layers for this map
         for (const layerName in map) {
-            if (map.hasOwnProperty(layerName)) {
+            if (Object.prototype.hasOwnProperty.call(map, layerName)) {
                 layers.push(map[layerName]);
             }
         }
 
-        // var enumLayerChildren = function (layers, childCallback) {
-        //     for (var i = 0, numLayers = layers.length; i < numLayers; i++) {
+        // let enumLayerChildren = function (layers, childCallback) {
+        //     for (let i = 0, numLayers = layers.length; i < numLayers; i++) {
         //         // parse the children
-        //         var children = layers[i],
+        //         let children = layers[i],
         //             numChildren = children.length;
-        //         for (var j = 0; j < numChildren; j++) {
+        //         for (let j = 0; j < numChildren; j++) {
         //             //console.log("CALLBAC", i, j)
         //             childCallback.call(self, children[j]);
         //         }
@@ -714,12 +714,12 @@ const GameScene = BaseElement.extend({
         // };
 
         // first pass handles basic settings and candy
-        for (var i = 0, numLayers = layers.length; i < numLayers; i++) {
+        for (let i = 0, numLayers = layers.length; i < numLayers; i++) {
             // parse the children
-            var children = layers[i],
+            const children = layers[i],
                 numChildren = children.length;
-            for (var j = 0; j < numChildren; j++) {
-                var child = children[j];
+            for (let j = 0; j < numChildren; j++) {
+                const child = children[j];
                 switch (child.name) {
                     case MapItem.MAP:
                         this.loadMapSettings(child);
@@ -741,12 +741,12 @@ const GameScene = BaseElement.extend({
         }
 
         // second pass handles the rest of the game elements
-        for (var i = 0, numLayers = layers.length; i < numLayers; i++) {
+        for (let i = 0, numLayers = layers.length; i < numLayers; i++) {
             // parse the children
-            var children = layers[i],
+            const children = layers[i],
                 numChildren = children.length;
-            for (var j = 0; j < numChildren; j++) {
-                var child = children[j];
+            for (let j = 0; j < numChildren; j++) {
+                const child = children[j];
                 switch (child.name) {
                     case MapItem.GRAVITY_SWITCH:
                         this.loadGravitySwitch(child);
@@ -840,10 +840,9 @@ const GameScene = BaseElement.extend({
         this.ropePhysicsSpeed *= resolution.PHYSICS_SPEED_MULTIPLIER;
     },
     loadGrab: function (item) {
-        let gx = item.x * this.PM + this.PMX,
+        const gx = item.x * this.PM + this.PMX,
             gy = item.y * this.PM + this.PMY,
             l = item.length * this.PM,
-            r = item.radius,
             wheel = item.wheel,
             kickable = item.kickable,
             invisible = item.invisible,
@@ -855,6 +854,7 @@ const GameScene = BaseElement.extend({
             hidePath = item.hidePath,
             gun = item.gun,
             g = new Grab();
+        let r = item.radius;
 
         g.x = gx;
         g.y = gy;
@@ -1288,7 +1288,7 @@ const GameScene = BaseElement.extend({
 
         target.bb = Rectangle.copy(resolution.TARGET_BB);
         target.bbOverride = Rectangle.copy(resolution.TARGET_BB);
-        var originalPlayTimeline = target.playTimeline;
+        const originalPlayTimeline = target.playTimeline;
         target.playTimeline = function (index) {
             originalPlayTimeline.call(this, index);
             if (this.bbOverride) {
@@ -1327,8 +1327,8 @@ const GameScene = BaseElement.extend({
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS
         );
-        var frame;
-        var idle3Sequence = [];
+        let frame;
+        const idle3Sequence = [];
         for (
             frame = IMG_CHAR_ANIMATIONS_idle3_start;
             frame <= IMG_CHAR_ANIMATIONS_idle3_end;
@@ -1494,7 +1494,7 @@ const GameScene = BaseElement.extend({
         circleToRemove.removeOnNextUpdate = true;
     },
     update: function (delta) {
-        var i, len, moveResult;
+        let i, len, moveResult;
         for (i = 0, len = this.drawings.length; i < len; i++) {
             this.drawings[i].update(delta);
         }
@@ -1507,8 +1507,8 @@ const GameScene = BaseElement.extend({
         }
 
         for (i = 0; i < Constants.MAX_TOUCHES; i++) {
-            let cuts = this.fingerCuts[i],
-                numCuts = cuts.length,
+            const cuts = this.fingerCuts[i];
+            let numCuts = cuts.length,
                 k = 0;
 
             while (k < numCuts) {
@@ -1603,10 +1603,10 @@ const GameScene = BaseElement.extend({
             for (i = 0; i < numGrabs; i++) {
                 // yes, its a little confusing that the bungees array
                 // actually holds grabs
-                var g = this.bungees[i];
+                const g = this.bungees[i];
                 g.update(delta);
 
-                var b = g.rope;
+                const b = g.rope;
 
                 if (g.mover) {
                     if (b) {
@@ -1638,7 +1638,7 @@ const GameScene = BaseElement.extend({
 
                 if (g.radius !== Constants.UNDEFINED && !g.rope) {
                     // shared code for creating a rope with a star
-                    var STAR_RADIUS = resolution.STAR_RADIUS,
+                    const STAR_RADIUS = resolution.STAR_RADIUS,
                         createRope = function (star) {
                             const l = new Vector(g.x, g.y).distance(star.pos);
                             if (l <= g.radius + STAR_RADIUS) {
@@ -1677,10 +1677,10 @@ const GameScene = BaseElement.extend({
                 }
 
                 if (b) {
-                    var prev = b.bungeeAnchor,
+                    const prev = b.bungeeAnchor,
                         tail = b.parts[b.parts.length - 1],
-                        v = Vector.subtract(prev.pos, tail.pos),
-                        hasCandy = false;
+                        v = Vector.subtract(prev.pos, tail.pos);
+                    let hasCandy = false;
 
                     if (!handledRotation) {
                         if (this.twoParts !== PartsType.NONE) {
@@ -1695,7 +1695,7 @@ const GameScene = BaseElement.extend({
                     }
 
                     if (b.relaxed !== 0 && b.cut === Constants.UNDEFINED && hasCandy) {
-                        var a = Radians.toDegrees(v.normalizedAngle());
+                        const a = Radians.toDegrees(v.normalizedAngle());
                         if (this.twoParts !== PartsType.NONE) {
                             const candyPart = tail === this.starL ? this.candyL : this.candyR;
                             if (!b.chosenOne) {
@@ -1798,15 +1798,15 @@ const GameScene = BaseElement.extend({
                     this.star.prevPos.copyFrom(this.star.pos);
                     this.star.prevPos.subtract(sv);
 
-                    for (var i = 0, count = this.bungees.length; i < count; i++) {
-                        var g = this.bungees[i],
+                    for (let i = 0, count = this.bungees.length; i < count; i++) {
+                        const g = this.bungees[i],
                             b = g.rope;
                         if (
                             b &&
                             b.cut !== b.parts.length - 3 &&
                             (b.tail === this.starL || b.tail === this.starR)
                         ) {
-                            var prev = b.parts[b.parts.length - 2],
+                            const prev = b.parts[b.parts.length - 2],
                                 heroRestLen = b.tail.restLength(prev);
                             this.star.addConstraint(prev, heroRestLen, ConstraintType.DISTANCE);
                             b.tail = this.star;
@@ -1822,7 +1822,7 @@ const GameScene = BaseElement.extend({
                     transform.x = this.candy.x;
                     transform.y = this.candy.y;
                     transform.anchor = Alignment.CENTER;
-                    var a = transform.addAnimationDelay(
+                    const a = transform.addAnimationDelay(
                         0.05,
                         Timeline.LoopType.NO_LOOP,
                         IMG_OBJ_CANDY_01_part_fx_start,
@@ -1854,7 +1854,7 @@ const GameScene = BaseElement.extend({
 
         if (this.camera.type !== Camera2D.SpeedType.PIXELS || !this.ignoreTouches) {
             for (i = 0, len = this.stars.length; i < len; i++) {
-                var s = this.stars[i];
+                const s = this.stars[i];
                 if (!s) continue;
                 s.update(delta);
 
@@ -1901,7 +1901,7 @@ const GameScene = BaseElement.extend({
         }
 
         for (i = 0, len = this.bubbles.length; i < len; i++) {
-            b = this.bubbles[i];
+            const b = this.bubbles[i];
             b.update(delta);
 
             if (!b.popped) {
@@ -1949,8 +1949,8 @@ const GameScene = BaseElement.extend({
 
             if (!b.withoutShadow) {
                 const numRotatedCircles = this.rotatedCircles.length;
-                for (j = 0; j < numRotatedCircles; j++) {
-                    var rc = this.rotatedCircles[j],
+                for (let j = 0; j < numRotatedCircles; j++) {
+                    const rc = this.rotatedCircles[j],
                         distanceToCircle = Vector.distance(b.x, b.y, rc.x, rc.y);
                     if (distanceToCircle < rc.sizeInPixels) {
                         b.withoutShadow = true;
@@ -1961,22 +1961,22 @@ const GameScene = BaseElement.extend({
 
         // tutorial text
         for (i = 0, len = this.tutorials.length; i < len; i++) {
-            var t = this.tutorials[i];
+            const t = this.tutorials[i];
             t.update(delta);
         }
 
         // tutorial images
         for (i = 0, len = this.tutorialImages.length; i < len; i++) {
-            t = this.tutorialImages[i];
+            const t = this.tutorialImages[i];
             t.update(delta);
         }
 
         let removeCircleIndex = -1;
-        for (i = 0, len = this.rotatedCircles.length; i < len; i++) {
-            rc = this.rotatedCircles[i];
+        for (let i = 0, len = this.rotatedCircles.length; i < len; i++) {
+            const rc = this.rotatedCircles[i];
 
-            for (j = 0; j < numGrabs; j++) {
-                var g = this.bungees[j],
+            for (let j = 0; j < numGrabs; j++) {
+                const g = this.bungees[j],
                     gIndex = rc.containedObjects.indexOf(g),
                     distance = Vector.distance(g.x, g.y, rc.x, rc.y);
 
@@ -1990,8 +1990,8 @@ const GameScene = BaseElement.extend({
             }
 
             const numBubbles = this.bubbles.length;
-            for (j = 0; j < numBubbles; j++) {
-                var b = this.bubbles[j],
+            for (let j = 0; j < numBubbles; j++) {
+                const b = this.bubbles[j],
                     distance = Vector.distance(b.x, b.y, rc.x, rc.y),
                     bIndex = rc.containedObjects.indexOf(b);
 
@@ -2017,16 +2017,16 @@ const GameScene = BaseElement.extend({
 
         // rockets
         for (i = 0, len = this.rockets.length; i < len; i++) {
-            r = this.rockets[i];
+            const r = this.rockets[i];
             r.update(delta);
             // TODO: finish
         }
 
         // socks
         for (i = 0, len = this.socks.length; i < len; i++) {
-            s = this.socks[i];
+            const s = this.socks[i];
             s.update(delta);
-            var moveStatus = Mover.moveToTargetWithStatus(s.idleTimeout, 0, 1, delta);
+            const moveStatus = Mover.moveToTargetWithStatus(s.idleTimeout, 0, 1, delta);
             s.idleTimeout = moveStatus.value;
             if (moveStatus.reachedZero) {
                 s.state = Sock.StateType.IDLE;
@@ -2047,7 +2047,7 @@ const GameScene = BaseElement.extend({
 
             /*
                  // DEBUG: draw the star bounding box
-                 var ctx = Canvas.context;
+                 let ctx = Canvas.context;
                  ctx.lineWidth = 1;
                  ctx.strokeStyle = 'red';
                  ctx.strokeRect(bbX, bbY, bbW, bbH);
@@ -2060,7 +2060,7 @@ const GameScene = BaseElement.extend({
             ) {
                 if (s.state === Sock.StateType.IDLE) {
                     // look for a recieving sock
-                    for (var j = 0; j < len; j++) {
+                    for (let j = 0; j < len; j++) {
                         const n = this.socks[j];
                         if (n !== s && n.group === s.group) {
                             s.state = Sock.StateType.RECEIVING;
@@ -2094,7 +2094,7 @@ const GameScene = BaseElement.extend({
             const p = this.pumps[i];
             p.update(delta);
 
-            var moveStatus = Mover.moveToTargetWithStatus(p.touchTimer, 0, 1, delta);
+            const moveStatus = Mover.moveToTargetWithStatus(p.touchTimer, 0, 1, delta);
             p.touchTimer = moveStatus.value;
             if (moveStatus.reachedZero) {
                 this.operatePump(p, delta);
@@ -2103,7 +2103,7 @@ const GameScene = BaseElement.extend({
 
         // razors
         for (i = 0, len = this.razors.length; i < len; i++) {
-            var r = this.razors[i];
+            const r = this.razors[i];
             r.update(delta);
             this.cut(r, null, null, false);
         }
@@ -2126,7 +2126,7 @@ const GameScene = BaseElement.extend({
         // };
 
         for (i = 0, len = this.spikes.length; i < len; i++) {
-            s = this.spikes[i];
+            const s = this.spikes[i];
 
             //only update if something happens
             if (s.mover || s.shouldUpdateRotation || s.electro) {
@@ -2134,7 +2134,7 @@ const GameScene = BaseElement.extend({
             }
 
             if (!s.electro || s.electroOn) {
-                var candyHits = false,
+                let candyHits = false,
                     left = false;
                 if (this.twoParts !== PartsType.NONE) {
                     candyHits = !this.noCandyL && isCandyHit(s, this.starL, star_spike_radius);
@@ -2162,7 +2162,7 @@ const GameScene = BaseElement.extend({
                         this.popCandyBubble(false);
                     }
 
-                    var candyTexture = ResourceMgr.getTexture(ResourceId.IMG_OBJ_CANDY_01),
+                    const candyTexture = ResourceMgr.getTexture(ResourceId.IMG_OBJ_CANDY_01),
                         b = new CandyBreak(5, candyTexture);
                     if (this.gravityButton && !this.gravityNormal) {
                         b.gravity.y = -500;
@@ -2211,8 +2211,8 @@ const GameScene = BaseElement.extend({
             bouncer.update(delta);
             //}
 
-            candyHits = false;
-            left = false;
+            let candyHits = false;
+            let left = false;
             if (this.twoParts !== PartsType.NONE) {
                 candyHits = !this.noCandyL && isCandyHit(bouncer, this.starL, bouncer_radius);
                 if (candyHits) {
@@ -2356,7 +2356,7 @@ const GameScene = BaseElement.extend({
 
                     // tutorial text
                     for (i = 0, len = this.tutorials.length; i < len; i++) {
-                        t = this.tutorials[i];
+                        const t = this.tutorials[i];
                         if (t.special === 1) {
                             t.playTimeline(0);
                         }
@@ -2364,7 +2364,7 @@ const GameScene = BaseElement.extend({
 
                     // tutorial images
                     for (i = 0, len = this.tutorialImages.length; i < len; i++) {
-                        t = this.tutorialImages[i];
+                        const t = this.tutorialImages[i];
                         if (t.special === 1) {
                             t.playTimeline(0);
                         }
@@ -2380,7 +2380,7 @@ const GameScene = BaseElement.extend({
             const cv = new Vector(0, 0),
                 pos = Vector.add(this.slastTouch, this.camera.pos),
                 grab = this.getNearestBungeeGrabByBezierPoints(cv, pos.x, pos.y);
-            b = grab ? grab.rope : null;
+            const b = grab ? grab.rope : null;
             if (b) {
                 // now see if there is an active element that would override
                 // bungee selection
@@ -2397,7 +2397,7 @@ const GameScene = BaseElement.extend({
                     (this.twoParts != PartsType.NONE && (this.candyBubbleL || this.candyBubbleR))
                 ) {
                     for (i = 0, len = this.bubbles.length; i < len; i++) {
-                        var s = this.bubbles[i],
+                        const s = this.bubbles[i],
                             BUBBLE_RADIUS = resolution.BUBBLE_RADIUS,
                             BUBBLE_DIAMETER = BUBBLE_RADIUS * 2;
                         if (this.candyBubble) {
@@ -2451,7 +2451,7 @@ const GameScene = BaseElement.extend({
                 }
 
                 for (i = 0, len = this.spikes.length; i < len; i++) {
-                    var s = this.spikes[i];
+                    const s = this.spikes[i];
                     if (s.rotateButton && s.rotateButton.isInTouchZone(pos.x, pos.y, true)) {
                         activeElement = true;
                     }
@@ -2465,7 +2465,7 @@ const GameScene = BaseElement.extend({
                 }
 
                 for (i = 0, len = this.rotatedCircles.length; i < len; i++) {
-                    var rc = this.rotatedCircles[i];
+                    const rc = this.rotatedCircles[i];
                     if (rc.isLeftControllerActive() || rc.isRightControllerActive()) {
                         activeElement = true;
                         break;
@@ -2483,7 +2483,7 @@ const GameScene = BaseElement.extend({
                 }
 
                 for (i = 0, len = this.bungees.length; i < len; i++) {
-                    var g = this.bungees[i];
+                    const g = this.bungees[i];
                     if (g.wheel) {
                         if (
                             Rectangle.pointInRect(
@@ -2742,10 +2742,8 @@ const GameScene = BaseElement.extend({
         this.back.draw();
 
         // Scale overlayCut based on resolution to prevent visible seams at HD resolutions
-        let overlayCut = Math.ceil((2 * resolution.CANVAS_SCALE) / 0.1875),
-            q,
-            overlayRect,
-            off;
+        const overlayCut = Math.ceil((2 * resolution.CANVAS_SCALE) / 0.1875);
+        let q, overlayRect, off;
         if (this.mapHeight > resolution.CANVAS_HEIGHT) {
             q = IMG_BGR_01_P2_vert_transition;
             off = this.overlayTexture.offsets[q].y;
@@ -2790,7 +2788,7 @@ const GameScene = BaseElement.extend({
 
         // tutorial images
         for (i = 0, len = this.tutorialImages.length; i < len; i++) {
-            var ti = this.tutorialImages[i];
+            const ti = this.tutorialImages[i];
 
             // don't draw the level1 arrow now - it needs to be on top
             if (ti.special !== LEVEL1_ARROW_SPECIAL_ID) {
@@ -2879,7 +2877,7 @@ const GameScene = BaseElement.extend({
 
         // draw the level1 arrow last so its on top
         for (i = 0, len = this.tutorialImages.length; i < len; i++) {
-            ti = this.tutorialImages[i];
+            const ti = this.tutorialImages[i];
             if (ti.special === LEVEL1_ARROW_SPECIAL_ID) {
                 ti.draw();
             }
@@ -2894,12 +2892,12 @@ const GameScene = BaseElement.extend({
                 count = cuts.length;
             if (count > 0) {
                 let perpSize = 1,
-                    v = 0,
                     fc = null,
-                    pts = [],
                     pc = 0;
+                const v = 0,
+                    pts = [];
 
-                for (var k = 0; k < count; k++) {
+                for (let k = 0; k < count; k++) {
                     fc = cuts[k];
                     if (k === 0) {
                         pts[pc++] = fc.start;
@@ -2907,12 +2905,12 @@ const GameScene = BaseElement.extend({
                     pts[pc++] = fc.end;
                 }
 
-                let p = null,
-                    points = 2,
+                let p = null;
+                const points = 2,
                     numVertices = count * points,
                     vertices = [],
-                    bstep = 1 / numVertices,
-                    a = 0;
+                    bstep = 1 / numVertices;
+                let a = 0;
 
                 while (true) {
                     if (a > 1) {
@@ -2931,7 +2929,7 @@ const GameScene = BaseElement.extend({
 
                 const step = maxSize / numVertices,
                     verts = [];
-                for (var k = 0, lenMinusOne = numVertices - 1; k < lenMinusOne; k++) {
+                for (let k = 0, lenMinusOne = numVertices - 1; k < lenMinusOne; k++) {
                     const startSize = perpSize,
                         endSize = k === numVertices - 1 ? 1 : perpSize + step,
                         start = vertices[k],
@@ -3089,9 +3087,9 @@ const GameScene = BaseElement.extend({
             const GRAB_WHEEL_RADIUS = resolution.GRAB_WHEEL_RADIUS,
                 GRAB_WHEEL_DIAMETER = GRAB_WHEEL_RADIUS * 2;
             for (let i = 0, iLimit = b.parts.length - 1; i < iLimit; i++) {
-                let p1 = b.parts[i],
-                    p2 = b.parts[i + 1],
-                    cut = false;
+                const p1 = b.parts[i],
+                    p2 = b.parts[i + 1];
+                let cut = false;
 
                 if (razor) {
                     if (p1.prevPos.x !== Constants.INT_MAX) {
@@ -3386,10 +3384,10 @@ const GameScene = BaseElement.extend({
         }
     },
     getNearestBungeeGrabByBezierPoints: function (s, tx, ty) {
-        let SEARCH_RADIUS = resolution.CLICK_TO_CUT_SEARCH_RADIUS,
-            grab = null,
-            md = SEARCH_RADIUS,
-            tv = new Vector(tx, ty);
+        const SEARCH_RADIUS = resolution.CLICK_TO_CUT_SEARCH_RADIUS;
+        let grab = null,
+            md = SEARCH_RADIUS;
+        const tv = new Vector(tx, ty);
 
         for (let l = 0, numBungees = this.bungees.length; l < numBungees; l++) {
             const g = this.bungees[l],
@@ -3411,10 +3409,10 @@ const GameScene = BaseElement.extend({
         return grab;
     },
     getNearestBungeeSegmentByConstraints: function (s, g) {
-        let SEARCH_RADIUS = Number.MAX_VALUE,
-            nb = null,
-            md = SEARCH_RADIUS,
-            sOrig = s.copy(),
+        const SEARCH_RADIUS = Number.MAX_VALUE;
+        let nb = null,
+            md = SEARCH_RADIUS;
+        const sOrig = s.copy(),
             b = g.rope;
 
         if (!b || b.cut !== Constants.UNDEFINED) {
@@ -3462,7 +3460,7 @@ const GameScene = BaseElement.extend({
         this.overOmNom = false;
 
         if (this.gravityButton) {
-            var childIndex = this.gravityButton.isOn() ? 1 : 0,
+            const childIndex = this.gravityButton.isOn() ? 1 : 0,
                 child = this.gravityButton.getChild(childIndex);
             if (child.isInTouchZone(x + this.camera.pos.x, y + this.camera.pos.y, true)) {
                 this.gravityTouchDown = touchIndex;
@@ -3496,9 +3494,8 @@ const GameScene = BaseElement.extend({
             this.prevStartPos[touchIndex].copyFrom(touch);
         }
 
-        let i,
-            len,
-            cameraPos = this.camera.pos,
+        let i, len;
+        const cameraPos = this.camera.pos,
             cameraAdjustedX = x + cameraPos.x,
             cameraAdjustedY = y + cameraPos.y;
 
@@ -3611,7 +3608,7 @@ const GameScene = BaseElement.extend({
             GRAB_MOVE_RADIUS = resolution.GRAB_MOVE_RADIUS,
             GRAB_MOVE_DIAMETER = GRAB_MOVE_RADIUS * 2;
         for (i = 0, len = this.bungees.length; i < len; i++) {
-            var grab = this.bungees[i];
+            const grab = this.bungees[i];
             if (grab.wheel) {
                 if (
                     Rectangle.pointInRect(
@@ -3646,7 +3643,7 @@ const GameScene = BaseElement.extend({
         }
 
         if (this.clickToCut) {
-            var cutPos = Vector.newZero(),
+            const cutPos = Vector.newZero(),
                 grab = this.getNearestBungeeGrabByBezierPoints(
                     cutPos,
                     cameraAdjustedX,
@@ -3690,9 +3687,8 @@ const GameScene = BaseElement.extend({
             this.overOmNom = false;
         }
 
-        let i,
-            len,
-            cameraPos = this.camera.pos,
+        let i, len;
+        const cameraPos = this.camera.pos,
             cameraAdjustedX = x + cameraPos.x,
             cameraAdjustedY = y + cameraPos.y;
 
@@ -3719,7 +3715,7 @@ const GameScene = BaseElement.extend({
         }
 
         for (i = 0, len = this.spikes.length; i < len; i++) {
-            var spike = this.spikes[i];
+            const spike = this.spikes[i];
             if (spike.rotateButton && spike.touchIndex === touchIndex) {
                 spike.touchIndex = Constants.UNDEFINED;
                 if (spike.rotateButton.onTouchUp(x + this.camera.pos.x, y + this.camera.pos.y)) {
@@ -3760,9 +3756,8 @@ const GameScene = BaseElement.extend({
             return true;
         }
 
-        let touch = new Vector(x, y),
-            i,
-            len;
+        const touch = new Vector(x, y);
+        let i, len;
         if (this.startPos[touchIndex].distance(touch) > 10) {
             for (i = 0, len = this.pumps.length; i < len; i++) {
                 const pump = this.pumps[i];
@@ -3786,9 +3781,9 @@ const GameScene = BaseElement.extend({
                     r.lastTouch.copyFrom(cameraAdjustedTouch);
                 }
 
-                let m1 = Vector.subtract(r.lastTouch, c),
-                    m2 = Vector.subtract(cameraAdjustedTouch, c),
-                    a = m2.normalizedAngle() - m1.normalizedAngle();
+                const m1 = Vector.subtract(r.lastTouch, c),
+                    m2 = Vector.subtract(cameraAdjustedTouch, c);
+                let a = m2.normalizedAngle() - m1.normalizedAngle();
 
                 if (a > Math.PI) {
                     a = a - 2 * Math.PI;
@@ -3810,7 +3805,7 @@ const GameScene = BaseElement.extend({
                 }
 
                 for (i = 0, len = this.bungees.length; i < len; i++) {
-                    var g = this.bungees[i],
+                    const g = this.bungees[i],
                         gn = new Vector(g.x, g.y);
                     if (gn.distance(c) <= r.sizeInPixels + 5 * this.PM) {
                         gn.rotateAround(a, r.x, r.y);
@@ -3824,7 +3819,7 @@ const GameScene = BaseElement.extend({
                 }
 
                 for (i = 0, len = this.pumps.length; i < len; i++) {
-                    var g = this.pumps[i],
+                    const g = this.pumps[i],
                         gn = new Vector(g.x, g.y);
                     if (gn.distance(c) <= r.sizeInPixels + 5 * this.PM) {
                         gn.rotateAround(a, r.x, r.y);
@@ -3836,7 +3831,7 @@ const GameScene = BaseElement.extend({
                 }
 
                 for (i = 0, len = this.bubbles.length; i < len; i++) {
-                    var g = this.bubbles[i],
+                    const g = this.bubbles[i],
                         gn = new Vector(g.x, g.y);
                     if (
                         gn.distance(c) <= r.sizeInPixels + 10 * this.PM &&
@@ -3860,7 +3855,7 @@ const GameScene = BaseElement.extend({
                         2 * r.size
                     )
                 ) {
-                    gn = new Vector(this.target.x, this.target.y);
+                    const gn = new Vector(this.target.x, this.target.y);
                     gn.rotateAround(a, r.x, r.y);
                     this.target.x = gn.x;
                     this.target.y = gn.y;
@@ -3909,15 +3904,15 @@ const GameScene = BaseElement.extend({
         }
 
         if (this.dragging[touchIndex]) {
-            let fc = new FingerCut(
-                    Vector.add(this.startPos[touchIndex], this.camera.pos),
-                    Vector.add(touch, this.camera.pos),
-                    5, // start size
-                    5, // end size
-                    RGBAColor.white.copy()
-                ),
-                currentCuts = this.fingerCuts[touchIndex],
-                ropeCuts = 0;
+            const fc = new FingerCut(
+                Vector.add(this.startPos[touchIndex], this.camera.pos),
+                Vector.add(touch, this.camera.pos),
+                5, // start size
+                5, // end size
+                RGBAColor.white.copy()
+            );
+            const currentCuts = this.fingerCuts[touchIndex];
+            let ropeCuts = 0;
 
             currentCuts.push(fc);
             for (i = 0, len = currentCuts.length; i < len; i++) {
@@ -3988,22 +3983,22 @@ const GameScene = BaseElement.extend({
     },
 });
 
-var IMG_OBJ_CANDY_01_candy_bottom = 0;
-var IMG_OBJ_CANDY_01_candy_main = 1;
-var IMG_OBJ_CANDY_01_candy_top = 2;
+const IMG_OBJ_CANDY_01_candy_bottom = 0;
+const IMG_OBJ_CANDY_01_candy_main = 1;
+const IMG_OBJ_CANDY_01_candy_top = 2;
 
-var IMG_OBJ_SPIDER_busted = 11;
-var IMG_OBJ_SPIDER_stealing = 12;
+const IMG_OBJ_SPIDER_busted = 11;
+const IMG_OBJ_SPIDER_stealing = 12;
 
-var IMG_OBJ_CANDY_01_highlight_start = 8;
-var IMG_OBJ_CANDY_01_highlight_end = 17;
-var IMG_OBJ_CANDY_01_glow = 18;
-var IMG_OBJ_CANDY_01_part_1 = 19;
-var IMG_OBJ_CANDY_01_part_2 = 20;
-var IMG_OBJ_CANDY_01_part_fx_start = 21;
-var IMG_OBJ_CANDY_01_part_fx_end = 25;
+const IMG_OBJ_CANDY_01_highlight_start = 8;
+const IMG_OBJ_CANDY_01_highlight_end = 17;
+const IMG_OBJ_CANDY_01_glow = 18;
+const IMG_OBJ_CANDY_01_part_1 = 19;
+const IMG_OBJ_CANDY_01_part_2 = 20;
+const IMG_OBJ_CANDY_01_part_fx_start = 21;
+const IMG_OBJ_CANDY_01_part_fx_end = 25;
 
-var IMG_OBJ_STAR_DISAPPEAR_Frame_1 = 0;
+const IMG_OBJ_STAR_DISAPPEAR_Frame_1 = 0;
 const IMG_OBJ_STAR_DISAPPEAR_Frame_2 = 1;
 const IMG_OBJ_STAR_DISAPPEAR_Frame_3 = 2;
 const IMG_OBJ_STAR_DISAPPEAR_Frame_4 = 3;
@@ -4015,9 +4010,9 @@ const IMG_OBJ_STAR_DISAPPEAR_Frame_9 = 8;
 const IMG_OBJ_STAR_DISAPPEAR_Frame_10 = 9;
 const IMG_OBJ_STAR_DISAPPEAR_Frame_11 = 10;
 const IMG_OBJ_STAR_DISAPPEAR_Frame_12 = 11;
-var IMG_OBJ_STAR_DISAPPEAR_Frame_13 = 12;
+const IMG_OBJ_STAR_DISAPPEAR_Frame_13 = 12;
 
-var IMG_OBJ_BUBBLE_FLIGHT_Frame_1 = 0;
+const IMG_OBJ_BUBBLE_FLIGHT_Frame_1 = 0;
 const IMG_OBJ_BUBBLE_FLIGHT_Frame_2 = 1;
 const IMG_OBJ_BUBBLE_FLIGHT_Frame_3 = 2;
 const IMG_OBJ_BUBBLE_FLIGHT_Frame_4 = 3;
@@ -4029,10 +4024,10 @@ const IMG_OBJ_BUBBLE_FLIGHT_Frame_9 = 8;
 const IMG_OBJ_BUBBLE_FLIGHT_Frame_10 = 9;
 const IMG_OBJ_BUBBLE_FLIGHT_Frame_11 = 10;
 const IMG_OBJ_BUBBLE_FLIGHT_Frame_12 = 11;
-var IMG_OBJ_BUBBLE_FLIGHT_Frame_13 = 12;
+const IMG_OBJ_BUBBLE_FLIGHT_Frame_13 = 12;
 const IMG_OBJ_BUBBLE_FLIGHT_Frame_14 = 13;
 
-var IMG_OBJ_BUBBLE_POP_Frame_1 = 0;
+const IMG_OBJ_BUBBLE_POP_Frame_1 = 0;
 const IMG_OBJ_BUBBLE_POP_Frame_2 = 1;
 const IMG_OBJ_BUBBLE_POP_Frame_3 = 2;
 const IMG_OBJ_BUBBLE_POP_Frame_4 = 3;
@@ -4043,14 +4038,14 @@ const IMG_OBJ_BUBBLE_POP_Frame_8 = 7;
 const IMG_OBJ_BUBBLE_POP_Frame_9 = 8;
 const IMG_OBJ_BUBBLE_POP_Frame_10 = 9;
 const IMG_OBJ_BUBBLE_POP_Frame_11 = 10;
-var IMG_OBJ_BUBBLE_POP_Frame_12 = 11;
+const IMG_OBJ_BUBBLE_POP_Frame_12 = 11;
 
-var IMG_OBJ_BUBBLE_ATTACHED_bubble = 0;
-var IMG_OBJ_BUBBLE_ATTACHED_stain_01 = 1;
+const IMG_OBJ_BUBBLE_ATTACHED_bubble = 0;
+const IMG_OBJ_BUBBLE_ATTACHED_stain_01 = 1;
 const IMG_OBJ_BUBBLE_ATTACHED_stain_02 = 2;
-var IMG_OBJ_BUBBLE_ATTACHED_stain_03 = 3;
+const IMG_OBJ_BUBBLE_ATTACHED_stain_03 = 3;
 
-var IMG_HUD_STAR_Frame_1 = 0;
+const IMG_HUD_STAR_Frame_1 = 0;
 const IMG_HUD_STAR_Frame_2 = 1;
 const IMG_HUD_STAR_Frame_3 = 2;
 const IMG_HUD_STAR_Frame_4 = 3;
@@ -4059,57 +4054,57 @@ const IMG_HUD_STAR_Frame_6 = 5;
 const IMG_HUD_STAR_Frame_7 = 6;
 const IMG_HUD_STAR_Frame_8 = 7;
 const IMG_HUD_STAR_Frame_9 = 8;
-var IMG_HUD_STAR_Frame_10 = 9;
+const IMG_HUD_STAR_Frame_10 = 9;
 const IMG_HUD_STAR_Frame_11 = 10;
 
 /* 480p vertical frames */
 /*
-var IMG_CHAR_ANIMATIONS_idle_start = 8;
-var IMG_CHAR_ANIMATIONS_idle_end = 26;
-var IMG_CHAR_ANIMATIONS_fail_start = 27;
-var IMG_CHAR_ANIMATIONS_fail_end = 39;
-var IMG_CHAR_ANIMATIONS_mouth_open_start = 40;
-var IMG_CHAR_ANIMATIONS_mouth_open_end = 48;
-var IMG_CHAR_ANIMATIONS_mouth_close_start = 49;
-var IMG_CHAR_ANIMATIONS_mouth_close_end = 52;
-var IMG_CHAR_ANIMATIONS_chew_start = 53;
-var IMG_CHAR_ANIMATIONS_chew_end = 61;
-var IMG_CHAR_ANIMATIONS_blink_start = 62;
-var IMG_CHAR_ANIMATIONS_blink_end = 63;
-var IMG_CHAR_ANIMATIONS_excited_start = 64;
-var IMG_CHAR_ANIMATIONS_excited_end = 83;
-var IMG_CHAR_ANIMATIONS_idle2_start = 84;
-var IMG_CHAR_ANIMATIONS_idle2_end = 108;
-var IMG_CHAR_ANIMATIONS_idle3_start = 109;
-var IMG_CHAR_ANIMATIONS_idle3_end = 124;
-var IMG_CHAR_ANIMATIONS_puzzled_start = 125;
-var IMG_CHAR_ANIMATIONS_puzzled_end = 151;
-var IMG_CHAR_ANIMATIONS_greeting_start = 152;
-var IMG_CHAR_ANIMATIONS_greeting_end = 180;
+let IMG_CHAR_ANIMATIONS_idle_start = 8;
+let IMG_CHAR_ANIMATIONS_idle_end = 26;
+let IMG_CHAR_ANIMATIONS_fail_start = 27;
+let IMG_CHAR_ANIMATIONS_fail_end = 39;
+let IMG_CHAR_ANIMATIONS_mouth_open_start = 40;
+let IMG_CHAR_ANIMATIONS_mouth_open_end = 48;
+let IMG_CHAR_ANIMATIONS_mouth_close_start = 49;
+let IMG_CHAR_ANIMATIONS_mouth_close_end = 52;
+let IMG_CHAR_ANIMATIONS_chew_start = 53;
+let IMG_CHAR_ANIMATIONS_chew_end = 61;
+let IMG_CHAR_ANIMATIONS_blink_start = 62;
+let IMG_CHAR_ANIMATIONS_blink_end = 63;
+let IMG_CHAR_ANIMATIONS_excited_start = 64;
+let IMG_CHAR_ANIMATIONS_excited_end = 83;
+let IMG_CHAR_ANIMATIONS_idle2_start = 84;
+let IMG_CHAR_ANIMATIONS_idle2_end = 108;
+let IMG_CHAR_ANIMATIONS_idle3_start = 109;
+let IMG_CHAR_ANIMATIONS_idle3_end = 124;
+let IMG_CHAR_ANIMATIONS_puzzled_start = 125;
+let IMG_CHAR_ANIMATIONS_puzzled_end = 151;
+let IMG_CHAR_ANIMATIONS_greeting_start = 152;
+let IMG_CHAR_ANIMATIONS_greeting_end = 180;
 */
 
-var IMG_CHAR_ANIMATIONS_idle_start = 0;
-var IMG_CHAR_ANIMATIONS_idle_end = 18;
-var IMG_CHAR_ANIMATIONS_mouth_open_start = 19;
-var IMG_CHAR_ANIMATIONS_mouth_open_end = 27;
-var IMG_CHAR_ANIMATIONS_mouth_close_start = 28;
-var IMG_CHAR_ANIMATIONS_mouth_close_end = 31;
-var IMG_CHAR_ANIMATIONS_chew_start = 32;
-var IMG_CHAR_ANIMATIONS_chew_end = 40;
-var IMG_CHAR_ANIMATIONS_blink_start = 41;
-var IMG_CHAR_ANIMATIONS_blink_end = 42;
-var IMG_CHAR_ANIMATIONS_idle2_start = 43;
-var IMG_CHAR_ANIMATIONS_idle2_end = 67;
-var IMG_CHAR_ANIMATIONS_idle3_start = 68;
-var IMG_CHAR_ANIMATIONS_idle3_end = 83;
+const IMG_CHAR_ANIMATIONS_idle_start = 0;
+const IMG_CHAR_ANIMATIONS_idle_end = 18;
+const IMG_CHAR_ANIMATIONS_mouth_open_start = 19;
+const IMG_CHAR_ANIMATIONS_mouth_open_end = 27;
+const IMG_CHAR_ANIMATIONS_mouth_close_start = 28;
+const IMG_CHAR_ANIMATIONS_mouth_close_end = 31;
+const IMG_CHAR_ANIMATIONS_chew_start = 32;
+const IMG_CHAR_ANIMATIONS_chew_end = 40;
+const IMG_CHAR_ANIMATIONS_blink_start = 41;
+const IMG_CHAR_ANIMATIONS_blink_end = 42;
+const IMG_CHAR_ANIMATIONS_idle2_start = 43;
+const IMG_CHAR_ANIMATIONS_idle2_end = 67;
+const IMG_CHAR_ANIMATIONS_idle3_start = 68;
+const IMG_CHAR_ANIMATIONS_idle3_end = 83;
 
-var IMG_CHAR_ANIMATIONS2_excited_start = 0;
-var IMG_CHAR_ANIMATIONS2_excited_end = 19;
-var IMG_CHAR_ANIMATIONS2_puzzled_start = 20;
-var IMG_CHAR_ANIMATIONS2_puzzled_end = 46;
-var IMG_CHAR_ANIMATIONS2_greeting_start = 47;
-var IMG_CHAR_ANIMATIONS2_greeting_end = 76;
+const IMG_CHAR_ANIMATIONS2_excited_start = 0;
+const IMG_CHAR_ANIMATIONS2_excited_end = 19;
+const IMG_CHAR_ANIMATIONS2_puzzled_start = 20;
+const IMG_CHAR_ANIMATIONS2_puzzled_end = 46;
+const IMG_CHAR_ANIMATIONS2_greeting_start = 47;
+const IMG_CHAR_ANIMATIONS2_greeting_end = 76;
 
-var IMG_CHAR_ANIMATIONS3_fail_start = 0;
-var IMG_CHAR_ANIMATIONS3_fail_end = 12;
+const IMG_CHAR_ANIMATIONS3_fail_start = 0;
+const IMG_CHAR_ANIMATIONS3_fail_end = 12;
 export default GameScene;

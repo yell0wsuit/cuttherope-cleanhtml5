@@ -189,13 +189,10 @@ const ConstrainedPoint = MaterialPoint.extend({
     },
     satisfyConstraints: function () {
         // NOTE: this method is a perf hotspot so be careful with changes
-        let pin = this.pin,
+        const pin = this.pin,
             pos = this.pos,
-            invWeight = this.invWeight,
-            tmp1X,
-            tmp1Y,
-            tmp2X,
-            tmp2Y;
+            invWeight = this.invWeight;
+        let tmp1X, tmp1Y, tmp2X, tmp2Y;
 
         if (pin.x !== -1 /* Constants.UNDEFINED */) {
             pos.x = pin.x;

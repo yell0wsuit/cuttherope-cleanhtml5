@@ -39,22 +39,22 @@ function getFullKey(prefix, boxIndex) {
        code in case we ever intergrate with another settings store that does
     function onSettingChanged(key, value) {
 
-        var parts = (key || '').split('-');
+        let parts = (key || '').split('-');
         if (parts.length === 0) {
             return;
         }
 
-        var userId, boxIndex, levelIndex, achievementIndex;
+        let userId, boxIndex, levelIndex, achievementIndex;
         switch(parts[0]) {
             case SCORES_PREFIX:
             case STARS_PREFIX:
-                var userId = (parts.length === 3) ? parts[2] : '';
+                let userId = (parts.length === 3) ? parts[2] : '';
                 if (userId === currentUserId) {
                     // only need to change data for current user
                 }
                 break;
             case ACHIEVEMENTS_PREFIX:
-                var userId = (parts.length === 2) ? parts[1] : '';
+                let userId = (parts.length === 2) ? parts[1] : '';
                 if (userId === currentUserId) {
                     // only need to change data for current user
                 }
@@ -69,12 +69,11 @@ function getHexValues(keyPrefix) {
         return null;
     }
 
-    let key = getFullKey(keyPrefix),
+    const key = getFullKey(keyPrefix),
         values = [],
         rawValues = (roamingProvider.get(key) || "").split(","), // split csv
-        len = rawValues.length,
-        i,
-        val;
+        len = rawValues.length;
+    let i, val;
 
     for (i = 0; i < len; i++) {
         if (i < rawValues.length) {
@@ -103,10 +102,9 @@ function saveHexValues(keyPrefix, values) {
     if (!values) {
         roamingProvider.remove(key);
     } else {
-        let rawValues = [],
-            len = values.length,
-            i,
-            val;
+        const rawValues = [],
+            len = values.length;
+        let i, val;
 
         for (i = 0; i < len; i++) {
             val = values[i];

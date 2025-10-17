@@ -91,7 +91,8 @@ LevelPanel.init = function (interfaceManager) {
         }
     };
 
-    for (var i = 0, filledRowCount = levelCount - lastRowCount; i < filledRowCount; i++) {
+    let i, filledRowCount;
+    for (i = 0, filledRowCount = levelCount - lastRowCount; i < filledRowCount; i++) {
         adLevel(i, inc);
     }
 
@@ -175,12 +176,9 @@ function onLevelClick(event) {
 
 // draw the level options based on current scores and stars
 function updateLevelOptions() {
-    let boxIndex = BoxManager.currentBoxIndex,
-        levelCount = ScoreManager.levelCount(boxIndex),
-        stars,
-        levelInfo,
-        i,
-        levelRequiresPurchase;
+    const boxIndex = BoxManager.currentBoxIndex,
+        levelCount = ScoreManager.levelCount(boxIndex);
+    let stars, levelInfo, i, levelRequiresPurchase;
 
     for (i = 0; i < levelCount; i++) {
         // get a reference to the level button

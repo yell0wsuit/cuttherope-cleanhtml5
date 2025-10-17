@@ -5,7 +5,7 @@ import Constants from "@/utils/Constants";
 import Alignment from "@/core/Alignment";
 const TOUCH_MOVE_AND_UP_ZONE_INCREASE = 15;
 
-var GenericButton = BaseElement.extend({
+const GenericButton = BaseElement.extend({
     init: function (id) {
         this._super();
 

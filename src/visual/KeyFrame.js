@@ -2,25 +2,26 @@ import Vector from "@/core/Vector";
 import RGBAColor from "@/core/RGBAColor";
 import Action from "@/visual/Action";
 import TrackType from "@/visual/TrackType";
-function KeyFrameValue() {
-    this.pos = Vector.newZero();
-    this.scale = Vector.newZero();
-    this.rotationAngle = 0;
-    this.color = RGBAColor.solidOpaque.copy();
-    this.actionSet = [];
+class KeyFrameValue {
+    constructor() {
+        this.pos = Vector.newZero();
+        this.scale = Vector.newZero();
+        this.rotationAngle = 0;
+        this.color = RGBAColor.solidOpaque.copy();
+        this.actionSet = [];
+    }
+    copy() {
+        const clone = new KeyFrameValue();
+        clone.pos = this.pos.copy();
+        clone.scale = this.scale.copy();
+        clone.rotationAngle = this.rotationAngle;
+        clone.color = this.color.copy();
+
+        // NOTE: this assumes actions are values (not object refs)
+        clone.actionSet = this.actionSet.slice(0);
+        return clone;
+    }
 }
-
-KeyFrameValue.prototype.copy = function () {
-    const clone = new KeyFrameValue();
-    clone.pos = this.pos.copy();
-    clone.scale = this.scale.copy();
-    clone.rotationAngle = this.rotationAngle;
-    clone.color = this.color.copy();
-
-    // NOTE: this assumes actions are values (not object refs)
-    clone.actionSet = this.actionSet.slice(0);
-    return clone;
-};
 
 /**
  * KeyFrame constructor

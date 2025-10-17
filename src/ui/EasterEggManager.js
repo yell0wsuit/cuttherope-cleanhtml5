@@ -10,9 +10,8 @@ import Lang from "@/resources/Lang";
 import MenuStringId from "@/resources/MenuStringId";
 class EasterEggManager {
     constructor() {
-        let devCanvas,
-            canvas,
-            scaleTo = resolution.uiScaledNumber(2.2);
+        let devCanvas, canvas;
+        const scaleTo = resolution.uiScaledNumber(2.2);
 
         const getElementById = (id) => document.getElementById(id);
         const animateElement = (element, keyframes, options = {}) => {
@@ -221,7 +220,7 @@ class EasterEggManager {
             });
         };
 
-        var closeDrawing = function () {
+        const closeDrawing = function () {
             const d = getElementById("d");
             const dframe = getElementById("dframe");
             const dmsg = getElementById("dmsg");
@@ -289,9 +288,9 @@ class EasterEggManager {
         // Om Nom
         // ------------------------------------------------------------------------
         // mouse over for dev link
-        var omNomShowing = false;
+        let omNomShowing = false;
 
-        var showDevLinkOmNom = function (onComplete) {
+        const showDevLinkOmNom = function (onComplete) {
             const ctx = devCanvas.getContext("2d");
             const begin = Date.now();
             const sx = 0.1;
@@ -350,8 +349,9 @@ class EasterEggManager {
                         l = 10 - Easing.easeInOutExpo(t - (s3 + 100), 0, 10, s4 - (s3 + 100));
                         r = l;
                     }
-                } else if (t < s5) {
                 }
+                //else if (t < s5) {
+                //}
 
                 // hide omnom
                 else if (t < s6) {
@@ -510,7 +510,7 @@ class EasterEggManager {
             );
         };
 
-        var drawOmNom = function (
+        const drawOmNom = function (
             ctx,
             scaleX,
             scaleY,

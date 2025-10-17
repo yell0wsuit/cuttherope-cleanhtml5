@@ -35,6 +35,35 @@ const GunState = {
     HIDE: 1,
 };
 
+// TODO: move into spider
+const IMG_OBJ_SPIDER_activation_start = 0;
+const IMG_OBJ_SPIDER_activation_end = 6;
+const IMG_OBJ_SPIDER_crawl_start = 7;
+const IMG_OBJ_SPIDER_crawl_end = 10;
+
+const IMG_OBJ_HOOK_AUTO_bottom = 0;
+const IMG_OBJ_HOOK_AUTO_top = 1;
+
+const IMG_OBJ_HOOK_01_bottom = 0;
+const IMG_OBJ_HOOK_01_top = 1;
+
+const IMG_OBJ_HOOK_02_bottom = 0;
+const IMG_OBJ_HOOK_02_top = 1;
+
+const IMG_OBJ_HOOK_REGULATED_bottom = 0;
+const IMG_OBJ_HOOK_REGULATED_rope = 1;
+const IMG_OBJ_HOOK_REGULATED_active = 2;
+const IMG_OBJ_HOOK_REGULATED_top = 3;
+
+const IMG_OBJ_HOOK_MOVABLE_active = 3;
+const IMG_OBJ_HOOK_MOVABLE_top = 4;
+
+// bees
+const IMG_OBJ_BEE_HD__rotation_center = 0;
+const IMG_OBJ_BEE_HD_obj_bee = 1;
+const IMG_OBJ_BEE_HD_wings_start = 2;
+const IMG_OBJ_BEE_HD_wings_end = 4;
+
 const grabCircleCache = [];
 
 const Grab = CTRGameObject.extend({
@@ -103,8 +132,8 @@ const Grab = CTRGameObject.extend({
     handleWheelRotate: function (v) {
         SoundMgr.playSound(ResourceId.SND_WHEEL);
 
-        let center = new Vector(this.x, this.y),
-            a = this.getRotateAngle(this.lastWheelTouch, v, center);
+        const center = new Vector(this.x, this.y);
+        let a = this.getRotateAngle(this.lastWheelTouch, v, center);
         if (a > 180) {
             a -= 360;
         } else if (a < -180) {
@@ -138,8 +167,8 @@ const Grab = CTRGameObject.extend({
         this._super(delta);
 
         if (this.launcher && this.rope) {
-            let anchor = this.rope.bungeeAnchor,
-                moveResult;
+            const anchor = this.rope.bungeeAnchor;
+            let moveResult;
             anchor.pos.x = this.x;
             anchor.pos.y = this.y;
             anchor.pin.copyFrom(anchor.pos);
@@ -166,11 +195,11 @@ const Grab = CTRGameObject.extend({
         }
 
         if (this.bee) {
-            let vt = this.mover.path[this.mover.targetPoint],
+            const vt = this.mover.path[this.mover.targetPoint],
                 vp = this.mover.pos,
                 v = Vector.subtract(vt, vp),
-                a = 0,
                 MAX_ANGLE = 10;
+            let a = 0;
 
             if (Math.abs(v.x) > 15) {
                 a = v.x > 0 ? MAX_ANGLE : -MAX_ANGLE;
@@ -292,11 +321,11 @@ const Grab = CTRGameObject.extend({
 
             //document.body.appendChild(circleCnv)
 
-            let ctx = circleCnv.getContext("2d"),
+            const ctx = circleCnv.getContext("2d"),
                 totalRadians = 2 * Math.PI,
                 radiusScaleFactor = resolution.CANVAS_SCALE * 2,
-                scaledRadius = radius / radiusScaleFactor,
-                segments = Math.max(16, Math.round(scaledRadius));
+                scaledRadius = radius / radiusScaleFactor;
+            let segments = Math.max(16, Math.round(scaledRadius));
 
             // make sure we have an even number of segments
             if (segments % 2 !== 0) {
@@ -591,34 +620,5 @@ const Grab = CTRGameObject.extend({
         this.rope = null;
     },
 });
-
-// TODO: move into spider
-var IMG_OBJ_SPIDER_activation_start = 0;
-var IMG_OBJ_SPIDER_activation_end = 6;
-var IMG_OBJ_SPIDER_crawl_start = 7;
-var IMG_OBJ_SPIDER_crawl_end = 10;
-
-var IMG_OBJ_HOOK_AUTO_bottom = 0;
-var IMG_OBJ_HOOK_AUTO_top = 1;
-
-var IMG_OBJ_HOOK_01_bottom = 0;
-var IMG_OBJ_HOOK_01_top = 1;
-
-const IMG_OBJ_HOOK_02_bottom = 0;
-const IMG_OBJ_HOOK_02_top = 1;
-
-var IMG_OBJ_HOOK_REGULATED_bottom = 0;
-var IMG_OBJ_HOOK_REGULATED_rope = 1;
-var IMG_OBJ_HOOK_REGULATED_active = 2;
-var IMG_OBJ_HOOK_REGULATED_top = 3;
-
-var IMG_OBJ_HOOK_MOVABLE_active = 3;
-var IMG_OBJ_HOOK_MOVABLE_top = 4;
-
-// bees
-var IMG_OBJ_BEE_HD__rotation_center = 0;
-var IMG_OBJ_BEE_HD_obj_bee = 1;
-var IMG_OBJ_BEE_HD_wings_start = 2;
-var IMG_OBJ_BEE_HD_wings_end = 4;
 
 export default Grab;

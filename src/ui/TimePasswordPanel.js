@@ -8,8 +8,9 @@ import TimeBox from "@/ui/TimeBox";
 import Doors from "@/Doors";
 import edition from "@/edition";
 import QueryStrings from "@/ui/QueryStrings";
-let TimePasswordPanel = new Panel(PanelId.PASSWORD, "codePanel", "levelBackground", false),
-    $message = null,
+
+const TimePasswordPanel = new Panel(PanelId.PASSWORD, "codePanel", "levelBackground", false);
+let $message = null,
     $codeText = null,
     $okButton = null,
     $backButton = null;
@@ -73,7 +74,7 @@ function initialize() {
             setMessageHtml("Code Accepted!");
 
             // have any boxes been unlocked?
-            var isFirstUnlock = true,
+            let isFirstUnlock = true,
                 i,
                 len;
             for (i = 0, len = edition.boxes.length; i < len; i++) {
@@ -84,7 +85,7 @@ function initialize() {
             }
 
             // unlock all the boxes
-            for (var i = boxIndex; i >= 0; i--) {
+            for (let i = boxIndex; i >= 0; i--) {
                 TimeBox.unlockBox(i);
             }
 
@@ -122,7 +123,8 @@ function initialize() {
         }
 
         // find the last unlocked box
-        for (var lastUnlockedIndex = numBoxes - 1; lastUnlockedIndex >= 0; lastUnlockedIndex--) {
+        let lastUnlockedIndex;
+        for (lastUnlockedIndex = numBoxes - 1; lastUnlockedIndex >= 0; lastUnlockedIndex--) {
             if (!TimeBox.isLocked(lastUnlockedIndex)) {
                 break;
             }

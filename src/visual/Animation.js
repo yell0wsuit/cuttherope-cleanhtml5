@@ -81,8 +81,8 @@ const Animation = ImageElement.extend({
         argumentList,
         resourceId
     ) {
-        let t = new Timeline(),
-            as = [Action.create(this, ActionType.SET_DRAWQUAD, start, 0)];
+        const t = new Timeline();
+        let as = [Action.create(this, ActionType.SET_DRAWQUAD, start, 0)];
 
         t.addKeyFrame(KeyFrame.makeAction(as, 0));
 

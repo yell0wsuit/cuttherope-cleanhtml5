@@ -17,22 +17,24 @@ function PointSprite(x, y, size) {
 /**
  * @constructor
  */
-function Particle() {
-    this.startPos = new Vector(0, 0);
-    this.pos = new Vector(0, 0);
-    this.dir = new Vector(0, 0);
-    this.radialAccel = 0;
-    this.tangentialAccel = 0;
-    this.color = new RGBAColor(0, 0, 0, 0);
-    this.deltaColor = new RGBAColor(0, 0, 0, 0);
-    this.size = 0;
-    this.life = 0;
-    this.deltaAngle = 0;
-    this.angle = 0;
+class Particle {
+    constructor() {
+        this.startPos = new Vector(0, 0);
+        this.pos = new Vector(0, 0);
+        this.dir = new Vector(0, 0);
+        this.radialAccel = 0;
+        this.tangentialAccel = 0;
+        this.color = new RGBAColor(0, 0, 0, 0);
+        this.deltaColor = new RGBAColor(0, 0, 0, 0);
+        this.size = 0;
+        this.life = 0;
+        this.deltaAngle = 0;
+        this.angle = 0;
 
-    // used in multi-image particles
-    this.width = 0;
-    this.height = 0;
+        // used in multi-image particles
+        this.width = 0;
+        this.height = 0;
+    }
 }
 
 const Particles = BaseElement.extend({
@@ -226,7 +228,7 @@ const Particles = BaseElement.extend({
         }
     },
     updateParticleLocation: function (p, delta) {
-        let tmp, radial, tangential;
+        let radial;
 
         // radial acceleration
         if (p.pos.x || p.pos.y) {
@@ -235,7 +237,7 @@ const Particles = BaseElement.extend({
         } else {
             radial = new Vector(0, 0);
         }
-        tangential = radial.copy();
+        const tangential = radial.copy();
         radial.multiply(p.radialAccel);
 
         // tangential acceleration
@@ -245,7 +247,7 @@ const Particles = BaseElement.extend({
         tangential.multiply(p.tangentialAccel);
 
         // (gravity + radial + tangential) * delta
-        tmp = Vector.add(radial, tangential);
+        const tmp = Vector.add(radial, tangential);
         tmp.add(this.gravity);
         tmp.multiply(delta);
         p.dir.add(tmp);

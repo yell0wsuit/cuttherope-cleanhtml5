@@ -38,8 +38,8 @@ const getLocalizedText = function (locEntry) {
 
 const Lang = {
     boxText: function (boxIndex, includeNumber) {
-        let locEntry = edition.boxText[boxIndex],
-            text = getLocalizedText(locEntry);
+        const locEntry = edition.boxText[boxIndex];
+        let text = getLocalizedText(locEntry);
 
         // all boxes except last one get prepended numbers
         if (text && includeNumber) {
@@ -49,9 +49,8 @@ const Lang = {
         return text;
     },
     menuText: function (menuStringId) {
-        let locEntry,
-            i,
-            len = menuStrings.length;
+        let locEntry, i;
+        const len = menuStrings.length;
         for (i = 0; i < len; i++) {
             locEntry = menuStrings[i];
             if (locEntry.id === menuStringId) {

@@ -4,7 +4,7 @@ import ResourceId from "@/resources/ResourceId";
 const IMG_OBJ_STAR_IDLE_gravity_down = 56;
 const IMG_OBJ_STAR_IDLE_gravity_up = 57;
 
-var GravityButton = ToggleButton.extend({
+const GravityButton = ToggleButton.extend({
     init: function () {
         const itn = ImageElement.create(
                 ResourceId.IMG_OBJ_STAR_IDLE,
