@@ -13,7 +13,7 @@ import PubSub from "@/utils/PubSub";
 /**
  * @constructor
  */
-var ViewController = Class.extend({
+const ViewController = Class.extend({
     init: function (parent) {
         this.controllerState = ViewController.StateType.INACTIVE;
         this.views = [];
@@ -143,7 +143,8 @@ var ViewController = Class.extend({
 
             // we use a running average to prevent drastic changes
             this.avgDelta = 0;
-            for (var i = 0, len = this.pastDeltas.length; i < len; i++) {
+            const len = this.pastDeltas.length;
+            for (let i = 0; i < len; i++) {
                 this.avgDelta += this.pastDeltas[i];
             }
             this.avgDelta /= len;

@@ -2,7 +2,7 @@ import Class from "@/utils/Class";
 import TimelineTrack from "@/visual/TimelineTrack";
 import TrackType from "@/visual/TrackType";
 import Constants from "@/utils/Constants";
-var Timeline = Class.extend({
+const Timeline = Class.extend({
     init: function () {
         this.time = 0;
         this.length = 0;

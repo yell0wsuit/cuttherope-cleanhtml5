@@ -45,7 +45,7 @@ LangId.fromString = function (val) {
 
     // handle BCP-47 style codes, ex: en-US
     if (val.length >= 3) {
-        switch (val.substr(0, 3)) {
+        switch (val.slice(0, 3)) {
             case "de-":
                 return LangId.DE;
             case "fr-":

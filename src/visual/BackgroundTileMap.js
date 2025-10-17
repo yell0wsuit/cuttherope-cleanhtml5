@@ -14,7 +14,7 @@ const BackgroundTileMap = TileMap.extend({
     draw: function () {
         /* seems like this should be taken care of in BaseElement.preDraw?
 
-             var rotationOffsetX = this.back.drawX + (this.back.width >> 1) + this.back.rotationCenterX,
+             let rotationOffsetX = this.back.drawX + (this.back.width >> 1) + this.back.rotationCenterX,
              rotationOffsetY = this.back.drawY + (this.back.height >> 1) + this.back.rotationCenterY,
              ctx = Canvas.context;
 

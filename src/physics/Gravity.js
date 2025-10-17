@@ -2,7 +2,7 @@ import Vector from "@/core/Vector";
 import Constants from "@/utils/Constants";
 const GCONST = 9.8 * Constants.PIXEL_TO_SI_METERS_K;
 
-var Gravity = {
+const Gravity = {
     /**
      * @const
      * @type {number}

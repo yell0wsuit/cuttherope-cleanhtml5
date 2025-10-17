@@ -137,8 +137,8 @@ const PanelManager = new (function () {
     };
 
     // fade parameters
-    var fadeInDur = 100;
-    var fadePause = 50;
+    const fadeInDur = 100;
+    const fadePause = 50;
     const fadeOutDur = 100;
     const fadeTo = 1.0;
     let fadeToBlack;
@@ -202,7 +202,7 @@ const PanelManager = new (function () {
     let shadowIsRotating = false;
     let shadowAngle = 15.0;
     let shadowCanvas = null;
-    var shadowImage = null;
+    let shadowImage = null;
     let shadowOpacity = 1.0;
     let shadowIsVisible = false;
     const shadowSpeedup = edition.shadowSpeedup || 1;
@@ -239,46 +239,46 @@ const PanelManager = new (function () {
     };
 
     // starts the shadow animation
-    var beginRotateShadow = function () {
+    const beginRotateShadow = function () {
         if (!shadowCanvas) return;
-        let ctx = shadowCanvas.getContext("2d"),
-            requestAnimationFrame = window["requestAnimationFrame"],
-            lastRotateTime = Date.now(),
-            renderShadow = function () {
-                if (!shadowIsRotating) {
-                    return;
-                }
+        const ctx = shadowCanvas.getContext("2d"),
+            requestAnimationFrame = window["requestAnimationFrame"];
+        let lastRotateTime = Date.now();
+        const renderShadow = function () {
+            if (!shadowIsRotating) {
+                return;
+            }
 
-                // move .1 radians every 25 msec
-                const now = Date.now(),
-                    delta = now - lastRotateTime;
-                shadowAngle += ((delta * 0.1) / 25) * shadowSpeedup;
-                lastRotateTime = now;
+            // move .1 radians every 25 msec
+            const now = Date.now(),
+                delta = now - lastRotateTime;
+            shadowAngle += ((delta * 0.1) / 25) * shadowSpeedup;
+            lastRotateTime = now;
 
-                // clear the canvas
-                ctx.setTransform(1, 0, 0, 1, 0, 0);
-                ctx.clearRect(0, 0, shadowCanvas.width, shadowCanvas.height);
+            // clear the canvas
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.clearRect(0, 0, shadowCanvas.width, shadowCanvas.height);
 
-                // update opacity
-                if (shadowOpacity < 1.0) {
-                    shadowOpacity += 0.025;
-                    shadowOpacity = Math.min(shadowOpacity, 1.0);
-                    ctx.globalAlpha = shadowOpacity;
-                }
+            // update opacity
+            if (shadowOpacity < 1.0) {
+                shadowOpacity += 0.025;
+                shadowOpacity = Math.min(shadowOpacity, 1.0);
+                ctx.globalAlpha = shadowOpacity;
+            }
 
-                // rotate the context
-                ctx.save();
-                ctx.translate(shadowImage.width * 0.5, shadowImage.height * 0.5);
-                ctx.translate(resolution.uiScaledNumber(-300), resolution.uiScaledNumber(-510));
-                ctx.rotate((shadowAngle * Math.PI) / 180);
-                ctx.translate(-shadowImage.width * 0.5, -shadowImage.height * 0.5);
+            // rotate the context
+            ctx.save();
+            ctx.translate(shadowImage.width * 0.5, shadowImage.height * 0.5);
+            ctx.translate(resolution.uiScaledNumber(-300), resolution.uiScaledNumber(-510));
+            ctx.rotate((shadowAngle * Math.PI) / 180);
+            ctx.translate(-shadowImage.width * 0.5, -shadowImage.height * 0.5);
 
-                // draw the image and update the loop
-                ctx.drawImage(shadowImage, 0, 0);
-                ctx.restore();
+            // draw the image and update the loop
+            ctx.drawImage(shadowImage, 0, 0);
+            ctx.restore();
 
-                requestAnimationFrame(renderShadow);
-            };
+            requestAnimationFrame(renderShadow);
+        };
 
         shadowIsRotating = true;
         renderShadow();

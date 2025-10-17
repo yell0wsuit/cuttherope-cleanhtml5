@@ -17,7 +17,7 @@ const CTRGameObject = GameObject.extend({
                 // Don't scale the radius when used for capacity
                 // calculation. We want same number of path points
                 // even if the actual radius is smaller
-                const rad = parseInt(path.substr(2), 10);
+                const rad = parseInt(path.slice(2), 10);
                 moverCapacity = Math.round((rad * 3) / 2 + 1);
             }
             const v = item.moveSpeed,

@@ -15,13 +15,10 @@ function satisfyConstraintArray(arr, n) {
             const constraints = cons.constraints,
                 num = constraints.length;
 
-            var pin = cons.pin,
+            const pin = cons.pin,
                 pos = cons.pos,
-                invWeight = cons.invWeight,
-                tmp1X,
-                tmp1Y,
-                tmp2X,
-                tmp2Y;
+                invWeight = cons.invWeight;
+            let tmp1X, tmp1Y, tmp2X, tmp2Y;
 
             if (pin.x !== -1 /* Constants.UNDEFINED */) {
                 pos.x = pin.x;

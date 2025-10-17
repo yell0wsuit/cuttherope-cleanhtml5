@@ -9,7 +9,7 @@ import PurchaseBox from "@/ui/PurchaseBox";
 import MoreComingBox from "@/ui/MoreComingBox";
 import TimeBox from "@/ui/TimeBox";
 import BoxPanel from "@/ui/BoxPanel";
-var BoxManager = new (function () {
+const BoxManager = new (function () {
     const self = this,
         boxes = [];
 
@@ -50,7 +50,7 @@ var BoxManager = new (function () {
         return !edition.levelRequiresPurchase(this.currentBoxIndex, this.currentLevelIndex); // NOTE: checking next level since this index is 1 based (TODO: fix!)
     };
 
-    var loadBoxes = function () {
+    const loadBoxes = function () {
         // only load boxes if app is ready
         if (!appIsReady) {
             return;
@@ -83,8 +83,8 @@ var BoxManager = new (function () {
     };
 
     this.possibleStars = function () {
-        let count = 0,
-            len = boxes.length;
+        let count = 0;
+        const len = boxes.length;
         for (let i = 0; i < len; i++) {
             // we'll count every box except for the hidden pinned box
             if (boxes[i].isRequired()) {
@@ -128,8 +128,8 @@ var BoxManager = new (function () {
     };
 
     this.updateBoxLocks = function () {
-        let numBoxes = boxes.length,
-            shouldRedraw = false,
+        const numBoxes = boxes.length;
+        let shouldRedraw = false,
             boxIndex,
             box;
 
@@ -150,14 +150,9 @@ var BoxManager = new (function () {
     };
 
     function createBoxes() {
-        let images = edition.boxImages,
-            boxtypes = edition.boxTypes,
-            i,
-            len,
-            box,
-            type,
-            requiredStars,
-            isLocked;
+        const images = edition.boxImages,
+            boxtypes = edition.boxTypes;
+        let i, len, box, type, requiredStars, isLocked;
 
         // clear any existing boxes
         while (boxes.length) {
@@ -201,10 +196,8 @@ var BoxManager = new (function () {
     }
 
     function updateVisibleBoxes() {
-        let visibleBoxes = [],
-            i,
-            box,
-            len;
+        const visibleBoxes = [];
+        let i, box, len;
         for (i = 0, len = boxes.length; i < len; i++) {
             box = boxes[i];
             box.index = i;
@@ -219,14 +212,12 @@ var BoxManager = new (function () {
     function onPaidBoxesChange(paid) {
         paid = paid || QueryStrings.unlockAllBoxes === true;
 
-        let requiresPurchase =
-                edition.levelRequiresPurchase ||
-                function () {
-                    return false;
-                },
-            i,
-            len,
-            box;
+        const requiresPurchase =
+            edition.levelRequiresPurchase ||
+            function () {
+                return false;
+            };
+        let i, len, box;
 
         // first box is always unlocked
         for (i = 1, len = boxes.length; i < len; i++) {

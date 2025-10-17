@@ -12,12 +12,12 @@ import RoamSettings from "@/game/RoamSettings";
 // prevent hacks - server side code would be necessary for that.
 
 // make the prefixes hard to find in source code
-let SCORE_PREFIX = String.fromCharCode(98, 112), // 'bp' (short for box-points)
+const SCORE_PREFIX = String.fromCharCode(98, 112), // 'bp' (short for box-points)
     STARS_PREFIX = String.fromCharCode(98, 115), // 'bs' (short for box-stars)
     // our XOR value is a random number that is stored in an entry that is
     // intended to look similar to the score record for a box
-    XOR_KEY = SCORE_PREFIX + String.fromCharCode(50, 51, 57, 48),
-    XOR_VALUE = SettingStorage.getIntOrDefault(XOR_KEY, null);
+    XOR_KEY = SCORE_PREFIX + String.fromCharCode(50, 51, 57, 48);
+let XOR_VALUE = SettingStorage.getIntOrDefault(XOR_KEY, null);
 
 // create the random value if it doesn't exist
 if (XOR_VALUE == null) {
@@ -103,7 +103,7 @@ const ScoreBox = function (levelCount, requiredStars, scores, stars) {
     this.stars = stars || [];
 };
 
-var ScoreManager = new (function () {
+const ScoreManager = new (function () {
     const boxes = [];
 
     this.load = function () {
@@ -126,20 +126,20 @@ var ScoreManager = new (function () {
     PubSub.subscribe(PubSub.ChannelId.RoamingDataChanged, this.load);
 
     // the score text can only be updated when the app is ready
-    var appReady = false;
+    let appReady = false;
     PubSub.subscribe(PubSub.ChannelId.AppRun, function () {
         appReady = true;
     });
 
     // load previous scores from local storage
-    var loadBox = function (boxIndex) {
+    const loadBox = function (boxIndex) {
         // see if the box exists by checking for a level 1 star record
-        let boxExists = getStars(boxIndex, 0) !== null,
+        const boxExists = getStars(boxIndex, 0) !== null,
             levelCount = edition.boxes[boxIndex].levels.length,
             requiredStars = edition.unlockStars[boxIndex],
             scores = [],
-            stars = [],
-            levelIndex;
+            stars = [];
+        let levelIndex;
 
         // get (or create) scores and stars from each level
         for (levelIndex = 0; levelIndex < levelCount; levelIndex++) {
@@ -244,8 +244,8 @@ var ScoreManager = new (function () {
             setScore(boxIndex, levelIndex, box.scores[levelIndex]);
 
             // sum all scores for the box
-            let numLevels = box.scores.length,
-                boxScore = 0,
+            const numLevels = box.scores.length;
+            let boxScore = 0,
                 i;
             for (i = 0; i < numLevels; i++) {
                 boxScore += box.scores[i];
@@ -290,11 +290,8 @@ var ScoreManager = new (function () {
     };
 
     this.resetGame = function () {
-        let boxCount = boxes.length,
-            boxIndex,
-            box,
-            levelIndex,
-            levelCount;
+        const boxCount = boxes.length;
+        let boxIndex, box, levelIndex, levelCount;
 
         for (boxIndex = 0; boxIndex < boxCount; boxIndex++) {
             box = boxes[boxIndex];

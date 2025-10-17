@@ -17,7 +17,7 @@ import dom from "@/utils/dom";
 // promotion runs from March 4 - April 14
 // using ticks makes finding hacking more difficult because
 // you can't search the code for well known dates
-let BoxOpenDates = [
+const BoxOpenDates = [
     1362384000000, // Mar 4
     1362985200000, // Mar 11
     1363590000000, // Mar 18
@@ -27,7 +27,7 @@ let BoxOpenDates = [
 ];
 
 // for testing the date locks
-if (true) {
+/*if (true) {
     BoxOpenDates = [
         new Date(), // open now
         new Date(), // open now
@@ -36,7 +36,7 @@ if (true) {
         1364799600000, // Apr 1
         1365404400000, // Apr 8
     ];
-}
+}*/
 
 // The random seeds that will be XOR'd with the user's unique value
 // to create the keys used to store the status of each box unlock

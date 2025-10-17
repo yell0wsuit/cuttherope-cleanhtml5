@@ -80,8 +80,8 @@ const ImageElement = BaseElement.extend({
         this.postDraw();
     },
     drawQuad: function (n) {
-        let rect = this.texture.rects[n],
-            quadWidth = rect.w,
+        const rect = this.texture.rects[n];
+        let quadWidth = rect.w,
             quadHeight = rect.h,
             qx = this.drawX,
             qy = this.drawY;
@@ -135,8 +135,8 @@ const ImageElement = BaseElement.extend({
         ); // destination coordinates
     },
     drawTiled: function (q, x, y, width, height) {
-        let ctx = Canvas.context,
-            qx = 0,
+        const ctx = Canvas.context;
+        let qx = 0,
             qy = 0,
             qw,
             qh,
@@ -157,10 +157,9 @@ const ImageElement = BaseElement.extend({
             qh = rect.h;
         }
 
-        let xInc = qw | 0,
-            yInc = qh | 0,
-            ceilW,
-            ceilH;
+        const xInc = qw | 0,
+            yInc = qh | 0;
+        let ceilW, ceilH;
 
         yoff = 0;
         while (yoff < height) {
@@ -212,8 +211,8 @@ const ImageElement = BaseElement.extend({
                 this.texture.height
             );
         } else {
-            let rect = this.texture.rects[this.quadToDraw],
-                qx = this.drawX,
+            const rect = this.texture.rects[this.quadToDraw];
+            let qx = this.drawX,
                 qy = this.drawY;
 
             if (this.restoreCutTransparency) {

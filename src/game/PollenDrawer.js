@@ -8,22 +8,27 @@ import Mover from "@/utils/Mover";
 import MathHelper from "@/utils/MathHelper";
 import resolution from "@/resolution";
 import Rectangle from "@/core/Rectangle";
-function Pollen() {
-    this.parentIndex = 0;
-    this.x = 0;
-    this.y = 0;
 
-    this.scaleX = 1;
-    this.startScaleX = 1;
-    this.endScaleX = 1;
+const IMG_OBJ_POLLEN_HD_obj_pollen = 0;
 
-    this.scaleY = 1;
-    this.startScaleY = 1;
-    this.endScaleY = 1;
+class Pollen {
+    constructor() {
+        this.parentIndex = 0;
+        this.x = 0;
+        this.y = 0;
 
-    this.alpha = 1;
-    this.startAlpha = 1;
-    this.endAlpha = 1;
+        this.scaleX = 1;
+        this.startScaleX = 1;
+        this.endScaleX = 1;
+
+        this.scaleY = 1;
+        this.startScaleY = 1;
+        this.endScaleY = 1;
+
+        this.alpha = 1;
+        this.startAlpha = 1;
+        this.endAlpha = 1;
+    }
 }
 
 const PollenDrawer = BaseElement.extend({
@@ -41,10 +46,10 @@ const PollenDrawer = BaseElement.extend({
         this.pollens = [];
     },
     addPollen: function (v, pi) {
+        const size = [0.3, 0.3, 0.5, 0.5, 0.6],
+            sizeCounts = size.length;
         let sX = 1,
             sY = 1,
-            size = [0.3, 0.3, 0.5, 0.5, 0.6],
-            sizeCounts = size.length,
             rx = size[MathHelper.randomRange(0, sizeCounts - 1)],
             ry = rx;
 
@@ -84,15 +89,14 @@ const PollenDrawer = BaseElement.extend({
         this.pollens.push(pollen);
     },
     fillWithPollenFromPath: function (fromIndex, toIndex, grab) {
-        let MIN_DISTANCE = resolution.POLLEN_MIN_DISTANCE,
+        const MIN_DISTANCE = resolution.POLLEN_MIN_DISTANCE,
             v1 = grab.mover.path[fromIndex],
             v2 = grab.mover.path[toIndex],
             v = Vector.subtract(v2, v1),
             vLen = v.getLength(),
             times = ~~(vLen / MIN_DISTANCE),
-            POLLEN_MAX_OFFSET = resolution.POLLEN_MAX_OFFSET,
-            i,
-            vn;
+            POLLEN_MAX_OFFSET = resolution.POLLEN_MAX_OFFSET;
+        let i, vn;
 
         v.normalize();
 
@@ -107,14 +111,8 @@ const PollenDrawer = BaseElement.extend({
         this._super(delta);
         this.drawer.update(delta);
 
-        let len = this.pollens.length,
-            i,
-            pollen,
-            temp,
-            w,
-            h,
-            moveResult,
-            a;
+        const len = this.pollens.length;
+        let i, pollen, temp, w, h, moveResult, a;
 
         for (i = 0; i < len; i++) {
             pollen = this.pollens[i];
@@ -164,7 +162,5 @@ const PollenDrawer = BaseElement.extend({
         this.postDraw();
     },
 });
-
-var IMG_OBJ_POLLEN_HD_obj_pollen = 0;
 
 export default PollenDrawer;

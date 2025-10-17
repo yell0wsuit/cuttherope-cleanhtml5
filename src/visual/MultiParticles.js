@@ -48,7 +48,7 @@ const MultiParticles = Particles.extend({
         this.preDraw();
 
         /* for debugging rotation: draw a line from origin at 0 degrees
-             var ctx = Canvas.context;
+             let ctx = Canvas.context;
              ctx.save();
              ctx.lineWidth = 5;
              ctx.strokeStyle = "blue";

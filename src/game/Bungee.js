@@ -174,13 +174,14 @@ const Bungee = ConstraintSystem.extend({
         }
     },
     rollBack: function (amount) {
-        let rollBackLen = amount,
-            partsCount = parts.length,
-            oldAnchor,
-            heroRestLen = tail.restLength(prev);
-        const parts = this.parts,
-            prev = parts[partsCount - 2],
-            tail = this.tail;
+        const parts = this.parts;
+        let partsCount = parts.length;
+        const prev = parts[partsCount - 2];
+        const tail = this.tail;
+        let rollBackLen = amount;
+
+        let oldAnchor;
+        let heroRestLen = tail.restLength(prev);
 
         while (rollBackLen > 0) {
             if (rollBackLen >= this.BUNGEE_REST_LEN) {

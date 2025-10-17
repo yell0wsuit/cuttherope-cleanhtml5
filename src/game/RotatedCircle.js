@@ -7,6 +7,14 @@ import resolution from "@/resolution";
 import Vector from "@/core/Vector";
 import Radians from "@/utils/Radians";
 import Canvas from "@/utils/Canvas";
+
+const IMG_OBJ_VINIL_obj_vinil = 0;
+const IMG_OBJ_VINIL_obj_vinil_highlight = 1;
+const IMG_OBJ_VINIL_odj_vinil_sticker = 2;
+const IMG_OBJ_VINIL_obj_vinil_center = 3;
+const IMG_OBJ_VINIL_obj_controller_active = 4;
+const IMG_OBJ_VINIL_obj_controller = 5;
+
 const CONTOUR_ALPHA = 0.2,
     CONTROLLER_MIN_SCALE = 0.75,
     STICKER_MIN_SCALE = 0.4,
@@ -27,7 +35,7 @@ const StickerImage = ImageElement.extend({
     },
 });
 
-var RotatedCircle = BaseElement.extend({
+const RotatedCircle = BaseElement.extend({
     init: function () {
         this._super();
         this.containedObjects = [];
@@ -169,9 +177,8 @@ var RotatedCircle = BaseElement.extend({
         this.vinilActiveControllerR.visible = value;
     },
     containsSameObjectWithAnotherCircle: function () {
-        let len = this.circles.length,
-            i,
-            anotherCircle;
+        const len = this.circles.length;
+        let i, anotherCircle;
         for (i = 0; i < len; i++) {
             anotherCircle = this.circles[i];
             if (anotherCircle != this && this.containsSameObjectWithCircle(anotherCircle)) {
@@ -198,11 +205,10 @@ var RotatedCircle = BaseElement.extend({
         this.vinil.color = this.color;
         this.vinil.draw();
 
-        let len = this.circles.length,
-            i,
-            anotherCircle,
+        const len = this.circles.length,
             selfIndex = this.circles.indexOf(this),
             previousAlpha = ctx.globalAlpha;
+        let i, anotherCircle;
 
         if (previousAlpha !== CONTOUR_ALPHA) {
             ctx.globalAlpha = CONTOUR_ALPHA;
@@ -245,14 +251,14 @@ var RotatedCircle = BaseElement.extend({
         }
 
         //circleDistance = a + b
-        let a =
+        const a =
                 (radius1 * radius1 - radius2 * radius2 + circleDistance * circleDistance) /
                 (2 * circleDistance),
             b = circleDistance - a,
             beta = Math.acos(b / radius2),
             diff = new Vector(cx1 - cx2, cy1 - cy2),
-            centersAngle = diff.angle(),
-            startAngle = centersAngle - beta,
+            centersAngle = diff.angle();
+        let startAngle = centersAngle - beta,
             endAngle = centersAngle + beta;
 
         if (cx2 > cx1) {
@@ -302,9 +308,8 @@ var RotatedCircle = BaseElement.extend({
             return false;
         }
 
-        let len = this.containedObjects.length,
-            i,
-            object;
+        const len = this.containedObjects.length;
+        let i, object;
         for (i = 0; i < len; i++) {
             if (anotherCircle.containedObjects.indexOf(this.containedObjects[i]) >= 0) {
                 return true;
@@ -339,12 +344,5 @@ var RotatedCircle = BaseElement.extend({
         return copiedCircle;
     },
 });
-
-var IMG_OBJ_VINIL_obj_vinil = 0;
-var IMG_OBJ_VINIL_obj_vinil_highlight = 1;
-var IMG_OBJ_VINIL_odj_vinil_sticker = 2;
-var IMG_OBJ_VINIL_obj_vinil_center = 3;
-var IMG_OBJ_VINIL_obj_controller_active = 4;
-var IMG_OBJ_VINIL_obj_controller = 5;
 
 export default RotatedCircle;

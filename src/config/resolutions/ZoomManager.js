@@ -20,11 +20,11 @@ class ZoomManager {
             css = css || {};
 
             let cssScale = "scale(" + this.zoom + ")",
-                prefixes = ["ms", "o", "webkit", "moz"],
                 transformOrigin = this.transformOrigin,
                 i,
                 len,
                 key;
+            const prefixes = ["ms", "o", "webkit", "moz"];
 
             // clear values if no zoom is required
             if (this.zoom === 1) {

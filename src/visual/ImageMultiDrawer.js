@@ -51,12 +51,12 @@ const ImageMultiDrawer = BaseElement.extend({
         //console.log("DRAW NO OF QUADS", n)
         const ctx = Canvas.context;
         for (let i = 0; i < n; i++) {
-            let source = this.texCoordinates[i],
+            const source = this.texCoordinates[i],
                 dest = this.vertices[i],
-                alpha = this.alphas[i],
                 previousAlpha = ctx.globalAlpha,
                 sourceW = Math.ceil(source.w),
                 sourceH = Math.ceil(source.h);
+            let alpha = this.alphas[i];
 
             // verify we need to draw the source
             if (sourceW === 0 || sourceH === 0) {
@@ -75,11 +75,15 @@ const ImageMultiDrawer = BaseElement.extend({
             }
 
             // rotate the image if requested
+
+            let rotationAngle = 0;
+            let rotationPosition = { x: 0, y: 0 };
+            let rotateIsTranslated = false;
             const checkRotation = this.rotationAngles && this.rotationAngles.length > i;
             if (checkRotation) {
-                var rotationAngle = this.rotationAngles[i],
-                    rotationPosition = this.rotationPositions[i],
-                    rotateIsTranslated = rotationPosition.x !== 0 || rotationPosition.y !== 0;
+                rotationAngle = this.rotationAngles[i];
+                rotationPosition = this.rotationPositions[i];
+                rotateIsTranslated = rotationPosition.x !== 0 || rotationPosition.y !== 0;
 
                 if (rotationAngle !== 0) {
                     if (rotateIsTranslated) {
@@ -93,7 +97,7 @@ const ImageMultiDrawer = BaseElement.extend({
             }
 
             // see if we need sub-pixel alignment
-            var qx, qy, qw, qh;
+            //let qx, qy, qw, qh;
             // if (this.drawPosIncrement) {
             //     qx = Math.round(dest.x / this.drawPosIncrement) * this.drawPosIncrement;
             //     qy = Math.round(dest.y / this.drawPosIncrement) * this.drawPosIncrement;
@@ -102,12 +106,11 @@ const ImageMultiDrawer = BaseElement.extend({
             // }
             // else {
             // otherwise by default we snap to pixel boundaries for perf
-            qx = ~~dest.x;
-            qy = ~~dest.y;
-
-            // use ceil so that we match the source when scale is equal
-            qw = 1 + ~~dest.w;
-            qh = 1 + ~~dest.h;
+            const qx = ~~dest.x,
+                qy = ~~dest.y,
+                // use ceil so that we match the source when scale is equal
+                qw = 1 + ~~dest.w,
+                qh = 1 + ~~dest.h;
             //}
 
             ctx.drawImage(

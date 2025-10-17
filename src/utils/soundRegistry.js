@@ -27,7 +27,9 @@ class SoundRegistry {
                 try {
                     source.stop();
                     source.disconnect();
-                } catch (e) {}
+                } catch (e) {
+                    console.log(`soundData.gainNode error: ${e}`);
+                }
             }
 
             if (soundData.playingSources) {
@@ -38,7 +40,9 @@ class SoundRegistry {
             if (soundData.gainNode) {
                 try {
                     soundData.gainNode.disconnect();
-                } catch (e) {}
+                } catch (e) {
+                    console.log(`soundData.gainNode error: ${e}`);
+                }
             }
         }
 

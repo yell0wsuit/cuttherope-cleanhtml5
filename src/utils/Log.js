@@ -1,4 +1,4 @@
-var Log = {
+const Log = {
     debug: function (message) {
         if (false && window.console) {
             console.log(message);

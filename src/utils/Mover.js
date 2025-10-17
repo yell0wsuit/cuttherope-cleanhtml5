@@ -29,15 +29,15 @@ const Mover = Class.extend({
      */
     setPathFromString: function (path, start) {
         if (path[0] === "R") {
-            let clockwise = path[1] === "C",
-                rad = parseInt(path.substr(2), 10),
-                pointsCount = rad / 2,
-                kIncrement = (2 * Math.PI) / pointsCount,
+            const clockwise = path[1] === "C",
+                rad = parseInt(path.slice(2), 10),
+                pointsCount = rad / 2;
+            let kIncrement = (2 * Math.PI) / pointsCount,
                 theta = 0;
 
             if (!clockwise) kIncrement = -kIncrement;
 
-            for (var i = 0; i < pointsCount; ++i) {
+            for (let i = 0; i < pointsCount; ++i) {
                 const nx = start.x + rad * Math.cos(theta),
                     ny = start.y + rad * Math.sin(theta);
 
@@ -49,11 +49,13 @@ const Mover = Class.extend({
 
             // remove the trailing comma
             if (path[path.length - 1] === ",") {
-                path = path.substr(0, path.length - 1);
+                path = path.slice(0, path.length - 1);
             }
 
             const parts = path.split(","),
                 len = parts.length;
+
+            let i;
             for (i = 0; i < len; i += 2) {
                 const xs = parseFloat(parts[i]),
                     ys = parseFloat(parts[i + 1]),
@@ -105,8 +107,8 @@ const Mover = Class.extend({
         if (this.paused) return;
 
         if (this.path.length > 0) {
-            let target = this.path[this.targetPoint],
-                switchPoint = false;
+            const target = this.path[this.targetPoint];
+            let switchPoint = false;
 
             if (!this.pos.equals(target)) {
                 let rdelta = delta;

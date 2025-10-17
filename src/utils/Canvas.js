@@ -32,19 +32,20 @@ const Canvas = {
      * @param style
      */
     fillTriangleStrip: function (points, style) {
-        let ctx = this.context,
-            point = points[0];
+        const ctx = this.context;
+        let point = points[0];
         ctx.fillStyle = style;
         ctx.beginPath();
         ctx.moveTo(point.x, point.y);
 
         // draw the bottom portion of the shape
-        for (var i = 1, len = points.length; i < len; i += 2) {
+        for (let i = 1, len = points.length; i < len; i += 2) {
             point = points[i];
             ctx.lineTo(point.x, point.y);
         }
 
         // draw the top portion
+        let i;
         for (i = points.length - 2; i >= 0; i -= 2) {
             point = points[i];
             ctx.lineTo(point.x, point.y);

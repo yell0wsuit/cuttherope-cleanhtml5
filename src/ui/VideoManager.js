@@ -61,7 +61,7 @@ const fadeOut = function (element, duration, callback) {
 
 let closeIntroCallback = null;
 
-var VideoManager = {
+const VideoManager = {
     loadIntroVideo: function () {
         // only load the video if the first level hasn't been played
         const firstLevelStars = ScoreManager.getStars(0, 0) || 0;

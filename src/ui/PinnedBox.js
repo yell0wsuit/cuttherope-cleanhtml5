@@ -130,12 +130,13 @@ function applyEasing(t, easing) {
             return t < 0.5
                 ? (1 - Math.sqrt(1 - Math.pow(2 * t, 2))) / 2
                 : (Math.sqrt(1 - Math.pow(-2 * t + 2, 2)) + 1) / 2;
-        case "easeInOutBack":
+        case "easeInOutBack": {
             const c1 = 1.70158;
             const c2 = c1 * 1.525;
             return t < 0.5
                 ? (Math.pow(2 * t, 2) * ((c2 + 1) * 2 * t - c2)) / 2
                 : (Math.pow(2 * t - 2, 2) * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2;
+        }
         default:
             return t;
     }
@@ -166,6 +167,10 @@ const PinnedBox = Box.extend({
             // already has IE10 installed)
             const getIeButton = document.getElementById("installieBtn");
             const ieDownload = getIE9DownloadUrl();
+
+            const getIE9DownloadUrl = () => {
+                console.log("stubbed");
+            };
 
             if (getIeButton) {
                 if (ieDownload) {
@@ -211,9 +216,9 @@ const PinnedBox = Box.extend({
     initPinnedState: function () {
         // returns the version of Internet Explorer or a -1 if another browser
         const getIEVersion = function () {
-            let rv = -1; // Return value assumes failure.
+            const rv = -1; // Return value assumes failure.
             return rv;
-            if (
+            /*if (
                 navigator.appName == "Microsoft Internet Explorer" ||
                 navigator.appName == "MSAppHost/1.0"
             ) {
@@ -226,13 +231,13 @@ const PinnedBox = Box.extend({
                     rv = parseInt(matches[1], 10);
                 }
             }
-            return rv;
+            return rv;*/
         };
 
         // returns a bool indiciating whether IE can run on the current OS
         const getIECapableOS = function () {
             return false;
-            try {
+            /*(try {
                 const u = navigator.userAgent;
                 const isWindows = u.indexOf("Windows NT") != -1;
                 const majVersion = isWindows ? parseInt(u[u.indexOf("Windows NT") + 11]) : -1;
@@ -240,7 +245,7 @@ const PinnedBox = Box.extend({
             } catch (ex) {
                 return false;
             }
-            return false;
+            return false;*/
         };
 
         // what version of IE are we running (or -1 for non-IE)
@@ -251,10 +256,10 @@ const PinnedBox = Box.extend({
 
         // are we in IE9 or greater
         if (ieVer >= 9 || QueryStrings.forcePinnedBox) {
-            let localStorageIsPinned =
-                    platform.ENABLE_PINNED_MODE ||
-                    SettingStorage.get("msIsSiteModeActivated") == "true",
-                msIsSiteMode = platform.ENABLE_PINNED_MODE === true;
+            const localStorageIsPinned =
+                platform.ENABLE_PINNED_MODE ||
+                SettingStorage.get("msIsSiteModeActivated") == "true";
+            let msIsSiteMode = platform.ENABLE_PINNED_MODE === true;
 
             // no way to check if this function exists, we have to use try/catch
             if (!msIsSiteMode) {
@@ -262,7 +267,9 @@ const PinnedBox = Box.extend({
                     if (window.external.msIsSiteMode()) {
                         msIsSiteMode = true;
                     }
-                } catch (ex) {}
+                } catch (ex) {
+                    // empty
+                }
             }
 
             // is the site pinned

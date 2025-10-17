@@ -134,9 +134,9 @@ function vcode(x_min, y_min, x_max, y_max, p) {
  */
 Rectangle.lineInRect = function (x1, y1, x2, y2, rx, ry, w, h) {
     let code_a, code_b, code;
-    let a = new Vector(x1, y1),
-        b = new Vector(x2, y2),
-        c;
+    const a = new Vector(x1, y1),
+        b = new Vector(x2, y2);
+    let c;
 
     //noinspection UnnecessaryLocalVariableJS
     const x_min = rx,

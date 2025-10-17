@@ -143,7 +143,9 @@ const Sounds = {
         source.onended = () => {
             try {
                 source.disconnect();
-            } catch (e) {}
+            } catch (e) {
+                console.log(`source.onended error: ${e}`);
+            }
 
             soundData.playingSources.delete(source);
 

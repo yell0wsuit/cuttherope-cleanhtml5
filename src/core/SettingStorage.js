@@ -1,7 +1,8 @@
 import edition from "@/edition";
 import PubSub from "@/utils/PubSub";
-let editionPrefix = edition.settingPrefix || "",
-    prefix = editionPrefix;
+
+const editionPrefix = edition.settingPrefix || "";
+let prefix = editionPrefix;
 
 PubSub.subscribe(PubSub.ChannelId.UserIdChanged, function (userId) {
     if (userId) {

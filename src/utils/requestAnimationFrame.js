@@ -6,8 +6,8 @@ for (let i = 0; i < vendors.length && !window["requestAnimationFrame"]; i++) {
 
 // fallback to using setTimeout if requestAnimationFrame isn't available
 if (!window["requestAnimationFrame"]) {
-    let renderInterval = 1000 / 60,
-        lastTime = 0;
+    const renderInterval = 1000 / 60;
+    let lastTime = 0;
     window["requestAnimationFrame"] = function (callback, element) {
         const currTime = Date.now();
         const timeToCall = Math.max(0, renderInterval - (currTime - lastTime));

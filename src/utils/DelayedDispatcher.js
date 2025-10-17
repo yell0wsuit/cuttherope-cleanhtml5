@@ -1,16 +1,17 @@
-const Dispatch = function (object, callback, param, delay) {
-    this.object = object;
-    this.callback = callback;
-    this.param = param;
-    this.delay = delay;
-};
-
-Dispatch.prototype.dispatch = function () {
-    this.callback.apply(
-        this.object, // use the object as the context (this) for the callback
-        this.param
-    );
-};
+class Dispatch {
+    constructor(object, callback, param, delay) {
+        this.object = object;
+        this.callback = callback;
+        this.param = param;
+        this.delay = delay;
+    }
+    dispatch() {
+        this.callback.apply(
+            this.object, // use the object as the context (this) for the callback
+            this.param
+        );
+    }
+}
 
 const DelayedDispatcher = {
     dispatchers: [],
@@ -22,7 +23,7 @@ const DelayedDispatcher = {
         this.dispatchers.length = 0;
     },
     cancelDispatch: function (object, callback, param) {
-        for (let i = 0, count = this.dispatchers.length; i < count; i--) {
+        for (let i = 0, count = this.dispatchers.length; i < count; i++) {
             const dp = this.dispatchers[i];
             if (dp.object === object && dp.callback === callback && dp.param === param) {
                 this.dispatchers.splice(i, 1);

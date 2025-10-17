@@ -16,7 +16,7 @@ function TileEntry(drawerIndex, quadIndex) {
     this.quad = quadIndex;
 }
 
-var TileMap = BaseElement.extend({
+const TileMap = BaseElement.extend({
     init: function (rows, columns) {
         this._super();
 
@@ -124,14 +124,15 @@ var TileMap = BaseElement.extend({
      * @param pos {Vector}
      */
     updateWithCameraPos: function (pos) {
-        let mx = Math.round(pos.x / this.parallaxRatio),
-            my = Math.round(pos.y / this.parallaxRatio),
-            tileMapStartX = this.x,
+        const mx = Math.round(pos.x / this.parallaxRatio),
+            my = Math.round(pos.y / this.parallaxRatio);
+        let tileMapStartX = this.x,
             tileMapStartY = this.y,
             a,
             i,
             len,
-            v;
+            v,
+            y;
 
         if (this.repeatedVertically !== TileMap.RepeatType.NONE) {
             const ys = tileMapStartY - my;

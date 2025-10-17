@@ -16,7 +16,7 @@ class FormattedString {
     }
 }
 
-Text = BaseElement.extend({
+const Text = BaseElement.extend({
     init: function (font) {
         this._super();
         this.font = font;
@@ -44,8 +44,8 @@ Text = BaseElement.extend({
     updateDrawerValues: function () {
         let dx = 0,
             dy = 0,
-            itemHeight = this.font.fontHeight(),
-            n = 0,
+            n = 0;
+        const itemHeight = this.font.fontHeight(),
             dotsString = "..",
             dotsOffset = this.font.getCharOffset(dotsString, 0),
             linesToDraw =
@@ -135,10 +135,10 @@ Text = BaseElement.extend({
         this.postDraw();
     },
     formatText: function () {
-        let strIdx = [],
+        const strIdx = [],
             s = this.string,
-            len = s.length,
-            idx = 0,
+            len = s.length;
+        let idx = 0,
             xc = 0,
             wc = 0,
             xp = 0,
@@ -206,26 +206,26 @@ Text = BaseElement.extend({
         }
     },
     createFromXml: function (xml) {
-        const resId = Xml.attrInt(xml, "font"),
+        const resId = xml.attrInt(xml, "font"),
             font = ResourceMgr.getFont(resId),
             element = new Text(font);
 
         if (xml.hasAttribute("align")) {
-            element.align = Alignment.parse(Xml.attr(xml, "align"));
+            element.align = Alignment.parse(xml.attr(xml, "align"));
         }
 
         if (xml.hasAttribute("string")) {
-            const strId = Xml.attrInt("string"),
+            const strId = xml.attrInt("string"),
                 str = ResourceMgr.getString(strId),
                 strWidth = xml.hasAttribute("width")
-                    ? Xml.attrFloat(xml, "width")
+                    ? xml.attrFloat(xml, "width")
                     : Constants.UNDEFINED;
 
             element.setString(str, strWidth);
         }
 
         if (xml.hasAttribute("height")) {
-            element.maxHeight = Xml.attrFloat(xml, "height");
+            element.maxHeight = xml.attrFloat(xml, "height");
         }
 
         return element;
@@ -235,13 +235,13 @@ Text = BaseElement.extend({
 function stringToArray(ctx, string, width) {
     // convert string to array of lines then words
     const input = string.split("\n");
-    for (var i = 0; i < input.length; ++i) {
+    for (let i = 0; i < input.length; ++i) {
         input[i] = input[i].split(" ");
     }
 
-    var i = 0,
-        j = 0,
-        output = [];
+    let i = 0,
+        j = 0;
+    const output = [];
     let runningWidth = 0;
     let line = 0;
 
@@ -441,9 +441,9 @@ Text.drawImg = function (options) {
 
     let finalWidth = imgWidth * scale,
         finalHeight = imgHeight * scale,
-        maxScaleWidth = options.maxScaleWidth,
         topPadding,
         widthScale;
+    const maxScaleWidth = options.maxScaleWidth;
 
     // do additional scaling if a max scale width was specified and exceeded
     if (maxScaleWidth && finalWidth > maxScaleWidth) {

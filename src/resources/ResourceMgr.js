@@ -128,7 +128,7 @@ const ResourceMgr = {
         t.adjustmentMaxX = info.adjustmentMaxX ? info.adjustmentMaxX : 0;
         t.adjustmentMaxY = info.adjustmentMaxY ? info.adjustmentMaxY : 0;
 
-        for (var i = 0, len = rects.length; i < len; i++) {
+        for (let i = 0, len = rects.length; i < len; i++) {
             // convert it to a Rectangle object
             const rawRect = rects[i],
                 rect = new Rectangle(rawRect.x, rawRect.y, rawRect.w, rawRect.h);
@@ -146,6 +146,7 @@ const ResourceMgr = {
         if (offsets) {
             // set the offsets inside the texture
             const oCount = offsets.length;
+            let i;
             for (i = 0; i < oCount; i++) {
                 const offset = offsets[i];
                 t.setOffset(i, offset.x, offset.y);
