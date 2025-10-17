@@ -125,8 +125,8 @@ const Bungee = ConstraintSystem.extend({
      * @return {number}
      */
     getLength: function () {
-        let len = 0,
-            parts = this.parts,
+        let len = 0;
+        const parts = this.parts,
             numParts = parts.length;
         if (numParts > 0) {
             let v = parts[0].pos;
@@ -143,9 +143,9 @@ const Bungee = ConstraintSystem.extend({
             offset = Vector.newZero();
         }
 
-        let parts = this.parts,
-            prev = parts[parts.length - 2],
-            tail = this.tail,
+        const parts = this.parts,
+            tail = this.tail;
+        let prev = parts[parts.length - 2],
             heroRestLen = tail.restLength(prev),
             cp = null;
 
@@ -175,12 +175,12 @@ const Bungee = ConstraintSystem.extend({
     },
     rollBack: function (amount) {
         let rollBackLen = amount,
-            parts = this.parts,
             partsCount = parts.length,
+            oldAnchor,
+            heroRestLen = tail.restLength(prev);
+        const parts = this.parts,
             prev = parts[partsCount - 2],
-            tail = this.tail,
-            heroRestLen = tail.restLength(prev),
-            oldAnchor;
+            tail = this.tail;
 
         while (rollBackLen > 0) {
             if (rollBackLen >= this.BUNGEE_REST_LEN) {
@@ -205,8 +205,8 @@ const Bungee = ConstraintSystem.extend({
             }
         }
 
-        const newTailRestLen = (partsCount - 1) * (this.BUNGEE_REST_LEN + 3);
-        const constraints = tail.constraints,
+        const newTailRestLen = (partsCount - 1) * (this.BUNGEE_REST_LEN + 3),
+            constraints = tail.constraints,
             numConstraints = constraints.length;
         for (let i = 0; i < numConstraints; i++) {
             const c = constraints[i];
@@ -243,13 +243,11 @@ const Bungee = ConstraintSystem.extend({
             }
         }
 
-        let parts = this.parts,
+        const parts = this.parts,
             numParts = parts.length,
             relaxationTimes = this.relaxationTimes,
-            tail = this.tail,
-            i,
-            cp,
-            k;
+            tail = this.tail;
+        let i, cp, k;
 
         for (i = 0; i < numParts; i++) {
             cp = parts[i];
@@ -311,12 +309,10 @@ const Bungee = ConstraintSystem.extend({
         this.highlighted = false;
     },
     draw: function () {
-        let parts = this.parts,
+        const parts = this.parts,
             count = parts.length,
-            ctx = Canvas.context,
-            i,
-            part,
-            prevPart;
+            ctx = Canvas.context;
+        let i, part, prevPart;
 
         ctx.lineJoin = "round";
         ctx.lineWidth = this.lineWidth;
@@ -329,9 +325,9 @@ const Bungee = ConstraintSystem.extend({
             }
             this.drawBungee(pts);
         } else {
-            let pts1 = [],
-                pts2 = [],
-                part2 = false;
+            const pts1 = [],
+                pts2 = [];
+            let part2 = false;
             for (i = 0; i < count; i++) {
                 part = parts[i];
                 let linked = true;
@@ -445,8 +441,8 @@ const Bungee = ConstraintSystem.extend({
             d2.r *= f;
         }
 
-        let useC1 = true, // ropes have alternating color segments
-            numVertices = (count - 1) * points;
+        let useC1 = true; // ropes have alternating color segments
+        const numVertices = (count - 1) * points;
 
         // // colors
         // //noinspection UnnecessaryLocalVariableJS
@@ -479,11 +475,11 @@ const Bungee = ConstraintSystem.extend({
             firstDrawPoint.y = firstPoint.y;
         }
 
-        var vertex, a, pathVector, currentColor;
+        let vertex, a, pathVector;
 
         ctx.beginPath();
 
-        var currentColor = b1.rgbaStyle();
+        let currentColor = b1.rgbaStyle();
         if (ctx.strokeStyle !== currentColor) ctx.strokeStyle = currentColor;
 
         for (vertex = 1; vertex <= numVertices; vertex++) {
