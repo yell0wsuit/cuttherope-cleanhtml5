@@ -1,0 +1,162 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "width": 320,
+            "height": 480,
+            "gridSize": 32
+        },
+        {
+            "name": 1,
+            "$": 1,
+            "special": 2,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 2,
+            "x": 217,
+            "y": 413
+        },
+        {
+            "name": 100,
+            "x": 50,
+            "y": 56,
+            "length": 55,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 157,
+            "y": 58,
+            "length": 130,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 52,
+            "x": 47,
+            "y": 150
+        },
+        {
+            "name": 3,
+            "x": 151,
+            "y": 384,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 121,
+            "y": 217,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 51,
+            "y": 217,
+            "timeout": -1
+        },
+        {
+            "name": 56,
+            "x": 127,
+            "y": 388,
+            "group": 0,
+            "angle": 0
+        },
+        {
+            "name": 56,
+            "x": 194,
+            "y": 218,
+            "group": 0,
+            "angle": -180
+        },
+        {
+            "name": 4,
+            "x": 51,
+            "y": 247,
+            "locale": "en",
+            "text": "Drop the candy into the sock and it will fall out from the other one",
+            "width": 220
+        },
+        {
+            "name": 8,
+            "x": 160,
+            "y": 236,
+            "locale": "en",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "fr": [
+        {
+            "name": 8,
+            "x": 160,
+            "y": 237,
+            "locale": "fr",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 52,
+            "y": 246,
+            "locale": "fr",
+            "text": "Dépose le bonbon dans la chaussette et il sortira de l'autre chaussette",
+            "width": 160
+        }
+    ],
+    "de": [
+        {
+            "name": 8,
+            "x": 161,
+            "y": 237,
+            "locale": "de",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 54,
+            "y": 245,
+            "locale": "de",
+            "text": "Wirf die Süßigkeiten in den Strumpf und sie kommt aus dem anderen wieder heraus",
+            "width": 200
+        }
+    ],
+    "ru": [
+        {
+            "name": 8,
+            "x": 160,
+            "y": 236,
+            "locale": "ru",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 52,
+            "y": 242,
+            "locale": "ru",
+            "text": "Киньте леденец в один из носков, и он вылетит из другого",
+            "width": 160
+        }
+    ]
+}

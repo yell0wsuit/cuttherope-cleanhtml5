@@ -1,0 +1,165 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "width": 320,
+            "height": 480,
+            "gridSize": 32
+        },
+        {
+            "name": 1,
+            "$": 1,
+            "special": 2,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 56,
+            "x": 110,
+            "y": 128,
+            "group": 1,
+            "angle": 0,
+            "path": "0,0",
+            "rotateSpeed": 70
+        },
+        {
+            "name": 100,
+            "x": 223,
+            "y": 162,
+            "length": 50,
+            "wheel": false,
+            "gun": false,
+            "radius": 40,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 52,
+            "x": 32,
+            "y": 241
+        },
+        {
+            "name": 3,
+            "x": 290,
+            "y": 125,
+            "timeout": -1
+        },
+        {
+            "name": 100,
+            "x": 34,
+            "y": 160,
+            "length": 50,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 56,
+            "x": 33,
+            "y": 395,
+            "group": 1,
+            "angle": 270
+        },
+        {
+            "name": 2,
+            "x": 259,
+            "y": 419
+        },
+        {
+            "name": 3,
+            "x": 290,
+            "y": 228,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 32,
+            "y": 94,
+            "timeout": -1
+        },
+        {
+            "name": 54,
+            "x": 30,
+            "y": 325
+        },
+        {
+            "name": 13,
+            "x": 96,
+            "y": 294,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 110,
+            "y": 256,
+            "locale": "en",
+            "text": "Om Nom loves when you collect all 3 stars!",
+            "width": 180
+        }
+    ],
+    "ru": [
+        {
+            "name": 4,
+            "x": 98,
+            "y": 254,
+            "locale": "ru",
+            "text": "!0#c !d$f#c$3 #d$0#0#2#8$2$1$f, #a#e#3#4#0 #2$1#5 3 #7#2#5#7#4$b $1#e#1$0#0#d$b!",
+            "width": 200
+        },
+        {
+            "name": 13,
+            "x": 77,
+            "y": 292,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "fr": [
+        {
+            "name": 4,
+            "x": 113,
+            "y": 252,
+            "locale": "fr",
+            "text": "Om Nom adore que tu collectes les 3 \u0000e9toiles!",
+            "width": 150
+        },
+        {
+            "name": 13,
+            "x": 89,
+            "y": 293,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "de": [
+        {
+            "name": 4,
+            "x": 112,
+            "y": 252,
+            "locale": "de",
+            "text": "Om Nom ist gl\u0000fccklich, wenn du alle 3 Sterne aufsammelst!",
+            "width": 180
+        },
+        {
+            "name": 13,
+            "x": 91,
+            "y": 292,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ]
+}

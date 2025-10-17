@@ -1,0 +1,143 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "width": 320,
+            "height": 480,
+            "gridSize": 32
+        },
+        {
+            "name": 1,
+            "$": 1,
+            "special": 2,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 2,
+            "x": 159,
+            "y": 242
+        },
+        {
+            "name": 52,
+            "x": 255,
+            "y": 171
+        },
+        {
+            "name": 3,
+            "x": 134,
+            "y": 185,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 189,
+            "y": 184,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 161,
+            "y": 147,
+            "timeout": -1
+        },
+        {
+            "name": 100,
+            "x": 76,
+            "y": 243,
+            "length": 160,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 54,
+            "x": 255,
+            "y": 170
+        },
+        {
+            "name": 4,
+            "x": 89,
+            "y": 288,
+            "locale": "en",
+            "text": "You can restart the level by pressing the",
+            "width": 140
+        },
+        {
+            "name": 4,
+            "x": 126,
+            "y": 352,
+            "locale": "en",
+            "text": "button",
+            "width": 100
+        },
+        {
+            "name": 12,
+            "x": 129,
+            "y": 379,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ru": [
+        {
+            "name": 4,
+            "x": 61,
+            "y": 302,
+            "locale": "ru",
+            "text": "Вы можете перезапустить уровень, нажав кнопку",
+            "width": 200
+        },
+        {
+            "name": 12,
+            "x": 234,
+            "y": 369,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "fr": [
+        {
+            "name": 4,
+            "x": 65,
+            "y": 285,
+            "locale": "fr",
+            "text": "Vous pouvez redémarrer le niveau en appuyant sur le bouton",
+            "width": 180
+        },
+        {
+            "name": 12,
+            "x": 201,
+            "y": 371,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "de": [
+        {
+            "name": 4,
+            "x": 31,
+            "y": 282,
+            "locale": "de",
+            "text": "Du kannst das Level neustarten, indem du das Symbol antippst",
+            "width": 250
+        },
+        {
+            "name": 12,
+            "x": 238,
+            "y": 351,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ]
+}

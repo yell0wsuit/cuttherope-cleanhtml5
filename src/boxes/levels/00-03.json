@@ -1,0 +1,217 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "width": 320,
+            "height": 480,
+            "gridSize": 32
+        },
+        {
+            "name": 1,
+            "$": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 2,
+            "x": 159,
+            "y": 425
+        },
+        {
+            "name": 52,
+            "x": 63,
+            "y": 238
+        },
+        {
+            "name": 3,
+            "x": 97,
+            "y": 311,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 159,
+            "y": 140,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 159,
+            "y": 66,
+            "timeout": -1
+        },
+        {
+            "name": 100,
+            "x": 63,
+            "y": 123,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 159,
+            "y": 245,
+            "length": 70,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 54,
+            "x": 159,
+            "y": 337
+        },
+        {
+            "name": 4,
+            "x": 195,
+            "y": 289,
+            "locale": "en",
+            "text": "The bubble will lift the candy up",
+            "width": 110
+        },
+        {
+            "name": 8,
+            "x": 213,
+            "y": 367,
+            "locale": "en",
+            "angle": 50,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 185,
+            "y": 155,
+            "locale": "en",
+            "text": "Click to pop the bubble",
+            "width": 120
+        },
+        {
+            "name": 13,
+            "x": 241,
+            "y": 143,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ru": [
+        {
+            "name": 4,
+            "x": 169,
+            "y": 284,
+            "locale": "ru",
+            "text": "Пузырь подымет леденец вверх",
+            "width": 160
+        },
+        {
+            "name": 8,
+            "x": 210,
+            "y": 350,
+            "locale": "ru",
+            "angle": 20,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 162,
+            "y": 161,
+            "locale": "ru",
+            "text": "Нажмите, чтобы лопнуть пузырь",
+            "width": 160
+        },
+        {
+            "name": 13,
+            "x": 239,
+            "y": 153,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "fr": [
+        {
+            "name": 4,
+            "x": 166,
+            "y": 255,
+            "locale": "fr",
+            "text": "La bulle va soulever le bonbon dans les airs",
+            "width": 150
+        },
+        {
+            "name": 8,
+            "x": 210,
+            "y": 350,
+            "locale": "fr",
+            "angle": 15,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 185,
+            "y": 155,
+            "locale": "fr",
+            "text": "Clique pour éclater la bulle",
+            "width": 160
+        },
+        {
+            "name": 13,
+            "x": 241,
+            "y": 147,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "de": [
+        {
+            "name": 4,
+            "x": 194,
+            "y": 283,
+            "locale": "de",
+            "text": "Die Blase lässt die Süßigkeit schweben",
+            "width": 130
+        },
+        {
+            "name": 8,
+            "x": 212,
+            "y": 360,
+            "locale": "de",
+            "angle": 50,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 175,
+            "y": 154,
+            "locale": "de",
+            "text": "Klicke, um die Seifenblase platzen zu lassen",
+            "width": 140
+        },
+        {
+            "name": 13,
+            "x": 241,
+            "y": 146,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ]
+}
