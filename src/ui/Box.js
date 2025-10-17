@@ -81,6 +81,7 @@ const Box = Class.extend({
         this.bounceStartTime = 0;
         this.opacity = 1.0;
         this.type = type;
+        this.yOffset = 0; // for special box types
 
         this.boxImg = new Image();
 
@@ -106,7 +107,9 @@ const Box = Class.extend({
             self.textRendered = true;
         };
 
-        this.pubSubSubscriptions.push(PubSub.subscribe(PubSub.ChannelId.LanguageChanged, this.renderText));
+        this.pubSubSubscriptions.push(
+            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, this.renderText)
+        );
 
         this.reqImg = Text.drawBig({ text: reqstars, scaleToUI: true });
 
@@ -154,6 +157,8 @@ const Box = Class.extend({
 
     render: function (ctx, omnomoffset) {
         const isGameBox = this.isGameBox();
+        const yOffset = resolution.uiScaledNumber(this.yOffset || 0);
+
         if (isGameBox) {
             // draw the black area
             ctx.fillStyle = "rgb(45,45,53)";
@@ -175,7 +180,11 @@ const Box = Class.extend({
         }
 
         // draw the box image
-        ctx.drawImage(this.boxImg, resolution.uiScaledNumber(25), resolution.uiScaledNumber(0));
+        ctx.drawImage(
+            this.boxImg,
+            resolution.uiScaledNumber(25),
+            resolution.uiScaledNumber(0) + yOffset
+        );
 
         if (isGameBox) {
             // draw the lock
@@ -200,7 +209,7 @@ const Box = Class.extend({
                 ctx.drawImage(
                     this.lockImg,
                     resolution.uiScaledNumber(23),
-                    resolution.uiScaledNumber(155)
+                    resolution.uiScaledNumber(155) + yOffset
                 );
                 ctx.scale(1 / 1.015, 1);
 
@@ -208,14 +217,14 @@ const Box = Class.extend({
                     ctx.drawImage(
                         this.reqImg,
                         labelX,
-                        resolution.uiScaledNumber(220),
+                        resolution.uiScaledNumber(220) + yOffset,
                         textWidth,
                         textHeight
                     );
                     ctx.drawImage(
                         this.starImg,
                         labelX + textWidth + starLeftMargin,
-                        resolution.uiScaledNumber(225)
+                        resolution.uiScaledNumber(225) + yOffset
                     );
                 }
 
