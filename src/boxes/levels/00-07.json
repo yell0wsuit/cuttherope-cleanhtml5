@@ -1,0 +1,191 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "width": 320,
+            "height": 480,
+            "gridSize": 32
+        },
+        {
+            "name": 1,
+            "$": 1,
+            "special": 2,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 2,
+            "x": 158,
+            "y": 83
+        },
+        {
+            "name": 52,
+            "x": 157,
+            "y": 272
+        },
+        {
+            "name": 100,
+            "x": 236,
+            "y": 348,
+            "length": 80,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 83,
+            "y": 348,
+            "length": 80,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 159,
+            "y": 145,
+            "length": 35,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 274,
+            "y": 145,
+            "length": 140,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 50,
+            "y": 144,
+            "length": 140,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 3,
+            "x": 158,
+            "y": 348,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 141,
+            "y": 442,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 183,
+            "y": 442,
+            "timeout": -1
+        },
+        {
+            "name": 54,
+            "x": 157,
+            "y": 347
+        },
+        {
+            "name": 4,
+            "x": 206,
+            "y": 250,
+            "locale": "en",
+            "text": "Stretched ropes get red",
+            "width": 100
+        },
+        {
+            "name": 13,
+            "x": 255,
+            "y": 237,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ru": [
+        {
+            "name": 13,
+            "x": 261,
+            "y": 221,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 214,
+            "y": 234,
+            "locale": "ru",
+            "text": "Натянутые веревки становятся красными",
+            "width": 100
+        }
+    ],
+    "fr": [
+        {
+            "name": 13,
+            "x": 258,
+            "y": 223,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 211,
+            "y": 236,
+            "locale": "fr",
+            "text": "Les cordes étirées deviennent rouges",
+            "width": 100
+        }
+    ],
+    "de": [
+        {
+            "name": 4,
+            "x": 181,
+            "y": 240,
+            "locale": "de",
+            "text": "Gespannte Seile werden rot",
+            "width": 140
+        },
+        {
+            "name": 13,
+            "x": 252,
+            "y": 233,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ]
+}

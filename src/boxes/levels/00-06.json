@@ -1,0 +1,149 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "width": 320,
+            "height": 480,
+            "gridSize": 32
+        },
+        {
+            "name": 1,
+            "$": 1,
+            "special": 2,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 2,
+            "x": 253,
+            "y": 178
+        },
+        {
+            "name": 100,
+            "x": 157,
+            "y": 121,
+            "length": 80,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 52,
+            "x": 154,
+            "y": 213
+        },
+        {
+            "name": 3,
+            "x": 159,
+            "y": 343,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 85,
+            "y": 231,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 251,
+            "y": 125,
+            "timeout": -1
+        },
+        {
+            "name": 54,
+            "x": 159,
+            "y": 343
+        },
+        {
+            "name": 56,
+            "x": 163,
+            "y": 404,
+            "group": 0,
+            "angle": -90
+        },
+        {
+            "name": 56,
+            "x": 70,
+            "y": 261,
+            "group": 0,
+            "angle": -60
+        },
+        {
+            "name": 4,
+            "x": 78,
+            "y": 32,
+            "locale": "en",
+            "text": "Candy maintains its speed when teleporting",
+            "width": 200
+        },
+        {
+            "name": 13,
+            "x": 59,
+            "y": 70,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "fr": [
+        {
+            "name": 4,
+            "x": 78,
+            "y": 23,
+            "locale": "fr",
+            "text": "Le bonbon garde sa vitesse lors de la téléportation",
+            "width": 200
+        },
+        {
+            "name": 13,
+            "x": 50,
+            "y": 73,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "de": [
+        {
+            "name": 4,
+            "x": 81,
+            "y": 28,
+            "locale": "de",
+            "text": "Die Süßigkeit behält ihre Geschwindigkeit",
+            "width": 200
+        },
+        {
+            "name": 13,
+            "x": 54,
+            "y": 72,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ru": [
+        {
+            "name": 4,
+            "x": 62,
+            "y": 31,
+            "locale": "ru",
+            "text": "Леденец сохраняет свою скорость при телепортации",
+            "width": 240
+        },
+        {
+            "name": 13,
+            "x": 43,
+            "y": 69,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ]
+}
