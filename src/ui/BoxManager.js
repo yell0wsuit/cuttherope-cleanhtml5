@@ -184,6 +184,10 @@ const BoxManager = new (function () {
                 case BoxType.TIME:
                     box = new TimeBox(i, images[i], requiredStars, isLocked, type);
                     break;
+                case BoxType.HOLIDAY:
+                    box = new Box(i, images[i], requiredStars, isLocked, type);
+                    box.yOffset = -26;
+                    break;
                 default:
                     box = new Box(i, images[i], requiredStars, isLocked, type);
                     break;
