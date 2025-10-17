@@ -8,7 +8,7 @@
         },
         {
             "name": 1,
-            "$": 1,
+            "ropePhysicsSpeed": 1,
             "special": 2,
             "twoParts": false
         }
