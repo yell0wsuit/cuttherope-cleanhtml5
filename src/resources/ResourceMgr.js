@@ -89,7 +89,7 @@ const ResourceMgr = {
                 resource.texture = new Texture2D(img);
                 this.setQuads(resource);
                 if (resource.info) {
-                    var font = new Font(),
+                    const font = new Font(),
                         info = resource.info;
                     font.initWithVariableSizeChars(info.chars, resource.texture, info.kerning);
                     font.setOffsets(info.charOffset, info.lineOffset, info.spaceWidth);

@@ -425,9 +425,9 @@ const BaseElement = Class.extend({
         this.currentTimelineIndex = index;
         this.currentTimeline = this.timelines[index];
         if (this.currentTimeline) {
-            var timelineResource = this.currentTimeline.resourceId;
+            const timelineResource = this.currentTimeline.resourceId;
             if (timelineResource !== undefined && timelineResource !== this.resId) {
-                var shouldRestoreCut = this.restoreCutTransparency;
+                const shouldRestoreCut = this.restoreCutTransparency;
                 this.initTextureWithId(timelineResource);
                 if (shouldRestoreCut) {
                     this.doRestoreCutTransparency();

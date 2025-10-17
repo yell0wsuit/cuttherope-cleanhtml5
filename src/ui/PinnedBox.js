@@ -84,7 +84,7 @@ function animateProperty(element, props, duration, easing = "linear", delay = 0)
             const endValues = {};
 
             // Get initial values
-            for (let prop in props) {
+            for (const prop in props) {
                 if (prop === "scale") {
                     startValues[prop] = parseFloat(
                         element.style.transform?.match(/scale\(([^)]+)\)/)?.[1] || "1"
@@ -103,7 +103,7 @@ function animateProperty(element, props, duration, easing = "linear", delay = 0)
                 const progress = Math.min((timestamp - start) / duration, 1);
                 const easedProgress = applyEasing(progress, easing);
 
-                for (let prop in props) {
+                for (const prop in props) {
                     const value =
                         startValues[prop] + (endValues[prop] - startValues[prop]) * easedProgress;
                     if (prop === "scale") {

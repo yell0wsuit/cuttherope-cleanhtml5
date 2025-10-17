@@ -1288,7 +1288,7 @@ const GameScene = BaseElement.extend({
 
         target.bb = Rectangle.copy(resolution.TARGET_BB);
         target.bbOverride = Rectangle.copy(resolution.TARGET_BB);
-        var originalPlayTimeline = target.playTimeline;
+        const originalPlayTimeline = target.playTimeline;
         target.playTimeline = function (index) {
             originalPlayTimeline.call(this, index);
             if (this.bbOverride) {
@@ -1327,8 +1327,8 @@ const GameScene = BaseElement.extend({
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS
         );
-        var frame;
-        var idle3Sequence = [];
+        let frame;
+        const idle3Sequence = [];
         for (
             frame = IMG_CHAR_ANIMATIONS_idle3_start;
             frame <= IMG_CHAR_ANIMATIONS_idle3_end;
@@ -3462,7 +3462,7 @@ const GameScene = BaseElement.extend({
         this.overOmNom = false;
 
         if (this.gravityButton) {
-            var childIndex = this.gravityButton.isOn() ? 1 : 0,
+            const childIndex = this.gravityButton.isOn() ? 1 : 0,
                 child = this.gravityButton.getChild(childIndex);
             if (child.isInTouchZone(x + this.camera.pos.x, y + this.camera.pos.y, true)) {
                 this.gravityTouchDown = touchIndex;
@@ -3719,7 +3719,7 @@ const GameScene = BaseElement.extend({
         }
 
         for (i = 0, len = this.spikes.length; i < len; i++) {
-            var spike = this.spikes[i];
+            const spike = this.spikes[i];
             if (spike.rotateButton && spike.touchIndex === touchIndex) {
                 spike.touchIndex = Constants.UNDEFINED;
                 if (spike.rotateButton.onTouchUp(x + this.camera.pos.x, y + this.camera.pos.y)) {
