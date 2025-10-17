@@ -112,7 +112,9 @@ const ResourceMgr = {
             imageHeight = t.imageHeight,
             info = resource.info || {},
             rects = info.rects,
-            offsets = info.offsets;
+            offsets = info.offsets,
+            sourceSizes = info.sourceSizes,
+            pivots = info.pivots;
 
         t.preCutSize = Vector.newUndefined();
 
@@ -141,6 +143,16 @@ const ResourceMgr = {
             }
 
             t.addRect(rect);
+
+            if (sourceSizes && sourceSizes[i]) {
+                const size = sourceSizes[i];
+                t.setSourceSize(i, size.w, size.h);
+            }
+
+            if (pivots && pivots[i]) {
+                const pivot = pivots[i];
+                t.setPivot(i, pivot.x, pivot.y);
+            }
         }
 
         if (offsets) {

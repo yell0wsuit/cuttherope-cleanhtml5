@@ -49,6 +49,8 @@ const ImageElement = BaseElement.extend({
             this.width = rect.w;
             this.height = rect.h;
         }
+
+        this._applyPivotForFrame(n);
     },
     setDrawFullImage: function () {
         this.quadToDraw = Constants.UNDEFINED;
@@ -60,6 +62,7 @@ const ImageElement = BaseElement.extend({
             this.restoreCutTransparency = true;
             this.width = this.texture.preCutSize.x;
             this.height = this.texture.preCutSize.y;
+            this._applyPivotForFrame(this.quadToDraw);
         }
     },
     draw: function () {
@@ -242,6 +245,31 @@ const ImageElement = BaseElement.extend({
         }
 
         return true;
+    },
+    _applyPivotForFrame: function (frameIndex) {
+        if (!this.texture || frameIndex === Constants.UNDEFINED) {
+            return;
+        }
+
+        const hasPivotSupport =
+            typeof this.texture.hasPivotData === "function" &&
+            typeof this.texture.getRotationCenterOffset === "function";
+
+        if (!hasPivotSupport || !this.texture.hasPivotData()) {
+            return;
+        }
+
+        const pivotOffset = this.texture.getRotationCenterOffset(
+            frameIndex,
+            this.restoreCutTransparency
+        );
+
+        if (!pivotOffset) {
+            return;
+        }
+
+        this.rotationCenterX = pivotOffset.x;
+        this.rotationCenterY = pivotOffset.y;
     },
     setElementPositionWithOffset: function (resId, index) {
         const texture = this.getTexture(resId),

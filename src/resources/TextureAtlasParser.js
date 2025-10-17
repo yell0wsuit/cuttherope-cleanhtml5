@@ -43,6 +43,7 @@ const orderFrameEntries = (entries, frameOrder) => {
 
 export const parseTexturePackerAtlas = (atlasData, options = {}) => {
     const { existingInfo = {}, frameOrder, offsetNormalization } = options;
+    const existingPivots = existingInfo.pivots;
 
     if (!atlasData || !atlasData.frames) {
         return existingInfo || {};
@@ -63,6 +64,9 @@ export const parseTexturePackerAtlas = (atlasData, options = {}) => {
     const offsets = [];
     const rectSizes = [];
     const frameKeys = [];
+    const sourceSizes = [];
+    const pivotPixels = [];
+    let hasPivotData = false;
     let hasNonZeroOffset = false;
     let preCutWidth = info.preCutWidth ?? 0;
     let preCutHeight = info.preCutHeight ?? 0;
@@ -96,9 +100,22 @@ export const parseTexturePackerAtlas = (atlasData, options = {}) => {
         }
 
         const sourceSize = frameInfo.sourceSize;
+        const sourceWidth = sourceSize?.w || frameRect.w;
+        const sourceHeight = sourceSize?.h || frameRect.h;
+        sourceSizes.push({ w: sourceWidth, h: sourceHeight });
         if (sourceSize) {
-            preCutWidth = Math.max(preCutWidth, sourceSize.w || 0);
-            preCutHeight = Math.max(preCutHeight, sourceSize.h || 0);
+            preCutWidth = Math.max(preCutWidth, sourceWidth);
+            preCutHeight = Math.max(preCutHeight, sourceHeight);
+        }
+
+        const pivot = frameInfo.pivot;
+        if (pivot && (typeof pivot.x === "number" || typeof pivot.y === "number")) {
+            const pivotX = (typeof pivot.x === "number" ? pivot.x : 0.5) * sourceWidth;
+            const pivotY = (typeof pivot.y === "number" ? pivot.y : 0.5) * sourceHeight;
+            pivotPixels.push({ x: pivotX, y: pivotY });
+            hasPivotData = true;
+        } else {
+            pivotPixels.push(null);
         }
 
         frameKeys.push(entry.name ?? String(index));
@@ -127,6 +144,33 @@ export const parseTexturePackerAtlas = (atlasData, options = {}) => {
         info.offsets = offsets.map((offset) => ({ x: offset.x, y: offset.y }));
     } else {
         delete info.offsets;
+    }
+
+    if (sourceSizes.length) {
+        info.sourceSizes = sourceSizes.map((size) => ({ w: size.w, h: size.h }));
+    } else {
+        delete info.sourceSizes;
+    }
+
+    if (hasPivotData || (existingPivots && existingPivots.length)) {
+        info.pivots = pivotPixels.map((pivot, index) => {
+            if (pivot) {
+                return { x: pivot.x, y: pivot.y };
+            }
+
+            if (existingPivots && existingPivots[index]) {
+                return existingPivots[index];
+            }
+
+            const size = sourceSizes[index];
+            if (size) {
+                return { x: size.w / 2, y: size.h / 2 };
+            }
+
+            return null;
+        });
+    } else {
+        delete info.pivots;
     }
 
     if (preCutWidth && preCutHeight) {
