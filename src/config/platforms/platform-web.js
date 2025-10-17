@@ -14,7 +14,7 @@ const locEntries = {
     },
 };
 
-var WebPlatform = {
+const WebPlatform = {
     /**
      * @const
      * @type {boolean}
