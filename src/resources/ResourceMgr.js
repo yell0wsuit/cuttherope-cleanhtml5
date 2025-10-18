@@ -125,8 +125,8 @@ const ResourceMgr = {
         // offsets with 1 extra pixel because offsets are pixel aligned
         // so they might need to go slightly beyond the dimensions
         // specified in the rect
-        t.adjustmentMaxX = info.adjustmentMaxX ? info.adjustmentMaxX : 0;
-        t.adjustmentMaxY = info.adjustmentMaxY ? info.adjustmentMaxY : 0;
+        t.adjustmentMaxX = info.adjustmentMaxX ?? 0;
+        t.adjustmentMaxY = info.adjustmentMaxY ?? 0;
 
         for (let i = 0, len = rects.length; i < len; i++) {
             // convert it to a Rectangle object

@@ -90,7 +90,7 @@ BoxDoors.renderDoors = function (showTape, percentOpen) {
 };
 
 BoxDoors.openDoors = function (showTape, callback, runInReverse) {
-    const r = runInReverse != null ? runInReverse : false;
+    const r = runInReverse ?? false;
 
     const begin = Date.now();
     const dur = 750;

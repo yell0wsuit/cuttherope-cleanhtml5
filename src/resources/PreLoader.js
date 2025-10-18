@@ -29,10 +29,8 @@ let menuImagesLoadComplete = false,
             );
         }
 
-        if (LoadAnimation) {
-            LoadAnimation.notifyLoaded();
-            LoadAnimation.hide();
-        }
+        LoadAnimation?.notifyLoaded();
+        LoadAnimation?.hide();
 
         if (completeCallback) {
             // queue the execution of the callback so the loader can
@@ -49,9 +47,7 @@ const updateProgress = function () {
     const progress = ((loadedImages + loadedSounds) / totalResources) * 100;
     PubSub.publish(PubSub.ChannelId.PreloaderProgress, { progress: progress });
 
-    if (LoadAnimation) {
-        LoadAnimation.notifyLoadProgress(progress);
-    }
+    LoadAnimation?.notifyLoadProgress(progress);
 };
 
 const MENU_TAG = "MENU";

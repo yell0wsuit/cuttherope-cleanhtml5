@@ -402,9 +402,7 @@ const Grab = CTRGameObject.extend({
             }
         }
 
-        if (this.wheel) {
-            this.wheelImage2.draw();
-        }
+        this.wheel && this.wheelImage2.draw();
 
         this.postDraw();
     },

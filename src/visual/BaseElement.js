@@ -263,9 +263,7 @@ const BaseElement = Class.extend({
             if (child.updateable) child.update(delta);
         }
 
-        if (this.currentTimeline) {
-            this.currentTimeline.update(delta);
-        }
+        this.currentTimeline?.update(delta);
     },
     /**
      * @param name {string}

@@ -123,9 +123,7 @@ const Star = CTRGameObject.extend({
         this._super(delta);
     },
     draw: function () {
-        if (this.timedAnim) {
-            this.timedAnim.draw();
-        }
+        this.timedAnim?.draw();
 
         this._super();
     },

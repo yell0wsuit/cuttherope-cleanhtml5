@@ -86,7 +86,7 @@ const Animation = ImageElement.extend({
 
         t.addKeyFrame(KeyFrame.makeAction(as, 0));
 
-        resourceId = resourceId !== undefined ? resourceId : this.resId;
+        resourceId = resourceId ?? this.resId;
 
         let si = start;
         for (let i = 1; i < count; i++) {
