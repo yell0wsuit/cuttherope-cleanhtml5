@@ -190,6 +190,7 @@ function initEventListeners() {
     const slowComputerBtn = document.getElementById("slowComputerBtn");
     const missingOkBtn = document.getElementById("missingOkBtn");
     const resetNoBtn = document.getElementById("resetNoBtn");
+    const holidayOkBtn = document.getElementById("holidayOkBtn");
 
     if (payImg) payImg.addEventListener("click", onPayClick);
     if (payBtn) payBtn.addEventListener("click", onPayClick);
@@ -197,6 +198,7 @@ function initEventListeners() {
     if (slowComputerBtn) slowComputerBtn.addEventListener("click", Dialogs.closePopup);
     if (missingOkBtn) missingOkBtn.addEventListener("click", Dialogs.closePopup);
     if (resetNoBtn) resetNoBtn.addEventListener("click", Dialogs.closePopup);
+    if (holidayOkBtn) holidayOkBtn.addEventListener("click", Dialogs.closePopup);
 }
 
 export default Dialogs;

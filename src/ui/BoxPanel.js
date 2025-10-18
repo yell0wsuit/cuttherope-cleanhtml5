@@ -13,6 +13,9 @@ import Lang from "@/resources/Lang";
 import Text from "@/visual/Text";
 import MenuStringId from "@/resources/MenuStringId";
 import Dialogs from "@/ui/Dialogs";
+import Alignment from "@/core/Alignment";
+import BoxType from "@/ui/BoxType";
+import { IS_XMAS } from "@/resources/ResData";
 // BoxPanel displays the set of visible boxes (which may not include all boxes)
 
 let boxes = [],
@@ -120,7 +123,12 @@ function boxClicked(visibleBoxIndex) {
     if (box.purchased === false) {
         PubSub.publish(PubSub.ChannelId.PurchaseBoxesPrompt);
     } else if (ScoreManager.isBoxLocked(editionBoxIndex)) {
-        showLockDialog(editionBoxIndex);
+        const isHolidayBox = box.type === BoxType.HOLIDAY;
+        if (isHolidayBox && !IS_XMAS) {
+            showHolidayUnavailableDialog();
+        } else {
+            showLockDialog(editionBoxIndex);
+        }
     } else {
         im.openLevelMenu(editionBoxIndex);
     }
@@ -158,6 +166,50 @@ function showLockDialog(boxIndex) {
 
     SoundMgr.playSound(ResourceId.SND_TAP);
     Dialogs.showPopup("missingStars");
+}
+
+function showHolidayUnavailableDialog() {
+    const titleImg = Text.drawBig({
+        text: Lang.menuText(MenuStringId.HOLIDAY_LEVELS_UNAVAILABLE_TITLE),
+        imgParentId: "holidayLine1",
+        alignment: Alignment.CENTER,
+        scaleToUI: true,
+    });
+    if (titleImg) {
+        titleImg.style.display = "block";
+        titleImg.style.margin = "0 auto";
+    }
+
+    const bodyImg = Text.drawSmall({
+        text: Lang.menuText(MenuStringId.HOLIDAY_LEVELS_UNAVAILABLE_TEXT),
+        imgParentId: "holidayLine2",
+        alignment: Alignment.CENTER,
+        width: resolution.uiScaledNumber(420),
+        scaleToUI: true,
+    });
+    if (bodyImg) {
+        bodyImg.style.display = "block";
+        bodyImg.style.margin = `${resolution.uiScaledNumber(16)}px auto 0`;
+    }
+    Text.drawBig({
+        text: Lang.menuText(MenuStringId.OK),
+        imgParentId: "holidayOkBtn",
+        scaleToUI: true,
+    });
+    const okBtn = document.getElementById("holidayOkBtn");
+    if (okBtn) {
+        okBtn.style.display = "block";
+        okBtn.style.margin = `${resolution.uiScaledNumber(24)}px auto 0`;
+        okBtn.style.textAlign = "center";
+        const okBtnImg = okBtn.querySelector("img");
+        if (okBtnImg) {
+            okBtnImg.style.display = "block";
+            okBtnImg.style.margin = "0 auto";
+        }
+    }
+
+    SoundMgr.playSound(ResourceId.SND_TAP);
+    Dialogs.showPopup("holidayUnavailable");
 }
 
 function bounceCurrentBox() {

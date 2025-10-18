@@ -11,6 +11,7 @@ import ScoreManager from "@/ui/ScoreManager";
 import MenuStringId from "@/resources/MenuStringId";
 import edition from "@/edition";
 import settings from "@/game/CTRSettings";
+import { IS_XMAS } from "@/resources/ResData";
 // cache upgrade UI elements
 let upgradeButton;
 
@@ -158,6 +159,7 @@ const Box = Class.extend({
     render: function (ctx, omnomoffset) {
         const isGameBox = this.isGameBox();
         const yOffset = resolution.uiScaledNumber(this.yOffset || 0);
+        const shouldHideLockDetails = this.type === BoxType.HOLIDAY && !IS_XMAS;
 
         if (isGameBox) {
             // draw the black area
@@ -188,11 +190,11 @@ const Box = Class.extend({
 
         if (isGameBox) {
             // draw the lock
-            if (this.islocked) {
-                // Get dimensions - prefer naturalWidth/Height, fallback to width/height
-                const textWidth = this.reqImg.naturalWidth || this.reqImg.width || 0;
-                const textHeight = this.reqImg.naturalHeight || this.reqImg.height || 0;
-                const starWidth = this.starImg.naturalWidth || this.starImg.width || 0;
+        if (this.islocked) {
+            // Get dimensions - prefer naturalWidth/Height, fallback to width/height
+            const textWidth = this.reqImg.naturalWidth || this.reqImg.width || 0;
+            const textHeight = this.reqImg.naturalHeight || this.reqImg.height || 0;
+            const starWidth = this.starImg.naturalWidth || this.starImg.width || 0;
 
                 const starLeftMargin = resolution.uiScaledNumber(-6);
                 // center the text and star label
@@ -213,7 +215,7 @@ const Box = Class.extend({
                 );
                 ctx.scale(1 / 1.015, 1);
 
-                if (this.purchased) {
+                if (this.purchased && !shouldHideLockDetails) {
                     ctx.drawImage(
                         this.reqImg,
                         labelX,
