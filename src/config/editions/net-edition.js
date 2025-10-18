@@ -15,7 +15,6 @@ const normalizedBoxMetadata = boxMetadata.map((box) => {
         levelOverlayId: box.levelOverlayId == null ? null : ResourceId[box.levelOverlayId],
     };
 
-    // 🎩 Paddington Theme Override (January only)
     if (IS_PADDINGTON && box.id === "holidaygiftbox") {
         modifiedBox = {
             ...modifiedBox,
