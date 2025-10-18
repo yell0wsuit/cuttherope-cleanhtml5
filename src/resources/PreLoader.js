@@ -141,8 +141,7 @@ const loadImages = function () {
         }
 
         menuBaseUrl = menuBaseUrl || platform.uiImageBaseUrl;
-        for (let i = 0, len = imageFilenames.length; i < len; i++) {
-            const filename = imageFilenames[i];
+        for (const filename of imageFilenames) {
             if (!filename) {
                 continue;
             }
@@ -176,8 +175,7 @@ const loadImages = function () {
             return;
         }
 
-        for (let i = 0, len = ids.length; i < len; i++) {
-            const imageId = ids[i];
+        for (const imageId of ids) {
             const resource = resData[imageId];
             if (!resource) {
                 continue;

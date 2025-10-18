@@ -232,10 +232,7 @@ const BaseElement = Class.extend({
         }
 
         // draw children
-        const children = this.children,
-            numChildren = children.length;
-        for (let i = 0; i < numChildren; i++) {
-            const child = children[i];
+        for (const child of this.children) {
             if (child.visible) child.draw();
         }
 
@@ -256,10 +253,7 @@ const BaseElement = Class.extend({
      * @param delta {number}
      */
     update: function (delta) {
-        const children = this.children,
-            numChildren = children.length;
-        for (let i = 0; i < numChildren; i++) {
-            const child = children[i];
+        for (const child of this.children) {
             if (child.updateable) child.update(delta);
         }
 
@@ -270,10 +264,7 @@ const BaseElement = Class.extend({
      * @return {BaseElement}
      */
     getChildWithName: function (name) {
-        const children = this.children,
-            numChildren = children.length;
-        for (let i = 0; i < numChildren; i++) {
-            const child = children[i];
+        for (const child of this.children) {
             if (child.name === name) return child;
 
             const descendant = child.getChildWithName(name);
@@ -289,11 +280,8 @@ const BaseElement = Class.extend({
             minY = this.drawY,
             maxX = this.drawX + this.width,
             maxY = this.drawY + this.height;
-        const children = this.children,
-            numChildren = children.length;
 
-        for (let i = 0; i < numChildren; i++) {
-            const child = children[i];
+        for (const child of this.children) {
             child.calculateTopLeft();
 
             if (child.drawX < minX) minX = child.drawX;
@@ -550,18 +538,12 @@ const BaseElement = Class.extend({
         return this.visible && this.touchable && this.updateable;
     },
     show: function () {
-        const children = this.children,
-            numChildren = children.length;
-        for (let i = 0; i < numChildren; i++) {
-            const child = children[i];
+        for (const child of this.children) {
             if (child.visible) child.show();
         }
     },
     hide: function () {
-        const children = this.children,
-            numChildren = children.length;
-        for (let i = 0; i < numChildren; i++) {
-            const child = children[i];
+        for (const child of this.children) {
             if (child.visible) child.hide();
         }
     },

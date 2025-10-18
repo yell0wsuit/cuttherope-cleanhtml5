@@ -60,9 +60,9 @@ const startIfReady = function () {
     currentCompleted = 0;
 
     const notifyProgress = () => {
-        for (let i = 0, len = progressListeners.length; i < len; i++) {
+        for (const listener of progressListeners) {
             try {
-                progressListeners[i](currentCompleted, currentTotal);
+                listener(currentCompleted, currentTotal);
             } catch (error) {
                 window.console?.error?.("Sound progress listener failed", error);
             }
@@ -70,9 +70,9 @@ const startIfReady = function () {
     };
 
     const notifyComplete = () => {
-        for (let i = 0, len = completeListeners.length; i < len; i++) {
+        for (const listener of completeListeners) {
             try {
-                completeListeners[i]();
+                listener();
             } catch (error) {
                 window.console?.error?.("Sound completion listener failed", error);
             }
