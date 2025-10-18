@@ -7,15 +7,23 @@ class Texture2D {
         this.offsets = [];
         this.preCutSize = Vector.newUndefined();
 
-        // Get dimensions, waiting for image to load if necessary
-        this.imageWidth = image.naturalWidth || image.width || 0;
-        this.imageHeight = image.naturalHeight || image.height || 0;
+        // Handle both ImageBitmap and HTMLImageElement
+        // ImageBitmap has .width/.height directly
+        // HTMLImageElement has .naturalWidth/.naturalHeight (and .width/.height as fallback)
+        if (image instanceof ImageBitmap) {
+            this.imageWidth = image.width;
+            this.imageHeight = image.height;
+        } else {
+            // HTMLImageElement
+            this.imageWidth = image.naturalWidth || image.width || 0;
+            this.imageHeight = image.naturalHeight || image.height || 0;
 
-        // If dimensions aren't available yet, try getting computed values
-        if (!this.imageWidth || !this.imageHeight) {
-            const computed = window.getComputedStyle(image);
-            this.imageWidth = this.imageWidth || parseInt(computed.width, 10) || 0;
-            this.imageHeight = this.imageHeight || parseInt(computed.height, 10) || 0;
+            // If dimensions aren't available yet, try getting computed values
+            if (!this.imageWidth || !this.imageHeight) {
+                const computed = window.getComputedStyle(image);
+                this.imageWidth = this.imageWidth || parseInt(computed.width, 10) || 0;
+                this.imageHeight = this.imageHeight || parseInt(computed.height, 10) || 0;
+            }
         }
 
         this._invWidth = 1 / this.imageWidth;

@@ -55,6 +55,29 @@ const FONT_TAG = "FONT";
 const GAME_TAG = "GAME";
 
 const loadImageElement = (url) => {
+    // Use ImageBitmap for better performance if available
+    if (typeof createImageBitmap === "function") {
+        return loadImageElementFallback(url).then((result) => {
+            if (!result.success) {
+                return result;
+            }
+
+            // Try to convert HTMLImageElement to ImageBitmap for better performance
+            // This avoids CORS issues while still getting ImageBitmap benefits
+            return createImageBitmap(result.img)
+                .then((bitmap) => ({ success: true, img: bitmap }))
+                .catch(() => {
+                    // If ImageBitmap conversion fails, keep using the HTMLImageElement
+                    return result;
+                });
+        });
+    }
+
+    // Fallback for browsers that don't support ImageBitmap
+    return loadImageElementFallback(url);
+};
+
+const loadImageElementFallback = (url) => {
     return new Promise((resolve) => {
         const img = new Image();
 
