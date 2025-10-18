@@ -306,9 +306,14 @@ const TileMap = BaseElement.extend({
     },
     draw: function () {
         this.preDraw();
-        for (let i = 0, len = this.drawers.length; i < len; i++) {
-            this.drawers[i].draw();
+
+        // Only redraw if tiles have changed (optimization for static scenes)
+        if (this.drawers.length > 0 && this.drawers[0].numberOfQuadsToDraw > 0) {
+            for (const drawer of this.drawers) {
+                drawer.draw();
+            }
         }
+
         this.postDraw();
     },
 });
