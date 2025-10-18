@@ -69,22 +69,22 @@ export const parseTexturePackerAtlas = (atlasData, options = {}) => {
 
     entries.forEach((entry, index) => {
         const frameInfo = entry.data || {};
-        const frameRect = frameInfo.frame;
+        const { frame: frameRect, rotated, spriteSourceSize, sourceSize } = frameInfo;
 
         if (!frameRect) {
             return;
         }
 
-        if (frameInfo.rotated) {
+        if (rotated) {
             globalThis.console?.warn?.(
                 `TexturePacker frame "${entry.name}" is rotated, which is not currently supported.`
             );
         }
 
-        rects.push(new Rectangle(frameRect.x, frameRect.y, frameRect.w, frameRect.h));
-        rectSizes.push({ w: frameRect.w, h: frameRect.h });
+        const { x, y, w, h } = frameRect;
+        rects.push(new Rectangle(x, y, w, h));
+        rectSizes.push({ w, h });
 
-        const spriteSourceSize = frameInfo.spriteSourceSize;
         if (spriteSourceSize) {
             const offset = new Vector(spriteSourceSize.x || 0, spriteSourceSize.y || 0);
             offsets.push(offset);
@@ -94,8 +94,6 @@ export const parseTexturePackerAtlas = (atlasData, options = {}) => {
         } else {
             offsets.push(new Vector(0, 0));
         }
-
-        const sourceSize = frameInfo.sourceSize;
         if (sourceSize) {
             preCutWidth = Math.max(preCutWidth, sourceSize.w || 0);
             preCutHeight = Math.max(preCutHeight, sourceSize.h || 0);

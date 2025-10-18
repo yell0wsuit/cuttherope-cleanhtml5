@@ -140,19 +140,19 @@ const BaseElement = Class.extend({
     preDraw: function () {
         this.calculateTopLeft();
 
-        const changeScale =
-                this.scaleX !== 0 && this.scaleY !== 0 && (this.scaleX !== 1 || this.scaleY !== 1),
-            changeRotation = this.rotation !== 0,
-            changeTranslate = this.translateX !== 0 || this.translateY !== 0,
-            ctx = Canvas.context;
+        const { scaleX, scaleY, rotation, translateX, translateY, drawX, drawY, width, height, rotationCenterX, rotationCenterY } = this;
+        const changeScale = scaleX !== 0 && scaleY !== 0 && (scaleX !== 1 || scaleY !== 1);
+        const changeRotation = rotation !== 0;
+        const changeTranslate = translateX !== 0 || translateY !== 0;
+        const ctx = Canvas.context;
 
         // save existing canvas state first and then reset
         ctx.save();
 
         // apply transformations
         if (changeScale || changeRotation) {
-            const rotationOffsetX = ~~(this.drawX + this.width / 2 + this.rotationCenterX),
-                rotationOffsetY = ~~(this.drawY + this.height / 2 + this.rotationCenterY),
+            const rotationOffsetX = ~~(drawX + width / 2 + rotationCenterX),
+                rotationOffsetY = ~~(drawY + height / 2 + rotationCenterY),
                 translatedRotation = rotationOffsetX !== 0 || rotationOffsetY !== 0;
 
             // move to the right position in the canvas before changes
@@ -161,10 +161,10 @@ const BaseElement = Class.extend({
             }
 
             if (changeRotation) {
-                ctx.rotate(Radians.fromDegrees(this.rotation));
+                ctx.rotate(Radians.fromDegrees(rotation));
             }
             if (changeScale) {
-                ctx.scale(this.scaleX, this.scaleY);
+                ctx.scale(scaleX, scaleY);
             }
 
             // move back to previous position
@@ -174,7 +174,7 @@ const BaseElement = Class.extend({
         }
 
         if (changeTranslate) {
-            ctx.translate(this.translateX, this.translateY);
+            ctx.translate(translateX, translateY);
         }
 
         // change the alpha

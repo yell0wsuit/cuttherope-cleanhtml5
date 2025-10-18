@@ -636,8 +636,7 @@ const GameScene = BaseElement.extend({
         }
     },
     startCamera: function () {
-        const SCREEN_WIDTH = resolution.CANVAS_WIDTH,
-            SCREEN_HEIGHT = resolution.CANVAS_HEIGHT;
+        const { CANVAS_WIDTH: SCREEN_WIDTH, CANVAS_HEIGHT: SCREEN_HEIGHT } = resolution;
 
         if (this.mapWidth > SCREEN_WIDTH || this.mapHeight > SCREEN_HEIGHT) {
             this.ignoreTouches = true;
@@ -840,21 +839,17 @@ const GameScene = BaseElement.extend({
         this.ropePhysicsSpeed *= resolution.PHYSICS_SPEED_MULTIPLIER;
     },
     loadGrab: function (item) {
-        const gx = item.x * this.PM + this.PMX,
-            gy = item.y * this.PM + this.PMY,
-            l = item.length * this.PM,
-            wheel = item.wheel,
-            kickable = item.kickable,
-            invisible = item.invisible,
-            ml = item.moveLength * this.PM || -1,
-            v = item.moveVertical,
-            o = item.moveOffset * this.PM || 0,
-            spider = item.spider,
-            left = item.part === "L",
-            hidePath = item.hidePath,
-            gun = item.gun,
+        const { x, y, length, wheel, kickable, invisible, moveLength, moveVertical, moveOffset, spider, part, hidePath, gun, radius } = item;
+        const { PM, PMX, PMY } = this;
+        const gx = x * PM + PMX,
+            gy = y * PM + PMY,
+            l = length * PM,
+            ml = moveLength * PM || -1,
+            v = moveVertical,
+            o = moveOffset * PM || 0,
+            left = part === "L",
             g = new Grab();
-        let r = item.radius;
+        let r = radius;
 
         g.x = gx;
         g.y = gy;

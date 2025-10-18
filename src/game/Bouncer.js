@@ -59,9 +59,8 @@ const Bouncer = CTRGameObject.extend({
         t.addKeyFrame(KeyFrame.makeSingleAction(this, ActionType.SET_DRAWQUAD, 0, 0, delay));
     },
     updateRotation: function () {
-        const x = this.x;
-        const y = this.y;
-        const width = this.width / 2;
+        const { x, y, width: fullWidth } = this;
+        const width = fullWidth / 2;
 
         this.t1.x = x - width;
         this.t2.x = x + width;
