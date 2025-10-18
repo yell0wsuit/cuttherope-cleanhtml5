@@ -1,5 +1,6 @@
 import TileMap from "@/visual/TileMap";
 import Vector from "@/core/Vector";
+
 const BackgroundTileMap = TileMap.extend({
     init: function (rows, columns) {
         this._super(rows, columns);
