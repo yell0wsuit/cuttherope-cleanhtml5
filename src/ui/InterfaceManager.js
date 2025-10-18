@@ -53,37 +53,52 @@ const isMsieBrowser = /MSIE|Trident/.test(window.navigator.userAgent);
 
 const menuMusicId = edition.menuMusicId || ResourceId.SND_MENU_MUSIC;
 
-const InterfaceManager = new (function () {
+class InterfaceManagerClass {
+    constructor() {
+        // Public properties
+        this.useHDVersion = resolution.isHD;
+        this.isInLevelSelectMode = false;
+        this.isInMenuSelectMode = false;
+        this.isInAdvanceBoxMode = false;
+        this.isBoxOpen = false;
+        this.isTransitionActive = false;
+        this.gameEnabled = true;
+
+        // Private properties
+        this._MIN_FPS = QueryStrings.minFps || 30;
+        this._signedIn = false;
+        this._bounceTimeOut = null;
+        this._transitionTimeout = null;
+        this._resultTopLines = [];
+        this._resultBottomLines = [];
+        this._currentResultLine = 0;
+        this._resultTimeShiftIndex = 0;
+        this._isDevLinkVisible = true;
+
+        // Subscribe to sign in/out events
+        PubSub.subscribe(PubSub.ChannelId.SignIn, () => {
+            this._signedIn = true;
+            this._updateSignInControls();
+        });
+        PubSub.subscribe(PubSub.ChannelId.SignOut, () => {
+            this._signedIn = false;
+            this._updateSignInControls();
+        });
+    }
+
     // ------------------------------------------------------------------------
-    // Locals Variables
+    // Helper Methods (private)
     // ------------------------------------------------------------------------
 
-    const _this = this;
-    this.useHDVersion = resolution.isHD;
-
-    this.isInLevelSelectMode = false;
-    this.isInMenuSelectMode = false;
-    this.isInAdvanceBoxMode = false;
-    this.isBoxOpen = false;
-    this.isTransitionActive = false;
-
-    // warn the user if the frame rate is low after the first level
-    const MIN_FPS = QueryStrings.minFps || 30;
-
-    // sets scaled menu text for the image specified by the selector query
-    const setImageBigText = function (selector, menuStringId) {
+    _setImageBigText(selector, menuStringId) {
         return Text.drawBig({
             text: Lang.menuText(menuStringId),
             imgSel: selector,
             scaleToUI: true,
         });
-    };
+    }
 
-    // ------------------------------------------------------------------------
-    // Initialize Panels (called once for each panel)
-    // ------------------------------------------------------------------------
-
-    const updateMiniSoundButton = function (doToggle, buttonId, msgId) {
+    _updateMiniSoundButton(doToggle, buttonId, msgId) {
         let className;
         let isSoundOn = SoundMgr.soundEnabled;
         let isMusicOn = SoundMgr.musicEnabled;
@@ -136,10 +151,10 @@ const InterfaceManager = new (function () {
                 .replace("{1}", Lang.menuText(soundId).toLowerCase());
         }
 
-        showMiniOptionMessage(msgId, text);
-    };
+        this._showMiniOptionMessage(msgId, text);
+    }
 
-    const showMiniOptionMessage = function (msgId, messageText, delayDuration) {
+    _showMiniOptionMessage(msgId, messageText, delayDuration) {
         if (msgId != undefined) {
             const showDelay = delayDuration || 500;
             const msg = document.getElementById(msgId);
@@ -170,38 +185,28 @@ const InterfaceManager = new (function () {
                     return fadeOut(msg, 750);
                 });
         }
-    };
+    }
 
-    // only enable achievements and leaderboard for signed-in users
-    let signedIn = false;
-    const updateSignInControls = function () {
-        toggleClass("#achievementsBtn", "disabled", !signedIn);
-        toggleClass("#leaderboardsBtn", "disabled", !signedIn);
-    };
-    PubSub.subscribe(PubSub.ChannelId.SignIn, function () {
-        signedIn = true;
-        updateSignInControls();
-    });
-    PubSub.subscribe(PubSub.ChannelId.SignOut, function () {
-        signedIn = false;
-        updateSignInControls();
-    });
+    _updateSignInControls() {
+        toggleClass("#achievementsBtn", "disabled", !this._signedIn);
+        toggleClass("#leaderboardsBtn", "disabled", !this._signedIn);
+    }
 
-    const onInitializePanel = function (panelId) {
+    _onInitializePanel(panelId) {
         // initialize the MENU panel
         if (panelId == PanelId.MENU) {
-            on("#playBtn", "click", function () {
+            on("#playBtn", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
 
                 if (analytics.onPlayClicked) {
                     analytics.onPlayClicked();
                 }
 
-                VideoManager.playIntroVideo(function () {
+                VideoManager.playIntroVideo(() => {
                     const firstLevelStars = ScoreManager.getStars(0, 0) || 0;
                     if (firstLevelStars === 0) {
                         // start the first level immediately
-                        _this.noMenuStartLevel(0, 0);
+                        this.noMenuStartLevel(0, 0);
                     } else {
                         const panelId = edition.disableBoxMenu ? PanelId.LEVELS : PanelId.BOXES;
                         PanelManager.showPanel(panelId, true);
@@ -209,7 +214,7 @@ const InterfaceManager = new (function () {
                 });
             });
 
-            on("#optionsBtn", "click", function () {
+            on("#optionsBtn", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 // see if there is a custom settings panel we should trigger
                 if (platform.customOptions) {
@@ -219,21 +224,21 @@ const InterfaceManager = new (function () {
                 }
             });
 
-            on("#achievementsBtn", "click", function () {
-                if (signedIn) {
+            on("#achievementsBtn", "click", () => {
+                if (this._signedIn) {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.ACHIEVEMENTS);
                 }
             });
-            toggleClass("#achievementsBtn", "disabled", !signedIn);
+            toggleClass("#achievementsBtn", "disabled", !this._signedIn);
 
-            on("#leaderboardsBtn", "click", function () {
-                if (signedIn) {
+            on("#leaderboardsBtn", "click", () => {
+                if (this._signedIn) {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.LEADERBOARDS);
                 }
             });
-            toggleClass("#leaderboardsBtn", "disabled", !signedIn);
+            toggleClass("#leaderboardsBtn", "disabled", !this._signedIn);
 
             // reset popup buttons
             let resetTimer = null;
@@ -262,20 +267,20 @@ const InterfaceManager = new (function () {
 
             // mini options panel
 
-            updateMiniSoundButton(false, "optionSound");
-            on("#optionSound", "click", function () {
-                updateMiniSoundButton(true, "optionSound", "optionMsg");
+            this._updateMiniSoundButton(false, "optionSound");
+            on("#optionSound", "click", () => {
+                this._updateMiniSoundButton(true, "optionSound", "optionMsg");
             });
 
             let hdtoggle;
-            if (_this.useHDVersion) {
+            if (this.useHDVersion) {
                 addClass("#optionHd", "activeResolution");
                 addClass("#optionSd", "inActiveResolution");
                 addClass("#optionSd", "ctrPointer");
                 hover(
                     "#optionSd",
-                    function () {
-                        showMiniOptionMessage(
+                    () => {
+                        this._showMiniOptionMessage(
                             "optionMsg",
                             Lang.menuText(MenuStringId.RELOAD_SD),
                             4000
@@ -296,8 +301,8 @@ const InterfaceManager = new (function () {
                 addClass("#optionHd", "ctrPointer");
                 hover(
                     "#optionHd",
-                    function () {
-                        showMiniOptionMessage(
+                    () => {
+                        this._showMiniOptionMessage(
                             "optionMsg",
                             Lang.menuText(MenuStringId.RELOAD_HD),
                             4000
@@ -314,17 +319,17 @@ const InterfaceManager = new (function () {
                 hdtoggle = "optionHd";
             }
 
-            on("#" + hdtoggle, "click", function () {
-                settings.setIsHD(!_this.useHDVersion);
+            on("#" + hdtoggle, "click", () => {
+                settings.setIsHD(!this.useHDVersion);
                 window.location.reload(); // refresh the page
             });
 
             // handle language changes
-            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
-                setImageBigText("#playBtn img", MenuStringId.PLAY);
-                setImageBigText("#optionsBtn img", MenuStringId.OPTIONS);
-                setImageBigText("#resetYesBtn img", MenuStringId.YES);
-                setImageBigText("#resetNoBtn img", MenuStringId.NO);
+            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
+                this._setImageBigText("#playBtn img", MenuStringId.PLAY);
+                this._setImageBigText("#optionsBtn img", MenuStringId.OPTIONS);
+                this._setImageBigText("#resetYesBtn img", MenuStringId.YES);
+                this._setImageBigText("#resetNoBtn img", MenuStringId.NO);
 
                 Text.drawBig({
                     text: Lang.menuText(MenuStringId.LEADERBOARDS),
@@ -380,27 +385,27 @@ const InterfaceManager = new (function () {
             const panel = PanelManager.getPanelById(panelId);
             panel.init(InterfaceManager);
         } else if (panelId == PanelId.GAME) {
-            on("#gameRestartBtn", "click", function () {
-                if (_this.isTransitionActive) return;
+            on("#gameRestartBtn", "click", () => {
+                if (this.isTransitionActive) return;
                 SoundMgr.playSound(ResourceId.SND_TAP);
-                openLevel(BoxManager.currentLevelIndex, true); // is a restart
+                this._openLevel(BoxManager.currentLevelIndex, true); // is a restart
             });
 
-            on("#gameMenuBtn", "click", function () {
-                if (_this.isTransitionActive) return;
+            on("#gameMenuBtn", "click", () => {
+                if (this.isTransitionActive) return;
                 SoundMgr.playSound(ResourceId.SND_TAP);
-                openLevelMenu();
+                this._openLevelMenu();
             });
         } else if (panelId == PanelId.GAMEMENU) {
-            on("#continueBtn", "click", function () {
+            on("#continueBtn", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
-                closeLevelMenu();
+                this._closeLevelMenu();
                 RootController.resumeLevel();
             });
 
-            on("#skipBtn", "click", function () {
+            on("#skipBtn", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
-                closeLevelMenu();
+                this._closeLevelMenu();
                 //unlock next level
                 if (BoxManager.isNextLevelPlayable()) {
                     ScoreManager.setStars(
@@ -408,78 +413,78 @@ const InterfaceManager = new (function () {
                         BoxManager.currentLevelIndex,
                         0
                     );
-                    openLevel(BoxManager.currentLevelIndex + 1, false, true);
+                    this._openLevel(BoxManager.currentLevelIndex + 1, false, true);
                 } else {
                     hide("#gameBtnTray");
-                    completeBox();
+                    this._completeBox();
                 }
             });
 
-            on("#selectBtn", "click", function () {
+            on("#selectBtn", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
-                closeLevelMenu();
-                closeLevel();
-                _this.isInLevelSelectMode = true;
-                _this.isInMenuSelectMode = false;
-                _this.closeBox();
+                this._closeLevelMenu();
+                this._closeLevel();
+                this.isInLevelSelectMode = true;
+                this.isInMenuSelectMode = false;
+                this.closeBox();
             });
 
-            on("#menuBtn", "click", function () {
+            on("#menuBtn", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
-                closeLevelMenu();
-                closeLevel();
-                _this.isInLevelSelectMode = true;
-                _this.isInMenuSelectMode = true;
-                _this.closeBox();
+                this._closeLevelMenu();
+                this._closeLevel();
+                this.isInLevelSelectMode = true;
+                this.isInMenuSelectMode = true;
+                this.closeBox();
             });
 
             // mini options panel
-            updateMiniSoundButton(false, "gameSound");
-            on("#gameSound", "click", function () {
-                updateMiniSoundButton(true, "gameSound", "gameMsg");
+            this._updateMiniSoundButton(false, "gameSound");
+            on("#gameSound", "click", () => {
+                this._updateMiniSoundButton(true, "gameSound", "gameMsg");
             });
 
             // language changes
-            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
-                setImageBigText("#continueBtn img", MenuStringId.CONTINUE);
-                setImageBigText("#skipBtn img", MenuStringId.SKIP_LEVEL);
-                setImageBigText("#selectBtn img", MenuStringId.LEVEL_SELECT);
-                setImageBigText("#menuBtn img", MenuStringId.MAIN_MENU);
+            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
+                this._setImageBigText("#continueBtn img", MenuStringId.CONTINUE);
+                this._setImageBigText("#skipBtn img", MenuStringId.SKIP_LEVEL);
+                this._setImageBigText("#selectBtn img", MenuStringId.LEVEL_SELECT);
+                this._setImageBigText("#menuBtn img", MenuStringId.MAIN_MENU);
             });
         } else if (panelId == PanelId.LEVELCOMPLETE) {
-            on("#nextBtn", "click", function () {
-                if (_this.isTransitionActive) return;
-                notifyBeginTransition(1000, "next level");
+            on("#nextBtn", "click", () => {
+                if (this.isTransitionActive) return;
+                this._notifyBeginTransition(1000, "next level");
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 //is there another level in this box?
                 if (BoxManager.isNextLevelPlayable()) {
-                    openLevel(BoxManager.currentLevelIndex + 1);
+                    this._openLevel(BoxManager.currentLevelIndex + 1);
                 } else {
-                    completeBox();
+                    this._completeBox();
                 }
             });
 
-            on("#replayBtn", "click", function () {
-                if (_this.isTransitionActive) return;
-                notifyBeginTransition(1000, "replay");
+            on("#replayBtn", "click", () => {
+                if (this.isTransitionActive) return;
+                this._notifyBeginTransition(1000, "replay");
                 SoundMgr.playSound(ResourceId.SND_TAP);
-                openLevel(BoxManager.currentLevelIndex);
+                this._openLevel(BoxManager.currentLevelIndex);
             });
 
-            on("#lrMenuBtn", "click", function () {
-                if (_this.isTransitionActive) return;
-                notifyBeginTransition(1000, "level menu");
+            on("#lrMenuBtn", "click", () => {
+                if (this.isTransitionActive) return;
+                this._notifyBeginTransition(1000, "level menu");
                 SoundMgr.playSound(ResourceId.SND_TAP);
-                _this.isInLevelSelectMode = true;
-                _this.isInMenuSelectMode = false;
-                _this.tapeBox();
+                this.isInLevelSelectMode = true;
+                this.isInMenuSelectMode = false;
+                this.tapeBox();
             });
 
             // handle language changes
-            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
-                setImageBigText("#nextBtn img", MenuStringId.NEXT);
-                setImageBigText("#replayBtn img", MenuStringId.REPLAY);
-                setImageBigText("#lrMenuBtn img", MenuStringId.MENU);
+            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
+                this._setImageBigText("#nextBtn img", MenuStringId.NEXT);
+                this._setImageBigText("#replayBtn img", MenuStringId.REPLAY);
+                this._setImageBigText("#lrMenuBtn img", MenuStringId.MENU);
                 Text.drawSmall({
                     text: Lang.menuText(MenuStringId.FINAL_SCORE),
                     imgId: "resultTickerMessage",
@@ -511,26 +516,26 @@ const InterfaceManager = new (function () {
             // sound effects
             const updateSoundOption = platform.updateSoundOption,
                 soundBtn = document.getElementById("soundBtn"),
-                onSoundButtonChange = function () {
+                onSoundButtonChange = () => {
                     const isSoundOn = !settings.getSoundEnabled();
                     SoundMgr.setSoundEnabled(isSoundOn);
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     updateSoundOption(soundBtn, isSoundOn);
-                    updateMiniSoundButton(false, "gameSound");
-                    updateMiniSoundButton(false, "optionSound");
+                    this._updateMiniSoundButton(false, "gameSound");
+                    this._updateMiniSoundButton(false, "optionSound");
                 };
             platform.setSoundButtonChange(soundBtn, onSoundButtonChange);
 
             // game music
             const updateMusicOption = platform.updateMusicOption,
                 musicBtn = document.getElementById("musicBtn"),
-                onMusicButtonChange = function () {
+                onMusicButtonChange = () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     const isMusicOn = !settings.getMusicEnabled();
                     SoundMgr.setMusicEnabled(isMusicOn);
                     updateMusicOption(musicBtn, isMusicOn);
-                    updateMiniSoundButton(false, "gameSound");
-                    updateMiniSoundButton(false, "optionSound");
+                    this._updateMiniSoundButton(false, "gameSound");
+                    this._updateMiniSoundButton(false, "optionSound");
                 };
             platform.setMusicButtonChange(musicBtn, onMusicButtonChange);
 
@@ -606,8 +611,8 @@ const InterfaceManager = new (function () {
             platform.toggleLangUI(!edition.disableLanguageOption);
 
             // update options menu when the language changes
-            const refreshOptionsButtons = function () {
-                setImageBigText("#optionsTitle img", MenuStringId.OPTIONS);
+            const refreshOptionsButtons = () => {
+                this._setImageBigText("#optionsTitle img", MenuStringId.OPTIONS);
                 updateSoundOption(soundBtn, settings.getSoundEnabled());
                 updateMusicOption(musicBtn, settings.getMusicEnabled());
                 updateLangOption();
@@ -645,14 +650,13 @@ const InterfaceManager = new (function () {
             });
         }
         //else if (panelId == PanelId.CREDITS) { }
-    };
+    }
 
     // ------------------------------------------------------------------------
     // Show Panels (called for each panel when it's shown)
     // ------------------------------------------------------------------------
 
-    let bounceTimeOut = null;
-    const onShowPanel = function (panelId) {
+    _onShowPanel(panelId) {
         const panel = PanelManager.getPanelById(panelId);
 
         if (panelId == PanelId.MENU || panelId == PanelId.BOXES || panelId == PanelId.OPTIONS) {
@@ -663,7 +667,7 @@ const InterfaceManager = new (function () {
 
         // make sure the pause level panel is closed
         if (panelId !== PanelId.GAMEMENU) {
-            closeLevelMenu();
+            this._closeLevelMenu();
         }
 
         // make sure the menu music is started on main menu and level selection
@@ -678,8 +682,8 @@ const InterfaceManager = new (function () {
             ScoreManager.updateTotalScoreText();
             boxPanel.onShow();
 
-            if (_this.isInAdvanceBoxMode) {
-                _this.isInAdvanceBoxMode = false;
+            if (this.isInAdvanceBoxMode) {
+                this.isInAdvanceBoxMode = false;
                 setTimeout(function () {
                     hide("#levelResults");
                     boxPanel.slideToNextBox();
@@ -690,8 +694,8 @@ const InterfaceManager = new (function () {
                     }
                 }, 800);
             } else {
-                clearTimeout(bounceTimeOut);
-                bounceTimeOut = setTimeout(function () {
+                clearTimeout(this._bounceTimeOut);
+                this._bounceTimeOut = setTimeout(function () {
                     boxPanel.bounceCurrentBox();
                 }, 300);
             }
@@ -712,7 +716,7 @@ const InterfaceManager = new (function () {
             Doors.renderDoors(true, 0);
             panel.onShow();
         } else if (panelId == PanelId.GAME) {
-            updateMiniSoundButton(false, "optionSound");
+            this._updateMiniSoundButton(false, "optionSound");
         }
         //else if (panelId == PanelId.GAMEMENU) { }
         //else if (panelId == PanelId.LEVELCOMPLETE) { }
@@ -764,50 +768,44 @@ const InterfaceManager = new (function () {
             PubSub.publish(PubSub.ChannelId.UpdateCandyScroller);
         }
         //else if (panelId == PanelId.CREDITS) { }
-    };
+    }
 
     // ------------------------------------------------------------------------
     // UI methods
     // ------------------------------------------------------------------------
 
-    // Sets the isTransitionActive flag to true and then back to false after the timeout. The
-    // reason for using a timer here is to ensure that we always clear the flag since some UI
-    // will be disabled until the flag gets cleared. This is an attempt to prevent new bugs.
-
-    let transitionTimeout = null;
-    const notifyBeginTransition = function (timeout, name) {
-        _this.isTransitionActive = true;
-        if (transitionTimeout != null) clearTimeout(transitionTimeout);
-        transitionTimeout = setTimeout(function () {
-            _this.isTransitionActive = false;
-            transitionTimeout = null;
+    _notifyBeginTransition(timeout, name) {
+        this.isTransitionActive = true;
+        if (this._transitionTimeout != null) clearTimeout(this._transitionTimeout);
+        this._transitionTimeout = setTimeout(() => {
+            this.isTransitionActive = false;
+            this._transitionTimeout = null;
         }, timeout);
-    };
+    }
 
-    const runScoreTicker = function () {
-        //$('#resultTicker').text(resultTopLines[currentResultLine]);
-        text("#resultScore", resultBottomLines[currentResultLine]);
-        currentResultLine++;
-        if (currentResultLine < resultTopLines.length) {
-            if (currentResultLine < resultTimeShiftIndex) {
-                setTimeout(function () {
-                    runScoreTicker();
+    _runScoreTicker() {
+        text("#resultScore", this._resultBottomLines[this._currentResultLine]);
+        this._currentResultLine++;
+        if (this._currentResultLine < this._resultTopLines.length) {
+            if (this._currentResultLine < this._resultTimeShiftIndex) {
+                setTimeout(() => {
+                    this._runScoreTicker();
                 }, 10);
             } else {
-                setTimeout(function () {
-                    runScoreTicker();
+                setTimeout(() => {
+                    this._runScoreTicker();
                 }, 167);
             }
         }
-    };
+    }
 
     // play the level
-    const openLevel = (this.openLevel = function (level, isRestart, isSkip) {
+    _openLevel(level, isRestart, isSkip) {
         GameBorder.fadeIn(650, 100);
         BoxManager.currentLevelIndex = level;
 
         // when we start the last level we should begin loading the outro video
-        if (isLastLevel()) {
+        if (this._isLastLevel()) {
             VideoManager.loadOutroVideo();
         }
 
@@ -815,17 +813,21 @@ const InterfaceManager = new (function () {
             RootController.restartLevel();
         } else {
             PanelManager.showPanel(PanelId.GAME, true);
-            setTimeout(function () {
-                _this.openBox(isSkip);
+            setTimeout(() => {
+                this.openBox(isSkip);
             }, 200);
         }
-    });
+    }
 
-    const closeLevel = function () {
+    openLevel(level, isRestart, isSkip) {
+        this._openLevel(level, isRestart, isSkip);
+    }
+
+    _closeLevel() {
         RootController.stopLevel();
-    };
+    }
 
-    const isLastLevel = function () {
+    _isLastLevel() {
         // see if we are on the last box
         const lastPlayableBoxIndex = BoxManager.requiredCount() - 1;
         if (BoxManager.currentBoxIndex !== lastPlayableBoxIndex) {
@@ -840,9 +842,9 @@ const InterfaceManager = new (function () {
         }
 
         return true;
-    };
+    }
 
-    const completeBox = function () {
+    _completeBox() {
         //attempt to move to the next box
         const boxIndex = BoxManager.currentBoxIndex;
 
@@ -854,20 +856,20 @@ const InterfaceManager = new (function () {
             GameBorder.hide();
             VideoManager.playOutroVideo();
         } else {
-            _this.isInAdvanceBoxMode = true;
+            this.isInAdvanceBoxMode = true;
             const panelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
             PanelManager.showPanel(panelId, false);
         }
-    };
+    }
 
-    const openLevelMenu = function () {
+    _openLevelMenu() {
         RootController.pauseLevel();
         // Pause music when opening the game menu
         SoundMgr.pauseMusic();
         show("#levelMenu");
-    };
+    }
 
-    const closeLevelMenu = function () {
+    _closeLevelMenu() {
         hide("#levelMenu");
         // Resume music when closing the game menu only if:
         // 1. We're currently in the game (not menu or level select)
@@ -875,78 +877,90 @@ const InterfaceManager = new (function () {
         // 3. A level is currently active
         if (
             PanelManager.currentPanelId === PanelId.GAME &&
-            _this.gameEnabled &&
+            this.gameEnabled &&
             RootController.isLevelActive()
         ) {
             SoundMgr.resumeMusic();
         }
-    };
+    }
 
-    this.tapeBox = function () {
-        if (_this.isInMenuSelectMode) {
+    _showLevelBackground() {
+        show("#levelBackground");
+    }
+
+    _hideLevelBackground() {
+        hide("#levelBackground");
+    }
+
+    // ------------------------------------------------------------------------
+    // Public methods
+    // ------------------------------------------------------------------------
+
+    tapeBox() {
+        if (this.isInMenuSelectMode) {
             GameBorder.fadeOut(800, 400);
             SoundMgr.playMusic(menuMusicId);
         }
 
-        Doors.closeBoxAnimation(function () {
-            _this.isBoxOpen = false;
-            if (_this.isInMenuSelectMode) {
+        Doors.closeBoxAnimation(() => {
+            this.isBoxOpen = false;
+            if (this.isInMenuSelectMode) {
                 PanelManager.showPanel(PanelId.MENU, false);
             } else {
                 Doors.renderDoors(true, 0);
                 PanelManager.showPanel(PanelId.LEVELS, true);
             }
         });
-    };
+    }
 
-    this.openBox = function openboxFunc(skip) {
+    openBox(skip) {
         const timeout = PanelManager.currentPanelId == PanelId.LEVELS ? 400 : 0;
 
         //fade out options elements
         fadeOut("#levelScore");
         fadeOut("#levelBack");
 
-        fadeOut("#levelOptions", timeout).then(function () {
-            if (_this.isBoxOpen) {
+        fadeOut("#levelOptions", timeout).then(() => {
+            if (this.isBoxOpen) {
                 fadeOut("#levelResults", 800);
 
-                setTimeout(function () {
+                setTimeout(() => {
                     //if (skip) {
                     //    RootController.startLevel(BoxManager.currentBoxIndex + 1, BoxManager.currentLevelIndex);
-                    //    _this.showGameUI();
+                    //    this.showGameUI();
                     //} else {
                     RootController.startLevel(
                         BoxManager.currentBoxIndex + 1,
                         BoxManager.currentLevelIndex
                     );
-                    Doors.openDoors(false, function () {
-                        _this.showGameUI();
+                    Doors.openDoors(false, () => {
+                        this.showGameUI();
                     });
                     //}
                 }, 400);
             } else {
-                Doors.openBoxAnimation(function () {
-                    _this.isBoxOpen = true;
+                Doors.openBoxAnimation(() => {
+                    this.isBoxOpen = true;
 
                     RootController.startLevel(
                         BoxManager.currentBoxIndex + 1,
                         BoxManager.currentLevelIndex
                     );
 
-                    Doors.openDoors(true, function () {
-                        _this.showGameUI();
+                    Doors.openDoors(true, () => {
+                        this.showGameUI();
                     });
                 });
             }
         }); // end fadeOut
-    };
+    }
 
-    this.closeBox = function () {
-        _this.closeGameUI();
+    closeBox() {
+        this.closeGameUI();
 
-        setTimeout(function () {
+        setTimeout(() => {
             // animating from game to results
-            if (!_this.isInLevelSelectMode) {
+            if (!this.isInLevelSelectMode) {
                 const levelResults = getElement("#levelResults");
                 if (levelResults) {
                     delay(levelResults, 750).then(function () {
@@ -956,51 +970,38 @@ const InterfaceManager = new (function () {
             }
 
             // close the doors
-            Doors.closeDoors(false, function () {
-                if (_this.isInLevelSelectMode) {
-                    _this.tapeBox();
+            Doors.closeDoors(false, () => {
+                if (this.isInLevelSelectMode) {
+                    this.tapeBox();
                 } else {
                     Doors.showGradient();
-                    setTimeout(function () {
-                        runScoreTicker();
+                    setTimeout(() => {
+                        this._runScoreTicker();
                     }, 250);
                 }
             });
         }, 250);
-    };
+    }
 
-    const showLevelBackground = function () {
-        show("#levelBackground");
-    };
-
-    const hideLevelBackground = function () {
-        hide("#levelBackground");
-    };
-
-    this.showGameUI = function () {
-        hideLevelBackground();
+    showGameUI() {
+        this._hideLevelBackground();
         if (QueryStrings.showBoxBackgrounds && edition.enableBoxBackgroundEasterEgg) {
             show("#bg");
         }
         fadeIn("#gameBtnTray");
-    };
+    }
 
-    this.closeGameUI = function () {
+    closeGameUI() {
         Doors.renderDoors(false, 1);
-        notifyBeginTransition(1000, "close game ui");
-        showLevelBackground();
+        this._notifyBeginTransition(1000, "close game ui");
+        this._showLevelBackground();
         if (QueryStrings.showBoxBackgrounds && edition.enableBoxBackgroundEasterEgg) {
             hide("#bg");
         }
         fadeOut("#gameBtnTray");
-    };
+    }
 
-    const resultTopLines = [],
-        resultBottomLines = [];
-    let currentResultLine = 0;
-    const resultTimeShiftIndex = 0;
-
-    this.onLevelWon = function (info) {
+    onLevelWon(info) {
         const stars = info.stars,
             score = info.score,
             levelTime = info.time;
@@ -1256,8 +1257,8 @@ const InterfaceManager = new (function () {
             ScoreManager.setStars(boxIndex, levelIndex, 0);
         }
 
-        _this.isInLevelSelectMode = false;
-        _this.closeBox();
+        this.isInLevelSelectMode = false;
+        this.closeBox();
 
         // events that occur after completing the first level
         if (boxIndex === 0 && levelIndex === 1) {
@@ -1266,7 +1267,7 @@ const InterfaceManager = new (function () {
             }
 
             // tell the user if the fps was low on the first level
-            if (info.fps < MIN_FPS && !platform.disableSlowWarning) {
+            if (info.fps < this._MIN_FPS && !platform.disableSlowWarning) {
                 // delay the popup to allow the score screen to finish
                 setTimeout(function () {
                     Dialogs.showSlowComputerPopup();
@@ -1275,41 +1276,37 @@ const InterfaceManager = new (function () {
 
             VideoManager.removeIntroVideo();
         }
-    };
+    }
 
     // show hide the "behind the scenes" link and the feedback tab when the screen changes size
-    let isDevLinkVisible = true;
-    this.updateDevLink = function () {
-        if (width(window) < resolution.uiScaledNumber(1024) + 120 && isDevLinkVisible) {
-            fadeOut("#moreLink").then(function () {
-                isDevLinkVisible = false;
+    updateDevLink() {
+        if (width(window) < resolution.uiScaledNumber(1024) + 120 && this._isDevLinkVisible) {
+            fadeOut("#moreLink").then(() => {
+                this._isDevLinkVisible = false;
             });
             fadeOut("#zenbox_tab");
-        } else if (width(window) > resolution.uiScaledNumber(1024) + 120 && !isDevLinkVisible) {
-            fadeIn("#moreLink").then(function () {
-                isDevLinkVisible = true;
+        } else if (width(window) > resolution.uiScaledNumber(1024) + 120 && !this._isDevLinkVisible) {
+            fadeIn("#moreLink").then(() => {
+                this._isDevLinkVisible = true;
             });
             fadeIn("#zenbox_tab");
         }
-    };
+    }
 
-    // we'll only resume when the game is enabled
-    this.gameEnabled = true;
-
-    this.pauseGame = function () {
+    pauseGame() {
         // make sure the game is active and no transitions are pending
         if (
             PanelManager.currentPanelId === PanelId.GAME &&
             RootController.isLevelActive() &&
-            !_this.isTransitionActive
+            !this.isTransitionActive
         ) {
-            openLevelMenu();
+            this._openLevelMenu();
         } else {
             SoundMgr.pauseMusic();
         }
-    };
+    }
 
-    this.resumeGame = function () {
+    resumeGame() {
         // Don't resume music if:
         // 1. Game menu (pause menu) is visible
         // 2. Current panel is the standalone game menu panel
@@ -1320,54 +1317,54 @@ const InterfaceManager = new (function () {
         if (
             !isLevelMenuVisible &&
             PanelManager.currentPanelId !== PanelId.GAMEMENU &&
-            _this.gameEnabled
+            this.gameEnabled
         ) {
             SoundMgr.resumeMusic();
         }
-    };
+    }
 
     // ------------------------------------------------------------------------
     // Object management stuff
     // ------------------------------------------------------------------------
 
-    this.init = function () {
+    init() {
         ScoreManager.load();
-        PanelManager.onShowPanel = onShowPanel;
-    };
+        PanelManager.onShowPanel = (panelId) => this._onShowPanel(panelId);
+    }
 
-    this.domReady = function () {
+    domReady() {
         VideoManager.domReady();
         EasterEggManager.domReady();
         PanelManager.domReady();
         GameBorder.domReady();
 
         // pause game / music when the user switches tabs
-        //window.addEventListener("blur", _this.pauseGame);
+        //window.addEventListener("blur", this.pauseGame);
 
         // when returning to the tab, resume music (except when on game menu - no music there)
-        //window.addEventListener("focus", _this.resumeGame);
+        //window.addEventListener("focus", this.resumeGame);
 
-        const onVisibilityChange = function () {
+        const onVisibilityChange = () => {
             if (document.hidden || document.visibilityState === "hidden") {
-                _this.pauseGame();
+                this.pauseGame();
             } else {
-                _this.resumeGame();
+                this.resumeGame();
             }
         };
         document.addEventListener("visibilitychange", onVisibilityChange);
 
         // hide behind the scenes when we update the page
-        window.addEventListener("resize", function () {
-            _this.updateDevLink();
+        window.addEventListener("resize", () => {
+            this.updateDevLink();
         });
-    };
+    }
 
-    this.appReady = function () {
-        PubSub.subscribe(PubSub.ChannelId.LevelWon, this.onLevelWon);
+    appReady() {
+        PubSub.subscribe(PubSub.ChannelId.LevelWon, (info) => this.onLevelWon(info));
 
         Doors.appReady();
         EasterEggManager.appReady();
-        PanelManager.appReady(onInitializePanel);
+        PanelManager.appReady((panelId) => this._onInitializePanel(panelId));
         BoxManager.appReady();
 
         // initialize all the localized resources
@@ -1387,22 +1384,21 @@ const InterfaceManager = new (function () {
             }
         }
 
-        const im = this;
-        PubSub.subscribe(PubSub.ChannelId.PauseGame, function () {
-            im.pauseGame();
+        PubSub.subscribe(PubSub.ChannelId.PauseGame, () => {
+            this.pauseGame();
         });
-        PubSub.subscribe(PubSub.ChannelId.EnableGame, function () {
-            im.gameEnabled = true;
-            im.resumeGame();
+        PubSub.subscribe(PubSub.ChannelId.EnableGame, () => {
+            this.gameEnabled = true;
+            this.resumeGame();
         });
-        PubSub.subscribe(PubSub.ChannelId.DisableGame, function () {
-            im.gameEnabled = false;
-            im.pauseGame();
+        PubSub.subscribe(PubSub.ChannelId.DisableGame, () => {
+            this.gameEnabled = false;
+            this.pauseGame();
         });
-    };
+    }
 
     // used for debug and in level editor to start a level w/o menus
-    this.noMenuStartLevel = function (boxIndex, levelIndex) {
+    noMenuStartLevel(boxIndex, levelIndex) {
         PanelManager.showPanel(PanelId.GAME, true);
 
         // unfortunate that box manager is zero index for box and 1 based for level
@@ -1411,14 +1407,16 @@ const InterfaceManager = new (function () {
 
         SoundMgr.selectRandomGameMusic();
         this.openBox();
-    };
+    }
 
-    this.openLevelMenu = function (boxIndex) {
-        _this.isBoxOpen = false;
+    openLevelMenu(boxIndex) {
+        this.isBoxOpen = false;
         Doors.renderDoors(true, 0);
         PanelManager.showPanel(PanelId.LEVELS);
         GameBorder.setBoxBorder(boxIndex);
-    };
-})();
+    }
+}
+
+const InterfaceManager = new InterfaceManagerClass();
 
 export default InterfaceManager;
