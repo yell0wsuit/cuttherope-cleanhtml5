@@ -1,5 +1,5 @@
 const NoAchievements = {
-    increment: function (achievementId) {
+    increment(achievementId) {
         // no-op
     },
 };
