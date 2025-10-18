@@ -96,43 +96,47 @@ const resetLevel = function (boxIndex, levelIndex) {
     setScore(boxIndex, levelIndex, 0);
 };
 
-const ScoreBox = function (levelCount, requiredStars, scores, stars) {
-    this.levelCount = levelCount;
-    this.requiredStars = requiredStars;
-    this.scores = scores || [];
-    this.stars = stars || [];
-};
+class ScoreBox {
+    constructor(levelCount, requiredStars, scores, stars) {
+        this.levelCount = levelCount;
+        this.requiredStars = requiredStars;
+        this.scores = scores || [];
+        this.stars = stars || [];
+    }
+}
 
-const ScoreManager = new (function () {
-    const boxes = [];
+class ScoreManagerClass {
+    constructor() {
+        this.boxes = [];
+        this.appReady = false;
 
-    this.load = function () {
+        // Subscribe to events
+        PubSub.subscribe(PubSub.ChannelId.SignIn, () => this.load());
+        PubSub.subscribe(PubSub.ChannelId.SignOut, () => this.load());
+        PubSub.subscribe(PubSub.ChannelId.RoamingDataChanged, () => this.load());
+        PubSub.subscribe(PubSub.ChannelId.AppRun, () => {
+            this.appReady = true;
+        });
+        PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => this.updateTotalScoreText());
+    }
+
+    load() {
         // clear existing boxes
-        boxes.length = 0;
+        this.boxes.length = 0;
 
         // load box scores
         for (let i = 0, len = edition.boxes.length; i < len; i++) {
-            boxes[i] = loadBox(i);
+            this.boxes[i] = this._loadBox(i);
         }
 
         // update score text
-        if (appReady) {
-            ScoreManager.updateTotalScoreText();
+        if (this.appReady) {
+            this.updateTotalScoreText();
         }
-    };
-
-    PubSub.subscribe(PubSub.ChannelId.SignIn, this.load);
-    PubSub.subscribe(PubSub.ChannelId.SignOut, this.load);
-    PubSub.subscribe(PubSub.ChannelId.RoamingDataChanged, this.load);
-
-    // the score text can only be updated when the app is ready
-    let appReady = false;
-    PubSub.subscribe(PubSub.ChannelId.AppRun, function () {
-        appReady = true;
-    });
+    }
 
     // load previous scores from local storage
-    const loadBox = function (boxIndex) {
+    _loadBox(boxIndex) {
         // see if the box exists by checking for a level 1 star record
         const boxExists = getStars(boxIndex, 0) !== null,
             levelCount = edition.boxes[boxIndex].levels.length,
@@ -155,36 +159,36 @@ const ScoreManager = new (function () {
         // generate fake (and good) star counts
         if (QueryStrings.createScoresForBox == boxIndex + 1) {
             for (let i = 0; i < levelCount; i++) {
-                ScoreManager.setStars(boxIndex, i, 3, true);
+                this.setStars(boxIndex, i, 3, true);
             }
         }
 
         return new ScoreBox(levelCount, requiredStars, scores, stars);
-    };
+    }
 
-    this.getXorValue = function () {
+    getXorValue() {
         return XOR_VALUE;
-    };
+    }
 
-    this.boxCount = function () {
-        if (boxes != null) return boxes.length;
+    boxCount() {
+        if (this.boxes != null) return this.boxes.length;
         return null;
-    };
+    }
 
-    this.levelCount = function (boxIndex) {
-        const box = boxes[boxIndex];
+    levelCount(boxIndex) {
+        const box = this.boxes[boxIndex];
         if (box != null) return box.levelCount;
         return null;
-    };
+    }
 
-    this.requiredStars = function (boxIndex) {
-        const box = boxes[boxIndex];
+    requiredStars(boxIndex) {
+        const box = this.boxes[boxIndex];
         if (box != null) return box.requiredStars;
         return 0;
-    };
+    }
 
-    this.achievedStars = function (boxIndex) {
-        const box = boxes[boxIndex];
+    achievedStars(boxIndex) {
+        const box = this.boxes[boxIndex];
         if (box != null) {
             let count = 0;
             for (let j = 0; j < box.levelCount; j++) {
@@ -194,45 +198,45 @@ const ScoreManager = new (function () {
             return count;
         }
         return 0;
-    };
+    }
 
-    this.totalStars = function () {
+    totalStars() {
         let total = 0;
-        for (let i = 0; i < boxes.length; i++) {
-            total += ScoreManager.achievedStars(i);
+        for (let i = 0; i < this.boxes.length; i++) {
+            total += this.achievedStars(i);
         }
         return total;
-    };
+    }
 
-    this.possibleStarsForBox = function (boxIndex) {
-        const box = boxes[boxIndex];
+    possibleStarsForBox(boxIndex) {
+        const box = this.boxes[boxIndex];
         if (box != null) {
             return box.levelCount * 3;
         }
         return 0;
-    };
+    }
 
-    this.isBoxLocked = function (boxIndex) {
+    isBoxLocked(boxIndex) {
         if (boxIndex == 0) return false;
         if (QueryStrings.unlockAllBoxes) return false;
-        const box = boxes[boxIndex];
-        if (box != null && ScoreManager.totalStars() >= ScoreManager.requiredStars(boxIndex)) {
+        const box = this.boxes[boxIndex];
+        if (box != null && this.totalStars() >= this.requiredStars(boxIndex)) {
             return false;
         }
         return true;
-    };
+    }
 
-    this.isLevelUnlocked = function (boxIndex, levelindex) {
-        const box = boxes[boxIndex];
+    isLevelUnlocked(boxIndex, levelindex) {
+        const box = this.boxes[boxIndex];
         if (QueryStrings.unlockAllBoxes) return true;
         if (box != null) {
             return box.stars[levelindex] != null;
         }
         return false;
-    };
+    }
 
-    this.setScore = function (boxIndex, levelIndex, levelScore, overridePrevious) {
-        const box = boxes[boxIndex];
+    setScore(boxIndex, levelIndex, levelScore, overridePrevious) {
+        const box = this.boxes[boxIndex];
         if (box != null) {
             if (overridePrevious) {
                 box.scores[levelIndex] = levelScore;
@@ -255,17 +259,17 @@ const ScoreManager = new (function () {
             // previous high score was achieved.
             PubSub.publish(PubSub.ChannelId.UpdateBoxScore, boxIndex, boxScore);
         }
-    };
+    }
 
-    this.getScore = function (boxIndex, levelIndex) {
-        const box = boxes[boxIndex];
+    getScore(boxIndex, levelIndex) {
+        const box = this.boxes[boxIndex];
         if (box != null) return box.scores[levelIndex];
         return null;
-    };
+    }
 
-    this.setStars = function (boxIndex, levelIndex, score, overridePrevious) {
+    setStars(boxIndex, levelIndex, score, overridePrevious) {
         const previousStars = this.totalStars(),
-            box = boxes[boxIndex];
+            box = this.boxes[boxIndex];
         if (box != null) {
             //don't override past high score
             const prevStars = getStars(boxIndex, levelIndex);
@@ -281,20 +285,20 @@ const ScoreManager = new (function () {
         if (newStarCount !== previousStars) {
             PubSub.publish(PubSub.ChannelId.StarCountChanged, newStarCount);
         }
-    };
+    }
 
-    this.getStars = function (boxIndex, levelIndex) {
-        const box = boxes[boxIndex];
+    getStars(boxIndex, levelIndex) {
+        const box = this.boxes[boxIndex];
         if (box != null) return box.stars[levelIndex];
         return null;
-    };
+    }
 
-    this.resetGame = function () {
-        const boxCount = boxes.length;
+    resetGame() {
+        const boxCount = this.boxes.length;
         let boxIndex, box, levelIndex, levelCount;
 
         for (boxIndex = 0; boxIndex < boxCount; boxIndex++) {
-            box = boxes[boxIndex];
+            box = this.boxes[boxIndex];
             levelCount = box.levelCount;
             for (levelIndex = 0; levelIndex < levelCount; levelIndex++) {
                 resetLevel(boxIndex, levelIndex);
@@ -305,17 +309,14 @@ const ScoreManager = new (function () {
 
         // update score
         this.updateTotalScoreText();
-    };
+    }
 
-    this.updateTotalScoreText = function () {
-        const text = Lang.menuText(MenuStringId.TOTAL_STARS).replace(
-            "%d",
-            ScoreManager.totalStars()
-        );
+    updateTotalScoreText() {
+        const text = Lang.menuText(MenuStringId.TOTAL_STARS).replace("%d", this.totalStars());
         Text.drawBig({ text: text, imgSel: "#boxScore img", scaleToUI: true });
-    };
+    }
+}
 
-    PubSub.subscribe(PubSub.ChannelId.LanguageChanged, this.updateTotalScoreText);
-})();
+const ScoreManager = new ScoreManagerClass();
 
 export default ScoreManager;

@@ -9,98 +9,97 @@ import PurchaseBox from "@/ui/PurchaseBox";
 import MoreComingBox from "@/ui/MoreComingBox";
 import TimeBox from "@/ui/TimeBox";
 import BoxPanel from "@/ui/BoxPanel";
-const BoxManager = new (function () {
-    const self = this,
-        boxes = [];
+class BoxManagerClass {
+    constructor() {
+        this.boxes = [];
+        this.appIsReady = false;
+        this.isPaid = false;
+        this.currentBoxIndex = 0;
+        // TODO: the current level index starts at 1, should be zero-based
+        this.currentLevelIndex = 1;
 
-    PubSub.subscribe(PubSub.ChannelId.SelectedBoxChanged, function (boxIndex) {
-        BoxManager.currentBoxIndex = boxIndex;
-        BoxManager.currentLevelIndex = 1;
-    });
+        // Subscribe to events
+        PubSub.subscribe(PubSub.ChannelId.SelectedBoxChanged, (boxIndex) => {
+            this.currentBoxIndex = boxIndex;
+            this.currentLevelIndex = 1;
+        });
 
-    let appIsReady = false;
-    this.appReady = function () {
-        appIsReady = true;
-        loadBoxes();
-    };
+        PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, (paid) => {
+            this.isPaid = paid;
+            this._onPaidBoxesChange(paid);
+        });
 
-    self.currentBoxIndex = 0;
+        // reload boxes when user signs in or out
+        PubSub.subscribe(PubSub.ChannelId.SignIn, () => this._loadBoxes());
+        PubSub.subscribe(PubSub.ChannelId.SignOut, () => this._loadBoxes());
+        PubSub.subscribe(PubSub.ChannelId.RoamingDataChanged, () => this._loadBoxes());
+        PubSub.subscribe(PubSub.ChannelId.BoxesUnlocked, () => this._loadBoxes());
+    }
 
-    // TODO: the current level index starts at 1, should be zero-based
-    self.currentLevelIndex = 1;
+    appReady() {
+        this.appIsReady = true;
+        this._loadBoxes();
+    }
 
-    // listen to purchase event
-    let isPaid = false;
-    PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, function (paid) {
-        isPaid = paid;
-    });
-
-    this.isNextLevelPlayable = function () {
+    isNextLevelPlayable() {
         // check to make sure we aren't on the last level of the box
         if (ScoreManager.levelCount(this.currentBoxIndex) <= this.currentLevelIndex) {
             return false;
         }
 
         // see if the game requires purchase of some levels
-        if (isPaid || !edition.levelRequiresPurchase) {
+        if (this.isPaid || !edition.levelRequiresPurchase) {
             return true; // already purchased or none required
         }
 
         // check whether next level is free
         return !edition.levelRequiresPurchase(this.currentBoxIndex, this.currentLevelIndex); // NOTE: checking next level since this index is 1 based (TODO: fix!)
-    };
+    }
 
-    const loadBoxes = function () {
+    _loadBoxes() {
         // only load boxes if app is ready
-        if (!appIsReady) {
+        if (!this.appIsReady) {
             return;
         }
 
-        self.currentBoxIndex = 0;
-
+        this.currentBoxIndex = 0;
         // TODO: the current level index starts at 1, should be zero-based
-        self.currentLevelIndex = 1;
+        this.currentLevelIndex = 1;
 
-        createBoxes();
-        updateVisibleBoxes();
-    };
-
-    // reload boxes when user signs in or out
-    PubSub.subscribe(PubSub.ChannelId.SignIn, loadBoxes);
-    PubSub.subscribe(PubSub.ChannelId.SignOut, loadBoxes);
-    PubSub.subscribe(PubSub.ChannelId.RoamingDataChanged, loadBoxes);
-    PubSub.subscribe(PubSub.ChannelId.BoxesUnlocked, loadBoxes);
+        this._createBoxes();
+        this._updateVisibleBoxes();
+    }
 
     // returns the number of boxes required to win the game
-    this.requiredCount = function () {
+    requiredCount() {
         let count = 0;
-        for (let i = 0, len = boxes.length; i < len; i++) {
-            if (boxes[i].isRequired()) {
+        for (let i = 0, len = this.boxes.length; i < len; i++) {
+            if (this.boxes[i].isRequired()) {
                 count++;
             }
         }
         return count;
-    };
+    }
 
-    this.possibleStars = function () {
+    possibleStars() {
         let count = 0;
-        const len = boxes.length;
+        const len = this.boxes.length;
         for (let i = 0; i < len; i++) {
             // we'll count every box except for the hidden pinned box
-            if (boxes[i].isRequired()) {
+            if (this.boxes[i].isRequired()) {
                 count += ScoreManager.possibleStarsForBox(i);
             }
         }
         return count;
-    };
+    }
 
-    this.visibleGameBoxes = function () {
+    visibleGameBoxes() {
         let count = 0,
             i,
             len,
             box;
-        for (i = 0, len = boxes.length; i < len; i++) {
-            box = boxes[i];
+        for (i = 0, len = this.boxes.length; i < len; i++) {
+            box = this.boxes[i];
 
             // count boxes that are required to finish the game
             // and also purchased
@@ -109,14 +108,14 @@ const BoxManager = new (function () {
             }
         }
         return count;
-    };
+    }
 
-    this.resetLocks = function () {
+    resetLocks() {
         let i, len, box;
 
         // don't lock the first box
-        for (i = 1, len = boxes.length; i < len; i++) {
-            box = boxes[i];
+        for (i = 1, len = this.boxes.length; i < len; i++) {
+            box = this.boxes[i];
 
             // only lock game boxes
             if (box.isGameBox()) {
@@ -125,10 +124,10 @@ const BoxManager = new (function () {
         }
 
         BoxPanel.redraw();
-    };
+    }
 
-    this.updateBoxLocks = function () {
-        const numBoxes = boxes.length;
+    updateBoxLocks() {
+        const numBoxes = this.boxes.length;
         let shouldRedraw = false,
             boxIndex,
             box;
@@ -136,7 +135,7 @@ const BoxManager = new (function () {
         // unlock new boxes if visual state has not been updated yet
         // (first box is always unlocked)
         for (boxIndex = 1; boxIndex < numBoxes; boxIndex++) {
-            box = boxes[boxIndex];
+            box = this.boxes[boxIndex];
             if (!ScoreManager.isBoxLocked(boxIndex) && box.purchased && box.islocked) {
                 box.islocked = false;
                 shouldRedraw = true;
@@ -147,16 +146,16 @@ const BoxManager = new (function () {
         if (shouldRedraw) {
             BoxPanel.redraw();
         }
-    };
+    }
 
-    function createBoxes() {
+    _createBoxes() {
         const images = edition.boxImages,
             boxtypes = edition.boxTypes;
         let i, len, box, type, requiredStars, isLocked;
 
         // clear any existing boxes
-        while (boxes.length) {
-            const existingBox = boxes.pop();
+        while (this.boxes.length) {
+            const existingBox = this.boxes.pop();
             if (existingBox && typeof existingBox.destroy === "function") {
                 existingBox.destroy();
             }
@@ -190,16 +189,16 @@ const BoxManager = new (function () {
             }
 
             if (box) {
-                boxes.push(box);
+                this.boxes.push(box);
             }
         }
     }
 
-    function updateVisibleBoxes() {
+    _updateVisibleBoxes() {
         const visibleBoxes = [];
         let i, box, len;
-        for (i = 0, len = boxes.length; i < len; i++) {
-            box = boxes[i];
+        for (i = 0, len = this.boxes.length; i < len; i++) {
+            box = this.boxes[i];
             box.index = i;
             if (box.visible) {
                 visibleBoxes.push(box);
@@ -209,7 +208,7 @@ const BoxManager = new (function () {
         PubSub.publish(PubSub.ChannelId.UpdateVisibleBoxes, visibleBoxes);
     }
 
-    function onPaidBoxesChange(paid) {
+    _onPaidBoxesChange(paid) {
         paid = paid || QueryStrings.unlockAllBoxes === true;
 
         const requiresPurchase =
@@ -220,8 +219,8 @@ const BoxManager = new (function () {
         let i, len, box;
 
         // first box is always unlocked
-        for (i = 1, len = boxes.length; i < len; i++) {
-            box = boxes[i];
+        for (i = 1, len = this.boxes.length; i < len; i++) {
+            box = this.boxes[i];
 
             // hide unpurchased boxes and show upgrade prompt
             switch (box.type) {
@@ -239,10 +238,10 @@ const BoxManager = new (function () {
             }
         }
 
-        updateVisibleBoxes();
+        this._updateVisibleBoxes();
     }
+}
 
-    PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, onPaidBoxesChange);
-})();
+const BoxManager = new BoxManagerClass();
 
 export default BoxManager;
