@@ -35,44 +35,44 @@ const WebPlatform = {
     boxImageBaseUrl: "images/" + resolution.UI_WIDTH + "/" + (edition.boxDirectory || "ui/"),
 
     audioBaseUrl: "audio/",
-    getAudioExtension: function () {
+    getAudioExtension() {
         return ".ogg";
     },
 
     videoBaseUrl: "video/",
-    getVideoExtension: function () {
+    getVideoExtension() {
         return ".mp4";
     },
 
-    getDrawingBaseUrl: function () {
+    getDrawingBaseUrl() {
         const loc = window.location,
             baseUrl = loc.protocol + "//" + loc.host;
         return baseUrl + "/images/" + resolution.UI_WIDTH + "/ui/";
     },
-    getScoreImageBaseUrl: function () {
+    getScoreImageBaseUrl() {
         const loc = window.location,
             baseUrl = loc.protocol + "//" + loc.host;
         return baseUrl + "/images/scores/";
     },
-    setSoundButtonChange: function (button, callback) {
+    setSoundButtonChange(button, callback) {
         button.addEventListener("click", callback);
     },
-    setMusicButtonChange: function (button, callback) {
+    setMusicButtonChange(button, callback) {
         button.addEventListener("click", callback);
     },
-    updateSoundOption: function (el, isSoundOn) {
+    updateSoundOption(el, isSoundOn) {
         el.classList.toggle("disabled", !isSoundOn);
     },
-    updateMusicOption: function (el, isMusicOn) {
+    updateMusicOption(el, isMusicOn) {
         el.classList.toggle("disabled", !isMusicOn);
     },
-    toggleLangUI: function (show) {
+    toggleLangUI(show) {
         const langBtn = document.getElementById("langBtn");
         if (langBtn) {
             langBtn.style.display = show ? "" : "none";
         }
     },
-    setLangOptionClick: function (callback) {
+    setLangOptionClick(callback) {
         const langBtn = document.getElementById("langBtn");
         if (langBtn) {
             langBtn.addEventListener("click", function (e) {
@@ -81,7 +81,7 @@ const WebPlatform = {
             });
         }
     },
-    updateLangSetting: function () {
+    updateLangSetting() {
         const langBtn = document.getElementById("langBtn");
         if (langBtn) {
             WebPlatform.setOptionText(langBtn, Lang.menuText(MenuStringId.LANGUAGE) + ":");
@@ -95,13 +95,13 @@ const WebPlatform = {
             flag.offsetTop; // Force layout recalculation
         }
     },
-    setCutOptionClick: function (callback) {
+    setCutOptionClick(callback) {
         const cutBtn = document.getElementById("cutBtn");
         if (cutBtn) {
             cutBtn.addEventListener("click", callback);
         }
     },
-    updateCutSetting: function (isClickToCut) {
+    updateCutSetting(isClickToCut) {
         // fonts use game sized assets based on canvas size
         const textWidth = 400 * resolution.CANVAS_SCALE,
             // scale need to take UI size into account
@@ -131,10 +131,10 @@ const WebPlatform = {
             cutBtn.classList.toggle("disabled", !isClickToCut);
         }
     },
-    setResetText: function (el, text) {
+    setResetText(el, text) {
         WebPlatform.setOptionText(el, text);
     },
-    setOptionText: function (button, text) {
+    setOptionText(button, text) {
         const img = button.querySelector("img");
         if (img) {
             Text.drawBig({
@@ -144,13 +144,13 @@ const WebPlatform = {
             });
         }
     },
-    getGameCompleteShareText: function (totalStars, possibleStars) {
+    getGameCompleteShareText(totalStars, possibleStars) {
         const text = Lang.getText(locEntries.GAME_COMPLETE)
             .replace("%d", totalStars)
             .replace("%d", possibleStars);
         return text;
     },
-    meetsRequirements: function () {
+    meetsRequirements() {
         // does the browser have the HTML5 features we need?
         /*const meetsReqs =
             Modernizr.canvas &&
