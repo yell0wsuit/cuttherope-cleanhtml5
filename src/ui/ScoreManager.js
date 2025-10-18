@@ -26,58 +26,137 @@ if (XOR_VALUE == null) {
 }
 
 // helper functions to get/set score
-const getScoreKey = function (box, level) {
-        const val = (box * 1000 + level) ^ XOR_VALUE,
-            key = SCORE_PREFIX + val;
+const padNumber = (value) => value.toString().padStart(2, "0"),
+    computeSlugNumber = (slug) => {
+        let hash = 2166136261;
+
+        for (let i = 0; i < slug.length; i++) {
+            hash ^= slug.charCodeAt(i);
+            hash = Math.imul(hash, 16777619);
+        }
+
+        const unsignedHash = hash >>> 0;
+        return (unsignedHash % 1000000) + 1;
+    },
+    getLevelIdentifiers = (box, level) => {
+        const fallbackBoxNumber = box + 1;
+        const fallbackLevelNumber = level + 1;
+        const boxData = edition?.boxes?.[box];
+        const levelData = boxData?.levels?.[level];
+
+        const defaultId = `${padNumber(fallbackBoxNumber)}-${padNumber(fallbackLevelNumber)}`;
+        const rawId = levelData && typeof levelData.__id === "string" ? levelData.__id : defaultId;
+
+        let slug = boxData && typeof boxData.__boxId === "string" ? boxData.__boxId : null;
+        let numericLevel = fallbackLevelNumber;
+        let numericBox = fallbackBoxNumber;
+
+        if (rawId.includes(":")) {
+            const [slugPart, levelPart] = rawId.split(":");
+
+            if (slugPart) {
+                slug = slugPart;
+            }
+
+            const parsedLevel = parseInt(levelPart, 10);
+            if (Number.isFinite(parsedLevel)) {
+                numericLevel = parsedLevel;
+            }
+        } else {
+            const parts = rawId.split("-");
+            if (parts.length >= 2) {
+                const maybeBox = parseInt(parts[0], 10);
+                if (Number.isFinite(maybeBox)) {
+                    numericBox = maybeBox;
+                }
+
+                const maybeLevel = parseInt(parts[parts.length - 1], 10);
+                if (Number.isFinite(maybeLevel)) {
+                    numericLevel = maybeLevel;
+                }
+            }
+        }
+
+        if (slug == null) {
+            slug = padNumber(numericBox);
+        }
+
+        const hashedBoxNumber = slug ? computeSlugNumber(slug) : numericBox;
+
+        return {
+            id: rawId,
+            boxId: slug,
+            boxNumber: hashedBoxNumber,
+            levelNumber: numericLevel,
+            indexBoxNumber: fallbackBoxNumber,
+            indexLevelNumber: fallbackLevelNumber,
+        };
+    },
+    getScoreKey = function (box, level, identifiers = getLevelIdentifiers(box, level)) {
+        const val = (identifiers.boxNumber * 1000 + identifiers.levelNumber) ^ XOR_VALUE;
+        let key = SCORE_PREFIX + val;
 
         // make sure we don't overwrite our XOR key
         if (key === XOR_KEY) {
-            return key + "_";
+            key += "_";
         }
 
         return key;
     },
     setScore = function (box, level, points) {
+        const identifiers = getLevelIdentifiers(box, level);
+
         SettingStorage.set(
-            getScoreKey(box, level),
+            getScoreKey(box, level, identifiers),
             // NOTE: we intentionally swap multiplier to level (key uses box)
-            (points + level * 1000 + box) ^ XOR_VALUE
+            (points + identifiers.levelNumber * 1000 + identifiers.boxNumber) ^ XOR_VALUE
         );
 
         RoamSettings.setScore(box, level, points);
     },
     getScore = function (box, level) {
         // fetch both roaming and local scores
-        const roamScore = RoamSettings.getScore(box, level) || 0,
-            localKey = getScoreKey(box, level),
-            localVal = SettingStorage.getIntOrDefault(localKey, null),
-            localScore = localVal == null ? 0 : (localVal ^ XOR_VALUE) - box - level * 1000;
+        const identifiers = getLevelIdentifiers(box, level);
+        const roamScore = RoamSettings.getScore(box, level) || 0;
+        const localKey = getScoreKey(box, level, identifiers);
+        const localVal = SettingStorage.getIntOrDefault(localKey, null);
+
+        const localScore =
+            localVal == null
+                ? 0
+                : (localVal ^ XOR_VALUE) - identifiers.boxNumber - identifiers.levelNumber * 1000;
 
         return Math.max(roamScore, localScore);
     };
 
 // helper functions to get/set stars
 const STARS_UNKNOWN = -1, // needs to be a number but can't be null
-    getStarsKey = function (box, level) {
+    getStarsKey = function (box, level, identifiers = getLevelIdentifiers(box, level)) {
         // NOTE: we intentionally swap multiplier from whats used for points
-        const key = (level * 1000 + box) ^ XOR_VALUE;
+        const key = (identifiers.levelNumber * 1000 + identifiers.boxNumber) ^ XOR_VALUE;
         return STARS_PREFIX + key;
     },
     setStars = function (box, level, stars) {
+        const identifiers = getLevelIdentifiers(box, level);
         const localStars = stars == null ? STARS_UNKNOWN : stars;
         SettingStorage.set(
-            getStarsKey(box, level),
+            getStarsKey(box, level, identifiers),
             // NOTE: we intentionally swap multiplier to box (key uses level)
-            (localStars + box * 1000 + level) ^ XOR_VALUE
+            (localStars + identifiers.boxNumber * 1000 + identifiers.levelNumber) ^ XOR_VALUE
         );
 
         RoamSettings.setStars(box, level, stars);
     },
     getStars = function (box, level) {
-        const roamStars = RoamSettings.getStars(box, level),
-            localKey = getStarsKey(box, level),
-            localVal = SettingStorage.getIntOrDefault(localKey, null),
-            localStars = localVal == null ? null : (localVal ^ XOR_VALUE) - level - box * 1000;
+        const identifiers = getLevelIdentifiers(box, level);
+        const roamStars = RoamSettings.getStars(box, level);
+        const localKey = getStarsKey(box, level, identifiers);
+        const localVal = SettingStorage.getIntOrDefault(localKey, null);
+
+        const localStars =
+            localVal == null
+                ? null
+                : (localVal ^ XOR_VALUE) - identifiers.levelNumber - identifiers.boxNumber * 1000;
 
         if (localStars === STARS_UNKNOWN || localStars === null) {
             return roamStars;

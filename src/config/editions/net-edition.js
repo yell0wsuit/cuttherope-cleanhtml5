@@ -5,6 +5,28 @@ import ResourceId from "@/resources/ResourceId";
 import BoxType from "@/ui/BoxType";
 import LangId from "@/resources/LangId";
 
+const padNumber = (value) => value.toString().padStart(2, "0");
+
+const boxesWithIdentifiers = boxes.map((box, index) => {
+    const metadata = boxMetadata[index] ?? null;
+    const boxId = metadata?.id ?? null;
+
+    return {
+        ...box,
+        __boxId: boxId,
+        levels: box.levels.map((level, levelIndex) => {
+            const numericLevelId = padNumber(levelIndex + 1);
+            const fallbackBoxId = `${padNumber(index + 1)}-${numericLevelId}`;
+            const levelId = boxId ? `${boxId}:${numericLevelId}` : fallbackBoxId;
+
+            return {
+                ...level,
+                __id: levelId,
+            };
+        }),
+    };
+});
+
 const normalizedBoxMetadata = boxMetadata.map((box) => ({
     ...box,
     boxType: BoxType[box.boxType] ?? box.boxType,
@@ -73,7 +95,7 @@ const netEdition = {
         ResourcePacks.FullGameAdditionalGameImages
     ),
 
-    boxes: boxes,
+    boxes: boxesWithIdentifiers,
 
     levelBackgroundIds: normalizedBoxMetadata
         .map(({ levelBackgroundId }) => levelBackgroundId)

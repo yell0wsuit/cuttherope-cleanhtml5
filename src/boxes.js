@@ -23,10 +23,13 @@ const groupedLevels = Array.from(
 
 const boxes = groupedLevels
     .sort(([boxA], [boxB]) => boxA.localeCompare(boxB))
-    .map(([, levels]) => ({
+    .map(([boxNumber, levels]) => ({
         levels: levels
             .sort((levelA, levelB) => levelA.levelNumber.localeCompare(levelB.levelNumber))
-            .map(({ level }) => level),
+            .map(({ level, levelNumber }) => ({
+                ...level,
+                __id: `${boxNumber}-${levelNumber}`,
+            })),
     }));
 
 export default boxes;
