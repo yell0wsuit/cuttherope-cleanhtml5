@@ -19,6 +19,7 @@ import AnimationPool from "@/visual/AnimationPool";
 import BaseElement from "@/visual/BaseElement";
 import BackgroundTileMap from "@/visual/BackgroundTileMap";
 import ResourceMgr from "@/resources/ResourceMgr";
+import { IS_XMAS } from "@/resources/ResData";
 import settings from "@/game/CTRSettings";
 import SoundMgr from "@/game/CTRSoundMgr";
 import ResourceId from "@/resources/ResourceId";
@@ -193,6 +194,8 @@ const CharAnimation = {
     MOUTH_CLOSE: 8,
     CHEW: 9,
     GREETING: 10,
+    IDLEXMAS: 11,
+    IDLE2XMAS: 12,
 };
 
 /**
@@ -1284,6 +1287,11 @@ const GameScene = BaseElement.extend({
         target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATIONS2);
         target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATIONS3);
 
+        if (IS_XMAS) {
+            target.initTextureWithId(ResourceId.IMG_CHAR_GREETINGS_XMAS);
+            target.initTextureWithId(ResourceId.IMG_CHAR_IDLE_XMAS);
+        }
+
         target.doRestoreCutTransparency();
 
         target.bb = Rectangle.copy(resolution.TARGET_BB);
@@ -1300,15 +1308,26 @@ const GameScene = BaseElement.extend({
         };
         target.drawPosIncrement = 0.0001;
 
+        const greetingResource = IS_XMAS
+            ? ResourceId.IMG_CHAR_GREETINGS_XMAS
+            : ResourceId.IMG_CHAR_ANIMATIONS2;
+        const greetingStart = IS_XMAS
+            ? IMG_CHAR_GREETINGS_XMAS_start
+            : IMG_CHAR_ANIMATIONS2_greeting_start;
+        const greetingEnd = IS_XMAS
+            ? IMG_CHAR_GREETINGS_XMAS_end
+            : IMG_CHAR_ANIMATIONS2_greeting_end;
+
         target.addAnimationEndpoints(
             CharAnimation.GREETING,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_CHAR_ANIMATIONS2_greeting_start,
-            IMG_CHAR_ANIMATIONS2_greeting_end,
+            greetingStart,
+            greetingEnd,
             undefined,
-            ResourceId.IMG_CHAR_ANIMATIONS2
+            greetingResource
         );
+
         target.addAnimationEndpoints(
             CharAnimation.IDLE,
             0.05,
@@ -1318,6 +1337,7 @@ const GameScene = BaseElement.extend({
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS
         );
+
         target.addAnimationEndpoints(
             CharAnimation.IDLE2,
             0.05,
@@ -1327,6 +1347,27 @@ const GameScene = BaseElement.extend({
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS
         );
+
+        target.addAnimationEndpoints(
+            CharAnimation.IDLEXMAS,
+            0.05,
+            Timeline.LoopType.NO_LOOP,
+            IMG_CHAR_IDLE_XMAS_idle_start,
+            IMG_CHAR_IDLE_XMAS_idle_end,
+            undefined,
+            ResourceId.IMG_CHAR_IDLE_XMAS
+        );
+
+        target.addAnimationEndpoints(
+            CharAnimation.IDLE2XMAS,
+            0.05,
+            Timeline.LoopType.NO_LOOP,
+            IMG_CHAR_IDLE_XMAS_idle2_start,
+            IMG_CHAR_IDLE_XMAS_idle2_end,
+            undefined,
+            ResourceId.IMG_CHAR_IDLE_XMAS
+        );
+
         let frame;
         const idle3Sequence = [];
         for (
@@ -1336,6 +1377,7 @@ const GameScene = BaseElement.extend({
         ) {
             idle3Sequence.push(frame);
         }
+
         for (
             frame = IMG_CHAR_ANIMATIONS_idle3_start;
             frame <= IMG_CHAR_ANIMATIONS_idle3_end;
@@ -1343,6 +1385,7 @@ const GameScene = BaseElement.extend({
         ) {
             idle3Sequence.push(frame);
         }
+
         target.addAnimationSequence(
             CharAnimation.IDLE3,
             0.05,
@@ -1351,6 +1394,7 @@ const GameScene = BaseElement.extend({
             idle3Sequence,
             ResourceId.IMG_CHAR_ANIMATIONS
         );
+
         target.addAnimationEndpoints(
             CharAnimation.EXCITED,
             0.05,
@@ -1419,6 +1463,8 @@ const GameScene = BaseElement.extend({
         target.switchToAnimation(CharAnimation.IDLE, CharAnimation.GREETING, 0.05);
         target.switchToAnimation(CharAnimation.IDLE, CharAnimation.IDLE2, 0.05);
         target.switchToAnimation(CharAnimation.IDLE, CharAnimation.IDLE3, 0.05);
+        target.switchToAnimation(CharAnimation.IDLE, CharAnimation.IDLEXMAS, 0.05);
+        target.switchToAnimation(CharAnimation.IDLE, CharAnimation.IDLE2XMAS, 0.05);
         target.switchToAnimation(CharAnimation.IDLE, CharAnimation.EXCITED, 0.05);
         target.switchToAnimation(CharAnimation.IDLE, CharAnimation.PUZZLED, 0.05);
 
@@ -1481,9 +1527,13 @@ const GameScene = BaseElement.extend({
             this.idlesTimer--;
             if (this.idlesTimer === 0) {
                 if (MathHelper.randomRange(0, 1) === 1) {
-                    this.target.playTimeline(CharAnimation.IDLE2);
+                    IS_XMAS
+                        ? this.target.playTimeline(CharAnimation.IDLEXMAS)
+                        : this.target.playTimeline(CharAnimation.IDLE2);
                 } else {
-                    this.target.playTimeline(CharAnimation.IDLE3);
+                    IS_XMAS
+                        ? this.target.playTimeline(CharAnimation.IDLE2XMAS)
+                        : this.target.playTimeline(CharAnimation.IDLE3);
                 }
                 this.idlesTimer = MathHelper.randomRange(5, 20);
             }
@@ -4107,4 +4157,11 @@ const IMG_CHAR_ANIMATIONS2_greeting_end = 76;
 
 const IMG_CHAR_ANIMATIONS3_fail_start = 0;
 const IMG_CHAR_ANIMATIONS3_fail_end = 12;
+
+const IMG_CHAR_GREETINGS_XMAS_start = 0;
+const IMG_CHAR_GREETINGS_XMAS_end = 33;
+const IMG_CHAR_IDLE_XMAS_idle_start = 0;
+const IMG_CHAR_IDLE_XMAS_idle_end = 30;
+const IMG_CHAR_IDLE_XMAS_idle2_start = 31;
+const IMG_CHAR_IDLE_XMAS_idle2_end = 61;
 export default GameScene;

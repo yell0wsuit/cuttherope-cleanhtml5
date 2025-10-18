@@ -9,6 +9,9 @@ import RGBAColor from "@/core/RGBAColor";
 import Mover from "@/utils/Mover";
 import Log from "@/utils/Log";
 import satisfyConstraintArray from "@/physics/satisfyConstraintArray";
+import ResourceMgr from "@/resources/ResourceMgr";
+import ResourceId from "@/resources/ResourceId";
+import { IS_XMAS } from "@/resources/ResData";
 /**
  * @const
  * @type {number}
@@ -26,6 +29,12 @@ const BUNGEE_RELAXION_TIMES = 25;
  * @type {number}
  */
 const MAX_BUNGEE_SEGMENTS = 10;
+
+const XMAS_LIGHT_MAX_COUNT = 24;
+const XMAS_LIGHT_FRAME_COUNT = 5;
+const XMAS_LIGHT_NORMAL_OFFSET_MIN = 4;
+const XMAS_LIGHT_NORMAL_OFFSET_MAX = 7;
+const XMAS_LIGHT_TANGENT_DELTA = 0.01;
 
 /**
  * @const
@@ -120,6 +129,12 @@ const Bungee = ConstraintSystem.extend({
         this.drawPts = [];
 
         this.BUNGEE_BEZIER_POINTS = resolution.BUNGEE_BEZIER_POINTS;
+
+        this.xmasLights = null;
+        this._xmasLastTailCount = 0;
+        if (IS_XMAS) {
+            this._setupXmasLights();
+        }
     },
     /**
      * @return {number}
@@ -172,6 +187,116 @@ const Bungee = ConstraintSystem.extend({
                 }
             }
         }
+
+        if (IS_XMAS) {
+            const tailParts = this._getTailSegmentParts();
+            if (tailParts.length !== this._xmasLastTailCount) {
+                this._setupXmasLights();
+            }
+        }
+    },
+    _getTailSegmentParts: function () {
+        const parts = this.parts || [];
+        if (parts.length === 0) {
+            return [];
+        }
+
+        if (this.cut === Constants.UNDEFINED) {
+            return parts.slice();
+        }
+
+        const segments = [];
+        let currentSegment = [];
+
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+            let linked = true;
+
+            if (i > 0) {
+                const prevPart = parts[i - 1];
+                if (!part.hasConstraint(prevPart)) {
+                    linked = false;
+                }
+            }
+
+            if (i > 0 && part.pin.x === Constants.UNDEFINED && !linked) {
+                if (currentSegment.length > 0) {
+                    segments.push(currentSegment);
+                }
+                currentSegment = [];
+            }
+
+            currentSegment.push(part);
+        }
+
+        if (currentSegment.length > 0) {
+            segments.push(currentSegment);
+        }
+
+        for (let s = 0; s < segments.length; s++) {
+            if (segments[s].includes(this.tail)) {
+                return segments[s];
+            }
+        }
+
+        return segments.length > 0 ? segments[segments.length - 1] : parts.slice();
+    },
+    _setupXmasLights: function () {
+        const tailParts = this._getTailSegmentParts();
+        const partCount = tailParts.length;
+
+        if (partCount < 2) {
+            this.xmasLights = [];
+            this._xmasLastTailCount = partCount;
+            return;
+        }
+
+        // Calculate how many vertices will be in the final bezier curve
+        const numVertices = (partCount - 1) * this.BUNGEE_BEZIER_POINTS;
+        const numSegments = this.BUNGEE_BEZIER_POINTS - 1;
+
+        // Color segments alternate every numSegments vertices
+        // We want lights at the transition points (end of each color segment)
+        const transitionIndices = [];
+
+        // Start after the first color segment
+        for (let vertex = numSegments; vertex < numVertices; vertex += numSegments) {
+            transitionIndices.push(vertex);
+        }
+
+        if (transitionIndices.length === 0) {
+            this.xmasLights = [];
+            this._xmasLastTailCount = partCount;
+            return;
+        }
+
+        // Limit to max light count, evenly distributed among transitions
+        const lightCount = Math.min(transitionIndices.length, XMAS_LIGHT_MAX_COUNT);
+
+        this.xmasLights = new Array(lightCount);
+
+        for (let i = 0; i < lightCount; i++) {
+            // Distribute lights evenly among available transitions
+            const normalized = lightCount === 1 ? 0 : i / (lightCount - 1);
+            const transitionIndex = Math.round(normalized * (transitionIndices.length - 1));
+            const vertex = transitionIndices[transitionIndex];
+
+            // Convert vertex index to parametric t value (0-1)
+            const t = vertex / numVertices;
+
+            this.xmasLights[i] = {
+                t,
+                frame: Math.floor(Math.random() * XMAS_LIGHT_FRAME_COUNT),
+                scale: 0.85 + Math.random() * 0.3,
+                rotationOffset: (Math.random() - 0.5) * 0.5,
+                normalOffset:
+                    XMAS_LIGHT_NORMAL_OFFSET_MIN +
+                    Math.random() * (XMAS_LIGHT_NORMAL_OFFSET_MAX - XMAS_LIGHT_NORMAL_OFFSET_MIN),
+                position: new Vector(0, 0),
+                tangentPoint: new Vector(0, 0),
+            };
+        }
+        this._xmasLastTailCount = partCount;
     },
     rollBack: function (amount) {
         const parts = this.parts;
@@ -213,6 +338,14 @@ const Bungee = ConstraintSystem.extend({
             const c = constraints[i];
             if (c.type === ConstraintType.NOT_MORE_THAN) c.restLength = newTailRestLen;
         }
+
+        if (IS_XMAS) {
+            const tailParts = this._getTailSegmentParts();
+            if (tailParts.length !== this._xmasLastTailCount) {
+                this._setupXmasLights();
+            }
+        }
+
         return rollBackLen;
     },
     strengthen: function () {
@@ -308,6 +441,9 @@ const Bungee = ConstraintSystem.extend({
         this.cutTime = CUT_DISSAPPEAR_TIMEOUT;
         this.forceWhite = true;
         this.highlighted = false;
+        if (IS_XMAS) {
+            this._setupXmasLights();
+        }
     },
     draw: function () {
         const parts = this.parts,
@@ -318,49 +454,184 @@ const Bungee = ConstraintSystem.extend({
         ctx.lineJoin = "round";
         ctx.lineWidth = this.lineWidth;
 
-        if (this.cut === Constants.UNDEFINED) {
-            const pts = new Array(count);
-            for (i = 0; i < count; i++) {
-                pts[i] = parts[i].pos;
-                //Log.debug('Point ' + i + ': ' + pts[i].toString());
-            }
-            this.drawBungee(pts);
-        } else {
-            const pts1 = [],
-                pts2 = [];
-            let part2 = false;
-            for (i = 0; i < count; i++) {
-                part = parts[i];
-                let linked = true;
+        const segments = [];
 
-                if (i > 0) {
-                    prevPart = parts[i - 1];
-                    if (!part.hasConstraint(prevPart)) {
-                        linked = false;
+        if (count > 0) {
+            if (this.cut === Constants.UNDEFINED) {
+                const pts = new Array(count);
+                let containsTail = false;
+                for (i = 0; i < count; i++) {
+                    part = parts[i];
+                    pts[i] = part.pos;
+                    if (part === this.tail) {
+                        containsTail = true;
+                    }
+                }
+                segments.push({ pts, containsTail });
+            } else {
+                const pts1 = [];
+                const pts2 = [];
+                let part2 = false;
+                let segment1HasTail = false;
+                let segment2HasTail = false;
+
+                for (i = 0; i < count; i++) {
+                    part = parts[i];
+                    let linked = true;
+
+                    if (i > 0) {
+                        prevPart = parts[i - 1];
+                        if (!part.hasConstraint(prevPart)) {
+                            linked = false;
+                        }
+                    }
+
+                    if (i > 0 && part.pin.x === Constants.UNDEFINED && !linked) {
+                        part2 = true;
+                    }
+
+                    if (!part2) {
+                        pts1.push(part.pos);
+                        if (part === this.tail) {
+                            segment1HasTail = true;
+                        }
+                    } else {
+                        pts2.push(part.pos);
+                        if (part === this.tail) {
+                            segment2HasTail = true;
+                        }
                     }
                 }
 
-                if (part.pin.x === Constants.UNDEFINED && !linked) {
-                    part2 = true;
+                if (pts1.length > 0) {
+                    segments.push({ pts: pts1, containsTail: segment1HasTail });
                 }
-
-                if (!part2) {
-                    pts1[i] = part.pos;
-                } else {
-                    pts2.push(part.pos);
+                if (pts2.length > 0 && !this.hideTailParts) {
+                    segments.push({ pts: pts2, containsTail: segment2HasTail });
                 }
             }
+        }
 
-            if (pts1.length > 0) {
-                this.drawBungee(pts1);
-            }
-            if (pts2.length > 0 && !this.hideTailParts) {
-                this.drawBungee(pts2);
+        let lightsDrawn = false;
+        for (let s = 0; s < segments.length; s++) {
+            const segment = segments[s];
+            const drawLights = segment.containsTail && !lightsDrawn;
+            this.drawBungee(segment.pts, drawLights);
+            if (drawLights) {
+                lightsDrawn = true;
             }
         }
         ctx.lineWidth = 1;
     },
-    drawBungee: function (pts) {
+    _drawXmasLights: function (pts) {
+        if (!IS_XMAS || !this.xmasLights || this.xmasLights.length === 0) {
+            return;
+        }
+
+        const texture = ResourceMgr.getTexture(ResourceId.IMG_XMAS_LIGHTS);
+        if (!texture || !texture.rects || texture.rects.length === 0) {
+            return;
+        }
+
+        const rects = texture.rects;
+        const offsets = texture.offsets || [];
+        const image = texture.image;
+        const ctx = Canvas.context;
+
+        const pointsCount = pts.length;
+        if (pointsCount < 2) {
+            return;
+        }
+
+        // Use a conservative epsilon to avoid precision issues
+        const epsilon = Math.max(
+            0.001,
+            1 / Math.max((pointsCount - 1) * this.BUNGEE_BEZIER_POINTS, 1)
+        );
+        const tangentDelta = Math.max(epsilon * 2, XMAS_LIGHT_TANGENT_DELTA);
+
+        for (let i = 0, len = this.xmasLights.length; i < len; i++) {
+            const light = this.xmasLights[i];
+            const position = light.position;
+            const tangentPoint = light.tangentPoint;
+
+            const clampedT = Math.min(1 - epsilon, Math.max(epsilon, light.t));
+            Vector.setCalcPathBezier(pts, clampedT, position);
+
+            // Calculate tangent for orientation
+            let aheadT = clampedT + tangentDelta;
+            let behindT = clampedT - tangentDelta;
+
+            // Determine which tangent direction to use
+            if (aheadT > 1 - epsilon) {
+                aheadT = clampedT;
+                behindT = Math.max(epsilon, behindT);
+            } else if (behindT < epsilon) {
+                behindT = clampedT;
+                aheadT = Math.min(1 - epsilon, aheadT);
+            }
+
+            const tangentT = aheadT !== clampedT ? aheadT : behindT;
+            Vector.setCalcPathBezier(pts, tangentT, tangentPoint);
+
+            // Calculate angle with fallback for zero-length tangent
+            let dx = tangentPoint.x - position.x;
+            let dy = tangentPoint.y - position.y;
+            const tangentLength = Math.sqrt(dx * dx + dy * dy);
+
+            // If tangent is too small, try a larger delta
+            if (tangentLength < 0.1) {
+                const largeDelta = Math.max(0.05, tangentDelta * 5);
+                const fallbackT = Math.min(1 - epsilon, Math.max(epsilon, clampedT + largeDelta));
+                Vector.setCalcPathBezier(pts, fallbackT, tangentPoint);
+                dx = tangentPoint.x - position.x;
+                dy = tangentPoint.y - position.y;
+            }
+
+            // Reverse direction if we used backward tangent
+            if (tangentT < clampedT) {
+                dx = -dx;
+                dy = -dy;
+            }
+
+            const angle = Math.atan2(dy, dx) + light.rotationOffset;
+            const frameIndex = rects.length ? light.frame % rects.length : 0;
+            const rect = rects[frameIndex];
+
+            if (!rect) {
+                continue;
+            }
+
+            const offset = offsets[frameIndex];
+            const scale = light.scale;
+            const normalAngle = angle + Math.PI / 2;
+            const offsetDistance = light.normalOffset;
+            const drawX = position.x + Math.cos(normalAngle) * offsetDistance;
+            const drawY = position.y + Math.sin(normalAngle) * offsetDistance;
+
+            ctx.save();
+            ctx.translate(drawX, drawY);
+            ctx.rotate(angle);
+            ctx.scale(scale, scale);
+
+            const offsetX = offset ? offset.x : 0;
+            const offsetY = offset ? offset.y : 0;
+
+            ctx.drawImage(
+                image,
+                rect.x,
+                rect.y,
+                rect.w,
+                rect.h,
+                -rect.w / 2 - offsetX,
+                -rect.h / 2 - offsetY,
+                rect.w,
+                rect.h
+            );
+            ctx.restore();
+        }
+    },
+    drawBungee: function (pts, drawLights) {
         const count = pts.length,
             points = this.BUNGEE_BEZIER_POINTS,
             drawPts = this.drawPts;
@@ -536,6 +807,10 @@ const Bungee = ConstraintSystem.extend({
         }
 
         ctx.stroke();
+
+        if (drawLights) {
+            this._drawXmasLights(pts);
+        }
 
         // reset the alpha
         if (previousAlpha !== alpha) {
