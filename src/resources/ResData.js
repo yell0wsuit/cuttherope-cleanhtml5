@@ -1,6 +1,11 @@
 import ResEntry from "@/resources/ResEntry";
 import ResourceType from "@/resources/ResourceType";
 import ResourceId from "@/resources/ResourceId";
+
+const DEBUG_FORCE_XMAS = true;
+const currentMonth = new Date().getMonth();
+export const IS_XMAS = DEBUG_FORCE_XMAS || currentMonth === 11 || currentMonth === 0;
+
 const RES_DATA = [];
 
 RES_DATA[ResourceId.IMG_DEFAULT] = new ResEntry("zeptolab.png", ResourceType.IMAGE);
@@ -325,5 +330,131 @@ RES_DATA[ResourceId.SND_PREHISTORIC_MONSTER_SAD] = new ResEntry(
 RES_DATA[ResourceId.SND_TIME_MENU_MUSIC] = new ResEntry("time_menu", ResourceType.SOUND);
 
 RES_DATA[ResourceId.IMG_TIME_STANDS] = new ResEntry("time-stands.png", ResourceType.IMAGE);
+
+RES_DATA[ResourceId.IMG_CHAR_GREETINGS_XMAS] = new ResEntry(
+    "char_greeting_xmas_056x.png",
+    ResourceType.IMAGE,
+    {
+        atlasPath: "char_greeting_xmas_056x.json",
+        atlasFormat: "texture-packer",
+        frameOrder: [
+            "frame_0143.png",
+            "frame_0144.png",
+            "frame_0145.png",
+            "frame_0146.png",
+            "frame_0147.png",
+            "frame_0148.png",
+            "frame_0149.png",
+            "frame_0150.png",
+            "frame_0151.png",
+            "frame_0152.png",
+            "frame_0153.png",
+            "frame_0154.png",
+            "frame_0155.png",
+            "frame_0156.png",
+            "frame_0157.png",
+            "frame_0158.png",
+            "frame_0159.png",
+            "frame_0160.png",
+            "frame_0161.png",
+            "frame_0162.png",
+            "frame_0163.png",
+            "frame_0164.png",
+            "frame_0165.png",
+            "frame_0166.png",
+            "frame_0167.png",
+            "frame_0168.png",
+            "frame_0169.png",
+            "frame_0170.png",
+            "frame_0171.png",
+            "frame_0172.png",
+            "frame_0173.png",
+            "frame_0174.png",
+            "frame_0175.png",
+            "frame_0176.png",
+        ],
+    }
+);
+
+RES_DATA[ResourceId.IMG_CHAR_IDLE_XMAS] = new ResEntry("char_idle_xmas.png", ResourceType.IMAGE, {
+    atlasPath: "char_idle_xmas.json",
+    atlasFormat: "texture-packer",
+    frameOrder: [
+        "frame_0000.png",
+        "frame_0001.png",
+        "frame_0002.png",
+        "frame_0003.png",
+        "frame_0004.png",
+        "frame_0005.png",
+        "frame_0006.png",
+        "frame_0007.png",
+        "frame_0008.png",
+        "frame_0009.png",
+        "frame_0010.png",
+        "frame_0011.png",
+        "frame_0012.png",
+        "frame_0013.png",
+        "frame_0014.png",
+        "frame_0015.png",
+        "frame_0016.png",
+        "frame_0017.png",
+        "frame_0018.png",
+        "frame_0019.png",
+        "frame_0020.png",
+        "frame_0021.png",
+        "frame_0022.png",
+        "frame_0023.png",
+        "frame_0024.png",
+        "frame_0025.png",
+        "frame_0026.png",
+        "frame_0027.png",
+        "frame_0028.png",
+        "frame_0029.png",
+        "frame_0030.png",
+        "frame_0031.png",
+        "frame_0032.png",
+        "frame_0033.png",
+        "frame_0034.png",
+        "frame_0035.png",
+        "frame_0036.png",
+        "frame_0037.png",
+        "frame_0038.png",
+        "frame_0039.png",
+        "frame_0040.png",
+        "frame_0041.png",
+        "frame_0042.png",
+        "frame_0043.png",
+        "frame_0044.png",
+        "frame_0045.png",
+        "frame_0046.png",
+        "frame_0047.png",
+        "frame_0048.png",
+        "frame_0049.png",
+        "frame_0050.png",
+        "frame_0051.png",
+        "frame_0052.png",
+        "frame_0053.png",
+        "frame_0054.png",
+        "frame_0055.png",
+        "frame_0056.png",
+        "frame_0057.png",
+        "frame_0058.png",
+        "frame_0059.png",
+        "frame_0060.png",
+        "frame_0061.png",
+    ],
+});
+
+RES_DATA[ResourceId.IMG_XMAS_LIGHTS] = new ResEntry("christmas_lights.png", ResourceType.IMAGE, {
+    atlasPath: "christmas_lights.json",
+    atlasFormat: "texture-packer",
+    frameOrder: [
+        "frame_0000.png",
+        "frame_0001.png",
+        "frame_0002.png",
+        "frame_0003.png",
+        "frame_0004.png",
+    ],
+});
 
 export default RES_DATA;
