@@ -208,10 +208,14 @@ const Box = Class.extend({
                 // TODO: should resize lock images for every resolution and remove scaling
                 // TODO: also need to normalize the size of boxes (which vary)
                 ctx.scale(1.015, 1);
+                let lockYOffset = yOffset;
+                if (this.type === BoxType.HOLIDAY) {
+                    lockYOffset += resolution.uiScaledNumber(26);
+                }
                 ctx.drawImage(
                     this.lockImg,
                     resolution.uiScaledNumber(23),
-                    resolution.uiScaledNumber(155) + yOffset
+                    resolution.uiScaledNumber(155) + lockYOffset
                 );
                 ctx.scale(1 / 1.015, 1);
 
