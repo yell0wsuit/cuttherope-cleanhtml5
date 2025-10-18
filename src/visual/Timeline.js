@@ -23,7 +23,7 @@ const Timeline = Class.extend({
     },
     addKeyFrame: function (keyFrame) {
         const track = this.tracks[keyFrame.trackType],
-            index = track == null ? 0 : track.keyFrames.length;
+            index = track?.keyFrames.length ?? 0;
         this.setKeyFrame(keyFrame, index);
     },
     setKeyFrame: function (keyFrame, index) {

@@ -191,9 +191,7 @@ const ViewController = Class.extend({
     deactivateActiveChild: function () {
         if (this.activeChildID !== Constants.UNDEFINED) {
             const prevController = this.children[this.activeChildID];
-            if (prevController) {
-                prevController.deactivate();
-            }
+            prevController?.deactivate();
             this.activeChildID = Constants.UNDEFINED;
         }
     },

@@ -1502,9 +1502,7 @@ const GameScene = BaseElement.extend({
         this._super(delta);
         this.dd.update(delta);
 
-        if (this.pollenDrawer) {
-            this.pollenDrawer.update(delta);
-        }
+        this.pollenDrawer?.update(delta);
 
         for (i = 0; i < Constants.MAX_TOUCHES; i++) {
             const cuts = this.fingerCuts[i];
@@ -2771,12 +2769,8 @@ const GameScene = BaseElement.extend({
             this.earthAnims[i].draw();
         }
 
-        if (this.pollenDrawer) {
-            this.pollenDrawer.draw();
-        }
-        if (this.gravityButton) {
-            this.gravityButton.draw();
-        }
+        this.pollenDrawer?.draw();
+        this.gravityButton?.draw();
 
         this.support.draw();
         this.target.draw();

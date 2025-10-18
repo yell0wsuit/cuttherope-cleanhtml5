@@ -73,7 +73,7 @@ class PointerCapture {
         const offsetLeft = rect.left + scrollLeft;
         const offsetTop = rect.top + scrollTop;
 
-        const zoom = this.getZoom ? this.getZoom() : 1;
+        const zoom = this.getZoom?.() ?? 1;
         const mouseX = Math.round((posx - offsetLeft) / zoom);
         const mouseY = Math.round((posy - offsetTop) / zoom);
 

@@ -33,8 +33,8 @@ const fadeIn = function (element, duration, callback) {
         element.style.opacity = Math.min(progress / duration, 1);
         if (progress < duration) {
             requestAnimationFrame(animate);
-        } else if (callback) {
-            callback();
+        } else {
+            callback?.();
         }
     };
     requestAnimationFrame(animate);
@@ -51,9 +51,7 @@ const fadeOut = function (element, duration, callback) {
             requestAnimationFrame(animate);
         } else {
             element.style.display = "none";
-            if (callback) {
-                callback();
-            }
+            callback?.();
         }
     };
     requestAnimationFrame(animate);

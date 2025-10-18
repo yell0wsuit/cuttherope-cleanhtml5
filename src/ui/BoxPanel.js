@@ -416,9 +416,7 @@ BoxPanel.activate = function () {
 };
 
 BoxPanel.deactivate = function () {
-    if (this.pointerCapture) {
-        this.pointerCapture.deactivate();
-    }
+    this.pointerCapture?.deactivate();
 };
 
 BoxPanel.redraw = function () {

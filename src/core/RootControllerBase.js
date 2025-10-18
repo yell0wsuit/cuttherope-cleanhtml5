@@ -97,9 +97,7 @@ const RootController = ViewController.extend({
         // draw the active view
         if (this.currentController.activeViewID !== Constants.UNDEFINED) {
             const activeView = this.currentController.activeView();
-            if (activeView) {
-                activeView.draw();
-            }
+            activeView?.draw();
 
             // always calc fps because we use the avg to adjust delta at runtime
             this.currentController.calculateFPS();
@@ -136,9 +134,7 @@ const RootController = ViewController.extend({
         this.pointerCapture.activate();
     },
     deactivateMouseEvents: function () {
-        if (this.pointerCapture) {
-            this.pointerCapture.deactivate();
-        }
+        this.pointerCapture?.deactivate();
     },
     activate: function () {
         this._super();
@@ -198,9 +194,7 @@ const RootController = ViewController.extend({
             this.currentController.calculateTimeDelta();
             this.transitionTime = this.currentController.lastTime + this.transitionDelay;
             const activeView = this.currentController.activeView();
-            if (activeView) {
-                activeView.draw();
-            }
+            activeView?.draw();
         }
     },
     onControllerViewHide: function (view) {
