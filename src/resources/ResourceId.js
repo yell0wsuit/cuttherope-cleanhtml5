@@ -182,8 +182,11 @@ const ResourceId = {
     IMG_CHAR_IDLE_XMAS: 186,
     IMG_XMAS_LIGHTS: 187,
 
+    IMG_BGR_XMAS: 188,
+    IMG_BGR_PADDINGTON: 189,
+
     // Total number of resources
-    RESOURCES_COUNT: 187,
+    RESOURCES_COUNT: 189,
 };
 
 export default ResourceId;

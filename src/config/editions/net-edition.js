@@ -5,12 +5,28 @@ import ResourceId from "@/resources/ResourceId";
 import BoxType from "@/ui/BoxType";
 import LangId from "@/resources/LangId";
 
-const normalizedBoxMetadata = boxMetadata.map((box) => ({
-    ...box,
-    boxType: BoxType[box.boxType] ?? box.boxType,
-    levelBackgroundId: box.levelBackgroundId == null ? null : ResourceId[box.levelBackgroundId],
-    levelOverlayId: box.levelOverlayId == null ? null : ResourceId[box.levelOverlayId],
-}));
+const IS_PADDINGTON = new Date().getMonth() === 0;
+
+const normalizedBoxMetadata = boxMetadata.map((box) => {
+    let modifiedBox = {
+        ...box,
+        boxType: BoxType[box.boxType] ?? box.boxType,
+        levelBackgroundId: box.levelBackgroundId == null ? null : ResourceId[box.levelBackgroundId],
+        levelOverlayId: box.levelOverlayId == null ? null : ResourceId[box.levelOverlayId],
+    };
+
+    // 🎩 Paddington Theme Override (January only)
+    if (IS_PADDINGTON && box.id === "holidaygiftbox") {
+        modifiedBox = {
+            ...modifiedBox,
+            boxDoor: "levelbgpad.webp",
+            levelBackgroundId: ResourceId.IMG_BGR_PADDINGTON,
+            levelOverlayId: ResourceId.IMG_BGR_PADDINGTON,
+        };
+    }
+
+    return modifiedBox;
+});
 
 const netEdition = {
     siteUrl: "http://www.cuttherope.net",

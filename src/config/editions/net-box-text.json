@@ -1,5 +1,30 @@
 [
     {
+        "id": "holidaygiftbox",
+        "boxText": {
+            "en": "Holiday Gift",
+            "ko": "홀리데이 기프트",
+            "zh": "节日礼物",
+            "ja": "ホリデーギフト",
+            "nl": "Feestdag Geschenk",
+            "it": "Regalo di Festa",
+            "ca": "Regal de Festa",
+            "br": "Presente de Feriado",
+            "es": "Regalo de Fiesta",
+            "fr": "Cadeau de Fête",
+            "de": "Festgeschenk",
+            "ru": "Праздничный подарок"
+        },
+        "boxImage": "boxholiday_bgd.png",
+        "boxDoor": "levelbgxmas.webp",
+        "boxType": "HOLIDAY",
+        "unlockStars": 0,
+        "support": 0,
+        "showEarth": false,
+        "levelBackgroundId": "IMG_BGR_XMAS",
+        "levelOverlayId": "IMG_BGR_XMAS"
+    },
+    {
         "id": "cardboardbox",
         "boxText": {
             "en": "Cardboard Box",
