@@ -9,6 +9,7 @@ import LangId from "@/resources/LangId";
 import MenuStringId from "@/resources/MenuStringId";
 import RoamSettings from "@/game/RoamSettings";
 import BoxType from "@/ui/BoxType";
+import { IS_XMAS } from "@/resources/ResData";
 
 // Helper to add prefix for Holiday Gift box
 const getBoxPrefix = function (box) {
@@ -226,8 +227,14 @@ const ScoreManager = new (function () {
     };
 
     this.isBoxLocked = function (boxIndex) {
-        if (boxIndex == 0) return false;
         if (QueryStrings.unlockAllBoxes) return false;
+
+        const isHolidayBox = edition.boxTypes?.[boxIndex] === BoxType.HOLIDAY;
+        if (isHolidayBox && !IS_XMAS) {
+            return true;
+        }
+        if (boxIndex === 0 && !isHolidayBox) return false;
+
         const box = boxes[boxIndex];
         if (box != null && ScoreManager.totalStars() >= ScoreManager.requiredStars(boxIndex)) {
             return false;

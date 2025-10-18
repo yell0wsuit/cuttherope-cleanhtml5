@@ -82,6 +82,8 @@ const MenuId = {
     // added for winjs version
     SETTINGS: 200,
     PRIVACY: 201,
+    HOLIDAY_LEVELS_UNAVAILABLE_TITLE: 202,
+    HOLIDAY_LEVELS_UNAVAILABLE_TEXT: 203,
 };
 
 export default MenuId;

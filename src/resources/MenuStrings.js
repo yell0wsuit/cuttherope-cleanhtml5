@@ -850,6 +850,14 @@ const locEntries = [
         de: "Datenschutz",
         ru: "Конфиденциальность",
     },
+    {
+        id: MenuStringId.HOLIDAY_LEVELS_UNAVAILABLE_TITLE,
+        en: "Holiday Gift is taking a break!",
+    },
+    {
+        id: MenuStringId.HOLIDAY_LEVELS_UNAVAILABLE_TEXT,
+        en: "These festive levels return during the holiday season. Please come back later!",
+    },
 
     /*
          {
