@@ -2,9 +2,8 @@ import ResEntry from "@/resources/ResEntry";
 import ResourceType from "@/resources/ResourceType";
 import ResourceId from "@/resources/ResourceId";
 
-const DEBUG_FORCE_XMAS = true;
 const currentMonth = new Date().getMonth();
-export const IS_XMAS = DEBUG_FORCE_XMAS || currentMonth === 11 || currentMonth === 0;
+export const IS_XMAS = currentMonth === 11 || currentMonth === 0;
 
 const RES_DATA = [];
 
