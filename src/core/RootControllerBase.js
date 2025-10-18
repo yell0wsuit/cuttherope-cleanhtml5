@@ -34,9 +34,9 @@ const RootController = ViewController.extend({
         this.currentController = null;
         this.viewTransition = Constants.UNDEFINED;
         this.transitionTime = Constants.UNDEFINED;
-       this.previousView = null;
-       this.transitionDelay = TRANSITION_DEFAULT_DELAY;
-       this.deactivateCurrentController = false;
+        this.previousView = null;
+        this.transitionDelay = TRANSITION_DEFAULT_DELAY;
+        this.deactivateCurrentController = false;
         this._rafId = null;
         this._visibilityChangeHandler = null;
         this._resumeOnVisibility = false;
@@ -58,16 +58,31 @@ const RootController = ViewController.extend({
         }
 
         this.controllerSubscriptions.push(
-            PubSub.subscribe(PubSub.ChannelId.ControllerActivated, this.onControllerActivated.bind(this)),
+            PubSub.subscribe(
+                PubSub.ChannelId.ControllerActivated,
+                this.onControllerActivated.bind(this)
+            ),
             PubSub.subscribe(
                 PubSub.ChannelId.ControllerDeactivateRequested,
                 this.onControllerDeactivationRequest.bind(this)
             ),
-            PubSub.subscribe(PubSub.ChannelId.ControllerDeactivated, this.onControllerDeactivated.bind(this)),
+            PubSub.subscribe(
+                PubSub.ChannelId.ControllerDeactivated,
+                this.onControllerDeactivated.bind(this)
+            ),
             PubSub.subscribe(PubSub.ChannelId.ControllerPaused, this.onControllerPaused.bind(this)),
-            PubSub.subscribe(PubSub.ChannelId.ControllerUnpaused, this.onControllerUnpaused.bind(this)),
-            PubSub.subscribe(PubSub.ChannelId.ControllerViewHidden, this.onControllerViewHide.bind(this)),
-            PubSub.subscribe(PubSub.ChannelId.ControllerViewShow, this.onControllerViewShow.bind(this))
+            PubSub.subscribe(
+                PubSub.ChannelId.ControllerUnpaused,
+                this.onControllerUnpaused.bind(this)
+            ),
+            PubSub.subscribe(
+                PubSub.ChannelId.ControllerViewHidden,
+                this.onControllerViewHide.bind(this)
+            ),
+            PubSub.subscribe(
+                PubSub.ChannelId.ControllerViewShow,
+                this.onControllerViewShow.bind(this)
+            )
         );
     },
 
