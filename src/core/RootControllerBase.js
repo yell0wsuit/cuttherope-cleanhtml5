@@ -34,9 +34,12 @@ const RootController = ViewController.extend({
         this.currentController = null;
         this.viewTransition = Constants.UNDEFINED;
         this.transitionTime = Constants.UNDEFINED;
-        this.previousView = null;
-        this.transitionDelay = TRANSITION_DEFAULT_DELAY;
-        this.deactivateCurrentController = false;
+       this.previousView = null;
+       this.transitionDelay = TRANSITION_DEFAULT_DELAY;
+       this.deactivateCurrentController = false;
+        this._rafId = null;
+        this._visibilityChangeHandler = null;
+        this._resumeOnVisibility = false;
 
         // when the user holds down the mouse button while moving the mouse
         this.dragMode = false;
@@ -145,26 +148,63 @@ const RootController = ViewController.extend({
         this.subscribeToControllerEvents();
         this.activateMouseEvents();
 
-        // called to render a frame
-        const self = this,
-            requestAnimationFrame = window["requestAnimationFrame"],
-            animationLoop = function () {
-                const now = Date.now();
-                self.operateCurrentMVC(now);
-                if (!self.stopAnimation) {
-                    requestAnimationFrame(animationLoop);
-                }
-            };
+        const self = this;
+        const requestAnimationFrame = window["requestAnimationFrame"];
+        const cancelAnimationFrame = window["cancelAnimationFrame"];
 
-        // start the animation loop
         this.stopAnimation = false;
-        animationLoop();
+        this._resumeOnVisibility = false;
+        this._rafId = null;
+
+        this._animationLoop = function () {
+            const now = performance.now();
+            self.operateCurrentMVC(now);
+            if (!self.stopAnimation) {
+                self._rafId = requestAnimationFrame(self._animationLoop);
+            } else {
+                self._rafId = null;
+            }
+        };
+
+        this._visibilityChangeHandler = function () {
+            if (document.hidden) {
+                if (self.stopAnimation) {
+                    return;
+                }
+
+                self._resumeOnVisibility = true;
+                self.stopAnimation = true;
+                if (typeof cancelAnimationFrame === "function" && self._rafId !== null) {
+                    cancelAnimationFrame(self._rafId);
+                    self._rafId = null;
+                }
+            } else if (self._resumeOnVisibility) {
+                self.stopAnimation = false;
+                self._resumeOnVisibility = false;
+                self._animationLoop();
+            }
+        };
+
+        document.addEventListener("visibilitychange", this._visibilityChangeHandler);
+        this._animationLoop();
     },
     deactivate: function () {
         this._super();
 
         // set flag to stop animation
         this.stopAnimation = true;
+        this._resumeOnVisibility = false;
+
+        const cancelAnimationFrame = window["cancelAnimationFrame"];
+        if (typeof cancelAnimationFrame === "function" && this._rafId !== null) {
+            cancelAnimationFrame(this._rafId);
+        }
+        this._rafId = null;
+
+        if (this._visibilityChangeHandler) {
+            document.removeEventListener("visibilitychange", this._visibilityChangeHandler);
+            this._visibilityChangeHandler = null;
+        }
 
         // remove mouse events
         this.deactivateMouseEvents();
