@@ -180,10 +180,10 @@ const Box = Class.extend({
         if (isGameBox) {
             // draw the lock
             if (this.islocked) {
-                // Get dimensions - prefer naturalWidth/Height, fallback to width/height
-                const textWidth = this.reqImg.naturalWidth || this.reqImg.width || 0;
-                const textHeight = this.reqImg.naturalHeight || this.reqImg.height || 0;
-                const starWidth = this.starImg.naturalWidth || this.starImg.width || 0;
+                // Get dimensions - ImageBitmap uses .width/.height, HTMLImageElement uses .naturalWidth/.naturalHeight
+                const textWidth = this.reqImg.width || this.reqImg.naturalWidth || 0;
+                const textHeight = this.reqImg.height || this.reqImg.naturalHeight || 0;
+                const starWidth = this.starImg.width || this.starImg.naturalWidth || 0;
 
                 const starLeftMargin = resolution.uiScaledNumber(-6);
                 // center the text and star label
@@ -250,8 +250,8 @@ const Box = Class.extend({
             this.renderText();
         }
 
-        const textWidth = this.textImg.naturalWidth || this.textImg.width || 0;
-        const textHeight = this.textImg.naturalHeight || this.textImg.height || 0;
+        const textWidth = this.textImg.width || this.textImg.naturalWidth || 0;
+        const textHeight = this.textImg.height || this.textImg.naturalHeight || 0;
         const x = ~~(
             resolution.uiScaledNumber(25) +
             this.boxTextMargin +
