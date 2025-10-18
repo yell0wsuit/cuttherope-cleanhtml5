@@ -34,10 +34,10 @@ function initializeDoors() {
 
 BoxDoors.appReady = function () {
     // cache the door and tape images (which have already been preloaded)
-    for (let i = 0, len = edition.boxDoors.length; i < len; i++) {
+    for (const doorPath of edition.boxDoors) {
         const doorImg = new Image();
-        doorImg.src = platform.uiImageBaseUrl + edition.boxDoors[i];
-        doorImages[i] = doorImg;
+        doorImg.src = platform.uiImageBaseUrl + doorPath;
+        doorImages.push(doorImg);
     }
 
     tapeImgL.src = platform.uiImageBaseUrl + "leveltape_left.png";

@@ -181,10 +181,9 @@ function render(offset) {
 
     let boxoffset = 0;
 
-    for (let i = 0; i < boxes.length; i++) {
+    for (const box of boxes) {
         let omnomoffset = null;
-        const relboxoffset = offset + boxoffset,
-            box = boxes[i];
+        const relboxoffset = offset + boxoffset;
 
         if (box.visible) {
             // calculate location of omnom if the box in the middle

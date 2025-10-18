@@ -14,8 +14,7 @@ const ResourceMgr = {
         // merge info into resource entries
         const infos = ResInfo;
         ResScaler.scaleResourceInfos(infos, resolution.CANVAS_SCALE);
-        for (let i = 0, len = infos.length; i < len; i++) {
-            const info = infos[i];
+        for (const info of infos) {
             delete info.originalRects;
             delete info.offsetAdjustments;
 
@@ -128,10 +127,9 @@ const ResourceMgr = {
         t.adjustmentMaxX = info.adjustmentMaxX ?? 0;
         t.adjustmentMaxY = info.adjustmentMaxY ?? 0;
 
-        for (let i = 0, len = rects.length; i < len; i++) {
+        for (const rawRect of rects) {
             // convert it to a Rectangle object
-            const rawRect = rects[i],
-                rect = new Rectangle(rawRect.x, rawRect.y, rawRect.w, rawRect.h);
+            const rect = new Rectangle(rawRect.x, rawRect.y, rawRect.w, rawRect.h);
 
             if (rect.w + t.adjustmentMaxX > imageWidth) {
                 rect.w = imageWidth - t.adjustmentMaxX;

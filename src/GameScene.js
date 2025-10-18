@@ -1970,9 +1970,7 @@ const GameScene = BaseElement.extend({
         }
 
         let removeCircleIndex = -1;
-        for (let i = 0, len = this.rotatedCircles.length; i < len; i++) {
-            const rc = this.rotatedCircles[i];
-
+        for (const rc of this.rotatedCircles) {
             for (let j = 0; j < numGrabs; j++) {
                 const g = this.bungees[j],
                     gIndex = rc.containedObjects.indexOf(g),
@@ -3368,9 +3366,8 @@ const GameScene = BaseElement.extend({
         return false;
     },
     resetBungeeHighlight: function () {
-        for (let i = 0, len = this.bungees.length; i < len; i++) {
-            const grab = this.bungees[i],
-                bungee = grab.rope;
+        for (const grab of this.bungees) {
+            const bungee = grab.rope;
             if (!bungee || bungee.cut !== Constants.UNDEFINED) {
                 continue;
             }
@@ -3959,8 +3956,7 @@ const GameScene = BaseElement.extend({
             this.gravityNormal ? ResourceId.SND_GRAVITY_OFF : ResourceId.SND_GRAVITY_ON
         );
 
-        for (let i = 0, len = this.earthAnims.length; i < len; i++) {
-            const earthImage = this.earthAnims[i];
+        for (const earthImage of this.earthAnims) {
             if (Gravity.isNormal()) {
                 earthImage.playTimeline(EarthImage.TimelineId.NORMAL);
             } else {
