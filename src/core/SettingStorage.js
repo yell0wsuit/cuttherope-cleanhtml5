@@ -7,7 +7,7 @@ let prefix = editionPrefix;
 
 PubSub.subscribe(PubSub.ChannelId.UserIdChanged, function (userId) {
     if (userId) {
-        prefix = userId + "-" + editionPrefix;
+        prefix = `${userId}-${editionPrefix}`;
     } else {
         prefix = editionPrefix;
     }

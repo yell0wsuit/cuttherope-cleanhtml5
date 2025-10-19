@@ -129,7 +129,7 @@ Vector.prototype.rotateAround = function (rad, cx, cy) {
 
 /** @return {string} */
 Vector.prototype.toString = function () {
-    return "[" + this.x + ", " + this.y + "]";
+    return `[${this.x}, ${this.y}]`;
 };
 
 /**

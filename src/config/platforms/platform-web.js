@@ -30,9 +30,9 @@ const WebPlatform = {
     ZOOM_BOX_CANVAS: false,
 
     imageBaseUrl: "images/",
-    resolutionBaseUrl: "images/" + resolution.UI_WIDTH + "/",
-    uiImageBaseUrl: "images/" + resolution.UI_WIDTH + "/ui/",
-    boxImageBaseUrl: "images/" + resolution.UI_WIDTH + "/" + (edition.boxDirectory || "ui/"),
+    resolutionBaseUrl: `images/${resolution.UI_WIDTH}/`,
+    uiImageBaseUrl: `images/${resolution.UI_WIDTH}/ui/`,
+    boxImageBaseUrl: `images/${resolution.UI_WIDTH}/${edition.boxDirectory || "ui/"}/`,
 
     audioBaseUrl: "audio/",
     getAudioExtension() {
@@ -46,13 +46,13 @@ const WebPlatform = {
 
     getDrawingBaseUrl() {
         const loc = window.location,
-            baseUrl = loc.protocol + "//" + loc.host;
-        return baseUrl + "/images/" + resolution.UI_WIDTH + "/ui/";
+            baseUrl = `${loc.protocol}//${loc.host}`;
+        return `${baseUrl}/images/${resolution.UI_WIDTH}/ui/`;
     },
     getScoreImageBaseUrl() {
         const loc = window.location,
-            baseUrl = loc.protocol + "//" + loc.host;
-        return baseUrl + "/images/scores/";
+            baseUrl = `${loc.protocol}//${loc.host}`;
+        return `${baseUrl}/images/scores/`;
     },
     setSoundButtonChange(button, callback) {
         button.addEventListener("click", callback);

@@ -93,8 +93,8 @@ const startIfReady = function () {
             throw new Error(`Resource not found for sound ID: ${soundId}`);
         }
 
-        const soundKey = "s" + soundId;
-        const soundUrl = baseUrl + resource.path + extension;
+        const soundKey = `s${soundId}`;
+        const soundUrl = `${baseUrl}${resource.path}${extension}`;
 
         const response = await fetch(soundUrl);
 
