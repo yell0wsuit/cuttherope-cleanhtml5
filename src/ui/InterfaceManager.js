@@ -28,6 +28,7 @@ import analytics from "@/analytics";
 import Doors from "@/Doors";
 import Dialogs from "@/ui/Dialogs";
 import dom from "@/utils/dom";
+import { IS_XMAS } from "@/resources/ResData";
 const {
     addClass,
     append,
@@ -60,6 +61,13 @@ const InterfaceManager = new (function () {
 
     const _this = this;
     this.useHDVersion = resolution.isHD;
+
+    // Helper function to get the default box index based on holiday period
+    // During Christmas season (Dec/Jan), default to Holiday Gift Box (index 0)
+    // Otherwise, default to Cardboard Box (index 1)
+    const getDefaultBoxIndex = function () {
+        return IS_XMAS ? 0 : 1;
+    };
 
     this.isInLevelSelectMode = false;
     this.isInMenuSelectMode = false;
@@ -198,10 +206,11 @@ const InterfaceManager = new (function () {
                 }
 
                 VideoManager.playIntroVideo(function () {
-                    const firstLevelStars = ScoreManager.getStars(0, 0) || 0;
+                    const defaultBoxIndex = getDefaultBoxIndex();
+                    const firstLevelStars = ScoreManager.getStars(defaultBoxIndex, 0) || 0;
                     if (firstLevelStars === 0) {
-                        // start the first level immediately
-                        _this.noMenuStartLevel(0, 0);
+                        // start the first level immediately for the default box
+                        _this.noMenuStartLevel(defaultBoxIndex, 0);
                     } else {
                         const panelId = edition.disableBoxMenu ? PanelId.LEVELS : PanelId.BOXES;
                         PanelManager.showPanel(panelId, true);

@@ -18,8 +18,15 @@ import BoxType from "@/ui/BoxType";
 import { IS_XMAS } from "@/resources/ResData";
 // BoxPanel displays the set of visible boxes (which may not include all boxes)
 
+// Helper function to get the default box index based on holiday period
+// During Christmas season (Dec/Jan), default to Holiday Gift Box (index 0)
+// Otherwise, default to Cardboard Box (index 1)
+const getDefaultBoxIndex = function () {
+    return IS_XMAS ? 0 : 1;
+};
+
 let boxes = [],
-    currentBoxIndex = 0,
+    currentBoxIndex = getDefaultBoxIndex(),
     currentOffset = 0,
     isBoxCentered = true,
     bouncebox = null,

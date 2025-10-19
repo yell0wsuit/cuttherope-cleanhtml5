@@ -9,9 +9,17 @@ import PurchaseBox from "@/ui/PurchaseBox";
 import MoreComingBox from "@/ui/MoreComingBox";
 import TimeBox from "@/ui/TimeBox";
 import BoxPanel from "@/ui/BoxPanel";
+import { IS_XMAS } from "@/resources/ResData";
 const BoxManager = new (function () {
     const self = this,
         boxes = [];
+
+    // Helper function to get the default box index based on holiday period
+    // During Christmas season (Dec/Jan), default to Holiday Gift Box (index 0)
+    // Otherwise, default to Cardboard Box (index 1)
+    const getDefaultBoxIndex = function () {
+        return IS_XMAS ? 0 : 1;
+    };
 
     PubSub.subscribe(PubSub.ChannelId.SelectedBoxChanged, function (boxIndex) {
         BoxManager.currentBoxIndex = boxIndex;
@@ -24,7 +32,7 @@ const BoxManager = new (function () {
         loadBoxes();
     };
 
-    self.currentBoxIndex = 0;
+    self.currentBoxIndex = getDefaultBoxIndex();
 
     // TODO: the current level index starts at 1, should be zero-based
     self.currentLevelIndex = 1;
@@ -56,7 +64,7 @@ const BoxManager = new (function () {
             return;
         }
 
-        self.currentBoxIndex = 0;
+        self.currentBoxIndex = getDefaultBoxIndex();
 
         // TODO: the current level index starts at 1, should be zero-based
         self.currentLevelIndex = 1;

@@ -7,6 +7,14 @@ import settings from "@/game/CTRSettings";
 import SoundMgr from "@/game/CTRSoundMgr";
 import PubSub from "@/utils/PubSub";
 import ScoreManager from "@/ui/ScoreManager";
+import { IS_XMAS } from "@/resources/ResData";
+
+// Helper function to get the default box index based on holiday period
+// During Christmas season (Dec/Jan), default to Holiday Gift Box (index 0)
+// Otherwise, default to Cardboard Box (index 1)
+const getDefaultBoxIndex = function () {
+    return IS_XMAS ? 0 : 1;
+};
 const ensureVideoElement = function () {
     let vid = document.getElementById("vid");
     if (!vid) {
@@ -64,7 +72,8 @@ let closeIntroCallback = null;
 const VideoManager = {
     loadIntroVideo: function () {
         // only load the video if the first level hasn't been played
-        const firstLevelStars = ScoreManager.getStars(0, 0) || 0;
+        const defaultBoxIndex = getDefaultBoxIndex();
+        const firstLevelStars = ScoreManager.getStars(defaultBoxIndex, 0) || 0;
         if (firstLevelStars === 0) {
             const vid = ensureVideoElement(),
                 size = resolution.VIDEO_WIDTH,
@@ -84,7 +93,8 @@ const VideoManager = {
     removeIntroVideo: function () {
         // we want to remove the video element to free up resources
         // as suggested by the IE team
-        const firstLevelStars = ScoreManager.getStars(0, 0) || 0;
+        const defaultBoxIndex = getDefaultBoxIndex();
+        const firstLevelStars = ScoreManager.getStars(defaultBoxIndex, 0) || 0;
         if (firstLevelStars > 0) {
             const vid = document.getElementById("vid");
             if (vid) {
@@ -95,7 +105,8 @@ const VideoManager = {
 
     playIntroVideo: function (callback) {
         // always show the intro video if the 1st level hasn't been played
-        const firstLevelStars = ScoreManager.getStars(0, 0) || 0,
+        const defaultBoxIndex = getDefaultBoxIndex();
+        const firstLevelStars = ScoreManager.getStars(defaultBoxIndex, 0) || 0,
             // the video might not exist if the user just reset the game
             // (we don't want to replay it during the same app session)
             vid = document.getElementById("vid");
