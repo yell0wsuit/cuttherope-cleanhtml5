@@ -919,6 +919,7 @@ const InterfaceManager = new (function () {
                 Doors.renderDoors(true, 0);
                 PanelManager.showPanel(PanelId.LEVELS, true);
             }
+            startSnow();
         });
     };
 
@@ -980,20 +981,20 @@ const InterfaceManager = new (function () {
                 }
             }
 
-            // close the doors
-            Doors.closeDoors(false, function () {
-                if (_this.isInLevelSelectMode) {
-                    _this.tapeBox();
-                } else {
-                    Doors.showGradient();
-                    setTimeout(function () {
-                        runScoreTicker();
-                    }, 250);
-                }
-                startSnow();
-            });
-        }, 250);
-    };
+        // close the doors
+        Doors.closeDoors(false, function () {
+            if (_this.isInLevelSelectMode) {
+                _this.tapeBox();
+            } else {
+                Doors.showGradient();
+                setTimeout(function () {
+                    runScoreTicker();
+                    startSnow();
+                }, 250);
+            }
+        });
+    }, 250);
+};
 
     const showLevelBackground = function () {
         show("#levelBackground");
