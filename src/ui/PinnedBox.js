@@ -219,8 +219,8 @@ const PinnedBox = Box.extend({
             const rv = -1; // Return value assumes failure.
             return rv;
             /*if (
-                navigator.appName == "Microsoft Internet Explorer" ||
-                navigator.appName == "MSAppHost/1.0"
+                navigator.appName === "Microsoft Internet Explorer" ||
+                navigator.appName === "MSAppHost/1.0"
             ) {
                 const ua = navigator.userAgent,
                     re = new RegExp("MSIE ([0-9]?[0-9]{1,}[.0-9]{0,})"),
@@ -258,7 +258,7 @@ const PinnedBox = Box.extend({
         if (ieVer >= 9 || QueryStrings.forcePinnedBox) {
             const localStorageIsPinned =
                 platform.ENABLE_PINNED_MODE ||
-                SettingStorage.get("msIsSiteModeActivated") == "true";
+                SettingStorage.get("msIsSiteModeActivated") === "true";
             let msIsSiteMode = platform.ENABLE_PINNED_MODE === true;
 
             // no way to check if this function exists, we have to use try/catch

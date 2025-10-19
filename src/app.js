@@ -18,7 +18,7 @@ const App = {
     domReady: function () {
         // disable text selection mode in IE9
         if (settings.disableTextSelection) {
-            if (typeof document.body["onselectstart"] != "undefined") {
+            if (typeof document.body["onselectstart"] !== "undefined") {
                 document.body["onselectstart"] = function () {
                     return false;
                 };

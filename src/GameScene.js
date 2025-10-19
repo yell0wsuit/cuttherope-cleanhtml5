@@ -2969,7 +2969,7 @@ const GameScene = BaseElement.extend({
             tn2.x = p.x + p.bb.w / 2.0;
             tn1.y = tn2.y = p.y;
 
-            if (p.angle != 0) {
+            if (p.angle !== 0) {
                 h.rotateAround(-p.angle, p.x, p.y);
             }
 

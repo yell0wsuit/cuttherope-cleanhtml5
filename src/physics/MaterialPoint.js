@@ -27,7 +27,7 @@ const MaterialPoint = Class.extend({
         const numIterations = ((delta / precision) >> 0) + 1;
 
         // update delta based on num of iterations
-        if (numIterations != 0) {
+        if (numIterations !== 0) {
             // avoid division by zero
             delta = delta / numIterations;
         }

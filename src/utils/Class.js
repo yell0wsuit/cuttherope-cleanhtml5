@@ -26,8 +26,8 @@ function extendClass(prop) {
 
     for (const name in prop) {
         prototype[name] =
-            typeof prop[name] == "function" &&
-            typeof _super[name] == "function" &&
+            typeof prop[name] === "function" &&
+            typeof _super[name] === "function" &&
             fnTest.test(prop[name])
                 ? (function (name, fn) {
                       return function () {

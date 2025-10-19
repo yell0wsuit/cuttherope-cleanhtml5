@@ -217,7 +217,7 @@ class ScoreManagerClass {
     }
 
     isBoxLocked(boxIndex) {
-        if (boxIndex == 0) return false;
+        if (boxIndex === 0) return false;
         if (QueryStrings.unlockAllBoxes) return false;
         const box = this.boxes[boxIndex];
         if (box != null && this.totalStars() >= this.requiredStars(boxIndex)) {

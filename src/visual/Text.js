@@ -149,13 +149,13 @@ const Text = BaseElement.extend({
         while (dx < len) {
             const c = s[dx++];
 
-            if (c == " " || c == "\n") {
+            if (c === " " || c === "\n") {
                 wp += wc;
                 xpe = dx - 1;
                 wc = 0;
                 xc = dx;
 
-                if (c == " ") {
+                if (c === " ") {
                     xc--;
                     wc = this.font.spaceWidth + this.font.getCharOffset(s, dx - 1);
                 }
@@ -167,17 +167,17 @@ const Text = BaseElement.extend({
 
             const tooLong = MathHelper.roundP2(wp + wc) > this.wrapWidth;
 
-            if (this.wrapLongWords && tooLong && xpe == xp) {
+            if (this.wrapLongWords && tooLong && xpe === xp) {
                 wp += wc;
                 xpe = dx;
                 wc = 0;
                 xc = dx;
             }
 
-            if ((MathHelper.roundP2(wp + wc) > this.wrapWidth && xpe != xp) || c == "\n") {
+            if ((MathHelper.roundP2(wp + wc) > this.wrapWidth && xpe !== xp) || c === "\n") {
                 strIdx[idx++] = xp;
                 strIdx[idx++] = xpe;
-                while (xc < len && s[xc] == " ") {
+                while (xc < len && s[xc] === " ") {
                     xc++;
                     wc -= this.font.spaceWidth;
                 }
@@ -188,7 +188,7 @@ const Text = BaseElement.extend({
             }
         }
 
-        if (wc != 0) {
+        if (wc !== 0) {
             strIdx[idx++] = xp;
             strIdx[idx++] = dx;
         }
