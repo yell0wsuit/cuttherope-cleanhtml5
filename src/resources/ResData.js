@@ -3,7 +3,7 @@ import ResourceType from "@/resources/ResourceType";
 import ResourceId from "@/resources/ResourceId";
 
 const currentMonth = new Date().getMonth();
-export const IS_XMAS = currentMonth === 11 || currentMonth === 0;
+export const IS_XMAS = true;
 
 const RES_DATA = [];
 
@@ -332,11 +332,19 @@ RES_DATA[ResourceId.SND_TIME_MENU_MUSIC] = new ResEntry("time_menu", ResourceTyp
 
 RES_DATA[ResourceId.IMG_TIME_STANDS] = new ResEntry("time-stands.png", ResourceType.IMAGE);
 
+// Christmas resources
+
+RES_DATA[ResourceId.SND_XMAS_BELL] = new ResEntry("xmas_bell", ResourceType.SOUND);
+
+RES_DATA[ResourceId.SND_MENU_MUSIC_XMAS] = new ResEntry("menu_music_xmas", ResourceType.SOUND);
+
+RES_DATA[ResourceId.SND_GAME_MUSIC_XMAS] = new ResEntry("game_music_xmas", ResourceType.SOUND);
+
 RES_DATA[ResourceId.IMG_CHAR_GREETINGS_XMAS] = new ResEntry(
-    "char_greeting_xmas_056x.png",
+    "char_greeting_xmas.png",
     ResourceType.IMAGE,
     {
-        atlasPath: "char_greeting_xmas_056x.json",
+        atlasPath: "char_greeting_xmas.json",
         atlasFormat: "texture-packer",
         frameOrder: [
             "frame_0143.png",
