@@ -1,0 +1,52 @@
+{"frames": [
+
+{
+	"filename": "frame_0000.png",
+	"frame": {"x":1,"y":233,"w":184,"h":229},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":31,"w":184,"h":229},
+	"sourceSize": {"w":287,"h":287}
+},
+{
+	"filename": "frame_0001.png",
+	"frame": {"x":1,"y":1,"w":184,"h":230},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":55,"y":30,"w":184,"h":230},
+	"sourceSize": {"w":287,"h":287}
+},
+{
+	"filename": "frame_0002.png",
+	"frame": {"x":187,"y":179,"w":178,"h":154},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":49,"y":52,"w":178,"h":154},
+	"sourceSize": {"w":287,"h":287}
+},
+{
+	"filename": "frame_0003.png",
+	"frame": {"x":187,"y":1,"w":194,"h":176},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":38,"y":38,"w":194,"h":176},
+	"sourceSize": {"w":287,"h":287}
+},
+{
+	"filename": "frame_0004.png",
+	"frame": {"x":187,"y":335,"w":167,"h":133},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":54,"y":65,"w":167,"h":133},
+	"sourceSize": {"w":287,"h":287}
+}],
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "obj_socks.png",
+	"format": "RGBA8888",
+	"size": {"w":382,"h":469},
+	"scale": "0.52",
+	"smartupdate": "$TexturePacker:SmartUpdate:20b8d8847d4306e8722256311a4ed67b:81b9c285b8528acadb1822ba8026510e:ebb1a7a35b5e7dbd926879db0be97f08$"
+}
+}

@@ -453,6 +453,7 @@ const GameScene = BaseElement.extend({
 
         // candy
         const candyResourceId = this.getCandyResourceId();
+        this.candyResourceId = candyResourceId;
         this.candy = new GameObject();
         this.candy.initTextureWithId(candyResourceId);
         this.candy.setTextureQuad(IMG_OBJ_CANDY_01_candy_bottom);
@@ -1207,8 +1208,9 @@ const GameScene = BaseElement.extend({
         this.pumps.push(s);
     },
     loadSock: function (item) {
+        const hatOrSock = IS_XMAS ? ResourceId.IMG_OBJ_SOCKS_XMAS : ResourceId.IMG_OBJ_SOCKS;
         const s = new Sock();
-        s.initTextureWithId(ResourceId.IMG_OBJ_SOCKS);
+        s.initTextureWithId(hatOrSock);
         s.scaleX = s.scaleY = 0.7;
         s.createAnimations();
         s.doRestoreCutTransparency();
@@ -2156,7 +2158,9 @@ const GameScene = BaseElement.extend({
 
                             s.light.playTimeline(0);
                             s.light.visible = true;
-                            SoundMgr.playSound(ResourceId.SND_TELEPORT);
+                            IS_XMAS
+                                ? SoundMgr.playSound(ResourceId.SND_TELEPORT_XMAS)
+                                : SoundMgr.playSound(ResourceId.SND_TELEPORT);
                             this.dd.callObject(this, this.teleport, null, 0.1);
                             break;
                         }
@@ -2244,7 +2248,9 @@ const GameScene = BaseElement.extend({
                     }
 
                     const candyTexture = ResourceMgr.getTexture(this.candyResourceId),
-                        b = new CandyBreak(5, candyTexture);
+                        b = new CandyBreak(5, candyTexture, {
+                            resourceId: this.candyResourceId,
+                        });
                     if (this.gravityButton && !this.gravityNormal) {
                         b.gravity.y = -500;
                         b.angle = 90;
@@ -4195,4 +4201,5 @@ const IMG_CHAR_IDLE_XMAS_idle_start = 0;
 const IMG_CHAR_IDLE_XMAS_idle_end = 30;
 const IMG_CHAR_IDLE_XMAS_idle2_start = 31;
 const IMG_CHAR_IDLE_XMAS_idle2_end = 61;
+
 export default GameScene;

@@ -8,6 +8,10 @@ import Vector from "@/core/Vector";
 import Mover from "@/utils/Mover";
 import Radians from "@/utils/Radians";
 import Canvas from "@/utils/Canvas";
+import { IS_XMAS } from "@/resources/ResData";
+
+const hatOrSock = IS_XMAS ? ResourceId.IMG_OBJ_SOCKS_XMAS : ResourceId.IMG_OBJ_SOCKS;
+
 const Sock = CTRGameObject.extend({
     init: function () {
         this._super();
@@ -23,21 +27,29 @@ const Sock = CTRGameObject.extend({
     },
     createAnimations: function () {
         this.light = new Animation();
-        this.light.initTextureWithId(ResourceId.IMG_OBJ_SOCKS);
+        this.light.initTextureWithId(hatOrSock);
         this.light.anchor = Alignment.BOTTOM | Alignment.HCENTER;
         this.light.parentAnchor = Alignment.TOP | Alignment.HCENTER;
 
-        this.light.y = resolution.SOCK_LIGHT_Y;
+        // Move glow up a bit more for Christmas sock
+        this.light.y = IS_XMAS ? resolution.SOCK_LIGHT_Y - 20 : resolution.SOCK_LIGHT_Y;
         this.light.x = 0;
         this.light.addAnimationSequence(0, 0.05, Timeline.LoopType.NO_LOOP, 4, [
             Sock.Quads.IMG_OBJ_SOCKS_glow_start,
             Sock.Quads.IMG_OBJ_SOCKS_glow_start + 1,
             Sock.Quads.IMG_OBJ_SOCKS_glow_start + 2,
-            Sock.Quads.IMG_OBJ_SOCKS_glow_start + 2,
+            Sock.Quads.IMG_OBJ_SOCKS_glow_end,
         ]);
         this.light.doRestoreCutTransparency();
         this.light.visible = false;
         this.addChild(this.light);
+    },
+    /**
+     * Play the glow animation when candy goes in
+     */
+    playGlowAnimation: function () {
+        this.light.visible = true;
+        this.light.play(0);
     },
     updateRotation: function () {
         this.t1.x = this.x - resolution.SOCK_WIDTH / 2;
@@ -56,11 +68,13 @@ const Sock = CTRGameObject.extend({
         this.b2.rotateAround(this.angle, this.x, this.y);
     },
     draw: function () {
+        this._super();
+
+        // Hide light after animation completes
         const tl = this.light.currentTimeline;
-        if (tl && tl.state === Timeline.StateType.STOPPED) {
+        if (tl && tl.state === Timeline.StateType.STOPPED && this.light.visible) {
             this.light.visible = false;
         }
-        this._super();
     },
     drawBB: function () {
         // DEBUG: draw bounding lines for transport area

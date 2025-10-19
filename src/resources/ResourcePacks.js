@@ -93,6 +93,7 @@ ResourcePacks.FullGameAdditionalGameImages = [
     ResourceId.IMG_OBJ_BEE_HD,
     ResourceId.IMG_OBJ_POLLEN_HD,
     ResourceId.IMG_OBJ_VINIL,
+    ResourceId.IMG_OBJ_SOCKS_XMAS,
 ];
 
 ResourcePacks.ChromeLiteAdditionalGameImages = [
@@ -156,6 +157,7 @@ ResourcePacks.FullGameAdditionalSounds = [
     ResourceId.SND_BUZZ,
     ResourceId.SND_TELEPORT,
     ResourceId.SND_XMAS_BELL,
+    ResourceId.SND_TELEPORT_XMAS,
 ];
 
 ResourcePacks.StandardMenuImageFilenames = [

@@ -3,8 +3,8 @@ import ResourceType from "@/resources/ResourceType";
 import ResourceId from "@/resources/ResourceId";
 
 const currentMonth = new Date().getMonth();
-export const IS_XMAS = currentMonth === 11 || currentMonth === 0;
-export const IS_JANUARY = currentMonth === 0;
+export const IS_XMAS = true;
+export const IS_JANUARY = true;
 
 const RES_DATA = [];
 
@@ -341,6 +341,8 @@ RES_DATA[ResourceId.SND_MENU_MUSIC_XMAS] = new ResEntry("menu_music_xmas", Resou
 
 RES_DATA[ResourceId.SND_GAME_MUSIC_XMAS] = new ResEntry("game_music_xmas", ResourceType.SOUND);
 
+RES_DATA[ResourceId.SND_TELEPORT_XMAS] = new ResEntry("teleport_xmas", ResourceType.SOUND);
+
 RES_DATA[ResourceId.IMG_CHAR_SUPPORTS_XMAS] = new ResEntry(
     "char_supports_xmas.png",
     ResourceType.IMAGE,
@@ -510,6 +512,18 @@ RES_DATA[ResourceId.IMG_SNOWFLAKES] = new ResEntry("snowflakes.png", ResourceTyp
     atlasPath: "snowflakes.json",
     atlasFormat: "texture-packer",
     frameOrder: ["frame_0000.png", "frame_0001.png", "frame_0002.png", "frame_0003.png"],
+});
+
+RES_DATA[ResourceId.IMG_OBJ_SOCKS_XMAS] = new ResEntry("obj_socks.png", ResourceType.IMAGE, {
+    atlasPath: "obj_socks.json",
+    atlasFormat: "texture-packer",
+    frameOrder: [
+        "frame_0000.png",
+        "frame_0001.png",
+        "frame_0002.png",
+        "frame_0003.png",
+        "frame_0004.png",
+    ],
 });
 
 export default RES_DATA;
