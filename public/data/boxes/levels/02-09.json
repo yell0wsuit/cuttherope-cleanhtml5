@@ -1,0 +1,158 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 640,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 52,
+            "x": 250,
+            "y": 125
+        },
+        {
+            "name": 2,
+            "x": 318,
+            "y": 431
+        },
+        {
+            "name": 100,
+            "x": 249,
+            "y": 46,
+            "length": 40,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 317,
+            "y": 225,
+            "length": 70,
+            "wheel": false,
+            "gun": false,
+            "radius": 80,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": true,
+            "part": "L"
+        },
+        {
+            "name": 57,
+            "x": 375,
+            "y": 406,
+            "angle": 90,
+            "size": 1
+        },
+        {
+            "name": 57,
+            "x": 256,
+            "y": 407,
+            "angle": 90,
+            "size": 1
+        },
+        {
+            "name": 4,
+            "x": 211,
+            "y": 300,
+            "locale": "en",
+            "text": "Cut the rope before the spider reaches the candy",
+            "width": 240
+        },
+        {
+            "name": 13,
+            "x": 194,
+            "y": 335,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 3,
+            "x": 268,
+            "y": 223,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 410,
+            "y": 287,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 317,
+            "y": 377,
+            "timeout": -1
+        }
+    ],
+    "ru": [
+        {
+            "name": 4,
+            "x": 48,
+            "y": 271,
+            "locale": "ru",
+            "text": "Перережьте веревку прежде чем паучок доберется до леденца",
+            "width": 200
+        },
+        {
+            "name": 13,
+            "x": 35,
+            "y": 317,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "fr": [
+        {
+            "name": 4,
+            "x": 56,
+            "y": 299,
+            "locale": "fr",
+            "text": "Coupe la corde avant que l'araignée n'atteigne le bonbon",
+            "width": 240
+        },
+        {
+            "name": 13,
+            "x": 39,
+            "y": 334,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "de": [
+        {
+            "name": 4,
+            "x": 79,
+            "y": 287,
+            "locale": "de",
+            "text": "Schneide das Seil durch, bevor die Spinne am Bonbon ist",
+            "width": 170
+        },
+        {
+            "name": 13,
+            "x": 150,
+            "y": 276,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ]
+}

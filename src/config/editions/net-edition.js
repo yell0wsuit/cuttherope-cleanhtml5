@@ -1,16 +1,27 @@
 import boxes from "@/boxes";
-import boxMetadata from "./net-box-text.json";
+import JsonLoader from "@/resources/JsonLoader";
 import ResourcePacks from "@/resources/ResourcePacks";
 import ResourceId from "@/resources/ResourceId";
 import BoxType from "@/ui/BoxType";
 import LangId from "@/resources/LangId";
 
-const normalizedBoxMetadata = boxMetadata.map((box) => ({
-    ...box,
-    boxType: BoxType[box.boxType] ?? box.boxType,
-    levelBackgroundId: box.levelBackgroundId == null ? null : ResourceId[box.levelBackgroundId],
-    levelOverlayId: box.levelOverlayId == null ? null : ResourceId[box.levelOverlayId],
-}));
+// Lazy getter for normalized box metadata
+let cachedNormalizedMetadata = null;
+const getNormalizedBoxMetadata = () => {
+    if (cachedNormalizedMetadata) {
+        return cachedNormalizedMetadata;
+    }
+
+    const boxMetadata = JsonLoader.getBoxMetadata() || [];
+    cachedNormalizedMetadata = boxMetadata.map((box) => ({
+        ...box,
+        boxType: BoxType[box.boxType] ?? box.boxType,
+        levelBackgroundId: box.levelBackgroundId == null ? null : ResourceId[box.levelBackgroundId],
+        levelOverlayId: box.levelOverlayId == null ? null : ResourceId[box.levelOverlayId],
+    }));
+
+    return cachedNormalizedMetadata;
+};
 
 const netEdition = {
     siteUrl: "http://www.cuttherope.net",
@@ -19,7 +30,9 @@ const netEdition = {
     disableHiddenDrawings: true,
 
     // the text to display on the box in the box selector
-    boxText: normalizedBoxMetadata.map(({ boxText }) => boxText),
+    get boxText() {
+        return getNormalizedBoxMetadata().map(({ boxText }) => boxText);
+    },
 
     // !LANG
     languages: [
@@ -38,28 +51,40 @@ const netEdition = {
     ],
 
     // the background image to use for the box in the box selector
-    boxImages: normalizedBoxMetadata.map(({ boxImage }) => boxImage),
+    get boxImages() {
+        return getNormalizedBoxMetadata().map(({ boxImage }) => boxImage);
+    },
 
     // no box borders in Chrome theme
     boxBorders: [],
 
     // images used for the sliding door transitions
-    boxDoors: normalizedBoxMetadata
-        .map(({ boxDoor }) => boxDoor)
-        // omit placeholders so resource preloaders only receive valid assets
-        .filter((boxDoor) => boxDoor != null),
+    get boxDoors() {
+        return getNormalizedBoxMetadata()
+            .map(({ boxDoor }) => boxDoor)
+            // omit placeholders so resource preloaders only receive valid assets
+            .filter((boxDoor) => boxDoor != null);
+    },
 
     // the type of box to create
-    boxTypes: normalizedBoxMetadata.map(({ boxType }) => boxType),
+    get boxTypes() {
+        return getNormalizedBoxMetadata().map(({ boxType }) => boxType);
+    },
 
     // how many stars are required to unlock each box
-    unlockStars: normalizedBoxMetadata.map(({ unlockStars }) => unlockStars),
+    get unlockStars() {
+        return getNormalizedBoxMetadata().map(({ unlockStars }) => unlockStars);
+    },
 
     // the index of the quad for the support OmNom sits on
-    supports: normalizedBoxMetadata.map(({ support }) => support),
+    get supports() {
+        return getNormalizedBoxMetadata().map(({ support }) => support);
+    },
 
     // determines whether the earth animation is shown
-    showEarth: normalizedBoxMetadata.map(({ showEarth }) => showEarth),
+    get showEarth() {
+        return getNormalizedBoxMetadata().map(({ showEarth }) => showEarth);
+    },
 
     menuSoundIds: ResourcePacks.StandardMenuSounds,
 
@@ -75,14 +100,18 @@ const netEdition = {
 
     boxes: boxes,
 
-    levelBackgroundIds: normalizedBoxMetadata
-        .map(({ levelBackgroundId }) => levelBackgroundId)
-        // ensure we don't emit null entries for the "coming soon" card
-        .filter((levelBackgroundId) => levelBackgroundId != null),
+    get levelBackgroundIds() {
+        return getNormalizedBoxMetadata()
+            .map(({ levelBackgroundId }) => levelBackgroundId)
+            // ensure we don't emit null entries for the "coming soon" card
+            .filter((levelBackgroundId) => levelBackgroundId != null);
+    },
 
-    levelOverlayIds: normalizedBoxMetadata
-        .map(({ levelOverlayId }) => levelOverlayId)
-        .filter((levelOverlayId) => levelOverlayId != null),
+    get levelOverlayIds() {
+        return getNormalizedBoxMetadata()
+            .map(({ levelOverlayId }) => levelOverlayId)
+            .filter((levelOverlayId) => levelOverlayId != null);
+    },
 
     // hidden drawings are disabled
     drawingImageNames: [],

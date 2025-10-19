@@ -4,6 +4,7 @@ import editionUI from "@/editionUI";
 import resolution from "@/resolution";
 import resData from "@/resources/ResData";
 import SoundLoader from "@/resources/SoundLoader";
+import JsonLoader from "@/resources/JsonLoader";
 import LoadAnimation from "@/LoadAnimation";
 import ResourceMgr from "@/resources/ResourceMgr";
 import ResourcePacks from "@/resources/ResourcePacks";
@@ -11,14 +12,16 @@ import PubSub from "@/utils/PubSub";
 
 let menuImagesLoadComplete = false,
     menuSoundLoadComplete = false,
+    menuJsonLoadComplete = false,
     completeCallback = null,
     totalResources = 0,
     loadedImages = 0,
     loadedSounds = 0,
+    loadedJsonFiles = 0,
     failedImages = 0,
     failedSounds,
     checkMenuLoadComplete = function () {
-        if (!menuImagesLoadComplete || !menuSoundLoadComplete) {
+        if (!menuImagesLoadComplete || !menuSoundLoadComplete || !menuJsonLoadComplete) {
             return;
         }
 
@@ -46,7 +49,7 @@ let menuImagesLoadComplete = false,
 
 const updateProgress = function () {
     if (totalResources === 0) return;
-    const progress = ((loadedImages + loadedSounds) / totalResources) * 100;
+    const progress = ((loadedImages + loadedSounds + loadedJsonFiles) / totalResources) * 100;
     PubSub.publish(PubSub.ChannelId.PreloaderProgress, { progress: progress });
 
     if (LoadAnimation) {
@@ -220,6 +223,7 @@ const loadImages = function () {
 const PreLoader = {
     init: function () {
         ResourceMgr.init();
+        JsonLoader.init();
 
         // start the loading animation images first
         if (LoadAnimation) {
@@ -267,23 +271,41 @@ const PreLoader = {
 };
 
 const startResourceLoading = function () {
-    // Start loading images and get the count we track for progress
-    const { trackedResourceCount } = loadImages();
+    // Set initial total resources for JSON loading only
+    totalResources = JsonLoader.getJsonFileCount();
 
-    // Set total resources for progress calculation (menu images/fonts + sounds)
-    totalResources = trackedResourceCount + SoundLoader.getSoundCount();
-
-    // Track sound loading progress
-    SoundLoader.onProgress(function (completed, total) {
-        loadedSounds = completed;
+    // Track JSON loading progress
+    JsonLoader.onProgress(function (completed) {
+        loadedJsonFiles = completed;
         updateProgress();
     });
 
-    SoundLoader.onMenuComplete(function () {
-        menuSoundLoadComplete = true;
-        checkMenuLoadComplete();
+    // Load JSON first, then start loading images and sounds
+    JsonLoader.onMenuComplete(function () {
+        menuJsonLoadComplete = true;
+
+        // Now that JSON is loaded, start loading images and sounds
+        const { trackedResourceCount } = loadImages();
+
+        // Update total resources to include images and sounds
+        totalResources = trackedResourceCount + SoundLoader.getSoundCount() + JsonLoader.getJsonFileCount();
+
+        // Track sound loading progress
+        SoundLoader.onProgress(function (completed) {
+            loadedSounds = completed;
+            updateProgress();
+        });
+
+        SoundLoader.onMenuComplete(function () {
+            menuSoundLoadComplete = true;
+            checkMenuLoadComplete();
+        });
+
+        SoundLoader.start();
     });
-    SoundLoader.start();
+
+    // Start JSON loading first
+    JsonLoader.start();
 };
 
 export default PreLoader;

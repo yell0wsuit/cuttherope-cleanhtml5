@@ -1,0 +1,126 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 960
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 54,
+            "x": 161,
+            "y": 135
+        },
+        {
+            "name": 2,
+            "x": 158,
+            "y": 910
+        },
+        {
+            "name": 52,
+            "x": 160,
+            "y": 134
+        },
+        {
+            "name": 60,
+            "x": 70,
+            "y": 322,
+            "angle": 0,
+            "size": 4,
+            "toggled": 1
+        },
+        {
+            "name": 60,
+            "x": 248,
+            "y": 547,
+            "angle": 90,
+            "size": 4,
+            "toggled": 1
+        },
+        {
+            "name": 54,
+            "x": 161,
+            "y": 249
+        },
+        {
+            "name": 54,
+            "x": 161,
+            "y": 462
+        },
+        {
+            "name": 60,
+            "x": 69,
+            "y": 547,
+            "angle": 90,
+            "size": 4,
+            "toggled": 2
+        },
+        {
+            "name": 60,
+            "x": 249,
+            "y": 322,
+            "angle": 0,
+            "size": 4,
+            "toggled": 2
+        },
+        {
+            "name": 60,
+            "x": 250,
+            "y": 770,
+            "angle": 0,
+            "size": 4,
+            "toggled": 2
+        },
+        {
+            "name": 60,
+            "x": 71,
+            "y": 769,
+            "angle": 0,
+            "size": 4,
+            "toggled": 1
+        },
+        {
+            "name": 54,
+            "x": 157,
+            "y": 654
+        },
+        {
+            "name": 3,
+            "x": 63,
+            "y": 429,
+            "path": "200,0",
+            "moveSpeed": 50,
+            "timeout": 10
+        },
+        {
+            "name": 3,
+            "x": 257,
+            "y": 724,
+            "path": "-200,0",
+            "moveSpeed": 50,
+            "timeout": 15
+        },
+        {
+            "name": 3,
+            "x": 255,
+            "y": 225,
+            "path": "-200,0",
+            "moveSpeed": 50,
+            "timeout": 6
+        },
+        {
+            "name": 82,
+            "x": 166,
+            "y": 82,
+            "angle": 0,
+            "size": 2
+        }
+    ]
+}

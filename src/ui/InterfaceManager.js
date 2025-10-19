@@ -1331,7 +1331,8 @@ const InterfaceManager = new (function () {
     // ------------------------------------------------------------------------
 
     this.init = function () {
-        ScoreManager.load();
+        // Don't load scores yet - JSON data isn't loaded
+        // ScoreManager.load() is now called in appReady()
         PanelManager.onShowPanel = onShowPanel;
     };
 
@@ -1364,6 +1365,9 @@ const InterfaceManager = new (function () {
 
     this.appReady = function () {
         PubSub.subscribe(PubSub.ChannelId.LevelWon, this.onLevelWon);
+
+        // Load scores now that JSON data is available
+        ScoreManager.load();
 
         Doors.appReady();
         EasterEggManager.appReady();

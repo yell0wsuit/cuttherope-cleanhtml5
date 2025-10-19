@@ -1,0 +1,111 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "twoParts": false,
+            "ropePhysicsSpeed": 1,
+            "water": 0,
+            "waterSpeed": 0
+        }
+    ],
+    "objects": [
+        {
+            "name": 120,
+            "x": 93,
+            "y": 287,
+            "size": 70,
+            "handleAngle": 0,
+            "oneHandle": false
+        },
+        {
+            "name": 120,
+            "x": 177,
+            "y": 199,
+            "size": 70,
+            "handleAngle": 0,
+            "oneHandle": false
+        },
+        {
+            "name": 52,
+            "x": 225,
+            "y": 309
+        },
+        {
+            "name": 100,
+            "x": 225,
+            "y": 237,
+            "length": 60,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "radius": -1,
+            "invisible": false,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "helicopter": false,
+            "part": "L",
+            "hidePath": false
+        },
+        {
+            "name": 2,
+            "x": 261,
+            "y": 416
+        },
+        {
+            "name": 3,
+            "x": 81,
+            "y": 66,
+            "timeout": -1
+        },
+        {
+            "name": 120,
+            "x": 89,
+            "y": 164,
+            "size": 70,
+            "handleAngle": 0,
+            "oneHandle": false
+        },
+        {
+            "name": 3,
+            "x": 70,
+            "y": 383,
+            "timeout": -1
+        },
+        {
+            "name": 57,
+            "x": 176,
+            "y": 101,
+            "angle": 0,
+            "size": 1,
+            "toggled": false
+        },
+        {
+            "name": 57,
+            "x": 127,
+            "y": 375,
+            "angle": 90,
+            "size": 1,
+            "toggled": false
+        },
+        {
+            "name": 54,
+            "x": 67,
+            "y": 382
+        },
+        {
+            "name": 3,
+            "x": 256,
+            "y": 63,
+            "timeout": -1
+        }
+    ]
+}

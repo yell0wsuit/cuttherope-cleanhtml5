@@ -1,0 +1,147 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 640,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 2,
+            "x": 436,
+            "y": 257
+        },
+        {
+            "name": 3,
+            "x": 226,
+            "y": 70,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 440,
+            "y": 345,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 227,
+            "y": 211,
+            "timeout": -1
+        },
+        {
+            "name": 52,
+            "x": 328,
+            "y": 69
+        },
+        {
+            "name": 100,
+            "x": 332,
+            "y": 411,
+            "length": 310,
+            "wheel": true,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 54,
+            "x": 328,
+            "y": 68
+        },
+        {
+            "name": 55,
+            "x": 228,
+            "y": 279,
+            "angle": 0
+        },
+        {
+            "name": 4,
+            "x": 164,
+            "y": 340,
+            "locale": "en",
+            "text": "Rotate the wheel to control the rope length",
+            "width": 120
+        },
+        {
+            "name": 7,
+            "x": 333,
+            "y": 413,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 55,
+            "x": 430,
+            "y": 166,
+            "angle": -180
+        }
+    ],
+    "ru": [
+        {
+            "name": 4,
+            "x": 177,
+            "y": 340,
+            "locale": "ru",
+            "text": "Вращайте колесо для регулировки длины веревки",
+            "width": 120
+        },
+        {
+            "name": 7,
+            "x": 328,
+            "y": 414,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "fr": [
+        {
+            "name": 7,
+            "x": 328,
+            "y": 413,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 161,
+            "y": 334,
+            "locale": "fr",
+            "text": "Fais tourner la roue pour contrôler la longueur de la corde",
+            "width": 140
+        }
+    ],
+    "de": [
+        {
+            "name": 7,
+            "x": 332,
+            "y": 416,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 170,
+            "y": 341,
+            "locale": "de",
+            "text": "Dreh am Rad um die Länge des Seils einzustellen",
+            "width": 120
+        }
+    ]
+}

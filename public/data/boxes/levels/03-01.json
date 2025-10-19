@@ -1,0 +1,140 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 52,
+            "x": 63,
+            "y": 376
+        },
+        {
+            "name": 2,
+            "x": 68,
+            "y": 101
+        },
+        {
+            "name": 3,
+            "x": 177,
+            "y": 185,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 162,
+            "y": 376,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 271,
+            "y": 106,
+            "timeout": -1
+        },
+        {
+            "name": 100,
+            "x": 65,
+            "y": 239,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": 200,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L",
+            "hidePath": false
+        },
+        {
+            "name": 54,
+            "x": 266,
+            "y": 377
+        },
+        {
+            "name": 4,
+            "x": 64,
+            "y": 264,
+            "locale": "en",
+            "text": "Some rope hooks can be moved with the cursor",
+            "width": 200
+        },
+        {
+            "name": 8,
+            "x": 48,
+            "y": 284,
+            "locale": "en",
+            "angle": 130,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ru": [
+        {
+            "name": 8,
+            "x": 54,
+            "y": 290,
+            "locale": "ru",
+            "angle": 130,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 57,
+            "y": 274,
+            "locale": "ru",
+            "text": "Такие крепежи можно двигать курсором",
+            "width": 200
+        }
+    ],
+    "fr": [
+        {
+            "name": 8,
+            "x": 48,
+            "y": 285,
+            "locale": "fr",
+            "angle": 130,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 64,
+            "y": 269,
+            "locale": "fr",
+            "text": "Tu peux déplacer certains crochets de corde avec le courseur",
+            "width": 220
+        }
+    ],
+    "de": [
+        {
+            "name": 8,
+            "x": 50,
+            "y": 290,
+            "locale": "de",
+            "angle": 130,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 67,
+            "y": 272,
+            "locale": "de",
+            "text": "Einige Seilhaken kannst du mit dem Kursor verschieben",
+            "width": 230
+        }
+    ]
+}

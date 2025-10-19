@@ -1,0 +1,119 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "twoParts": false,
+            "ropePhysicsSpeed": 1,
+            "water": 0,
+            "waterCap": false,
+            "waterSpeed": 30
+        }
+    ],
+    "objects": [
+        {
+            "name": 52,
+            "x": 157,
+            "y": 169
+        },
+        {
+            "name": 100,
+            "x": 160,
+            "y": 46,
+            "length": 80,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "radius": -1,
+            "invisible": false,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "helicopter": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 123,
+            "y": 262,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "radius": -1,
+            "invisible": false,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "helicopter": false,
+            "part": "L",
+            "path": "-100,0",
+            "moveSpeed": 30
+        },
+        {
+            "name": 100,
+            "x": 196,
+            "y": 265,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "radius": -1,
+            "invisible": false,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "helicopter": false,
+            "part": "L",
+            "path": "100,0",
+            "moveSpeed": 30
+        },
+        {
+            "name": 54,
+            "x": 158,
+            "y": 308
+        },
+        {
+            "name": 2,
+            "x": 161,
+            "y": 394
+        },
+        {
+            "name": 3,
+            "x": 286,
+            "y": 204,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 287,
+            "y": 172,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 259,
+            "y": 183,
+            "timeout": -1
+        },
+        {
+            "name": 57,
+            "x": 161,
+            "y": 355,
+            "angle": 0,
+            "size": 1,
+            "toggled": false
+        }
+    ]
+}

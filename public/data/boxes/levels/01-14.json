@@ -1,0 +1,156 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 52,
+            "x": 64,
+            "y": 310
+        },
+        {
+            "name": 2,
+            "x": 244,
+            "y": 77
+        },
+        {
+            "name": 100,
+            "x": 66,
+            "y": 248,
+            "length": 60,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L",
+            "hidePath": false
+        },
+        {
+            "name": 54,
+            "x": 65,
+            "y": 424
+        },
+        {
+            "name": 100,
+            "x": 143,
+            "y": 159,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": 75,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L",
+            "hidePath": false
+        },
+        {
+            "name": 54,
+            "x": 238,
+            "y": 211
+        },
+        {
+            "name": 3,
+            "x": 65,
+            "y": 425,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 63,
+            "y": 205,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 239,
+            "y": 211,
+            "timeout": -1
+        },
+        {
+            "name": 4,
+            "x": 135,
+            "y": 336,
+            "locale": "en",
+            "text": "You can skip the level in the pause menu",
+            "width": 140
+        },
+        {
+            "name": 13,
+            "x": 200,
+            "y": 322,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ru": [
+        {
+            "name": 4,
+            "x": 137,
+            "y": 312,
+            "locale": "ru",
+            "text": "Вы можете пропустить уровень через меню паузы",
+            "width": 140
+        },
+        {
+            "name": 13,
+            "x": 202,
+            "y": 297,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "fr": [
+        {
+            "name": 4,
+            "x": 135,
+            "y": 337,
+            "locale": "fr",
+            "text": "Tu peux passer le niveau via le menu Pause",
+            "width": 140
+        },
+        {
+            "name": 13,
+            "x": 200,
+            "y": 323,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "de": [
+        {
+            "name": 4,
+            "x": 141,
+            "y": 318,
+            "locale": "de",
+            "text": "Im Pause-Menü kannst Du den Level überspringen",
+            "width": 170
+        },
+        {
+            "name": 13,
+            "x": 224,
+            "y": 303,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ]
+}

@@ -1,0 +1,93 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "special": 1,
+            "ropePhysicsSpeed": 1
+        }
+    ],
+    "objects": [
+        {
+            "name": 52,
+            "x": 158,
+            "y": 187
+        },
+        {
+            "name": 2,
+            "x": 262,
+            "y": 362
+        },
+        {
+            "name": 100,
+            "x": 161,
+            "y": 315,
+            "length": 93,
+            "wheel": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false
+        },
+        {
+            "name": 100,
+            "x": 289,
+            "y": 186,
+            "length": 105,
+            "wheel": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false
+        },
+        {
+            "name": 100,
+            "x": 162,
+            "y": 57,
+            "length": 93,
+            "wheel": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false
+        },
+        {
+            "name": 100,
+            "x": 33,
+            "y": 186,
+            "length": 105,
+            "wheel": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false
+        },
+        {
+            "name": 3,
+            "x": 159,
+            "y": 226,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 32,
+            "y": 312,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 161,
+            "y": 434,
+            "timeout": -1
+        }
+    ]
+}
