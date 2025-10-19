@@ -33,6 +33,7 @@ import resolution from "@/resolution";
 import PubSub from "@/utils/PubSub";
 import LevelState from "@/game/LevelState";
 import edition from "@/edition";
+import BoxType from "@/ui/BoxType";
 import Alignment from "@/core/Alignment";
 import TileMap from "@/visual/TileMap";
 import ConstrainedPoint from "@/physics/ConstrainedPoint";
@@ -1500,8 +1501,15 @@ const GameScene = BaseElement.extend({
         this.blink.doRestoreCutTransparency();
         target.addChild(this.blink);
 
-        const supportQuadID = edition.supports[LevelState.pack];
-        this.support = ImageElement.create(ResourceId.IMG_CHAR_SUPPORTS, supportQuadID);
+        const supportQuadIndex = edition.supports?.[LevelState.pack];
+        const boxType = edition.boxTypes?.[LevelState.pack];
+        const isHolidayBox = boxType === BoxType.HOLIDAY;
+        const isJanuary = new Date().getMonth() === 0;
+        const supportResourceId = isHolidayBox
+            ? ResourceId.IMG_CHAR_SUPPORTS_XMAS
+            : ResourceId.IMG_CHAR_SUPPORTS;
+        const supportQuadID = isHolidayBox ? (isJanuary ? 1 : 0) : supportQuadIndex;
+        this.support = ImageElement.create(supportResourceId, supportQuadID);
         this.support.doRestoreCutTransparency();
         this.support.anchor = Alignment.CENTER;
 

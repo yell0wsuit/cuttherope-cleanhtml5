@@ -3,6 +3,7 @@ const ResourcePacks = {};
 
 ResourcePacks.StandardMenuSounds = [
     ResourceId.SND_MENU_MUSIC,
+    ResourceId.SND_MENU_MUSIC_XMAS,
     ResourceId.SND_BUTTON,
     ResourceId.SND_TAP,
 ];
@@ -42,6 +43,7 @@ ResourcePacks.StandardGameImages = [
     ResourceId.IMG_TUTORIAL_SIGNS,
     ResourceId.IMG_DRAWING_HIDDEN,
     ResourceId.IMG_CHAR_SUPPORTS,
+    ResourceId.IMG_CHAR_SUPPORTS_XMAS,
 ];
 
 ResourcePacks.Round5AdditionalGameImages = [
@@ -111,6 +113,7 @@ ResourcePacks.StandardGameSounds = [
     ResourceId.SND_GAME_MUSIC2,
     ResourceId.SND_GAME_MUSIC3,
     ResourceId.SND_GAME_MUSIC4,
+    ResourceId.SND_GAME_MUSIC_XMAS,
     ResourceId.SND_BOUNCER,
     ResourceId.SND_BUBBLE,
     ResourceId.SND_BUBBLE_BREAK,
@@ -150,6 +153,7 @@ ResourcePacks.FullGameAdditionalSounds = [
     ResourceId.SND_SCRATCH_OUT,
     ResourceId.SND_BUZZ,
     ResourceId.SND_TELEPORT,
+    ResourceId.SND_XMAS_BELL,
 ];
 
 ResourcePacks.StandardMenuImageFilenames = [

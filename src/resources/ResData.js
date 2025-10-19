@@ -340,6 +340,16 @@ RES_DATA[ResourceId.SND_MENU_MUSIC_XMAS] = new ResEntry("menu_music_xmas", Resou
 
 RES_DATA[ResourceId.SND_GAME_MUSIC_XMAS] = new ResEntry("game_music_xmas", ResourceType.SOUND);
 
+RES_DATA[ResourceId.IMG_CHAR_SUPPORTS_XMAS] = new ResEntry(
+    "char_supports_xmas.png",
+    ResourceType.IMAGE,
+    {
+        atlasPath: "char_supports_xmas.json",
+        atlasFormat: "texture-packer",
+        frameOrder: ["frame_0000.png", "frame_0001.png"],
+    }
+);
+
 RES_DATA[ResourceId.IMG_CHAR_GREETINGS_XMAS] = new ResEntry(
     "char_greeting_xmas.png",
     ResourceType.IMAGE,

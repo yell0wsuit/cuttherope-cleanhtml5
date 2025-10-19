@@ -178,15 +178,21 @@ const ResourceId = {
     SND_GAME_MUSIC3: 183,
     SND_GAME_MUSIC4: 184,
 
+    // Christmas edition resources
     IMG_CHAR_GREETINGS_XMAS: 185,
     IMG_CHAR_IDLE_XMAS: 186,
     IMG_XMAS_LIGHTS: 187,
+    IMG_CHAR_SUPPORTS_XMAS: 188,
 
-    IMG_BGR_XMAS: 188,
-    IMG_BGR_PADDINGTON: 189,
+    IMG_BGR_XMAS: 189,
+    IMG_BGR_PADDINGTON: 190,
+
+    SND_XMAS_BELL: 191,
+    SND_MENU_MUSIC_XMAS: 192,
+    SND_GAME_MUSIC_XMAS: 193,
 
     // Total number of resources
-    RESOURCES_COUNT: 189,
+    RESOURCES_COUNT: 193,
 };
 
 export default ResourceId;
