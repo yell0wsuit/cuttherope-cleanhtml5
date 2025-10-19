@@ -196,8 +196,9 @@ const CharAnimation = {
     MOUTH_CLOSE: 8,
     CHEW: 9,
     GREETING: 10,
-    IDLEXMAS: 11,
-    IDLE2XMAS: 12,
+    GREETINGXMAS: 11,
+    IDLEXMAS: 12,
+    IDLE2XMAS: 13,
 };
 
 /**
@@ -353,7 +354,12 @@ const GameScene = BaseElement.extend({
         this.show();
     },
     showGreeting: function () {
-        this.target.playTimeline(CharAnimation.GREETING);
+        if (IS_XMAS) {
+            this.target.playTimeline(CharAnimation.GREETINGXMAS);
+            SoundMgr.playSound(ResourceId.SND_XMAS_BELL);
+        } else {
+            this.target.playTimeline(CharAnimation.GREETING);
+        }
     },
     shouldSkipTutorialElement: function (element) {
         const langId = settings.getLangId(),
@@ -1318,24 +1324,24 @@ const GameScene = BaseElement.extend({
         };
         target.drawPosIncrement = 0.0001;
 
-        const greetingResource = IS_XMAS
-            ? ResourceId.IMG_CHAR_GREETINGS_XMAS
-            : ResourceId.IMG_CHAR_ANIMATIONS2;
-        const greetingStart = IS_XMAS
-            ? IMG_CHAR_GREETINGS_XMAS_start
-            : IMG_CHAR_ANIMATIONS2_greeting_start;
-        const greetingEnd = IS_XMAS
-            ? IMG_CHAR_GREETINGS_XMAS_end
-            : IMG_CHAR_ANIMATIONS2_greeting_end;
-
         target.addAnimationEndpoints(
             CharAnimation.GREETING,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            greetingStart,
-            greetingEnd,
+            IMG_CHAR_ANIMATIONS2_greeting_start,
+            IMG_CHAR_ANIMATIONS2_greeting_end,
             undefined,
-            greetingResource
+            ResourceId.IMG_CHAR_ANIMATIONS2
+        );
+
+        target.addAnimationEndpoints(
+            CharAnimation.GREETINGXMAS,
+            0.05,
+            Timeline.LoopType.NO_LOOP,
+            IMG_CHAR_GREETINGS_XMAS_start,
+            IMG_CHAR_GREETINGS_XMAS_end,
+            undefined,
+            ResourceId.IMG_CHAR_GREETINGS_XMAS
         );
 
         target.addAnimationEndpoints(
@@ -1471,6 +1477,7 @@ const GameScene = BaseElement.extend({
         target.switchToAnimation(CharAnimation.CHEW, CharAnimation.WIN, 0.05);
         target.switchToAnimation(CharAnimation.PUZZLED, CharAnimation.MOUTH_CLOSE, 0.05);
         target.switchToAnimation(CharAnimation.IDLE, CharAnimation.GREETING, 0.05);
+        target.switchToAnimation(CharAnimation.IDLE, CharAnimation.GREETINGXMAS, 0.05);
         target.switchToAnimation(CharAnimation.IDLE, CharAnimation.IDLE2, 0.05);
         target.switchToAnimation(CharAnimation.IDLE, CharAnimation.IDLE3, 0.05);
         target.switchToAnimation(CharAnimation.IDLE, CharAnimation.IDLEXMAS, 0.05);
