@@ -2,15 +2,32 @@ import RotateableMultiParticles from "@/visual/RotateableMultiParticles";
 import resolution from "@/resolution";
 import MathHelper from "@/utils/MathHelper";
 import Rectangle from "@/core/Rectangle";
+import RES_DATA from "@/resources/ResData";
+import ResourceId from "@/resources/ResourceId";
 const IMG_OBJ_CANDY_01_piece_01 = 3;
 const IMG_OBJ_CANDY_01_piece_02 = 4;
 const IMG_OBJ_CANDY_01_piece_03 = 5;
 const IMG_OBJ_CANDY_01_piece_04 = 6;
 const IMG_OBJ_CANDY_01_piece_05 = 7;
+const DEFAULT_PIECE_FRAME_INDICES = [
+    IMG_OBJ_CANDY_01_piece_01,
+    IMG_OBJ_CANDY_01_piece_02,
+    IMG_OBJ_CANDY_01_piece_03,
+    IMG_OBJ_CANDY_01_piece_04,
+    IMG_OBJ_CANDY_01_piece_05,
+];
+const PADDINGTON_BREAK_FRAME_NAMES = [
+    "frame_0003.png",
+    "frame_0004.png",
+    "frame_0005.png",
+    "frame_0006.png",
+    "frame_0007.png",
+];
 
 const CandyBreak = RotateableMultiParticles.extend({
-    init: function (numParticles, texture) {
+    init: function (numParticles, texture, options = {}) {
         this._super(numParticles, texture);
+        this.pieceFrameIndices = this._resolvePieceFrameIndices(options.resourceId);
 
         // duration
         this.duration = 2;
@@ -78,14 +95,45 @@ const CandyBreak = RotateableMultiParticles.extend({
         this._super(particle);
 
         const texture = this.imageGrid,
-            n = MathHelper.randomRange(IMG_OBJ_CANDY_01_piece_01, IMG_OBJ_CANDY_01_piece_05),
-            tquad = texture.rects[n],
+            frameIndices =
+                this.pieceFrameIndices && this.pieceFrameIndices.length
+                    ? this.pieceFrameIndices
+                    : DEFAULT_PIECE_FRAME_INDICES,
+            randomIndex = MathHelper.randomRange(0, frameIndices.length - 1),
+            frameToUse = frameIndices[randomIndex],
+            tquad = texture.rects[frameToUse],
             vquad = new Rectangle(0, 0, 0, 0); // don't draw initially
 
         this.drawer.setTextureQuad(this.particles.length, tquad, vquad);
 
         particle.width = tquad.w * this.size;
         particle.height = tquad.h * this.size;
+    },
+    _resolvePieceFrameIndices: function (resourceId) {
+        if (!resourceId) {
+            return DEFAULT_PIECE_FRAME_INDICES.slice();
+        }
+
+        if (resourceId === ResourceId.IMG_OBJ_CANDY_PADDINGTON) {
+            const indices = this._lookupFrameIndices(resourceId, PADDINGTON_BREAK_FRAME_NAMES);
+            if (indices.length) {
+                return indices;
+            }
+        }
+
+        return DEFAULT_PIECE_FRAME_INDICES.slice();
+    },
+    _lookupFrameIndices: function (resourceId, frameNames) {
+        const resource = RES_DATA[resourceId];
+        const frameIndexByName = resource?.info?.frameIndexByName;
+
+        if (!frameIndexByName) {
+            return [];
+        }
+
+        return frameNames
+            .map((name) => frameIndexByName[name])
+            .filter((index) => index !== undefined);
     },
 });
 
