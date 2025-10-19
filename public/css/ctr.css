@@ -302,6 +302,18 @@ footer .zeptoLogo {
     display: none;
 }
 
+#snowOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 80;
+}
+
+#fadeToBlack {
+    z-index: 120;
+}
+
 #content {
     width: 840px;
     margin: 80px auto 10px;
