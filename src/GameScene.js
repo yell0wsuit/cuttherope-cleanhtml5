@@ -58,6 +58,10 @@ import Log from "@/utils/Log";
 import RotatedCircle from "@/game/RotatedCircle";
 import AchievementId from "@/achievements/AchievementId";
 import Achievements from "@/Achievements";
+
+// January seasonal flag shared by Paddington-specific assets.
+const IS_JANUARY = new Date().getMonth() === 0;
+
 /**
  * Tutorial elements can have a special id specified in the level xml
  * @const
@@ -330,6 +334,13 @@ const GameScene = BaseElement.extend({
             this.prevStartPos[i] = Vector.newZero();
         }
     },
+    getCandyResourceId: function () {
+        const boxType = edition.boxTypes?.[LevelState.pack];
+        const isHolidayBox = boxType === BoxType.HOLIDAY;
+        return IS_JANUARY && isHolidayBox
+            ? ResourceId.IMG_OBJ_CANDY_PADDINGTON
+            : ResourceId.IMG_OBJ_CANDY_01;
+    },
     /**
      * @param p {ConstrainedPoint}
      * @return {boolean}
@@ -438,8 +449,9 @@ const GameScene = BaseElement.extend({
         this.starR.setWeight(1);
 
         // candy
+        const candyResourceId = this.getCandyResourceId();
         this.candy = new GameObject();
-        this.candy.initTextureWithId(ResourceId.IMG_OBJ_CANDY_01);
+        this.candy.initTextureWithId(candyResourceId);
         this.candy.setTextureQuad(IMG_OBJ_CANDY_01_candy_bottom);
         this.candy.doRestoreCutTransparency();
         this.candy.anchor = Alignment.CENTER;
@@ -450,7 +462,7 @@ const GameScene = BaseElement.extend({
 
         // candy main
         this.candyMain = new GameObject();
-        this.candyMain.initTextureWithId(ResourceId.IMG_OBJ_CANDY_01);
+        this.candyMain.initTextureWithId(candyResourceId);
         this.candyMain.setTextureQuad(IMG_OBJ_CANDY_01_candy_main);
         this.candyMain.doRestoreCutTransparency();
         this.candyMain.anchor = this.candyMain.parentAnchor = Alignment.CENTER;
@@ -460,7 +472,7 @@ const GameScene = BaseElement.extend({
 
         // candy top
         this.candyTop = new GameObject();
-        this.candyTop.initTextureWithId(ResourceId.IMG_OBJ_CANDY_01);
+        this.candyTop.initTextureWithId(candyResourceId);
         this.candyTop.setTextureQuad(IMG_OBJ_CANDY_01_candy_top);
         this.candyTop.doRestoreCutTransparency();
         this.candyTop.anchor = this.candyTop.parentAnchor = Alignment.CENTER;
@@ -1504,7 +1516,7 @@ const GameScene = BaseElement.extend({
         const supportQuadIndex = edition.supports?.[LevelState.pack];
         const boxType = edition.boxTypes?.[LevelState.pack];
         const isHolidayBox = boxType === BoxType.HOLIDAY;
-        const isJanuary = new Date().getMonth() === 0;
+        const isJanuary = IS_JANUARY;
         const supportResourceId = isHolidayBox
             ? ResourceId.IMG_CHAR_SUPPORTS_XMAS
             : ResourceId.IMG_CHAR_SUPPORTS;
@@ -1882,7 +1894,7 @@ const GameScene = BaseElement.extend({
                     }
 
                     const transform = new Animation();
-                    transform.initTextureWithId(ResourceId.IMG_OBJ_CANDY_01);
+                    transform.initTextureWithId(this.candyResourceId);
                     transform.doRestoreCutTransparency();
                     transform.x = this.candy.x;
                     transform.y = this.candy.y;
@@ -2227,7 +2239,7 @@ const GameScene = BaseElement.extend({
                         this.popCandyBubble(false);
                     }
 
-                    const candyTexture = ResourceMgr.getTexture(ResourceId.IMG_OBJ_CANDY_01),
+                    const candyTexture = ResourceMgr.getTexture(this.candyResourceId),
                         b = new CandyBreak(5, candyTexture);
                     if (this.gravityButton && !this.gravityNormal) {
                         b.gravity.y = -500;

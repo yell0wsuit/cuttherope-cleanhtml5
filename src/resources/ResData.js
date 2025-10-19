@@ -3,7 +3,7 @@ import ResourceType from "@/resources/ResourceType";
 import ResourceId from "@/resources/ResourceId";
 
 const currentMonth = new Date().getMonth();
-export const IS_XMAS = true;
+export const IS_XMAS = currentMonth === 11 || currentMonth === 0;
 
 const RES_DATA = [];
 
@@ -475,5 +475,34 @@ RES_DATA[ResourceId.IMG_XMAS_LIGHTS] = new ResEntry("christmas_lights.png", Reso
         "frame_0004.png",
     ],
 });
+
+RES_DATA[ResourceId.IMG_OBJ_CANDY_PADDINGTON] = new ResEntry(
+    "obj_candy_paddington.png",
+    ResourceType.IMAGE,
+    {
+        atlasPath: "obj_candy_paddington.json",
+        atlasFormat: "texture-packer",
+        frameOrder: [
+            "frame_0000.png",
+            "frame_0001.png",
+            "frame_0002.png",
+            "frame_0003.png",
+            "frame_0004.png",
+            "frame_0005.png",
+            "frame_0006.png",
+            "frame_0007.png",
+            "frame_0008.png",
+            "frame_0009.png",
+            "frame_0010.png",
+            "frame_0011.png",
+            "frame_0012.png",
+            "frame_0013.png",
+            "frame_0014.png",
+            "frame_0015.png",
+            "frame_0016.png",
+            "frame_0017.png",
+        ],
+    }
+);
 
 export default RES_DATA;
