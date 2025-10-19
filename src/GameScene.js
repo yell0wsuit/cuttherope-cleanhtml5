@@ -1516,8 +1516,15 @@ const GameScene = BaseElement.extend({
         const sx = item.x,
             sy = item.y;
 
-        this.target.x = this.support.x = (sx * this.PM + this.PMX) | 0;
-        this.target.y = this.support.y = (sy * this.PM + this.PMY) | 0;
+        const posX = (sx * this.PM + this.PMX) | 0;
+        const posY = (sy * this.PM + this.PMY) | 0;
+        // Slight downward shift for the taller Paddington chair (January).
+        const paddingtonSupportYOffset = isHolidayBox && isJanuary ? 75 : 0;
+
+        this.target.x = posX;
+        this.target.y = posY;
+        this.support.x = posX;
+        this.support.y = posY + paddingtonSupportYOffset;
 
         this.idlesTimer = MathHelper.randomRange(5, 20);
     },
