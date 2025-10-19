@@ -18,6 +18,7 @@ const SWING_SPEED_MIN = 0.5;
 const SWING_SPEED_MAX = 1.2;
 const TWINKLE_SPEED_MIN = 0.4;
 const TWINKLE_SPEED_MAX = 1;
+const START_DELAY_MS = 2000;
 
 class SnowfallOverlay {
     constructor() {
@@ -33,6 +34,7 @@ class SnowfallOverlay {
         this.fadeElapsed = 0;
         this.fadeDuration = 0.6; // seconds
         this.globalAlpha = 1;
+        this.startTimeout = null;
         this.tick = this.tick.bind(this);
     }
 
@@ -97,21 +99,27 @@ class SnowfallOverlay {
             return;
         }
 
+        if (this.startTimeout) {
+            clearTimeout(this.startTimeout);
+            this.startTimeout = null;
+        }
+
+        if (this.running) {
+            this._stopImmediate();
+        }
+
+        this.fading = false;
+        this.fadeElapsed = 0;
+        this.globalAlpha = 0;
+
         if (!this.ensureTexture()) {
             return;
         }
 
-        this.canvas.style.display = "block";
-        this.fading = false;
-        this.fadeElapsed = 0;
-        this.globalAlpha = 1;
-
-        if (!this.running) {
-            this.prepareSnowflakes();
-            this.running = true;
-            this.lastTimestamp = performance.now();
-            this.frameHandle = requestAnimationFrame(this.tick);
-        }
+        this.startTimeout = window.setTimeout(() => {
+            this.startTimeout = null;
+            this._beginSnowfall();
+        }, START_DELAY_MS);
     }
 
     stop(immediate = false) {
@@ -202,6 +210,23 @@ class SnowfallOverlay {
         Object.assign(flake, replacement);
     }
 
+    _beginSnowfall() {
+        if (!this.ensureTexture()) {
+            this.start();
+            return;
+        }
+
+        this.fading = false;
+        this.fadeElapsed = 0;
+        this.globalAlpha = 1;
+
+        this.canvas.style.display = "block";
+        this.prepareSnowflakes();
+        this.running = true;
+        this.lastTimestamp = performance.now();
+        this.frameHandle = requestAnimationFrame(this.tick);
+    }
+
     _stopImmediate() {
         if (this.frameHandle) {
             const cancelFrame =
@@ -214,6 +239,10 @@ class SnowfallOverlay {
         if (this.retryHandle) {
             clearTimeout(this.retryHandle);
             this.retryHandle = null;
+        }
+        if (this.startTimeout) {
+            clearTimeout(this.startTimeout);
+            this.startTimeout = null;
         }
 
         this.running = false;
@@ -322,10 +351,10 @@ class SnowfallOverlay {
             const drawX = currentX - scaledPreWidth / 2 + scaledOffsetX;
             const drawY = flake.y - scaledPreHeight / 2 + scaledOffsetY;
 
-            const alpha =
-                flake.alphaBase + Math.sin(flake.twinklePhase) * flake.alphaRange;
+            const alpha = flake.alphaBase + Math.sin(flake.twinklePhase) * flake.alphaRange;
             const finalAlpha =
-                MathHelper.fitToBoundaries(alpha, 0, 1) * MathHelper.fitToBoundaries(this.globalAlpha, 0, 1);
+                MathHelper.fitToBoundaries(alpha, 0, 1) *
+                MathHelper.fitToBoundaries(this.globalAlpha, 0, 1);
             if (finalAlpha <= 0) {
                 continue;
             }
