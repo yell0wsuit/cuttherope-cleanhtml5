@@ -58,9 +58,7 @@ import Log from "@/utils/Log";
 import RotatedCircle from "@/game/RotatedCircle";
 import AchievementId from "@/achievements/AchievementId";
 import Achievements from "@/Achievements";
-
-// January seasonal flag shared by Paddington-specific assets.
-const IS_JANUARY = new Date().getMonth() === 0;
+import { IS_JANUARY } from "@/resources/ResData";
 
 /**
  * Tutorial elements can have a special id specified in the level xml
