@@ -1,0 +1,98 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 640,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 52,
+            "x": 315,
+            "y": 511
+        },
+        {
+            "name": 2,
+            "x": 317,
+            "y": 66
+        },
+        {
+            "name": 53,
+            "x": 315,
+            "y": 252
+        },
+        {
+            "name": 54,
+            "x": 315,
+            "y": 510
+        },
+        {
+            "name": 55,
+            "x": 163,
+            "y": 194,
+            "angle": 0
+        },
+        {
+            "name": 55,
+            "x": 476,
+            "y": 190,
+            "angle": 180
+        },
+        {
+            "name": 59,
+            "x": 206,
+            "y": 401,
+            "angle": 90,
+            "size": 3
+        },
+        {
+            "name": 59,
+            "x": 277,
+            "y": 402,
+            "angle": 90,
+            "size": 3
+        },
+        {
+            "name": 59,
+            "x": 351,
+            "y": 400,
+            "angle": 90,
+            "size": 3
+        },
+        {
+            "name": 59,
+            "x": 422,
+            "y": 399,
+            "angle": 90,
+            "size": 3
+        },
+        {
+            "name": 3,
+            "x": 314,
+            "y": 79,
+            "path": "RW60",
+            "moveSpeed": 30,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 246,
+            "y": 439,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 383,
+            "y": 440,
+            "timeout": -1
+        }
+    ]
+}

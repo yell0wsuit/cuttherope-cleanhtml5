@@ -1,0 +1,97 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 640,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 52,
+            "x": 254,
+            "y": 361
+        },
+        {
+            "name": 100,
+            "x": 259,
+            "y": 445,
+            "length": 50,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L",
+            "hidePath": false
+        },
+        {
+            "name": 3,
+            "x": 397,
+            "y": 61,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 394,
+            "y": 348,
+            "timeout": -1
+        },
+        {
+            "name": 54,
+            "x": 253,
+            "y": 357
+        },
+        {
+            "name": 60,
+            "x": 323,
+            "y": 249,
+            "angle": 0,
+            "size": 4,
+            "path": "0,0",
+            "rotateSpeed": 70,
+            "toggled": false
+        },
+        {
+            "name": 55,
+            "x": 210,
+            "y": 154,
+            "angle": 0
+        },
+        {
+            "name": 2,
+            "x": 395,
+            "y": 418
+        },
+        {
+            "name": 3,
+            "x": 274,
+            "y": 153,
+            "timeout": -1
+        },
+        {
+            "name": 100,
+            "x": 397,
+            "y": 147,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": 35,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L",
+            "hidePath": false
+        }
+    ]
+}

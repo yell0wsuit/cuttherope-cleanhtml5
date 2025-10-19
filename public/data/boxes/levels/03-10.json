@@ -1,0 +1,95 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "special": 1,
+            "ropePhysicsSpeed": 1
+        }
+    ],
+    "objects": [
+        {
+            "name": 52,
+            "x": 160,
+            "y": 305
+        },
+        {
+            "name": 2,
+            "x": 62,
+            "y": 161
+        },
+        {
+            "name": 100,
+            "x": 163,
+            "y": 364,
+            "length": 30,
+            "wheel": false,
+            "radius": -1,
+            "moveLength": 100,
+            "moveVertical": true,
+            "moveOffset": 0,
+            "spider": false
+        },
+        {
+            "name": 100,
+            "x": 163,
+            "y": 182,
+            "length": 90,
+            "wheel": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false
+        },
+        {
+            "name": 60,
+            "x": 156,
+            "y": 47,
+            "angle": 0,
+            "size": 4
+        },
+        {
+            "name": 100,
+            "x": 66,
+            "y": 71,
+            "length": 80,
+            "wheel": false,
+            "radius": 50,
+            "moveLength": 260,
+            "moveVertical": false,
+            "moveOffset": 30,
+            "spider": false
+        },
+        {
+            "name": 58,
+            "x": 62,
+            "y": 217,
+            "angle": 0,
+            "size": 2
+        },
+        {
+            "name": 3,
+            "x": 248,
+            "y": 183,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 266,
+            "y": 152,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 282,
+            "y": 182,
+            "timeout": -1
+        }
+    ]
+}

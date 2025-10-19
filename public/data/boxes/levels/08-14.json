@@ -1,0 +1,97 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 640,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 100,
+            "x": 407,
+            "y": 357,
+            "length": 40,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": 260,
+            "moveVertical": false,
+            "moveOffset": 220,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 242,
+            "y": 134,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": 30,
+            "moveLength": 260,
+            "moveVertical": false,
+            "moveOffset": 54,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 2,
+            "x": 219,
+            "y": 55
+        },
+        {
+            "name": 52,
+            "x": 406,
+            "y": 425
+        },
+        {
+            "name": 3,
+            "x": 202,
+            "y": 296,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 331,
+            "y": 60,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 445,
+            "y": 200,
+            "timeout": -1
+        },
+        {
+            "name": 53,
+            "x": 432,
+            "y": 53
+        },
+        {
+            "name": 60,
+            "x": 458,
+            "y": 245,
+            "angle": 0,
+            "size": 4,
+            "path": "-47,0",
+            "moveSpeed": 20
+        },
+        {
+            "name": 60,
+            "x": 182,
+            "y": 245,
+            "angle": 0,
+            "size": 4,
+            "path": "47,0",
+            "moveSpeed": 20
+        }
+    ]
+}

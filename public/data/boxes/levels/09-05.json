@@ -1,0 +1,89 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 59,
+            "x": 98,
+            "y": 347,
+            "angle": 90,
+            "size": 3,
+            "toggled": 1
+        },
+        {
+            "name": 59,
+            "x": 242,
+            "y": 350,
+            "angle": 0,
+            "size": 3,
+            "toggled": 1
+        },
+        {
+            "name": 3,
+            "x": 41,
+            "y": 437,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 166,
+            "y": 215,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 289,
+            "y": 434,
+            "timeout": -1
+        },
+        {
+            "name": 100,
+            "x": 167,
+            "y": 266,
+            "length": 140,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "radius": -1,
+            "invisible": false,
+            "moveLength": 240,
+            "moveVertical": false,
+            "moveOffset": 120,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 2,
+            "x": 164,
+            "y": 435
+        },
+        {
+            "name": 52,
+            "x": 164,
+            "y": 107
+        },
+        {
+            "name": 54,
+            "x": 166,
+            "y": 107
+        },
+        {
+            "name": 54,
+            "x": 286,
+            "y": 432
+        }
+    ]
+}

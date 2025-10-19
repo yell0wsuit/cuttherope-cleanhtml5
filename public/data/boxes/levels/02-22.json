@@ -1,0 +1,99 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "gridSize": 32,
+            "width": 320,
+            "height": 480
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 100,
+            "x": 195,
+            "y": 258,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": 40,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": "flase",
+            "part": "L"
+        },
+        {
+            "name": 3,
+            "x": 194,
+            "y": 371,
+            "timeout": 10
+        },
+        {
+            "name": 54,
+            "x": 194,
+            "y": 432
+        },
+        {
+            "name": 2,
+            "x": 70,
+            "y": 273
+        },
+        {
+            "name": 3,
+            "x": 77,
+            "y": 191,
+            "timeout": -1
+        },
+        {
+            "name": 55,
+            "x": 284,
+            "y": 146,
+            "angle": 180
+        },
+        {
+            "name": 3,
+            "x": 289,
+            "y": 76,
+            "timeout": -1
+        },
+        {
+            "name": 52,
+            "x": 195,
+            "y": 140
+        },
+        {
+            "name": 100,
+            "x": 194,
+            "y": 34,
+            "length": 70,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 58,
+            "x": 126,
+            "y": 274,
+            "angle": 90,
+            "size": 2
+        },
+        {
+            "name": 58,
+            "x": 255,
+            "y": 274,
+            "angle": 90,
+            "size": 2
+        }
+    ]
+}
