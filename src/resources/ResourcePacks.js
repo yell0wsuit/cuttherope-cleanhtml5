@@ -45,6 +45,7 @@ ResourcePacks.StandardGameImages = [
     ResourceId.IMG_CHAR_SUPPORTS,
     ResourceId.IMG_CHAR_SUPPORTS_XMAS,
     ResourceId.IMG_OBJ_CANDY_PADDINGTON,
+    ResourceId.IMG_SNOWFLAKES,
 ];
 
 ResourcePacks.Round5AdditionalGameImages = [

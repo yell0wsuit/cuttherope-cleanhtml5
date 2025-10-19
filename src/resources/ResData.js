@@ -506,4 +506,10 @@ RES_DATA[ResourceId.IMG_OBJ_CANDY_PADDINGTON] = new ResEntry(
     }
 );
 
+RES_DATA[ResourceId.IMG_SNOWFLAKES] = new ResEntry("snowflakes.png", ResourceType.IMAGE, {
+    atlasPath: "snowflakes.json",
+    atlasFormat: "texture-packer",
+    frameOrder: ["frame_0000.png", "frame_0001.png", "frame_0002.png", "frame_0003.png"],
+});
+
 export default RES_DATA;
