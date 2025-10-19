@@ -7,7 +7,7 @@ import settings from "@/game/CTRSettings";
 import SoundMgr from "@/game/CTRSoundMgr";
 import PubSub from "@/utils/PubSub";
 import ScoreManager from "@/ui/ScoreManager";
-const ensureVideoElement = function () {
+const ensureVideoElement = () => {
     let vid = document.getElementById("vid");
     if (!vid) {
         try {
@@ -23,7 +23,7 @@ const ensureVideoElement = function () {
     return vid;
 };
 
-const fadeIn = function (element, duration, callback) {
+const fadeIn = (element, duration, callback) => {
     element.style.opacity = 0;
     element.style.display = "block";
     let start = null;
@@ -40,7 +40,7 @@ const fadeIn = function (element, duration, callback) {
     requestAnimationFrame(animate);
 };
 
-const fadeOut = function (element, duration, callback) {
+const fadeOut = (element, duration, callback) => {
     element.style.opacity = 1;
     let start = null;
     const animate = (timestamp) => {

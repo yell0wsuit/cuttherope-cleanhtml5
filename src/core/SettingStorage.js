@@ -14,7 +14,7 @@ PubSub.subscribe(PubSub.ChannelId.UserIdChanged, function (userId) {
 });
 
 // Migration: consolidate existing localStorage keys into the single storage object
-function migrateOldData() {
+const migrateOldData = () => {
     if (!window.localStorage) {
         return;
     }
@@ -52,10 +52,10 @@ function migrateOldData() {
         // No data to migrate, but create the storage key
         localStorage.setItem(STORAGE_KEY, JSON.stringify({}));
     }
-}
+};
 
 // Get all data from the consolidated storage
-function getAllData() {
+const getAllData = () => {
     if (!window.localStorage) {
         return {};
     }
@@ -67,10 +67,10 @@ function getAllData() {
         console.error("Error parsing localStorage data:", e);
         return {};
     }
-}
+};
 
 // Save all data to the consolidated storage
-function saveAllData(data) {
+const saveAllData = (data) => {
     if (!window.localStorage) {
         return;
     }
@@ -80,7 +80,7 @@ function saveAllData(data) {
     } catch (e) {
         console.error("Error saving localStorage data:", e);
     }
-}
+};
 
 // Run migration on initialization
 migrateOldData();
