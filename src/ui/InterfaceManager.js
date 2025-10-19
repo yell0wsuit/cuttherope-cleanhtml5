@@ -52,7 +52,8 @@ const {
 
 const isMsieBrowser = /MSIE|Trident/.test(window.navigator.userAgent);
 
-const menuMusicId = edition.menuMusicId || ResourceId.SND_MENU_MUSIC;
+const menuMusicId =
+    edition.menuMusicId || IS_XMAS ? ResourceId.SND_MENU_MUSIC_XMAS : ResourceId.SND_MENU_MUSIC;
 
 const InterfaceManager = new (function () {
     // ------------------------------------------------------------------------
