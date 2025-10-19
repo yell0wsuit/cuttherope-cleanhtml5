@@ -19,7 +19,7 @@ import AnimationPool from "@/visual/AnimationPool";
 import BaseElement from "@/visual/BaseElement";
 import BackgroundTileMap from "@/visual/BackgroundTileMap";
 import ResourceMgr from "@/resources/ResourceMgr";
-import { IS_XMAS } from "@/resources/ResData";
+import { IS_XMAS, IS_JANUARY } from "@/resources/ResData";
 import settings from "@/game/CTRSettings";
 import SoundMgr from "@/game/CTRSoundMgr";
 import ResourceId from "@/resources/ResourceId";
@@ -58,7 +58,6 @@ import Log from "@/utils/Log";
 import RotatedCircle from "@/game/RotatedCircle";
 import AchievementId from "@/achievements/AchievementId";
 import Achievements from "@/Achievements";
-import { IS_JANUARY } from "@/resources/ResData";
 
 /**
  * Tutorial elements can have a special id specified in the level xml

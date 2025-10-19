@@ -4,9 +4,8 @@ import ResourcePacks from "@/resources/ResourcePacks";
 import ResourceId from "@/resources/ResourceId";
 import BoxType from "@/ui/BoxType";
 import LangId from "@/resources/LangId";
-import { IS_XMAS } from "@/resources/ResData";
+import { IS_JANUARY } from "@/resources/ResData";
 
-const IS_PADDINGTON = new Date().getMonth() === 0;
 const HOLIDAY_GIFT_BOX_ID = "holidaygiftbox";
 
 // Lazy getter for normalized box metadata
@@ -27,7 +26,7 @@ const getNormalizedBoxMetadata = () => {
             levelOverlayId: box.levelOverlayId == null ? null : ResourceId[box.levelOverlayId],
         };
 
-        if (IS_PADDINGTON && isHolidayBox) {
+        if (IS_JANUARY && isHolidayBox) {
             modifiedBox = {
                 ...modifiedBox,
                 boxDoor: "levelbgpad.webp",
