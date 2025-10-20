@@ -94,6 +94,7 @@ ResourcePacks.FullGameAdditionalGameImages = [
     ResourceId.IMG_OBJ_POLLEN_HD,
     ResourceId.IMG_OBJ_VINIL,
     ResourceId.IMG_OBJ_SOCKS_XMAS,
+    ResourceId.IMG_CHAR_ANIMATION_PADDINGTON,
 ];
 
 ResourcePacks.ChromeLiteAdditionalGameImages = [

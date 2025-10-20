@@ -199,6 +199,7 @@ const CharAnimation = {
     GREETINGXMAS: 11,
     IDLEXMAS: 12,
     IDLE2XMAS: 13,
+    IDLEPADDINGTON: 14,
 };
 
 /**
@@ -316,6 +317,9 @@ const GameScene = BaseElement.extend({
 
         this.earthAnims = [];
 
+        this.paddingtonFinalFrame = null;
+        this.pendingPaddingtonIdleTransition = false;
+
         this.lastCandyRotateDelta = 0;
         this.lastCandyRotateDeltaL = 0;
         this.lastCandyRotateDeltaR = 0;
@@ -354,12 +358,41 @@ const GameScene = BaseElement.extend({
         this.show();
     },
     showGreeting: function () {
+        if (IS_JANUARY) {
+            this.playPaddingtonIntro();
+            return;
+        }
+
         if (IS_XMAS) {
             this.target.playTimeline(CharAnimation.GREETINGXMAS);
             SoundMgr.playSound(ResourceId.SND_XMAS_BELL);
         } else {
             this.target.playTimeline(CharAnimation.GREETING);
         }
+    },
+    hidePaddingtonFinalFrame: function () {
+        if (this.paddingtonFinalFrame) {
+            this.paddingtonFinalFrame.visible = false;
+        }
+    },
+    showPaddingtonFinalFrame: function () {
+        if (this.paddingtonFinalFrame) {
+            this.paddingtonFinalFrame.visible = true;
+        }
+    },
+    preparePaddingtonIntro: function () {
+        this.pendingPaddingtonIdleTransition = false;
+        if (this.dd && this.dd.cancelDispatch) {
+            this.dd.cancelDispatch(this, this.playRegularIdleAfterPaddington, null);
+        }
+        this.hidePaddingtonFinalFrame();
+    },
+    playPaddingtonIntro: function () {
+        if (!this.target) {
+            return;
+        }
+        this.preparePaddingtonIntro();
+        this.target.playTimeline(CharAnimation.IDLEPADDINGTON);
     },
     shouldSkipTutorialElement: function (element) {
         const langId = settings.getLangId(),
@@ -1301,9 +1334,16 @@ const GameScene = BaseElement.extend({
         const target = new GameObject();
         this.target = target;
 
+        const isJanuary = IS_JANUARY;
+        this.pendingPaddingtonIdleTransition = false;
+
         target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATIONS);
         target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATIONS2);
         target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATIONS3);
+
+        if (isJanuary) {
+            target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATION_PADDINGTON);
+        }
 
         if (IS_XMAS) {
             target.initTextureWithId(ResourceId.IMG_CHAR_GREETINGS_XMAS);
@@ -1413,6 +1453,32 @@ const GameScene = BaseElement.extend({
             ResourceId.IMG_CHAR_ANIMATIONS
         );
 
+        if (isJanuary) {
+            target.addAnimationEndpoints(
+                CharAnimation.IDLEPADDINGTON,
+                0.05,
+                Timeline.LoopType.NO_LOOP,
+                IMG_CHAR_ANIMATION_PADDINGTON_start,
+                IMG_CHAR_ANIMATION_PADDINGTON_end,
+                undefined,
+                ResourceId.IMG_CHAR_ANIMATION_PADDINGTON
+            );
+            const paddingtonTimeline = target.getTimeline(CharAnimation.IDLEPADDINGTON);
+            paddingtonTimeline.onKeyFrame = this.onPaddingtonIdleKeyFrame.bind(this);
+
+            this.paddingtonFinalFrame = ImageElement.create(
+                ResourceId.IMG_CHAR_ANIMATION_PADDINGTON,
+                IMG_CHAR_ANIMATION_PADDINGTON_hat
+            );
+            this.paddingtonFinalFrame.doRestoreCutTransparency();
+            this.paddingtonFinalFrame.anchor = Alignment.CENTER;
+            this.paddingtonFinalFrame.parentAnchor = Alignment.CENTER;
+            this.paddingtonFinalFrame.visible = false;
+            target.addChild(this.paddingtonFinalFrame);
+        } else {
+            this.paddingtonFinalFrame = null;
+        }
+
         target.addAnimationEndpoints(
             CharAnimation.EXCITED,
             0.05,
@@ -1487,13 +1553,19 @@ const GameScene = BaseElement.extend({
         target.switchToAnimation(CharAnimation.IDLE, CharAnimation.EXCITED, 0.05);
         target.switchToAnimation(CharAnimation.IDLE, CharAnimation.PUZZLED, 0.05);
 
-        // delay greeting by Om-nom
+        // delay greeting by Om-nom when not using January Paddington intro
         if (settings.showGreeting) {
-            this.dd.callObject(this, this.showGreeting, null, 2);
+            if (!isJanuary) {
+                this.dd.callObject(this, this.showGreeting, null, 2);
+            }
             settings.showGreeting = false;
         }
 
-        target.playTimeline(CharAnimation.IDLE);
+        if (isJanuary) {
+            this.playPaddingtonIntro();
+        } else {
+            target.playTimeline(CharAnimation.IDLE);
+        }
 
         const idle = target.getTimeline(CharAnimation.IDLE);
         idle.onKeyFrame = this.onIdleOmNomKeyFrame.bind(this);
@@ -1522,7 +1594,6 @@ const GameScene = BaseElement.extend({
         const supportQuadIndex = edition.supports?.[LevelState.pack];
         const boxType = edition.boxTypes?.[LevelState.pack];
         const isHolidayBox = boxType === BoxType.HOLIDAY;
-        const isJanuary = IS_JANUARY;
         const supportResourceId = isHolidayBox
             ? ResourceId.IMG_CHAR_SUPPORTS_XMAS
             : ResourceId.IMG_CHAR_SUPPORTS;
@@ -1571,6 +1642,33 @@ const GameScene = BaseElement.extend({
                 this.idlesTimer = MathHelper.randomRange(5, 20);
             }
         }
+    },
+    onPaddingtonIdleKeyFrame: function (timeline, keyFrame, index) {
+        if (!IS_JANUARY) {
+            return;
+        }
+
+        const lastIndex =
+            IMG_CHAR_ANIMATION_PADDINGTON_end - IMG_CHAR_ANIMATION_PADDINGTON_start;
+
+        if (index !== lastIndex) {
+            this.hidePaddingtonFinalFrame();
+            return;
+        }
+
+        if (index === lastIndex) {
+            this.showPaddingtonFinalFrame();
+            if (!this.pendingPaddingtonIdleTransition) {
+                this.pendingPaddingtonIdleTransition = true;
+                this.dd.callObject(this, this.playRegularIdleAfterPaddington, null, 0.05);
+            }
+        }
+    },
+    playRegularIdleAfterPaddington: function () {
+        if (this.target) {
+            this.target.playTimeline(CharAnimation.IDLE);
+        }
+        this.pendingPaddingtonIdleTransition = false;
     },
     onRotatedCircleTimelineFinished: function (t) {
         const circleToRemove = t.element;
@@ -4201,5 +4299,8 @@ const IMG_CHAR_IDLE_XMAS_idle_start = 0;
 const IMG_CHAR_IDLE_XMAS_idle_end = 30;
 const IMG_CHAR_IDLE_XMAS_idle2_start = 31;
 const IMG_CHAR_IDLE_XMAS_idle2_end = 61;
+const IMG_CHAR_ANIMATION_PADDINGTON_start = 0;
+const IMG_CHAR_ANIMATION_PADDINGTON_end = 38;
+const IMG_CHAR_ANIMATION_PADDINGTON_hat = 39;
 
 export default GameScene;
