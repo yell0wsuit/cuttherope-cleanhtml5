@@ -1465,6 +1465,8 @@ const GameScene = BaseElement.extend({
             );
             const paddingtonTimeline = target.getTimeline(CharAnimation.IDLEPADDINGTON);
             paddingtonTimeline.onKeyFrame = this.onPaddingtonIdleKeyFrame.bind(this);
+            target.setDelay(0.75, 1, CharAnimation.IDLEPADDINGTON);
+            target.setDelay(0.75, 2, CharAnimation.IDLEPADDINGTON);
 
             this.paddingtonFinalFrame = ImageElement.create(
                 ResourceId.IMG_CHAR_ANIMATION_PADDINGTON,
@@ -1648,8 +1650,7 @@ const GameScene = BaseElement.extend({
             return;
         }
 
-        const lastIndex =
-            IMG_CHAR_ANIMATION_PADDINGTON_end - IMG_CHAR_ANIMATION_PADDINGTON_start;
+        const lastIndex = IMG_CHAR_ANIMATION_PADDINGTON_end - IMG_CHAR_ANIMATION_PADDINGTON_start;
 
         if (index !== lastIndex) {
             this.hidePaddingtonFinalFrame();
