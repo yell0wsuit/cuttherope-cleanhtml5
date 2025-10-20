@@ -3131,9 +3131,17 @@ body {
     background: url(../images/1920/ui/startbg.jpg);
 }
 
+.ui-1920.is-xmas #startBackground {
+    background: url(../images/1920/ui/menubg_xmas.webp);
+}
+
 .ui-1920 #menuBackground {
     display: none;
     background: url(../images/1920/ui/menubg.jpg);
+}
+
+.ui-1920.is-xmas #menuBackground {
+    background: url(../images/1920/ui/menubg_paddington.webp);
 }
 
 .ui-1920 .seethrough {
