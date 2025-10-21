@@ -9,6 +9,9 @@ import RGBAColor from "@/core/RGBAColor";
 import Mover from "@/utils/Mover";
 import Log from "@/utils/Log";
 import satisfyConstraintArray from "@/physics/satisfyConstraintArray";
+import { IS_XMAS } from "@/resources/ResData";
+import ResourceId from "@/resources/ResourceId";
+import ResourceMgr from "@/resources/ResourceMgr";
 /**
  * @const
  * @type {number}
@@ -539,6 +542,102 @@ const Bungee = ConstraintSystem.extend({
 
         // reset the alpha
         if (previousAlpha !== alpha) {
+            ctx.globalAlpha = previousAlpha;
+        }
+
+        // Draw Christmas lights along the rope
+        this.drawChristmasLights(drawPts, numVertices + 1, alpha);
+    },
+    drawChristmasLights: function (drawPts, count, alpha) {
+        if (!IS_XMAS) return;
+        if (!drawPts || count < 2) return;
+        if (alpha <= 0) return;
+
+        const ctx = Canvas.context;
+        const texture = ResourceMgr.getTexture(ResourceId.IMG_XMAS_LIGHTS);
+
+        if (!texture || !texture.image) return;
+
+        const rects = texture.rects || [];
+        const image = texture.image;
+
+        if (rects.length === 0) return;
+
+        const lightSpacing = resolution.BUNGEE_REST_LEN * 1.5; // Space between lights
+
+        // Calculate total rope length using the smooth bezier points
+        let totalDistance = 0;
+        const distances = [0];
+
+        for (let i = 1; i < count; i++) {
+            if (!drawPts[i] || !drawPts[i - 1]) continue;
+            const dx = drawPts[i].x - drawPts[i - 1].x;
+            const dy = drawPts[i].y - drawPts[i - 1].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            totalDistance += dist;
+            distances.push(totalDistance);
+        }
+
+        // Set alpha for fading effect
+        const previousAlpha = ctx.globalAlpha;
+        if (alpha < 1) {
+            ctx.globalAlpha = alpha;
+        }
+
+        // Initialize random seed based on rope position for consistent randomization
+        if (!this.lightRandomSeed) {
+            this.lightRandomSeed = Math.floor(Math.random() * 1000);
+        }
+
+        // Draw lights at regular intervals along the rope
+        let currentDistance = lightSpacing / 2; // Start offset
+        let lightIndex = 0;
+
+        while (currentDistance < totalDistance) {
+            // Find which segment this light is on
+            for (let i = 1; i < count; i++) {
+                if (!drawPts[i] || !drawPts[i - 1]) continue;
+                if (currentDistance <= distances[i]) {
+                    // Interpolate position between drawPts[i-1] and drawPts[i]
+                    const segmentStart = distances[i - 1];
+                    const segmentEnd = distances[i];
+                    const t = (currentDistance - segmentStart) / (segmentEnd - segmentStart);
+
+                    const x = drawPts[i - 1].x + (drawPts[i].x - drawPts[i - 1].x) * t;
+                    const y = drawPts[i - 1].y + (drawPts[i].y - drawPts[i - 1].y) * t;
+
+                    // Use seeded random for consistent light colors
+                    const randomSeed = (this.lightRandomSeed + lightIndex) % rects.length;
+                    const frameIndex = randomSeed;
+
+                    // Get the frame rect
+                    const rect = rects[frameIndex];
+
+                    if (rect) {
+                        // Draw the light sprite centered on the rope
+                        ctx.drawImage(
+                            image,
+                            rect.x,
+                            rect.y,
+                            rect.w,
+                            rect.h,
+                            x - rect.w / 2,
+                            y - rect.h / 2,
+                            rect.w,
+                            rect.h
+                        );
+                    }
+
+                    lightIndex++;
+                    break;
+                }
+            }
+
+            currentDistance += lightSpacing;
+        }
+
+        // Reset alpha
+        if (alpha < 1) {
             ctx.globalAlpha = previousAlpha;
         }
     },
