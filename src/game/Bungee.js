@@ -332,6 +332,7 @@ const Bungee = ConstraintSystem.extend({
             const pts1 = [],
                 pts2 = [];
             let part2 = false;
+            let cutIndex = 0;
             for (i = 0; i < count; i++) {
                 part = parts[i];
                 let linked = true;
@@ -345,6 +346,7 @@ const Bungee = ConstraintSystem.extend({
 
                 if (part.pin.x === Constants.UNDEFINED && !linked) {
                     part2 = true;
+                    cutIndex = i;
                 }
 
                 if (!part2) {
@@ -355,21 +357,26 @@ const Bungee = ConstraintSystem.extend({
             }
 
             if (pts1.length > 0) {
-                this.drawBungee(pts1);
+                this.drawBungee(pts1, 0);
             }
             if (pts2.length > 0 && !this.hideTailParts) {
-                this.drawBungee(pts2);
+                this.drawBungee(pts2, cutIndex);
             }
         }
         ctx.lineWidth = 1;
     },
-    drawBungee: function (pts) {
+    drawBungee: function (pts, segmentStartIndex) {
         const count = pts.length,
             points = this.BUNGEE_BEZIER_POINTS,
             drawPts = this.drawPts;
 
         // we can't calc the distance for a single point
         if (count < 2) return;
+
+        // Default to 0 if not provided (for uncut ropes)
+        if (segmentStartIndex === undefined) {
+            segmentStartIndex = 0;
+        }
 
         // set the global alpha
         const alpha =
@@ -546,9 +553,9 @@ const Bungee = ConstraintSystem.extend({
         }
 
         // Draw Christmas lights along the rope
-        this.drawChristmasLights(drawPts, numVertices + 1, alpha);
+        this.drawChristmasLights(drawPts, numVertices + 1, alpha, segmentStartIndex);
     },
-    drawChristmasLights: function (drawPts, count, alpha) {
+    drawChristmasLights: function (drawPts, count, alpha, segmentStartIndex) {
         if (!IS_XMAS) return;
         if (!drawPts || count < 2) return;
         if (alpha <= 0) return;
@@ -589,9 +596,12 @@ const Bungee = ConstraintSystem.extend({
             this.lightRandomSeed = Math.floor(Math.random() * 1000);
         }
 
+        // Calculate distance offset for cut rope segments
+        // This ensures lights keep the same color even after cutting
+        const segmentOffset = segmentStartIndex * this.BUNGEE_REST_LEN;
+
         // Draw lights at regular intervals along the rope
         let currentDistance = lightSpacing / 2; // Start offset
-        let lightIndex = 0;
 
         while (currentDistance < totalDistance) {
             // Find which segment this light is on
@@ -606,9 +616,11 @@ const Bungee = ConstraintSystem.extend({
                     const x = drawPts[i - 1].x + (drawPts[i].x - drawPts[i - 1].x) * t;
                     const y = drawPts[i - 1].y + (drawPts[i].y - drawPts[i - 1].y) * t;
 
-                    // Use seeded random for consistent light colors
-                    const randomSeed = (this.lightRandomSeed + lightIndex) % rects.length;
-                    const frameIndex = randomSeed;
+                    // Use distance-based index for consistent light colors that persist across cuts
+                    // Add segmentOffset to maintain color consistency after cutting
+                    const absoluteDistance = currentDistance + segmentOffset;
+                    const distanceIndex = Math.round(absoluteDistance / lightSpacing);
+                    const frameIndex = (this.lightRandomSeed + distanceIndex) % rects.length;
 
                     // Get the frame rect
                     const rect = rects[frameIndex];
@@ -628,7 +640,6 @@ const Bungee = ConstraintSystem.extend({
                         );
                     }
 
-                    lightIndex++;
                     break;
                 }
             }
