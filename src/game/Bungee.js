@@ -441,9 +441,6 @@ const Bungee = ConstraintSystem.extend({
         this.cutTime = CUT_DISSAPPEAR_TIMEOUT;
         this.forceWhite = true;
         this.highlighted = false;
-        if (IS_XMAS) {
-            this._setupXmasLights();
-        }
     },
     draw: function () {
         const parts = this.parts,
