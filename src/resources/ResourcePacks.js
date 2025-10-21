@@ -3,6 +3,7 @@ const ResourcePacks = {};
 
 ResourcePacks.StandardMenuSounds = [
     ResourceId.SND_MENU_MUSIC,
+    ResourceId.SND_MENU_MUSIC_XMAS,
     ResourceId.SND_BUTTON,
     ResourceId.SND_TAP,
 ];
@@ -18,6 +19,9 @@ ResourcePacks.StandardGameImages = [
     ResourceId.IMG_CHAR_ANIMATIONS,
     ResourceId.IMG_CHAR_ANIMATIONS2,
     ResourceId.IMG_CHAR_ANIMATIONS3,
+    ResourceId.IMG_CHAR_GREETINGS_XMAS,
+    ResourceId.IMG_CHAR_IDLE_XMAS,
+    ResourceId.IMG_XMAS_LIGHTS,
     ResourceId.IMG_OBJ_HOOK_01,
     ResourceId.IMG_OBJ_HOOK_02,
     ResourceId.IMG_OBJ_HOOK_AUTO,
@@ -39,6 +43,9 @@ ResourcePacks.StandardGameImages = [
     ResourceId.IMG_TUTORIAL_SIGNS,
     ResourceId.IMG_DRAWING_HIDDEN,
     ResourceId.IMG_CHAR_SUPPORTS,
+    ResourceId.IMG_CHAR_SUPPORTS_XMAS,
+    ResourceId.IMG_OBJ_CANDY_PADDINGTON,
+    ResourceId.IMG_SNOWFLAKES,
 ];
 
 ResourcePacks.Round5AdditionalGameImages = [
@@ -86,6 +93,8 @@ ResourcePacks.FullGameAdditionalGameImages = [
     ResourceId.IMG_OBJ_BEE_HD,
     ResourceId.IMG_OBJ_POLLEN_HD,
     ResourceId.IMG_OBJ_VINIL,
+    ResourceId.IMG_OBJ_SOCKS_XMAS,
+    ResourceId.IMG_CHAR_ANIMATION_PADDINGTON,
 ];
 
 ResourcePacks.ChromeLiteAdditionalGameImages = [
@@ -108,6 +117,7 @@ ResourcePacks.StandardGameSounds = [
     ResourceId.SND_GAME_MUSIC2,
     ResourceId.SND_GAME_MUSIC3,
     ResourceId.SND_GAME_MUSIC4,
+    ResourceId.SND_GAME_MUSIC_XMAS,
     ResourceId.SND_BOUNCER,
     ResourceId.SND_BUBBLE,
     ResourceId.SND_BUBBLE_BREAK,
@@ -147,6 +157,8 @@ ResourcePacks.FullGameAdditionalSounds = [
     ResourceId.SND_SCRATCH_OUT,
     ResourceId.SND_BUZZ,
     ResourceId.SND_TELEPORT,
+    ResourceId.SND_XMAS_BELL,
+    ResourceId.SND_TELEPORT_XMAS,
 ];
 
 ResourcePacks.StandardMenuImageFilenames = [

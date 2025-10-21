@@ -1,0 +1,200 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "width": 320,
+            "height": 480,
+            "gridSize": 32
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 2,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 2,
+            "x": 238,
+            "y": 417
+        },
+        {
+            "name": 52,
+            "x": 159,
+            "y": 153
+        },
+        {
+            "name": 3,
+            "x": 158,
+            "y": 357,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 82,
+            "y": 358,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 238,
+            "y": 360,
+            "timeout": -1
+        },
+        {
+            "name": 100,
+            "x": 79,
+            "y": 220,
+            "length": 75,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 246,
+            "y": 99,
+            "length": 75,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 74,
+            "y": 101,
+            "length": 75,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 243,
+            "y": 225,
+            "length": 75,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 160,
+            "y": 48,
+            "length": 75,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 160,
+            "y": 270,
+            "length": 75,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 4,
+            "x": 85,
+            "y": 274,
+            "locale": "en",
+            "text": "Collect as many stars as you can",
+            "width": 200
+        },
+        {
+            "name": 13,
+            "x": 65,
+            "y": 307,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ru": [
+        {
+            "name": 13,
+            "x": 60,
+            "y": 315,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 73,
+            "y": 278,
+            "locale": "ru",
+            "text": "Старайтесь собирать звезды леденцом",
+            "width": 210
+        }
+    ],
+    "fr": [
+        {
+            "name": 4,
+            "x": 97,
+            "y": 280,
+            "locale": "fr",
+            "text": "Recueillez le plus d'étoiles possible",
+            "width": 150
+        },
+        {
+            "name": 13,
+            "x": 83,
+            "y": 316,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "de": [
+        {
+            "name": 13,
+            "x": 66,
+            "y": 311,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 86,
+            "y": 275,
+            "locale": "de",
+            "text": "Sammle möglichst viele Sternchen",
+            "width": 170
+        }
+    ]
+}

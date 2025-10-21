@@ -7,6 +7,7 @@ const BoxType = {
     MORECOMING: "MORECOMING",
     PURCHASE: "PURCHASE",
     TIME: "TIME",
+    HOLIDAY: "HOLIDAY",
 };
 
 export default BoxType;

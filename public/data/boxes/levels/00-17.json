@@ -1,0 +1,195 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "width": 320,
+            "height": 480,
+            "gridSize": 32
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 2,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 3,
+            "x": 246,
+            "y": 254,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 266,
+            "y": 417,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 129,
+            "y": 347,
+            "timeout": -1
+        },
+        {
+            "name": 2,
+            "x": 259,
+            "y": 69
+        },
+        {
+            "name": 100,
+            "x": 186,
+            "y": 158,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": 60,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 187,
+            "y": 351,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": 60,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 52,
+            "x": 94,
+            "y": 135
+        },
+        {
+            "name": 100,
+            "x": 185,
+            "y": 253,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": 60,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 41,
+            "y": 37,
+            "length": 70,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 148,
+            "y": 37,
+            "length": 70,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 4,
+            "x": 5,
+            "y": 190,
+            "locale": "en",
+            "text": "Automatic ropes appear when candy gets into their area",
+            "width": 130
+        },
+        {
+            "name": 8,
+            "x": 98,
+            "y": 181,
+            "locale": "en",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 54,
+            "x": 266,
+            "y": 417
+        }
+    ],
+    "ru": [
+        {
+            "name": 8,
+            "x": 100,
+            "y": 181,
+            "locale": "ru",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 6,
+            "y": 190,
+            "locale": "ru",
+            "text": "Авто-веревки появляются, когда леденец попадает в их радиус",
+            "width": 150
+        }
+    ],
+    "fr": [
+        {
+            "name": 8,
+            "x": 98,
+            "y": 180,
+            "locale": "fr",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 5,
+            "y": 190,
+            "locale": "fr",
+            "text": "Les cordes automatiques apparaissent lorsqu'un bonbon arrive dans leur zone",
+            "width": 150
+        }
+    ],
+    "de": [
+        {
+            "name": 8,
+            "x": 100,
+            "y": 180,
+            "locale": "de",
+            "angle": 180,
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 5,
+            "y": 189,
+            "locale": "de",
+            "text": "Sobald der Bonbon in ihrer Nähe ist, erscheinen automatisch Seile",
+            "width": 160
+        }
+    ]
+}

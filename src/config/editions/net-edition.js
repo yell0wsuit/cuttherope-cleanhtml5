@@ -4,6 +4,9 @@ import ResourcePacks from "@/resources/ResourcePacks";
 import ResourceId from "@/resources/ResourceId";
 import BoxType from "@/ui/BoxType";
 import LangId from "@/resources/LangId";
+import { IS_JANUARY } from "@/resources/ResData";
+
+const HOLIDAY_GIFT_BOX_ID = "holidaygiftbox";
 
 // Lazy getter for normalized box metadata
 let cachedNormalizedMetadata = null;
@@ -13,12 +16,27 @@ const getNormalizedBoxMetadata = () => {
     }
 
     const boxMetadata = JsonLoader.getBoxMetadata() || [];
-    cachedNormalizedMetadata = boxMetadata.map((box) => ({
-        ...box,
-        boxType: BoxType[box.boxType] ?? box.boxType,
-        levelBackgroundId: box.levelBackgroundId == null ? null : ResourceId[box.levelBackgroundId],
-        levelOverlayId: box.levelOverlayId == null ? null : ResourceId[box.levelOverlayId],
-    }));
+    cachedNormalizedMetadata = boxMetadata.map((box) => {
+        const isHolidayBox = box.id === HOLIDAY_GIFT_BOX_ID;
+        let modifiedBox = {
+            ...box,
+            boxType: BoxType[box.boxType] ?? box.boxType,
+            levelBackgroundId:
+                box.levelBackgroundId == null ? null : ResourceId[box.levelBackgroundId],
+            levelOverlayId: box.levelOverlayId == null ? null : ResourceId[box.levelOverlayId],
+        };
+
+        if (IS_JANUARY && isHolidayBox) {
+            modifiedBox = {
+                ...modifiedBox,
+                boxDoor: "levelbgpad.webp",
+                levelBackgroundId: ResourceId.IMG_BGR_PADDINGTON,
+                levelOverlayId: ResourceId.IMG_BGR_PADDINGTON,
+            };
+        }
+
+        return modifiedBox;
+    });
 
     return cachedNormalizedMetadata;
 };
@@ -60,10 +78,12 @@ const netEdition = {
 
     // images used for the sliding door transitions
     get boxDoors() {
-        return getNormalizedBoxMetadata()
-            .map(({ boxDoor }) => boxDoor)
-            // omit placeholders so resource preloaders only receive valid assets
-            .filter((boxDoor) => boxDoor != null);
+        return (
+            getNormalizedBoxMetadata()
+                .map(({ boxDoor }) => boxDoor)
+                // omit placeholders so resource preloaders only receive valid assets
+                .filter((boxDoor) => boxDoor != null)
+        );
     },
 
     // the type of box to create
@@ -101,10 +121,12 @@ const netEdition = {
     boxes: boxes,
 
     get levelBackgroundIds() {
-        return getNormalizedBoxMetadata()
-            .map(({ levelBackgroundId }) => levelBackgroundId)
-            // ensure we don't emit null entries for the "coming soon" card
-            .filter((levelBackgroundId) => levelBackgroundId != null);
+        return (
+            getNormalizedBoxMetadata()
+                .map(({ levelBackgroundId }) => levelBackgroundId)
+                // ensure we don't emit null entries for the "coming soon" card
+                .filter((levelBackgroundId) => levelBackgroundId != null)
+        );
     },
 
     get levelOverlayIds() {

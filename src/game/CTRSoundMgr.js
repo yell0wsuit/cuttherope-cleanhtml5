@@ -1,6 +1,7 @@
 import settings from "@/game/CTRSettings";
 import Sounds from "@/resources/Sounds";
 import ResourceId from "@/resources/ResourceId";
+import { IS_XMAS } from "@/resources/ResData";
 
 const SoundMgr = {
     audioPaused: false,
@@ -8,12 +9,15 @@ const SoundMgr = {
     musicEnabled: settings.getMusicEnabled(),
     musicId: null,
     musicResumeOffset: 0,
-    gameMusicLibrary: [
-        ResourceId.SND_GAME_MUSIC,
-        ResourceId.SND_GAME_MUSIC2,
-        ResourceId.SND_GAME_MUSIC3,
-        ResourceId.SND_GAME_MUSIC4,
-    ].filter((soundId) => typeof soundId === "number"),
+    gameMusicLibrary: IS_XMAS
+        ? [ResourceId.SND_GAME_MUSIC_XMAS]
+        : [
+              ResourceId.SND_GAME_MUSIC,
+              ResourceId.SND_GAME_MUSIC2,
+              ResourceId.SND_GAME_MUSIC3,
+              ResourceId.SND_GAME_MUSIC4,
+          ],
+
     currentGameMusicId: ResourceId.SND_GAME_MUSIC,
     loopingSounds: new Map(), // Track looping sound state by instance
     _getActiveLoopSoundIds: function () {

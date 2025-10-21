@@ -1,0 +1,198 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "width": 320,
+            "height": 480,
+            "gridSize": 32
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 2,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 52,
+            "x": 238,
+            "y": 178
+        },
+        {
+            "name": 100,
+            "x": 163,
+            "y": 101,
+            "length": 80,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 296,
+            "y": 98,
+            "length": 70,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 249,
+            "y": 289,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 3,
+            "x": 71,
+            "y": 118,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 253,
+            "y": 118,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 253,
+            "y": 336,
+            "timeout": -1
+        },
+        {
+            "name": 2,
+            "x": 75,
+            "y": 421
+        },
+        {
+            "name": 54,
+            "x": 72,
+            "y": 178
+        },
+        {
+            "name": 58,
+            "x": 138,
+            "y": 106,
+            "angle": 90,
+            "size": 3
+        },
+        {
+            "name": 58,
+            "x": 110,
+            "y": 376,
+            "angle": 0,
+            "size": 4
+        },
+        {
+            "name": 56,
+            "x": 259,
+            "y": 390,
+            "group": 0,
+            "angle": 270
+        },
+        {
+            "name": 56,
+            "x": 158,
+            "y": 428,
+            "group": 0,
+            "angle": 180
+        },
+        {
+            "name": 58,
+            "x": 79,
+            "y": 46,
+            "angle": 0,
+            "size": 2
+        },
+        {
+            "name": 10,
+            "x": 112,
+            "y": 256,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 38,
+            "y": 273,
+            "locale": "en",
+            "text": "Keep the candy away from spikes",
+            "width": 150
+        }
+    ],
+    "ru": [
+        {
+            "name": 10,
+            "x": 112,
+            "y": 256,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 14,
+            "y": 269,
+            "locale": "ru",
+            "text": "Не дайте леденцу разбиться о шипы",
+            "width": 200
+        }
+    ],
+    "fr": [
+        {
+            "name": 10,
+            "x": 111,
+            "y": 257,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 34,
+            "y": 268,
+            "locale": "fr",
+            "text": "Garde le bonbon loin des pointes",
+            "width": 150
+        }
+    ],
+    "de": [
+        {
+            "name": 10,
+            "x": 112,
+            "y": 256,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 26,
+            "y": 273,
+            "locale": "de",
+            "text": "Pass auf, dass der Bonbon nicht in die Nähe der Spikes kommt",
+            "width": 250
+        }
+    ]
+}

@@ -19,6 +19,7 @@ import AnimationPool from "@/visual/AnimationPool";
 import BaseElement from "@/visual/BaseElement";
 import BackgroundTileMap from "@/visual/BackgroundTileMap";
 import ResourceMgr from "@/resources/ResourceMgr";
+import { IS_XMAS, IS_JANUARY } from "@/resources/ResData";
 import settings from "@/game/CTRSettings";
 import SoundMgr from "@/game/CTRSoundMgr";
 import ResourceId from "@/resources/ResourceId";
@@ -32,6 +33,7 @@ import resolution from "@/resolution";
 import PubSub from "@/utils/PubSub";
 import LevelState from "@/game/LevelState";
 import edition from "@/edition";
+import BoxType from "@/ui/BoxType";
 import Alignment from "@/core/Alignment";
 import TileMap from "@/visual/TileMap";
 import ConstrainedPoint from "@/physics/ConstrainedPoint";
@@ -56,6 +58,7 @@ import Log from "@/utils/Log";
 import RotatedCircle from "@/game/RotatedCircle";
 import AchievementId from "@/achievements/AchievementId";
 import Achievements from "@/Achievements";
+
 /**
  * Tutorial elements can have a special id specified in the level xml
  * @const
@@ -193,6 +196,10 @@ const CharAnimation = {
     MOUTH_CLOSE: 8,
     CHEW: 9,
     GREETING: 10,
+    GREETINGXMAS: 11,
+    IDLEXMAS: 12,
+    IDLE2XMAS: 13,
+    IDLEPADDINGTON: 14,
 };
 
 /**
@@ -310,6 +317,9 @@ const GameScene = BaseElement.extend({
 
         this.earthAnims = [];
 
+        this.paddingtonFinalFrame = null;
+        this.pendingPaddingtonIdleTransition = false;
+
         this.lastCandyRotateDelta = 0;
         this.lastCandyRotateDeltaL = 0;
         this.lastCandyRotateDeltaR = 0;
@@ -326,6 +336,13 @@ const GameScene = BaseElement.extend({
             this.prevStartPos[i] = Vector.newZero();
         }
     },
+    getCandyResourceId: function () {
+        const boxType = edition.boxTypes?.[LevelState.pack];
+        const isHolidayBox = boxType === BoxType.HOLIDAY;
+        return IS_JANUARY && isHolidayBox
+            ? ResourceId.IMG_OBJ_CANDY_PADDINGTON
+            : ResourceId.IMG_OBJ_CANDY_01;
+    },
     /**
      * @param p {ConstrainedPoint}
      * @return {boolean}
@@ -341,7 +358,44 @@ const GameScene = BaseElement.extend({
         this.show();
     },
     showGreeting: function () {
-        this.target.playTimeline(CharAnimation.GREETING);
+        const boxType = edition.boxTypes?.[LevelState.pack];
+        const isHolidayBox = boxType === BoxType.HOLIDAY;
+
+        if (IS_JANUARY && isHolidayBox) {
+            this.playPaddingtonIntro();
+            return;
+        }
+
+        if (IS_XMAS) {
+            this.target.playTimeline(CharAnimation.GREETINGXMAS);
+            SoundMgr.playSound(ResourceId.SND_XMAS_BELL);
+        } else {
+            this.target.playTimeline(CharAnimation.GREETING);
+        }
+    },
+    hidePaddingtonFinalFrame: function () {
+        if (this.paddingtonFinalFrame) {
+            this.paddingtonFinalFrame.visible = false;
+        }
+    },
+    showPaddingtonFinalFrame: function () {
+        if (this.paddingtonFinalFrame) {
+            this.paddingtonFinalFrame.visible = true;
+        }
+    },
+    preparePaddingtonIntro: function () {
+        this.pendingPaddingtonIdleTransition = false;
+        if (this.dd && this.dd.cancelDispatch) {
+            this.dd.cancelDispatch(this, this.playRegularIdleAfterPaddington, null);
+        }
+        this.hidePaddingtonFinalFrame();
+    },
+    playPaddingtonIntro: function () {
+        if (!this.target) {
+            return;
+        }
+        this.preparePaddingtonIntro();
+        this.target.playTimeline(CharAnimation.IDLEPADDINGTON);
     },
     shouldSkipTutorialElement: function (element) {
         const langId = settings.getLangId(),
@@ -434,8 +488,10 @@ const GameScene = BaseElement.extend({
         this.starR.setWeight(1);
 
         // candy
+        const candyResourceId = this.getCandyResourceId();
+        this.candyResourceId = candyResourceId;
         this.candy = new GameObject();
-        this.candy.initTextureWithId(ResourceId.IMG_OBJ_CANDY_01);
+        this.candy.initTextureWithId(candyResourceId);
         this.candy.setTextureQuad(IMG_OBJ_CANDY_01_candy_bottom);
         this.candy.doRestoreCutTransparency();
         this.candy.anchor = Alignment.CENTER;
@@ -446,7 +502,7 @@ const GameScene = BaseElement.extend({
 
         // candy main
         this.candyMain = new GameObject();
-        this.candyMain.initTextureWithId(ResourceId.IMG_OBJ_CANDY_01);
+        this.candyMain.initTextureWithId(candyResourceId);
         this.candyMain.setTextureQuad(IMG_OBJ_CANDY_01_candy_main);
         this.candyMain.doRestoreCutTransparency();
         this.candyMain.anchor = this.candyMain.parentAnchor = Alignment.CENTER;
@@ -456,7 +512,7 @@ const GameScene = BaseElement.extend({
 
         // candy top
         this.candyTop = new GameObject();
-        this.candyTop.initTextureWithId(ResourceId.IMG_OBJ_CANDY_01);
+        this.candyTop.initTextureWithId(candyResourceId);
         this.candyTop.setTextureQuad(IMG_OBJ_CANDY_01_candy_top);
         this.candyTop.doRestoreCutTransparency();
         this.candyTop.anchor = this.candyTop.parentAnchor = Alignment.CENTER;
@@ -1188,8 +1244,9 @@ const GameScene = BaseElement.extend({
         this.pumps.push(s);
     },
     loadSock: function (item) {
+        const hatOrSock = IS_XMAS ? ResourceId.IMG_OBJ_SOCKS_XMAS : ResourceId.IMG_OBJ_SOCKS;
         const s = new Sock();
-        s.initTextureWithId(ResourceId.IMG_OBJ_SOCKS);
+        s.initTextureWithId(hatOrSock);
         s.scaleX = s.scaleY = 0.7;
         s.createAnimations();
         s.doRestoreCutTransparency();
@@ -1280,9 +1337,24 @@ const GameScene = BaseElement.extend({
         const target = new GameObject();
         this.target = target;
 
+        const boxType = edition.boxTypes?.[LevelState.pack];
+        const isHolidayBox = boxType === BoxType.HOLIDAY;
+
+        const isJanuary = IS_JANUARY;
+        this.pendingPaddingtonIdleTransition = false;
+
         target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATIONS);
         target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATIONS2);
         target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATIONS3);
+
+        if (isJanuary) {
+            target.initTextureWithId(ResourceId.IMG_CHAR_ANIMATION_PADDINGTON);
+        }
+
+        if (IS_XMAS) {
+            target.initTextureWithId(ResourceId.IMG_CHAR_GREETINGS_XMAS);
+            target.initTextureWithId(ResourceId.IMG_CHAR_IDLE_XMAS);
+        }
 
         target.doRestoreCutTransparency();
 
@@ -1309,6 +1381,17 @@ const GameScene = BaseElement.extend({
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS2
         );
+
+        target.addAnimationEndpoints(
+            CharAnimation.GREETINGXMAS,
+            0.05,
+            Timeline.LoopType.NO_LOOP,
+            IMG_CHAR_GREETINGS_XMAS_start,
+            IMG_CHAR_GREETINGS_XMAS_end,
+            undefined,
+            ResourceId.IMG_CHAR_GREETINGS_XMAS
+        );
+
         target.addAnimationEndpoints(
             CharAnimation.IDLE,
             0.05,
@@ -1318,6 +1401,7 @@ const GameScene = BaseElement.extend({
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS
         );
+
         target.addAnimationEndpoints(
             CharAnimation.IDLE2,
             0.05,
@@ -1327,6 +1411,27 @@ const GameScene = BaseElement.extend({
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS
         );
+
+        target.addAnimationEndpoints(
+            CharAnimation.IDLEXMAS,
+            0.05,
+            Timeline.LoopType.NO_LOOP,
+            IMG_CHAR_IDLE_XMAS_idle_start,
+            IMG_CHAR_IDLE_XMAS_idle_end,
+            undefined,
+            ResourceId.IMG_CHAR_IDLE_XMAS
+        );
+
+        target.addAnimationEndpoints(
+            CharAnimation.IDLE2XMAS,
+            0.05,
+            Timeline.LoopType.NO_LOOP,
+            IMG_CHAR_IDLE_XMAS_idle2_start,
+            IMG_CHAR_IDLE_XMAS_idle2_end,
+            undefined,
+            ResourceId.IMG_CHAR_IDLE_XMAS
+        );
+
         let frame;
         const idle3Sequence = [];
         for (
@@ -1336,6 +1441,7 @@ const GameScene = BaseElement.extend({
         ) {
             idle3Sequence.push(frame);
         }
+
         for (
             frame = IMG_CHAR_ANIMATIONS_idle3_start;
             frame <= IMG_CHAR_ANIMATIONS_idle3_end;
@@ -1343,6 +1449,7 @@ const GameScene = BaseElement.extend({
         ) {
             idle3Sequence.push(frame);
         }
+
         target.addAnimationSequence(
             CharAnimation.IDLE3,
             0.05,
@@ -1351,6 +1458,35 @@ const GameScene = BaseElement.extend({
             idle3Sequence,
             ResourceId.IMG_CHAR_ANIMATIONS
         );
+
+        if (isJanuary && isHolidayBox) {
+            target.addAnimationEndpoints(
+                CharAnimation.IDLEPADDINGTON,
+                0.05,
+                Timeline.LoopType.NO_LOOP,
+                IMG_CHAR_ANIMATION_PADDINGTON_start,
+                IMG_CHAR_ANIMATION_PADDINGTON_end,
+                undefined,
+                ResourceId.IMG_CHAR_ANIMATION_PADDINGTON
+            );
+            const paddingtonTimeline = target.getTimeline(CharAnimation.IDLEPADDINGTON);
+            paddingtonTimeline.onKeyFrame = this.onPaddingtonIdleKeyFrame.bind(this);
+            target.setDelay(0.75, 1, CharAnimation.IDLEPADDINGTON);
+            target.setDelay(0.75, 2, CharAnimation.IDLEPADDINGTON);
+
+            this.paddingtonFinalFrame = ImageElement.create(
+                ResourceId.IMG_CHAR_ANIMATION_PADDINGTON,
+                IMG_CHAR_ANIMATION_PADDINGTON_hat
+            );
+            this.paddingtonFinalFrame.doRestoreCutTransparency();
+            this.paddingtonFinalFrame.anchor = Alignment.CENTER;
+            this.paddingtonFinalFrame.parentAnchor = Alignment.CENTER;
+            this.paddingtonFinalFrame.visible = false;
+            target.addChild(this.paddingtonFinalFrame);
+        } else {
+            this.paddingtonFinalFrame = null;
+        }
+
         target.addAnimationEndpoints(
             CharAnimation.EXCITED,
             0.05,
@@ -1417,18 +1553,27 @@ const GameScene = BaseElement.extend({
         target.switchToAnimation(CharAnimation.CHEW, CharAnimation.WIN, 0.05);
         target.switchToAnimation(CharAnimation.PUZZLED, CharAnimation.MOUTH_CLOSE, 0.05);
         target.switchToAnimation(CharAnimation.IDLE, CharAnimation.GREETING, 0.05);
+        target.switchToAnimation(CharAnimation.IDLE, CharAnimation.GREETINGXMAS, 0.05);
         target.switchToAnimation(CharAnimation.IDLE, CharAnimation.IDLE2, 0.05);
         target.switchToAnimation(CharAnimation.IDLE, CharAnimation.IDLE3, 0.05);
+        target.switchToAnimation(CharAnimation.IDLE, CharAnimation.IDLEXMAS, 0.05);
+        target.switchToAnimation(CharAnimation.IDLE, CharAnimation.IDLE2XMAS, 0.05);
         target.switchToAnimation(CharAnimation.IDLE, CharAnimation.EXCITED, 0.05);
         target.switchToAnimation(CharAnimation.IDLE, CharAnimation.PUZZLED, 0.05);
 
-        // delay greeting by Om-nom
+        // delay greeting by Om-nom when not using January Paddington intro
         if (settings.showGreeting) {
-            this.dd.callObject(this, this.showGreeting, null, 2);
+            if (!(isJanuary && isHolidayBox)) {
+                this.dd.callObject(this, this.showGreeting, null, 2);
+            }
             settings.showGreeting = false;
         }
 
-        target.playTimeline(CharAnimation.IDLE);
+        if (isJanuary && isHolidayBox) {
+            this.playPaddingtonIntro();
+        } else {
+            target.playTimeline(CharAnimation.IDLE);
+        }
 
         const idle = target.getTimeline(CharAnimation.IDLE);
         idle.onKeyFrame = this.onIdleOmNomKeyFrame.bind(this);
@@ -1454,16 +1599,27 @@ const GameScene = BaseElement.extend({
         this.blink.doRestoreCutTransparency();
         target.addChild(this.blink);
 
-        const supportQuadID = edition.supports[LevelState.pack];
-        this.support = ImageElement.create(ResourceId.IMG_CHAR_SUPPORTS, supportQuadID);
+        const supportQuadIndex = edition.supports?.[LevelState.pack];
+        const supportResourceId = isHolidayBox
+            ? ResourceId.IMG_CHAR_SUPPORTS_XMAS
+            : ResourceId.IMG_CHAR_SUPPORTS;
+        const supportQuadID = isHolidayBox ? (isJanuary ? 1 : 0) : supportQuadIndex;
+        this.support = ImageElement.create(supportResourceId, supportQuadID);
         this.support.doRestoreCutTransparency();
         this.support.anchor = Alignment.CENTER;
 
         const sx = item.x,
             sy = item.y;
 
-        this.target.x = this.support.x = (sx * this.PM + this.PMX) | 0;
-        this.target.y = this.support.y = (sy * this.PM + this.PMY) | 0;
+        const posX = (sx * this.PM + this.PMX) | 0;
+        const posY = (sy * this.PM + this.PMY) | 0;
+        // Slight downward shift for the taller Paddington chair (January).
+        const paddingtonSupportYOffset = isHolidayBox && isJanuary ? 75 : 0;
+
+        this.target.x = posX;
+        this.target.y = posY;
+        this.support.x = posX;
+        this.support.y = posY + paddingtonSupportYOffset;
 
         this.idlesTimer = MathHelper.randomRange(5, 20);
     },
@@ -1481,13 +1637,43 @@ const GameScene = BaseElement.extend({
             this.idlesTimer--;
             if (this.idlesTimer === 0) {
                 if (MathHelper.randomRange(0, 1) === 1) {
-                    this.target.playTimeline(CharAnimation.IDLE2);
+                    IS_XMAS
+                        ? this.target.playTimeline(CharAnimation.IDLEXMAS)
+                        : this.target.playTimeline(CharAnimation.IDLE2);
                 } else {
-                    this.target.playTimeline(CharAnimation.IDLE3);
+                    IS_XMAS
+                        ? this.target.playTimeline(CharAnimation.IDLE2XMAS)
+                        : this.target.playTimeline(CharAnimation.IDLE3);
                 }
                 this.idlesTimer = MathHelper.randomRange(5, 20);
             }
         }
+    },
+    onPaddingtonIdleKeyFrame: function (timeline, keyFrame, index) {
+        if (!IS_JANUARY) {
+            return;
+        }
+
+        const lastIndex = IMG_CHAR_ANIMATION_PADDINGTON_end - IMG_CHAR_ANIMATION_PADDINGTON_start;
+
+        if (index !== lastIndex) {
+            this.hidePaddingtonFinalFrame();
+            return;
+        }
+
+        if (index === lastIndex) {
+            this.showPaddingtonFinalFrame();
+            if (!this.pendingPaddingtonIdleTransition) {
+                this.pendingPaddingtonIdleTransition = true;
+                this.dd.callObject(this, this.playRegularIdleAfterPaddington, null, 0.05);
+            }
+        }
+    },
+    playRegularIdleAfterPaddington: function () {
+        if (this.target) {
+            this.target.playTimeline(CharAnimation.IDLE);
+        }
+        this.pendingPaddingtonIdleTransition = false;
     },
     onRotatedCircleTimelineFinished: function (t) {
         const circleToRemove = t.element;
@@ -1817,7 +2003,7 @@ const GameScene = BaseElement.extend({
                     }
 
                     const transform = new Animation();
-                    transform.initTextureWithId(ResourceId.IMG_OBJ_CANDY_01);
+                    transform.initTextureWithId(this.candyResourceId);
                     transform.doRestoreCutTransparency();
                     transform.x = this.candy.x;
                     transform.y = this.candy.y;
@@ -2075,7 +2261,9 @@ const GameScene = BaseElement.extend({
 
                             s.light.playTimeline(0);
                             s.light.visible = true;
-                            SoundMgr.playSound(ResourceId.SND_TELEPORT);
+                            IS_XMAS
+                                ? SoundMgr.playSound(ResourceId.SND_TELEPORT_XMAS)
+                                : SoundMgr.playSound(ResourceId.SND_TELEPORT);
                             this.dd.callObject(this, this.teleport, null, 0.1);
                             break;
                         }
@@ -2162,8 +2350,10 @@ const GameScene = BaseElement.extend({
                         this.popCandyBubble(false);
                     }
 
-                    const candyTexture = ResourceMgr.getTexture(ResourceId.IMG_OBJ_CANDY_01),
-                        b = new CandyBreak(5, candyTexture);
+                    const candyTexture = ResourceMgr.getTexture(this.candyResourceId),
+                        b = new CandyBreak(5, candyTexture, {
+                            resourceId: this.candyResourceId,
+                        });
                     if (this.gravityButton && !this.gravityNormal) {
                         b.gravity.y = -500;
                         b.angle = 90;
@@ -4107,4 +4297,15 @@ const IMG_CHAR_ANIMATIONS2_greeting_end = 76;
 
 const IMG_CHAR_ANIMATIONS3_fail_start = 0;
 const IMG_CHAR_ANIMATIONS3_fail_end = 12;
+
+const IMG_CHAR_GREETINGS_XMAS_start = 0;
+const IMG_CHAR_GREETINGS_XMAS_end = 33;
+const IMG_CHAR_IDLE_XMAS_idle_start = 0;
+const IMG_CHAR_IDLE_XMAS_idle_end = 30;
+const IMG_CHAR_IDLE_XMAS_idle2_start = 31;
+const IMG_CHAR_IDLE_XMAS_idle2_end = 61;
+const IMG_CHAR_ANIMATION_PADDINGTON_start = 0;
+const IMG_CHAR_ANIMATION_PADDINGTON_end = 38;
+const IMG_CHAR_ANIMATION_PADDINGTON_hat = 39;
+
 export default GameScene;

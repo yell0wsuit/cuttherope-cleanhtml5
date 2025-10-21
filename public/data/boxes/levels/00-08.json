@@ -1,0 +1,186 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "width": 320,
+            "height": 480,
+            "gridSize": 32
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 2,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 2,
+            "x": 63,
+            "y": 296
+        },
+        {
+            "name": 52,
+            "x": 162,
+            "y": 292
+        },
+        {
+            "name": 100,
+            "x": 29,
+            "y": 397,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 294,
+            "y": 192,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 29,
+            "y": 192,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 294,
+            "y": 399,
+            "length": 100,
+            "wheel": false,
+            "gun": false,
+            "radius": -1,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L"
+        },
+        {
+            "name": 3,
+            "x": 161,
+            "y": 159,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 161,
+            "y": 40,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 160,
+            "y": 359,
+            "timeout": -1
+        },
+        {
+            "name": 56,
+            "x": 165,
+            "y": 401,
+            "group": 0,
+            "angle": 270
+        },
+        {
+            "name": 56,
+            "x": 248,
+            "y": 292,
+            "group": 0,
+            "angle": 180
+        },
+        {
+            "name": 13,
+            "x": 73,
+            "y": 97,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 82,
+            "y": 63,
+            "locale": "en",
+            "text": "You can cut several ropes at once",
+            "width": 200
+        }
+    ],
+    "ru": [
+        {
+            "name": 13,
+            "x": 40,
+            "y": 96,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 60,
+            "y": 50,
+            "locale": "ru",
+            "text": "Вы можете перерезать несколько веревок одновременно",
+            "width": 240
+        }
+    ],
+    "fr": [
+        {
+            "name": 13,
+            "x": 39,
+            "y": 78,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 58,
+            "y": 46,
+            "locale": "fr",
+            "text": "Vous pouvez couper plusieurs cordes à la fois",
+            "width": 250
+        }
+    ],
+    "de": [
+        {
+            "name": 13,
+            "x": 46,
+            "y": 83,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        },
+        {
+            "name": 4,
+            "x": 57,
+            "y": 46,
+            "locale": "de",
+            "text": "Du kannst mehrere Seile auf einmal durchschneiden",
+            "width": 250
+        }
+    ]
+}

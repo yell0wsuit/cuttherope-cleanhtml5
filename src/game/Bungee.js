@@ -9,6 +9,9 @@ import RGBAColor from "@/core/RGBAColor";
 import Mover from "@/utils/Mover";
 import Log from "@/utils/Log";
 import satisfyConstraintArray from "@/physics/satisfyConstraintArray";
+import { IS_XMAS } from "@/resources/ResData";
+import ResourceId from "@/resources/ResourceId";
+import ResourceMgr from "@/resources/ResourceMgr";
 /**
  * @const
  * @type {number}
@@ -329,6 +332,7 @@ const Bungee = ConstraintSystem.extend({
             const pts1 = [],
                 pts2 = [];
             let part2 = false;
+            let cutIndex = 0;
             for (i = 0; i < count; i++) {
                 part = parts[i];
                 let linked = true;
@@ -342,6 +346,7 @@ const Bungee = ConstraintSystem.extend({
 
                 if (part.pin.x === Constants.UNDEFINED && !linked) {
                     part2 = true;
+                    cutIndex = i;
                 }
 
                 if (!part2) {
@@ -352,21 +357,26 @@ const Bungee = ConstraintSystem.extend({
             }
 
             if (pts1.length > 0) {
-                this.drawBungee(pts1);
+                this.drawBungee(pts1, 0);
             }
             if (pts2.length > 0 && !this.hideTailParts) {
-                this.drawBungee(pts2);
+                this.drawBungee(pts2, cutIndex);
             }
         }
         ctx.lineWidth = 1;
     },
-    drawBungee: function (pts) {
+    drawBungee: function (pts, segmentStartIndex) {
         const count = pts.length,
             points = this.BUNGEE_BEZIER_POINTS,
             drawPts = this.drawPts;
 
         // we can't calc the distance for a single point
         if (count < 2) return;
+
+        // Default to 0 if not provided (for uncut ropes)
+        if (segmentStartIndex === undefined) {
+            segmentStartIndex = 0;
+        }
 
         // set the global alpha
         const alpha =
@@ -539,6 +549,106 @@ const Bungee = ConstraintSystem.extend({
 
         // reset the alpha
         if (previousAlpha !== alpha) {
+            ctx.globalAlpha = previousAlpha;
+        }
+
+        // Draw Christmas lights along the rope
+        this.drawChristmasLights(drawPts, numVertices + 1, alpha, segmentStartIndex);
+    },
+    drawChristmasLights: function (drawPts, count, alpha, segmentStartIndex) {
+        if (!IS_XMAS) return;
+        if (!drawPts || count < 2) return;
+        if (alpha <= 0) return;
+
+        const ctx = Canvas.context;
+        const texture = ResourceMgr.getTexture(ResourceId.IMG_XMAS_LIGHTS);
+
+        if (!texture || !texture.image) return;
+
+        const rects = texture.rects || [];
+        const image = texture.image;
+
+        if (rects.length === 0) return;
+
+        const lightSpacing = resolution.BUNGEE_REST_LEN * 1.5; // Space between lights
+
+        // Calculate total rope length using the smooth bezier points
+        let totalDistance = 0;
+        const distances = [0];
+
+        for (let i = 1; i < count; i++) {
+            if (!drawPts[i] || !drawPts[i - 1]) continue;
+            const dx = drawPts[i].x - drawPts[i - 1].x;
+            const dy = drawPts[i].y - drawPts[i - 1].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            totalDistance += dist;
+            distances.push(totalDistance);
+        }
+
+        // Set alpha for fading effect
+        const previousAlpha = ctx.globalAlpha;
+        if (alpha < 1) {
+            ctx.globalAlpha = alpha;
+        }
+
+        // Initialize random seed based on rope position for consistent randomization
+        if (!this.lightRandomSeed) {
+            this.lightRandomSeed = Math.floor(Math.random() * 1000);
+        }
+
+        // Calculate distance offset for cut rope segments
+        // This ensures lights keep the same color even after cutting
+        const segmentOffset = segmentStartIndex * this.BUNGEE_REST_LEN;
+
+        // Draw lights at regular intervals along the rope
+        let currentDistance = lightSpacing / 2; // Start offset
+
+        while (currentDistance < totalDistance) {
+            // Find which segment this light is on
+            for (let i = 1; i < count; i++) {
+                if (!drawPts[i] || !drawPts[i - 1]) continue;
+                if (currentDistance <= distances[i]) {
+                    // Interpolate position between drawPts[i-1] and drawPts[i]
+                    const segmentStart = distances[i - 1];
+                    const segmentEnd = distances[i];
+                    const t = (currentDistance - segmentStart) / (segmentEnd - segmentStart);
+
+                    const x = drawPts[i - 1].x + (drawPts[i].x - drawPts[i - 1].x) * t;
+                    const y = drawPts[i - 1].y + (drawPts[i].y - drawPts[i - 1].y) * t;
+
+                    // Use distance-based index for consistent light colors that persist across cuts
+                    // Add segmentOffset to maintain color consistency after cutting
+                    const absoluteDistance = currentDistance + segmentOffset;
+                    const distanceIndex = Math.round(absoluteDistance / lightSpacing);
+                    const frameIndex = (this.lightRandomSeed + distanceIndex) % rects.length;
+
+                    // Get the frame rect
+                    const rect = rects[frameIndex];
+
+                    if (rect) {
+                        // Draw the light sprite centered on the rope
+                        ctx.drawImage(
+                            image,
+                            rect.x,
+                            rect.y,
+                            rect.w,
+                            rect.h,
+                            x - rect.w / 2,
+                            y - rect.h / 2,
+                            rect.w,
+                            rect.h
+                        );
+                    }
+
+                    break;
+                }
+            }
+
+            currentDistance += lightSpacing;
+        }
+
+        // Reset alpha
+        if (alpha < 1) {
             ctx.globalAlpha = previousAlpha;
         }
     },

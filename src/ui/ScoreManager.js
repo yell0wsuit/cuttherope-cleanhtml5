@@ -8,6 +8,18 @@ import Lang from "@/resources/Lang";
 import LangId from "@/resources/LangId";
 import MenuStringId from "@/resources/MenuStringId";
 import RoamSettings from "@/game/RoamSettings";
+import BoxType from "@/ui/BoxType";
+import { IS_XMAS } from "@/resources/ResData";
+
+// Helper to add prefix for Holiday Gift box
+const getBoxPrefix = function (box) {
+    const boxType = edition.boxTypes?.[box];
+    if (boxType === BoxType.HOLIDAY) {
+        return "holidaygiftbox_";
+    }
+    return "";
+};
+
 // we use XOR to obfuscate the level scores to discourage cheats. Doesn't
 // prevent hacks - server side code would be necessary for that.
 
@@ -27,8 +39,8 @@ if (XOR_VALUE == null) {
 
 // helper functions to get/set score
 const getScoreKey = function (box, level) {
-        const val = (box * 1000 + level) ^ XOR_VALUE,
-            key = SCORE_PREFIX + val;
+        const val = (box * 1000 + level) ^ XOR_VALUE;
+        let key = getBoxPrefix(box) + SCORE_PREFIX + val;
 
         // make sure we don't overwrite our XOR key
         if (key === XOR_KEY) {
@@ -61,7 +73,7 @@ const STARS_UNKNOWN = -1, // needs to be a number but can't be null
     getStarsKey = function (box, level) {
         // NOTE: we intentionally swap multiplier from whats used for points
         const key = (level * 1000 + box) ^ XOR_VALUE;
-        return STARS_PREFIX + key;
+        return getBoxPrefix(box) + STARS_PREFIX + key;
     },
     setStars = function (box, level, stars) {
         const localStars = stars == null ? STARS_UNKNOWN : stars;
@@ -96,12 +108,14 @@ const resetLevel = function (boxIndex, levelIndex) {
     setScore(boxIndex, levelIndex, 0);
 };
 
-const ScoreBox = function (levelCount, requiredStars, scores, stars) {
-    this.levelCount = levelCount;
-    this.requiredStars = requiredStars;
-    this.scores = scores || [];
-    this.stars = stars || [];
-};
+class ScoreBox {
+    constructor(levelCount, requiredStars, scores, stars) {
+        this.levelCount = levelCount;
+        this.requiredStars = requiredStars;
+        this.scores = scores || [];
+        this.stars = stars || [];
+    }
+}
 
 const ScoreManager = new (function () {
     const boxes = [];
@@ -213,8 +227,14 @@ const ScoreManager = new (function () {
     };
 
     this.isBoxLocked = function (boxIndex) {
-        if (boxIndex == 0) return false;
         if (QueryStrings.unlockAllBoxes) return false;
+
+        const isHolidayBox = edition.boxTypes?.[boxIndex] === BoxType.HOLIDAY;
+        if (isHolidayBox && !IS_XMAS) {
+            return true;
+        }
+        if (boxIndex === 0 && !isHolidayBox) return false;
+
         const box = boxes[boxIndex];
         if (box != null && ScoreManager.totalStars() >= ScoreManager.requiredStars(boxIndex)) {
             return false;

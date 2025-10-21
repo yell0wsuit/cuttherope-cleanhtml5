@@ -24,10 +24,12 @@ import MenuStringId from "@/resources/MenuStringId";
 import Alignment from "@/core/Alignment";
 import SocialHelper from "@/ui/SocialHelper";
 import GameBorder from "@/ui/GameBorder";
+import SnowfallOverlay from "@/ui/SnowfallOverlay";
 import analytics from "@/analytics";
 import Doors from "@/Doors";
 import Dialogs from "@/ui/Dialogs";
 import dom from "@/utils/dom";
+import { IS_XMAS } from "@/resources/ResData";
 const {
     addClass,
     append,
@@ -51,7 +53,8 @@ const {
 
 const isMsieBrowser = /MSIE|Trident/.test(window.navigator.userAgent);
 
-const menuMusicId = edition.menuMusicId || ResourceId.SND_MENU_MUSIC;
+const menuMusicId =
+    edition.menuMusicId || IS_XMAS ? ResourceId.SND_MENU_MUSIC_XMAS : ResourceId.SND_MENU_MUSIC;
 
 const InterfaceManager = new (function () {
     // ------------------------------------------------------------------------
@@ -60,6 +63,25 @@ const InterfaceManager = new (function () {
 
     const _this = this;
     this.useHDVersion = resolution.isHD;
+
+    const startSnow = function () {
+        if (IS_XMAS) {
+            SnowfallOverlay.start();
+        }
+    };
+
+    const stopSnow = function () {
+        if (IS_XMAS) {
+            SnowfallOverlay.stop();
+        }
+    };
+
+    // Helper function to get the default box index based on holiday period
+    // During Christmas season (Dec/Jan), default to Holiday Gift Box (index 0)
+    // Otherwise, default to Cardboard Box (index 1)
+    const getDefaultBoxIndex = function () {
+        return IS_XMAS ? 0 : 1;
+    };
 
     this.isInLevelSelectMode = false;
     this.isInMenuSelectMode = false;
@@ -198,10 +220,11 @@ const InterfaceManager = new (function () {
                 }
 
                 VideoManager.playIntroVideo(function () {
-                    const firstLevelStars = ScoreManager.getStars(0, 0) || 0;
+                    const defaultBoxIndex = getDefaultBoxIndex();
+                    const firstLevelStars = ScoreManager.getStars(defaultBoxIndex, 0) || 0;
                     if (firstLevelStars === 0) {
-                        // start the first level immediately
-                        _this.noMenuStartLevel(0, 0);
+                        // start the first level immediately for the default box
+                        _this.noMenuStartLevel(defaultBoxIndex, 0);
                     } else {
                         const panelId = edition.disableBoxMenu ? PanelId.LEVELS : PanelId.BOXES;
                         PanelManager.showPanel(panelId, true);
@@ -896,10 +919,12 @@ const InterfaceManager = new (function () {
                 Doors.renderDoors(true, 0);
                 PanelManager.showPanel(PanelId.LEVELS, true);
             }
+            startSnow();
         });
     };
 
     this.openBox = function openboxFunc(skip) {
+        stopSnow();
         const timeout = PanelManager.currentPanelId == PanelId.LEVELS ? 400 : 0;
 
         //fade out options elements
@@ -942,6 +967,7 @@ const InterfaceManager = new (function () {
     };
 
     this.closeBox = function () {
+        stopSnow();
         _this.closeGameUI();
 
         setTimeout(function () {
@@ -955,19 +981,20 @@ const InterfaceManager = new (function () {
                 }
             }
 
-            // close the doors
-            Doors.closeDoors(false, function () {
-                if (_this.isInLevelSelectMode) {
-                    _this.tapeBox();
-                } else {
-                    Doors.showGradient();
-                    setTimeout(function () {
-                        runScoreTicker();
-                    }, 250);
-                }
-            });
-        }, 250);
-    };
+        // close the doors
+        Doors.closeDoors(false, function () {
+            if (_this.isInLevelSelectMode) {
+                _this.tapeBox();
+            } else {
+                Doors.showGradient();
+                setTimeout(function () {
+                    runScoreTicker();
+                    startSnow();
+                }, 250);
+            }
+        });
+    }, 250);
+};
 
     const showLevelBackground = function () {
         show("#levelBackground");
@@ -983,9 +1010,11 @@ const InterfaceManager = new (function () {
             show("#bg");
         }
         fadeIn("#gameBtnTray");
+        startSnow();
     };
 
     this.closeGameUI = function () {
+        stopSnow();
         Doors.renderDoors(false, 1);
         notifyBeginTransition(1000, "close game ui");
         showLevelBackground();
@@ -1341,6 +1370,7 @@ const InterfaceManager = new (function () {
         EasterEggManager.domReady();
         PanelManager.domReady();
         GameBorder.domReady();
+        SnowfallOverlay.domReady();
 
         // pause game / music when the user switches tabs
         //window.addEventListener("blur", _this.pauseGame);
@@ -1373,6 +1403,11 @@ const InterfaceManager = new (function () {
         EasterEggManager.appReady();
         PanelManager.appReady(onInitializePanel);
         BoxManager.appReady();
+        if (IS_XMAS) {
+            startSnow();
+        } else {
+            SnowfallOverlay.stop();
+        }
 
         // initialize all the localized resources
         PubSub.publish(PubSub.ChannelId.LanguageChanged);

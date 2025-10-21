@@ -11,6 +11,7 @@ import ScoreManager from "@/ui/ScoreManager";
 import MenuStringId from "@/resources/MenuStringId";
 import edition from "@/edition";
 import settings from "@/game/CTRSettings";
+import { IS_XMAS } from "@/resources/ResData";
 // cache upgrade UI elements
 let upgradeButton;
 
@@ -81,6 +82,7 @@ const Box = Class.extend({
         this.bounceStartTime = 0;
         this.opacity = 1.0;
         this.type = type;
+        this.yOffset = 0; // for special box types
 
         this.boxImg = new Image();
 
@@ -106,7 +108,9 @@ const Box = Class.extend({
             self.textRendered = true;
         };
 
-        this.pubSubSubscriptions.push(PubSub.subscribe(PubSub.ChannelId.LanguageChanged, this.renderText));
+        this.pubSubSubscriptions.push(
+            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, this.renderText)
+        );
 
         this.reqImg = Text.drawBig({ text: reqstars, scaleToUI: true });
 
@@ -154,6 +158,9 @@ const Box = Class.extend({
 
     render: function (ctx, omnomoffset) {
         const isGameBox = this.isGameBox();
+        const yOffset = resolution.uiScaledNumber(this.yOffset || 0);
+        const shouldHideLockDetails = this.type === BoxType.HOLIDAY && !IS_XMAS;
+
         if (isGameBox) {
             // draw the black area
             ctx.fillStyle = "rgb(45,45,53)";
@@ -175,15 +182,19 @@ const Box = Class.extend({
         }
 
         // draw the box image
-        ctx.drawImage(this.boxImg, resolution.uiScaledNumber(25), resolution.uiScaledNumber(0));
+        ctx.drawImage(
+            this.boxImg,
+            resolution.uiScaledNumber(25),
+            resolution.uiScaledNumber(0) + yOffset
+        );
 
         if (isGameBox) {
             // draw the lock
-            if (this.islocked) {
-                // Get dimensions - prefer naturalWidth/Height, fallback to width/height
-                const textWidth = this.reqImg.naturalWidth || this.reqImg.width || 0;
-                const textHeight = this.reqImg.naturalHeight || this.reqImg.height || 0;
-                const starWidth = this.starImg.naturalWidth || this.starImg.width || 0;
+        if (this.islocked) {
+            // Get dimensions - prefer naturalWidth/Height, fallback to width/height
+            const textWidth = this.reqImg.naturalWidth || this.reqImg.width || 0;
+            const textHeight = this.reqImg.naturalHeight || this.reqImg.height || 0;
+            const starWidth = this.starImg.naturalWidth || this.starImg.width || 0;
 
                 const starLeftMargin = resolution.uiScaledNumber(-6);
                 // center the text and star label
@@ -197,25 +208,29 @@ const Box = Class.extend({
                 // TODO: should resize lock images for every resolution and remove scaling
                 // TODO: also need to normalize the size of boxes (which vary)
                 ctx.scale(1.015, 1);
+                let lockYOffset = yOffset;
+                if (this.type === BoxType.HOLIDAY) {
+                    lockYOffset += resolution.uiScaledNumber(26);
+                }
                 ctx.drawImage(
                     this.lockImg,
                     resolution.uiScaledNumber(23),
-                    resolution.uiScaledNumber(155)
+                    resolution.uiScaledNumber(155) + lockYOffset
                 );
                 ctx.scale(1 / 1.015, 1);
 
-                if (this.purchased) {
+                if (this.purchased && !shouldHideLockDetails) {
                     ctx.drawImage(
                         this.reqImg,
                         labelX,
-                        resolution.uiScaledNumber(220),
+                        resolution.uiScaledNumber(220) + yOffset,
                         textWidth,
                         textHeight
                     );
                     ctx.drawImage(
                         this.starImg,
                         labelX + textWidth + starLeftMargin,
-                        resolution.uiScaledNumber(225)
+                        resolution.uiScaledNumber(225) + yOffset
                     );
                 }
 

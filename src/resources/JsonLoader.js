@@ -56,8 +56,8 @@ const JsonLoader = {
             key: "boxMetadata",
         });
 
-        // Queue all level JSON files (01-01 through 11-25)
-        for (let box = 1; box <= 11; box++) {
+        // Queue all level JSON files (00-01 through 11-25)
+        for (let box = 0; box <= 11; box++) {
             for (let level = 1; level <= 25; level++) {
                 const boxStr = String(box).padStart(2, "0");
                 const levelStr = String(level).padStart(2, "0");
