@@ -600,7 +600,7 @@ const Bungee = ConstraintSystem.extend({
             }
 
             const offset = offsets[frameIndex];
-            const scale = light.scale;
+            //const scale = light.scale;
             const normalAngle = angle + Math.PI / 2;
             const offsetDistance = light.normalOffset;
             const drawX = position.x + Math.cos(normalAngle) * offsetDistance;
@@ -609,7 +609,7 @@ const Bungee = ConstraintSystem.extend({
             ctx.save();
             ctx.translate(drawX, drawY);
             ctx.rotate(angle);
-            ctx.scale(scale, scale);
+            //ctx.scale(scale, scale);
 
             const offsetX = offset ? offset.x : 0;
             const offsetY = offset ? offset.y : 0;
