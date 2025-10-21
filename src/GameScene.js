@@ -358,7 +358,10 @@ const GameScene = BaseElement.extend({
         this.show();
     },
     showGreeting: function () {
-        if (IS_JANUARY) {
+        const boxType = edition.boxTypes?.[LevelState.pack];
+        const isHolidayBox = boxType === BoxType.HOLIDAY;
+
+        if (IS_JANUARY && isHolidayBox) {
             this.playPaddingtonIntro();
             return;
         }
@@ -1334,6 +1337,9 @@ const GameScene = BaseElement.extend({
         const target = new GameObject();
         this.target = target;
 
+        const boxType = edition.boxTypes?.[LevelState.pack];
+        const isHolidayBox = boxType === BoxType.HOLIDAY;
+
         const isJanuary = IS_JANUARY;
         this.pendingPaddingtonIdleTransition = false;
 
@@ -1453,7 +1459,7 @@ const GameScene = BaseElement.extend({
             ResourceId.IMG_CHAR_ANIMATIONS
         );
 
-        if (isJanuary) {
+        if (isJanuary && isHolidayBox) {
             target.addAnimationEndpoints(
                 CharAnimation.IDLEPADDINGTON,
                 0.05,
@@ -1557,13 +1563,13 @@ const GameScene = BaseElement.extend({
 
         // delay greeting by Om-nom when not using January Paddington intro
         if (settings.showGreeting) {
-            if (!isJanuary) {
+            if (!(isJanuary && isHolidayBox)) {
                 this.dd.callObject(this, this.showGreeting, null, 2);
             }
             settings.showGreeting = false;
         }
 
-        if (isJanuary) {
+        if (isJanuary && isHolidayBox) {
             this.playPaddingtonIntro();
         } else {
             target.playTimeline(CharAnimation.IDLE);
@@ -1594,8 +1600,6 @@ const GameScene = BaseElement.extend({
         target.addChild(this.blink);
 
         const supportQuadIndex = edition.supports?.[LevelState.pack];
-        const boxType = edition.boxTypes?.[LevelState.pack];
-        const isHolidayBox = boxType === BoxType.HOLIDAY;
         const supportResourceId = isHolidayBox
             ? ResourceId.IMG_CHAR_SUPPORTS_XMAS
             : ResourceId.IMG_CHAR_SUPPORTS;
