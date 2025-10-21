@@ -14,11 +14,11 @@ With this source, however, we can modernize and expand the game's functionality.
 ## Features
 
 - Better loading system
-- Include Holiday Gift levels and animations
+- Include Holiday Gift levels and animations, and Paddington-themed assets
 - More in-game music, randomized
 - HD 1080p, adapt to current screen's resolution
 - Fixed some audio/music bugs -- see [PR #9](https://github.com/yell0wsuit/cuttherope-cleanhtml5/pull/9) for more information
-- Support loading custom animations from TexturePacker in JSON array format
+- Support loading custom sprites and animations from [TexturePacker](https://www.codeandweb.com/texturepacker) in JSON array format. This allows easier modding and adding new assets.
 
 ## Goals
 
