@@ -29,11 +29,11 @@ const App = {
         // toggle the active css class when the user clicks
         const ctrCursors = document.querySelectorAll(".ctrCursor");
         ctrCursors.forEach((cursor) => {
-            cursor.addEventListener("mousedown", function () {
-                this.classList.toggle("ctrCursorActive");
+            cursor.addEventListener("mousedown", () => {
+                cursor.classList.toggle("ctrCursorActive");
             });
-            cursor.addEventListener("mouseup", function () {
-                this.classList.toggle("ctrCursorActive");
+            cursor.addEventListener("mouseup", () => {
+                cursor.classList.toggle("ctrCursorActive");
             });
         });
 
