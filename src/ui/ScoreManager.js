@@ -40,7 +40,7 @@ if (XOR_VALUE == null) {
 // helper functions to get/set score
 const getScoreKey = function (box, level) {
         const val = (box * 1000 + level) ^ XOR_VALUE;
-        let key = getBoxPrefix(box) + SCORE_PREFIX + val;
+        const key = getBoxPrefix(box) + SCORE_PREFIX + val;
 
         // make sure we don't overwrite our XOR key
         if (key === XOR_KEY) {
