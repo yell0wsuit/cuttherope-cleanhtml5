@@ -33,9 +33,8 @@ const AnimationPool = BaseElement.extend({
     timelineFinishedDelegate: function () {
         // save a reference to ourselves since we may be called in a
         // different context (typically by another class)
-        const self = this;
-        return function (timeline) {
-            self.timelineFinished(timeline);
+        return (timeline) => {
+            this.timelineFinished(timeline);
         };
     },
     /**
@@ -50,9 +49,8 @@ const AnimationPool = BaseElement.extend({
     particlesFinishedDelegate: function () {
         // save a reference to ourselves since we may be called in a
         // different context (typically by another class)
-        const self = this;
-        return function (particles) {
-            self.particlesFinished(particles);
+        return (particles) => {
+            this.particlesFinished(particles);
         };
     },
 });

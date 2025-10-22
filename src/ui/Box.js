@@ -291,58 +291,57 @@ const Box = Class.extend({
             w = resolution.uiScaledNumber(1024),
             h = resolution.uiScaledNumber(576);
 
-        const self = this,
-            renderBounce = function () {
-                // get the elapsed time
-                const t = Date.now() - self.bounceStartTime;
+        const renderBounce = () => {
+            // get the elapsed time
+            const t = Date.now() - this.bounceStartTime;
 
-                let d, x, y;
+            let d, x, y;
 
-                if (t < s1) {
-                    d = Easing.easeOutSine(t, 0, 0.05, s1); // to 0.95
-                    x = 1.0 - d;
-                    y = 1.0 + d;
-                } else if (t < s2) {
-                    d = Easing.easeInOutCubic(t - s1, 0, 0.11, s2 - s1); // to 0.95
-                    x = 0.95 + d;
-                    y = 1.05 - d;
-                } else if (t < s3) {
-                    // intentionally not ending at 1.0 prevents the animation from "@/snapping" at the end.
-                    d = Easing.easeOutCubic(t - s2, 0, 0.05, s3 - s2); // to 0.95
-                    x = 1.06 - d;
-                    y = 0.94 + d;
-                }
+            if (t < s1) {
+                d = Easing.easeOutSine(t, 0, 0.05, s1); // to 0.95
+                x = 1.0 - d;
+                y = 1.0 + d;
+            } else if (t < s2) {
+                d = Easing.easeInOutCubic(t - s1, 0, 0.11, s2 - s1); // to 0.95
+                x = 0.95 + d;
+                y = 1.05 - d;
+            } else if (t < s3) {
+                // intentionally not ending at 1.0 prevents the animation from "@/snapping" at the end.
+                d = Easing.easeOutCubic(t - s2, 0, 0.05, s3 - s2); // to 0.95
+                x = 1.06 - d;
+                y = 0.94 + d;
+            }
 
-                const tx = (w - w * x) / 2.0,
-                    ty = (h - h * y) / 2.0,
-                    sx = (w - 2.0 * tx) / w,
-                    sy = (h - 2.0 * ty) / h;
+            const tx = (w - w * x) / 2.0,
+                ty = (h - h * y) / 2.0,
+                sx = (w - 2.0 * tx) / w,
+                sy = (h - 2.0 * ty) / h;
 
-                if (!isNaN(sx) && !isNaN(sy)) {
-                    ctx.save();
-                    ctx.setTransform(1, 0, 0, 1, 0, 0);
-                    ctx.clearRect(
-                        resolution.uiScaledNumber(312),
-                        resolution.uiScaledNumber(100),
-                        resolution.uiScaledNumber(400),
-                        resolution.uiScaledNumber(460)
-                    );
-                    ctx.restore();
+            if (!isNaN(sx) && !isNaN(sy)) {
+                ctx.save();
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.clearRect(
+                    resolution.uiScaledNumber(312),
+                    resolution.uiScaledNumber(100),
+                    resolution.uiScaledNumber(400),
+                    resolution.uiScaledNumber(460)
+                );
+                ctx.restore();
 
-                    ctx.save();
-                    ctx.scale(sx, sy);
-                    ctx.translate(tx, ty);
-                    ctx.translate(resolution.uiScaledNumber(312), resolution.uiScaledNumber(130));
-                    self.draw(ctx, resolution.uiScaledNumber(140));
-                    ctx.restore();
-                }
+                ctx.save();
+                ctx.scale(sx, sy);
+                ctx.translate(tx, ty);
+                ctx.translate(resolution.uiScaledNumber(312), resolution.uiScaledNumber(130));
+                this.draw(ctx, resolution.uiScaledNumber(140));
+                ctx.restore();
+            }
 
-                if (t > s3) {
-                    self.bounceStartTime = 0;
-                } else {
-                    window.requestAnimationFrame(renderBounce);
-                }
-            };
+            if (t > s3) {
+                this.bounceStartTime = 0;
+            } else {
+                window.requestAnimationFrame(renderBounce);
+            }
+        };
 
         // start the animation
         renderBounce();

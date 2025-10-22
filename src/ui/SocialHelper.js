@@ -21,11 +21,10 @@ const SocialHelper = new (function () {
     }
 
     // listen to language changes
-    const self = this;
-    PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
-        self.siteDescription = Lang.menuText(MenuStringId.SITE_DESC);
-        self.siteName = Lang.menuText(MenuStringId.SITE_TITLE);
-        self.siteActions = [
+    PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
+        this.siteDescription = Lang.menuText(MenuStringId.SITE_DESC);
+        this.siteName = Lang.menuText(MenuStringId.SITE_TITLE);
+        this.siteActions = [
             {
                 name: Lang.menuText(MenuStringId.SITE_ACTION),
                 link: edition.siteUrl,
@@ -36,7 +35,7 @@ const SocialHelper = new (function () {
     this.initFB = function () {
         // NOTE: must create settings this way to prevent obfuscation
         const fbInitSettings = {};
-        fbInitSettings["appId"] = self.appId;
+        fbInitSettings["appId"] = this.appId;
         fbInitSettings["status"] = true;
         fbInitSettings["cookie"] = true;
         fbInitSettings["xfbml"] = true;
@@ -62,12 +61,12 @@ const SocialHelper = new (function () {
             // NOTE: must create settings this way to prevent obfuscation
             const publish = {};
             publish["method"] = "feed";
-            publish["name"] = self.siteName;
+            publish["name"] = this.siteName;
             publish["caption"] = caption;
             publish["description"] = description;
-            publish["link"] = self.siteUrl;
+            publish["link"] = this.siteUrl;
             publish["picture"] = imageurl;
-            publish["actions"] = self.siteActions;
+            publish["actions"] = this.siteActions;
 
             let FB;
             FB.ui(publish, callback);

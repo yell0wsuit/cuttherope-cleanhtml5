@@ -2874,15 +2874,14 @@ const GameScene = BaseElement.extend({
         this.calculateScore();
         this.releaseAllRopes(false);
 
-        const self = this,
-            onLevelWonAppCallback = function () {
-                PubSub.publish(PubSub.ChannelId.LevelWon, {
-                    stars: self.starsCollected,
-                    time: self.time,
-                    score: self.score,
-                    fps: 1 / self.gameController.avgDelta,
-                });
-            };
+        const onLevelWonAppCallback = () => {
+            PubSub.publish(PubSub.ChannelId.LevelWon, {
+                stars: this.starsCollected,
+                time: this.time,
+                score: this.score,
+                fps: 1 / this.gameController.avgDelta,
+            });
+        };
 
         // the closing doors animation takes 850ms so we want it to
         // finish before the game level deactivates (and freezes)

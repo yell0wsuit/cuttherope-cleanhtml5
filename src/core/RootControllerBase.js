@@ -146,12 +146,11 @@ const RootController = ViewController.extend({
         this.activateMouseEvents();
 
         // called to render a frame
-        const self = this,
-            requestAnimationFrame = window["requestAnimationFrame"],
-            animationLoop = function () {
+        const requestAnimationFrame = window["requestAnimationFrame"],
+            animationLoop = () => {
                 const now = Date.now();
-                self.operateCurrentMVC(now);
-                if (!self.stopAnimation) {
+                this.operateCurrentMVC(now);
+                if (!this.stopAnimation) {
                     requestAnimationFrame(animationLoop);
                 }
             };

@@ -54,9 +54,8 @@ class ZoomManager {
 
         // begin monitoring the window for dimension changes
         this.autoResize = function () {
-            const self = this;
-            window.addEventListener("resize", function () {
-                self.resize();
+            window.addEventListener("resize", () => {
+                this.resize();
             });
             this.resize();
         };

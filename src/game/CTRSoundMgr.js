@@ -73,8 +73,6 @@ const SoundMgr = {
      * @param {number} delayMs - Optional delay before starting the loop (for staggered sounds)
      */
     playLoopedSound: function (soundId, instanceKey, delayMs = 0) {
-        const self = this;
-
         if (!this.soundEnabled || this.audioPaused) {
             return;
         }
@@ -90,12 +88,12 @@ const SoundMgr = {
         }
 
         const loop = () => {
-            const entry = self.loopingSounds.get(instanceId);
+            const entry = this.loopingSounds.get(instanceId);
             if (!entry || !entry.active) {
                 return;
             }
 
-            if (!self.audioPaused && self.soundEnabled) {
+            if (!this.audioPaused && this.soundEnabled) {
                 Sounds.play(soundId, loop, { instanceId });
             }
         };
@@ -214,17 +212,16 @@ const SoundMgr = {
 
         this.musicId = soundId;
 
-        const self = this;
         if (this.musicEnabled && !Sounds.isPlaying(soundId)) {
             const offset = this.musicResumeOffset || 0;
             this.musicResumeOffset = 0;
             Sounds.setVolume(soundId, 70);
             Sounds.play(
                 soundId,
-                function () {
-                    if (!self.audioPaused && self.musicEnabled) {
-                        self.musicResumeOffset = 0;
-                        self.playMusic(soundId);
+                () => {
+                    if (!this.audioPaused && this.musicEnabled) {
+                        this.musicResumeOffset = 0;
+                        this.playMusic(soundId);
                     }
                 },
                 { offset }

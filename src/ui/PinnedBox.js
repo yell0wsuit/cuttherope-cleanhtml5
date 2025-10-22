@@ -149,16 +149,15 @@ const PinnedBox = Box.extend({
         this.promptId = null;
 
         // dom ready init
-        const self = this;
 
         function initialize() {
             const showMeBtn = document.getElementById("showMeBtn");
             if (showMeBtn) {
-                showMeBtn.addEventListener("click", function () {
+                showMeBtn.addEventListener("click", () => {
                     if (analytics.onShowPinning) {
                         analytics.onShowPinning();
                     }
-                    self.showMePinning();
+                    this.showMePinning();
                 });
             }
 
@@ -292,9 +291,7 @@ const PinnedBox = Box.extend({
                 this.opacity = 0.35;
                 this.promptId = "pinPrompt";
 
-                const self = this;
-
-                PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
+                PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
                     const showMeImg = document.querySelector("#showMeBtn img");
                     if (showMeImg) {
                         Text.drawBig({
