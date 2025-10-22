@@ -9,8 +9,7 @@ import Easing from "@/ui/Easing";
 import PubSub from "@/utils/PubSub";
 import edition from "@/edition";
 const PanelManager = new (function () {
-    const _this = this,
-        panels = [];
+    const panels = [];
 
     const getElementById = (id) => (id ? document.getElementById(id) : null);
     const showElementById = (id) => {
@@ -56,12 +55,13 @@ const PanelManager = new (function () {
     };
 
     // get a panel by id
-    const getPanelById = (this.getPanelById = function (panelId) {
+    this.getPanelById = (panelId) => {
         for (let i = 0; i < panels.length; i++) {
             if (panels[i].id == panelId) return panels[i];
         }
         return null;
-    });
+    };
+    const getPanelById = this.getPanelById;
 
     // create our panels
     panels.push(new Panel(PanelId.MENU, "menuPanel", "startBackground", true));
@@ -83,7 +83,7 @@ const PanelManager = new (function () {
 
     // show a panel by id
     this.showPanel = function (panelId, skipFade) {
-        _this.currentPanelId = panelId;
+        this.currentPanelId = panelId;
 
         const panel = getPanelById(panelId);
         const skip = skipFade == null ? false : skipFade;
@@ -97,7 +97,7 @@ const PanelManager = new (function () {
 
         // we always use a timeout, even if we skip the animation, to keep the code clean
         const timeout = skip ? 0 : fadeInDur + fadePause;
-        setTimeout(function () {
+        setTimeout(() => {
             // show the panel
             if (panel.bgDivId) {
                 showElementById(panel.bgDivId);
@@ -120,19 +120,19 @@ const PanelManager = new (function () {
             }
 
             // run the "show" handler
-            if (_this.onShowPanel != null) {
-                _this.onShowPanel(panelId);
+            if (this.onShowPanel != null) {
+                this.onShowPanel(panelId);
             }
 
             // fade back in
             if (!skip) {
-                _this.runBlackFadeOut();
+                this.runBlackFadeOut();
             }
         }, timeout);
 
         // start the animation
         if (!skip) {
-            _this.runBlackFadeIn();
+            this.runBlackFadeIn();
         }
     };
 
@@ -285,11 +285,11 @@ const PanelManager = new (function () {
     };
 })();
 
-PubSub.subscribe(PubSub.ChannelId.BoxesUnlocked, function (isFirstUnlock) {
+PubSub.subscribe(PubSub.ChannelId.BoxesUnlocked, (isFirstUnlock) => {
     const nextPanelId = isFirstUnlock ? PanelId.MENU : PanelId.BOXES;
 
     // switch back to the boxes panel after a short delay
-    setTimeout(function () {
+    setTimeout(() => {
         PanelManager.showPanel(nextPanelId);
     }, 1000);
 });

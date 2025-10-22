@@ -61,16 +61,15 @@ const InterfaceManager = new (function () {
     // Locals Variables
     // ------------------------------------------------------------------------
 
-    const _this = this;
     this.useHDVersion = resolution.isHD;
 
-    const startSnow = function () {
+    const startSnow = () => {
         if (IS_XMAS) {
             SnowfallOverlay.start();
         }
     };
 
-    const stopSnow = function () {
+    const stopSnow = () => {
         if (IS_XMAS) {
             SnowfallOverlay.stop();
         }
@@ -79,7 +78,7 @@ const InterfaceManager = new (function () {
     // Helper function to get the default box index based on holiday period
     // During Christmas season (Dec/Jan), default to Holiday Gift Box (index 0)
     // Otherwise, default to Cardboard Box (index 1)
-    const getDefaultBoxIndex = function () {
+    const getDefaultBoxIndex = () => {
         return IS_XMAS ? 0 : 1;
     };
 
@@ -93,7 +92,7 @@ const InterfaceManager = new (function () {
     const MIN_FPS = QueryStrings.minFps || 30;
 
     // sets scaled menu text for the image specified by the selector query
-    const setImageBigText = function (selector, menuStringId) {
+    const setImageBigText = (selector, menuStringId) => {
         return Text.drawBig({
             text: Lang.menuText(menuStringId),
             imgSel: selector,
@@ -105,7 +104,7 @@ const InterfaceManager = new (function () {
     // Initialize Panels (called once for each panel)
     // ------------------------------------------------------------------------
 
-    const updateMiniSoundButton = function (doToggle, buttonId, msgId) {
+    const updateMiniSoundButton = (doToggle, buttonId, msgId) => {
         let className;
         let isSoundOn = SoundMgr.soundEnabled;
         let isMusicOn = SoundMgr.musicEnabled;
@@ -161,7 +160,7 @@ const InterfaceManager = new (function () {
         showMiniOptionMessage(msgId, text);
     };
 
-    const showMiniOptionMessage = function (msgId, messageText, delayDuration) {
+    const showMiniOptionMessage = (msgId, messageText, delayDuration) => {
         if (msgId != undefined) {
             const showDelay = delayDuration || 500;
             const msg = document.getElementById(msgId);
@@ -196,35 +195,35 @@ const InterfaceManager = new (function () {
 
     // only enable achievements and leaderboard for signed-in users
     let signedIn = false;
-    const updateSignInControls = function () {
+    const updateSignInControls = () => {
         toggleClass("#achievementsBtn", "disabled", !signedIn);
         toggleClass("#leaderboardsBtn", "disabled", !signedIn);
     };
-    PubSub.subscribe(PubSub.ChannelId.SignIn, function () {
+    PubSub.subscribe(PubSub.ChannelId.SignIn, () => {
         signedIn = true;
         updateSignInControls();
     });
-    PubSub.subscribe(PubSub.ChannelId.SignOut, function () {
+    PubSub.subscribe(PubSub.ChannelId.SignOut, () => {
         signedIn = false;
         updateSignInControls();
     });
 
-    const onInitializePanel = function (panelId) {
+    const onInitializePanel = (panelId) => {
         // initialize the MENU panel
         if (panelId == PanelId.MENU) {
-            on("#playBtn", "click", function () {
+            on("#playBtn", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
 
                 if (analytics.onPlayClicked) {
                     analytics.onPlayClicked();
                 }
 
-                VideoManager.playIntroVideo(function () {
+                VideoManager.playIntroVideo(() => {
                     const defaultBoxIndex = getDefaultBoxIndex();
                     const firstLevelStars = ScoreManager.getStars(defaultBoxIndex, 0) || 0;
                     if (firstLevelStars === 0) {
                         // start the first level immediately for the default box
-                        _this.noMenuStartLevel(defaultBoxIndex, 0);
+                        this.noMenuStartLevel(defaultBoxIndex, 0);
                     } else {
                         const panelId = edition.disableBoxMenu ? PanelId.LEVELS : PanelId.BOXES;
                         PanelManager.showPanel(panelId, true);
@@ -232,7 +231,7 @@ const InterfaceManager = new (function () {
                 });
             });
 
-            on("#optionsBtn", "click", function () {
+            on("#optionsBtn", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 // see if there is a custom settings panel we should trigger
                 if (platform.customOptions) {
@@ -242,7 +241,7 @@ const InterfaceManager = new (function () {
                 }
             });
 
-            on("#achievementsBtn", "click", function () {
+            on("#achievementsBtn", "click", () => {
                 if (signedIn) {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.ACHIEVEMENTS);
@@ -250,7 +249,7 @@ const InterfaceManager = new (function () {
             });
             toggleClass("#achievementsBtn", "disabled", !signedIn);
 
-            on("#leaderboardsBtn", "click", function () {
+            on("#leaderboardsBtn", "click", () => {
                 if (signedIn) {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.LEADERBOARDS);
@@ -260,9 +259,9 @@ const InterfaceManager = new (function () {
 
             // reset popup buttons
             let resetTimer = null;
-            on("#resetYesBtn", PointerCapture.startEventName, function () {
+            on("#resetYesBtn", PointerCapture.startEventName, () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
-                resetTimer = setTimeout(function () {
+                resetTimer = setTimeout(() => {
                     Dialogs.closePopup();
                     resetTimer = null;
 
@@ -277,7 +276,7 @@ const InterfaceManager = new (function () {
                     PubSub.publish(PubSub.ChannelId.LoadIntroVideo);
                 }, 3000); // wait 3 seconds in case user changes their mind
             });
-            on("#resetYesBtn", PointerCapture.endEventName, function () {
+            on("#resetYesBtn", PointerCapture.endEventName, () => {
                 if (resetTimer != null) {
                     clearTimeout(resetTimer);
                 }
@@ -286,12 +285,12 @@ const InterfaceManager = new (function () {
             // mini options panel
 
             updateMiniSoundButton(false, "optionSound");
-            on("#optionSound", "click", function () {
+            on("#optionSound", "click", () => {
                 updateMiniSoundButton(true, "optionSound", "optionMsg");
             });
 
             let hdtoggle;
-            if (_this.useHDVersion) {
+            if (this.useHDVersion) {
                 addClass("#optionHd", "activeResolution");
                 addClass("#optionSd", "inActiveResolution");
                 addClass("#optionSd", "ctrPointer");
@@ -337,13 +336,13 @@ const InterfaceManager = new (function () {
                 hdtoggle = "optionHd";
             }
 
-            on("#" + hdtoggle, "click", function () {
-                settings.setIsHD(!_this.useHDVersion);
+            on("#" + hdtoggle, "click", () => {
+                settings.setIsHD(!this.useHDVersion);
                 window.location.reload(); // refresh the page
             });
 
             // handle language changes
-            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
+            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
                 setImageBigText("#playBtn img", MenuStringId.PLAY);
                 setImageBigText("#optionsBtn img", MenuStringId.OPTIONS);
                 setImageBigText("#resetYesBtn img", MenuStringId.YES);
@@ -366,7 +365,7 @@ const InterfaceManager = new (function () {
         // initialize the BOXES panel
         else if (panelId == PanelId.BOXES) {
             // handles clicking on the circular back button
-            on("#boxBack", "click", function () {
+            on("#boxBack", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 PanelManager.showPanel(PanelId.MENU);
             });
@@ -374,13 +373,13 @@ const InterfaceManager = new (function () {
             const panel = PanelManager.getPanelById(panelId);
             panel.init(InterfaceManager);
         } else if (panelId == PanelId.PASSWORD) {
-            on("#boxEnterCodeButton", "click", function () {
+            on("#boxEnterCodeButton", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 PanelManager.showPanel(PanelId.PASSWORD);
             });
 
             // handles clicking on the circular back button
-            on("#codeBack", "click", function () {
+            on("#codeBack", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 PanelManager.showPanel(PanelId.BOXES);
             });
@@ -391,7 +390,7 @@ const InterfaceManager = new (function () {
 
         // initialize the LEVELS panel
         else if (panelId == PanelId.LEVELS) {
-            on("#levelBack", "click", function () {
+            on("#levelBack", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 const panelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
                 PanelManager.showPanel(panelId);
@@ -403,25 +402,25 @@ const InterfaceManager = new (function () {
             const panel = PanelManager.getPanelById(panelId);
             panel.init(InterfaceManager);
         } else if (panelId == PanelId.GAME) {
-            on("#gameRestartBtn", "click", function () {
-                if (_this.isTransitionActive) return;
+            on("#gameRestartBtn", "click", () => {
+                if (this.isTransitionActive) return;
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 openLevel(BoxManager.currentLevelIndex, true); // is a restart
             });
 
-            on("#gameMenuBtn", "click", function () {
-                if (_this.isTransitionActive) return;
+            on("#gameMenuBtn", "click", () => {
+                if (this.isTransitionActive) return;
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 openLevelMenu();
             });
         } else if (panelId == PanelId.GAMEMENU) {
-            on("#continueBtn", "click", function () {
+            on("#continueBtn", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 closeLevelMenu();
                 RootController.resumeLevel();
             });
 
-            on("#skipBtn", "click", function () {
+            on("#skipBtn", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 closeLevelMenu();
                 //unlock next level
@@ -438,40 +437,40 @@ const InterfaceManager = new (function () {
                 }
             });
 
-            on("#selectBtn", "click", function () {
+            on("#selectBtn", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 closeLevelMenu();
                 closeLevel();
-                _this.isInLevelSelectMode = true;
-                _this.isInMenuSelectMode = false;
-                _this.closeBox();
+                this.isInLevelSelectMode = true;
+                this.isInMenuSelectMode = false;
+                this.closeBox();
             });
 
-            on("#menuBtn", "click", function () {
+            on("#menuBtn", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 closeLevelMenu();
                 closeLevel();
-                _this.isInLevelSelectMode = true;
-                _this.isInMenuSelectMode = true;
-                _this.closeBox();
+                this.isInLevelSelectMode = true;
+                this.isInMenuSelectMode = true;
+                this.closeBox();
             });
 
             // mini options panel
             updateMiniSoundButton(false, "gameSound");
-            on("#gameSound", "click", function () {
+            on("#gameSound", "click", () => {
                 updateMiniSoundButton(true, "gameSound", "gameMsg");
             });
 
             // language changes
-            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
+            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
                 setImageBigText("#continueBtn img", MenuStringId.CONTINUE);
                 setImageBigText("#skipBtn img", MenuStringId.SKIP_LEVEL);
                 setImageBigText("#selectBtn img", MenuStringId.LEVEL_SELECT);
                 setImageBigText("#menuBtn img", MenuStringId.MAIN_MENU);
             });
         } else if (panelId == PanelId.LEVELCOMPLETE) {
-            on("#nextBtn", "click", function () {
-                if (_this.isTransitionActive) return;
+            on("#nextBtn", "click", () => {
+                if (this.isTransitionActive) return;
                 notifyBeginTransition(1000, "next level");
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 //is there another level in this box?
@@ -482,24 +481,24 @@ const InterfaceManager = new (function () {
                 }
             });
 
-            on("#replayBtn", "click", function () {
-                if (_this.isTransitionActive) return;
+            on("#replayBtn", "click", () => {
+                if (this.isTransitionActive) return;
                 notifyBeginTransition(1000, "replay");
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 openLevel(BoxManager.currentLevelIndex);
             });
 
-            on("#lrMenuBtn", "click", function () {
-                if (_this.isTransitionActive) return;
+            on("#lrMenuBtn", "click", () => {
+                if (this.isTransitionActive) return;
                 notifyBeginTransition(1000, "level menu");
                 SoundMgr.playSound(ResourceId.SND_TAP);
-                _this.isInLevelSelectMode = true;
-                _this.isInMenuSelectMode = false;
-                _this.tapeBox();
+                this.isInLevelSelectMode = true;
+                this.isInMenuSelectMode = false;
+                this.tapeBox();
             });
 
             // handle language changes
-            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
+            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
                 setImageBigText("#nextBtn img", MenuStringId.NEXT);
                 setImageBigText("#replayBtn img", MenuStringId.REPLAY);
                 setImageBigText("#lrMenuBtn img", MenuStringId.MENU);
@@ -511,13 +510,13 @@ const InterfaceManager = new (function () {
                 });
             });
         } else if (panelId == PanelId.GAMECOMPLETE) {
-            on("#gameCompleteBack", "click", function () {
+            on("#gameCompleteBack", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 PanelManager.showPanel(PanelId.MENU);
                 GameBorder.hide();
             });
 
-            on("#finalShareBtn", "click", function () {
+            on("#finalShareBtn", "click", () => {
                 const possibleStars = BoxManager.possibleStars(),
                     totalStars = ScoreManager.totalStars();
 
@@ -629,7 +628,7 @@ const InterfaceManager = new (function () {
             platform.toggleLangUI(!edition.disableLanguageOption);
 
             // update options menu when the language changes
-            const refreshOptionsButtons = function () {
+            const refreshOptionsButtons = () => {
                 setImageBigText("#optionsTitle img", MenuStringId.OPTIONS);
                 updateSoundOption(soundBtn, settings.getSoundEnabled());
                 updateMusicOption(musicBtn, settings.getMusicEnabled());
@@ -657,12 +656,12 @@ const InterfaceManager = new (function () {
             PubSub.subscribe(PubSub.ChannelId.LanguageChanged, refreshOptionsButtons);
             PubSub.subscribe(PubSub.ChannelId.ShowOptionsPage, refreshOptionsButtons);
         } else if (panelId === PanelId.LEADERBOARDS) {
-            on("#leaderboardBack", "click", function () {
+            on("#leaderboardBack", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 PanelManager.showPanel(PanelId.MENU);
             });
         } else if (panelId === PanelId.ACHIEVEMENTS) {
-            on("#achievementsBack", "click", function () {
+            on("#achievementsBack", "click", () => {
                 SoundMgr.playSound(ResourceId.SND_TAP);
                 PanelManager.showPanel(PanelId.MENU);
             });
@@ -675,7 +674,7 @@ const InterfaceManager = new (function () {
     // ------------------------------------------------------------------------
 
     let bounceTimeOut = null;
-    const onShowPanel = function (panelId) {
+    const onShowPanel = (panelId) => {
         const panel = PanelManager.getPanelById(panelId);
 
         if (panelId == PanelId.MENU || panelId == PanelId.BOXES || panelId == PanelId.OPTIONS) {
@@ -701,9 +700,9 @@ const InterfaceManager = new (function () {
             ScoreManager.updateTotalScoreText();
             boxPanel.onShow();
 
-            if (_this.isInAdvanceBoxMode) {
-                _this.isInAdvanceBoxMode = false;
-                setTimeout(function () {
+            if (this.isInAdvanceBoxMode) {
+                this.isInAdvanceBoxMode = false;
+                setTimeout(() => {
                     hide("#levelResults");
                     boxPanel.slideToNextBox();
 
@@ -714,7 +713,7 @@ const InterfaceManager = new (function () {
                 }, 800);
             } else {
                 clearTimeout(bounceTimeOut);
-                bounceTimeOut = setTimeout(function () {
+                bounceTimeOut = setTimeout(() => {
                     boxPanel.bounceCurrentBox();
                 }, 300);
             }
@@ -798,16 +797,16 @@ const InterfaceManager = new (function () {
     // will be disabled until the flag gets cleared. This is an attempt to prevent new bugs.
 
     let transitionTimeout = null;
-    const notifyBeginTransition = function (timeout, name) {
-        _this.isTransitionActive = true;
+    const notifyBeginTransition = (timeout, name) => {
+        this.isTransitionActive = true;
         if (transitionTimeout != null) clearTimeout(transitionTimeout);
-        transitionTimeout = setTimeout(function () {
-            _this.isTransitionActive = false;
+        transitionTimeout = setTimeout(() => {
+            this.isTransitionActive = false;
             transitionTimeout = null;
         }, timeout);
     };
 
-    const runScoreTicker = function () {
+    const runScoreTicker = () => {
         //$('#resultTicker').text(resultTopLines[currentResultLine]);
         text("#resultScore", resultBottomLines[currentResultLine]);
         currentResultLine++;
@@ -825,7 +824,7 @@ const InterfaceManager = new (function () {
     };
 
     // play the level
-    const openLevel = (this.openLevel = function (level, isRestart, isSkip) {
+    this.openLevel = (level, isRestart, isSkip) => {
         GameBorder.fadeIn(650, 100);
         BoxManager.currentLevelIndex = level;
 
@@ -838,17 +837,18 @@ const InterfaceManager = new (function () {
             RootController.restartLevel();
         } else {
             PanelManager.showPanel(PanelId.GAME, true);
-            setTimeout(function () {
-                _this.openBox(isSkip);
+            setTimeout(() => {
+                this.openBox(isSkip);
             }, 200);
         }
-    });
+    };
+    const openLevel = this.openLevel;
 
-    const closeLevel = function () {
+    const closeLevel = () => {
         RootController.stopLevel();
     };
 
-    const isLastLevel = function () {
+    const isLastLevel = () => {
         // see if we are on the last box
         const lastPlayableBoxIndex = BoxManager.requiredCount() - 1;
         if (BoxManager.currentBoxIndex !== lastPlayableBoxIndex) {
@@ -865,7 +865,7 @@ const InterfaceManager = new (function () {
         return true;
     };
 
-    const completeBox = function () {
+    const completeBox = () => {
         //attempt to move to the next box
         const boxIndex = BoxManager.currentBoxIndex;
 
@@ -877,20 +877,20 @@ const InterfaceManager = new (function () {
             GameBorder.hide();
             VideoManager.playOutroVideo();
         } else {
-            _this.isInAdvanceBoxMode = true;
+            this.isInAdvanceBoxMode = true;
             const panelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
             PanelManager.showPanel(panelId, false);
         }
     };
 
-    const openLevelMenu = function () {
+    const openLevelMenu = () => {
         RootController.pauseLevel();
         // Pause music when opening the game menu
         SoundMgr.pauseMusic();
         show("#levelMenu");
     };
 
-    const closeLevelMenu = function () {
+    const closeLevelMenu = () => {
         hide("#levelMenu");
         // Resume music when closing the game menu only if:
         // 1. We're currently in the game (not menu or level select)
@@ -898,7 +898,7 @@ const InterfaceManager = new (function () {
         // 3. A level is currently active
         if (
             PanelManager.currentPanelId === PanelId.GAME &&
-            _this.gameEnabled &&
+            this.gameEnabled &&
             RootController.isLevelActive()
         ) {
             SoundMgr.resumeMusic();
@@ -906,14 +906,14 @@ const InterfaceManager = new (function () {
     };
 
     this.tapeBox = function () {
-        if (_this.isInMenuSelectMode) {
+        if (this.isInMenuSelectMode) {
             GameBorder.fadeOut(800, 400);
             SoundMgr.playMusic(menuMusicId);
         }
 
-        Doors.closeBoxAnimation(function () {
-            _this.isBoxOpen = false;
-            if (_this.isInMenuSelectMode) {
+        Doors.closeBoxAnimation(() => {
+            this.isBoxOpen = false;
+            if (this.isInMenuSelectMode) {
                 PanelManager.showPanel(PanelId.MENU, false);
             } else {
                 Doors.renderDoors(true, 0);
@@ -931,35 +931,35 @@ const InterfaceManager = new (function () {
         fadeOut("#levelScore");
         fadeOut("#levelBack");
 
-        fadeOut("#levelOptions", timeout).then(function () {
-            if (_this.isBoxOpen) {
+        fadeOut("#levelOptions", timeout).then(() => {
+            if (this.isBoxOpen) {
                 fadeOut("#levelResults", 800);
 
-                setTimeout(function () {
+                setTimeout(() => {
                     //if (skip) {
                     //    RootController.startLevel(BoxManager.currentBoxIndex + 1, BoxManager.currentLevelIndex);
-                    //    _this.showGameUI();
+                    //    this.showGameUI();
                     //} else {
                     RootController.startLevel(
                         BoxManager.currentBoxIndex + 1,
                         BoxManager.currentLevelIndex
                     );
-                    Doors.openDoors(false, function () {
-                        _this.showGameUI();
+                    Doors.openDoors(false, () => {
+                        this.showGameUI();
                     });
                     //}
                 }, 400);
             } else {
-                Doors.openBoxAnimation(function () {
-                    _this.isBoxOpen = true;
+                Doors.openBoxAnimation(() => {
+                    this.isBoxOpen = true;
 
                     RootController.startLevel(
                         BoxManager.currentBoxIndex + 1,
                         BoxManager.currentLevelIndex
                     );
 
-                    Doors.openDoors(true, function () {
-                        _this.showGameUI();
+                    Doors.openDoors(true, () => {
+                        this.showGameUI();
                     });
                 });
             }
@@ -968,26 +968,26 @@ const InterfaceManager = new (function () {
 
     this.closeBox = function () {
         stopSnow();
-        _this.closeGameUI();
+        this.closeGameUI();
 
-        setTimeout(function () {
+        setTimeout(() => {
             // animating from game to results
-            if (!_this.isInLevelSelectMode) {
+            if (!this.isInLevelSelectMode) {
                 const levelResults = getElement("#levelResults");
                 if (levelResults) {
-                    delay(levelResults, 750).then(function () {
+                    delay(levelResults, 750).then(() => {
                         return fadeIn(levelResults, 250);
                     });
                 }
             }
 
         // close the doors
-        Doors.closeDoors(false, function () {
-            if (_this.isInLevelSelectMode) {
-                _this.tapeBox();
+        Doors.closeDoors(false, () => {
+            if (this.isInLevelSelectMode) {
+                this.tapeBox();
             } else {
                 Doors.showGradient();
-                setTimeout(function () {
+                setTimeout(() => {
                     runScoreTicker();
                     startSnow();
                 }, 250);
@@ -996,11 +996,11 @@ const InterfaceManager = new (function () {
     }, 250);
 };
 
-    const showLevelBackground = function () {
+    const showLevelBackground = () => {
         show("#levelBackground");
     };
 
-    const hideLevelBackground = function () {
+    const hideLevelBackground = () => {
         hide("#levelBackground");
     };
 
@@ -1105,19 +1105,19 @@ const InterfaceManager = new (function () {
 
         // HELPER FUNCTIONS
 
-        const secondsToMin = function (sec) {
+        const secondsToMin = (sec) => {
             const m = (sec / 60) | 0,
                 s = Math.round(sec % 60);
             return m + ":" + (s < 10 ? "0" + s : s);
         };
 
-        const doStarCountdown = function (from, callback) {
+        const doStarCountdown = (from, callback) => {
             let countDownPoints = from;
             const duration = 1000;
             let lastRender = Date.now();
             const requestAnimationFrame = window["requestAnimationFrame"];
 
-            const renderCount = function () {
+            const renderCount = () => {
                 const now = Date.now(),
                     timeDelta = now - lastRender,
                     pointDelta = Math.min(
@@ -1155,7 +1155,7 @@ const InterfaceManager = new (function () {
             renderCount();
         };
 
-        const doTimeCountdown = function (fromsec, frompoints, callback) {
+        const doTimeCountdown = (fromsec, frompoints, callback) => {
             const finalPoints = currentPoints + frompoints;
             let countDownSecs = fromsec;
             // between 1 and 2 secs depending on time
@@ -1163,7 +1163,7 @@ const InterfaceManager = new (function () {
             let lastRender = Date.now();
             const requestAnimationFrame = window["requestAnimationFrame"];
 
-            const renderScore = function () {
+            const renderScore = () => {
                 const now = Date.now(),
                     percentElapsed = (now - lastRender) / duration;
 
@@ -1285,8 +1285,8 @@ const InterfaceManager = new (function () {
             ScoreManager.setStars(boxIndex, levelIndex, 0);
         }
 
-        _this.isInLevelSelectMode = false;
-        _this.closeBox();
+        this.isInLevelSelectMode = false;
+        this.closeBox();
 
         // events that occur after completing the first level
         if (boxIndex === 0 && levelIndex === 1) {
@@ -1297,7 +1297,7 @@ const InterfaceManager = new (function () {
             // tell the user if the fps was low on the first level
             if (info.fps < MIN_FPS && !platform.disableSlowWarning) {
                 // delay the popup to allow the score screen to finish
-                setTimeout(function () {
+                setTimeout(() => {
                     Dialogs.showSlowComputerPopup();
                 }, 3000);
             }
@@ -1310,12 +1310,12 @@ const InterfaceManager = new (function () {
     let isDevLinkVisible = true;
     this.updateDevLink = function () {
         if (width(window) < resolution.uiScaledNumber(1024) + 120 && isDevLinkVisible) {
-            fadeOut("#moreLink").then(function () {
+            fadeOut("#moreLink").then(() => {
                 isDevLinkVisible = false;
             });
             fadeOut("#zenbox_tab");
         } else if (width(window) > resolution.uiScaledNumber(1024) + 120 && !isDevLinkVisible) {
-            fadeIn("#moreLink").then(function () {
+            fadeIn("#moreLink").then(() => {
                 isDevLinkVisible = true;
             });
             fadeIn("#zenbox_tab");
@@ -1330,7 +1330,7 @@ const InterfaceManager = new (function () {
         if (
             PanelManager.currentPanelId === PanelId.GAME &&
             RootController.isLevelActive() &&
-            !_this.isTransitionActive
+            !this.isTransitionActive
         ) {
             openLevelMenu();
         } else {
@@ -1349,7 +1349,7 @@ const InterfaceManager = new (function () {
         if (
             !isLevelMenuVisible &&
             PanelManager.currentPanelId !== PanelId.GAMEMENU &&
-            _this.gameEnabled
+            this.gameEnabled
         ) {
             SoundMgr.resumeMusic();
         }
@@ -1378,23 +1378,23 @@ const InterfaceManager = new (function () {
         // when returning to the tab, resume music (except when on game menu - no music there)
         //window.addEventListener("focus", _this.resumeGame);
 
-        const onVisibilityChange = function () {
+        const onVisibilityChange = () => {
             if (document.hidden || document.visibilityState === "hidden") {
-                _this.pauseGame();
+                this.pauseGame();
             } else {
-                _this.resumeGame();
+                this.resumeGame();
             }
         };
         document.addEventListener("visibilitychange", onVisibilityChange);
 
         // hide behind the scenes when we update the page
-        window.addEventListener("resize", function () {
-            _this.updateDevLink();
+        window.addEventListener("resize", () => {
+            this.updateDevLink();
         });
     };
 
     this.appReady = function () {
-        PubSub.subscribe(PubSub.ChannelId.LevelWon, this.onLevelWon);
+        PubSub.subscribe(PubSub.ChannelId.LevelWon, (info) => this.onLevelWon(info));
 
         // Load scores now that JSON data is available
         ScoreManager.load();
@@ -1426,17 +1426,16 @@ const InterfaceManager = new (function () {
             }
         }
 
-        const im = this;
-        PubSub.subscribe(PubSub.ChannelId.PauseGame, function () {
-            im.pauseGame();
+        PubSub.subscribe(PubSub.ChannelId.PauseGame, () => {
+            this.pauseGame();
         });
-        PubSub.subscribe(PubSub.ChannelId.EnableGame, function () {
-            im.gameEnabled = true;
-            im.resumeGame();
+        PubSub.subscribe(PubSub.ChannelId.EnableGame, () => {
+            this.gameEnabled = true;
+            this.resumeGame();
         });
-        PubSub.subscribe(PubSub.ChannelId.DisableGame, function () {
-            im.gameEnabled = false;
-            im.pauseGame();
+        PubSub.subscribe(PubSub.ChannelId.DisableGame, () => {
+            this.gameEnabled = false;
+            this.pauseGame();
         });
     };
 
@@ -1453,7 +1452,7 @@ const InterfaceManager = new (function () {
     };
 
     this.openLevelMenu = function (boxIndex) {
-        _this.isBoxOpen = false;
+        this.isBoxOpen = false;
         Doors.renderDoors(true, 0);
         PanelManager.showPanel(PanelId.LEVELS);
         GameBorder.setBoxBorder(boxIndex);

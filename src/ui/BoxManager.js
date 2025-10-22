@@ -11,35 +11,34 @@ import TimeBox from "@/ui/TimeBox";
 import BoxPanel from "@/ui/BoxPanel";
 import { IS_XMAS } from "@/resources/ResData";
 const BoxManager = new (function () {
-    const self = this,
-        boxes = [];
+    const boxes = [];
 
     // Helper function to get the default box index based on holiday period
     // During Christmas season (Dec/Jan), default to Holiday Gift Box (index 0)
     // Otherwise, default to Cardboard Box (index 1)
-    const getDefaultBoxIndex = function () {
+    const getDefaultBoxIndex = () => {
         return IS_XMAS ? 0 : 1;
     };
 
-    PubSub.subscribe(PubSub.ChannelId.SelectedBoxChanged, function (boxIndex) {
+    PubSub.subscribe(PubSub.ChannelId.SelectedBoxChanged, (boxIndex) => {
         BoxManager.currentBoxIndex = boxIndex;
         BoxManager.currentLevelIndex = 1;
     });
 
     let appIsReady = false;
-    this.appReady = function () {
+    this.appReady = () => {
         appIsReady = true;
         loadBoxes();
     };
 
-    self.currentBoxIndex = getDefaultBoxIndex();
+    this.currentBoxIndex = getDefaultBoxIndex();
 
     // TODO: the current level index starts at 1, should be zero-based
-    self.currentLevelIndex = 1;
+    this.currentLevelIndex = 1;
 
     // listen to purchase event
     let isPaid = false;
-    PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, function (paid) {
+    PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, (paid) => {
         isPaid = paid;
     });
 
@@ -58,16 +57,16 @@ const BoxManager = new (function () {
         return !edition.levelRequiresPurchase(this.currentBoxIndex, this.currentLevelIndex); // NOTE: checking next level since this index is 1 based (TODO: fix!)
     };
 
-    const loadBoxes = function () {
+    const loadBoxes = () => {
         // only load boxes if app is ready
         if (!appIsReady) {
             return;
         }
 
-        self.currentBoxIndex = getDefaultBoxIndex();
+        BoxManager.currentBoxIndex = getDefaultBoxIndex();
 
         // TODO: the current level index starts at 1, should be zero-based
-        self.currentLevelIndex = 1;
+        BoxManager.currentLevelIndex = 1;
 
         createBoxes();
         updateVisibleBoxes();
