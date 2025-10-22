@@ -46,8 +46,10 @@ const QueryStrings = new (function () {
     this.forceHtml5Audio = urlContains("html5audio=true");
 
     // for testing
-    //this.unlockAllBoxes = true;
-    //this.showFrameRate = true;
+    if (import.meta.env.DEV) {
+        this.unlockAllBoxes = true;
+        this.showFrameRate = true;
+    }
 })();
 
 export default QueryStrings;
