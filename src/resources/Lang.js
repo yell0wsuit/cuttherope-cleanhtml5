@@ -43,7 +43,7 @@ const Lang = {
 
         // all boxes except last one get prepended numbers
         if (text && includeNumber) {
-            text = boxIndex + 1 + ". " + text;
+            text = `${boxIndex + 1}. ${text}`;
         }
 
         return text;
@@ -58,7 +58,7 @@ const Lang = {
             }
         }
 
-        Log.debug("Missing menu string for id: " + menuStringId);
+        Log.debug(`Missing menu string for id: ${menuStringId}`);
         return "";
     },
     getText: getLocalizedText,

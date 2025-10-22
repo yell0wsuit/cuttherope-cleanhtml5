@@ -28,7 +28,7 @@ const Font = ImageElement.extend({
             return charIndex;
         }
 
-        Log.alert("Char not found in font:" + c);
+        Log.alert(`Char not found in font: ${c}`);
 
         // replace missing character with a period
         return this.chars.indexOf(".");

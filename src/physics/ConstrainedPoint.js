@@ -262,7 +262,7 @@ const ConstrainedPoint = MaterialPoint.extend({
         this.update(delta);
     },
     posString: function () {
-        return this.pos.x.toFixed(2) + ", " + this.pos.y.toFixed(2);
+        return `${this.pos.x.toFixed(2)}, ${this.pos.y.toFixed(2)}`;
     },
 });
 

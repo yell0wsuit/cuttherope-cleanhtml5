@@ -20,10 +20,10 @@ const ConstraintSystem = Class.extend({
         Log.debug("Constraint System Log:");
         for (let i = 0, partsLen = this.parts.length; i < partsLen; i++) {
             const cp = this.parts[i];
-            Log.debug("-- Point: " + cp.posString());
+            Log.debug(`-- Point: ${cp.posString()}`);
             for (let j = 0, constraintsLen = cp.constraints.length; j < constraintsLen; j++) {
                 const c = cp.constraints[j];
-                const cInfo = "---- Constraint: " + c.cp.posString() + " len: " + c.restLength;
+                const cInfo = `---- Constraint: ${c.cp.posString()} len: ${c.restLength}`;
                 Log.debug(cInfo);
             }
         }

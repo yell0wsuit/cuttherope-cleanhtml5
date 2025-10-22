@@ -153,7 +153,7 @@ const TimeBox = Box.extend({
                 this.dateImg = new Image();
                 const openDate = new Date(BoxOpenDates[this.index]);
                 Text.drawBig({
-                    text: MonthNames[openDate.getMonth()] + " " + openDate.getDate(),
+                    text: `${MonthNames[openDate.getMonth()]} ${openDate.getDate()}`,
                     img: this.dateImg,
                     width: resolution.uiScaledNumber(200),
                     alignment: Alignment.HCENTER,

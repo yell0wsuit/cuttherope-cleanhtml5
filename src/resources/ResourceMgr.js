@@ -165,7 +165,7 @@ const ResourceMgr = {
             return resEntry.texture;
         }
 
-        Log.debug("Image not yet loaded:" + resEntry.path);
+        Log.debug(`Image not yet loaded: ${resEntry.path}`);
         return null;
     },
     getFont: function (resId) {
@@ -174,7 +174,7 @@ const ResourceMgr = {
             return resEntry.font;
         }
 
-        Log.debug("Font not yet loaded:" + resEntry.path);
+        Log.debug(`Font not yet loaded: ${resEntry.path}`);
         return null;
     },
 };

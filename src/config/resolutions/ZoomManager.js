@@ -19,7 +19,7 @@ class ZoomManager {
         this.updateCss = function (css) {
             css = css || {};
 
-            let cssScale = "scale(" + this.zoom + ")",
+            let cssScale = `scale(${this.zoom})`,
                 transformOrigin = this.transformOrigin,
                 i,
                 len,
@@ -82,16 +82,16 @@ class ZoomManager {
 
             const coverBgs = document.querySelectorAll(".coverBg");
             coverBgs.forEach((el) => {
-                el.style.webkitTransform = "scale(" + this.bgZoom + ")";
-                el.style.mozTransform = "scale(" + this.bgZoom + ")";
-                el.style.transform = "scale(" + this.bgZoom + ")";
+                el.style.webkitTransform = `scale(${this.bgZoom})`;
+                el.style.mozTransform = `scale(${this.bgZoom})`;
+                el.style.transform = `scale(${this.bgZoom})`;
             });
 
             const scaleBgs = document.querySelectorAll(".scaleBg");
             scaleBgs.forEach((el) => {
-                el.style.webkitTransform = "scaleY(" + this.bgZoom + ")";
-                el.style.mozTransform = "scaleY(" + this.bgZoom + ")";
-                el.style.transform = "scaleY(" + this.bgZoom + ")";
+                el.style.webkitTransform = `scaleY(${this.bgZoom})`;
+                el.style.mozTransform = `scaleY(${this.bgZoom})`;
+                el.style.transform = `scaleY(${this.bgZoom})`;
             });
 
             // Calculate the actual scaled dimensions
@@ -104,10 +104,10 @@ class ZoomManager {
 
             this.updateCss({
                 position: "absolute",
-                left: left + "px",
-                top: top + "px",
-                width: canvasWidth + "px",
-                height: canvasHeight + "px",
+                left: `${left}px`,
+                top: `${top}px`,
+                width: `${canvasWidth}px`,
+                height: `${canvasHeight}px`,
             });
         };
     }

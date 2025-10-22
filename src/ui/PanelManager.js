@@ -45,7 +45,7 @@ const PanelManager = new (function () {
         // panels because we need the fonts to be loaded
 
         shadowImage = new Image();
-        shadowImage.src = platform.uiImageBaseUrl + "shadow.png";
+        shadowImage.src = `${platform.uiImageBaseUrl}shadow.png`;
 
         // initialize each of the panels
         if (onInitializePanel) {

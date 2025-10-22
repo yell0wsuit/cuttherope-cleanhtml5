@@ -109,7 +109,7 @@ function animateProperty(element, props, duration, easing = "linear", delay = 0)
                     if (prop === "scale") {
                         element.style.transform = `scale(${value})`;
                     } else {
-                        element.style[prop] = value + "px";
+                        element.style[prop] = `${value}px`;
                     }
                 }
 
@@ -379,8 +379,8 @@ const PinnedBox = Box.extend({
                 )
                 .then(() => fadeOut(cursor, 400))
                 .then(() => {
-                    cursor.style.top = resolution.uiScaledNumber(65) + "px";
-                    cursor.style.left = resolution.uiScaledNumber(45) + "px";
+                    cursor.style.top = `${resolution.uiScaledNumber(65)}px`;
+                    cursor.style.left = `${resolution.uiScaledNumber(45)}px`;
                     cursor.style.transform = "scale(1.0)";
                 });
         }
@@ -405,8 +405,8 @@ const PinnedBox = Box.extend({
                 .then(() => new Promise((resolve) => setTimeout(resolve, 1500)))
                 .then(() => fadeOut(omnom, 1000))
                 .then(() => {
-                    omnom.style.top = resolution.uiScaledNumber(115) + "px";
-                    omnom.style.left = resolution.uiScaledNumber(-49) + "px";
+                    omnom.style.top = `${resolution.uiScaledNumber(115)}px`;
+                    omnom.style.left = `${resolution.uiScaledNumber(-49)}px`;
                     omnom.style.transform = "scale(1.0)";
                     return new Promise((resolve) => setTimeout(resolve, 50));
                 })

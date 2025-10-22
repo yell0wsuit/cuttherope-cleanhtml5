@@ -307,7 +307,7 @@ const Grab = CTRGameObject.extend({
         }
 
         //generate a key for the cache
-        const key = radius.toString() + "|" + color.rgbaStyle();
+        const key = `${radius.toString()}|${color.rgbaStyle()}`;
         let circleCnv;
 
         //check the cache first

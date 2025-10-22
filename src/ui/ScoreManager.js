@@ -44,7 +44,7 @@ const getScoreKey = function (box, level) {
 
         // make sure we don't overwrite our XOR key
         if (key === XOR_KEY) {
-            return key + "_";
+            return `${key}_`;
         }
 
         return key;

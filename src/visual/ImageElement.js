@@ -32,7 +32,7 @@ const ImageElement = BaseElement.extend({
         // so we'll assume its been loaded and fetch directly
         const texture = RES_DATA[resId].texture;
         if (!texture) {
-            Log.debug("Image not loaded: " + RES_DATA[resId].path);
+            Log.debug(`Image not loaded: ${RES_DATA[resId].path}`);
         }
         return texture;
     },

@@ -138,7 +138,7 @@ const Dialogs = {
                 scale: 0.8 * resolution.UI_TEXT_SCALE,
             });
 
-        textImg.style.marginLeft = resolution.uiScaledNumber(30) + "px";
+        textImg.style.marginLeft = `${resolution.uiScaledNumber(30)}px`;
         slowComputer.appendChild(titleImg);
         slowComputer.appendChild(textImg);
 

@@ -1,7 +1,7 @@
 // see if the browser natively supports requestAnimationFrame
 const vendors = ["ms", "moz", "webkit", "o"];
 for (let i = 0; i < vendors.length && !window["requestAnimationFrame"]; i++) {
-    window["requestAnimationFrame"] = window[vendors[i] + "RequestAnimationFrame"];
+    window["requestAnimationFrame"] = window[`${vendors[i]}RequestAnimationFrame`];
 }
 
 // fallback to using setTimeout if requestAnimationFrame isn't available

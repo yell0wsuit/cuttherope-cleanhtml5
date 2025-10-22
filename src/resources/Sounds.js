@@ -2,7 +2,7 @@ import { getAudioContext, resumeAudioContext } from "@/utils/audioContext";
 import { soundRegistry } from "@/utils/soundRegistry";
 
 const getSoundData = (soundId) => {
-    const id = "s" + soundId;
+    const id = `s${soundId}`;
     const soundData = soundRegistry.get(id);
 
     if (!soundData || !soundData.buffer) {

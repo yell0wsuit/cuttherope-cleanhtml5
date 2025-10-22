@@ -438,7 +438,7 @@ const GameScene = BaseElement.extend({
         if (currentPack != LevelState.pack) {
             this.bgTexture = ResourceMgr.getTexture(bgrID);
             const canvasBackground = document.getElementById("c");
-            canvasBackground.style.background = "url('" + this.bgTexture.image.src + "')";
+            canvasBackground.style.background = `url('${this.bgTexture.image.src}')`;
             canvasBackground.style.display = "block";
 
             currentPack = LevelState.pack;
@@ -651,7 +651,7 @@ const GameScene = BaseElement.extend({
         this.dd.callObject(this, this.doCandyBlink, null, 1);
 
         const levelLabel = new TextImage(),
-            levelText = LevelState.pack + 1 + " - " + (LevelState.level + 1);
+            levelText = `${LevelState.pack + 1} - ${LevelState.level + 1}`;
         levelLabel.setText(ResourceId.FNT_BIG_FONT, levelText);
         levelLabel.anchor = Alignment.BOTTOM | Alignment.LEFT;
         levelLabel.x = 37 * resolution.CANVAS_SCALE;

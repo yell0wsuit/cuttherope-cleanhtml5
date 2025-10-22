@@ -86,8 +86,8 @@ class SnowfallOverlay {
             this.canvas.height = height;
         }
 
-        this.canvas.style.width = width + "px";
-        this.canvas.style.height = height + "px";
+        this.canvas.style.width = `${width}px`;
+        this.canvas.style.height = `${height}px`;
     }
 
     start() {

@@ -455,13 +455,13 @@ Text.drawImg = function (options) {
 
     // When the src is set using image data, the height and width are
     // not immediately available so we'll explicitly set them
-    img.style.width = finalWidth + "px";
-    img.style.height = finalHeight + "px";
+    img.style.width = `${finalWidth}px`;
+    img.style.height = `${finalHeight}px`;
     img.style.paddingTop = "0px";
 
     // adjust the top padding if we scaled the image for width
     if (topPadding) {
-        img.style.paddingTop = topPadding + "px";
+        img.style.paddingTop = `${topPadding}px`;
     }
 
     return img;

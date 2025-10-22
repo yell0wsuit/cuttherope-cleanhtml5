@@ -115,7 +115,7 @@ const Box = Class.extend({
         this.reqImg = Text.drawBig({ text: reqstars, scaleToUI: true });
 
         this.omNomImg = new Image();
-        this.omNomImg.src = platform.uiImageBaseUrl + "box_omnom.png";
+        this.omNomImg.src = `${platform.uiImageBaseUrl}box_omnom.png`;
 
         this.lockImg = new Image();
         this.lockImg.src = platform.uiImageBaseUrl + "box_lock.png";

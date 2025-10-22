@@ -97,7 +97,7 @@ const loadJson = (url) => {
 };
 
 const loadImages = function () {
-    const gameBaseUrl = platform.imageBaseUrl + resolution.CANVAS_WIDTH + "/game/";
+    const gameBaseUrl = `${platform.imageBaseUrl}${resolution.CANVAS_WIDTH}/game/`;
 
     let menuResourceCount = 0;
     let menuResourcesLoaded = 0;
@@ -166,8 +166,8 @@ const loadImages = function () {
         platform.resolutionBaseUrl + (editionUI.passwordResolutionDirectory || "");
     queueMenuImages(editionUI.passwordResolutionImageNames, passwordResolutionPath);
 
-    queueMenuImages(editionUI.pageImageNames, platform.imageBaseUrl + "page/");
-    queueMenuImages(editionUI.pageResolutionImageNames, platform.resolutionBaseUrl + "page/");
+    queueMenuImages(editionUI.pageImageNames, `${platform.imageBaseUrl}page/`);
+    queueMenuImages(editionUI.pageResolutionImageNames, `${platform.resolutionBaseUrl}page/`);
     queueMenuImages(edition.menuImageFilenames);
     queueMenuImages(edition.boxImages, platform.boxImageBaseUrl);
     queueMenuImages(edition.boxBorders);

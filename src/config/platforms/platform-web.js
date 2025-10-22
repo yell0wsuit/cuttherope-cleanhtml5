@@ -30,9 +30,9 @@ const WebPlatform = {
     ZOOM_BOX_CANVAS: false,
 
     imageBaseUrl: "images/",
-    resolutionBaseUrl: "images/" + resolution.UI_WIDTH + "/",
-    uiImageBaseUrl: "images/" + resolution.UI_WIDTH + "/ui/",
-    boxImageBaseUrl: "images/" + resolution.UI_WIDTH + "/" + (edition.boxDirectory || "ui/"),
+    resolutionBaseUrl: `images/${resolution.UI_WIDTH}/`,
+    uiImageBaseUrl: `images/${resolution.UI_WIDTH}/ui/`,
+    boxImageBaseUrl: `images/${resolution.UI_WIDTH}/${edition.boxDirectory || "ui/"}`,
 
     audioBaseUrl: "audio/",
     getAudioExtension: function () {
@@ -46,13 +46,13 @@ const WebPlatform = {
 
     getDrawingBaseUrl: function () {
         const loc = window.location,
-            baseUrl = loc.protocol + "//" + loc.host;
-        return baseUrl + "/images/" + resolution.UI_WIDTH + "/ui/";
+            baseUrl = `${loc.protocol}//${loc.host}`;
+        return `${baseUrl}/images/${resolution.UI_WIDTH}/ui/`;
     },
     getScoreImageBaseUrl: function () {
         const loc = window.location,
-            baseUrl = loc.protocol + "//" + loc.host;
-        return baseUrl + "/images/scores/";
+            baseUrl = `${loc.protocol}//${loc.host}`;
+        return `${baseUrl}/images/scores/`;
     },
     setSoundButtonChange: function (button, callback) {
         button.addEventListener("click", callback);
@@ -84,7 +84,7 @@ const WebPlatform = {
     updateLangSetting: function () {
         const langBtn = document.getElementById("langBtn");
         if (langBtn) {
-            WebPlatform.setOptionText(langBtn, Lang.menuText(MenuStringId.LANGUAGE) + ":");
+            WebPlatform.setOptionText(langBtn, `${Lang.menuText(MenuStringId.LANGUAGE)}:`);
         }
 
         // Chrome has a layout bug where the css offset on the flag

@@ -37,7 +37,7 @@ const App = {
             });
         });
 
-        document.body.classList.add("ui-" + resolution.UI_WIDTH);
+        document.body.classList.add(`ui-${resolution.UI_WIDTH}`);
         if (IS_XMAS) {
             document.body.classList.add("is-xmas");
         }
@@ -49,8 +49,8 @@ const App = {
         Canvas.element.height = resolution.CANVAS_HEIGHT;
 
         // set the screen (css) dimensions
-        Canvas.element.style.width = resolution.CANVAS_WIDTH + "px";
-        Canvas.element.style.height = resolution.CANVAS_HEIGHT + "px";
+        Canvas.element.style.width = `${resolution.CANVAS_WIDTH}px`;
+        Canvas.element.style.height = `${resolution.CANVAS_HEIGHT}px`;
 
         if (ZoomManager.domReady) {
             ZoomManager.domReady();
@@ -75,7 +75,7 @@ const App = {
                 if (progressBar && data && typeof data.progress === "number") {
                     const progress = Math.min(100, Math.max(0, data.progress));
                     progressBar.style.transition = "width 0.3s ease-out";
-                    progressBar.style.width = progress + "%";
+                    progressBar.style.width = `${progress}%`;
                 }
             }
         );

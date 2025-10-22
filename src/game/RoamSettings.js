@@ -29,7 +29,7 @@ const SCORES_PREFIX = "scores",
 function getFullKey(prefix, boxIndex) {
     let key = prefix;
     if (currentUserId) {
-        key += "-" + currentUserId;
+        key += `-${currentUserId}`;
     }
 
     return key;
@@ -149,18 +149,18 @@ function saveValue(keyPrefix, index, value) {
 const RoamingSettings = {
     // scores
     getScore: function (boxIndex, levelIndex) {
-        return getValue(SCORES_PREFIX + "-" + boxIndex, levelIndex);
+        return getValue(`${SCORES_PREFIX}-${boxIndex}`, levelIndex);
     },
     setScore: function (boxIndex, levelIndex, score) {
-        saveValue(SCORES_PREFIX + "-" + boxIndex, levelIndex, score);
+        saveValue(`${SCORES_PREFIX}-${boxIndex}`, levelIndex, score);
     },
 
     // stars
     getStars: function (boxIndex, levelIndex) {
-        return getValue(STARS_PREFIX + "-" + boxIndex, levelIndex);
+        return getValue(`${STARS_PREFIX}-${boxIndex}`, levelIndex);
     },
     setStars: function (boxIndex, levelIndex, stars) {
-        saveValue(STARS_PREFIX + "-" + boxIndex, levelIndex, stars);
+        saveValue(`${STARS_PREFIX}-${boxIndex}`, levelIndex, stars);
     },
 
     // achievement counts

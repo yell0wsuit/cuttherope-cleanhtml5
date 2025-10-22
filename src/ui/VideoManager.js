@@ -81,7 +81,7 @@ const VideoManager = {
                 baseUrl = platform.videoBaseUrl;
             if (vid != null && extension != null) {
                 try {
-                    vid.src = baseUrl + "intro_" + size + extension;
+                    vid.src = `${baseUrl}intro_${size}${extension}`;
                     vid.load();
                 } catch (ex) {
                     // loading the video sometimes causes an exception on win8
@@ -163,7 +163,7 @@ const VideoManager = {
         // start loading the video
         if (vid != null && extension != null) {
             try {
-                vid.src = baseUrl + "outro_" + size + extension;
+                vid.src = `${baseUrl}outro_${size}${extension}`;
                 vid.load();
             } catch (ex) {
                 // loading the video sometimes causes an exception on win8
