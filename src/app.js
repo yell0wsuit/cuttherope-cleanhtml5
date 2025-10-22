@@ -28,7 +28,7 @@ const App = {
 
         // toggle the active css class when the user clicks
         const ctrCursors = document.querySelectorAll(".ctrCursor");
-        ctrCursors.forEach(function (cursor) {
+        ctrCursors.forEach((cursor) => {
             cursor.addEventListener("mousedown", function () {
                 this.classList.toggle("ctrCursorActive");
             });
@@ -105,7 +105,7 @@ const App = {
 
             // fade in the game
             const hideAfterLoad = document.querySelectorAll(".hideAfterLoad");
-            hideAfterLoad.forEach(function (el) {
+            hideAfterLoad.forEach((el) => {
                 el.style.transition = "opacity 0.5s";
                 el.style.opacity = "0";
                 setTimeout(function () {
@@ -114,7 +114,7 @@ const App = {
             });
 
             const hideBeforeLoad = document.querySelectorAll(".hideBeforeLoad");
-            hideBeforeLoad.forEach(function (el) {
+            hideBeforeLoad.forEach((el) => {
                 // Make sure element is visible first
                 el.style.display = el.style.display || "block";
                 el.style.opacity = "0";

@@ -1213,10 +1213,10 @@ const InterfaceManager = new (function () {
             canvas: true,
         });
         if (resdiv) {
-            resdiv.querySelectorAll("img").forEach(function (node) {
+            resdiv.querySelectorAll("img").forEach((node) => {
                 node.remove();
             });
-            resdiv.querySelectorAll("canvas").forEach(function (node) {
+            resdiv.querySelectorAll("canvas").forEach((node) => {
                 node.remove();
             });
         }
