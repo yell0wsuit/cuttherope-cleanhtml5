@@ -92,20 +92,19 @@ const Box = Class.extend({
 
         const textImg = (this.textImg = new Image()),
             boxWidth = (this.boxWidth = resolution.uiScaledNumber(350)),
-            boxTextMargin = (this.boxTextMargin = resolution.uiScaledNumber(20)),
-            self = this;
+            boxTextMargin = (this.boxTextMargin = resolution.uiScaledNumber(20));
 
         this.textRendered = false;
-        this.renderText = function () {
+        this.renderText = () => {
             Text.drawBig({
-                text: Lang.boxText(boxIndex, self.includeBoxNumberInTitle),
+                text: Lang.boxText(boxIndex, this.includeBoxNumberInTitle),
                 img: textImg,
                 width: (boxWidth - boxTextMargin * 2) / resolution.UI_TEXT_SCALE,
                 alignment: Alignment.HCENTER,
                 scaleToUI: true,
             });
 
-            self.textRendered = true;
+            this.textRendered = true;
         };
 
         this.pubSubSubscriptions.push(

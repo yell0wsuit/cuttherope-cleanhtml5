@@ -747,8 +747,7 @@ const GameScene = BaseElement.extend({
      * @param map {Object}
      */
     loadMap: function (map) {
-        const layers = [],
-            self = this;
+        const layers = [];
 
         // get all the layers for this map
         for (const layerName in map) {
