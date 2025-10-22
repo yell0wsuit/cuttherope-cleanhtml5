@@ -3,10 +3,12 @@ import MaterialPoint from "@/physics/MaterialPoint";
 import Vector from "@/core/Vector";
 import Constants from "@/utils/Constants";
 import Gravity from "@/physics/Gravity";
-function Constraint(cp, restLength, type) {
-    this.cp = cp;
-    this.restLength = restLength;
-    this.type = type;
+class Constraint {
+    constructor(cp, restLength, type) {
+        this.cp = cp;
+        this.restLength = restLength;
+        this.type = type;
+    }
 }
 
 const ConstrainedPoint = MaterialPoint.extend({
