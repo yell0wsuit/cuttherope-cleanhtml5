@@ -8,12 +8,24 @@ import PubSub from "@/utils/PubSub";
 import RootController from "@/game/CTRRootController";
 import Lang from "@/resources/Lang";
 import MenuStringId from "@/resources/MenuStringId";
+import dom from "@/utils/dom";
+
+const canvas = dom.getElement("#e");
+const devCanvas = dom.getElement("#moreCanvas");
+const dShareBtn = dom.getElement("#dshareBtn");
+const drawingElement = dom.getElement("#d");
+const moreLink = dom.getElement("#moreLink");
+const d = dom.getElement("#d");
+const dframe = dom.getElement("#dframe");
+const dmsg = dom.getElement("#dmsg");
+const dshareBtn = dom.getElement("#dshareBtn");
+const dpic = dom.getElement("#dpic");
+const gameBtnTray = dom.getElement("#gameBtnTray");
+
 class EasterEggManager {
     constructor() {
-        let devCanvas, canvas;
         const scaleTo = resolution.uiScaledNumber(2.2);
 
-        const getElementById = (id) => document.getElementById(id);
         const animateElement = (element, keyframes, options = {}) => {
             if (!element) {
                 return Promise.resolve();
@@ -21,7 +33,7 @@ class EasterEggManager {
             const animation = element.animate(keyframes, { fill: "forwards", ...options });
             return animation.finished.catch(() => {});
         };
-        const fadeElement = (
+        const fadeElementCustom = (
             element,
             { from = null, to = 1, duration = 200, delay = 0, display } = {}
         ) => {
@@ -29,12 +41,12 @@ class EasterEggManager {
                 return Promise.resolve();
             }
             if (display) {
-                element.style.display = display;
+                dom.show(element, display);
             }
             const startOpacity =
                 from !== null ? from : Number.parseFloat(getComputedStyle(element).opacity) || 0;
             if (from !== null) {
-                element.style.opacity = from;
+                dom.setStyle(element, "opacity", from);
             }
             const animation = element.animate([{ opacity: startOpacity }, { opacity: to }], {
                 duration,
@@ -46,7 +58,7 @@ class EasterEggManager {
                 .catch(() => {})
                 .then(() => {
                     if (to === 0 && display === "none") {
-                        element.style.display = "none";
+                        dom.hide(element);
                     }
                 });
         };
@@ -59,18 +71,16 @@ class EasterEggManager {
         let gameBtnTrayDisplay = null;
 
         this.domReady = function () {
-            canvas = document.getElementById("e");
             canvas.width = resolution.uiScaledNumber(1024);
             canvas.height = resolution.uiScaledNumber(576);
 
-            devCanvas = document.getElementById("moreCanvas");
             if (devCanvas) {
                 devCanvas.width = 51;
                 devCanvas.height = 51;
             }
 
             // event handlers
-            const dShareBtn = document.getElementById("dshareBtn");
+
             if (dShareBtn) {
                 dShareBtn.addEventListener("click", function () {
                     SocialHelper.postToFeed(
@@ -87,14 +97,12 @@ class EasterEggManager {
                 });
             }
 
-            const drawingElement = document.getElementById("d");
             if (drawingElement) {
                 drawingElement.addEventListener("click", function () {
                     closeDrawing();
                 });
             }
 
-            const moreLink = document.getElementById("moreLink");
             if (moreLink) {
                 moreLink.addEventListener("mouseenter", function () {
                     if (!omNomShowing) {
@@ -135,13 +143,6 @@ class EasterEggManager {
         // show a drawing
         let drawingNum = null;
         this.showDrawing = function (drawingIndex) {
-            const d = getElementById("d");
-            const dframe = getElementById("dframe");
-            const dmsg = getElementById("dmsg");
-            const dshareBtn = getElementById("dshareBtn");
-            const dpic = getElementById("dpic");
-            const gameBtnTray = getElementById("gameBtnTray");
-
             drawingNum = drawingIndex + 1;
             RootController.pauseLevel();
 
@@ -150,7 +151,7 @@ class EasterEggManager {
                     const resolvedDisplay = getComputedStyle(gameBtnTray).display;
                     gameBtnTrayDisplay = resolvedDisplay === "none" ? "" : resolvedDisplay;
                 }
-                gameBtnTray.style.display = "none";
+                dom.hide(gameBtnTray);
             }
 
             if (dpic) {
@@ -168,21 +169,21 @@ class EasterEggManager {
             if (dframe) {
                 dframe.style.top = frameTopStart;
                 dframe.style.transform = "scale(0.35)";
-                dframe.style.opacity = "0";
+                dom.setStyle(dframe, "opacity", "0");
             }
             if (dmsg) {
                 dmsg.style.top = msgTopStart;
                 dmsg.style.transform = "scale(0.5)";
-                dmsg.style.opacity = "0";
+                dom.setStyle(dmsg, "opacity", "0");
             }
             if (dshareBtn) {
-                dshareBtn.style.opacity = "0";
+                dom.setStyle(dshareBtn, "opacity", "0");
                 dshareBtn.style.pointerEvents = "none";
             }
 
-            fadeElement(d, { from: 0, to: 1, duration: 100, display: "block" }).then(() => {
+            fadeElementCustom(d, { from: 0, to: 1, duration: 100, display: "block" }).then(() => {
                 if (dframe) {
-                    dframe.style.opacity = "1";
+                    dom.setStyle(dframe, "opacity", "1");
                     animateElement(
                         dframe,
                         [
@@ -196,7 +197,7 @@ class EasterEggManager {
                     });
                 }
                 if (dmsg) {
-                    dmsg.style.opacity = "1";
+                    dom.setStyle(dmsg, "opacity", "1");
                     animateElement(
                         dmsg,
                         [
@@ -211,8 +212,8 @@ class EasterEggManager {
                 }
                 if (dshareBtn) {
                     setTimeout(() => {
-                        fadeElement(dshareBtn, { from: 0, to: 1, duration: 200 }).then(() => {
-                            dshareBtn.style.opacity = "1";
+                        fadeElementCustom(dshareBtn, { from: 0, to: 1, duration: 200 }).then(() => {
+                            dom.setStyle(dshareBtn, "opacity", "1");
                             dshareBtn.style.pointerEvents = "";
                         });
                     }, 600);
@@ -221,13 +222,6 @@ class EasterEggManager {
         };
 
         const closeDrawing = function () {
-            const d = getElementById("d");
-            const dframe = getElementById("dframe");
-            const dmsg = getElementById("dmsg");
-            const dshareBtn = getElementById("dshareBtn");
-            const dpic = getElementById("dpic");
-            const gameBtnTray = getElementById("gameBtnTray");
-
             if (dpic) {
                 dpic.className = dpicBaseClassName || "";
             }
@@ -236,8 +230,8 @@ class EasterEggManager {
 
             if (dshareBtn) {
                 dshareBtn.style.pointerEvents = "none";
-                fadeElement(dshareBtn, { from: 1, to: 0, duration: 200 }).then(() => {
-                    dshareBtn.style.opacity = "0";
+                fadeElementCustom(dshareBtn, { from: 1, to: 0, duration: 200 }).then(() => {
+                    dom.setStyle(dshareBtn, "opacity", "0");
                 });
             }
 
@@ -270,15 +264,15 @@ class EasterEggManager {
             });
 
             setTimeout(() => {
-                fadeElement(d, { from: 1, to: 0, duration: 200 }).then(() => {
+                fadeElementCustom(d, { from: 1, to: 0, duration: 200 }).then(() => {
                     if (d) {
-                        d.style.display = "none";
-                        d.style.opacity = "";
+                        dom.hide(d);
+                        dom.setStyle(d, "opacity", "");
                     }
                     RootController.resumeLevel();
                     drawingNum = null;
                     if (gameBtnTray) {
-                        gameBtnTray.style.display = gameBtnTrayDisplay || "";
+                        dom.show(gameBtnTray, gameBtnTrayDisplay || "");
                     }
                 });
             }, 200);
@@ -482,10 +476,10 @@ class EasterEggManager {
                     if (t < s6) {
                         window.requestAnimationFrame(step);
                     } else {
-                        fadeElement(canvas, { from: 1, to: 0, duration: 200 }).then(() => {
+                        fadeElementCustom(canvas, { from: 1, to: 0, duration: 200 }).then(() => {
                             ctx.setTransform(1, 0, 0, 1, 0, 0);
                             ctx.clearRect(0, 0, canvas.width, canvas.height);
-                            canvas.style.display = "none";
+                            dom.hide(canvas);
                         });
                         RootController.resumeLevel();
                     }
@@ -505,7 +499,7 @@ class EasterEggManager {
                 window.requestAnimationFrame(step);
             };
 
-            fadeElement(canvas, { from: 0, to: 1, duration: 200, display: "block" }).then(
+            fadeElementCustom(canvas, { from: 0, to: 1, duration: 200, display: "block" }).then(
                 startAnimation
             );
         };
