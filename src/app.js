@@ -7,6 +7,9 @@ import settings from "@/game/CTRSettings";
 import ZoomManager from "@/ZoomManager";
 import PubSub from "@/utils/PubSub";
 import editionUI from "@/editionUI";
+
+let progressBar, betterLoader, gameFooterSocial;
+
 const App = {
     // Gives the app a chance to begin working before the DOM is ready
     init: function () {
@@ -17,6 +20,10 @@ const App = {
 
     // Called by the loader when the DOM is loaded
     domReady: function () {
+        progressBar = document.getElementById("progress");
+        betterLoader = document.getElementById("betterLoader");
+        gameFooterSocial = document.getElementById("gameFooterSocial");
+
         // disable text selection mode in IE9
         if (settings.disableTextSelection) {
             if (typeof document.body["onselectstart"] != "undefined") {
@@ -63,10 +70,6 @@ const App = {
 
     run: function () {
         // Called by the loader when the app is ready to run
-
-        // Set up progress tracking before loading starts
-        const progressBar = document.getElementById("progress");
-        const betterLoader = document.getElementById("betterLoader");
 
         // Subscribe to preloader progress updates
         const progressSubscription = PubSub.subscribe(
@@ -128,7 +131,7 @@ const App = {
             im.updateDevLink();
 
             // put the social links back into the footer (need to be offscreen instead of hidden during load)
-            const gameFooterSocial = document.getElementById("gameFooterSocial");
+
             if (gameFooterSocial) {
                 gameFooterSocial.style.top = "0";
             }
