@@ -86,14 +86,12 @@ const loadImageElement = (url) => {
     });
 };
 
-const loadJson = (url) => {
-    return fetch(url).then((response) => {
-        if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}`);
-        }
-
-        return response.json();
-    });
+const loadJson = async (url) => {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+    }
+    return await response.json();
 };
 
 const loadImages = function () {
@@ -288,7 +286,8 @@ const startResourceLoading = function () {
         const { trackedResourceCount } = loadImages();
 
         // Update total resources to include images and sounds
-        totalResources = trackedResourceCount + SoundLoader.getSoundCount() + JsonLoader.getJsonFileCount();
+        totalResources =
+            trackedResourceCount + SoundLoader.getSoundCount() + JsonLoader.getJsonFileCount();
 
         // Track sound loading progress
         SoundLoader.onProgress(function (completed) {
