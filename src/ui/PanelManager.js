@@ -8,23 +8,7 @@ import platform from "@/platform";
 import Easing from "@/ui/Easing";
 import PubSub from "@/utils/PubSub";
 import edition from "@/edition";
-
-// Helper functions
-const getElementById = (id) => (id ? document.getElementById(id) : null);
-const showElementById = (id) => {
-    const el = getElementById(id);
-    if (el) el.style.display = "block";
-};
-const hideElementById = (id) => {
-    const el = getElementById(id);
-    if (el) el.style.display = "none";
-};
-const setElementOpacity = (el, value) => {
-    if (el) el.style.opacity = String(value);
-};
-const setElementDisplay = (el, value) => {
-    if (el) el.style.display = value;
-};
+import dom from "@/utils/dom";
 
 // Panel state
 const panels = [];
@@ -70,7 +54,7 @@ const showShadow = () => {
         shadowIsVisible = true;
 
         if (shadowPanelElement) {
-            shadowPanelElement.style.display = "block";
+            dom.show(shadowPanelElement, "block");
         }
         if (!shadowIsRotating) {
             beginRotateShadow();
@@ -82,7 +66,7 @@ const hideShadow = () => {
     shadowIsVisible = false;
     shadowIsRotating = false;
     if (shadowPanelElement) {
-        shadowPanelElement.style.display = "none";
+        dom.hide(shadowPanelElement);
     }
 };
 
@@ -144,8 +128,8 @@ const runBlackFadeIn = (callback) => {
 
     isFading = true;
 
-    setElementOpacity(fadeToBlack, 0);
-    setElementDisplay(fadeToBlack, "block");
+    dom.setStyle(fadeToBlack, "opacity", "0");
+    dom.show(fadeToBlack, "block");
 
     // our loop
     const loop = () => {
@@ -153,12 +137,12 @@ const runBlackFadeIn = (callback) => {
         const diff = now - startTime;
         const v = Easing.noEase(diff, 0, fadeTo, fadeInDur);
 
-        setElementOpacity(fadeToBlack, v);
+        dom.setStyle(fadeToBlack, "opacity", String(v));
 
         if (diff < fadeInDur) {
             window.requestAnimationFrame(loop);
         } else {
-            setElementOpacity(fadeToBlack, fadeTo);
+            dom.setStyle(fadeToBlack, "opacity", String(fadeTo));
             if (callback != null) callback();
         }
     };
@@ -175,13 +159,13 @@ const runBlackFadeOut = () => {
         const diff = now - startTime;
         const v = fadeTo - Easing.noEase(diff, 0, fadeTo, fadeInDur);
 
-        setElementOpacity(fadeToBlack, v);
+        dom.setStyle(fadeToBlack, "opacity", String(v));
 
         if (diff < fadeInDur) {
             window.requestAnimationFrame(loop);
         } else {
-            setElementOpacity(fadeToBlack, 0);
-            setElementDisplay(fadeToBlack, "none");
+            dom.setStyle(fadeToBlack, "opacity", "0");
+            dom.hide(fadeToBlack);
             isFading = false;
         }
     };
@@ -255,10 +239,10 @@ const PanelManager = {
         setTimeout(() => {
             // show the panel
             if (panel.bgDivId) {
-                showElementById(panel.bgDivId);
+                dom.show(`#${panel.bgDivId}`, "block");
             }
             if (panel.panelDivId) {
-                showElementById(panel.panelDivId);
+                dom.show(`#${panel.panelDivId}`, "block");
             }
 
             // hide other panels
@@ -266,11 +250,11 @@ const PanelManager = {
                 const otherPanel = panels[i];
 
                 if (otherPanel.panelDivId != null && otherPanel.panelDivId != panel.panelDivId) {
-                    hideElementById(otherPanel.panelDivId);
+                    dom.hide(`#${otherPanel.panelDivId}`);
                 }
 
                 if (otherPanel.bgDivId != null && otherPanel.bgDivId != panel.bgDivId) {
-                    hideElementById(otherPanel.bgDivId);
+                    dom.hide(`#${otherPanel.bgDivId}`);
                 }
             }
 
