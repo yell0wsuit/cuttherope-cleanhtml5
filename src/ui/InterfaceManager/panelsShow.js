@@ -13,7 +13,11 @@ import Text from "@/visual/Text";
 import PubSub from "@/utils/PubSub";
 import dom from "@/utils/dom";
 import { MENU_MUSIC_ID } from "@/ui/InterfaceManager/constants";
+
 const { hide, append, empty, getElement } = dom;
+
+const congratsElement = getElement("#congrats");
+
 export default function createPanelShowHandler(manager) {
     return (panelId) => {
         const panel = PanelManager.getPanelById(panelId);
@@ -97,7 +101,6 @@ export default function createPanelShowHandler(manager) {
                 alignment: 1,
             });
 
-            const congratsElement = getElement("#congrats");
             if (congratsElement) {
                 empty(congratsElement);
                 append(

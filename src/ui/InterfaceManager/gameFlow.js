@@ -21,6 +21,9 @@ import BoxDoors from "../../Doors";
 
 const { fadeIn, fadeOut, delay, show, hide, text, width, getElement } = dom;
 
+const levelResults = getElement("#levelResults");
+const levelMenu = getElement("#levelMenu");
+
 // UI methods
 
 // Sets the isTransitionActive flag to true and then back to false after the timeout. The
@@ -212,7 +215,6 @@ export default function createGameFlow(manager) {
         setTimeout(() => {
             // animating from game to results
             if (!manager.isInLevelSelectMode) {
-                const levelResults = getElement("#levelResults");
                 if (levelResults) {
                     delay(levelResults, 750).then(() => fadeIn(levelResults, 250));
                 }
@@ -267,7 +269,6 @@ export default function createGameFlow(manager) {
     };
 
     const resumeGame = () => {
-        const levelMenu = getElement("#levelMenu");
         const isLevelMenuVisible = levelMenu && levelMenu.style.display !== "none";
         if (
             !isLevelMenuVisible &&
