@@ -9,7 +9,16 @@ import VideoManager from "@/ui/VideoManager";
 import analytics from "@/analytics";
 import dom from "@/utils/dom";
 import { IS_MSIE_BROWSER } from "@/ui/InterfaceManager/constants";
+
 const { removeClass, addClass, hide, empty, fadeOut, fadeIn, getElement, show } = dom;
+
+// result elements
+const valdiv = getElement("#resultTickerValue");
+const lbldiv = getElement("#resultTickerLabel");
+const resdiv = getElement("#resultScore");
+const stamp = getElement("#resultImproved");
+const msgdiv = getElement("#resultTickerMessage");
+
 export default function createResultsHandler(manager) {
     const onLevelWon = (info) => {
         const stars = info.stars;
@@ -66,13 +75,6 @@ export default function createResultsHandler(manager) {
             scaleToUI: true,
             canvas: true,
         });
-
-        // set stuff up
-        const valdiv = getElement("#resultTickerValue");
-        const lbldiv = getElement("#resultTickerLabel");
-        const resdiv = getElement("#resultScore");
-        const stamp = getElement("#resultImproved");
-        const msgdiv = getElement("#resultTickerMessage");
 
         hide(valdiv);
         hide(lbldiv);
