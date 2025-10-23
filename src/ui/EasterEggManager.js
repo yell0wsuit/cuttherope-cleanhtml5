@@ -71,7 +71,7 @@ class EasterEggManager {
         let dpicBaseClassName = null;
         let gameBtnTrayDisplay = null;
 
-        this.domReady = function () {
+        this.domReady = () => {
             canvas.width = resolution.uiScaledNumber(1024);
             canvas.height = resolution.uiScaledNumber(576);
 
@@ -83,12 +83,12 @@ class EasterEggManager {
             // event handlers
 
             if (dShareBtn) {
-                dShareBtn.addEventListener("click", function () {
+                dShareBtn.addEventListener("click", () => {
                     SocialHelper.postToFeed(
                         Lang.menuText(MenuStringId.SHARE_DRAWING),
                         SocialHelper.siteDescription,
-                        platform.getDrawingBaseUrl() + "drawing" + drawingNum + ".jpg",
-                        function () {
+                        `${platform.getDrawingBaseUrl()}drawing${drawingNum}.jpg`,
+                        () => {
                             closeDrawing();
                             return true;
                         }
@@ -99,29 +99,29 @@ class EasterEggManager {
             }
 
             if (drawingElement) {
-                drawingElement.addEventListener("click", function () {
+                drawingElement.addEventListener("click", () => {
                     closeDrawing();
                 });
             }
 
             if (moreLink) {
-                moreLink.addEventListener("mouseenter", function () {
+                moreLink.addEventListener("mouseenter", () => {
                     if (!omNomShowing) {
                         omNomShowing = true;
-                        showDevLinkOmNom(function () {
+                        showDevLinkOmNom(() => {
                             omNomShowing = false;
                         });
                     }
                 });
-                moreLink.addEventListener("click", function () {
+                moreLink.addEventListener("click", () => {
                     analytics.atlasAction("SMG_MRTINX_CTR_SITE_BehindtheScenes");
                 });
             }
         };
 
-        this.appReady = function () {
+        this.appReady = () => {
             // setup (choosing not to use PanelManager for now because of the fade in animation)
-            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
+            PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
                 Text.drawBig({
                     text: Lang.menuText(MenuStringId.FOUND_DRAWING),
                     imgId: "dmsg",
@@ -143,7 +143,7 @@ class EasterEggManager {
         // ------------------------------------------------------------------------
         // show a drawing
         let drawingNum = null;
-        this.showDrawing = function (drawingIndex) {
+        this.showDrawing = (drawingIndex) => {
             drawingNum = drawingIndex + 1;
             RootController.pauseLevel();
 
@@ -222,7 +222,7 @@ class EasterEggManager {
             });
         };
 
-        const closeDrawing = function () {
+        const closeDrawing = () => {
             if (dpic) {
                 dpic.className = dpicBaseClassName || "";
             }
@@ -285,7 +285,7 @@ class EasterEggManager {
         // mouse over for dev link
         let omNomShowing = false;
 
-        const showDevLinkOmNom = function (onComplete) {
+        const showDevLinkOmNom = (onComplete) => {
             const ctx = devCanvas.getContext("2d");
             const begin = Date.now();
             const sx = 0.1;
@@ -313,7 +313,7 @@ class EasterEggManager {
             const modflag = false;
             const modt = null;
 
-            function step() {
+            const step = () => {
                 const now = Date.now(),
                     t = now - begin;
 
@@ -376,12 +376,12 @@ class EasterEggManager {
                 } else {
                     onComplete();
                 }
-            }
+            };
 
             window.requestAnimationFrame(step);
         };
 
-        this.showOmNom = function () {
+        this.showOmNom = () => {
             if (!canvas) {
                 return;
             }
@@ -416,7 +416,7 @@ class EasterEggManager {
                 const modflag = false;
                 const modt = null;
 
-                function step() {
+                const step = () => {
                     const now = Date.now(),
                         t = now - begin;
 
@@ -495,7 +495,7 @@ class EasterEggManager {
                             (sy / scaleTo) * resolution.uiScaledNumber(400));
 
                     drawOmNom(ctx, sx, sy + mod, mx, my, l, r);
-                }
+                };
 
                 window.requestAnimationFrame(step);
             };
