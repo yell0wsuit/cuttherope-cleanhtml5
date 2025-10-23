@@ -15,6 +15,7 @@ import { IS_XMAS } from "@/resources/ResData";
 const getDefaultBoxIndex = function () {
     return IS_XMAS ? 0 : 1;
 };
+
 const ensureVideoElement = function () {
     let vid = document.getElementById("vid");
     if (!vid) {
