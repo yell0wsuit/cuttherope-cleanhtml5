@@ -1,6 +1,6 @@
 const animationTimers = new WeakMap();
 
-function getElement(target, context) {
+const getElement = (target, context) => {
     if (!target) {
         return null;
     }
@@ -14,9 +14,9 @@ function getElement(target, context) {
         return target;
     }
     return null;
-}
+};
 
-function getElements(target, context) {
+const getElements = (target, context) => {
     if (!target) {
         return [];
     }
@@ -30,9 +30,9 @@ function getElements(target, context) {
         return Array.from(target);
     }
     return [];
-}
+};
 
-function addClass(target, className) {
+const addClass = (target, className) => {
     const element = getElement(target);
     if (!element || !className) {
         return;
@@ -41,9 +41,9 @@ function addClass(target, className) {
         .split(/\s+/)
         .filter(Boolean)
         .forEach((name) => element.classList.add(name));
-}
+};
 
-function removeClass(target, classNames) {
+const removeClass = (target, classNames) => {
     const element = getElement(target);
     if (!element || !classNames) {
         return;
@@ -52,9 +52,9 @@ function removeClass(target, classNames) {
         .split(/\s+/)
         .filter(Boolean)
         .forEach((name) => element.classList.remove(name));
-}
+};
 
-function toggleClass(target, className, force) {
+const toggleClass = (target, className, force) => {
     const element = getElement(target);
     if (!element || !className) {
         return;
@@ -64,19 +64,19 @@ function toggleClass(target, className, force) {
     } else {
         element.classList.toggle(className, !!force);
     }
-}
+};
 
-function setStyle(target, property, value) {
+const setStyle = (target, property, value) => {
     const element = getElement(target);
     if (!element) {
         return;
     }
     element.style[property] = value;
-}
+};
 
 const defaultDisplayCache = new Map();
 
-function getDefaultDisplay(nodeName) {
+const getDefaultDisplay = (nodeName) => {
     const tagName = nodeName.toLowerCase();
     if (defaultDisplayCache.has(tagName)) {
         return defaultDisplayCache.get(tagName);
@@ -93,9 +93,9 @@ function getDefaultDisplay(nodeName) {
     }
     defaultDisplayCache.set(tagName, display);
     return display;
-}
+};
 
-function show(target, displayValue) {
+const show = (target, displayValue) => {
     const element = getElement(target);
     if (!element) {
         return;
@@ -105,17 +105,17 @@ function show(target, displayValue) {
     if (computedDisplay === "none") {
         element.style.display = displayValue || getDefaultDisplay(element.nodeName);
     }
-}
+};
 
-function hide(target) {
+const hide = (target) => {
     const element = getElement(target);
     if (!element) {
         return;
     }
     element.style.display = "none";
-}
+};
 
-function empty(target) {
+const empty = (target) => {
     const element = getElement(target);
     if (!element) {
         return;
@@ -123,9 +123,9 @@ function empty(target) {
     while (element.firstChild) {
         element.removeChild(element.firstChild);
     }
-}
+};
 
-function append(target, child) {
+const append = (target, child) => {
     const element = getElement(target);
     if (!element || child == null) {
         return null;
@@ -140,9 +140,9 @@ function append(target, child) {
         return childElement;
     }
     return null;
-}
+};
 
-function text(target, value) {
+const text = (target, value) => {
     const element = getElement(target);
     if (!element) {
         return undefined;
@@ -152,17 +152,17 @@ function text(target, value) {
     }
     element.textContent = value;
     return value;
-}
+};
 
-function find(target, selector) {
+const find = (target, selector) => {
     const element = getElement(target);
     if (!element) {
         return null;
     }
     return element.querySelector(selector);
-}
+};
 
-function on(target, event, handler, options) {
+const on = (target, event, handler, options) => {
     const element = getElement(target);
     if (!element) {
         return function () {};
@@ -171,9 +171,9 @@ function on(target, event, handler, options) {
     return function () {
         element.removeEventListener(event, handler, options);
     };
-}
+};
 
-function hover(target, enter, leave) {
+const hover = (target, enter, leave) => {
     const element = getElement(target);
     if (!element) {
         return function () {};
@@ -186,16 +186,16 @@ function hover(target, enter, leave) {
         element.removeEventListener("mouseenter", enterHandler);
         element.removeEventListener("mouseleave", leaveHandler);
     };
-}
+};
 
-function trackTimer(element, timer) {
+const trackTimer = (element, timer) => {
     if (!animationTimers.has(element)) {
         animationTimers.set(element, new Set());
     }
     animationTimers.get(element).add(timer);
-}
+};
 
-function clearTrackedTimer(element, timer) {
+const clearTrackedTimer = (element, timer) => {
     const timers = animationTimers.get(element);
     if (!timers) {
         return;
@@ -204,9 +204,9 @@ function clearTrackedTimer(element, timer) {
     if (timers.size === 0) {
         animationTimers.delete(element);
     }
-}
+};
 
-function stopAnimations(target) {
+const stopAnimations = (target) => {
     const element = getElement(target);
     if (!element) {
         return;
@@ -220,9 +220,9 @@ function stopAnimations(target) {
     const computedOpacity = window.getComputedStyle(element).opacity;
     element.style.transition = "";
     element.style.opacity = computedOpacity;
-}
+};
 
-function animateOpacity(element, to, duration, displayValue) {
+const animateOpacity = (element, to, duration, displayValue) => {
     if (!element) {
         return Promise.resolve();
     }
@@ -247,19 +247,19 @@ function animateOpacity(element, to, duration, displayValue) {
         }, duration);
         trackTimer(element, timer);
     });
-}
+};
 
-function fadeIn(target, duration, displayValue) {
+const fadeIn = (target, duration, displayValue) => {
     const element = getElement(target);
     return animateOpacity(element, 1, duration || 400, displayValue);
-}
+};
 
-function fadeOut(target, duration) {
+const fadeOut = (target, duration) => {
     const element = getElement(target);
     return animateOpacity(element, 0, duration || 400);
-}
+};
 
-function delay(target, duration) {
+const delay = (target, duration) => {
     const element = getElement(target);
     if (!element) {
         return Promise.resolve();
@@ -271,9 +271,9 @@ function delay(target, duration) {
         }, duration);
         trackTimer(element, timer);
     });
-}
+};
 
-function width(target) {
+const width = (target) => {
     const element = getElement(target);
     if (!element) {
         return 0;
@@ -282,7 +282,7 @@ function width(target) {
         return window.innerWidth;
     }
     return element.getBoundingClientRect().width;
-}
+};
 
 export default {
     addClass,
