@@ -1,6 +1,5 @@
 import RootController from "@/game/CTRRootController";
 import PanelId from "@/ui/PanelId";
-import Panel from "@/ui/Panel";
 import resolution from "@/resolution";
 import platform from "@/platform";
 import ScoreManager from "@/ui/ScoreManager";
@@ -16,133 +15,122 @@ import Alignment from "@/core/Alignment";
 
 const ACTIVE_ANIMATIONS = new WeakMap();
 const FADE_DURATION_MS = 200;
+const SELECTORS = {
+    popupOuter: ".popupOuterFrame",
+    popupInner: ".popupInnerFrame",
+    popupWindow: "#popupWindow",
+};
 
-function cancelAnimation(element, finalOpacity) {
-    const current = ACTIVE_ANIMATIONS.get(element);
-    if (current) {
-        cancelAnimationFrame(current.frameId);
-        ACTIVE_ANIMATIONS.delete(element);
+// ---------- Animation Helpers ----------
+function cancelAnimation(el, finalOpacity) {
+    const anim = ACTIVE_ANIMATIONS.get(el);
+    if (anim) {
+        cancelAnimationFrame(anim.frameId);
+        ACTIVE_ANIMATIONS.delete(el);
     }
-    if (typeof finalOpacity === "number") {
-        element.style.opacity = finalOpacity.toString();
-    }
+    if (typeof finalOpacity === "number") el.style.opacity = finalOpacity.toString();
 }
 
-function fadeElement(element, { from, to, duration, display }) {
-    cancelAnimation(element);
+async function fadeElement(el, { from, to, duration, display }) {
+    cancelAnimation(el);
+    if (display !== undefined) el.style.display = display;
 
-    if (display !== undefined) {
-        element.style.display = display;
-    }
+    const start =
+        typeof from === "number" ? from : parseFloat(getComputedStyle(el).opacity || "0") || 0;
+    const target = to;
+    el.style.opacity = start;
 
-    const startOpacity = typeof from === "number" ? from : parseFloat(getComputedStyle(element).opacity || "0") || 0;
-    const targetOpacity = to;
-    element.style.opacity = startOpacity.toString();
-
-    const startTimeRef = { value: null };
-
+    let startTime;
     return new Promise((resolve) => {
-        function step(timestamp) {
-            if (startTimeRef.value === null) {
-                startTimeRef.value = timestamp;
-            }
-
-            const progress = Math.min((timestamp - startTimeRef.value) / duration, 1);
-            const currentOpacity = startOpacity + (targetOpacity - startOpacity) * progress;
-            element.style.opacity = currentOpacity.toString();
-
+        const step = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            const current = start + (target - start) * progress;
+            el.style.opacity = current;
             if (progress < 1) {
                 const frameId = requestAnimationFrame(step);
-                ACTIVE_ANIMATIONS.set(element, { frameId });
+                ACTIVE_ANIMATIONS.set(el, { frameId });
             } else {
-                ACTIVE_ANIMATIONS.delete(element);
+                ACTIVE_ANIMATIONS.delete(el);
                 resolve();
             }
-        }
-
+        };
         const frameId = requestAnimationFrame(step);
-        ACTIVE_ANIMATIONS.set(element, { frameId });
+        ACTIVE_ANIMATIONS.set(el, { frameId });
     });
 }
 
-// show a popup
+// ---------- Dialog Logic ----------
 const Dialogs = {
-    showPopup: function (contentDivId) {
+    async showPopup(contentId) {
         RootController.pauseLevel();
-        document.querySelectorAll(".popupOuterFrame").forEach((el) => {
-            cancelAnimation(el, 0);
-            el.style.display = "none";
-        });
-        document.querySelectorAll(".popupInnerFrame").forEach((el) => (el.style.display = "none"));
 
-        const popupWindow = document.getElementById("popupWindow");
-        if (!popupWindow) {
-            return;
-        }
+        const popupWindow = document.querySelector(SELECTORS.popupWindow);
+        if (!popupWindow) return;
 
-        cancelAnimation(popupWindow);
+        document.querySelectorAll(SELECTORS.popupOuter).forEach((el) => cancelAnimation(el, 0));
+        document
+            .querySelectorAll(SELECTORS.popupInner)
+            .forEach((el) => (el.style.display = "none"));
 
         popupWindow.style.display = "block";
+        await fadeElement(popupWindow, { from: 0, to: 1, duration: FADE_DURATION_MS });
 
-        fadeElement(popupWindow, { from: 0, to: 1, duration: FADE_DURATION_MS }).then(() => {
-            const content = document.getElementById(contentDivId);
-            if (!content) return;
+        const content = document.getElementById(contentId);
+        if (content) {
             content.style.display = "block";
-
-            document.querySelectorAll(".popupOuterFrame").forEach((el) => {
+            document.querySelectorAll(SELECTORS.popupOuter).forEach((el) => {
                 cancelAnimation(el);
                 el.style.display = "block";
                 fadeElement(el, { from: 0, to: 1, duration: FADE_DURATION_MS });
             });
-        });
+        }
     },
 
-    closePopup: function () {
+    async closePopup() {
         SoundMgr.playSound(ResourceId.SND_TAP);
-        const popupWindow = document.getElementById("popupWindow");
-        if (!popupWindow) {
-            return;
-        }
-        cancelAnimation(popupWindow);
+        const popupWindow = document.querySelector(SELECTORS.popupWindow);
+        if (!popupWindow) return;
 
-        fadeElement(popupWindow, {
-            from: parseFloat(getComputedStyle(popupWindow).opacity || "1") || 1,
+        cancelAnimation(popupWindow);
+        const currentOpacity = parseFloat(getComputedStyle(popupWindow).opacity || "1") || 1;
+
+        await fadeElement(popupWindow, {
+            from: currentOpacity,
             to: 0,
             duration: FADE_DURATION_MS,
-        }).then(() => {
-            popupWindow.style.display = "none";
-            RootController.resumeLevel();
         });
+
+        popupWindow.style.display = "none";
+        RootController.resumeLevel();
     },
 
-    showPayDialog: function () {
+    showPayDialog() {
         SoundMgr.playSound(ResourceId.SND_TAP);
         Dialogs.showPopup("payDialog");
     },
 
-    showSlowComputerPopup: function () {
-        // remove the text images
+    showSlowComputerPopup() {
         const slowComputer = document.getElementById("slowComputer");
+        if (!slowComputer) return;
+
         slowComputer.querySelectorAll("img").forEach((img) => img.remove());
 
-        // add the title and text
         const titleImg = Text.drawBig({
             text: Lang.menuText(MenuStringId.SLOW_TITLE),
             alignment: Alignment.CENTER,
             width: 1200 * resolution.CANVAS_SCALE,
             scale: 1.25 * resolution.UI_TEXT_SCALE,
-        }),
-            textImg = Text.drawBig({
-                text: Lang.menuText(MenuStringId.SLOW_TEXT),
-                width: 1200 * resolution.CANVAS_SCALE,
-                scale: 0.8 * resolution.UI_TEXT_SCALE,
-            });
+        });
+        const textImg = Text.drawBig({
+            text: Lang.menuText(MenuStringId.SLOW_TEXT),
+            width: 1200 * resolution.CANVAS_SCALE,
+            scale: 0.8 * resolution.UI_TEXT_SCALE,
+        });
 
         textImg.style.marginLeft = `${resolution.uiScaledNumber(30)}px`;
-        slowComputer.appendChild(titleImg);
-        slowComputer.appendChild(textImg);
+        slowComputer.append(titleImg, textImg);
 
-        // shrink button text slightly so it will fit in RU and DE
         Text.drawBig({
             text: Lang.menuText(MenuStringId.LETS_PLAY),
             imgSel: "#slowComputerBtn img",
@@ -153,13 +141,31 @@ const Dialogs = {
     },
 };
 
+// ---------- Event Logic ----------
 function onPayClick() {
     PubSub.publish(PubSub.ChannelId.PurchaseBoxesPrompt);
     Dialogs.closePopup();
 }
 
+function initEventListeners() {
+    const ids = [
+        ["payImg", onPayClick],
+        ["payBtn", onPayClick],
+        ["payClose", Dialogs.closePopup],
+        ["slowComputerBtn", Dialogs.closePopup],
+        ["missingOkBtn", Dialogs.closePopup],
+        ["resetNoBtn", Dialogs.closePopup],
+        ["holidayOkBtn", Dialogs.closePopup],
+    ];
+
+    ids.forEach(([id, handler]) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("click", handler);
+    });
+}
+
 // localize dialog text
-PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
+PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
     Text.drawBig({
         text: Lang.menuText(MenuStringId.UPGRADE_TO_FULL),
         imgParentId: "payMessage",
@@ -175,30 +181,11 @@ PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
     });
 });
 
-// DOM ready replacement
+// DOM ready
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initEventListeners);
 } else {
     initEventListeners();
-}
-
-function initEventListeners() {
-    // trigger purchase when pay button is clicked
-    const payImg = document.getElementById("payImg");
-    const payBtn = document.getElementById("payBtn");
-    const payClose = document.getElementById("payClose");
-    const slowComputerBtn = document.getElementById("slowComputerBtn");
-    const missingOkBtn = document.getElementById("missingOkBtn");
-    const resetNoBtn = document.getElementById("resetNoBtn");
-    const holidayOkBtn = document.getElementById("holidayOkBtn");
-
-    if (payImg) payImg.addEventListener("click", onPayClick);
-    if (payBtn) payBtn.addEventListener("click", onPayClick);
-    if (payClose) payClose.addEventListener("click", Dialogs.closePopup);
-    if (slowComputerBtn) slowComputerBtn.addEventListener("click", Dialogs.closePopup);
-    if (missingOkBtn) missingOkBtn.addEventListener("click", Dialogs.closePopup);
-    if (resetNoBtn) resetNoBtn.addEventListener("click", Dialogs.closePopup);
-    if (holidayOkBtn) holidayOkBtn.addEventListener("click", Dialogs.closePopup);
 }
 
 export default Dialogs;
