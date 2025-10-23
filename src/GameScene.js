@@ -58,173 +58,7 @@ import Log from "@/utils/Log";
 import RotatedCircle from "@/game/RotatedCircle";
 import AchievementId from "@/achievements/AchievementId";
 import Achievements from "@/Achievements";
-
-/**
- * Tutorial elements can have a special id specified in the level xml
- * @const
- * @type {number}
- */
-const LEVEL1_ARROW_SPECIAL_ID = 2;
-
-/**
- * @enum {number}
- */
-const RestartState = {
-    FADE_IN: 0,
-    FADE_OUT: 1,
-};
-
-/**
- * @enum {number}
- */
-const CameraMove = {
-    TO_CANDY_PART: 0,
-    TO_CANDY: 1,
-};
-
-/**
- * @enum {number}
- */
-const ButtonMode = {
-    GRAVITY: 0,
-    SPIKES: 1,
-};
-
-/**
- * @enum {number}
- */
-const PartsType = {
-    SEPARATE: 0,
-    DISTANCE: 1,
-    NONE: 2,
-};
-
-/**
- * @const
- * @type {number}
- */
-const SCOMBO_TIMEOUT = 0.2;
-
-/**
- * @const
- * @type {number}
- */
-const SCUT_SCORE = 10;
-
-/**
- * @const
- * @type {number}
- */
-const MAX_LOST_CANDIES = 3;
-
-/**
- * @const
- * @type {number}
- */
-const ROPE_CUT_AT_ONCE_TIMEOUT = 0.1;
-
-// Candy Juggler: keep candy without ropes or bubbles for 30 secs
-const CANDY_JUGGLER_TIME = 30;
-
-/**
- * @const
- * @type {number}
- */
-const BLINK_SKIP = 3;
-
-/**
- * @const
- * @type {number}
- */
-const MOUTH_OPEN_TIME = 1;
-
-/**
- * @const
- * @type {number}
- */
-const PUMP_TIMEOUT = 0.05;
-
-/**
- * @const
- * @type {number}
- */
-const SOCK_SPEED_K = 0.9;
-
-/**
- * @const
- * @type {number}
- */
-const SOCK_COLLISION_Y_OFFSET = 25;
-
-/**
- * @enum {number}
- */
-const CandyBlink = {
-    INITIAL: 0,
-    STAR: 1,
-};
-
-/**
- * @enum {number}
- */
-const TutorialAnimation = {
-    SHOW: 0,
-    HIDE: 1,
-};
-
-/**
- * @enum {number}
- */
-const EarthAnimation = {
-    NORMAL: 0,
-    UPSIDE_DOWN: 1,
-};
-
-/**
- * Animations for Om-nom character
- * @enum {number}
- */
-const CharAnimation = {
-    IDLE: 0,
-    IDLE2: 1,
-    IDLE3: 2,
-    EXCITED: 3,
-    PUZZLED: 4,
-    FAIL: 5,
-    WIN: 6,
-    MOUTH_OPEN: 7,
-    MOUTH_CLOSE: 8,
-    CHEW: 9,
-    GREETING: 10,
-    GREETINGXMAS: 11,
-    IDLEXMAS: 12,
-    IDLE2XMAS: 13,
-    IDLEPADDINGTON: 14,
-};
-
-/**
- * @const
- * @type {number}
- */
-const HUD_STARS_COUNT = 3;
-
-/**
- * @const
- * @type {number}
- */
-const HUD_CANDIES_COUNT = 3;
-
-/**
- * @const
- * @type {number}
- */
-const IMG_BGR_01_bgr = 0;
-/**
- * @const
- * @type {number}
- */
-const IMG_BGR_01_P2_vert_transition = 0;
-const IMG_BGR_02_vert_transition = 1;
+import * as GameSceneConstants from "@/GameSceneConstants";
 
 let starDisappearPool = [];
 let bubbleDisappear;
@@ -285,17 +119,20 @@ const GameScene = BaseElement.extend({
         this.hudStars = [];
         starDisappearPool = [];
 
-        for (let i = 0; i < HUD_STARS_COUNT; i++) {
+        for (let i = 0; i < GameSceneConstants.HUD_STARS_COUNT; i++) {
             const hs = (this.hudStars[i] = new Animation());
             hs.initTextureWithId(ResourceId.IMG_HUD_STAR);
             hs.doRestoreCutTransparency();
             hs.addAnimationDelay(
                 0.05,
                 Timeline.LoopType.NO_LOOP,
-                IMG_HUD_STAR_Frame_1,
-                IMG_HUD_STAR_Frame_10
+                GameSceneConstants.IMG_HUD_STAR_Frame_1,
+                GameSceneConstants.IMG_HUD_STAR_Frame_10
             );
-            hs.setPause(IMG_HUD_STAR_Frame_10 - IMG_HUD_STAR_Frame_1, 0);
+            hs.setPause(
+                GameSceneConstants.IMG_HUD_STAR_Frame_10 - GameSceneConstants.IMG_HUD_STAR_Frame_1,
+                0
+            );
             //TODO: + canvas.xOffsetScaled on next line?
             hs.x = 10 + (hs.width + 5) * i;
             hs.y = 8;
@@ -367,10 +204,10 @@ const GameScene = BaseElement.extend({
         }
 
         if (IS_XMAS) {
-            this.target.playTimeline(CharAnimation.GREETINGXMAS);
+            this.target.playTimeline(GameSceneConstants.CharAnimation.GREETINGXMAS);
             SoundMgr.playSound(ResourceId.SND_XMAS_BELL);
         } else {
-            this.target.playTimeline(CharAnimation.GREETING);
+            this.target.playTimeline(GameSceneConstants.CharAnimation.GREETING);
         }
     },
     hidePaddingtonFinalFrame: function () {
@@ -395,7 +232,7 @@ const GameScene = BaseElement.extend({
             return;
         }
         this.preparePaddingtonIntro();
-        this.target.playTimeline(CharAnimation.IDLEPADDINGTON);
+        this.target.playTimeline(GameSceneConstants.CharAnimation.IDLEPADDINGTON);
     },
     shouldSkipTutorialElement: function (element) {
         const langId = settings.getLangId(),
@@ -419,8 +256,8 @@ const GameScene = BaseElement.extend({
         const a = bubbleDisappear.addAnimationDelay(
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_OBJ_BUBBLE_POP_Frame_1,
-            IMG_OBJ_BUBBLE_POP_Frame_12
+            GameSceneConstants.IMG_OBJ_BUBBLE_POP_Frame_1,
+            GameSceneConstants.IMG_OBJ_BUBBLE_POP_Frame_12
         );
         bubbleDisappear.getTimeline(a).onFinished = this.aniPool.timelineFinishedDelegate();
 
@@ -452,13 +289,13 @@ const GameScene = BaseElement.extend({
         this.back = new BackgroundTileMap(1, 1);
         this.back.setRepeatHorizontally(TileMap.RepeatType.NONE);
         this.back.setRepeatVertically(TileMap.RepeatType.ALL);
-        this.back.addTile(this.bgTexture, IMG_BGR_01_bgr);
+        this.back.addTile(this.bgTexture, GameSceneConstants.IMG_BGR_01_bgr);
         this.back.fill(0, 0, 1, 1, 0);
 
         this.gravityButton = null;
         this.gravityTouchDown = Constants.UNDEFINED;
 
-        this.twoParts = PartsType.NONE;
+        this.twoParts = GameSceneConstants.PartsType.NONE;
         this.partsDist = 0;
 
         this.targetSock = null;
@@ -492,7 +329,7 @@ const GameScene = BaseElement.extend({
         this.candyResourceId = candyResourceId;
         this.candy = new GameObject();
         this.candy.initTextureWithId(candyResourceId);
-        this.candy.setTextureQuad(IMG_OBJ_CANDY_01_candy_bottom);
+        this.candy.setTextureQuad(GameSceneConstants.IMG_OBJ_CANDY_01_candy_bottom);
         this.candy.doRestoreCutTransparency();
         this.candy.anchor = Alignment.CENTER;
         this.candy.bb = Rectangle.copy(resolution.CANDY_BB);
@@ -503,7 +340,7 @@ const GameScene = BaseElement.extend({
         // candy main
         this.candyMain = new GameObject();
         this.candyMain.initTextureWithId(candyResourceId);
-        this.candyMain.setTextureQuad(IMG_OBJ_CANDY_01_candy_main);
+        this.candyMain.setTextureQuad(GameSceneConstants.IMG_OBJ_CANDY_01_candy_main);
         this.candyMain.doRestoreCutTransparency();
         this.candyMain.anchor = this.candyMain.parentAnchor = Alignment.CENTER;
         this.candy.addChild(this.candyMain);
@@ -513,7 +350,7 @@ const GameScene = BaseElement.extend({
         // candy top
         this.candyTop = new GameObject();
         this.candyTop.initTextureWithId(candyResourceId);
-        this.candyTop.setTextureQuad(IMG_OBJ_CANDY_01_candy_top);
+        this.candyTop.setTextureQuad(GameSceneConstants.IMG_OBJ_CANDY_01_candy_top);
         this.candyTop.doRestoreCutTransparency();
         this.candyTop.anchor = this.candyTop.parentAnchor = Alignment.CENTER;
         this.candy.addChild(this.candyTop);
@@ -525,20 +362,20 @@ const GameScene = BaseElement.extend({
         this.candyBlink.initTextureWithId(ResourceId.IMG_OBJ_CANDY_01);
         this.candyBlink.doRestoreCutTransparency();
         this.candyBlink.addAnimationEndpoints(
-            CandyBlink.INITIAL,
+            GameSceneConstants.CandyBlink.INITIAL,
             0.07,
             Timeline.LoopType.NO_LOOP,
-            IMG_OBJ_CANDY_01_highlight_start,
-            IMG_OBJ_CANDY_01_highlight_end
+            GameSceneConstants.IMG_OBJ_CANDY_01_highlight_start,
+            GameSceneConstants.IMG_OBJ_CANDY_01_highlight_end
         );
         this.candyBlink.addAnimationSequence(
-            CandyBlink.STAR,
+            GameSceneConstants.CandyBlink.STAR,
             0.3, // delay
             Timeline.LoopType.NO_LOOP,
             2, // count
-            [IMG_OBJ_CANDY_01_glow, IMG_OBJ_CANDY_01_glow]
+            [GameSceneConstants.IMG_OBJ_CANDY_01_glow, GameSceneConstants.IMG_OBJ_CANDY_01_glow]
         );
-        const gt = this.candyBlink.getTimeline(CandyBlink.STAR);
+        const gt = this.candyBlink.getTimeline(GameSceneConstants.CandyBlink.STAR);
         gt.addKeyFrame(
             KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0)
         );
@@ -561,27 +398,27 @@ const GameScene = BaseElement.extend({
         this.candyBubbleAnimation.addAnimationDelay(
             0.05,
             Timeline.LoopType.REPLAY,
-            IMG_OBJ_BUBBLE_FLIGHT_Frame_1,
-            IMG_OBJ_BUBBLE_FLIGHT_Frame_13
+            GameSceneConstants.IMG_OBJ_BUBBLE_FLIGHT_Frame_1,
+            GameSceneConstants.IMG_OBJ_BUBBLE_FLIGHT_Frame_13
         );
         this.candyBubbleAnimation.playTimeline(0);
         this.candy.addChild(this.candyBubbleAnimation);
         this.candyBubbleAnimation.visible = false;
         this.candyBubbleAnimation.drawPosIncrement = 0.0001;
 
-        for (let i = 0; i < HUD_STARS_COUNT; i++) {
+        for (let i = 0; i < GameSceneConstants.HUD_STARS_COUNT; i++) {
             const hs = this.hudStars[i];
             if (hs.currentTimeline) {
                 hs.currentTimeline.stop();
             }
-            hs.setTextureQuad(IMG_HUD_STAR_Frame_1);
+            hs.setTextureQuad(GameSceneConstants.IMG_HUD_STAR_Frame_1);
         }
 
         const map = LevelState.loadedMap;
         this.loadMap(map);
 
         // add the animations for the bubbles
-        if (this.twoParts !== PartsType.NONE) {
+        if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
             this.candyBubbleAnimationL = new Animation();
             this.candyBubbleAnimationL.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
             this.candyBubbleAnimationL.parentAnchor = this.candyBubbleAnimationL.anchor =
@@ -589,8 +426,8 @@ const GameScene = BaseElement.extend({
             this.candyBubbleAnimationL.addAnimationDelay(
                 0.05,
                 Timeline.LoopType.REPLAY,
-                IMG_OBJ_BUBBLE_FLIGHT_Frame_1,
-                IMG_OBJ_BUBBLE_FLIGHT_Frame_13
+                GameSceneConstants.IMG_OBJ_BUBBLE_FLIGHT_Frame_1,
+                GameSceneConstants.IMG_OBJ_BUBBLE_FLIGHT_Frame_13
             );
             this.candyBubbleAnimationL.playTimeline(0);
             this.candyL.addChild(this.candyBubbleAnimationL);
@@ -604,8 +441,8 @@ const GameScene = BaseElement.extend({
             this.candyBubbleAnimationR.addAnimationDelay(
                 0.05,
                 Timeline.LoopType.REPLAY,
-                IMG_OBJ_BUBBLE_FLIGHT_Frame_1,
-                IMG_OBJ_BUBBLE_FLIGHT_Frame_13
+                GameSceneConstants.IMG_OBJ_BUBBLE_FLIGHT_Frame_1,
+                GameSceneConstants.IMG_OBJ_BUBBLE_FLIGHT_Frame_13
             );
             this.candyBubbleAnimationR.playTimeline(0);
             this.candyR.addChild(this.candyBubbleAnimationR);
@@ -631,7 +468,7 @@ const GameScene = BaseElement.extend({
         this.candyBubbleR = null;
 
         this.mouthOpen = false;
-        this.noCandy = this.twoParts !== PartsType.NONE;
+        this.noCandy = this.twoParts !== GameSceneConstants.PartsType.NONE;
         this.noCandyL = false;
         this.noCandyR = false;
         this.blink.playTimeline(0);
@@ -700,10 +537,11 @@ const GameScene = BaseElement.extend({
             this.fastenCamera = false;
             this.camera.type = Camera2D.SpeedType.PIXELS;
             this.camera.speed = 10;
-            this.cameraMoveMode = CameraMove.TO_CANDY_PART;
+            this.cameraMoveMode = GameSceneConstants.CameraMove.TO_CANDY_PART;
 
             let startX, startY;
-            const cameraTarget = this.twoParts !== PartsType.NONE ? this.starL : this.star;
+            const cameraTarget =
+                this.twoParts !== GameSceneConstants.PartsType.NONE ? this.starL : this.star;
 
             if (this.mapWidth > SCREEN_WIDTH) {
                 if (cameraTarget.pos.x > this.mapWidth / 2) {
@@ -739,7 +577,7 @@ const GameScene = BaseElement.extend({
         }
     },
     doCandyBlink: function () {
-        this.candyBlink.playTimeline(CandyBlink.INITIAL);
+        this.candyBlink.playTimeline(GameSceneConstants.CandyBlink.INITIAL);
     },
 
     /**
@@ -891,7 +729,9 @@ const GameScene = BaseElement.extend({
         this.special = item.special || 0;
         this.ropePhysicsSpeed = item.ropePhysicsSpeed;
         this.nightLevel = item.nightLevel;
-        this.twoParts = item.twoParts ? PartsType.SEPARATE : PartsType.NONE;
+        this.twoParts = item.twoParts
+            ? GameSceneConstants.PartsType.SEPARATE
+            : GameSceneConstants.PartsType.NONE;
         this.ropePhysicsSpeed *= resolution.PHYSICS_SPEED_MULTIPLIER;
     },
     loadGrab: function (item) {
@@ -948,7 +788,7 @@ const GameScene = BaseElement.extend({
 
         if (r === Constants.UNDEFINED && !gun) {
             let tail = this.star;
-            if (this.twoParts !== PartsType.NONE) {
+            if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
                 tail = left ? this.starL : this.starR;
             }
 
@@ -969,7 +809,7 @@ const GameScene = BaseElement.extend({
 
         this.candyL = new GameObject();
         this.candyL.initTextureWithId(ResourceId.IMG_OBJ_CANDY_01);
-        this.candyL.setTextureQuad(IMG_OBJ_CANDY_01_part_1);
+        this.candyL.setTextureQuad(GameSceneConstants.IMG_OBJ_CANDY_01_part_1);
         this.candyL.scaleX = this.candyL.scaleY = 0.71;
         this.candyL.passTransformationsToChilds = false;
         this.candyL.doRestoreCutTransparency();
@@ -984,7 +824,7 @@ const GameScene = BaseElement.extend({
 
         this.candyR = new GameObject();
         this.candyR.initTextureWithId(ResourceId.IMG_OBJ_CANDY_01);
-        this.candyR.setTextureQuad(IMG_OBJ_CANDY_01_part_2);
+        this.candyR.setTextureQuad(GameSceneConstants.IMG_OBJ_CANDY_01_part_2);
         this.candyR.scaleX = this.candyR.scaleY = 0.71;
         this.candyR.passTransformationsToChilds = false;
         this.candyR.doRestoreCutTransparency();
@@ -1032,8 +872,8 @@ const GameScene = BaseElement.extend({
         sd.addAnimationDelay(
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_OBJ_STAR_DISAPPEAR_Frame_1,
-            IMG_OBJ_STAR_DISAPPEAR_Frame_13
+            GameSceneConstants.IMG_OBJ_STAR_DISAPPEAR_Frame_1,
+            GameSceneConstants.IMG_OBJ_STAR_DISAPPEAR_Frame_13
         );
     },
     loadTutorialText: function (item) {
@@ -1131,7 +971,7 @@ const GameScene = BaseElement.extend({
 
         if (s.special === 0) {
             s.playTimeline(0);
-        } else if (s.special === LEVEL1_ARROW_SPECIAL_ID) {
+        } else if (s.special === GameSceneConstants.LEVEL1_ARROW_SPECIAL_ID) {
             const tl2 = new Timeline();
             tl2.addKeyFrame(
                 KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0)
@@ -1206,8 +1046,8 @@ const GameScene = BaseElement.extend({
     },
     loadBubble: function (item) {
         const at = MathHelper.randomRange(
-                IMG_OBJ_BUBBLE_ATTACHED_stain_01,
-                IMG_OBJ_BUBBLE_ATTACHED_stain_03
+                GameSceneConstants.IMG_OBJ_BUBBLE_ATTACHED_stain_01,
+                GameSceneConstants.IMG_OBJ_BUBBLE_ATTACHED_stain_03
             ),
             s = new Bubble();
         s.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_ATTACHED);
@@ -1222,7 +1062,7 @@ const GameScene = BaseElement.extend({
 
         const bubble = new ImageElement();
         bubble.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_ATTACHED);
-        bubble.setTextureQuad(IMG_OBJ_BUBBLE_ATTACHED_bubble);
+        bubble.setTextureQuad(GameSceneConstants.IMG_OBJ_BUBBLE_ATTACHED_bubble);
         bubble.doRestoreCutTransparency();
         bubble.parentAnchor = bubble.anchor = Alignment.CENTER;
         s.addChild(bubble);
@@ -1255,7 +1095,7 @@ const GameScene = BaseElement.extend({
         s.group = item.group;
 
         s.anchor = Alignment.TOP | Alignment.HCENTER;
-        s.rotationCenterY -= s.height / 2 - SOCK_COLLISION_Y_OFFSET;
+        s.rotationCenterY -= s.height / 2 - GameSceneConstants.SOCK_COLLISION_Y_OFFSET;
 
         s.setTextureQuad(
             s.group === 0 ? Sock.Quads.IMG_OBJ_SOCKS_hat_01 : Sock.Quads.IMG_OBJ_SOCKS_hat_02
@@ -1372,61 +1212,61 @@ const GameScene = BaseElement.extend({
         target.drawPosIncrement = 0.0001;
 
         target.addAnimationEndpoints(
-            CharAnimation.GREETING,
+            GameSceneConstants.CharAnimation.GREETING,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_CHAR_ANIMATIONS2_greeting_start,
-            IMG_CHAR_ANIMATIONS2_greeting_end,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS2_greeting_start,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS2_greeting_end,
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS2
         );
 
         target.addAnimationEndpoints(
-            CharAnimation.GREETINGXMAS,
+            GameSceneConstants.CharAnimation.GREETINGXMAS,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_CHAR_GREETINGS_XMAS_start,
-            IMG_CHAR_GREETINGS_XMAS_end,
+            GameSceneConstants.IMG_CHAR_GREETINGS_XMAS_start,
+            GameSceneConstants.IMG_CHAR_GREETINGS_XMAS_end,
             undefined,
             ResourceId.IMG_CHAR_GREETINGS_XMAS
         );
 
         target.addAnimationEndpoints(
-            CharAnimation.IDLE,
+            GameSceneConstants.CharAnimation.IDLE,
             0.05,
             Timeline.LoopType.REPLAY,
-            IMG_CHAR_ANIMATIONS_idle_start,
-            IMG_CHAR_ANIMATIONS_idle_end,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_idle_start,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_idle_end,
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS
         );
 
         target.addAnimationEndpoints(
-            CharAnimation.IDLE2,
+            GameSceneConstants.CharAnimation.IDLE2,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_CHAR_ANIMATIONS_idle2_start,
-            IMG_CHAR_ANIMATIONS_idle2_end,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_idle2_start,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_idle2_end,
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS
         );
 
         target.addAnimationEndpoints(
-            CharAnimation.IDLEXMAS,
+            GameSceneConstants.CharAnimation.IDLEXMAS,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_CHAR_IDLE_XMAS_idle_start,
-            IMG_CHAR_IDLE_XMAS_idle_end,
+            GameSceneConstants.IMG_CHAR_IDLE_XMAS_idle_start,
+            GameSceneConstants.IMG_CHAR_IDLE_XMAS_idle_end,
             undefined,
             ResourceId.IMG_CHAR_IDLE_XMAS
         );
 
         target.addAnimationEndpoints(
-            CharAnimation.IDLE2XMAS,
+            GameSceneConstants.CharAnimation.IDLE2XMAS,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_CHAR_IDLE_XMAS_idle2_start,
-            IMG_CHAR_IDLE_XMAS_idle2_end,
+            GameSceneConstants.IMG_CHAR_IDLE_XMAS_idle2_start,
+            GameSceneConstants.IMG_CHAR_IDLE_XMAS_idle2_end,
             undefined,
             ResourceId.IMG_CHAR_IDLE_XMAS
         );
@@ -1434,23 +1274,23 @@ const GameScene = BaseElement.extend({
         let frame;
         const idle3Sequence = [];
         for (
-            frame = IMG_CHAR_ANIMATIONS_idle3_start;
-            frame <= IMG_CHAR_ANIMATIONS_idle3_end;
+            frame = GameSceneConstants.IMG_CHAR_ANIMATIONS_idle3_start;
+            frame <= GameSceneConstants.IMG_CHAR_ANIMATIONS_idle3_end;
             frame++
         ) {
             idle3Sequence.push(frame);
         }
 
         for (
-            frame = IMG_CHAR_ANIMATIONS_idle3_start;
-            frame <= IMG_CHAR_ANIMATIONS_idle3_end;
+            frame = GameSceneConstants.IMG_CHAR_ANIMATIONS_idle3_start;
+            frame <= GameSceneConstants.IMG_CHAR_ANIMATIONS_idle3_end;
             frame++
         ) {
             idle3Sequence.push(frame);
         }
 
         target.addAnimationSequence(
-            CharAnimation.IDLE3,
+            GameSceneConstants.CharAnimation.IDLE3,
             0.05,
             Timeline.LoopType.NO_LOOP,
             idle3Sequence.length,
@@ -1460,22 +1300,24 @@ const GameScene = BaseElement.extend({
 
         if (isJanuary && isHolidayBox) {
             target.addAnimationEndpoints(
-                CharAnimation.IDLEPADDINGTON,
+                GameSceneConstants.CharAnimation.IDLEPADDINGTON,
                 0.05,
                 Timeline.LoopType.NO_LOOP,
-                IMG_CHAR_ANIMATION_PADDINGTON_start,
-                IMG_CHAR_ANIMATION_PADDINGTON_end,
+                GameSceneConstants.IMG_CHAR_ANIMATION_PADDINGTON_start,
+                GameSceneConstants.IMG_CHAR_ANIMATION_PADDINGTON_end,
                 undefined,
                 ResourceId.IMG_CHAR_ANIMATION_PADDINGTON
             );
-            const paddingtonTimeline = target.getTimeline(CharAnimation.IDLEPADDINGTON);
+            const paddingtonTimeline = target.getTimeline(
+                GameSceneConstants.CharAnimation.IDLEPADDINGTON
+            );
             paddingtonTimeline.onKeyFrame = this.onPaddingtonIdleKeyFrame.bind(this);
-            target.setDelay(0.75, 1, CharAnimation.IDLEPADDINGTON);
-            target.setDelay(0.75, 2, CharAnimation.IDLEPADDINGTON);
+            target.setDelay(0.75, 1, GameSceneConstants.CharAnimation.IDLEPADDINGTON);
+            target.setDelay(0.75, 2, GameSceneConstants.CharAnimation.IDLEPADDINGTON);
 
             this.paddingtonFinalFrame = ImageElement.create(
                 ResourceId.IMG_CHAR_ANIMATION_PADDINGTON,
-                IMG_CHAR_ANIMATION_PADDINGTON_hat
+                GameSceneConstants.IMG_CHAR_ANIMATION_PADDINGTON_hat
             );
             this.paddingtonFinalFrame.doRestoreCutTransparency();
             this.paddingtonFinalFrame.anchor = Alignment.CENTER;
@@ -1487,78 +1329,118 @@ const GameScene = BaseElement.extend({
         }
 
         target.addAnimationEndpoints(
-            CharAnimation.EXCITED,
+            GameSceneConstants.CharAnimation.EXCITED,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_CHAR_ANIMATIONS2_excited_start,
-            IMG_CHAR_ANIMATIONS2_excited_end,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS2_excited_start,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS2_excited_end,
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS2
         );
         target.addAnimationEndpoints(
-            CharAnimation.PUZZLED,
+            GameSceneConstants.CharAnimation.PUZZLED,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_CHAR_ANIMATIONS2_puzzled_start,
-            IMG_CHAR_ANIMATIONS2_puzzled_end,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS2_puzzled_start,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS2_puzzled_end,
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS2
         );
         target.addAnimationEndpoints(
-            CharAnimation.FAIL,
+            GameSceneConstants.CharAnimation.FAIL,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_CHAR_ANIMATIONS3_fail_start,
-            IMG_CHAR_ANIMATIONS3_fail_end,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS3_fail_start,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS3_fail_end,
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS3
         );
         target.addAnimationEndpoints(
-            CharAnimation.WIN,
+            GameSceneConstants.CharAnimation.WIN,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_CHAR_ANIMATIONS_mouth_close_start,
-            IMG_CHAR_ANIMATIONS_mouth_close_end,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_mouth_close_start,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_mouth_close_end,
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS
         );
         target.addAnimationEndpoints(
-            CharAnimation.MOUTH_OPEN,
+            GameSceneConstants.CharAnimation.MOUTH_OPEN,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_CHAR_ANIMATIONS_mouth_open_start,
-            IMG_CHAR_ANIMATIONS_mouth_open_end,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_mouth_open_start,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_mouth_open_end,
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS
         );
         target.addAnimationEndpoints(
-            CharAnimation.MOUTH_CLOSE,
+            GameSceneConstants.CharAnimation.MOUTH_CLOSE,
             0.05,
             Timeline.LoopType.NO_LOOP,
-            IMG_CHAR_ANIMATIONS_mouth_close_start,
-            IMG_CHAR_ANIMATIONS_mouth_close_end,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_mouth_close_start,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_mouth_close_end,
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS
         );
         target.addAnimationEndpoints(
-            CharAnimation.CHEW,
+            GameSceneConstants.CharAnimation.CHEW,
             0.05,
             Timeline.LoopType.REPLAY,
-            IMG_CHAR_ANIMATIONS_chew_start,
-            IMG_CHAR_ANIMATIONS_chew_end,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_chew_start,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_chew_end,
             undefined,
             ResourceId.IMG_CHAR_ANIMATIONS
         );
-        target.switchToAnimation(CharAnimation.CHEW, CharAnimation.WIN, 0.05);
-        target.switchToAnimation(CharAnimation.PUZZLED, CharAnimation.MOUTH_CLOSE, 0.05);
-        target.switchToAnimation(CharAnimation.IDLE, CharAnimation.GREETING, 0.05);
-        target.switchToAnimation(CharAnimation.IDLE, CharAnimation.GREETINGXMAS, 0.05);
-        target.switchToAnimation(CharAnimation.IDLE, CharAnimation.IDLE2, 0.05);
-        target.switchToAnimation(CharAnimation.IDLE, CharAnimation.IDLE3, 0.05);
-        target.switchToAnimation(CharAnimation.IDLE, CharAnimation.IDLEXMAS, 0.05);
-        target.switchToAnimation(CharAnimation.IDLE, CharAnimation.IDLE2XMAS, 0.05);
-        target.switchToAnimation(CharAnimation.IDLE, CharAnimation.EXCITED, 0.05);
-        target.switchToAnimation(CharAnimation.IDLE, CharAnimation.PUZZLED, 0.05);
+        target.switchToAnimation(
+            GameSceneConstants.CharAnimation.CHEW,
+            GameSceneConstants.CharAnimation.WIN,
+            0.05
+        );
+        target.switchToAnimation(
+            GameSceneConstants.CharAnimation.PUZZLED,
+            GameSceneConstants.CharAnimation.MOUTH_CLOSE,
+            0.05
+        );
+        target.switchToAnimation(
+            GameSceneConstants.CharAnimation.IDLE,
+            GameSceneConstants.CharAnimation.GREETING,
+            0.05
+        );
+        target.switchToAnimation(
+            GameSceneConstants.CharAnimation.IDLE,
+            GameSceneConstants.CharAnimation.GREETINGXMAS,
+            0.05
+        );
+        target.switchToAnimation(
+            GameSceneConstants.CharAnimation.IDLE,
+            GameSceneConstants.CharAnimation.IDLE2,
+            0.05
+        );
+        target.switchToAnimation(
+            GameSceneConstants.CharAnimation.IDLE,
+            GameSceneConstants.CharAnimation.IDLE3,
+            0.05
+        );
+        target.switchToAnimation(
+            GameSceneConstants.CharAnimation.IDLE,
+            GameSceneConstants.CharAnimation.IDLEXMAS,
+            0.05
+        );
+        target.switchToAnimation(
+            GameSceneConstants.CharAnimation.IDLE,
+            GameSceneConstants.CharAnimation.IDLE2XMAS,
+            0.05
+        );
+        target.switchToAnimation(
+            GameSceneConstants.CharAnimation.IDLE,
+            GameSceneConstants.CharAnimation.EXCITED,
+            0.05
+        );
+        target.switchToAnimation(
+            GameSceneConstants.CharAnimation.IDLE,
+            GameSceneConstants.CharAnimation.PUZZLED,
+            0.05
+        );
 
         // delay greeting by Om-nom when not using January Paddington intro
         if (settings.showGreeting) {
@@ -1571,15 +1453,16 @@ const GameScene = BaseElement.extend({
         if (isJanuary && isHolidayBox) {
             this.playPaddingtonIntro();
         } else {
-            target.playTimeline(CharAnimation.IDLE);
+            target.playTimeline(GameSceneConstants.CharAnimation.IDLE);
         }
 
-        const idle = target.getTimeline(CharAnimation.IDLE);
+        const idle = target.getTimeline(GameSceneConstants.CharAnimation.IDLE);
         idle.onKeyFrame = this.onIdleOmNomKeyFrame.bind(this);
 
         target.setPause(
-            IMG_CHAR_ANIMATIONS_mouth_open_end - IMG_CHAR_ANIMATIONS_mouth_open_start,
-            CharAnimation.MOUTH_OPEN
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_mouth_open_end -
+                GameSceneConstants.IMG_CHAR_ANIMATIONS_mouth_open_start,
+            GameSceneConstants.CharAnimation.MOUTH_OPEN
         );
         this.blink = new Animation();
         this.blink.initTextureWithId(ResourceId.IMG_CHAR_ANIMATIONS);
@@ -1587,13 +1470,13 @@ const GameScene = BaseElement.extend({
 
         this.blink.visible = false;
         this.blink.addAnimationSequence(0, 0.05, Timeline.LoopType.NO_LOOP, 4, [
-            IMG_CHAR_ANIMATIONS_blink_start,
-            IMG_CHAR_ANIMATIONS_blink_end,
-            IMG_CHAR_ANIMATIONS_blink_end,
-            IMG_CHAR_ANIMATIONS_blink_end,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_blink_start,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_blink_end,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_blink_end,
+            GameSceneConstants.IMG_CHAR_ANIMATIONS_blink_end,
         ]);
         this.blink.setAction(ActionType.SET_VISIBLE, this.blink, 0, 0, 2, 0);
-        this.blinkTimer = BLINK_SKIP;
+        this.blinkTimer = GameSceneConstants.BLINK_SKIP;
 
         this.blink.doRestoreCutTransparency();
         target.addChild(this.blink);
@@ -1629,7 +1512,7 @@ const GameScene = BaseElement.extend({
             if (this.blinkTimer === 0) {
                 this.blink.visible = true;
                 this.blink.playTimeline(0);
-                this.blinkTimer = BLINK_SKIP;
+                this.blinkTimer = GameSceneConstants.BLINK_SKIP;
             }
 
             // om-nom idle action
@@ -1637,12 +1520,12 @@ const GameScene = BaseElement.extend({
             if (this.idlesTimer === 0) {
                 if (MathHelper.randomRange(0, 1) === 1) {
                     IS_XMAS
-                        ? this.target.playTimeline(CharAnimation.IDLEXMAS)
-                        : this.target.playTimeline(CharAnimation.IDLE2);
+                        ? this.target.playTimeline(GameSceneConstants.CharAnimation.IDLEXMAS)
+                        : this.target.playTimeline(GameSceneConstants.CharAnimation.IDLE2);
                 } else {
                     IS_XMAS
-                        ? this.target.playTimeline(CharAnimation.IDLE2XMAS)
-                        : this.target.playTimeline(CharAnimation.IDLE3);
+                        ? this.target.playTimeline(GameSceneConstants.CharAnimation.IDLE2XMAS)
+                        : this.target.playTimeline(GameSceneConstants.CharAnimation.IDLE3);
                 }
                 this.idlesTimer = MathHelper.randomRange(5, 20);
             }
@@ -1653,7 +1536,9 @@ const GameScene = BaseElement.extend({
             return;
         }
 
-        const lastIndex = IMG_CHAR_ANIMATION_PADDINGTON_end - IMG_CHAR_ANIMATION_PADDINGTON_start;
+        const lastIndex =
+            GameSceneConstants.IMG_CHAR_ANIMATION_PADDINGTON_end -
+            GameSceneConstants.IMG_CHAR_ANIMATION_PADDINGTON_start;
 
         if (index !== lastIndex) {
             this.hidePaddingtonFinalFrame();
@@ -1670,7 +1555,7 @@ const GameScene = BaseElement.extend({
     },
     playRegularIdleAfterPaddington: function () {
         if (this.target) {
-            this.target.playTimeline(CharAnimation.IDLE);
+            this.target.playTimeline(GameSceneConstants.CharAnimation.IDLE);
         }
         this.pendingPaddingtonIdleTransition = false;
     },
@@ -1719,7 +1604,7 @@ const GameScene = BaseElement.extend({
             this.juggleTimer += delta;
 
             // has it been 30 secs since the candy was attached?
-            if (this.juggleTimer > CANDY_JUGGLER_TIME) {
+            if (this.juggleTimer > GameSceneConstants.CANDY_JUGGLER_TIME) {
                 //Achievements.increment(AchievementId.CANDY_JUGGLER);
 
                 // reset the timer
@@ -1729,7 +1614,8 @@ const GameScene = BaseElement.extend({
 
         const SCREEN_WIDTH = resolution.CANVAS_WIDTH,
             SCREEN_HEIGHT = resolution.CANVAS_HEIGHT,
-            cameraTarget = this.twoParts != PartsType.NONE ? this.starL : this.star,
+            cameraTarget =
+                this.twoParts != GameSceneConstants.PartsType.NONE ? this.starL : this.star,
             xScroll = cameraTarget.pos.x - SCREEN_WIDTH / 2,
             yScroll = cameraTarget.pos.y - SCREEN_HEIGHT / 2,
             targetX = MathHelper.fitToBoundaries(xScroll, 0, this.mapWidth - SCREEN_WIDTH),
@@ -1849,7 +1735,7 @@ const GameScene = BaseElement.extend({
                             }
                         }.bind(this);
 
-                    if (this.twoParts !== PartsType.NONE) {
+                    if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
                         if (!this.noCandyL) {
                             createRope(this.starL);
                         }
@@ -1868,7 +1754,7 @@ const GameScene = BaseElement.extend({
                     let hasCandy = false;
 
                     if (!handledRotation) {
-                        if (this.twoParts !== PartsType.NONE) {
+                        if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
                             if (tail === this.starL && !this.noCandyL && !handledRotationL) {
                                 hasCandy = true;
                             } else if (tail === this.starR && !this.noCandyR && !handledRotationR) {
@@ -1881,7 +1767,7 @@ const GameScene = BaseElement.extend({
 
                     if (b.relaxed !== 0 && b.cut === Constants.UNDEFINED && hasCandy) {
                         const a = Radians.toDegrees(v.normalizedAngle());
-                        if (this.twoParts !== PartsType.NONE) {
+                        if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
                             const candyPart = tail === this.starL ? this.candyL : this.candyR;
                             if (!b.chosenOne) {
                                 b.initialCandleAngle = candyPart.rotation - a;
@@ -1914,7 +1800,7 @@ const GameScene = BaseElement.extend({
                 }
             }
 
-            if (this.twoParts !== PartsType.NONE) {
+            if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
                 if (!handledRotationL && !this.noCandyL) {
                     this.candyL.rotation += Math.min(5, this.lastCandyRotateDeltaL);
                     this.lastCandyRotateDeltaL *= 0.98;
@@ -1936,13 +1822,13 @@ const GameScene = BaseElement.extend({
             this.star.update(delta * this.ropePhysicsSpeed);
         }
 
-        if (this.twoParts !== PartsType.NONE) {
+        if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
             const ropeDelta = delta * this.ropePhysicsSpeed;
             this.candyL.update(delta);
             this.starL.update(ropeDelta);
             this.candyR.update(delta);
             this.starR.update(ropeDelta);
-            if (this.twoParts === PartsType.DISTANCE) {
+            if (this.twoParts === GameSceneConstants.PartsType.DISTANCE) {
                 for (i = 0; i < Bungee.BUNGEE_RELAXION_TIMES; i++) {
                     this.starL.satisfyConstraints();
                     this.starR.satisfyConstraints();
@@ -1953,7 +1839,7 @@ const GameScene = BaseElement.extend({
                 this.partsDist = moveResult.value;
                 if (moveResult.reachedZero) {
                     SoundMgr.playSound(ResourceId.SND_CANDY_LINK);
-                    this.twoParts = PartsType.NONE;
+                    this.twoParts = GameSceneConstants.PartsType.NONE;
                     this.noCandy = false;
                     this.noCandyL = true;
                     this.noCandyR = true;
@@ -2010,8 +1896,8 @@ const GameScene = BaseElement.extend({
                     const a = transform.addAnimationDelay(
                         0.05,
                         Timeline.LoopType.NO_LOOP,
-                        IMG_OBJ_CANDY_01_part_fx_start,
-                        IMG_OBJ_CANDY_01_part_fx_end
+                        GameSceneConstants.IMG_OBJ_CANDY_01_part_fx_start,
+                        GameSceneConstants.IMG_OBJ_CANDY_01_part_fx_end
                     );
                     transform.getTimeline(a).onFinished = this.aniPool.timelineFinishedDelegate();
                     transform.playTimeline(0);
@@ -2025,10 +1911,10 @@ const GameScene = BaseElement.extend({
             if (
                 !this.noCandyL &&
                 !this.noCandyR &&
-                this.twoParts === PartsType.SEPARATE &&
+                this.twoParts === GameSceneConstants.PartsType.SEPARATE &&
                 GameObject.intersect(this.candyL, this.candyR)
             ) {
-                this.twoParts = PartsType.DISTANCE;
+                this.twoParts = GameSceneConstants.PartsType.DISTANCE;
                 this.partsDist = this.starL.pos.distance(this.starR.pos);
                 this.starL.addConstraint(this.starR, this.partsDist, ConstraintType.NOT_MORE_THAN);
                 this.starR.addConstraint(this.starL, this.partsDist, ConstraintType.NOT_MORE_THAN);
@@ -2052,7 +1938,7 @@ const GameScene = BaseElement.extend({
                     break;
                 } else {
                     let hits = false;
-                    if (this.twoParts !== PartsType.NONE) {
+                    if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
                         hits =
                             (GameObject.intersect(this.candyL, s) && !this.noCandyL) ||
                             (GameObject.intersect(this.candyR, s) && !this.noCandyR);
@@ -2061,7 +1947,7 @@ const GameScene = BaseElement.extend({
                     }
 
                     if (hits) {
-                        this.candyBlink.playTimeline(CandyBlink.STAR);
+                        this.candyBlink.playTimeline(GameSceneConstants.CandyBlink.STAR);
                         this.starsCollected++;
                         this.hudStars[this.starsCollected - 1].playTimeline(0);
 
@@ -2075,8 +1961,11 @@ const GameScene = BaseElement.extend({
                         this.stars[i] = null;
                         SoundMgr.playSound(ResourceId.SND_STAR_1 + this.starsCollected - 1);
 
-                        if (this.target.currentTimelineIndex === CharAnimation.IDLE) {
-                            this.target.playTimeline(CharAnimation.EXCITED);
+                        if (
+                            this.target.currentTimelineIndex ===
+                            GameSceneConstants.CharAnimation.IDLE
+                        ) {
+                            this.target.playTimeline(GameSceneConstants.CharAnimation.EXCITED);
                         }
 
                         break;
@@ -2090,7 +1979,7 @@ const GameScene = BaseElement.extend({
             b.update(delta);
 
             if (!b.popped) {
-                if (this.twoParts != PartsType.NONE) {
+                if (this.twoParts != GameSceneConstants.PartsType.NONE) {
                     if (
                         !this.noCandyL &&
                         this.isBubbleCapture(
@@ -2253,7 +2142,7 @@ const GameScene = BaseElement.extend({
                             this.releaseAllRopes(false);
 
                             this.savedSockSpeed =
-                                SOCK_SPEED_K *
+                                GameSceneConstants.SOCK_SPEED_K *
                                 this.star.v.getLength() *
                                 resolution.PHYSICS_SPEED_MULTIPLIER;
                             this.targetSock = n;
@@ -2323,7 +2212,7 @@ const GameScene = BaseElement.extend({
             if (!s.electro || s.electroOn) {
                 let candyHits = false,
                     left = false;
-                if (this.twoParts !== PartsType.NONE) {
+                if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
                     candyHits = !this.noCandyL && isCandyHit(s, this.starL, star_spike_radius);
                     if (candyHits) {
                         left = true;
@@ -2335,7 +2224,7 @@ const GameScene = BaseElement.extend({
                 }
 
                 if (candyHits) {
-                    if (this.twoParts !== PartsType.NONE) {
+                    if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
                         if (left) {
                             if (this.candyBubbleL) {
                                 this.popCandyBubble(true);
@@ -2360,7 +2249,7 @@ const GameScene = BaseElement.extend({
 
                     b.onFinished = this.aniPool.particlesFinishedDelegate();
 
-                    if (this.twoParts != PartsType.NONE) {
+                    if (this.twoParts != GameSceneConstants.PartsType.NONE) {
                         if (left) {
                             b.x = this.candyL.x;
                             b.y = this.candyL.y;
@@ -2381,7 +2270,7 @@ const GameScene = BaseElement.extend({
                     SoundMgr.playSound(ResourceId.SND_CANDY_BREAK);
                     this.releaseAllRopes(left);
 
-                    if (this.restartState !== RestartState.FADE_IN) {
+                    if (this.restartState !== GameSceneConstants.RestartState.FADE_IN) {
                         this.dd.callObject(this, this.gameLost, null, 0.3);
                     }
 
@@ -2402,7 +2291,7 @@ const GameScene = BaseElement.extend({
 
             let candyHits = false;
             let left = false;
-            if (this.twoParts !== PartsType.NONE) {
+            if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
                 candyHits = !this.noCandyL && isCandyHit(bouncer, this.starL, bouncer_radius);
                 if (candyHits) {
                     left = true;
@@ -2414,7 +2303,7 @@ const GameScene = BaseElement.extend({
             }
 
             if (candyHits) {
-                if (this.twoParts !== PartsType.NONE) {
+                if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
                     if (left) {
                         this.handleBounce(bouncer, this.starL, delta);
                     } else {
@@ -2436,7 +2325,7 @@ const GameScene = BaseElement.extend({
             rd = resolution.BUBBLE_IMPULSE_RD;
 
         // apply candy impulse
-        if (this.twoParts === PartsType.SEPARATE) {
+        if (this.twoParts === GameSceneConstants.PartsType.SEPARATE) {
             if (this.candyBubbleL) {
                 applyStarImpulse(this.starL, rd, yImpulse, delta);
             }
@@ -2444,7 +2333,7 @@ const GameScene = BaseElement.extend({
                 applyStarImpulse(this.starR, rd, yImpulse, delta);
             }
         }
-        if (this.twoParts === PartsType.DISTANCE) {
+        if (this.twoParts === GameSceneConstants.PartsType.DISTANCE) {
             if (this.candyBubbleL || this.candyBubbleR) {
                 applyStarImpulse(this.starL, rd, yImpulse, delta);
                 applyStarImpulse(this.starR, rd, yImpulse, delta);
@@ -2462,9 +2351,9 @@ const GameScene = BaseElement.extend({
                 targetVector = new Vector(this.target.x, this.target.y);
                 if (this.star.pos.distance(targetVector) < MOUTH_OPEN_RADIUS) {
                     this.mouthOpen = true;
-                    this.target.playTimeline(CharAnimation.MOUTH_OPEN);
+                    this.target.playTimeline(GameSceneConstants.CharAnimation.MOUTH_OPEN);
                     SoundMgr.playSound(ResourceId.SND_MONSTER_OPEN);
-                    this.mouthCloseTimer = MOUTH_OPEN_TIME;
+                    this.mouthCloseTimer = GameSceneConstants.MOUTH_OPEN_TIME;
                 }
             } else {
                 if (this.mouthCloseTimer > 0) {
@@ -2474,7 +2363,7 @@ const GameScene = BaseElement.extend({
                         targetVector = new Vector(this.target.x, this.target.y);
                         if (this.star.pos.distance(targetVector) > MOUTH_OPEN_RADIUS) {
                             this.mouthOpen = false;
-                            this.target.playTimeline(CharAnimation.MOUTH_CLOSE);
+                            this.target.playTimeline(GameSceneConstants.CharAnimation.MOUTH_CLOSE);
                             SoundMgr.playSound(ResourceId.SND_MONSTER_CLOSE);
 
                             // this.tummyTeasers++;
@@ -2482,13 +2371,13 @@ const GameScene = BaseElement.extend({
                             //     Achievements.increment(AchievementId.TUMMY_TEASER);
                             // }
                         } else {
-                            this.mouthCloseTimer = MOUTH_OPEN_TIME;
+                            this.mouthCloseTimer = GameSceneConstants.MOUTH_OPEN_TIME;
                         }
                     }
                 }
             }
 
-            if (this.restartState !== RestartState.FADE_IN) {
+            if (this.restartState !== GameSceneConstants.RestartState.FADE_IN) {
                 if (GameObject.intersect(this.candy, this.target)) {
                     this.gameWon();
                     return;
@@ -2497,15 +2386,15 @@ const GameScene = BaseElement.extend({
         }
 
         const outOfScreen =
-                this.twoParts === PartsType.NONE &&
+                this.twoParts === GameSceneConstants.PartsType.NONE &&
                 this.pointOutOfScreen(this.star) &&
                 !this.noCandy,
             outOfScreenL =
-                this.twoParts !== PartsType.NONE &&
+                this.twoParts !== GameSceneConstants.PartsType.NONE &&
                 this.pointOutOfScreen(this.starL) &&
                 !this.noCandyL,
             outOfScreenR =
-                this.twoParts !== PartsType.NONE &&
+                this.twoParts !== GameSceneConstants.PartsType.NONE &&
                 this.pointOutOfScreen(this.starR) &&
                 !this.noCandyR;
 
@@ -2520,12 +2409,16 @@ const GameScene = BaseElement.extend({
                 this.noCandyR = true;
             }
 
-            if (this.restartState !== RestartState.FADE_IN) {
+            if (this.restartState !== GameSceneConstants.RestartState.FADE_IN) {
                 // lost candy achievements
                 // Achievements.increment(AchievementId.WEIGHT_LOSER);
                 // Achievements.increment(AchievementId.CALORIE_MINIMIZER);
 
-                if (this.twoParts != PartsType.NONE && this.noCandyL && this.noCandyR) {
+                if (
+                    this.twoParts != GameSceneConstants.PartsType.NONE &&
+                    this.noCandyL &&
+                    this.noCandyR
+                ) {
                     return;
                 }
                 this.gameLost();
@@ -2583,7 +2476,8 @@ const GameScene = BaseElement.extend({
 
                 if (
                     this.candyBubble ||
-                    (this.twoParts != PartsType.NONE && (this.candyBubbleL || this.candyBubbleR))
+                    (this.twoParts != GameSceneConstants.PartsType.NONE &&
+                        (this.candyBubbleL || this.candyBubbleR))
                 ) {
                     for (i = 0, len = this.bubbles.length; i < len; i++) {
                         const s = this.bubbles[i],
@@ -2716,8 +2610,8 @@ const GameScene = BaseElement.extend({
         moveResult = Mover.moveToTargetWithStatus(this.dimTime, 0, 1, delta);
         this.dimTime = moveResult.value;
         if (moveResult.reachedZero) {
-            if (this.restartState === RestartState.FADE_IN) {
-                this.restartState = RestartState.FADE_OUT;
+            if (this.restartState === GameSceneConstants.RestartState.FADE_IN) {
+                this.restartState = GameSceneConstants.RestartState.FADE_OUT;
                 this.hide();
                 this.show();
                 this.dimTime = Constants.DIM_TIMEOUT;
@@ -2788,11 +2682,11 @@ const GameScene = BaseElement.extend({
         //Achievements.increment(AchievementId.MAGICIAN);
     },
     animateLevelRestart: function () {
-        this.restartState = RestartState.FADE_IN;
+        this.restartState = GameSceneConstants.RestartState.FADE_IN;
         this.dimTime = Constants.DIM_TIMEOUT;
     },
     isFadingIn: function () {
-        return this.restartState === RestartState.FADE_IN;
+        return this.restartState === GameSceneConstants.RestartState.FADE_IN;
     },
     releaseAllRopes: function (left) {
         for (let l = 0, len = this.bungees.length; l < len; l++) {
@@ -2837,7 +2731,7 @@ const GameScene = BaseElement.extend({
     gameWon: function () {
         this.dd.cancelAllDispatches();
 
-        this.target.playTimeline(CharAnimation.WIN);
+        this.target.playTimeline(GameSceneConstants.CharAnimation.WIN);
         SoundMgr.playSound(ResourceId.SND_MONSTER_CHEWING);
 
         if (this.candyBubble) {
@@ -2907,7 +2801,7 @@ const GameScene = BaseElement.extend({
     },
     gameLost: function () {
         this.dd.cancelAllDispatches();
-        this.target.playTimeline(CharAnimation.FAIL);
+        this.target.playTimeline(GameSceneConstants.CharAnimation.FAIL);
         SoundMgr.playSound(ResourceId.SND_MONSTER_SAD);
 
         // fire level lost callback after 1 sec
@@ -2933,7 +2827,7 @@ const GameScene = BaseElement.extend({
         const overlayCut = Math.ceil((2 * resolution.CANVAS_SCALE) / 0.1875);
         let q, overlayRect, off;
         if (this.mapHeight > resolution.CANVAS_HEIGHT) {
-            q = IMG_BGR_01_P2_vert_transition;
+            q = GameSceneConstants.IMG_BGR_01_P2_vert_transition;
             off = this.overlayTexture.offsets[q].y;
             overlayRect = this.overlayTexture.rects[q];
 
@@ -2979,7 +2873,7 @@ const GameScene = BaseElement.extend({
             const ti = this.tutorialImages[i];
 
             // don't draw the level1 arrow now - it needs to be on top
-            if (ti.special !== LEVEL1_ARROW_SPECIAL_ID) {
+            if (ti.special !== GameSceneConstants.LEVEL1_ARROW_SPECIAL_ID) {
                 ti.draw();
             }
         }
@@ -3010,9 +2904,9 @@ const GameScene = BaseElement.extend({
 
         for (i = 0, len = this.socks.length; i < len; i++) {
             const sock = this.socks[i];
-            sock.y -= SOCK_COLLISION_Y_OFFSET;
+            sock.y -= GameSceneConstants.SOCK_COLLISION_Y_OFFSET;
             sock.draw();
-            sock.y += SOCK_COLLISION_Y_OFFSET;
+            sock.y += GameSceneConstants.SOCK_COLLISION_Y_OFFSET;
         }
 
         const bungees = this.bungees;
@@ -3037,7 +2931,7 @@ const GameScene = BaseElement.extend({
             }
         }
 
-        if (this.twoParts !== PartsType.NONE) {
+        if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
             if (!this.noCandyL) {
                 this.candyL.x = this.starL.pos.x;
                 this.candyL.y = this.starL.pos.y;
@@ -3066,7 +2960,7 @@ const GameScene = BaseElement.extend({
         // draw the level1 arrow last so its on top
         for (i = 0, len = this.tutorialImages.length; i < len; i++) {
             const ti = this.tutorialImages[i];
-            if (ti.special === LEVEL1_ARROW_SPECIAL_ID) {
+            if (ti.special === GameSceneConstants.LEVEL1_ARROW_SPECIAL_ID) {
                 ti.draw();
             }
         }
@@ -3252,7 +3146,7 @@ const GameScene = BaseElement.extend({
             this.handlePumpFlow(pump, this.star, this.candy, delta);
         }
 
-        if (this.twoParts !== PartsType.NONE) {
+        if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
             if (!this.noCandyL) {
                 this.handlePumpFlow(pump, this.starL, this.candyL, delta);
             }
@@ -3373,7 +3267,10 @@ const GameScene = BaseElement.extend({
     spiderBusted: function (g) {
         SoundMgr.playSound(ResourceId.SND_SPIDER_FALL);
         g.hasSpider = false;
-        const s = ImageElement.create(ResourceId.IMG_OBJ_SPIDER, IMG_OBJ_SPIDER_busted);
+        const s = ImageElement.create(
+            ResourceId.IMG_OBJ_SPIDER,
+            GameSceneConstants.IMG_OBJ_SPIDER_busted
+        );
         s.doRestoreCutTransparency();
         const tl = new Timeline();
         if (this.gravityButton && !this.gravityNormal) {
@@ -3448,7 +3345,10 @@ const GameScene = BaseElement.extend({
         this.spiderTookCandy = true;
         this.noCandy = true;
 
-        const s = ImageElement.create(ResourceId.IMG_OBJ_SPIDER, IMG_OBJ_SPIDER_stealing);
+        const s = ImageElement.create(
+            ResourceId.IMG_OBJ_SPIDER,
+            GameSceneConstants.IMG_OBJ_SPIDER_stealing
+        );
         s.doRestoreCutTransparency();
         this.candy.anchor = this.candy.parentAnchor = Alignment.CENTER;
         this.candy.x = 0;
@@ -3507,14 +3407,14 @@ const GameScene = BaseElement.extend({
         tl.onFinished = this.aniPool.timelineFinishedDelegate();
         this.aniPool.addChild(s);
 
-        if (this.restartState !== RestartState.FADE_IN) {
+        if (this.restartState !== GameSceneConstants.RestartState.FADE_IN) {
             this.dd.callObject(this, this.gameLost, null, 2);
         }
 
         // Achievements.increment(AchievementId.SPIDER_LOVER);
     },
     popCandyBubble: function (isLeft) {
-        if (this.twoParts !== PartsType.NONE) {
+        if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
             if (isLeft) {
                 this.candyBubbleL = null;
                 this.candyBubbleAnimationL.visible = false;
@@ -3662,7 +3562,7 @@ const GameScene = BaseElement.extend({
             }
         }
 
-        if (this.twoParts !== PartsType.NONE) {
+        if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
             if (this.candyBubbleL) {
                 if (this.handleBubbleTouch(this.starL, x, y)) {
                     return true;
@@ -3704,7 +3604,7 @@ const GameScene = BaseElement.extend({
         for (i = 0, len = this.pumps.length; i < len; i++) {
             const pump = this.pumps[i];
             if (pump.pointInObject(cameraAdjustedX, cameraAdjustedY)) {
-                pump.touchTimer = PUMP_TIMEOUT;
+                pump.touchTimer = GameSceneConstants.PUMP_TIMEOUT;
                 pump.touch = touchIndex;
                 return true;
             }
@@ -4116,7 +4016,7 @@ const GameScene = BaseElement.extend({
                 } else {
                     this.ropesCutAtOnce = ropeCuts;
                 }
-                this.ropesAtOnceTimer = ROPE_CUT_AT_ONCE_TIMEOUT;
+                this.ropesAtOnceTimer = GameSceneConstants.ROPE_CUT_AT_ONCE_TIMEOUT;
 
                 // rope cut achievements
                 // Achievements.increment(AchievementId.ROPE_CUTTER);
@@ -4170,140 +4070,5 @@ const GameScene = BaseElement.extend({
         }
     },
 });
-
-const IMG_OBJ_CANDY_01_candy_bottom = 0;
-const IMG_OBJ_CANDY_01_candy_main = 1;
-const IMG_OBJ_CANDY_01_candy_top = 2;
-
-const IMG_OBJ_SPIDER_busted = 11;
-const IMG_OBJ_SPIDER_stealing = 12;
-
-const IMG_OBJ_CANDY_01_highlight_start = 8;
-const IMG_OBJ_CANDY_01_highlight_end = 17;
-const IMG_OBJ_CANDY_01_glow = 18;
-const IMG_OBJ_CANDY_01_part_1 = 19;
-const IMG_OBJ_CANDY_01_part_2 = 20;
-const IMG_OBJ_CANDY_01_part_fx_start = 21;
-const IMG_OBJ_CANDY_01_part_fx_end = 25;
-
-const IMG_OBJ_STAR_DISAPPEAR_Frame_1 = 0;
-const IMG_OBJ_STAR_DISAPPEAR_Frame_2 = 1;
-const IMG_OBJ_STAR_DISAPPEAR_Frame_3 = 2;
-const IMG_OBJ_STAR_DISAPPEAR_Frame_4 = 3;
-const IMG_OBJ_STAR_DISAPPEAR_Frame_5 = 4;
-const IMG_OBJ_STAR_DISAPPEAR_Frame_6 = 5;
-const IMG_OBJ_STAR_DISAPPEAR_Frame_7 = 6;
-const IMG_OBJ_STAR_DISAPPEAR_Frame_8 = 7;
-const IMG_OBJ_STAR_DISAPPEAR_Frame_9 = 8;
-const IMG_OBJ_STAR_DISAPPEAR_Frame_10 = 9;
-const IMG_OBJ_STAR_DISAPPEAR_Frame_11 = 10;
-const IMG_OBJ_STAR_DISAPPEAR_Frame_12 = 11;
-const IMG_OBJ_STAR_DISAPPEAR_Frame_13 = 12;
-
-const IMG_OBJ_BUBBLE_FLIGHT_Frame_1 = 0;
-const IMG_OBJ_BUBBLE_FLIGHT_Frame_2 = 1;
-const IMG_OBJ_BUBBLE_FLIGHT_Frame_3 = 2;
-const IMG_OBJ_BUBBLE_FLIGHT_Frame_4 = 3;
-const IMG_OBJ_BUBBLE_FLIGHT_Frame_5 = 4;
-const IMG_OBJ_BUBBLE_FLIGHT_Frame_6 = 5;
-const IMG_OBJ_BUBBLE_FLIGHT_Frame_7 = 6;
-const IMG_OBJ_BUBBLE_FLIGHT_Frame_8 = 7;
-const IMG_OBJ_BUBBLE_FLIGHT_Frame_9 = 8;
-const IMG_OBJ_BUBBLE_FLIGHT_Frame_10 = 9;
-const IMG_OBJ_BUBBLE_FLIGHT_Frame_11 = 10;
-const IMG_OBJ_BUBBLE_FLIGHT_Frame_12 = 11;
-const IMG_OBJ_BUBBLE_FLIGHT_Frame_13 = 12;
-const IMG_OBJ_BUBBLE_FLIGHT_Frame_14 = 13;
-
-const IMG_OBJ_BUBBLE_POP_Frame_1 = 0;
-const IMG_OBJ_BUBBLE_POP_Frame_2 = 1;
-const IMG_OBJ_BUBBLE_POP_Frame_3 = 2;
-const IMG_OBJ_BUBBLE_POP_Frame_4 = 3;
-const IMG_OBJ_BUBBLE_POP_Frame_5 = 4;
-const IMG_OBJ_BUBBLE_POP_Frame_6 = 5;
-const IMG_OBJ_BUBBLE_POP_Frame_7 = 6;
-const IMG_OBJ_BUBBLE_POP_Frame_8 = 7;
-const IMG_OBJ_BUBBLE_POP_Frame_9 = 8;
-const IMG_OBJ_BUBBLE_POP_Frame_10 = 9;
-const IMG_OBJ_BUBBLE_POP_Frame_11 = 10;
-const IMG_OBJ_BUBBLE_POP_Frame_12 = 11;
-
-const IMG_OBJ_BUBBLE_ATTACHED_bubble = 0;
-const IMG_OBJ_BUBBLE_ATTACHED_stain_01 = 1;
-const IMG_OBJ_BUBBLE_ATTACHED_stain_02 = 2;
-const IMG_OBJ_BUBBLE_ATTACHED_stain_03 = 3;
-
-const IMG_HUD_STAR_Frame_1 = 0;
-const IMG_HUD_STAR_Frame_2 = 1;
-const IMG_HUD_STAR_Frame_3 = 2;
-const IMG_HUD_STAR_Frame_4 = 3;
-const IMG_HUD_STAR_Frame_5 = 4;
-const IMG_HUD_STAR_Frame_6 = 5;
-const IMG_HUD_STAR_Frame_7 = 6;
-const IMG_HUD_STAR_Frame_8 = 7;
-const IMG_HUD_STAR_Frame_9 = 8;
-const IMG_HUD_STAR_Frame_10 = 9;
-const IMG_HUD_STAR_Frame_11 = 10;
-
-/* 480p vertical frames */
-/*
-let IMG_CHAR_ANIMATIONS_idle_start = 8;
-let IMG_CHAR_ANIMATIONS_idle_end = 26;
-let IMG_CHAR_ANIMATIONS_fail_start = 27;
-let IMG_CHAR_ANIMATIONS_fail_end = 39;
-let IMG_CHAR_ANIMATIONS_mouth_open_start = 40;
-let IMG_CHAR_ANIMATIONS_mouth_open_end = 48;
-let IMG_CHAR_ANIMATIONS_mouth_close_start = 49;
-let IMG_CHAR_ANIMATIONS_mouth_close_end = 52;
-let IMG_CHAR_ANIMATIONS_chew_start = 53;
-let IMG_CHAR_ANIMATIONS_chew_end = 61;
-let IMG_CHAR_ANIMATIONS_blink_start = 62;
-let IMG_CHAR_ANIMATIONS_blink_end = 63;
-let IMG_CHAR_ANIMATIONS_excited_start = 64;
-let IMG_CHAR_ANIMATIONS_excited_end = 83;
-let IMG_CHAR_ANIMATIONS_idle2_start = 84;
-let IMG_CHAR_ANIMATIONS_idle2_end = 108;
-let IMG_CHAR_ANIMATIONS_idle3_start = 109;
-let IMG_CHAR_ANIMATIONS_idle3_end = 124;
-let IMG_CHAR_ANIMATIONS_puzzled_start = 125;
-let IMG_CHAR_ANIMATIONS_puzzled_end = 151;
-let IMG_CHAR_ANIMATIONS_greeting_start = 152;
-let IMG_CHAR_ANIMATIONS_greeting_end = 180;
-*/
-
-const IMG_CHAR_ANIMATIONS_idle_start = 0;
-const IMG_CHAR_ANIMATIONS_idle_end = 18;
-const IMG_CHAR_ANIMATIONS_mouth_open_start = 19;
-const IMG_CHAR_ANIMATIONS_mouth_open_end = 27;
-const IMG_CHAR_ANIMATIONS_mouth_close_start = 28;
-const IMG_CHAR_ANIMATIONS_mouth_close_end = 31;
-const IMG_CHAR_ANIMATIONS_chew_start = 32;
-const IMG_CHAR_ANIMATIONS_chew_end = 40;
-const IMG_CHAR_ANIMATIONS_blink_start = 41;
-const IMG_CHAR_ANIMATIONS_blink_end = 42;
-const IMG_CHAR_ANIMATIONS_idle2_start = 43;
-const IMG_CHAR_ANIMATIONS_idle2_end = 67;
-const IMG_CHAR_ANIMATIONS_idle3_start = 68;
-const IMG_CHAR_ANIMATIONS_idle3_end = 83;
-
-const IMG_CHAR_ANIMATIONS2_excited_start = 0;
-const IMG_CHAR_ANIMATIONS2_excited_end = 19;
-const IMG_CHAR_ANIMATIONS2_puzzled_start = 20;
-const IMG_CHAR_ANIMATIONS2_puzzled_end = 46;
-const IMG_CHAR_ANIMATIONS2_greeting_start = 47;
-const IMG_CHAR_ANIMATIONS2_greeting_end = 76;
-
-const IMG_CHAR_ANIMATIONS3_fail_start = 0;
-const IMG_CHAR_ANIMATIONS3_fail_end = 12;
-
-const IMG_CHAR_GREETINGS_XMAS_start = 0;
-const IMG_CHAR_GREETINGS_XMAS_end = 33;
-const IMG_CHAR_IDLE_XMAS_idle_start = 0;
-const IMG_CHAR_IDLE_XMAS_idle_end = 30;
-const IMG_CHAR_IDLE_XMAS_idle2_start = 31;
-const IMG_CHAR_IDLE_XMAS_idle2_end = 61;
-const IMG_CHAR_ANIMATION_PADDINGTON_start = 0;
-const IMG_CHAR_ANIMATION_PADDINGTON_end = 38;
-const IMG_CHAR_ANIMATION_PADDINGTON_hat = 39;
 
 export default GameScene;
