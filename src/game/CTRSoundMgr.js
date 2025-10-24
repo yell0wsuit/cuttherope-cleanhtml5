@@ -20,7 +20,7 @@ const SoundMgr = {
 
     currentGameMusicId: ResourceId.SND_GAME_MUSIC,
     loopingSounds: new Map(), // Track looping sound state by instance
-    _getActiveLoopSoundIds: function () {
+    _getActiveLoopSoundIds() {
         const soundIds = new Set();
 
         for (const entry of this.loopingSounds.values()) {
@@ -31,7 +31,7 @@ const SoundMgr = {
 
         return soundIds;
     },
-    _deactivateLoopEntry: function (instanceId, entry) {
+    _deactivateLoopEntry(instanceId, entry) {
         if (!entry) {
             return;
         }
@@ -46,19 +46,19 @@ const SoundMgr = {
         this.loopingSounds.delete(instanceId);
     },
 
-    playSound: function (soundId) {
+    playSound(soundId) {
         if (this.soundEnabled) {
             Sounds.play(soundId);
         }
     },
 
-    pauseSound: function (soundId) {
+    pauseSound(soundId) {
         if (this.soundEnabled && Sounds.isPlaying(soundId)) {
             Sounds.pause(soundId);
         }
     },
 
-    resumeSound: function (soundId) {
+    resumeSound(soundId) {
         if (this.soundEnabled && Sounds.isPaused(soundId)) {
             Sounds.play(soundId);
         }
@@ -72,7 +72,7 @@ const SoundMgr = {
      * @param {string} instanceKey - Unique identifier for this loop instance (e.g., spark position or ID)
      * @param {number} delayMs - Optional delay before starting the loop (for staggered sounds)
      */
-    playLoopedSound: function (soundId, instanceKey, delayMs = 0) {
+    playLoopedSound(soundId, instanceKey, delayMs = 0) {
         if (!this.soundEnabled || this.audioPaused) {
             return;
         }
@@ -114,7 +114,7 @@ const SoundMgr = {
      * @param {string} soundId - The sound resource ID
      * @param {string} instanceKey - The unique identifier for this instance
      */
-    stopLoopedSoundInstance: function (soundId, instanceKey) {
+    stopLoopedSoundInstance(soundId, instanceKey) {
         const instanceId = `${soundId}_${instanceKey}`;
         const entry = this.loopingSounds.get(instanceId);
 
@@ -139,7 +139,7 @@ const SoundMgr = {
     /**
      * Stop all looping instances of a sound
      */
-    stopLoopedSound: function (soundId) {
+    stopLoopedSound(soundId) {
         const matchingInstanceIds = [];
 
         for (const [instanceId, entry] of this.loopingSounds) {
@@ -156,11 +156,11 @@ const SoundMgr = {
         Sounds.stop(soundId);
     },
 
-    stopSound: function (soundId) {
+    stopSound(soundId) {
         this.stopLoopedSound(soundId);
     },
 
-    _getAvailableGameMusic: function () {
+    _getAvailableGameMusic() {
         if (!this.gameMusicLibrary || this.gameMusicLibrary.length === 0) {
             return [];
         }
@@ -168,7 +168,7 @@ const SoundMgr = {
         return this.gameMusicLibrary;
     },
 
-    selectRandomGameMusic: function () {
+    selectRandomGameMusic() {
         const availableTracks = this._getAvailableGameMusic();
         if (availableTracks.length === 0) {
             this.currentGameMusicId = null;
@@ -188,7 +188,7 @@ const SoundMgr = {
         return nextId;
     },
 
-    playGameMusic: function () {
+    playGameMusic() {
         const availableTracks = this._getAvailableGameMusic();
         if (availableTracks.length === 0) {
             return;
@@ -203,7 +203,7 @@ const SoundMgr = {
         this.playMusic(trackId);
     },
 
-    playMusic: function (soundId) {
+    playMusic(soundId) {
         const previousMusicId = this.musicId;
 
         if (previousMusicId && previousMusicId !== soundId) {
@@ -229,7 +229,7 @@ const SoundMgr = {
         }
     },
 
-    pauseAudio: function () {
+    pauseAudio() {
         if (this.audioPaused) return; // Don't pause if already paused
 
         this.audioPaused = true;
@@ -240,14 +240,14 @@ const SoundMgr = {
         }
     },
 
-    pauseMusic: function () {
+    pauseMusic() {
         if (this.musicId && Sounds.isPlaying(this.musicId)) {
             Sounds.pause(this.musicId);
             this.musicResumeOffset = Sounds.getResumeOffset(this.musicId);
         }
     },
 
-    resumeAudio: function () {
+    resumeAudio() {
         if (!this.audioPaused) return;
 
         this.audioPaused = false;
@@ -263,20 +263,20 @@ const SoundMgr = {
         }
     },
 
-    resumeMusic: function () {
+    resumeMusic() {
         if (this.musicId && !Sounds.isPlaying(this.musicId)) {
             this.playMusic(this.musicId);
         }
     },
 
-    stopMusic: function () {
+    stopMusic() {
         if (this.musicId) {
             Sounds.stop(this.musicId);
             this.musicResumeOffset = 0;
         }
     },
 
-    setMusicEnabled: function (musicEnabled) {
+    setMusicEnabled(musicEnabled) {
         this.musicEnabled = musicEnabled;
         settings.setMusicEnabled(musicEnabled);
         if (this.musicEnabled) {
@@ -286,7 +286,7 @@ const SoundMgr = {
         }
     },
 
-    setSoundEnabled: function (soundEnabled) {
+    setSoundEnabled(soundEnabled) {
         this.soundEnabled = soundEnabled;
         settings.setSoundEnabled(soundEnabled);
 

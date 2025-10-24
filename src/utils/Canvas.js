@@ -1,9 +1,9 @@
 import RGBAColor from "@/core/RGBAColor";
 const Canvas = {
-    domReady: function (elementId) {
+    domReady(elementId) {
         this.setTarget(document.getElementById(elementId));
     },
-    setTarget: function (element) {
+    setTarget(element) {
         this.id = element;
         this.element = element;
         this.context = this.element.getContext("2d");
@@ -13,13 +13,13 @@ const Canvas = {
      * Sets the fill and stroke styles
      * @param color {RGBAColor}
      */
-    setStyleColor: function (color) {
+    setStyleColor(color) {
         const rgba = color.rgbaStyle();
         this.context.fillStyle = rgba;
         this.context.strokeStyle = rgba;
         //console.log('Color changed to: ' + rgba);
     },
-    setStyles: function (style) {
+    setStyles(style) {
         this.context.fillStyle = style;
         this.context.strokeStyle = style;
     },
@@ -31,7 +31,7 @@ const Canvas = {
      * @param points
      * @param style
      */
-    fillTriangleStrip: function (points, style) {
+    fillTriangleStrip(points, style) {
         const ctx = this.context;
         let point = points[0];
         ctx.fillStyle = style;

@@ -12,14 +12,14 @@ let progressBar, betterLoader, gameFooterSocial;
 
 const App = {
     // Gives the app a chance to begin working before the DOM is ready
-    init: function () {
+    init() {
         preloader.init();
         im.init();
         PubSub.publish(PubSub.ChannelId.AppInit);
     },
 
     // Called by the loader when the DOM is loaded
-    domReady: function () {
+    domReady() {
         progressBar = document.getElementById("progress");
         betterLoader = document.getElementById("betterLoader");
         gameFooterSocial = document.getElementById("gameFooterSocial");
@@ -68,7 +68,7 @@ const App = {
         PubSub.publish(PubSub.ChannelId.AppDomReady);
     },
 
-    run: function () {
+    run() {
         // Called by the loader when the app is ready to run
 
         // Subscribe to preloader progress updates

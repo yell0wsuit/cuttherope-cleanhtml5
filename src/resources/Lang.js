@@ -37,7 +37,7 @@ const getLocalizedText = function (locEntry) {
 };
 
 const Lang = {
-    boxText: function (boxIndex, includeNumber) {
+    boxText(boxIndex, includeNumber) {
         const locEntry = edition.boxText[boxIndex];
         let text = getLocalizedText(locEntry);
 
@@ -48,7 +48,7 @@ const Lang = {
 
         return text;
     },
-    menuText: function (menuStringId) {
+    menuText(menuStringId) {
         let locEntry, i;
         const len = menuStrings.length;
         for (i = 0; i < len; i++) {
@@ -62,7 +62,7 @@ const Lang = {
         return "";
     },
     getText: getLocalizedText,
-    getCurrentId: function () {
+    getCurrentId() {
         return settings.getLangId();
     },
 };

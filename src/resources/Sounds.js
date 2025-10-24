@@ -94,10 +94,10 @@ const calculateResumeOffset = (soundData) => {
 
 // export a singleton which manages audio using the Web Audio API
 const Sounds = {
-    onReady: function (callback) {
+    onReady(callback) {
         callback();
     },
-    play: function (soundId, onComplete, options = {}) {
+    play(soundId, onComplete, options = {}) {
         const soundData = getSoundData(soundId);
         if (!soundData) return;
 
@@ -194,19 +194,19 @@ const Sounds = {
             }
         }
     },
-    isPlaying: function (soundId) {
+    isPlaying(soundId) {
         const soundData = getSoundData(soundId);
         if (!soundData) return false;
 
         return soundData.playingSources.size > 0;
     },
-    isPaused: function (soundId) {
+    isPaused(soundId) {
         const soundData = getSoundData(soundId);
         if (!soundData) return false;
 
         return soundData.isPaused && soundData.playingSources.size === 0;
     },
-    pause: function (soundId) {
+    pause(soundId) {
         const soundData = getSoundData(soundId);
         if (!soundData) return;
 
@@ -214,7 +214,7 @@ const Sounds = {
         stopSources(soundData, false);
         soundData.isPaused = true;
     },
-    stop: function (soundId) {
+    stop(soundId) {
         const soundData = getSoundData(soundId);
         if (!soundData) return;
 
@@ -222,7 +222,7 @@ const Sounds = {
         soundData.isPaused = false;
         soundData.resumeOffset = 0;
     },
-    stopInstance: function (soundId, instanceId) {
+    stopInstance(soundId, instanceId) {
         if (!instanceId) return;
 
         const soundData = getSoundData(soundId);
@@ -239,13 +239,13 @@ const Sounds = {
             soundData.resumeOffset = 0;
         }
     },
-    getResumeOffset: function (soundId) {
+    getResumeOffset(soundId) {
         const soundData = getSoundData(soundId);
         if (!soundData) return 0;
 
         return soundData.resumeOffset || 0;
     },
-    setVolume: function (soundId, percent) {
+    setVolume(soundId, percent) {
         const soundData = getSoundData(soundId);
         if (!soundData) return;
 

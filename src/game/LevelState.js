@@ -6,7 +6,7 @@ const LevelState = {
     level: 0,
     survival: false,
 
-    loadLevel: function (pack, level) {
+    loadLevel(pack, level) {
         this.pack = pack - 1;
         this.level = level - 1;
 

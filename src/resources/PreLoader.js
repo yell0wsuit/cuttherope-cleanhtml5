@@ -219,7 +219,7 @@ const loadImages = function () {
 };
 
 const PreLoader = {
-    init: function () {
+    init() {
         ResourceMgr.init();
         JsonLoader.init();
 
@@ -228,7 +228,7 @@ const PreLoader = {
             LoadAnimation.init();
         }
     },
-    domReady: function () {
+    domReady() {
         if (LoadAnimation) {
             LoadAnimation.domReady();
             LoadAnimation.show();
@@ -262,7 +262,7 @@ const PreLoader = {
             startResourceLoading();
         }
     },
-    run: function (onComplete) {
+    run(onComplete) {
         completeCallback = onComplete;
         checkMenuLoadComplete();
     },

@@ -141,14 +141,14 @@ const startIfReady = function () {
 };
 
 const SoundLoader = {
-    start: function () {
+    start() {
         startRequested = true;
         startIfReady();
     },
-    onMenuComplete: function (callback) {
+    onMenuComplete(callback) {
         completeListeners.push(callback);
     },
-    onProgress: function (callback) {
+    onProgress(callback) {
         progressListeners.push(callback);
         if (currentTotal > 0) {
             try {
@@ -158,7 +158,7 @@ const SoundLoader = {
             }
         }
     },
-    getSoundCount: function () {
+    getSoundCount() {
         return edition.menuSoundIds.length + edition.gameSoundIds.length;
     },
 };

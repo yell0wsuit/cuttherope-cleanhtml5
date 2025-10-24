@@ -25,7 +25,7 @@ const loadJson = (url) => {
 };
 
 const JsonLoader = {
-    init: function () {
+    init() {
         menuJsonLoadComplete = false;
         loadedJsonFiles = 0;
         failedJsonFiles = 0;
@@ -33,19 +33,19 @@ const JsonLoader = {
         jsonCache.clear();
     },
 
-    getJsonFileCount: function () {
+    getJsonFileCount() {
         return totalJsonFiles;
     },
 
-    onProgress: function (callback) {
+    onProgress(callback) {
         progressCallback = callback;
     },
 
-    onMenuComplete: function (callback) {
+    onMenuComplete(callback) {
         checkCompleteCallback = callback;
     },
 
-    start: function () {
+    start() {
         // Use the configured base from vite config
         const baseUrl = import.meta.env.BASE_URL || "/";
         const jsonFiles = [];
@@ -108,11 +108,11 @@ const JsonLoader = {
         });
     },
 
-    getJson: function (key) {
+    getJson(key) {
         return jsonCache.get(key);
     },
 
-    getAllLevels: function () {
+    getAllLevels() {
         const levels = new Map();
         for (const [key, value] of jsonCache.entries()) {
             if (key.startsWith("level-")) {
@@ -129,7 +129,7 @@ const JsonLoader = {
         return levels;
     },
 
-    getBoxMetadata: function () {
+    getBoxMetadata() {
         return jsonCache.get("boxMetadata");
     },
 };

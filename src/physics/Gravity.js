@@ -9,16 +9,16 @@ const Gravity = {
      */
     EARTH_Y: GCONST,
     current: new Vector(0, GCONST),
-    toggle: function () {
+    toggle() {
         Gravity.current.y = -Gravity.current.y;
     },
-    isZero: function () {
+    isZero() {
         return Gravity.current.y === 0 && Gravity.current.x === 0;
     },
-    isNormal: function () {
+    isNormal() {
         return Gravity.current.y === Gravity.EARTH_Y && Gravity.current.x === 0;
     },
-    reset: function () {
+    reset() {
         Gravity.current.x = 0;
         Gravity.current.y = GCONST;
     },
