@@ -90,7 +90,7 @@ export default function createResultsHandler(manager) {
         const secondsToMin = (sec) => {
             const minutes = (sec / 60) | 0;
             const seconds = Math.round(sec % 60);
-            return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+            return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
         };
 
         const doStarCountdown = (from, callback) => {

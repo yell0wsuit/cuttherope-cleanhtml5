@@ -117,13 +117,13 @@ class Box {
         this.omNomImg.src = `${platform.uiImageBaseUrl}box_omnom.png`;
 
         this.lockImg = new Image();
-        this.lockImg.src = platform.uiImageBaseUrl + "box_lock.png";
+        this.lockImg.src = `${platform.uiImageBaseUrl}box_lock.png`;
 
         this.starImg = new Image();
-        this.starImg.src = platform.uiImageBaseUrl + "star_result_small.png";
+        this.starImg.src = `${platform.uiImageBaseUrl}star_result_small.png`;
 
         this.perfectMark = new Image();
-        this.perfectMark.src = platform.uiImageBaseUrl + "perfect_mark.png";
+        this.perfectMark.src = `${platform.uiImageBaseUrl}perfect_mark.png`;
 
         this.includeBoxNumberInTitle = true;
     }

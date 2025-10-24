@@ -214,7 +214,7 @@ class Vector {
     }
     /** @return {string} */
     toString() {
-        return "[" + this.x + ", " + this.y + "]";
+        return `[${this.x}, ${this.y}]`;
     }
     /**
      * Add another vector to this vector (modifies this vector)

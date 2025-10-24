@@ -18,17 +18,7 @@ class RGBAColor {
         this.a = a;
     }
     rgbaStyle() {
-        return (
-            "rgba(" +
-            ((this.r * 255) >> 0) +
-            "," +
-            ((this.g * 255) >> 0) +
-            "," +
-            ((this.b * 255) >> 0) +
-            "," +
-            this.a.toFixed(2) +
-            ")"
-        );
+        return `rgba(${(this.r * 255) >> 0},${(this.g * 255) >> 0},${(this.b * 255) >> 0},${this.a.toFixed(2)})`;
     }
     /**
      * @param other {RGBAColor}

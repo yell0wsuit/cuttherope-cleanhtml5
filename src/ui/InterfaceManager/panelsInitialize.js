@@ -383,7 +383,7 @@ export default function createPanelInitializer(manager) {
                     SocialHelper.postToFeed(
                         platform.getGameCompleteShareText(totalStars, possibleStars),
                         SocialHelper.siteDescription,
-                        platform.getScoreImageBaseUrl() + "score" + totalStars + ".png",
+                        `${platform.getScoreImageBaseUrl()}score${totalStars}.png`,
                         () => true
                     );
                 });
@@ -502,7 +502,7 @@ export default function createPanelInitializer(manager) {
                             langElement,
                             "lang-system lang-en lang-de lang-ru lang-fr lang-ca lang-br lang-es lang-it lang-nl lang-ko lang-ja lang-zh"
                         );
-                        addClass(langElement, "lang-" + LangId.toCountryCode(langId));
+                        addClass(langElement, `lang-${LangId.toCountryCode(langId)}`);
                         if (langId >= 4 && langId <= 9) {
                             addClass(langElement, "lang-system");
                         }

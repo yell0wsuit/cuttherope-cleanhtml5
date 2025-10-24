@@ -257,7 +257,7 @@ function stringToArray(ctx, string, width) {
                 output[line] = "";
             }
 
-            const text = input[i][j] + " ";
+            const text = `${input[i][j]} `;
             const w = ctx.measureText(text).width;
 
             // overflow to a newline

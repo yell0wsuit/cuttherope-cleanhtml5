@@ -33,9 +33,9 @@ class ZoomManager {
 
             // set the transform scale and origin for each browser prefix
             for (i = 0, len = prefixes.length; i < len; i++) {
-                key = prefixes[i] + "Transform";
+                key = `${prefixes[i]}Transform`;
                 this.$el.style[key] = cssScale;
-                this.$el.style[prefixes[i] + "TransformOrigin"] = transformOrigin;
+                this.$el.style[`${prefixes[i]}TransformOrigin`] = transformOrigin;
             }
 
             // Apply additional CSS properties

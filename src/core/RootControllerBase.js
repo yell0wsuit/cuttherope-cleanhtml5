@@ -126,7 +126,7 @@ class RootController extends ViewController {
                     const ctx = Canvas.context;
                     ctx.font = "20px Arial";
                     ctx.fillStyle = RGBAColor.styles.SOLID_OPAQUE;
-                    ctx.fillText(frameRate + " fps", 10, resolution.CANVAS_HEIGHT - 10);
+                    ctx.fillText(`${frameRate} fps`, 10, resolution.CANVAS_HEIGHT - 10);
                 }
             }
         }
