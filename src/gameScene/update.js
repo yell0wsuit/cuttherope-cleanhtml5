@@ -6,7 +6,7 @@ import Canvas from "@/utils/Canvas";
 import Constants from "@/utils/Constants";
 import ConstraintType from "@/physics/ConstraintType";
 import GameObject from "@/visual/GameObject";
-import * as GameSceneConstants from "@/GameSceneConstants";
+import * as GameSceneConstants from "@/GameScene/constants";
 import ImageElement from "@/visual/ImageElement";
 import KeyFrame from "@/visual/KeyFrame";
 import MathHelper from "@/utils/MathHelper";

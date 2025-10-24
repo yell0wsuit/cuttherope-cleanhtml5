@@ -1,9 +1,9 @@
 import BaseElement from "@/visual/BaseElement";
-import { GameSceneInit } from "./GameSceneInit";
-import { GameSceneLoaders } from "./GameSceneLoaders";
-import { GameSceneCharacter } from "./GameSceneCharacter";
-import { GameSceneUpdate } from "./GameSceneUpdate";
-import { GameSceneTouch } from "./GameSceneTouch";
+import { GameSceneInit } from "@/GameScene/init";
+import { GameSceneLoaders } from "@/GameScene/loaders";
+import { GameSceneCharacter } from "@/GameScene/character";
+import { GameSceneUpdate } from "@/GameScene/update";
+import { GameSceneTouch } from "@/GameScene/touch";
 
 const GameScene = BaseElement.extend(
     Object.assign(

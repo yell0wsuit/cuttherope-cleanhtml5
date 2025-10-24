@@ -24,7 +24,7 @@ import Timeline from "@/visual/Timeline";
 import TutorialText from "@/game/TutorialText";
 import Vector from "@/core/Vector";
 import RGBAColor from "@/core/RGBAColor";
-import * as GameSceneConstants from "@/GameSceneConstants";
+import * as GameSceneConstants from "@/GameScene/constants";
 import Constants from "@/utils/Constants";
 import resolution from "@/resolution";
 import LevelState from "@/game/LevelState";

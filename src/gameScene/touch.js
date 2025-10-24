@@ -1,6 +1,6 @@
 import Vector from "@/core/Vector";
 import Constants from "@/utils/Constants";
-import * as GameSceneConstants from "@/GameSceneConstants";
+import * as GameSceneConstants from "@/GameScene/constants";
 import Camera2D from "@/visual/Camera2D";
 import Rectangle from "@/core/Rectangle";
 import MathHelper from "@/utils/MathHelper";
