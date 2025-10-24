@@ -10,18 +10,20 @@ let progressCallback = null;
 // Cache for loaded JSON data
 const jsonCache = new Map();
 
-const loadJson = (url) => {
-    return fetch(url)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Request failed with status ${response.status}`);
-            }
-            return response.json();
-        })
-        .catch((error) => {
-            window.console?.error?.("Failed to load JSON:", url, error);
-            throw error;
-        });
+const loadJson = async (url) => {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+    }
+
+    const text = await response.text();
+
+    try {
+        return JSON.parse(text);
+    } catch (error) {
+        window.console?.error?.("Failed to parse JSON:", url, error);
+        throw error;
+    }
 };
 
 const JsonLoader = {

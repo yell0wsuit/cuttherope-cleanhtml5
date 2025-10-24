@@ -3,6 +3,7 @@ import platform from "@/platform.js";
 import "./ctrExports.js";
 import RootController from "@/game/CTRRootController";
 import SoundMgr from "@/game/CTRSoundMgr";
+import { registerSW } from "virtual:pwa-register";
 
 window.addEventListener("contextmenu", (event) => {
     event.preventDefault();
@@ -20,4 +21,13 @@ if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", boot, { once: true });
 } else {
     boot();
+}
+
+if ("serviceWorker" in navigator) {
+    registerSW({
+        immediate: true,
+        onOfflineReady() {
+            window.console?.info?.("Cut the Rope is ready for offline play.");
+        },
+    });
 }

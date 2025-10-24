@@ -210,7 +210,10 @@ export const GameSceneInit = {
         if (currentPack != LevelState.pack) {
             this.bgTexture = ResourceMgr.getTexture(bgrID);
             const canvasBackground = document.getElementById("c");
-            canvasBackground.style.background = `url('${this.bgTexture.image.src}')`;
+            const backgroundSource = this.bgTexture?.imageSrc || this.bgTexture?.image?.src || "";
+            canvasBackground.style.background = backgroundSource
+                ? `url('${backgroundSource}')`
+                : "";
             canvasBackground.style.display = "block";
 
             currentPack = LevelState.pack;
