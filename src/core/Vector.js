@@ -216,38 +216,56 @@ class Vector {
     toString() {
         return "[" + this.x + ", " + this.y + "]";
     }
+    /**
+     * Add another vector to this vector (modifies this vector)
+     * @param v2 {Vector}
+     */
+    add(v2) {
+        this.x += v2.x;
+        this.y += v2.y;
+    }
+    /**
+     * Subtract another vector from this vector (modifies this vector)
+     * @param v2 {Vector}
+     */
+    subtract(v2) {
+        this.x -= v2.x;
+        this.y -= v2.y;
+    }
+    /**
+     * Multiply this vector by a scalar (modifies this vector)
+     * @param s {number} scalar multiplier
+     */
+    multiply(s) {
+        this.x *= s;
+        this.y *= s;
+    }
+    /**
+     * Divide this vector by a scalar (modifies this vector)
+     * @param s {number} scalar divisor
+     */
+    divide(s) {
+        this.x /= s;
+        this.y /= s;
+    }
+    /**
+     * Calculate distance to another vector
+     * @param v2 {Vector}
+     * @return {number}
+     */
+    distance(v2) {
+        const tx = this.x - v2.x,
+            ty = this.y - v2.y,
+            dot = tx * tx + ty * ty;
+        return Math.sqrt(dot);
+    }
+    /**
+     * Normalize this vector (modifies this vector)
+     */
+    normalize() {
+        this.multiply(1 / this.getLength());
+    }
 }
-
-Vector.prototype.add = function (v2) {
-    this.x += v2.x;
-    this.y += v2.y;
-};
-
-Vector.prototype.subtract = function (v2) {
-    this.x -= v2.x;
-    this.y -= v2.y;
-};
-
-Vector.prototype.multiply = function (s) {
-    this.x *= s;
-    this.y *= s;
-};
-
-Vector.prototype.divide = function (s) {
-    this.x /= s;
-    this.y /= s;
-};
-
-Vector.prototype.distance = function (v2) {
-    const tx = this.x - v2.x,
-        ty = this.y - v2.y,
-        dot = tx * tx + ty * ty;
-    return Math.sqrt(dot);
-};
-
-Vector.prototype.normalize = function () {
-    this.multiply(1 / this.getLength());
-};
 
 Vector.zero = new Vector(0, 0);
 
