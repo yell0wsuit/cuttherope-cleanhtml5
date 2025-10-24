@@ -6,7 +6,7 @@ import Camera2D from "@/visual/Camera2D";
 import ConstrainedPoint from "@/physics/ConstrainedPoint";
 import Constants from "@/utils/Constants";
 import GameObject from "@/visual/GameObject";
-import * as GameSceneConstants from "@/GameScene/constants";
+import * as GameSceneConstants from "@/gameScene/constants";
 import LevelState from "@/game/LevelState";
 import ResourceId from "@/resources/ResourceId";
 import ResourceMgr from "@/resources/ResourceMgr";

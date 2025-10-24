@@ -1,5 +1,5 @@
 import MathHelper from "@/utils/MathHelper";
-import * as GameSceneConstants from "@/GameScene/constants";
+import * as GameSceneConstants from "@/gameScene/constants";
 import { IS_XMAS, IS_JANUARY } from "@/resources/ResData";
 
 export const GameSceneCharacter = {
