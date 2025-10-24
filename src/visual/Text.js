@@ -8,6 +8,7 @@ import ResourceMgr from "@/resources/ResourceMgr";
 import resolution from "@/resolution";
 import MathHelper from "@/utils/MathHelper";
 import settings from "@/game/CTRSettings";
+
 //settings.getLangId()
 class FormattedString {
     constructor(str, width) {
@@ -16,9 +17,9 @@ class FormattedString {
     }
 }
 
-const Text = BaseElement.extend({
-    init: function (font) {
-        this._super();
+class Text extends BaseElement {
+    constructor(font) {
+        super();
         this.font = font;
         this.formattedStrings = [];
         this.width = Constants.UNDEFINED;
@@ -27,8 +28,9 @@ const Text = BaseElement.extend({
         this.d = new ImageMultiDrawer(font.texture);
         this.wrapLongWords = false;
         this.maxHeight = Constants.UNDEFINED;
-    },
-    setString: function (newString, width) {
+    }
+
+    setString(newString, width) {
         this.string = newString;
         if (width == null || width === Constants.UNDEFINED) {
             this.wrapWidth = Math.ceil(this.font.stringWidth(newString));
@@ -40,8 +42,9 @@ const Text = BaseElement.extend({
             this.formatText();
             this.updateDrawerValues();
         }
-    },
-    updateDrawerValues: function () {
+    }
+
+    updateDrawerValues() {
         let dx = 0,
             dy = 0,
             n = 0;
@@ -117,8 +120,9 @@ const Text = BaseElement.extend({
         if (this.maxHeight !== Constants.UNDEFINED) {
             this.height = Math.min(this.height, this.maxHeight);
         }
-    },
-    draw: function () {
+    }
+
+    draw() {
         this.preDraw();
 
         // only draw if the image is non-transparent
@@ -133,8 +137,9 @@ const Text = BaseElement.extend({
         }
 
         this.postDraw();
-    },
-    formatText: function () {
+    }
+
+    formatText() {
         const strIdx = [],
             s = this.string,
             len = s.length;
@@ -204,8 +209,9 @@ const Text = BaseElement.extend({
                 fs = new FormattedString(str, wd);
             this.formattedStrings.push(fs);
         }
-    },
-    createFromXml: function (xml) {
+    }
+
+    createFromXml(xml) {
         const resId = xml.attrInt(xml, "font"),
             font = ResourceMgr.getFont(resId),
             element = new Text(font);
@@ -229,8 +235,8 @@ const Text = BaseElement.extend({
         }
 
         return element;
-    },
-});
+    }
+}
 
 function stringToArray(ctx, string, width) {
     // convert string to array of lines then words

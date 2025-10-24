@@ -2,13 +2,14 @@ import BaseElement from "@/visual/BaseElement";
 import Canvas from "@/utils/Canvas";
 import Constants from "@/utils/Constants";
 import Rectangle from "@/core/Rectangle";
+
 /**
  * Holds the information necessary to draw multiple quads from a
  * shared source image texture
  */
-const ImageMultiDrawer = BaseElement.extend({
-    init: function (texture) {
-        this._super();
+class ImageMultiDrawer extends BaseElement {
+    constructor(texture) {
+        super();
 
         this.texture = texture;
         this.numberOfQuadsToDraw = Constants.UNDEFINED;
@@ -24,26 +25,30 @@ const ImageMultiDrawer = BaseElement.extend({
 
         // NOTE: in OpenGL its possible to draw multiple quads at once. In
         // canvas we'll just draw them sequentially (no need for indices buffer)
-    },
-    setTextureQuad: function (index, textureQuad, vertexQuad, alpha) {
+    }
+
+    setTextureQuad(index, textureQuad, vertexQuad, alpha) {
         this.texCoordinates[index] = textureQuad;
         this.vertices[index] = vertexQuad;
         this.alphas[index] = alpha != null ? alpha : 1;
-    },
-    removeQuads: function (index) {
+    }
+
+    removeQuads(index) {
         this.texCoordinates.splice(index, 1);
         this.vertices.splice(index, 1);
         this.alphas.splice(index, 1);
-    },
-    mapTextureQuad: function (quadIndex, dx, dy, index) {
+    }
+
+    mapTextureQuad(quadIndex, dx, dy, index) {
         this.texCoordinates[index] = Rectangle.copy(this.texture.rects[quadIndex]);
 
         const offset = this.texture.offsets[quadIndex],
             rect = this.texture.rects[quadIndex];
         this.vertices[index] = new Rectangle(dx + offset.x, dy + offset.y, rect.w, rect.h);
         this.alphas[index] = 1;
-    },
-    drawNumberOfQuads: function (n) {
+    }
+
+    drawNumberOfQuads(n) {
         if (n > this.texCoordinates.length) {
             n = this.texCoordinates.length;
         }
@@ -141,8 +146,9 @@ const ImageMultiDrawer = BaseElement.extend({
                 ctx.globalAlpha = previousAlpha;
             }
         }
-    },
-    draw: function () {
+    }
+
+    draw() {
         this.preDraw();
 
         // only draw if the image is non-transparent
@@ -166,7 +172,7 @@ const ImageMultiDrawer = BaseElement.extend({
         }
 
         this.postDraw();
-    },
-});
+    }
+}
 
 export default ImageMultiDrawer;

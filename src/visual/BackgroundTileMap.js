@@ -1,17 +1,20 @@
 import TileMap from "@/visual/TileMap";
 import Vector from "@/core/Vector";
-const BackgroundTileMap = TileMap.extend({
-    init: function (rows, columns) {
-        this._super(rows, columns);
+
+class BackgroundTileMap extends TileMap {
+    constructor(rows, columns) {
+        super(rows, columns);
         this.lastCameraPos = Vector.newUndefined();
-    },
-    updateWithCameraPos: function (pos) {
+    }
+
+    updateWithCameraPos(pos) {
         if (!this.lastCameraPos.equals(pos)) {
-            this._super(pos);
+            super.updateWithCameraPos(pos);
             this.lastCameraPos.copyFrom(pos);
         }
-    },
-    draw: function () {
+    }
+
+    draw() {
         /* seems like this should be taken care of in BaseElement.preDraw?
 
              let rotationOffsetX = this.back.drawX + (this.back.width >> 1) + this.back.rotationCenterX,
@@ -24,8 +27,8 @@ const BackgroundTileMap = TileMap.extend({
              ctx.translate(-rotationOffsetX, -rotationOffsetY);
              */
 
-        this._super();
-    },
-});
+        super.draw();
+    }
+}
 
 export default BackgroundTileMap;

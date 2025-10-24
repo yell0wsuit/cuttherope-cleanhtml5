@@ -5,9 +5,9 @@ import Constants from "@/utils/Constants";
 import Alignment from "@/core/Alignment";
 const TOUCH_MOVE_AND_UP_ZONE_INCREASE = 15;
 
-const GenericButton = BaseElement.extend({
-    init: function (id) {
-        this._super();
+class GenericButton extends BaseElement {
+    constructor(id) {
+        super();
 
         this.buttonId = id;
         this.state = GenericButton.StateType.UP;
@@ -25,14 +25,16 @@ const GenericButton = BaseElement.extend({
             Constants.UNDEFINED,
             Constants.UNDEFINED
         );
-    },
-    initWithElements: function (up, down) {
+    }
+
+    initWithElements(up, down) {
         up.parentAnchor = down.parentAnchor = Alignment.TOP | Alignment.LEFT;
         this.addChildWithID(up, GenericButton.StateType.UP);
         this.addChildWithID(down, GenericButton.StateType.DOWN);
         this.setState(GenericButton.StateType.UP);
-    },
-    initWithTextures: function (upTexture, downTexture) {
+    }
+
+    initWithTextures(upTexture, downTexture) {
         const up = new ImageElement();
         up.initTexture(upTexture);
 
@@ -40,25 +42,29 @@ const GenericButton = BaseElement.extend({
         down.initTexture(downTexture);
 
         this.initWithElements(up, down);
-    },
-    forceTouchRect: function (rect) {
+    }
+
+    forceTouchRect(rect) {
         this.forcedTouchZone = rect;
-    },
-    setTouchIncrease: function (left, right, top, bottom) {
+    }
+
+    setTouchIncrease(left, right, top, bottom) {
         this.touchLeftInc = left;
         this.touchRightInc = right;
         this.touchTopInc = top;
         this.touchBottomInc = bottom;
-    },
-    setState: function (s) {
+    }
+
+    setState(s) {
         this.state = s;
         const up = this.getChild(GenericButton.StateType.UP),
             down = this.getChild(GenericButton.StateType.DOWN);
 
         up.setEnabled(s === GenericButton.StateType.UP);
         down.setEnabled(s === GenericButton.StateType.DOWN);
-    },
-    isInTouchZone: function (tx, ty, td) {
+    }
+
+    isInTouchZone(tx, ty, td) {
         const tzIncrease = td ? 0 : TOUCH_MOVE_AND_UP_ZONE_INCREASE;
 
         if (this.forcedTouchZone.w !== Constants.UNDEFINED) {
@@ -80,9 +86,10 @@ const GenericButton = BaseElement.extend({
                 this.height + (this.touchTopInc + this.touchBottomInc) + tzIncrease * 2
             );
         }
-    },
-    onTouchDown: function (tx, ty) {
-        this._super(tx, ty);
+    }
+
+    onTouchDown(tx, ty) {
+        super.onTouchDown(tx, ty);
 
         if (this.state === GenericButton.StateType.UP) {
             if (this.isInTouchZone(tx, ty, true)) {
@@ -92,9 +99,10 @@ const GenericButton = BaseElement.extend({
         }
 
         return false;
-    },
-    onTouchUp: function (tx, ty) {
-        this._super(tx, ty);
+    }
+
+    onTouchUp(tx, ty) {
+        super.onTouchUp(tx, ty);
 
         if (this.state === GenericButton.StateType.DOWN) {
             this.setState(GenericButton.StateType.UP);
@@ -107,9 +115,10 @@ const GenericButton = BaseElement.extend({
         }
 
         return false;
-    },
-    onTouchMove: function (tx, ty) {
-        this._super(tx, ty);
+    }
+
+    onTouchMove(tx, ty) {
+        super.onTouchMove(tx, ty);
 
         if (this.state === GenericButton.StateType.DOWN) {
             if (!this.isInTouchZone(tx, ty, false)) {
@@ -120,9 +129,10 @@ const GenericButton = BaseElement.extend({
         }
 
         return false;
-    },
-    addChildWithID: function (child, id) {
-        this._super(child, id);
+    }
+
+    addChildWithID(child, id) {
+        super.addChildWithID(child, id);
 
         child.parentAnchor = Alignment.TOP | Alignment.LEFT;
 
@@ -131,8 +141,8 @@ const GenericButton = BaseElement.extend({
             this.height = child.height;
             this.setState(GenericButton.StateType.UP);
         }
-    },
-});
+    }
+}
 
 GenericButton.StateType = {
     UP: 0,

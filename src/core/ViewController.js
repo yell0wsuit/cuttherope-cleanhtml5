@@ -1,6 +1,6 @@
-import Class from "@/utils/Class";
 import Constants from "@/utils/Constants";
 import PubSub from "@/utils/PubSub";
+
 // COMMENTS from iOS sources:
 // controller philosophy
 // - there's a root controller which is notified about every controller state change
@@ -13,8 +13,8 @@ import PubSub from "@/utils/PubSub";
 /**
  * @constructor
  */
-const ViewController = Class.extend({
-    init: function (parent) {
+class ViewController {
+    constructor(parent) {
         this.controllerState = ViewController.StateType.INACTIVE;
         this.views = [];
         this.children = [];
@@ -43,16 +43,19 @@ const ViewController = Class.extend({
             this.avgDelta,
             this.avgDelta,
         ];
-    },
-    activate: function () {
+    }
+
+    activate() {
         //Debug.log('View controller activated');
         this.controllerState = ViewController.StateType.ACTIVE;
         PubSub.publish(PubSub.ChannelId.ControllerActivated, this);
-    },
-    deactivate: function () {
+    }
+
+    deactivate() {
         PubSub.publish(PubSub.ChannelId.ControllerDeactivateRequested, this);
-    },
-    deactivateImmediately: function () {
+    }
+
+    deactivateImmediately() {
         this.controllerState = ViewController.StateType.INACTIVE;
         if (this.activeViewID !== Constants.UNDEFINED) {
             this.hideActiveView();
@@ -60,8 +63,9 @@ const ViewController = Class.extend({
         // notify root and parent controllers
         PubSub.publish(PubSub.ChannelId.ControllerDeactivate, this);
         this.parent.onChildDeactivated(this.parent.activeChildID);
-    },
-    pause: function () {
+    }
+
+    pause() {
         this.controllerState = ViewController.StateType.PAUSED;
         PubSub.publish(PubSub.ChannelId.ControllerPaused, this);
 
@@ -69,8 +73,9 @@ const ViewController = Class.extend({
             this.pausedViewID = this.activeViewID;
             this.hideActiveView();
         }
-    },
-    unpause: function () {
+    }
+
+    unpause() {
         this.controllerState = ViewController.StateType.ACTIVE;
         if (this.activeChildID !== Constants.UNDEFINED) {
             this.activeChildID = Constants.UNDEFINED;
@@ -81,8 +86,9 @@ const ViewController = Class.extend({
         if (this.pausedViewID !== Constants.UNDEFINED) {
             this.showView(this.pausedViewID);
         }
-    },
-    update: function () {
+    }
+
+    update() {
         if (this.activeViewID === Constants.UNDEFINED) {
             return;
         }
@@ -97,18 +103,21 @@ const ViewController = Class.extend({
             v.update(0.016);
             this.frameBalance -= 1;
         }
-    },
-    resetLastTime: function () {
+    }
+
+    resetLastTime() {
         this.lastTime = Constants.UNDEFINED;
-    },
-    calculateTimeDelta: function (time) {
+    }
+
+    calculateTimeDelta(time) {
         this.delta = this.lastTime !== Constants.UNDEFINED ? (time - this.lastTime) / 1000 : 0;
         this.lastTime = time;
 
         // if the physics engine requires 60 fps, how many frames do
         // we need to update?
         this.frameBalance += this.clampDelta(this.delta) / 0.016;
-    },
+    }
+
     /**
      * Make sure a delta doesn't exceed some reasonable bounds
      * Delta changes might be large if we are using requestAnimationFrame
@@ -116,7 +125,7 @@ const ViewController = Class.extend({
      * preserve power).
      * @param delta {number}
      */
-    clampDelta: function (delta) {
+    clampDelta(delta) {
         if (delta < 0.016) {
             // sometimes we'll get a bunch of frames batched together
             // but we don't want to go below the 60 fps delta
@@ -126,8 +135,9 @@ const ViewController = Class.extend({
             return 0.05;
         }
         return delta;
-    },
-    calculateFPS: function () {
+    }
+
+    calculateFPS() {
         this.frames++;
         this.accumDt += this.delta;
 
@@ -149,22 +159,26 @@ const ViewController = Class.extend({
             }
             this.avgDelta /= len;
         }
-    },
-    addView: function (v, index) {
+    }
+
+    addView(v, index) {
         this.views[index] = v;
-    },
-    deleteView: function (viewIndex) {
+    }
+
+    deleteView(viewIndex) {
         this.views[viewIndex] = null;
-    },
-    hideActiveView: function () {
+    }
+
+    hideActiveView() {
         const previousView = this.views[this.activeViewID];
         if (previousView) {
             PubSub.publish(PubSub.ChannelId.ControllerViewHidden, previousView);
             previousView.hide();
             this.activeViewID = Constants.UNDEFINED;
         }
-    },
-    showView: function (index) {
+    }
+
+    showView(index) {
         if (this.activeViewID != Constants.UNDEFINED) {
             this.hideActiveView();
         }
@@ -172,23 +186,28 @@ const ViewController = Class.extend({
         const v = this.views[index];
         PubSub.publish(PubSub.ChannelId.ControllerViewShow, v);
         v.show();
-    },
-    activeView: function () {
+    }
+
+    activeView() {
         return this.views[this.activeViewID];
-    },
-    getView: function (index) {
+    }
+
+    getView(index) {
         return this.views[index];
-    },
-    addChildWithID: function (controller, index) {
+    }
+
+    addChildWithID(controller, index) {
         this.children[index] = controller;
-    },
-    deleteChild: function (index) {
+    }
+
+    deleteChild(index) {
         this.children[index] = null;
         if (this.activeChildID === index) {
             this.activeChildID = Constants.UNDEFINED;
         }
-    },
-    deactivateActiveChild: function () {
+    }
+
+    deactivateActiveChild() {
         if (this.activeChildID !== Constants.UNDEFINED) {
             const prevController = this.children[this.activeChildID];
             if (prevController) {
@@ -196,8 +215,9 @@ const ViewController = Class.extend({
             }
             this.activeChildID = Constants.UNDEFINED;
         }
-    },
-    activateChild: function (index) {
+    }
+
+    activateChild(index) {
         if (this.activeChildID !== Constants.UNDEFINED) {
             this.deactivateActiveChild();
         }
@@ -205,70 +225,78 @@ const ViewController = Class.extend({
         this.pause();
         this.activeChildID = index;
         this.children[index].activate();
-    },
-    onChildDeactivated: function (childType) {
+    }
+
+    onChildDeactivated(childType) {
         this.unpause();
-    },
-    activeChild: function () {
+    }
+
+    activeChild() {
         return this.children[this.activeChildID];
-    },
-    getChild: function (index) {
+    }
+
+    getChild(index) {
         return this.children[index];
-    },
+    }
+
     /**
      * @param x {number}
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    mouseDown: function (x, y) {
+    mouseDown(x, y) {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
         return this.views[this.activeViewID].onTouchDown(x, y);
-    },
+    }
+
     /**
      * @param x {number}
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    mouseUp: function (x, y) {
+    mouseUp(x, y) {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
         return this.views[this.activeViewID].onTouchUp(x, y);
-    },
+    }
+
     /**
      * @param x {number}
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    mouseDragged: function (x, y) {
+    mouseDragged(x, y) {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
         return this.views[this.activeViewID].onTouchMove(x, y);
-    },
+    }
+
     /**
      * @param x {number}
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    mouseMoved: function (x, y) {
+    mouseMoved(x, y) {
         // only drag events are used
         return false;
-    },
+    }
+
     /**
      * @param x {number}
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    doubleClick: function (x, y) {
+    doubleClick(x, y) {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
         return this.views[this.activeViewID].onDoubleClick(x, y);
-    },
-});
+    }
+}
 
 /**
  * @enum {number}

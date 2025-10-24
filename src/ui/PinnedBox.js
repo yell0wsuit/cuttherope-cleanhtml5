@@ -9,6 +9,7 @@ import platform from "@/platform";
 import analytics from "@/analytics";
 import resolution from "@/resolution";
 import SettingStorage from "@/core/SettingStorage";
+
 /**
  * @enum {number}
  */
@@ -142,9 +143,9 @@ function applyEasing(t, easing) {
     }
 }
 
-const PinnedBox = Box.extend({
-    init: function (boxIndex, bgimg, reqstars, islocked, type) {
-        this._super(boxIndex, bgimg, reqstars, islocked, type);
+class PinnedBox extends Box {
+    constructor(boxIndex, bgimg, reqstars, islocked, type) {
+        super(boxIndex, bgimg, reqstars, islocked, type);
         this.pinnedState = PinnedStates.UNDEFINED;
         this.promptId = null;
 
@@ -201,18 +202,18 @@ const PinnedBox = Box.extend({
         } else {
             initialize();
         }
-    },
+    }
 
-    isRequired: function () {
+    isRequired() {
         // returns true if the box is enabled on the platform. this doesn't always
         // mean it is unlocked. For example, in Chrome on Windows, we'll tell
         // the user to install IE. On IE, they need to pin the game first. However
         // there is no IE on mac so the box is completely disabled.
 
         return this.pinnedState !== PinnedStates.HIDDEN;
-    },
+    }
 
-    initPinnedState: function () {
+    initPinnedState() {
         // returns the version of Internet Explorer or a -1 if another browser
         const getIEVersion = function () {
             const rv = -1; // Return value assumes failure.
@@ -319,9 +320,9 @@ const PinnedBox = Box.extend({
         } else {
             return true;
         }
-    },
+    }
 
-    onSelected: function () {
+    onSelected() {
         if (this.promptId != null) {
             const pinningContent = document.getElementById("pinningContent");
             const promptElement = document.getElementById(this.promptId);
@@ -333,19 +334,19 @@ const PinnedBox = Box.extend({
                 promptElement.style.display = "";
             }
         }
-    },
+    }
 
-    onUnselected: function () {
+    onUnselected() {
         if (this.promptId != null) {
             const pinningContent = document.getElementById("pinningContent");
             if (pinningContent) {
                 fadeOut(pinningContent, 300);
             }
         }
-    },
+    }
 
     // runs (and the resets) the "show me" animation for the pinned box
-    showMePinning: function () {
+    showMePinning() {
         const cursor = document.getElementById("pinCursor");
         const omnom = document.getElementById("pinOmNom");
         const shadow = document.getElementById("pinChairShadow");
@@ -416,7 +417,7 @@ const PinnedBox = Box.extend({
                 .then(() => new Promise((resolve) => setTimeout(resolve, 5000)))
                 .then(() => fadeOut(taskbar, 1000));
         }
-    },
-});
+    }
+}
 
 export default PinnedBox;

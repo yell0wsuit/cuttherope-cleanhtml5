@@ -1,4 +1,3 @@
-import Class from "@/utils/Class";
 import Easing from "@/ui/Easing";
 import Text from "@/visual/Text";
 import resolution from "@/resolution";
@@ -12,6 +11,7 @@ import MenuStringId from "@/resources/MenuStringId";
 import edition from "@/edition";
 import settings from "@/game/CTRSettings";
 import { IS_XMAS } from "@/resources/ResData";
+
 // cache upgrade UI elements
 let upgradeButton;
 
@@ -69,8 +69,8 @@ PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
 
 const boxImageBase = platform.boxImageBaseUrl || platform.uiImageBaseUrl;
 
-const Box = Class.extend({
-    init: function (boxIndex, bgimg, reqstars, islocked, type) {
+class Box {
+    constructor(boxIndex, bgimg, reqstars, islocked, type) {
         this.index = boxIndex;
         this.islocked = islocked;
         this.visible = true;
@@ -126,21 +126,21 @@ const Box = Class.extend({
         this.perfectMark.src = platform.uiImageBaseUrl + "perfect_mark.png";
 
         this.includeBoxNumberInTitle = true;
-    },
+    }
 
-    isRequired: function () {
+    isRequired() {
         return true;
-    },
+    }
 
-    isGameBox: function () {
+    isGameBox() {
         return true;
-    },
+    }
 
-    isClickable: function () {
+    isClickable() {
         return true;
-    },
+    }
 
-    draw: function (ctx, omnomoffset) {
+    draw(ctx, omnomoffset) {
         const prevAlpha = ctx.globalAlpha;
         if (this.opacity !== prevAlpha) {
             ctx.globalAlpha = this.opacity;
@@ -153,9 +153,9 @@ const Box = Class.extend({
         if (this.opacity !== prevAlpha) {
             ctx.globalAlpha = prevAlpha;
         }
-    },
+    }
 
-    render: function (ctx, omnomoffset) {
+    render(ctx, omnomoffset) {
         const isGameBox = this.isGameBox();
         const yOffset = resolution.uiScaledNumber(this.yOffset || 0);
         const shouldHideLockDetails = this.type === BoxType.HOLIDAY && !IS_XMAS;
@@ -189,11 +189,11 @@ const Box = Class.extend({
 
         if (isGameBox) {
             // draw the lock
-        if (this.islocked) {
-            // Get dimensions - prefer naturalWidth/Height, fallback to width/height
-            const textWidth = this.reqImg.naturalWidth || this.reqImg.width || 0;
-            const textHeight = this.reqImg.naturalHeight || this.reqImg.height || 0;
-            const starWidth = this.starImg.naturalWidth || this.starImg.width || 0;
+            if (this.islocked) {
+                // Get dimensions - prefer naturalWidth/Height, fallback to width/height
+                const textWidth = this.reqImg.naturalWidth || this.reqImg.width || 0;
+                const textHeight = this.reqImg.naturalHeight || this.reqImg.height || 0;
+                const starWidth = this.starImg.naturalWidth || this.starImg.width || 0;
 
                 const starLeftMargin = resolution.uiScaledNumber(-6);
                 // center the text and star label
@@ -234,16 +234,16 @@ const Box = Class.extend({
                 }
 
                 /*
-                     // DEBUG: draw red dots to show the label boundaries
-                     ctx.fillStyle= 'red';
-                     ctx.beginPath();
-                     ctx.arc(labelMinX, resolution.uiScaledNumber(220), 5, 0, 2*Math.PI, false);
-                     ctx.fill();
+                // DEBUG: draw red dots to show the label boundaries
+                ctx.fillStyle= 'red';
+                ctx.beginPath();
+                ctx.arc(labelMinX, resolution.uiScaledNumber(220), 5, 0, 2*Math.PI, false);
+                ctx.fill();
 
-                     ctx.beginPath();
-                     ctx.arc(labelMinX + labelMaxWidth, resolution.uiScaledNumber(220), 5, 0, 2*Math.PI, false);
-                     ctx.fill();
-                     */
+                ctx.beginPath();
+                ctx.arc(labelMinX + labelMaxWidth, resolution.uiScaledNumber(220), 5, 0, 2*Math.PI, false);
+                ctx.fill();
+                */
             }
 
             // draw the perfect mark if user got every star in the box
@@ -274,9 +274,9 @@ const Box = Class.extend({
         const y = resolution.uiScaledNumber(70);
 
         ctx.drawImage(this.textImg, x, y);
-    },
+    }
 
-    bounce: function (ctx) {
+    bounce(ctx) {
         if (!ctx) {
             return;
         }
@@ -344,26 +344,26 @@ const Box = Class.extend({
 
         // start the animation
         renderBounce();
-    },
+    }
 
-    cancelBounce: function () {
+    cancelBounce() {
         this.bounceStartTime = 0;
-    },
+    }
 
-    onSelected: function () {
+    onSelected() {
         if (!this.purchased) {
             if (upgradeButton) {
                 upgradeButton.classList.toggle("purchaseBox", this.isPurchaseBox || false);
                 showPurchaseButton();
             }
         }
-    },
+    }
 
-    onUnselected: function () {
+    onUnselected() {
         hidePurchaseButton();
-    },
+    }
 
-    destroy: function () {
+    destroy() {
         if (!this.pubSubSubscriptions) {
             return;
         }
@@ -371,7 +371,7 @@ const Box = Class.extend({
         while (this.pubSubSubscriptions.length) {
             PubSub.unsubscribe(this.pubSubSubscriptions.pop());
         }
-    },
-});
+    }
+}
 
 export default Box;

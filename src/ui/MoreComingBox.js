@@ -1,22 +1,23 @@
 import Box from "@/ui/Box";
-const MoreComingBox = Box.extend({
-    init: function (boxIndex, bgimg, reqstars, islocked, type) {
-        this._super(boxIndex, bgimg, reqstars, islocked, type);
-        this.includeBoxNumberInTitle = false;
-    },
 
-    isRequired: function () {
+class MoreComingBox extends Box {
+    constructor(boxIndex, bgimg, reqstars, islocked, type) {
+        super(boxIndex, bgimg, reqstars, islocked, type);
+        this.includeBoxNumberInTitle = false;
+    }
+
+    isRequired() {
         // not a box required for game completion
         return false;
-    },
+    }
 
-    isGameBox: function () {
+    isGameBox() {
         return false;
-    },
+    }
 
-    isClickable: function () {
+    isClickable() {
         return false;
-    },
-});
+    }
+}
 
 export default MoreComingBox;

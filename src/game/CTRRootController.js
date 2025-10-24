@@ -13,11 +13,12 @@ const ChildController = {
     GAME: 3,
 };
 
-const CTRRootController = RootControllerBase.extend({
-    init: function (parent) {
-        this._super(parent);
-    },
-    startLevel: function (pack, level) {
+class CTRRootController extends RootControllerBase {
+    constructor(parent) {
+        super(parent);
+    }
+
+    startLevel(pack, level) {
         LevelState.loadLevel(pack, level);
 
         // activate the root controller if necessary
@@ -35,29 +36,34 @@ const CTRRootController = RootControllerBase.extend({
         gameController = new GameController(this);
         this.addChildWithID(gameController, ChildController.GAME);
         this.activateChild(ChildController.GAME);
-    },
-    pauseLevel: function () {
+    }
+
+    pauseLevel() {
         const gameController = this.getChild(ChildController.GAME);
         if (gameController) {
             gameController.pauseLevel();
         }
-    },
-    resumeLevel: function () {
+    }
+
+    resumeLevel() {
         const gameController = this.getChild(ChildController.GAME);
         if (gameController) {
             gameController.resumeLevel();
         }
-    },
-    restartLevel: function () {
+    }
+
+    restartLevel() {
         const gameController = this.getChild(ChildController.GAME);
         if (gameController) {
             gameController.restartLevel();
         }
-    },
-    stopLevel: function () {
+    }
+
+    stopLevel() {
         this.deactivateActiveChild();
-    },
-    isLevelActive: function () {
+    }
+
+    isLevelActive() {
         // is the root controller active?
         if (this.controllerState === ViewController.StateType.INACTIVE) return false;
 
@@ -72,14 +78,15 @@ const CTRRootController = RootControllerBase.extend({
         if (gameController.isGamePaused) return false;
 
         return true;
-    },
-    onChildDeactivated: function (childType) {
-        this._super(childType);
+    }
+
+    onChildDeactivated(childType) {
+        super.onChildDeactivated(childType);
 
         if (childType == ChildController.GAME) {
             this.deleteChild(ChildController.GAME);
         }
-    },
-});
+    }
+}
 
 export default new CTRRootController();

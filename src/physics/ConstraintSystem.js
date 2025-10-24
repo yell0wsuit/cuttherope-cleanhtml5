@@ -1,22 +1,24 @@
-import Class from "@/utils/Class";
 import Vector from "@/core/Vector";
 import Log from "@/utils/Log";
 import satisfyConstraintArray from "@/physics/satisfyConstraintArray";
-const ConstraintSystem = Class.extend({
-    init: function () {
-        this.relaxationTimes = 1;
 
+class ConstraintSystem {
+    constructor() {
+        this.relaxationTimes = 1;
         this.parts = [];
-    },
-    addPartAtIndex: function (cp, index) {
+    }
+
+    addPartAtIndex(cp, index) {
         // splice with removeLength=0 means we just insert
         // the additional element (cp) at the index
         this.parts.splice(index, 0, cp);
-    },
-    addPart: function (cp) {
+    }
+
+    addPart(cp) {
         this.parts[this.parts.length] = cp;
-    },
-    log: function () {
+    }
+
+    log() {
         Log.debug("Constraint System Log:");
         for (let i = 0, partsLen = this.parts.length; i < partsLen; i++) {
             const cp = this.parts[i];
@@ -27,11 +29,13 @@ const ConstraintSystem = Class.extend({
                 Log.debug(cInfo);
             }
         }
-    },
-    removePartAtIndex: function (index) {
+    }
+
+    removePartAtIndex(index) {
         this.parts.splice(index, 1);
-    },
-    update: function (delta) {
+    }
+
+    update(delta) {
         const parts = this.parts,
             numParts = parts.length,
             relaxationTimes = this.relaxationTimes;
@@ -42,11 +46,10 @@ const ConstraintSystem = Class.extend({
         }
 
         // satisfy constraints during each relaxation period
-
         satisfyConstraintArray(parts, relaxationTimes);
-    },
+    }
 
     // NOTE: base draw() implementation isn't used so we won't port it yet
-});
+}
 
 export default ConstraintSystem;

@@ -1,27 +1,37 @@
-import Class from "@/utils/Class";
 import Constants from "@/utils/Constants";
 import Vector from "@/core/Vector";
 import Gravity from "@/physics/Gravity";
-const MaterialPoint = Class.extend({
-    init: function () {
+
+class MaterialPoint {
+    constructor() {
         this.disableGravity = false;
         this.setWeight(1);
-        this.resetAll();
-    },
-    setWeight: function (w) {
-        this.weight = w;
-        this.invWeight = 1 / w;
-        this.gravity = new Vector(0, Constants.EARTH_Y * w);
-    },
-    resetAll: function () {
+        // Initialize vectors directly instead of calling resetAll()
+        // to avoid issues with subclass initialization order
         const newZero = Vector.newZero;
         this.v = newZero(); // velocity vector
         this.a = newZero(); // acceleration vector
         this.pos = newZero();
         this.posDelta = newZero();
         this.totalForce = newZero();
-    },
-    updateWithPrecision: function (delta, precision) {
+    }
+
+    setWeight(w) {
+        this.weight = w;
+        this.invWeight = 1 / w;
+        this.gravity = new Vector(0, Constants.EARTH_Y * w);
+    }
+
+    resetAll() {
+        const newZero = Vector.newZero;
+        this.v = newZero(); // velocity vector
+        this.a = newZero(); // acceleration vector
+        this.pos = newZero();
+        this.posDelta = newZero();
+        this.totalForce = newZero();
+    }
+
+    updateWithPrecision(delta, precision) {
         // Calculate number Of iterations to be made at this update depending
         // on maxPossible_dt And dt (chop off fractional part and add 1)
         const numIterations = ((delta / precision) >> 0) + 1;
@@ -35,8 +45,9 @@ const MaterialPoint = Class.extend({
         for (let i = 0; i < numIterations; i++) {
             this.update(delta);
         }
-    },
-    update: function (delta) {
+    }
+
+    update(delta) {
         this.totalForce = Vector.newZero();
 
         // incorporate gravity
@@ -55,13 +66,14 @@ const MaterialPoint = Class.extend({
 
         this.posDelta = Vector.multiply(this.v, adjustedDelta);
         this.pos.add(this.posDelta);
-    },
-    applyImpulse: function (impulse, delta) {
+    }
+
+    applyImpulse(impulse, delta) {
         if (!impulse.isZero()) {
             const im = Vector.multiply(impulse, delta / Constants.TIME_SCALE);
             this.pos.add(im);
         }
-    },
-});
+    }
+}
 
 export default MaterialPoint;

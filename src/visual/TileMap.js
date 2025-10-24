@@ -5,20 +5,23 @@ import resolution from "@/resolution";
 import Constants from "@/utils/Constants";
 import MathHelper from "@/utils/MathHelper";
 import Vector from "@/core/Vector";
+
 /**
  * An entry in the tile map
  * @constructor
  * @param drawerIndex {number}
  * @param quadIndex {number}
  */
-function TileEntry(drawerIndex, quadIndex) {
-    this.drawerIndex = drawerIndex;
-    this.quad = quadIndex;
+class TileEntry {
+    constructor(drawerIndex, quadIndex) {
+        this.drawerIndex = drawerIndex;
+        this.quad = quadIndex;
+    }
 }
 
-const TileMap = BaseElement.extend({
-    init: function (rows, columns) {
-        this._super();
+class TileMap extends BaseElement {
+    constructor(rows, columns) {
+        super();
 
         this.rows = rows;
         this.columns = columns;
@@ -45,8 +48,9 @@ const TileMap = BaseElement.extend({
         this.verticalRandom = false;
         this.restoreTileTransparency = true;
         this.randomSeed = MathHelper.randomRange(1000, 2000);
-    },
-    addTile: function (texture, quadIndex) {
+    }
+
+    addTile(texture, quadIndex) {
         if (quadIndex === Constants.UNDEFINED) {
             this.tileWidth = texture.imageWidth;
             this.tileHeight = texture.imageHeight;
@@ -74,8 +78,9 @@ const TileMap = BaseElement.extend({
 
         const entry = new TileEntry(drawerId, quadIndex);
         this.tiles.push(entry);
-    },
-    updateVars: function () {
+    }
+
+    updateVars() {
         this.maxColsOnScreen = 2 + ~~(this.cameraViewWidth / (this.tileWidth + 1));
         this.maxRowsOnScreen = 2 + ~~(this.cameraViewHeight / (this.tileHeight + 1));
 
@@ -89,7 +94,8 @@ const TileMap = BaseElement.extend({
 
         this.width = this.tileMapWidth = this.columns * this.tileWidth;
         this.height = this.tileMapHeight = this.rows * this.tileHeight;
-    },
+    }
+
     /**
      * Fills the tilemap matrix with the specified tile entry index
      * @param startRow {number}
@@ -98,32 +104,36 @@ const TileMap = BaseElement.extend({
      * @param numCols {number}
      * @param tileIndex {number}
      */
-    fill: function (startRow, startCol, numRows, numCols, tileIndex) {
+    fill(startRow, startCol, numRows, numCols, tileIndex) {
         for (let i = startCol, colEnd = startCol + numCols; i < colEnd; i++) {
             for (let k = startRow, rowEnd = startRow + numRows; k < rowEnd; k++) {
                 this.matrix[i][k] = tileIndex;
             }
         }
-    },
-    setParallaxRation: function (ratio) {
+    }
+
+    setParallaxRation(ratio) {
         this.parallaxRatio = ratio;
-    },
+    }
+
     /**
      * @param repeatType {TileMap.RepeatType}
      */
-    setRepeatHorizontally: function (repeatType) {
+    setRepeatHorizontally(repeatType) {
         this.repeatedHorizontally = repeatType;
         this.updateVars();
-    },
-    setRepeatVertically: function (repeatType) {
+    }
+
+    setRepeatVertically(repeatType) {
         this.repeatedVertically = repeatType;
         this.updateVars();
-    },
+    }
+
     /**
      * Updates the tile map based on the current camera position
      * @param pos {Vector}
      */
-    updateWithCameraPos: function (pos) {
+    updateWithCameraPos(pos) {
         const mx = Math.round(pos.x / this.parallaxRatio),
             my = Math.round(pos.y / this.parallaxRatio);
         let tileMapStartX = this.x,
@@ -303,15 +313,16 @@ const TileMap = BaseElement.extend({
                 break;
             }
         }
-    },
-    draw: function () {
+    }
+
+    draw() {
         this.preDraw();
         for (let i = 0, len = this.drawers.length; i < len; i++) {
             this.drawers[i].draw();
         }
         this.postDraw();
-    },
-});
+    }
+}
 
 /**
  * @enum {number}

@@ -67,7 +67,7 @@ const drawBlack = new RGBAColor(0, 0, 0, 1),
     drawC2 = new RGBAColor(0, 0, 0, 1),
     drawD2 = new RGBAColor(0, 0, 0, 1);
 
-const Bungee = ConstraintSystem.extend({
+class Bungee extends ConstraintSystem {
     /**
      * Create a new Rope
      * @param headCp {ConstrainedPoint} head constrained point
@@ -78,8 +78,8 @@ const Bungee = ConstraintSystem.extend({
      * @param ty {number} tail location: y
      * @param len {number} length of the rope
      */
-    init: function (headCp, hx, hy, tailCp, tx, ty, len) {
-        this._super();
+    constructor(headCp, hx, hy, tailCp, tx, ty, len) {
+        super();
         this.relaxed = 0;
         this.relaxationTimes = BUNGEE_RELAXION_TIMES;
         this.lineWidth = resolution.DEFAULT_BUNGEE_LINE_WIDTH;
@@ -123,11 +123,12 @@ const Bungee = ConstraintSystem.extend({
         this.drawPts = [];
 
         this.BUNGEE_BEZIER_POINTS = resolution.BUNGEE_BEZIER_POINTS;
-    },
+    }
+
     /**
      * @return {number}
      */
-    getLength: function () {
+    getLength() {
         let len = 0;
         const parts = this.parts,
             numParts = parts.length;
@@ -140,8 +141,9 @@ const Bungee = ConstraintSystem.extend({
             }
         }
         return len;
-    },
-    roll: function (rollLen, offset) {
+    }
+
+    roll(rollLen, offset) {
         if (offset == null) {
             offset = Vector.newZero();
         }
@@ -175,8 +177,9 @@ const Bungee = ConstraintSystem.extend({
                 }
             }
         }
-    },
-    rollBack: function (amount) {
+    }
+
+    rollBack(amount) {
         const parts = this.parts;
         let partsCount = parts.length;
         const prev = parts[partsCount - 2];
@@ -217,8 +220,9 @@ const Bungee = ConstraintSystem.extend({
             if (c.type === ConstraintType.NOT_MORE_THAN) c.restLength = newTailRestLen;
         }
         return rollBackLen;
-    },
-    strengthen: function () {
+    }
+
+    strengthen() {
         const parts = this.parts,
             numParts = parts.length;
         for (let i = 0; i < numParts; i++) {
@@ -234,12 +238,13 @@ const Bungee = ConstraintSystem.extend({
                 }
             }
         }
-    },
+    }
+
     /**
      * Updates the rope based on the time delta
      * @param delta {number}
      */
-    update: function (delta) {
+    update(delta) {
         if (this.cutTime > 0) {
             this.cutTime = Mover.moveToTarget(this.cutTime, 0, 1, delta);
             if (this.cutTime < CUT_DISSAPPEAR_TIMEOUT - WHITE_TIMEOUT && this.forceWhite) {
@@ -272,8 +277,9 @@ const Bungee = ConstraintSystem.extend({
         //         parts[k].satisfyConstraints();
         //     }
         // }
-    },
-    removePart: function (partIndex) {
+    }
+
+    removePart(partIndex) {
         this.forceWhite = false;
 
         const parts = this.parts,
@@ -305,14 +311,16 @@ const Bungee = ConstraintSystem.extend({
             const cp = parts[i];
             if (cp != this.tail) cp.setWeight(0.00001);
         }
-    },
-    setCut: function (partIndex) {
+    }
+
+    setCut(partIndex) {
         this.cut = partIndex;
         this.cutTime = CUT_DISSAPPEAR_TIMEOUT;
         this.forceWhite = true;
         this.highlighted = false;
-    },
-    draw: function () {
+    }
+
+    draw() {
         const parts = this.parts,
             count = parts.length,
             ctx = Canvas.context;
@@ -364,8 +372,9 @@ const Bungee = ConstraintSystem.extend({
             }
         }
         ctx.lineWidth = 1;
-    },
-    drawBungee: function (pts, segmentStartIndex) {
+    }
+
+    drawBungee(pts, segmentStartIndex) {
         const count = pts.length,
             points = this.BUNGEE_BEZIER_POINTS,
             drawPts = this.drawPts;
@@ -554,8 +563,9 @@ const Bungee = ConstraintSystem.extend({
 
         // Draw Christmas lights along the rope
         this.drawChristmasLights(drawPts, numVertices + 1, alpha, segmentStartIndex);
-    },
-    drawChristmasLights: function (drawPts, count, alpha, segmentStartIndex) {
+    }
+
+    drawChristmasLights(drawPts, count, alpha, segmentStartIndex) {
         if (!IS_XMAS) return;
         if (!drawPts || count < 2) return;
         if (alpha <= 0) return;
@@ -651,8 +661,8 @@ const Bungee = ConstraintSystem.extend({
         if (alpha < 1) {
             ctx.globalAlpha = previousAlpha;
         }
-    },
-});
+    }
+}
 
 // export const for use in GameScene
 Bungee.BUNGEE_RELAXION_TIMES = BUNGEE_RELAXION_TIMES;

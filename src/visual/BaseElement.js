@@ -1,4 +1,3 @@
-import Class from "@/utils/Class";
 import RGBAColor from "@/core/RGBAColor";
 import Alignment from "@/core/Alignment";
 import Constants from "@/utils/Constants";
@@ -6,8 +5,9 @@ import Canvas from "@/utils/Canvas";
 import ActionType from "@/visual/ActionType";
 import Timeline from "@/visual/Timeline";
 import Radians from "@/utils/Radians";
-const BaseElement = Class.extend({
-    init: function () {
+
+class BaseElement {
+    constructor() {
         /** @type {BaseElement} */
         this.parent = null;
 
@@ -97,11 +97,12 @@ const BaseElement = Class.extend({
          * @type {Timeline}
          */
         this.currentTimeline = null;
-    },
+    }
+
     /**
      * @private
      */
-    calculateTopLeft: function () {
+    calculateTopLeft() {
         const parentAnchor = this.parentAnchor,
             parent = this.parent,
             anchor = this.anchor;
@@ -136,8 +137,9 @@ const BaseElement = Class.extend({
             if (anchor & 2 /*Alignment.HCENTER*/) this.drawX -= this.width / 2;
             else if (anchor & 4 /*Alignment.RIGHT*/) this.drawX -= this.width;
         }
-    },
-    preDraw: function () {
+    }
+
+    preDraw() {
         this.calculateTopLeft();
 
         const changeScale =
@@ -182,17 +184,20 @@ const BaseElement = Class.extend({
         if (this.color.a !== 1 && this.color.a !== this.previousAlpha) {
             ctx.globalAlpha = this.color.a;
         }
-    },
-    draw: function () {
+    }
+
+    draw() {
         this.preDraw();
         this.postDraw();
-    },
-    drawBB: function () {
+    }
+
+    drawBB() {
         const ctx = Canvas.context;
         ctx.strokeStyle = "red";
         ctx.strokeRect(this.drawX, this.drawY, this.width, this.height);
-    },
-    postDraw: function () {
+    }
+
+    postDraw() {
         const ctx = Canvas.context,
             alphaChanged = this.color.a !== 1 && this.color.a !== this.previousAlpha;
 
@@ -250,12 +255,13 @@ const BaseElement = Class.extend({
                 Canvas.context.globalAlpha = this.previousAlpha;
             }
         }
-    },
+    }
+
     /**
      * Updates timelines with the elapsed time
      * @param delta {number}
      */
-    update: function (delta) {
+    update(delta) {
         const children = this.children,
             numChildren = children.length;
         for (let i = 0; i < numChildren; i++) {
@@ -266,12 +272,13 @@ const BaseElement = Class.extend({
         if (this.currentTimeline) {
             this.currentTimeline.update(delta);
         }
-    },
+    }
+
     /**
      * @param name {string}
      * @return {BaseElement}
      */
-    getChildWithName: function (name) {
+    getChildWithName(name) {
         const children = this.children,
             numChildren = children.length;
         for (let i = 0; i < numChildren; i++) {
@@ -283,8 +290,9 @@ const BaseElement = Class.extend({
         }
 
         return null;
-    },
-    setSizeToChildsBounds: function () {
+    }
+
+    setSizeToChildsBounds() {
         this.calculateTopLeft();
 
         let minX = this.drawX,
@@ -309,12 +317,13 @@ const BaseElement = Class.extend({
 
         this.width = maxX - minX;
         this.height = maxY - minY;
-    },
+    }
+
     /**
      * @param a {ActionData} action data
      * @return {boolean} true if an action was handled
      */
-    handleAction: function (a) {
+    handleAction(a) {
         switch (a.actionName) {
             case ActionType.SET_VISIBLE:
                 this.visible = a.actionSubParam !== 0;
@@ -344,34 +353,39 @@ const BaseElement = Class.extend({
         }
 
         return true;
-    },
+    }
+
     /**
      * @param child {BaseElement} child to add
      * @return {number} index of added child
      */
-    addChild: function (child) {
+    addChild(child) {
         this.children.push(child);
         child.parent = this;
         return this.children.length - 1;
-    },
-    addChildWithID: function (child, index) {
+    }
+
+    addChildWithID(child, index) {
         this.children[index] = child;
         child.parent = this;
-    },
+    }
+
     /**
      * @param i {number} index of the child to remove
      */
-    removeChildWithID: function (i) {
+    removeChildWithID(i) {
         const child = this.children.splice(i, 1);
         child.parent = null;
-    },
-    removeAllChildren: function () {
+    }
+
+    removeAllChildren() {
         this.children.length = 0;
-    },
+    }
+
     /**
      * @param c {BaseElement} child to remove
      */
-    removeChild: function (c) {
+    removeChild(c) {
         const children = this.children,
             numChildren = children.length;
         for (let i = 0; i < numChildren; i++) {
@@ -381,43 +395,50 @@ const BaseElement = Class.extend({
                 return;
             }
         }
-    },
+    }
+
     /**
      * @param i {number} index of child
      * @return {BaseElement}
      */
-    getChild: function (i) {
+    getChild(i) {
         return this.children[i];
-    },
+    }
+
     /**
      * @return {number} number of children
      */
-    childCount: function () {
+    childCount() {
         return this.children.length;
-    },
+    }
+
     /**
      * @return {Array.<BaseElement>} children
      */
-    getChildren: function () {
+    getChildren() {
         return this.children;
-    },
-    addTimeline: function (timeline) {
+    }
+
+    addTimeline(timeline) {
         const index = this.timelines.length;
         this.addTimelineWithID(timeline, index);
         return index;
-    },
-    addTimelineWithID: function (timeline, index) {
+    }
+
+    addTimelineWithID(timeline, index) {
         timeline.element = this;
         this.timelines[index] = timeline;
-    },
-    removeTimeline: function (index) {
+    }
+
+    removeTimeline(index) {
         if (this.currentTimelineIndex === index) this.stopCurrentTimeline();
 
         if (index < this.timelines.length) {
             this.timelines.splice(index, 1);
         }
-    },
-    playTimeline: function (index) {
+    }
+
+    playTimeline(index) {
         if (this.currentTimeline) {
             if (this.currentTimeline.state !== Timeline.StateType.STOPPED) {
                 this.currentTimeline.stop();
@@ -437,28 +458,32 @@ const BaseElement = Class.extend({
 
             this.currentTimeline.play();
         }
-    },
-    pauseCurrentTimeline: function () {
+    }
+
+    pauseCurrentTimeline() {
         this.currentTimeline.pause();
-    },
-    stopCurrentTimeline: function () {
+    }
+
+    stopCurrentTimeline() {
         this.currentTimeline.stop();
         this.currentTimeline = null;
         this.currentTimelineIndex = Constants.UNDEFINED;
-    },
+    }
+
     /**
      * @param index {number}
      * @return {Timeline}
      */
-    getTimeline: function (index) {
+    getTimeline(index) {
         return this.timelines[index];
-    },
+    }
+
     /**
      * @param x {number}
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    onTouchDown: function (x, y) {
+    onTouchDown(x, y) {
         let ret = false;
         const count = this.children.length;
         for (let i = count - 1; i >= 0; i--) {
@@ -473,13 +498,14 @@ const BaseElement = Class.extend({
             }
         }
         return ret;
-    },
+    }
+
     /**
      * @param x {number}
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    onTouchUp: function (x, y) {
+    onTouchUp(x, y) {
         let ret = false;
         const count = this.children.length;
         for (let i = count - 1; i >= 0; i--) {
@@ -494,13 +520,14 @@ const BaseElement = Class.extend({
             }
         }
         return ret;
-    },
+    }
+
     /**
      * @param x {number}
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    onTouchMove: function (x, y) {
+    onTouchMove(x, y) {
         let ret = false;
         const count = this.children.length;
         for (let i = count - 1; i >= 0; i--) {
@@ -515,13 +542,14 @@ const BaseElement = Class.extend({
             }
         }
         return ret;
-    },
+    }
+
     /**
      * @param x {number}
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    onDoubleClick: function (x, y) {
+    onDoubleClick(x, y) {
         let ret = false;
         const count = this.children.length;
         for (let i = count - 1; i >= 0; i--) {
@@ -536,37 +564,41 @@ const BaseElement = Class.extend({
             }
         }
         return ret;
-    },
+    }
+
     /**
      * @param enabled {boolean}
      */
-    setEnabled: function (enabled) {
+    setEnabled(enabled) {
         this.visible = enabled;
         this.touchable = enabled;
         this.updateable = enabled;
-    },
+    }
+
     /**
      * @return {boolean}
      */
-    isEnabled: function () {
+    isEnabled() {
         return this.visible && this.touchable && this.updateable;
-    },
-    show: function () {
+    }
+
+    show() {
         const children = this.children,
             numChildren = children.length;
         for (let i = 0; i < numChildren; i++) {
             const child = children[i];
             if (child.visible) child.show();
         }
-    },
-    hide: function () {
+    }
+
+    hide() {
         const children = this.children,
             numChildren = children.length;
         for (let i = 0; i < numChildren; i++) {
             const child = children[i];
             if (child.visible) child.hide();
         }
-    },
-});
+    }
+}
 
 export default BaseElement;

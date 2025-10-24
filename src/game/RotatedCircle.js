@@ -27,17 +27,17 @@ const CONTOUR_ALPHA = 0.2,
     CONTROLLER_SHIFT_PARAM1 = 22.5 * resolution.PM,
     CONTROLLER_SHIFT_PARAM2 = 0.03 * resolution.PM;
 
-const StickerImage = ImageElement.extend({
-    init: function () {
-        this._super();
+class StickerImage extends ImageElement {
+    constructor() {
+        super();
         this.initTextureWithId(ResourceId.IMG_OBJ_VINIL);
         this.setTextureQuad(IMG_OBJ_VINIL_odj_vinil_sticker);
-    },
-});
+    }
+}
 
-const RotatedCircle = BaseElement.extend({
-    init: function () {
-        this._super();
+class RotatedCircle extends BaseElement {
+    constructor() {
+        super();
         this.containedObjects = [];
         this.circles = [];
         this.soundPlaying = Constants.UNDEFINED;
@@ -117,8 +117,9 @@ const RotatedCircle = BaseElement.extend({
         this.addChild(this.vinilActiveControllerR);
         this.addChild(this.vinilControllerL);
         this.addChild(this.vinilControllerR);
-    },
-    setSize: function (value) {
+    }
+
+    setSize(value) {
         this.size = value;
 
         const newScale = this.size / HUNDRED_PERCENT_SCALE_SIZE;
@@ -156,27 +157,33 @@ const RotatedCircle = BaseElement.extend({
         this.sizeInPixels = this.vinilHighlightL.width * this.vinilHighlightL.scaleX;
 
         this.updateChildPositions();
-    },
+    }
 
-    hasOneHandle: function () {
+    hasOneHandle() {
         return !this.vinilControllerL.visible;
-    },
-    setHasOneHandle: function (value) {
+    }
+
+    setHasOneHandle(value) {
         this.vinilControllerL.visible = !value;
-    },
-    isLeftControllerActive: function () {
+    }
+
+    isLeftControllerActive() {
         return this.vinilActiveControllerL.visible;
-    },
-    setIsLeftControllerActive: function (value) {
+    }
+
+    setIsLeftControllerActive(value) {
         this.vinilActiveControllerL.visible = value;
-    },
-    isRightControllerActive: function () {
+    }
+
+    isRightControllerActive() {
         return this.vinilActiveControllerR.visible;
-    },
-    setIsRightControllerActive: function (value) {
+    }
+
+    setIsRightControllerActive(value) {
         this.vinilActiveControllerR.visible = value;
-    },
-    containsSameObjectWithAnotherCircle: function () {
+    }
+
+    containsSameObjectWithAnotherCircle() {
         const len = this.circles.length;
         let i, anotherCircle;
         for (i = 0; i < len; i++) {
@@ -186,8 +193,9 @@ const RotatedCircle = BaseElement.extend({
             }
         }
         return false;
-    },
-    draw: function () {
+    }
+
+    draw() {
         const ctx = Canvas.context;
         if (this.isRightControllerActive() || this.isLeftControllerActive()) {
             const lineWidth = (ACTIVE_CIRCLE_WIDTH + resolution.PM) * this.vinilControllerL.scaleX,
@@ -240,11 +248,12 @@ const RotatedCircle = BaseElement.extend({
         this.vinilHighlightL.draw();
         this.vinilHighlightR.draw();
 
-        this._super();
+        super.draw();
 
         this.vinilCenter.draw();
-    },
-    drawCircleIntersection: function (cx1, cy1, radius1, cx2, cy2, radius2, width) {
+    }
+
+    drawCircleIntersection(cx1, cy1, radius1, cx2, cy2, radius2, width) {
         const circleDistance = Vector.distance(cx1, cy1, cx2, cy2);
         if (circleDistance >= radius1 + radius2 || radius1 >= circleDistance + radius2) {
             return;
@@ -271,8 +280,9 @@ const RotatedCircle = BaseElement.extend({
         ctx.lineWidth = width;
         ctx.arc(cx2, cy2, radius2, startAngle, endAngle, false);
         ctx.stroke();
-    },
-    updateChildPositions: function () {
+    }
+
+    updateChildPositions() {
         this.vinil.x = this.vinilCenter.x = this.x;
         this.vinil.y = this.vinilCenter.y = this.y;
 
@@ -297,8 +307,9 @@ const RotatedCircle = BaseElement.extend({
         this.vinilActiveControllerL.y = this.vinilControllerL.y;
         this.vinilActiveControllerR.x = this.vinilControllerR.x;
         this.vinilActiveControllerR.y = this.vinilControllerR.y;
-    },
-    containsSameObjectWithCircle: function (anotherCircle) {
+    }
+
+    containsSameObjectWithCircle(anotherCircle) {
         // check for copy of self
         if (
             this.x === anotherCircle.x &&
@@ -316,8 +327,9 @@ const RotatedCircle = BaseElement.extend({
             }
         }
         return false;
-    },
-    copy: function (zone) {
+    }
+
+    copy(zone) {
         const copiedCircle = new RotatedCircle();
         copiedCircle.zone = zone;
         copiedCircle.x = this.x;
@@ -342,7 +354,7 @@ const RotatedCircle = BaseElement.extend({
         copiedCircle.vinilControllerR.visible = false;
 
         return copiedCircle;
-    },
-});
+    }
+}
 
 export default RotatedCircle;

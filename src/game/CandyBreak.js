@@ -24,9 +24,9 @@ const PADDINGTON_BREAK_FRAME_NAMES = [
     "frame_0007.png",
 ];
 
-const CandyBreak = RotateableMultiParticles.extend({
-    init: function (numParticles, texture, options = {}) {
-        this._super(numParticles, texture);
+class CandyBreak extends RotateableMultiParticles {
+    constructor(numParticles, texture, options = {}) {
+        super(numParticles, texture);
         this.pieceFrameIndices = this._resolvePieceFrameIndices(options.resourceId);
 
         // duration
@@ -90,9 +90,10 @@ const CandyBreak = RotateableMultiParticles.extend({
 
         // additive
         this.blendAdditive = false;
-    },
-    initParticle: function (particle) {
-        this._super(particle);
+    }
+
+    initParticle(particle) {
+        super.initParticle(particle);
 
         const texture = this.imageGrid,
             frameIndices =
@@ -108,8 +109,9 @@ const CandyBreak = RotateableMultiParticles.extend({
 
         particle.width = tquad.w * this.size;
         particle.height = tquad.h * this.size;
-    },
-    _resolvePieceFrameIndices: function (resourceId) {
+    }
+
+    _resolvePieceFrameIndices(resourceId) {
         if (!resourceId) {
             return DEFAULT_PIECE_FRAME_INDICES.slice();
         }
@@ -122,8 +124,9 @@ const CandyBreak = RotateableMultiParticles.extend({
         }
 
         return DEFAULT_PIECE_FRAME_INDICES.slice();
-    },
-    _lookupFrameIndices: function (resourceId, frameNames) {
+    }
+
+    _lookupFrameIndices(resourceId, frameNames) {
         const resource = RES_DATA[resourceId];
         const frameIndexByName = resource?.info?.frameIndexByName;
 
@@ -134,7 +137,7 @@ const CandyBreak = RotateableMultiParticles.extend({
         return frameNames
             .map((name) => frameIndexByName[name])
             .filter((index) => index !== undefined);
-    },
-});
+    }
+}
 
 export default CandyBreak;

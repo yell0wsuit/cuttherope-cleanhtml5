@@ -40,9 +40,9 @@ const SpikeAnimation = {
     ROTATION_ADJUSTED: 2,
 };
 
-const Spikes = CTRGameObject.extend({
-    init: function (px, py, width, angle, t) {
-        this._super();
+class Spikes extends CTRGameObject {
+    constructor(px, py, width, angle, t) {
+        super();
 
         // select and load the spikes image
         let imageId;
@@ -150,8 +150,9 @@ const Spikes = CTRGameObject.extend({
             this.doRestoreCutTransparency();
         }
         this.touchIndex = Constants.UNDEFINED;
-    },
-    updateRotation: function () {
+    }
+
+    updateRotation() {
         let pWidth = this.electro
             ? this.width - 400 * resolution.CANVAS_SCALE
             : this.texture.rects[this.quadToDraw].w;
@@ -172,8 +173,9 @@ const Spikes = CTRGameObject.extend({
         this.t2.rotateAround(this.angle, this.x, this.y);
         this.b1.rotateAround(this.angle, this.x, this.y);
         this.b2.rotateAround(this.angle, this.x, this.y);
-    },
-    turnElectroOn: function () {
+    }
+
+    turnElectroOn() {
         this.electroOn = true;
         this.playTimeline(SpikeAnimation.ELECTRODES_ELECTRIC);
         this.electroTimer = this.onTime;
@@ -184,17 +186,19 @@ const Spikes = CTRGameObject.extend({
         const delayMs = Math.max(0, this.initialDelay * 1000) + Math.random() * 30;
 
         SoundMgr.playLoopedSound(ResourceId.SND_ELECTRIC, this.electroInstanceKey, delayMs);
-    },
-    turnElectroOff: function () {
+    }
+
+    turnElectroOff() {
         this.electroOn = false;
         this.playTimeline(SpikeAnimation.ELECTRODES_BASE);
         this.electroTimer = this.offTime;
 
         // Stop only this spike's sound instance
         SoundMgr.stopLoopedSoundInstance(ResourceId.SND_ELECTRIC, this.electroInstanceKey);
-    },
-    update: function (delta) {
-        this._super(delta);
+    }
+
+    update(delta) {
+        super.update(delta);
 
         if (this.mover || this.shouldUpdateRotation) {
             this.updateRotation();
@@ -213,14 +217,17 @@ const Spikes = CTRGameObject.extend({
                 }
             }
         }
-    },
-    setToggled: function (t) {
+    }
+
+    setToggled(t) {
         this.toggled = t;
-    },
-    getToggled: function () {
+    }
+
+    getToggled() {
         return this.toggled;
-    },
-    rotateSpikes: function () {
+    }
+
+    rotateSpikes() {
         this.spikesNormal = !this.spikesNormal;
         this.removeTimeline(SpikeAnimation.ROTATION_ADJUSTED);
 
@@ -241,13 +248,15 @@ const Spikes = CTRGameObject.extend({
         this.playTimeline(SpikeAnimation.ROTATION_ADJUSTED);
         this.shouldUpdateRotation = true;
         this.rotateButton.scaleX = -this.rotateButton.scaleX;
-    },
-    timelineFinished: function (t) {
+    }
+
+    timelineFinished(t) {
         // update rotation one last time now that timeline is complete
         this.updateRotation();
         this.shouldUpdateRotation = false;
-    },
-    onButtonPressed: function (n) {
+    }
+
+    onButtonPressed(n) {
         if (n === SPIKES_ROTATION_BUTTON) {
             if (this.onRotateButtonPressed) {
                 this.onRotateButtonPressed(this.toggled);
@@ -259,8 +268,9 @@ const Spikes = CTRGameObject.extend({
                 SoundMgr.playSound(ResourceId.SND_SPIKE_ROTATE_OUT);
             }
         }
-    },
-    drawBB: function () {
+    }
+
+    drawBB() {
         const ctx = Canvas.context;
         ctx.beginPath();
         ctx.strokeStyle = "red";
@@ -271,7 +281,7 @@ const Spikes = CTRGameObject.extend({
         ctx.lineTo(this.t1.x, this.t1.y);
         ctx.closePath();
         ctx.stroke();
-    },
-});
+    }
+}
 
 export default Spikes;

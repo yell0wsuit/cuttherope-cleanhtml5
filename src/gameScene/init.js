@@ -33,9 +33,7 @@ import Gravity from "@/physics/Gravity";
 let currentPack = -1;
 
 export const GameSceneInit = {
-    init: function () {
-        this._super();
-
+    init() {
         this.dd = DelayedDispatcher;
 
         this.initialCameraToStarDistance = Constants.UNDEFINED;
@@ -110,7 +108,7 @@ export const GameSceneInit = {
             this.prevStartPos[i] = Vector.newZero();
         }
     },
-    getCandyResourceId: function () {
+    getCandyResourceId() {
         const boxType = edition.boxTypes?.[LevelState.pack];
         const isHolidayBox = boxType === BoxType.HOLIDAY;
         return IS_JANUARY && isHolidayBox
@@ -121,17 +119,17 @@ export const GameSceneInit = {
      * @param p {ConstrainedPoint}
      * @return {boolean}
      */
-    pointOutOfScreen: function (p) {
+    pointOutOfScreen(p) {
         const bottomY = this.mapHeight + resolution.OUT_OF_SCREEN_ADJUSTMENT_BOTTOM,
             topY = resolution.OUT_OF_SCREEN_ADJUSTMENT_TOP,
             outOfScreen = p.pos.y > bottomY || p.pos.y < topY;
         return outOfScreen;
     },
-    restart: function () {
+    restart() {
         this.hide();
         this.show();
     },
-    showGreeting: function () {
+    showGreeting() {
         const boxType = edition.boxTypes?.[LevelState.pack];
         const isHolidayBox = boxType === BoxType.HOLIDAY;
 
@@ -147,31 +145,31 @@ export const GameSceneInit = {
             this.target.playTimeline(GameSceneConstants.CharAnimation.GREETING);
         }
     },
-    hidePaddingtonFinalFrame: function () {
+    hidePaddingtonFinalFrame() {
         if (this.paddingtonFinalFrame) {
             this.paddingtonFinalFrame.visible = false;
         }
     },
-    showPaddingtonFinalFrame: function () {
+    showPaddingtonFinalFrame() {
         if (this.paddingtonFinalFrame) {
             this.paddingtonFinalFrame.visible = true;
         }
     },
-    preparePaddingtonIntro: function () {
+    preparePaddingtonIntro() {
         this.pendingPaddingtonIdleTransition = false;
         if (this.dd && this.dd.cancelDispatch) {
             this.dd.cancelDispatch(this, this.playRegularIdleAfterPaddington, null);
         }
         this.hidePaddingtonFinalFrame();
     },
-    playPaddingtonIntro: function () {
+    playPaddingtonIntro() {
         if (!this.target) {
             return;
         }
         this.preparePaddingtonIntro();
         this.target.playTimeline(GameSceneConstants.CharAnimation.IDLEPADDINGTON);
     },
-    shouldSkipTutorialElement: function (element) {
+    shouldSkipTutorialElement(element) {
         const langId = settings.getLangId(),
             tl = element.locale;
 
@@ -181,7 +179,7 @@ export const GameSceneInit = {
 
         return false;
     },
-    show: function () {
+    show() {
         this.starDisappearPool = [];
 
         //create bubble animation
@@ -465,7 +463,7 @@ export const GameSceneInit = {
             this.resetBungeeHighlight();
         }
     },
-    startCamera: function () {
+    startCamera() {
         const SCREEN_WIDTH = resolution.CANVAS_WIDTH,
             SCREEN_HEIGHT = resolution.CANVAS_HEIGHT;
 
@@ -513,7 +511,7 @@ export const GameSceneInit = {
             this.camera.moveTo(0, 0, true);
         }
     },
-    doCandyBlink: function () {
+    doCandyBlink() {
         this.candyBlink.playTimeline(GameSceneConstants.CandyBlink.INITIAL);
     },
 };

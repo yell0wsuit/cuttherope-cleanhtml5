@@ -6,13 +6,15 @@ import Action from "@/visual/Action";
 import ActionType from "@/visual/ActionType";
 import KeyFrame from "@/visual/KeyFrame";
 import Constants from "@/utils/Constants";
+
 /**
  * Animation element based on timeline
  */
-const Animation = ImageElement.extend({
-    init: function () {
-        this._super();
-    },
+class Animation extends ImageElement {
+    constructor() {
+        super();
+    }
+
     /**
      * @param delay {number}
      * @param loop {number}
@@ -20,16 +22,18 @@ const Animation = ImageElement.extend({
      * @param end {number}
      * @return {number}
      */
-    addAnimationDelay: function (delay, loop, start, end) {
+    addAnimationDelay(delay, loop, start, end) {
         const index = this.timelines.length;
         this.addAnimationEndpoints(index, delay, loop, start, end);
         return index;
-    },
-    addAnimationWithDelay: function (delay, loopType, count, sequence) {
+    }
+
+    addAnimationWithDelay(delay, loopType, count, sequence) {
         const index = this.timelines.length;
         this.addAnimationSequence(index, delay, loopType, count, sequence);
-    },
-    addAnimationSequence: function (animationId, delay, loopType, count, sequence, resourceId) {
+    }
+
+    addAnimationSequence(animationId, delay, loopType, count, sequence, resourceId) {
         this.addAnimation(
             animationId,
             delay,
@@ -40,8 +44,9 @@ const Animation = ImageElement.extend({
             sequence,
             resourceId
         );
-    },
-    addAnimationEndpoints: function (
+    }
+
+    addAnimationEndpoints(
         animationId,
         delay,
         loopType,
@@ -61,7 +66,8 @@ const Animation = ImageElement.extend({
             argumentList,
             resourceId
         );
-    },
+    }
+
     /**
      * @param animationId {number}
      * @param delay {number}
@@ -71,7 +77,7 @@ const Animation = ImageElement.extend({
      * @param end {number}
      * @param argumentList
      */
-    addAnimation: function (
+    addAnimation(
         animationId,
         delay,
         loopType,
@@ -111,38 +117,43 @@ const Animation = ImageElement.extend({
         this.addTimelineWithID(t, animationId);
 
         t.resourceId = resourceId;
-    },
-    setDelay: function (delay, index, animationId) {
+    }
+
+    setDelay(delay, index, animationId) {
         const timeline = this.getTimeline(animationId),
             track = timeline.getTrack(TrackType.ACTION),
             kf = track.keyFrames[index];
         kf.timeOffset = delay;
-    },
-    setPause: function (index, animationId) {
+    }
+
+    setPause(index, animationId) {
         this.setAction(ActionType.PAUSE_TIMELINE, this, 0, 0, index, animationId);
-    },
-    setAction: function (actionName, target, param, subParam, index, animationId) {
+    }
+
+    setAction(actionName, target, param, subParam, index, animationId) {
         const timeline = this.getTimeline(animationId),
             track = timeline.getTrack(TrackType.ACTION),
             kf = track.keyFrames[index],
             action = Action.create(target, actionName, param, subParam);
 
         kf.value.actionSet.push(action);
-    },
-    switchToAnimation: function (a2, a1, delay) {
+    }
+
+    switchToAnimation(a2, a1, delay) {
         const timeline = this.getTimeline(a1),
             as = [Action.create(this, ActionType.PLAY_TIMELINE, 0, a2)],
             kf = KeyFrame.makeAction(as, delay);
         timeline.addKeyFrame(kf);
-    },
+    }
+
     /**
      * Go to the specified sequence frame of the current animation
      * @param index {number}
      */
-    jumpTo: function (index) {
+    jumpTo(index) {
         const timeline = this.currentTimeline;
         timeline.jumpToTrack(TrackType.ACTION, index);
-    },
-});
+    }
+}
 
 export default Animation;

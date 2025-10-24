@@ -3,13 +3,14 @@ import HorizontallyTiledImage from "@/visual/HorizontallyTiledImage";
 import resolution from "@/resolution";
 import ResourceId from "@/resources/ResourceId";
 import Texture2D from "@/core/Texture2D";
+
 const IMG_OBJ_HOOK_MOVABLE_bottom_tile_left = 0;
 const IMG_OBJ_HOOK_MOVABLE_bottom_tile_right = 1;
 const IMG_OBJ_HOOK_MOVABLE_bottom_tile_middle = 2;
 
-const GrabMoveBackground = ImageElement.extend({
-    init: function (length) {
-        this._super();
+class GrabMoveBackground extends ImageElement {
+    constructor(length) {
+        super();
 
         // render the tiled image once and cache the image
         const tiledImage = new HorizontallyTiledImage();
@@ -24,7 +25,7 @@ const GrabMoveBackground = ImageElement.extend({
 
         const completeImage = tiledImage.getImage();
         this.initTexture(new Texture2D(completeImage));
-    },
-});
+    }
+}
 
 export default GrabMoveBackground;

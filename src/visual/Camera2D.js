@@ -1,27 +1,28 @@
-import Class from "@/utils/Class";
 import Vector from "@/core/Vector";
 import Canvas from "@/utils/Canvas";
 import MathHelper from "@/utils/MathHelper";
-const Camera2D = Class.extend({
+
+class Camera2D {
     /**
      * Camera2D constructor
      * @param speed {number}
      * @param cameraSpeed {CameraSpeed}
      */
-    init: function (speed, cameraSpeed) {
+    constructor(speed, cameraSpeed) {
         this.speed = speed;
         this.type = cameraSpeed;
         this.pos = Vector.newZero();
         this.target = Vector.newZero();
         this.offset = Vector.newZero();
-    },
+    }
+
     /**
      * Changes the camera position (but doesn't actually transform the canvas)
      * @param x {number}
      * @param y {number}
      * @param immediate {boolean}
      */
-    moveTo: function (x, y, immediate) {
+    moveTo(x, y, immediate) {
         this.target.x = x;
         this.target.y = y;
 
@@ -35,11 +36,12 @@ const Camera2D = Class.extend({
             this.offset.normalize();
             this.offset.multiply(this.speed);
         }
-    },
+    }
+
     /**
      * @param delta {number} time delta
      */
-    update: function (delta) {
+    update(delta) {
         if (!this.pos.equals(this.target)) {
             // add to the current position and round
             this.pos.add(Vector.multiply(this.offset, delta));
@@ -55,18 +57,20 @@ const Camera2D = Class.extend({
 
             //console.log('camera pos update x:' + this.pos.x + ' y:' + this.pos.y);
         }
-    },
-    applyCameraTransformation: function () {
+    }
+
+    applyCameraTransformation() {
         if (this.pos.x !== 0 || this.pos.y !== 0) {
             Canvas.context.translate(-this.pos.x, -this.pos.y);
         }
-    },
-    cancelCameraTransformation: function () {
+    }
+
+    cancelCameraTransformation() {
         if (this.pos.x !== 0 || this.pos.y !== 0) {
             Canvas.context.translate(this.pos.x, this.pos.y);
         }
-    },
-});
+    }
+}
 
 /**
  * @enum {number}

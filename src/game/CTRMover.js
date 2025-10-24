@@ -1,11 +1,13 @@
 import resolution from "@/resolution";
 import Mover from "@/utils/Mover";
 import Vector from "@/core/Vector";
-const CTRMover = Mover.extend({
-    init: function (pathCapacity, moveSpeed, rotateSpeed) {
-        this._super(pathCapacity, moveSpeed, rotateSpeed);
-    },
-    setPathAndStart: function (path, startX, startY) {
+
+class CTRMover extends Mover {
+    constructor(pathCapacity, moveSpeed, rotateSpeed) {
+        super(pathCapacity, moveSpeed, rotateSpeed);
+    }
+
+    setPathAndStart(path, startX, startY) {
         let i, nx, ny, xs, ys;
         const MOVER_SCALE = resolution.MOVER_SCALE;
 
@@ -43,7 +45,7 @@ const CTRMover = Mover.extend({
                 this.addPathPoint(new Vector(startX + xs * MOVER_SCALE, startY + ys * MOVER_SCALE));
             }
         }
-    },
-});
+    }
+}
 
 export default CTRMover;

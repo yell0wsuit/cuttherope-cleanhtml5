@@ -6,9 +6,9 @@ const ToggleButtonId = {
     FACE2: 1,
 };
 
-const ToggleButton = BaseElement.extend({
-    init: function (up1, down1, up2, down2, id) {
-        this._super();
+class ToggleButton extends BaseElement {
+    constructor(up1, down1, up2, down2, id) {
+        super();
 
         this.buttonId = id;
 
@@ -28,8 +28,9 @@ const ToggleButton = BaseElement.extend({
         this.b2.setEnabled(false);
         this.b1.onButtonPressed = this.onButtonPressed.bind(this);
         this.b2.onButtonPressed = this.onButtonPressed.bind(this);
-    },
-    onButtonPressed: function (n) {
+    }
+
+    onButtonPressed(n) {
         switch (n) {
             case ToggleButtonId.FACE1:
             case ToggleButtonId.FACE2:
@@ -39,18 +40,21 @@ const ToggleButton = BaseElement.extend({
         if (this.onButtonPressed) {
             this.onButtonPressed(this.buttonId);
         }
-    },
-    setTouchIncrease: function (left, right, top, bottom) {
+    }
+
+    setTouchIncrease(left, right, top, bottom) {
         this.b1.setTouchIncrease(left, right, top, bottom);
         this.b2.setTouchIncrease(left, right, top, bottom);
-    },
-    toggle: function () {
+    }
+
+    toggle() {
         this.b1.setEnabled(!this.b1.isEnabled());
         this.b2.setEnabled(!this.b2.isEnabled());
-    },
-    isOn: function () {
+    }
+
+    isOn() {
         return this.b2.isEnabled();
-    },
-});
+    }
+}
 
 export default ToggleButton;
