@@ -18,7 +18,7 @@ import KeyFrame from "@/visual/KeyFrame";
 import Radians from "@/utils/Radians";
 
 export const GameSceneTouch = {
-    touchDown: function (x, y, touchIndex) {
+    touchDown(x, y, touchIndex) {
         if (this.ignoreTouches) {
             if (this.camera.type === Camera2D.SpeedType.PIXELS) {
                 this.fastenCamera = true;
@@ -237,14 +237,14 @@ export const GameSceneTouch = {
 
         return true;
     },
-    doubleClick: function (x, y, touchIndex) {
+    doubleClick(x, y, touchIndex) {
         if (this.ignoreTouches) {
             return true;
         }
 
         return true;
     },
-    touchUp: function (x, y, touchIndex) {
+    touchUp(x, y, touchIndex) {
         if (this.ignoreTouches) {
             return true;
         }
@@ -320,7 +320,7 @@ export const GameSceneTouch = {
 
         return true;
     },
-    touchMove: function (x, y, touchIndex) {
+    touchMove(x, y, touchIndex) {
         if (this.ignoreTouches) {
             return true;
         }
@@ -522,7 +522,7 @@ export const GameSceneTouch = {
 
         return true;
     },
-    touchDragged: function (x, y, touchIndex) {
+    touchDragged(x, y, touchIndex) {
         if (touchIndex > Constants.MAX_TOUCHES) {
             return false;
         }
@@ -531,7 +531,7 @@ export const GameSceneTouch = {
         this.slastTouch.y = y;
         return true;
     },
-    onButtonPressed: function (n) {
+    onButtonPressed(n) {
         Gravity.toggle();
         this.gravityNormal = Gravity.isNormal();
         SoundMgr.playSound(
@@ -547,7 +547,7 @@ export const GameSceneTouch = {
             }
         }
     },
-    rotateAllSpikesWithId: function (sid) {
+    rotateAllSpikesWithId(sid) {
         for (let i = 0, len = this.spikes.length; i < len; i++) {
             if (this.spikes[i].getToggled() === sid) {
                 this.spikes[i].rotateSpikes();

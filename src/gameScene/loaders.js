@@ -38,7 +38,7 @@ import ActionType from "@/visual/ActionType";
 import BoxType from "@/ui/BoxType";
 
 export const GameSceneLoaders = {
-    loadMap: function (map) {
+    loadMap(map) {
         const layers = [];
 
         // get all the layers for this map
@@ -162,7 +162,7 @@ export const GameSceneLoaders = {
      * Loads the map settings for the map node (inside settings layer)
      * @param item
      */
-    loadMapSettings: function (item) {
+    loadMapSettings(item) {
         this.mapWidth = item.width;
         this.mapHeight = item.height;
         this.PMX = (resolution.CANVAS_WIDTH - this.mapWidth * this.PM) / 2;
@@ -179,7 +179,7 @@ export const GameSceneLoaders = {
             this.earthAnims.push(new EarthImage(0, 0));
         }
     },
-    loadGameDesign: function (item) {
+    loadGameDesign(item) {
         this.special = item.special || 0;
         this.ropePhysicsSpeed = item.ropePhysicsSpeed;
         this.nightLevel = item.nightLevel;
@@ -188,7 +188,7 @@ export const GameSceneLoaders = {
             : GameSceneConstants.PartsType.NONE;
         this.ropePhysicsSpeed *= resolution.PHYSICS_SPEED_MULTIPLIER;
     },
-    loadGrab: function (item) {
+    loadGrab(item) {
         const gx = item.x * this.PM + this.PMX,
             gy = item.y * this.PM + this.PMY,
             l = item.length * this.PM,
@@ -257,7 +257,7 @@ export const GameSceneLoaders = {
 
         this.bungees.push(g);
     },
-    loadCandyL: function (item) {
+    loadCandyL(item) {
         this.starL.pos.x = item.x * this.PM + this.PMX;
         this.starL.pos.y = item.y * this.PM + this.PMY;
 
@@ -272,7 +272,7 @@ export const GameSceneLoaders = {
         this.candyL.y = this.starL.pos.y;
         this.candyL.bb = Rectangle.copy(resolution.CANDY_LR_BB);
     },
-    loadCandyR: function (item) {
+    loadCandyR(item) {
         this.starR.pos.x = item.x * this.PM + this.PMX;
         this.starR.pos.y = item.y * this.PM + this.PMY;
 
@@ -287,11 +287,11 @@ export const GameSceneLoaders = {
         this.candyR.y = this.starR.pos.y;
         this.candyR.bb = Rectangle.copy(resolution.CANDY_LR_BB);
     },
-    loadCandy: function (item) {
+    loadCandy(item) {
         this.star.pos.x = item.x * this.PM + this.PMX;
         this.star.pos.y = item.y * this.PM + this.PMY;
     },
-    loadGravitySwitch: function (item) {
+    loadGravitySwitch(item) {
         this.gravityButton = new GravityButton();
         this.gravityButton.onButtonPressed = this.onButtonPressed.bind(this);
         this.gravityButton.visible = false;
@@ -301,7 +301,7 @@ export const GameSceneLoaders = {
         this.gravityButton.y = item.y * this.PM + this.PMY;
         this.gravityButton.anchor = Alignment.CENTER;
     },
-    loadStar: function (item) {
+    loadStar(item) {
         const s = new Star();
         s.initTextureWithId(ResourceId.IMG_OBJ_STAR_IDLE);
         s.x = item.x * this.PM + this.PMX;
@@ -330,7 +330,7 @@ export const GameSceneLoaders = {
             GameSceneConstants.IMG_OBJ_STAR_DISAPPEAR_Frame_13
         );
     },
-    loadTutorialText: function (item) {
+    loadTutorialText(item) {
         if (this.shouldSkipTutorialElement(item)) {
             return;
         }
@@ -379,7 +379,7 @@ export const GameSceneLoaders = {
 
         this.tutorials.push(t);
     },
-    loadTutorialImage: function (item) {
+    loadTutorialImage(item) {
         if (this.shouldSkipTutorialElement(item)) {
             return;
         }
@@ -484,7 +484,7 @@ export const GameSceneLoaders = {
 
         this.tutorialImages.push(s);
     },
-    loadHidden: function (item) {
+    loadHidden(item) {
         // get the hidden image index
         const v = item.name - MapItem.HIDDEN_01,
             drawingId = item.drawing - 1;
@@ -498,7 +498,7 @@ export const GameSceneLoaders = {
             this.drawings.push(s);
         }
     },
-    loadBubble: function (item) {
+    loadBubble(item) {
         const at = MathHelper.randomRange(
                 GameSceneConstants.IMG_OBJ_BUBBLE_ATTACHED_stain_01,
                 GameSceneConstants.IMG_OBJ_BUBBLE_ATTACHED_stain_03
@@ -522,7 +522,7 @@ export const GameSceneLoaders = {
         s.addChild(bubble);
         this.bubbles.push(s);
     },
-    loadPump: function (item) {
+    loadPump(item) {
         const s = new Pump();
         s.initTextureWithId(ResourceId.IMG_OBJ_PUMP);
         s.doRestoreCutTransparency();
@@ -536,7 +536,7 @@ export const GameSceneLoaders = {
         s.anchor = Alignment.CENTER;
         this.pumps.push(s);
     },
-    loadSock: function (item) {
+    loadSock(item) {
         const hatOrSock = IS_XMAS ? ResourceId.IMG_OBJ_SOCKS_XMAS : ResourceId.IMG_OBJ_SOCKS;
         const s = new Sock();
         s.initTextureWithId(hatOrSock);
@@ -565,7 +565,7 @@ export const GameSceneLoaders = {
         s.updateRotation();
         this.socks.push(s);
     },
-    loadSpike: function (item) {
+    loadSpike(item) {
         const px = item.x * this.PM + this.PMX,
             py = item.y * this.PM + this.PMY,
             w = item.size,
@@ -593,7 +593,7 @@ export const GameSceneLoaders = {
         }
         this.spikes.push(s);
     },
-    loadRotatedCircle: function (item) {
+    loadRotatedCircle(item) {
         const px = item.x * this.PM + this.PMX,
             py = item.y * this.PM + this.PMY,
             size = item.size,
@@ -617,7 +617,7 @@ export const GameSceneLoaders = {
 
         this.rotatedCircles.push(l);
     },
-    loadBouncer: function (item) {
+    loadBouncer(item) {
         const px = item.x * this.PM + this.PMX,
             py = item.y * this.PM + this.PMY,
             w = item.size,
@@ -626,7 +626,7 @@ export const GameSceneLoaders = {
         bouncer.parseMover(item);
         this.bouncers.push(bouncer);
     },
-    loadTarget: function (item) {
+    loadTarget(item) {
         const target = new GameObject();
         this.target = target;
 

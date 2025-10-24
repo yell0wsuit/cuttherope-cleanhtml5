@@ -3,7 +3,7 @@ import * as GameSceneConstants from "@/gameScene/constants";
 import { IS_XMAS, IS_JANUARY } from "@/resources/ResData";
 
 export const GameSceneCharacter = {
-    onIdleOmNomKeyFrame: function (timeline, keyFrame, index) {
+    onIdleOmNomKeyFrame(timeline, keyFrame, index) {
         if (index === 1) {
             // om-nom blink
             this.blinkTimer--;
@@ -29,7 +29,7 @@ export const GameSceneCharacter = {
             }
         }
     },
-    onPaddingtonIdleKeyFrame: function (timeline, keyFrame, index) {
+    onPaddingtonIdleKeyFrame(timeline, keyFrame, index) {
         if (!IS_JANUARY) {
             return;
         }
@@ -51,13 +51,13 @@ export const GameSceneCharacter = {
             }
         }
     },
-    playRegularIdleAfterPaddington: function () {
+    playRegularIdleAfterPaddington() {
         if (this.target) {
             this.target.playTimeline(GameSceneConstants.CharAnimation.IDLE);
         }
         this.pendingPaddingtonIdleTransition = false;
     },
-    onRotatedCircleTimelineFinished: function (t) {
+    onRotatedCircleTimelineFinished(t) {
         const circleToRemove = t.element;
         circleToRemove.removeOnNextUpdate = true;
     },
