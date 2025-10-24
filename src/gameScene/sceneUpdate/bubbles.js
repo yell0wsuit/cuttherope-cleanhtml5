@@ -1,0 +1,86 @@
+import Rectangle from "@/core/Rectangle";
+import * as GameSceneConstants from "@/gameScene/constants";
+import ResourceId from "@/resources/ResourceId";
+import SoundMgr from "@/game/CTRSoundMgr";
+import resolution from "@/resolution";
+
+export const GameSceneBubbles = {
+    isBubbleCapture(b, candy, candyBubble, candyBubbleAnimation) {
+        const bubbleSize = resolution.BUBBLE_SIZE;
+        const bubbleSizeDouble = bubbleSize * 2;
+
+        if (
+            Rectangle.pointInRect(
+                candy.x,
+                candy.y,
+                b.x - bubbleSize,
+                b.y - bubbleSize,
+                bubbleSizeDouble,
+                bubbleSizeDouble
+            )
+        ) {
+            if (candyBubble) {
+                this.popBubble(b.x, b.y);
+            }
+            candyBubbleAnimation.visible = true;
+
+            SoundMgr.playSound(ResourceId.SND_BUBBLE);
+
+            b.popped = true;
+            b.removeChildWithID(0);
+
+            this.attachCandy();
+
+            return true;
+        }
+        return false;
+    },
+    popCandyBubble(isLeft) {
+        if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
+            if (isLeft) {
+                this.candyBubbleL = null;
+                this.candyBubbleAnimationL.visible = false;
+                this.popBubble(this.candyL.x, this.candyL.y);
+            } else {
+                this.candyBubbleR = null;
+                this.candyBubbleAnimationR.visible = false;
+                this.popBubble(this.candyR.x, this.candyR.y);
+            }
+        } else {
+            this.candyBubble = null;
+            this.candyBubbleAnimation.visible = false;
+            this.popBubble(this.candy.x, this.candy.y);
+        }
+    },
+    popBubble(x, y) {
+        this.detachCandy();
+
+        SoundMgr.playSound(ResourceId.SND_BUBBLE_BREAK);
+
+        this.bubbleDisappear.x = x;
+        this.bubbleDisappear.y = y;
+
+        this.bubbleDisappear.playTimeline(0);
+        this.aniPool.addChild(this.bubbleDisappear);
+    },
+    handleBubbleTouch(s, tx, ty) {
+        if (
+            Rectangle.pointInRect(
+                tx + this.camera.pos.x,
+                ty + this.camera.pos.y,
+                s.pos.x - resolution.BUBBLE_TOUCH_OFFSET,
+                s.pos.y - resolution.BUBBLE_TOUCH_OFFSET,
+                resolution.BUBBLE_TOUCH_SIZE,
+                resolution.BUBBLE_TOUCH_SIZE
+            )
+        ) {
+            this.popCandyBubble(s === this.starL);
+
+            // Achievements.increment(AchievementId.BUBBLE_POPPER);
+            // Achievements.increment(AchievementId.BUBBLE_MASTER);
+
+            return true;
+        }
+        return false;
+    },
+};
