@@ -11,6 +11,8 @@ const tapeImgR = new Image();
 
 const BoxDoors = {};
 
+const isImageReady = (img) => img && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0;
+
 // Initialize when DOM is ready
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initializeDoors);
@@ -50,6 +52,33 @@ BoxDoors.preRenderDoors = function () {
     const doorImg = doorImages[BoxManager.currentBoxIndex];
     const leftCtx = BoxDoors.canvasLeft.getContext("2d");
     const rightCtx = BoxDoors.canvasRight.getContext("2d");
+
+    if (!doorImg) {
+        leftCtx.clearRect(0, 0, BoxDoors.canvasLeft.width, BoxDoors.canvasLeft.height);
+        rightCtx.clearRect(0, 0, BoxDoors.canvasRight.width, BoxDoors.canvasRight.height);
+        return;
+    }
+
+    const imagesToWaitFor = [doorImg];
+
+    if (BoxDoors.showTape) {
+        imagesToWaitFor.push(tapeImgL, tapeImgR);
+    }
+
+    const pendingImages = imagesToWaitFor.filter((img) => !isImageReady(img));
+
+    if (pendingImages.length > 0) {
+        pendingImages.forEach((img) => {
+            if (!img) {
+                return;
+            }
+            img.addEventListener("load", BoxDoors.preRenderDoors, { once: true });
+        });
+        return;
+    }
+
+    leftCtx.clearRect(0, 0, BoxDoors.canvasLeft.width, BoxDoors.canvasLeft.height);
+    rightCtx.clearRect(0, 0, BoxDoors.canvasRight.width, BoxDoors.canvasRight.height);
 
     leftCtx.drawImage(doorImg, 0, 0);
 
