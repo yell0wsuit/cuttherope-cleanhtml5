@@ -221,7 +221,7 @@ const PanelManager = {
     getPanelById,
 
     // show a panel by id
-    showPanel: function (panelId, skipFade) {
+    showPanel(panelId, skipFade) {
         this.currentPanelId = panelId;
 
         const panel = getPanelById(panelId);

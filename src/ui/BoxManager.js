@@ -145,7 +145,7 @@ const BoxManager = {
         loadBoxes();
     },
 
-    isNextLevelPlayable: function () {
+    isNextLevelPlayable() {
         // check to make sure we aren't on the last level of the box
         if (ScoreManager.levelCount(this.currentBoxIndex) <= this.currentLevelIndex) {
             return false;

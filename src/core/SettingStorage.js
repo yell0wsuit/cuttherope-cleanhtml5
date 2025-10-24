@@ -88,7 +88,7 @@ migrateOldData();
 const settingCache = {};
 
 const SettingStorage = {
-    get: function (key) {
+    get(key) {
         if (!window.localStorage) {
             return null;
         }
@@ -100,7 +100,7 @@ const SettingStorage = {
         const data = getAllData();
         return data[prefix + key] || null;
     },
-    set: function (key, value) {
+    set(key, value) {
         if (window.localStorage) {
             //console.log("SET",key,value);
             const data = getAllData();
@@ -117,7 +117,7 @@ const SettingStorage = {
             saveAllData(data);
         }
     },
-    remove: function (key) {
+    remove(key) {
         if (window.localStorage) {
             //console.log("REMOVE",key)
             delete settingCache[key];
@@ -127,14 +127,14 @@ const SettingStorage = {
             saveAllData(data);
         }
     },
-    getBoolOrDefault: function (key, defaultValue) {
+    getBoolOrDefault(key, defaultValue) {
         const val = this.get(key);
         if (val == null) {
             return defaultValue;
         }
         return val === "true";
     },
-    getIntOrDefault: function (key, defaultValue) {
+    getIntOrDefault(key, defaultValue) {
         const val = this.get(key);
         if (val == null) {
             return defaultValue;

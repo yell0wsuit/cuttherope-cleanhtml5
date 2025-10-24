@@ -141,7 +141,7 @@ class RootController extends ViewController {
                 onMove: this.mouseMove.bind(this),
                 onEnd: this.mouseUp.bind(this),
                 onOut: this.mouseOut.bind(this),
-                getZoom: function () {
+                getZoom() {
                     return ZoomManager.getCanvasZoom();
                 },
             });

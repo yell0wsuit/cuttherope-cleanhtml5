@@ -71,7 +71,7 @@ const fadeOut = function (element, duration, callback) {
 let closeIntroCallback = null;
 
 const VideoManager = {
-    loadIntroVideo: function () {
+    loadIntroVideo() {
         // only load the video if the first level hasn't been played
         const defaultBoxIndex = getDefaultBoxIndex();
         const firstLevelStars = ScoreManager.getStars(defaultBoxIndex, 0) || 0;
@@ -91,7 +91,7 @@ const VideoManager = {
         }
     },
 
-    removeIntroVideo: function () {
+    removeIntroVideo() {
         // we want to remove the video element to free up resources
         // as suggested by the IE team
         const defaultBoxIndex = getDefaultBoxIndex();
@@ -104,7 +104,7 @@ const VideoManager = {
         }
     },
 
-    playIntroVideo: function (callback) {
+    playIntroVideo(callback) {
         // always show the intro video if the 1st level hasn't been played
         const defaultBoxIndex = getDefaultBoxIndex();
         const firstLevelStars = ScoreManager.getStars(defaultBoxIndex, 0) || 0,
@@ -137,7 +137,7 @@ const VideoManager = {
         VideoManager.closeIntroVideo();
     },
 
-    closeIntroVideo: function () {
+    closeIntroVideo() {
         const vid = document.getElementById("vid");
         if (vid) {
             fadeOut(vid, 500, function () {
@@ -151,7 +151,7 @@ const VideoManager = {
         }
     },
 
-    loadOutroVideo: function () {
+    loadOutroVideo() {
         // we can re-use the same video element used for the intro
         // because we only show the intro video once per session.
 
@@ -172,7 +172,7 @@ const VideoManager = {
         }
     },
 
-    playOutroVideo: function () {
+    playOutroVideo() {
         const vid = document.getElementById("vid");
         if (vid) {
             // make sure we can play the video
@@ -200,7 +200,7 @@ const VideoManager = {
         }
     },
 
-    closeOutroVideo: function () {
+    closeOutroVideo() {
         PanelManager.showPanel(PanelId.GAMECOMPLETE, true);
         const vid = document.getElementById("vid");
         if (vid) {
@@ -212,7 +212,7 @@ const VideoManager = {
         }
     },
 
-    domReady: function () {
+    domReady() {
         this.loadIntroVideo();
     },
 };

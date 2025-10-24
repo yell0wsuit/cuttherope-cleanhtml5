@@ -465,7 +465,7 @@ BoxPanel.activate = function () {
             onMove: pointerMove.bind(this),
             onEnd: pointerUp.bind(this),
             onOut: pointerOut.bind(this),
-            getZoom: function () {
+            getZoom() {
                 return ZoomManager.getUIZoom();
             },
         });

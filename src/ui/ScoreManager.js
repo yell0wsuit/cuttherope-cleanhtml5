@@ -278,7 +278,7 @@ const ScoreManager = {
         return null;
     },
 
-    setStars: function (boxIndex, levelIndex, score, overridePrevious) {
+    setStars(boxIndex, levelIndex, score, overridePrevious) {
         const previousStars = this.totalStars();
         const box = boxes[boxIndex];
         if (box != null) {
@@ -304,7 +304,7 @@ const ScoreManager = {
         return null;
     },
 
-    resetGame: function () {
+    resetGame() {
         const boxCount = boxes.length;
 
         for (let boxIndex = 0; boxIndex < boxCount; boxIndex++) {

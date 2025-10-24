@@ -24,7 +24,7 @@ const SocialHelper = {
     siteName: undefined,
     siteActions: undefined,
 
-    initFB: function () {
+    initFB() {
         // NOTE: must create settings this way to prevent obfuscation
         const fbInitSettings = {};
         fbInitSettings["appId"] = this.appId;
@@ -43,7 +43,7 @@ const SocialHelper = {
     },
 
     // remember to return true in the callback
-    postToFeed: function (caption, description, imageurl, callback) {
+    postToFeed(caption, description, imageurl, callback) {
         // see if the platform has custom sharing
         if (platform.customSharing) {
             PubSub.publish(PubSub.ChannelId.Share, caption, description, imageurl);
@@ -65,7 +65,7 @@ const SocialHelper = {
         }
     },
 
-    initTwitter: function (twttr) {
+    initTwitter(twttr) {
         // report tweets from users
         twttr["events"]["bind"]("tweet", function (event) {
             if (analytics.onTweet) {
