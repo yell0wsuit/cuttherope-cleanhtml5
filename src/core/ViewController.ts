@@ -125,7 +125,7 @@ class ViewController {
      * preserve power).
      * @param delta {number}
      */
-    clampDelta(delta) {
+    clampDelta(delta: number) {
         if (delta < 0.016) {
             // sometimes we'll get a bunch of frames batched together
             // but we don't want to go below the 60 fps delta
@@ -244,7 +244,7 @@ class ViewController {
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    mouseDown(x, y) {
+    mouseDown(x: number, y: number): boolean {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
@@ -256,7 +256,7 @@ class ViewController {
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    mouseUp(x, y) {
+    mouseUp(x: number, y: number): boolean {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
@@ -268,7 +268,7 @@ class ViewController {
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    mouseDragged(x, y) {
+    mouseDragged(x: number, y: number): boolean {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
@@ -280,7 +280,7 @@ class ViewController {
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    mouseMoved(x, y) {
+    mouseMoved(x: number, y: number): boolean {
         // only drag events are used
         return false;
     }
@@ -290,7 +290,7 @@ class ViewController {
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    doubleClick(x, y) {
+    doubleClick(x: number, y: number): boolean {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
