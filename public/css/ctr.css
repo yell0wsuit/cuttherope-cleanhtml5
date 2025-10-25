@@ -3811,49 +3811,51 @@ body {
 .ui-1920 .mini-button {
     background-image: url(../images/1920/ui/menu-options.png);
     background-repeat: no-repeat;
-    width: 268px;
-    height: 128px;
+    width: 272px;
+    height: 131px;
+    background-position: -3px -3px;
     display: inline-block;
     margin-bottom: 15px;
     margin-right: 9px;
     text-align: center;
     position: relative;
+    cursor: url(../cursors/handcursor.cur), url(../cursors/handcursor.png), auto;
 }
 
 .ui-1920 .mini-button:hover {
-    background-position: 0 -131px;
+    background-position: -3px -138px;
 }
 
 .ui-1920 .options-x {
     background-image: url(../images/1920/ui/menu-options.png);
     background-repeat: no-repeat;
-    background-position: -283px -131px;
-    width: 56px;
-    height: 56px;
+    background-position: -280px -138px;
+    width: 54px;
+    height: 53px;
 }
 
 .ui-1920 .options-check {
     background-image: url(../images/1920/ui/menu-options.png);
     background-repeat: no-repeat;
-    background-position: -146px -283px;
-    width: 66px;
-    height: 66px;
+    background-position: -3px -273px;
+    width: 62px;
+    height: 63px;
 }
 
 .ui-1920 .options-check-disabled {
     background-image: url(../images/1920/ui/menu-options.png);
     background-repeat: no-repeat;
-    background-position: -281px -191px;
-    width: 66px;
-    height: 66px;
+    background-position: -69px -273px;
+    width: 62px;
+    height: 62px;
 }
 
 .ui-1920 #options-speaker {
     background-image: url(../images/1920/ui/menu-options.png);
     background-repeat: no-repeat;
-    background-position: 0 -263px;
-    width: 122px;
-    height: 107px;
+    background-position: -135px -273px;
+    width: 117px;
+    height: 108px;
     position: absolute;
     left: 75px;
     top: 11px;
@@ -3877,9 +3879,9 @@ body {
 .ui-1920 #options-note {
     background-image: url(../images/1920/ui/menu-options.png);
     background-repeat: no-repeat;
-    background-position: -281px 0;
-    width: 103px;
-    height: 116px;
+    background-position: -256px -273px;
+    width: 83px;
+    height: 114px;
     position: absolute;
     left: 84px;
     top: 4px;
@@ -3904,31 +3906,32 @@ body {
 .ui-1920 #cutBtn {
     background-image: url(../images/1920/ui/menu-options.png);
     background-repeat: no-repeat;
-    width: 169px;
-    height: 375px;
+    width: 166px;
+    height: 350px;
     display: inline-block;
     position: relative;
     margin-left: 71px;
 }
 
 .ui-1920 #dragBtn {
-    background-position: 0 -371px;
+    background-position: -3px -391px;
     background-repeat: no-repeat;
 }
 
 .ui-1920 #dragBtn .options-check-disabled {
     position: absolute;
-    bottom: 32px;
+    bottom: 8px;
     left: 53px;
 }
 
 .ui-1920 #cutBtn {
-    background-position: -197px -371px;
+    background-position: -173px -391px;
+    cursor: url(../cursors/handcursor.cur), url(../cursors/handcursor.png), auto;
 }
 
 .ui-1920 #cutBtn .options-check {
     position: absolute;
-    bottom: 28px;
+    bottom: 6px;
     left: 58px;
 }
 
