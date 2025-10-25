@@ -9,7 +9,7 @@ export default defineConfig([
         plugins: { js },
         extends: ["js/recommended"],
         languageOptions: { globals: globals.browser },
-        ignores: ["node_modules/**", "dist/**", "public/**"],
+        ignores: ["node_modules/**", "dist/**", "public/**", "dev-dist/**"],
         rules: {
             "no-var": "error",
             "prefer-const": "error",
