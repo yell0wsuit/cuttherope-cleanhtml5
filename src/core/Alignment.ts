@@ -35,7 +35,7 @@ const Alignment = {
      * @param s {string} input string
      * @return {number}
      */
-    parse(s) {
+    parse(s: string): number {
         let a = this.UNDEFINED;
         if (s.indexOf("LEFT") > 0) a = this.LEFT;
         else if (s.indexOf("HCENTER") > 0 || s === "CENTER") a = this.HCENTER;
