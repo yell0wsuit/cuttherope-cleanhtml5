@@ -14,6 +14,8 @@ import PubSub from "@/utils/PubSub";
  * @constructor
  */
 class ViewController {
+    static StateType: { INACTIVE: number; ACTIVE: number; PAUSED: number };
+
     constructor(parent) {
         this.controllerState = ViewController.StateType.INACTIVE;
         this.views = [];
