@@ -5,7 +5,10 @@
  * @param y {number}
  */
 class Vector {
-    constructor(x, y) {
+    x: number;
+    y: number;
+
+    constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
     }
@@ -13,7 +16,7 @@ class Vector {
      *  Convenience method to create a new zero-based vector
      *  @return {Vector}
      */
-    static newZero() {
+    static newZero(): Vector {
         return new Vector(0, 0);
     }
     static newUndefined() {
@@ -28,7 +31,7 @@ class Vector {
      * @param v2 {Vector}
      * @return {Vector}
      */
-    static add(v1, v2) {
+    static add(v1: Vector, v2: Vector): Vector {
         return new Vector(v1.x + v2.x, v1.y + v2.y);
     }
     /**
@@ -36,14 +39,14 @@ class Vector {
      * @param v2 {Vector}
      * @return {Vector}
      */
-    static subtract(v1, v2) {
+    static subtract(v1: Vector, v2: Vector): Vector {
         return new Vector(v1.x - v2.x, v1.y - v2.y);
     }
     /**
      * @param v {Vector}
      * @param s {number} scalar multiplier
      */
-    static multiply(v, s) {
+    static multiply(v: Vector, s: number) {
         return new Vector(v.x * s, v.y * s);
     }
     /**
@@ -51,7 +54,7 @@ class Vector {
      * @param s {number} scalar divisor
      * @return {Vector}
      */
-    static divide(v, s) {
+    static divide(v: Vector, s: number): Vector {
         return new Vector(v.x / s, v.y / s);
     }
     static distance(x1, y1, x2, y2) {
@@ -64,7 +67,7 @@ class Vector {
      * @param v {Vector}
      * @return {Vector}
      */
-    static perpendicular(v) {
+    static perpendicular(v: Vector): Vector {
         //noinspection JSSuspiciousNameCombination
         return new Vector(-v.y, v.x);
     }
@@ -72,7 +75,7 @@ class Vector {
      * @param v {Vector}
      * @return {Vector}
      */
-    static rPerpendicular(v) {
+    static rPerpendicular(v: Vector): Vector {
         //noinspection JSSuspiciousNameCombination
         return new Vector(v.y, -v.x);
     }
@@ -80,14 +83,14 @@ class Vector {
      * @param v {Vector}
      * @return {Vector}
      */
-    static normalize(v) {
+    static normalize(v: Vector): Vector {
         return this.multiply(v, 1 / v.getLength());
     }
     /**
      * @param v {Vector}
      * @return {Vector}
      */
-    static negate(v) {
+    static negate(v: Vector): Vector {
         return new Vector(-v.x, -v.y);
     }
     static calcPathBezier(points, delta) {
@@ -101,7 +104,7 @@ class Vector {
      * @param delta {number}
      * @param result {Vector}
      */
-    static setCalcPathBezier(points, delta, result) {
+    static setCalcPathBezier(points: Array<Vector>, delta: number, result: Vector) {
         let count = points.length;
         if (count <= 1) {
             result.x = result.y = 0;
@@ -134,7 +137,7 @@ class Vector {
      * @param angle {number}
      * @return {Vector}
      */
-    static forAngle(angle) {
+    static forAngle(angle: number): Vector {
         return new Vector(Math.cos(angle), Math.sin(angle));
     }
     getLength() {
@@ -145,20 +148,20 @@ class Vector {
      * @param v2 {Vector}
      * @return {number}
      */
-    getDot(v2) {
+    getDot(v2: Vector): number {
         return this.x * v2.x + this.y * v2.y;
     }
     /**
      * @return {boolean}
      */
-    isZero() {
+    isZero(): boolean {
         return this.x === 0 && this.y === 0;
     }
     /**
      * @param v2 {Vector}
      * @return {boolean}
      */
-    equals(v2) {
+    equals(v2: Vector): boolean {
         return this.x === v2.x && this.y === v2.y;
     }
     setToZero() {
@@ -166,23 +169,23 @@ class Vector {
         this.y = 0;
     }
     /** @return {number} */
-    angle() {
+    angle(): number {
         return Math.atan(this.y / this.x);
     }
     /** @return {number} */
-    normalizedAngle() {
+    normalizedAngle(): number {
         // Note: y goes first in Math.atan2()
         return Math.atan2(this.y, this.x);
     }
     /** @return {Vector} */
-    copy() {
+    copy(): Vector {
         return new Vector(this.x, this.y);
     }
     /**
      * Copies the values from another vector
      * @param v {Vector} source vector
      */
-    copyFrom(v) {
+    copyFrom(v: Vector) {
         this.x = v.x;
         this.y = v.y;
     }
@@ -213,14 +216,14 @@ class Vector {
         this.y += cy;
     }
     /** @return {string} */
-    toString() {
+    toString(): string {
         return `[${this.x}, ${this.y}]`;
     }
     /**
      * Add another vector to this vector (modifies this vector)
      * @param v2 {Vector}
      */
-    add(v2) {
+    add(v2: Vector) {
         this.x += v2.x;
         this.y += v2.y;
     }
@@ -228,7 +231,7 @@ class Vector {
      * Subtract another vector from this vector (modifies this vector)
      * @param v2 {Vector}
      */
-    subtract(v2) {
+    subtract(v2: Vector) {
         this.x -= v2.x;
         this.y -= v2.y;
     }
@@ -236,7 +239,7 @@ class Vector {
      * Multiply this vector by a scalar (modifies this vector)
      * @param s {number} scalar multiplier
      */
-    multiply(s) {
+    multiply(s: number) {
         this.x *= s;
         this.y *= s;
     }
@@ -244,7 +247,7 @@ class Vector {
      * Divide this vector by a scalar (modifies this vector)
      * @param s {number} scalar divisor
      */
-    divide(s) {
+    divide(s: number) {
         this.x /= s;
         this.y /= s;
     }
@@ -253,7 +256,7 @@ class Vector {
      * @param v2 {Vector}
      * @return {number}
      */
-    distance(v2) {
+    distance(v2: Vector): number {
         const tx = this.x - v2.x,
             ty = this.y - v2.y,
             dot = tx * tx + ty * ty;
