@@ -13,10 +13,9 @@ import settings from "@/game/CTRSettings";
 import { IS_XMAS } from "@/resources/ResData";
 
 // cache upgrade UI elements
-let upgradeButton;
+const upgradeButton = document.getElementById("boxUpgradePlate");
 
 function initializeUpgradeButton() {
-    upgradeButton = document.getElementById("boxUpgradePlate");
     if (upgradeButton) {
         upgradeButton.style.display = "none";
     }

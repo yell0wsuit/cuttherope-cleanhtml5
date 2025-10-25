@@ -1,5 +1,25 @@
 import ResourceId from "@/resources/ResourceId";
-const ResourcePacks = {};
+
+type ResourceId = (typeof ResourceId)[keyof typeof ResourceId];
+
+const ResourcePacks = {
+    StandardMenuSounds: [] as ResourceId[],
+    TimeMenuSounds: [] as ResourceId[],
+    StandardGameImages: [] as ResourceId[],
+    Round5AdditionalGameImages: [] as ResourceId[],
+    Round5AdditionalSounds: [] as ResourceId[],
+    TimeEditionAdditionalGameImages: [] as ResourceId[],
+    TimeEditionAdditionalSounds: [] as ResourceId[],
+    FullGameAdditionalGameImages: [] as ResourceId[],
+    ChromeLiteAdditionalGameImages: [] as ResourceId[],
+    ChromeLiteAdditionalGameSounds: [] as ResourceId[],
+    StandardFonts: [] as ResourceId[],
+    StandardGameSounds: [] as ResourceId[],
+    FullGameAdditionalSounds: [] as ResourceId[],
+    StandardMenuImageFilenames: [] as string[],
+    DrawingMenuImageFilenames: [] as string[],
+    NetDesignResolutionImageNames: [] as string[],
+};
 
 ResourcePacks.StandardMenuSounds = [
     ResourceId.SND_MENU_MUSIC,

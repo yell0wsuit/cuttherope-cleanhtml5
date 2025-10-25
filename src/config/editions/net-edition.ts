@@ -8,8 +8,37 @@ import { IS_JANUARY } from "@/resources/ResData";
 
 const HOLIDAY_GIFT_BOX_ID = "holidaygiftbox";
 
+// For localization entries
+interface LocalizationEntry {
+    en: string;
+    fr?: string;
+    de?: string;
+    ru?: string;
+    es?: string;
+    br?: string;
+    ca?: string;
+    it?: string;
+    nl?: string;
+    ko?: string;
+    zh?: string;
+    ja?: string;
+}
+
+interface NormalizedBoxMetadata {
+    id: string;
+    boxText?: LocalizationEntry;
+    boxImage?: string;
+    boxDoor?: string | null;
+    boxType: string | number;
+    unlockStars?: number | null;
+    support?: number | null;
+    showEarth?: boolean;
+    levelBackgroundId?: string | null;
+    levelOverlayId?: string | null;
+}
+
 // Lazy getter for normalized box metadata
-let cachedNormalizedMetadata = null;
+let cachedNormalizedMetadata: NormalizedBoxMetadata[] | null = null;
 const getNormalizedBoxMetadata = () => {
     if (cachedNormalizedMetadata) {
         return cachedNormalizedMetadata;
@@ -44,12 +73,14 @@ const getNormalizedBoxMetadata = () => {
 const netEdition = {
     siteUrl: "http://www.cuttherope.net",
 
+    boxDirectory: "",
+
     // no hidden drawings yet
     disableHiddenDrawings: true,
 
     // the text to display on the box in the box selector
     get boxText() {
-        return getNormalizedBoxMetadata().map(({ boxText }) => boxText);
+        return getNormalizedBoxMetadata()?.map(({ boxText }) => boxText);
     },
 
     // !LANG
@@ -70,7 +101,7 @@ const netEdition = {
 
     // the background image to use for the box in the box selector
     get boxImages() {
-        return getNormalizedBoxMetadata().map(({ boxImage }) => boxImage);
+        return getNormalizedBoxMetadata()?.map(({ boxImage }) => boxImage);
     },
 
     // no box borders in Chrome theme
@@ -80,7 +111,7 @@ const netEdition = {
     get boxDoors() {
         return (
             getNormalizedBoxMetadata()
-                .map(({ boxDoor }) => boxDoor)
+                ?.map(({ boxDoor }) => boxDoor)
                 // omit placeholders so resource preloaders only receive valid assets
                 .filter((boxDoor) => boxDoor != null)
         );
@@ -88,22 +119,22 @@ const netEdition = {
 
     // the type of box to create
     get boxTypes() {
-        return getNormalizedBoxMetadata().map(({ boxType }) => boxType);
+        return getNormalizedBoxMetadata()?.map(({ boxType }) => boxType);
     },
 
     // how many stars are required to unlock each box
     get unlockStars() {
-        return getNormalizedBoxMetadata().map(({ unlockStars }) => unlockStars);
+        return getNormalizedBoxMetadata()?.map(({ unlockStars }) => unlockStars);
     },
 
     // the index of the quad for the support OmNom sits on
     get supports() {
-        return getNormalizedBoxMetadata().map(({ support }) => support);
+        return getNormalizedBoxMetadata()?.map(({ support }) => support);
     },
 
     // determines whether the earth animation is shown
     get showEarth() {
-        return getNormalizedBoxMetadata().map(({ showEarth }) => showEarth);
+        return getNormalizedBoxMetadata()?.map(({ showEarth }) => showEarth);
     },
 
     menuSoundIds: ResourcePacks.StandardMenuSounds,
@@ -123,7 +154,7 @@ const netEdition = {
     get levelBackgroundIds() {
         return (
             getNormalizedBoxMetadata()
-                .map(({ levelBackgroundId }) => levelBackgroundId)
+                ?.map(({ levelBackgroundId }) => levelBackgroundId)
                 // ensure we don't emit null entries for the "coming soon" card
                 .filter((levelBackgroundId) => levelBackgroundId != null)
         );
@@ -131,7 +162,7 @@ const netEdition = {
 
     get levelOverlayIds() {
         return getNormalizedBoxMetadata()
-            .map(({ levelOverlayId }) => levelOverlayId)
+            ?.map(({ levelOverlayId }) => levelOverlayId)
             .filter((levelOverlayId) => levelOverlayId != null);
     },
 
