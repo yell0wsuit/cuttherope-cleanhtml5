@@ -111,6 +111,8 @@ const res1920x1080 = {
      * @type {number}
      */
     PHYSICS_SPEED_MULTIPLIER: 1.05,
+
+    BUNGEE_REST_LEN: 105,
 };
 
 window.resolution = res1920x1080;
