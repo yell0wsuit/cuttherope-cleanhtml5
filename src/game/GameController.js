@@ -29,19 +29,21 @@ const ExitCodeFrom = {
     PAUSE_MENU_LEVEL_SELECT_NEXT_PACK: 2,
 };
 
-const GameController = ViewController.extend({
-    init: function (parent) {
-        this._super(parent);
+class GameController extends ViewController {
+    constructor(parent) {
+        super(parent);
         this.animateRestart = false;
-    },
-    activate: function () {
-        this._super();
+    }
+
+    activate() {
+        super.activate();
         SoundMgr.playGameMusic();
         this.createGameView();
         this.initGameView();
         this.showView(0);
-    },
-    createGameView: function () {
+    }
+
+    createGameView() {
         const view = new GameView();
         const sc = new GameScene();
         sc.gameController = this;
@@ -50,26 +52,31 @@ const GameController = ViewController.extend({
         view.addChildWithID(sc, GameView.ElementType.GAME_SCENE);
 
         this.addView(view, 0);
-    },
+    }
 
-    initGameView: function () {
+    initGameView() {
         this.setPaused(false);
         this.levelFirstStart();
-    },
-    levelFirstStart: function () {
+    }
+
+    levelFirstStart() {
         this.isGamePaused = false;
-    },
-    levelStart: function () {
+    }
+
+    levelStart() {
         this.isGamePaused = false;
-    },
-    onLevelWon: function () {
+    }
+
+    onLevelWon() {
         SoundMgr.playSound(ResourceId.SND_WIN);
         this.deactivate();
-    },
-    onLevelLost: function () {
+    }
+
+    onLevelLost() {
         this.restartLevel();
-    },
-    setPaused: function (paused) {
+    }
+
+    setPaused(paused) {
         this.isGamePaused = paused;
 
         const view = this.getView(0);
@@ -86,8 +93,9 @@ const GameController = ViewController.extend({
                 }
             }
         }
-    },
-    pauseLevel: function () {
+    }
+
+    pauseLevel() {
         const view = this.getView(0);
         if (view) {
             const gs = view.getChild(GameView.ElementType.GAME_SCENE);
@@ -96,24 +104,26 @@ const GameController = ViewController.extend({
                 this.setPaused(true);
             }
         }
-    },
-    resumeLevel: function () {
+    }
+
+    resumeLevel() {
         this.setPaused(false);
-    },
-    restartLevel: function () {
+    }
+
+    restartLevel() {
         this.deleteView(0);
         this.animateRestart = true;
         this.activate();
-    },
+    }
 
     /**
      * @param x {number}
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    mouseDown: function (x, y) {
+    mouseDown(x, y) {
         // see if the event was handled by the base class
-        const res = this._super(x, y);
+        const res = super.mouseDown(x, y);
         if (res) {
             return true;
         }
@@ -129,15 +139,16 @@ const GameController = ViewController.extend({
         }
 
         return false;
-    },
+    }
+
     /**
      * @param x {number}
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    mouseDragged: function (x, y) {
+    mouseDragged(x, y) {
         // see if the event was handled by the base class
-        const res = this._super(x, y);
+        const res = super.mouseDragged(x, y);
         if (res) {
             return true;
         }
@@ -153,15 +164,16 @@ const GameController = ViewController.extend({
         }
 
         return false;
-    },
+    }
+
     /**
      * @param x {number}
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    mouseMoved: function (x, y) {
+    mouseMoved(x, y) {
         // see if the event was handled by the base class
-        const res = this._super(x, y);
+        const res = super.mouseMoved(x, y);
         if (res) {
             return true;
         }
@@ -177,15 +189,16 @@ const GameController = ViewController.extend({
         }
 
         return false;
-    },
+    }
+
     /**
      * @param x {number}
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    mouseUp: function (x, y) {
+    mouseUp(x, y) {
         // see if the event was handled by the base class
-        const res = this._super(x, y);
+        const res = super.mouseUp(x, y);
         if (res) {
             return true;
         }
@@ -201,15 +214,16 @@ const GameController = ViewController.extend({
         }
 
         return false;
-    },
+    }
+
     /**
      * @param x {number}
      * @param y {number}
      * @return {boolean} true if event was handled
      */
-    doubleClick: function (x, y) {
+    doubleClick(x, y) {
         // see if the event was handled by the base class
-        const res = this._super(x, y);
+        const res = super.doubleClick(x, y);
         if (res) {
             return true;
         }
@@ -224,7 +238,7 @@ const GameController = ViewController.extend({
         }
 
         return false;
-    },
-});
+    }
+}
 
 export default GameController;

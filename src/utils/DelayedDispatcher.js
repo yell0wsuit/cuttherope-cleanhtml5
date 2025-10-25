@@ -15,14 +15,14 @@ class Dispatch {
 
 const DelayedDispatcher = {
     dispatchers: [],
-    callObject: function (object, callback, param, delay) {
+    callObject(object, callback, param, delay) {
         const dp = new Dispatch(object, callback, param, delay);
         this.dispatchers.push(dp);
     },
-    cancelAllDispatches: function () {
+    cancelAllDispatches() {
         this.dispatchers.length = 0;
     },
-    cancelDispatch: function (object, callback, param) {
+    cancelDispatch(object, callback, param) {
         for (let i = 0, count = this.dispatchers.length; i < count; i++) {
             const dp = this.dispatchers[i];
             if (dp.object === object && dp.callback === callback && dp.param === param) {
@@ -31,7 +31,7 @@ const DelayedDispatcher = {
             }
         }
     },
-    update: function (delta) {
+    update(delta) {
         // take a snapshot of the current dispatchers since
         // the queue may be modified during our update
         const currentDps = this.dispatchers.slice(0);

@@ -1,7 +1,7 @@
-import Class from "@/utils/Class";
 import KeyFrame from "@/visual/KeyFrame";
 import TrackType from "@/visual/TrackType";
 import Constants from "@/utils/Constants";
+
 /**
  * @enum {number}
  */
@@ -10,8 +10,8 @@ const TrackState = {
     ACTIVE: 1,
 };
 
-const TimelineTrack = Class.extend({
-    init: function (timeline, trackType) {
+class TimelineTrack {
+    constructor(timeline, trackType) {
         this.type = trackType;
         this.state = TrackState.NOT_ACTIVE;
         this.relative = false;
@@ -33,32 +33,38 @@ const TimelineTrack = Class.extend({
         if (trackType === TrackType.ACTION) {
             this.actionSets = [];
         }
-    },
-    deactivate: function () {
+    }
+
+    deactivate() {
         this.state = TrackState.NOT_ACTIVE;
-    },
-    addKeyFrame: function (keyFrame) {
+    }
+
+    addKeyFrame(keyFrame) {
         this.setKeyFrame(keyFrame, this.keyFrames.length);
-    },
-    setKeyFrame: function (keyFrame, index) {
+    }
+
+    setKeyFrame(keyFrame, index) {
         this.keyFrames[index] = keyFrame;
 
         if (this.type === TrackType.ACTION) {
             this.actionSets.push(keyFrame.value.actionSet);
         }
-    },
-    getFrameTime: function (frameIndex) {
+    }
+
+    getFrameTime(frameIndex) {
         let total = 0;
         for (let i = 0; i <= frameIndex; i++) {
             total += this.keyFrames[i].timeOffset;
         }
         return total;
-    },
-    updateRange: function () {
+    }
+
+    updateRange() {
         this.startTime = this.getFrameTime(0);
         this.endTime = this.getFrameTime(this.keyFrames.length - 1);
-    },
-    updateActionTrack: function (delta) {
+    }
+
+    updateActionTrack(delta) {
         if (this.state === TrackState.NOT_ACTIVE) {
             if (!this.t.timelineDirReverse) {
                 if (!(this.t.time - delta > this.endTime || this.t.time < this.startTime)) {
@@ -126,8 +132,9 @@ const TimelineTrack = Class.extend({
                 }
             }
         }
-    },
-    updateNonActionTrack: function (delta) {
+    }
+
+    updateNonActionTrack(delta) {
         const t = this.t;
         let kf;
         if (this.state === TrackState.NOT_ACTIVE) {
@@ -278,8 +285,9 @@ const TimelineTrack = Class.extend({
                 }
             }
         }
-    },
-    initActionKeyFrame: function (kf, time) {
+    }
+
+    initActionKeyFrame(kf, time) {
         this.keyFrameTimeLeft = time;
         this.setElementFromKeyFrame(kf);
 
@@ -287,11 +295,12 @@ const TimelineTrack = Class.extend({
             this.updateActionTrack(this.overrun);
             this.overrun = 0;
         }
-    },
+    }
+
     /**
      * @param kf {KeyFrame}
      */
-    setElementFromKeyFrame: function (kf) {
+    setElementFromKeyFrame(kf) {
         switch (this.type) {
             case TrackType.POSITION: {
                 const elem = this.t.element,
@@ -350,8 +359,9 @@ const TimelineTrack = Class.extend({
                 break;
             }
         }
-    },
-    setKeyFrameFromElement: function (kf) {
+    }
+
+    setKeyFrameFromElement(kf) {
         const kfValue = kf.value,
             elem = this.t.element;
         switch (this.type) {
@@ -372,8 +382,9 @@ const TimelineTrack = Class.extend({
             case TrackType.ACTION:
                 break;
         }
-    },
-    initKeyFrameStepFrom: function (src, dst, time) {
+    }
+
+    initKeyFrameStepFrom(src, dst, time) {
         this.keyFrameTimeLeft = time;
 
         this.setKeyFrameFromElement(this.elementPrevState);
@@ -482,7 +493,7 @@ const TimelineTrack = Class.extend({
             this.updateNonActionTrack(this.overrun);
             this.overrun = 0;
         }
-    },
-});
+    }
+}
 
 export default TimelineTrack;

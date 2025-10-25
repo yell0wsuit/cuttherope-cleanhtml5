@@ -15,9 +15,9 @@ const IMG_OBJ_STAR_IDLE_idle_end = 18;
 const IMG_OBJ_STAR_IDLE_timed_start = 19;
 const IMG_OBJ_STAR_IDLE_timed_end = 55;
 
-const Star = CTRGameObject.extend({
-    init: function () {
-        this._super();
+class Star extends CTRGameObject {
+    constructor() {
+        super();
 
         this.time = 0;
         this.timeout = 0;
@@ -28,8 +28,9 @@ const Star = CTRGameObject.extend({
         // don't appear jerky. It's good to use a value that evenly divides 1
         // so that at least some of the positions are on pixel boundaries.
         this.drawPosIncrement = 0.0001;
-    },
-    createAnimations: function () {
+    }
+
+    createAnimations() {
         let t;
         if (this.timeout > 0) {
             // create animation
@@ -113,22 +114,24 @@ const Star = CTRGameObject.extend({
         sr.drawPosIncrement = 0.0001;
 
         this.addChild(sr);
-    },
-    update: function (delta) {
+    }
+
+    update(delta) {
         if (this.timeout > 0) {
             if (this.time > 0) {
                 this.time = Mover.moveToTarget(this.time, 0, 1, delta);
             }
         }
-        this._super(delta);
-    },
-    draw: function () {
+        super.update(delta);
+    }
+
+    draw() {
         if (this.timedAnim) {
             this.timedAnim.draw();
         }
 
-        this._super();
-    },
-});
+        super.draw();
+    }
+}
 
 export default Star;

@@ -12,9 +12,9 @@ import { IS_XMAS } from "@/resources/ResData";
 
 const hatOrSock = IS_XMAS ? ResourceId.IMG_OBJ_SOCKS_XMAS : ResourceId.IMG_OBJ_SOCKS;
 
-const Sock = CTRGameObject.extend({
-    init: function () {
-        this._super();
+class Sock extends CTRGameObject {
+    constructor() {
+        super();
 
         this.group = 0;
         this.angle = 0;
@@ -24,8 +24,9 @@ const Sock = CTRGameObject.extend({
         this.b2 = new Vector(0, 0);
 
         this.idleTimeout = 0;
-    },
-    createAnimations: function () {
+    }
+
+    createAnimations() {
         this.light = new Animation();
         this.light.initTextureWithId(hatOrSock);
         this.light.anchor = Alignment.BOTTOM | Alignment.HCENTER;
@@ -43,15 +44,17 @@ const Sock = CTRGameObject.extend({
         this.light.doRestoreCutTransparency();
         this.light.visible = false;
         this.addChild(this.light);
-    },
+    }
+
     /**
      * Play the glow animation when candy goes in
      */
-    playGlowAnimation: function () {
+    playGlowAnimation() {
         this.light.visible = true;
         this.light.play(0);
-    },
-    updateRotation: function () {
+    }
+
+    updateRotation() {
         this.t1.x = this.x - resolution.SOCK_WIDTH / 2;
         this.t2.x = this.x + resolution.SOCK_WIDTH / 2;
         this.t1.y = this.t2.y = this.y;
@@ -66,17 +69,19 @@ const Sock = CTRGameObject.extend({
         this.t2.rotateAround(this.angle, this.x, this.y);
         this.b1.rotateAround(this.angle, this.x, this.y);
         this.b2.rotateAround(this.angle, this.x, this.y);
-    },
-    draw: function () {
-        this._super();
+    }
+
+    draw() {
+        super.draw();
 
         // Hide light after animation completes
         const tl = this.light.currentTimeline;
         if (tl && tl.state === Timeline.StateType.STOPPED && this.light.visible) {
             this.light.visible = false;
         }
-    },
-    drawBB: function () {
+    }
+
+    drawBB() {
         // DEBUG: draw bounding lines for transport area
         /*if (false) {
             const ctx = Canvas.context;
@@ -94,14 +99,15 @@ const Sock = CTRGameObject.extend({
             ctx.lineTo(this.b2.x, this.b2.y);
             ctx.stroke();
         }*/
-    },
-    update: function (delta) {
-        this._super(delta);
+    }
+
+    update(delta) {
+        super.update(delta);
         if (this.mover) {
             this.updateRotation();
         }
-    },
-});
+    }
+}
 
 /**
  * @enum {number}

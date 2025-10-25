@@ -93,7 +93,7 @@ const startIfReady = function () {
             throw new Error(`Resource not found for sound ID: ${soundId}`);
         }
 
-        const soundKey = "s" + soundId;
+        const soundKey = `s${soundId}`;
         const soundUrl = baseUrl + resource.path + extension;
 
         const response = await fetch(soundUrl);
@@ -141,14 +141,14 @@ const startIfReady = function () {
 };
 
 const SoundLoader = {
-    start: function () {
+    start() {
         startRequested = true;
         startIfReady();
     },
-    onMenuComplete: function (callback) {
+    onMenuComplete(callback) {
         completeListeners.push(callback);
     },
-    onProgress: function (callback) {
+    onProgress(callback) {
         progressListeners.push(callback);
         if (currentTotal > 0) {
             try {
@@ -158,7 +158,7 @@ const SoundLoader = {
             }
         }
     },
-    getSoundCount: function () {
+    getSoundCount() {
         return edition.menuSoundIds.length + edition.gameSoundIds.length;
     },
 };

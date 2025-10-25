@@ -7,7 +7,7 @@ const MathHelper = {
      * @param maxV {number}
      * @return {number}
      */
-    fitToBoundaries: function (v, minV, maxV) {
+    fitToBoundaries(v, minV, maxV) {
         return Math.max(Math.min(v, maxV), minV);
     },
     /**
@@ -16,7 +16,7 @@ const MathHelper = {
      * @param y {number}
      * @return {boolean}
      */
-    sameSign: function (x, y) {
+    sameSign(x, y) {
         return x < 0 === y < 0;
     },
     /**
@@ -24,13 +24,13 @@ const MathHelper = {
      * @param from {number}
      * @param to {number}
      */
-    randomRange: function (from, to) {
+    randomRange(from, to) {
         return ~~(Math.random() * (to - from + 1) + from);
     },
-    randomBool: function () {
+    randomBool() {
         return Math.random() > 0.5;
     },
-    randomMinus1to1: function () {
+    randomMinus1to1() {
         return Math.random() * 2 - 1;
     },
     /**
@@ -41,7 +41,7 @@ const MathHelper = {
      * @param v4 {number}
      * @return {number}
      */
-    maxOf4: function (v1, v2, v3, v4) {
+    maxOf4(v1, v2, v3, v4) {
         if (v1 >= v2 && v1 >= v3 && v1 >= v4) return v1;
         if (v2 >= v1 && v2 >= v3 && v2 >= v4) return v2;
         if (v3 >= v2 && v3 >= v1 && v3 >= v4) return v3;
@@ -57,7 +57,7 @@ const MathHelper = {
      * @param v4 {number}
      * @return {number}
      */
-    minOf4: function (v1, v2, v3, v4) {
+    minOf4(v1, v2, v3, v4) {
         if (v1 <= v2 && v1 <= v3 && v1 <= v4) return v1;
         if (v2 <= v1 && v2 <= v3 && v2 <= v4) return v2;
         if (v3 <= v2 && v3 <= v1 && v3 <= v4) return v3;
@@ -76,7 +76,7 @@ const MathHelper = {
      * @param y4 {number}
      * @return {boolean}
      */
-    lineInLine: function (x1, y1, x2, y2, x3, y3, x4, y4) {
+    lineInLine(x1, y1, x2, y2, x3, y3, x4, y4) {
         //let DPx, DPy, QAx, QAy, QBx, QBy, d, la, lb;
 
         const DPx = x3 - x1 + x4 - x2,
@@ -94,13 +94,13 @@ const MathHelper = {
     },
 
     // round to arbitrary precision
-    roundPrecision: function (value, precision) {
+    roundPrecision(value, precision) {
         const scalar = Math.pow(10, precision);
         return Math.round(value * scalar) / scalar;
     },
 
     // round to 2 decimals of precision
-    roundP2: function (value) {
+    roundP2(value) {
         return Math.round(value * 100) / 100;
     },
 };

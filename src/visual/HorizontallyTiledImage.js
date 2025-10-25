@@ -1,22 +1,25 @@
 import ImageElement from "@/visual/ImageElement";
 import Canvas from "@/utils/Canvas";
 import Alignment from "@/core/Alignment";
-const HorizontallyTiledImage = ImageElement.extend({
-    init: function () {
-        this._super();
-    },
+
+class HorizontallyTiledImage extends ImageElement {
+    constructor() {
+        super();
+    }
+
     /**
      * Set the texture for this image element
      * @param texture {Texture2D}
      */
-    initTexture: function (texture) {
-        this._super(texture);
+    initTexture(texture) {
+        super.initTexture(texture);
 
         this.tiles = [];
         this.offsets = [];
         this.align = Alignment.CENTER;
-    },
-    setTileHorizontally: function (left, center, right) {
+    }
+
+    setTileHorizontally(left, center, right) {
         this.tiles[0] = left;
         this.tiles[1] = center;
         this.tiles[2] = right;
@@ -36,8 +39,9 @@ const HorizontallyTiledImage = ImageElement.extend({
         this.offsets[0] = ~~((this.height - h1) / 2.0);
         this.offsets[1] = ~~((this.height - h2) / 2.0);
         this.offsets[2] = ~~((this.height - h3) / 2.0);
-    },
-    draw: function () {
+    }
+
+    draw() {
         this.preDraw();
 
         const left = this.texture.rects[this.tiles[0]],
@@ -114,12 +118,12 @@ const HorizontallyTiledImage = ImageElement.extend({
         }
 
         this.postDraw();
-    },
+    }
 
     /**
      * Draw the tile image to an offscreen canvas and return an Image
      */
-    getImage: function () {
+    getImage() {
         // save the existing canvas id and switch to the hidden canvas
         const existingCanvas = Canvas.element;
 
@@ -148,7 +152,7 @@ const HorizontallyTiledImage = ImageElement.extend({
         }
 
         return img;
-    },
-});
+    }
+}
 
 export default HorizontallyTiledImage;

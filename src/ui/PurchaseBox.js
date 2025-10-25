@@ -92,32 +92,32 @@ PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
     });
 });
 
-const PurchaseBox = Box.extend({
-    init: function (boxIndex, bgimg, reqstars, islocked, type) {
-        this._super(boxIndex, bgimg, reqstars, islocked, type);
+class PurchaseBox extends Box {
+    constructor(boxIndex, bgimg, reqstars, islocked, type) {
+        super(boxIndex, bgimg, reqstars, islocked, type);
         this.purchased = false;
         this.includeBoxNumberInTitle = false;
         this.isPurchaseBox = true;
-    },
+    }
 
-    isRequired: function () {
+    isRequired() {
         // not a box required for game completion
         return false;
-    },
+    }
 
-    isGameBox: function () {
+    isGameBox() {
         return false;
-    },
+    }
 
-    onSelected: function () {
+    onSelected() {
         fadeIn($upgradePrompt);
         fadeIn($upgradeButton);
-    },
+    }
 
-    onUnselected: function () {
+    onUnselected() {
         fadeOut($upgradePrompt);
         fadeOut($upgradeButton, 200);
-    },
-});
+    }
+}
 
 export default PurchaseBox;

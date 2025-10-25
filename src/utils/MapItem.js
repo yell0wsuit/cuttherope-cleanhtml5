@@ -139,7 +139,7 @@ function getMapItem(name) {
         case "rotatedCircle":
             return MapItem.ROTATED_CIRCLE;
         default:
-            alert("Unknown map item:" + name);
+            alert(`Unknown map item: ${name}`);
             return null;
     }
 }

@@ -81,6 +81,7 @@ out
 # Nuxt.js build / generate output
 .nuxt
 dist
+dev-dist
 .output
 
 # Gatsby files
@@ -139,6 +140,8 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+.npm_cache/
 
 # 💩 stuff
 .DS_Store

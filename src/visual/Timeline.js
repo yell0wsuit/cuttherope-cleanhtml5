@@ -1,9 +1,9 @@
-import Class from "@/utils/Class";
 import TimelineTrack from "@/visual/TimelineTrack";
 import TrackType from "@/visual/TrackType";
 import Constants from "@/utils/Constants";
-const Timeline = Class.extend({
-    init: function () {
+
+class Timeline {
+    constructor() {
         this.time = 0;
         this.length = 0;
         this.loopsLimit = Constants.UNDEFINED;
@@ -20,23 +20,27 @@ const Timeline = Class.extend({
         this.timelineDirReverse = false;
 
         this.element = null;
-    },
-    addKeyFrame: function (keyFrame) {
+    }
+
+    addKeyFrame(keyFrame) {
         const track = this.tracks[keyFrame.trackType],
             index = track == null ? 0 : track.keyFrames.length;
         this.setKeyFrame(keyFrame, index);
-    },
-    setKeyFrame: function (keyFrame, index) {
+    }
+
+    setKeyFrame(keyFrame, index) {
         let track = this.tracks[keyFrame.trackType];
         if (!track) {
             this.tracks[keyFrame.trackType] = track = new TimelineTrack(this, keyFrame.trackType);
         }
         track.setKeyFrame(keyFrame, index);
-    },
-    getTrack: function (index) {
+    }
+
+    getTrack(index) {
         return this.tracks[index];
-    },
-    play: function () {
+    }
+
+    play() {
         if (this.state !== Timeline.StateType.PAUSED) {
             this.time = 0;
             this.timelineDirReverse = false;
@@ -54,30 +58,35 @@ const Timeline = Class.extend({
             this.update(0);
         }
         this.state = Timeline.StateType.PLAYING;
-    },
-    pause: function () {
+    }
+
+    pause() {
         this.state = Timeline.StateType.PAUSED;
-    },
-    jumpToTrack: function (trackIndex, keyFrame) {
+    }
+
+    jumpToTrack(trackIndex, keyFrame) {
         if (this.state === Timeline.StateType.STOPPED) {
             this.state = Timeline.StateType.PAUSED;
         }
         const delta = this.tracks[trackIndex].getFrameTime(keyFrame) - this.time;
         this.update(delta);
-    },
-    stop: function () {
+    }
+
+    stop() {
         this.state = Timeline.StateType.STOPPED;
         this.deactivateTracks();
-    },
-    deactivateTracks: function () {
+    }
+
+    deactivateTracks() {
         for (let i = 0, len = this.tracks.length; i < len; i++) {
             const track = this.tracks[i];
             if (track) {
                 track.deactivate();
             }
         }
-    },
-    update: function (delta) {
+    }
+
+    update(delta) {
         if (this.state !== Timeline.StateType.PLAYING) return;
 
         if (!this.timelineDirReverse) this.time += delta;
@@ -138,8 +147,8 @@ const Timeline = Class.extend({
                 }
             }
         }
-    },
-});
+    }
+}
 
 /**
  * @enum {number}

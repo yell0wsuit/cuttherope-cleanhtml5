@@ -6,41 +6,46 @@ import Constants from "@/utils/Constants";
 import Vector from "@/core/Vector";
 import ActionType from "@/visual/ActionType";
 import Log from "@/utils/Log";
+
 // Note: This class is named Image in the iOS sources but we'll use
 // ImageElement to avoid conflicts with the native JS Image class.
 
 /**
  * Texture container with the ability to calculate and draw quads
  */
-const ImageElement = BaseElement.extend({
-    init: function () {
-        this._super();
-    },
+class ImageElement extends BaseElement {
+    constructor() {
+        super();
+    }
+
     /**
      * Set the texture for this image element
      * @param texture {Texture2D}
      */
-    initTexture: function (texture) {
+    initTexture(texture) {
         this.texture = texture;
         this.restoreCutTransparency = false;
 
         if (this.texture.rects.length > 0) this.setTextureQuad(0);
         else this.setDrawFullImage();
-    },
-    getTexture: function (resId) {
+    }
+
+    getTexture(resId) {
         // using the resMgr would create a circular dependency,
         // so we'll assume its been loaded and fetch directly
         const texture = RES_DATA[resId].texture;
         if (!texture) {
-            Log.debug("Image not loaded: " + RES_DATA[resId].path);
+            Log.debug(`Image not loaded: ${RES_DATA[resId].path}`);
         }
         return texture;
-    },
-    initTextureWithId: function (resId) {
+    }
+
+    initTextureWithId(resId) {
         this.resId = resId;
         this.initTexture(this.getTexture(resId));
-    },
-    setTextureQuad: function (n) {
+    }
+
+    setTextureQuad(n) {
         this.quadToDraw = n;
 
         // don't set width / height to quad size if we cut transparency from each quad
@@ -49,20 +54,23 @@ const ImageElement = BaseElement.extend({
             this.width = rect.w;
             this.height = rect.h;
         }
-    },
-    setDrawFullImage: function () {
+    }
+
+    setDrawFullImage() {
         this.quadToDraw = Constants.UNDEFINED;
         this.width = this.texture.imageWidth;
         this.height = this.texture.imageHeight;
-    },
-    doRestoreCutTransparency: function () {
+    }
+
+    doRestoreCutTransparency() {
         if (this.texture.preCutSize.x !== Vector.undefined.x) {
             this.restoreCutTransparency = true;
             this.width = this.texture.preCutSize.x;
             this.height = this.texture.preCutSize.y;
         }
-    },
-    draw: function () {
+    }
+
+    draw() {
         this.preDraw();
 
         // only draw if the image is non-transparent
@@ -78,8 +86,9 @@ const ImageElement = BaseElement.extend({
         }
 
         this.postDraw();
-    },
-    drawQuad: function (n) {
+    }
+
+    drawQuad(n) {
         const rect = this.texture.rects[n];
         let quadWidth = rect.w,
             quadHeight = rect.h,
@@ -133,8 +142,9 @@ const ImageElement = BaseElement.extend({
             quadWidth,
             quadHeight
         ); // destination coordinates
-    },
-    drawTiled: function (q, x, y, width, height) {
+    }
+
+    drawTiled(q, x, y, width, height) {
         const ctx = Canvas.context;
         let qx = 0,
             qy = 0,
@@ -194,13 +204,14 @@ const ImageElement = BaseElement.extend({
 
             yoff += yInc;
         }
-    },
+    }
+
     /**
      * Returns true if the point is inside the boundaries of the current quad
      * @param x
      * @param y
      */
-    pointInDrawQuad: function (x, y) {
+    pointInDrawQuad(x, y) {
         if (this.quadToDraw === Constants.UNDEFINED) {
             return Rectangle.pointInRect(
                 x,
@@ -223,14 +234,15 @@ const ImageElement = BaseElement.extend({
 
             return Rectangle.pointInRect(x, y, qx, qy, rect.w, rect.h);
         }
-    },
+    }
+
     /**
      * Returns true if the action was handled
      * @param actionData {ActionData}
      * @return {boolean}
      */
-    handleAction: function (actionData) {
-        if (this._super(actionData)) {
+    handleAction(actionData) {
+        if (super.handleAction(actionData)) {
             return true;
         }
 
@@ -241,29 +253,31 @@ const ImageElement = BaseElement.extend({
         }
 
         return true;
-    },
-    setElementPositionWithOffset: function (resId, index) {
+    }
+
+    setElementPositionWithOffset(resId, index) {
         const texture = this.getTexture(resId),
             offset = texture.offsets[index];
         this.x = offset.x;
         this.y = offset.y;
-    },
-    setElementPositionWithCenter: function (resId, index) {
+    }
+
+    setElementPositionWithCenter(resId, index) {
         const texture = this.getTexture(resId),
             rect = texture.rects[index],
             offset = texture.offsets[index];
         this.x = offset.x + rect.w / 2;
         this.y = offset.y + rect.h / 2;
-    },
-});
+    }
 
-ImageElement.create = function (resId, drawQuad) {
-    const image = new ImageElement();
-    image.initTextureWithId(resId);
+    static create(resId, drawQuad) {
+        const image = new ImageElement();
+        image.initTextureWithId(resId);
 
-    if (drawQuad != null) image.setTextureQuad(drawQuad);
+        if (drawQuad != null) image.setTextureQuad(drawQuad);
 
-    return image;
-};
+        return image;
+    }
+}
 
 export default ImageElement;

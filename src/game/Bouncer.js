@@ -24,9 +24,9 @@ const IMG_OBJ_BOUNCER_02_Frame_3 = 2;
 const IMG_OBJ_BOUNCER_02_Frame_4 = 3;
 const IMG_OBJ_BOUNCER_02_end = 4;
 
-const Bouncer = CTRGameObject.extend({
-    init: function (x, y, width, angle) {
-        this._super();
+class Bouncer extends CTRGameObject {
+    constructor(x, y, width, angle) {
+        super();
 
         this.angle = 0;
         this.skip = 0;
@@ -57,8 +57,9 @@ const Bouncer = CTRGameObject.extend({
             ),
             t = this.getTimeline(k);
         t.addKeyFrame(KeyFrame.makeSingleAction(this, ActionType.SET_DRAWQUAD, 0, 0, delay));
-    },
-    updateRotation: function () {
+    }
+
+    updateRotation() {
         const x = this.x;
         const y = this.y;
         const width = this.width / 2;
@@ -77,13 +78,14 @@ const Bouncer = CTRGameObject.extend({
         this.t2.rotateAround(angle, x, y);
         this.b1.rotateAround(angle, x, y);
         this.b2.rotateAround(angle, x, y);
-    },
-    update: function (delta) {
-        this._super(delta);
+    }
+
+    update(delta) {
+        super.update(delta);
         if (this.mover) {
             this.updateRotation();
         }
-    },
-});
+    }
+}
 
 export default Bouncer;

@@ -10,7 +10,7 @@ import Rectangle from "@/core/Rectangle";
 import Log from "@/utils/Log";
 import { parseTexturePackerAtlas } from "@/resources/TextureAtlasParser";
 const ResourceMgr = {
-    init: function () {
+    init() {
         // merge info into resource entries
         const infos = ResInfo;
         ResScaler.scaleResourceInfos(infos, resolution.CANVAS_SCALE);
@@ -22,7 +22,7 @@ const ResourceMgr = {
             RES_DATA[info.id].info = info;
         }
     },
-    onResourceLoaded: function (resId, img) {
+    onResourceLoaded(resId, img) {
         const resource = RES_DATA[resId];
         if (!resource) {
             return;
@@ -31,7 +31,7 @@ const ResourceMgr = {
         resource.pendingImage = img;
         this._finalizeTextureResource(resId);
     },
-    onAtlasLoaded: function (resId, atlasData) {
+    onAtlasLoaded(resId, atlasData) {
         const resource = RES_DATA[resId];
         if (!resource) {
             return;
@@ -41,7 +41,7 @@ const ResourceMgr = {
         resource._atlasFailed = false;
         this._finalizeTextureResource(resId);
     },
-    onAtlasError: function (resId, error) {
+    onAtlasError(resId, error) {
         const resource = RES_DATA[resId];
         if (!resource) {
             return;
@@ -51,7 +51,7 @@ const ResourceMgr = {
         resource._atlasFailed = true;
         this._finalizeTextureResource(resId);
     },
-    _parseAtlasForResource: function (resource, atlasData) {
+    _parseAtlasForResource(resource, atlasData) {
         const format = resource.atlasFormat || "texture-packer";
         const existingInfo = resource.info || {};
 
@@ -67,7 +67,7 @@ const ResourceMgr = {
                 return existingInfo;
         }
     },
-    _finalizeTextureResource: function (resId) {
+    _finalizeTextureResource(resId) {
         const resource = RES_DATA[resId];
         if (!resource || !resource.pendingImage) {
             return;
@@ -102,7 +102,7 @@ const ResourceMgr = {
      * Sets texture quads from xml info
      * @param resource {ResEntry}
      */
-    setQuads: function (resource) {
+    setQuads(resource) {
         if (!resource || !resource.texture) {
             return;
         }
@@ -159,22 +159,22 @@ const ResourceMgr = {
             t.preCutSize.y = info.preCutHeight;
         }
     },
-    getTexture: function (resId) {
+    getTexture(resId) {
         const resEntry = RES_DATA[resId];
         if (resEntry.texture) {
             return resEntry.texture;
         }
 
-        Log.debug("Image not yet loaded:" + resEntry.path);
+        Log.debug(`Image not yet loaded: ${resEntry.path}`);
         return null;
     },
-    getFont: function (resId) {
+    getFont(resId) {
         const resEntry = RES_DATA[resId];
         if (resEntry.font) {
             return resEntry.font;
         }
 
-        Log.debug("Font not yet loaded:" + resEntry.path);
+        Log.debug(`Font not yet loaded: ${resEntry.path}`);
         return null;
     },
 };

@@ -3,11 +3,13 @@ import resolution from "@/resolution";
 import RGBAColor from "@/core/RGBAColor";
 import Canvas from "@/utils/Canvas";
 import Constants from "@/utils/Constants";
-const GameView = View.extend({
-    init: function () {
-        this._super();
-    },
-    draw: function () {
+
+class GameView extends View {
+    constructor() {
+        super();
+    }
+
+    draw() {
         const children = this.children,
             childCount = children.length;
         for (let i = 0; i < childCount; i++) {
@@ -31,16 +33,17 @@ const GameView = View.extend({
             ctx.fillStyle = color.rgbaStyle();
             ctx.fillRect(0, 0, resolution.CANVAS_WIDTH, resolution.CANVAS_HEIGHT);
         }
-    },
-    show: function () {
-        this._super();
+    }
+
+    show() {
+        super.show();
 
         const gs = this.getChild(GameView.ElementType.GAME_SCENE);
         if (gs.animateRestartDim) {
             gs.animateLevelRestart();
         }
-    },
-});
+    }
+}
 
 /**
  * @enum {number}

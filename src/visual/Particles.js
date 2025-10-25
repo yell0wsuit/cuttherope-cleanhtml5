@@ -5,13 +5,16 @@ import MathHelper from "@/utils/MathHelper";
 import Canvas from "@/utils/Canvas";
 import resolution from "@/resolution";
 import Radians from "@/utils/Radians";
+
 /**
  * @constructor
  */
-function PointSprite(x, y, size) {
-    this.x = x;
-    this.y = y;
-    this.size = size;
+class PointSprite {
+    constructor(x, y, size) {
+        this.x = x;
+        this.y = y;
+        this.size = size;
+    }
 }
 
 /**
@@ -37,9 +40,9 @@ class Particle {
     }
 }
 
-const Particles = BaseElement.extend({
-    init: function (numParticles) {
-        this._super();
+class Particles extends BaseElement {
+    constructor(numParticles) {
+        super();
         this.width = resolution.CANVAS_WIDTH;
         this.height = resolution.CANVAS_HEIGHT;
 
@@ -120,12 +123,13 @@ const Particles = BaseElement.extend({
 
         // callback when particle system has finished
         this.onFinished = null;
-    },
+    }
+
     /**
      * Creates and adds a particle to the system
      * @return {boolean} false if the system is full, otherwise true
      */
-    addParticle: function () {
+    addParticle() {
         if (this.particles.length == this.totalParticles) {
             return false;
         }
@@ -134,8 +138,9 @@ const Particles = BaseElement.extend({
         this.initParticle(particle);
         this.particles.push(particle);
         return true;
-    },
-    initParticle: function (particle) {
+    }
+
+    initParticle(particle) {
         particle.pos.x = this.x + this.posVar.x * MathHelper.randomMinus1to1();
         particle.pos.y = this.y + this.posVar.y * MathHelper.randomMinus1to1();
         particle.startPos.copyFrom(particle.pos);
@@ -182,9 +187,10 @@ const Particles = BaseElement.extend({
 
         // size
         particle.size = this.size + this.sizeVar * MathHelper.randomMinus1to1();
-    },
-    update: function (delta) {
-        this._super(delta);
+    }
+
+    update(delta) {
+        super.update(delta);
         if (this.onFinished) {
             if (this.particles.length === 0 && !this.active) {
                 this.onFinished(this);
@@ -226,8 +232,9 @@ const Particles = BaseElement.extend({
                 this.removeParticle(this.particleIdx);
             }
         }
-    },
-    updateParticleLocation: function (p, delta) {
+    }
+
+    updateParticleLocation(p, delta) {
         let radial;
 
         // radial acceleration
@@ -255,8 +262,9 @@ const Particles = BaseElement.extend({
         tmp.copyFrom(p.dir);
         tmp.multiply(delta);
         p.pos.add(tmp);
-    },
-    updateParticle: function (particle, index) {
+    }
+
+    updateParticle(particle, index) {
         this.vertices[this.particleIdx] = new PointSprite(
             particle.pos.x,
             particle.pos.y,
@@ -264,27 +272,32 @@ const Particles = BaseElement.extend({
         );
 
         this.colors[this.particleIdx] = particle.color;
-    },
-    removeParticle: function (index) {
+    }
+
+    removeParticle(index) {
         this.particles.splice(index, 1);
-    },
-    startSystem: function (initialParticles) {
+    }
+
+    startSystem(initialParticles) {
         this.particles.length = 0;
         for (let i = 0; i < initialParticles; i++) {
             this.addParticle();
         }
         this.active = true;
-    },
-    stopSystem: function () {
+    }
+
+    stopSystem() {
         this.active = false;
         this.elapsed = this.duration;
         this.emitCounter = 0;
-    },
-    resetSystem: function () {
+    }
+
+    resetSystem() {
         this.elapsed = 0;
         this.emitCounter = 0;
-    },
-    draw: function () {
+    }
+
+    draw() {
         this.preDraw();
 
         // only draw if the image is non-transparent
@@ -298,10 +311,11 @@ const Particles = BaseElement.extend({
         }
 
         this.postDraw();
-    },
-    isFull: function () {
+    }
+
+    isFull() {
         return this.particles.length === this.totalParticles;
-    },
-});
+    }
+}
 
 export default Particles;

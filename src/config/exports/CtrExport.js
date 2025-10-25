@@ -1,4 +1,4 @@
-function ctrExport(key, value) {
+const ctrExport = (key, value) => {
     // MUST use string literals for exported properties
     let zeptoLab = window["ZeptoLab"];
     if (zeptoLab == null) {
@@ -10,6 +10,6 @@ function ctrExport(key, value) {
         ctr = zeptoLab["ctr"] = {};
     }
     ctr[key] = value;
-}
+};
 
 export default ctrExport;

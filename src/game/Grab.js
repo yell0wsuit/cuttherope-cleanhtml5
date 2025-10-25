@@ -17,6 +17,7 @@ import Timeline from "@/visual/Timeline";
 import MathHelper from "@/utils/MathHelper";
 import HorizontallyTiledImage from "@/visual/HorizontallyTiledImage";
 import GrabMoveBackground from "@/game/GrabMoveBackground";
+
 /**
  * @enum {number}
  */
@@ -66,9 +67,9 @@ const IMG_OBJ_BEE_HD_wings_end = 4;
 
 const grabCircleCache = [];
 
-const Grab = CTRGameObject.extend({
-    init: function () {
-        this._super();
+class Grab extends CTRGameObject {
+    constructor() {
+        super();
         this.rope = null;
 
         this.gun = false;
@@ -107,29 +108,32 @@ const Grab = CTRGameObject.extend({
         this.radius = 0;
 
         this.balloon = false;
-    },
+    }
+
     /**
      *
      * @param v1 {Vector} start
      * @param v2 {Vector} end
      * @param c {Vector} center
      */
-    getRotateAngle: function (v1, v2, c) {
+    getRotateAngle(v1, v2, c) {
         const m1 = Vector.subtract(v1, c);
         const m2 = Vector.subtract(v2, c);
 
         const a = m2.normalizedAngle() - m1.normalizedAngle();
         return Radians.toDegrees(a);
-    },
+    }
+
     /**
      *
      * @param v {Vector}
      */
-    handleWheelTouch: function (x, y) {
+    handleWheelTouch(x, y) {
         this.lastWheelTouch.x = x;
         this.lastWheelTouch.y = y;
-    },
-    handleWheelRotate: function (v) {
+    }
+
+    handleWheelRotate(v) {
         SoundMgr.playSound(ResourceId.SND_WHEEL);
 
         const center = new Vector(this.x, this.y);
@@ -162,9 +166,10 @@ const Grab = CTRGameObject.extend({
             this.wheelDirty = true;
         }
         this.lastWheelTouch.copyFrom(v);
-    },
-    update: function (delta) {
-        this._super(delta);
+    }
+
+    update(delta) {
+        super.update(delta);
 
         if (this.launcher && this.rope) {
             const anchor = this.rope.bungeeAnchor;
@@ -219,8 +224,9 @@ const Grab = CTRGameObject.extend({
                 );
             }
         }
-    },
-    updateSpider: function (delta) {
+    }
+
+    updateSpider(delta) {
         if (this.hasSpider && this.shouldActivate) {
             this.shouldActivate = false;
             this.spiderActive = true;
@@ -275,8 +281,9 @@ const Grab = CTRGameObject.extend({
                 this.spiderPos = Constants.UNDEFINED;
             }
         }
-    },
-    drawBack: function () {
+    }
+
+    drawBack() {
         if (this.invisible) return;
         if (this.gun) return;
 
@@ -300,14 +307,15 @@ const Grab = CTRGameObject.extend({
                     this.radius !== Constants.UNDEFINED ? this.radius : this.previousRadius;
             this.drawGrabCircle(this.x, this.y, drawRadius, color);
         }
-    },
-    drawGrabCircle: function (x, y, radius, color) {
+    }
+
+    drawGrabCircle(x, y, radius, color) {
         if (radius < 0) {
             return;
         }
 
         //generate a key for the cache
-        const key = radius.toString() + "|" + color.rgbaStyle();
+        const key = `${radius.toString()}|${color.rgbaStyle()}`;
         let circleCnv;
 
         //check the cache first
@@ -360,13 +368,15 @@ const Grab = CTRGameObject.extend({
 
         const mainCtx = Canvas.context;
         mainCtx.drawImage(circleCnv, x - radius - 2, y - radius - 2);
-    },
-    drawBB: function () {
+    }
+
+    drawBB() {
         if (this.wheel) {
             this.drawGrabCircle(this.x, this.y, resolution.GRAB_WHEEL_RADIUS, RGBAColor.red);
         }
-    },
-    draw: function () {
+    }
+
+    draw() {
         if (this.invisible) return;
 
         // NOTE: we do pre-draw when drawing the back so the position
@@ -407,22 +417,26 @@ const Grab = CTRGameObject.extend({
         }
 
         this.postDraw();
-    },
-    drawSpider: function () {
+    }
+
+    drawSpider() {
         this.spider.draw();
-    },
-    drawGunCup: function () {
+    }
+
+    drawGunCup() {
         this.gunCup.draw();
-    },
-    setRope: function (rope) {
+    }
+
+    setRope(rope) {
         this.rope = rope;
         this.previousRadius = this.radius;
         this.radius = Constants.UNDEFINED;
         if (this.hasSpider) {
             this.shouldActivate = true;
         }
-    },
-    setLauncher: function () {
+    }
+
+    setLauncher() {
         this.launcher = true;
         this.launcherIncreaseSpeed = true;
         this.launcherSpeed = 130;
@@ -430,8 +444,9 @@ const Grab = CTRGameObject.extend({
         m.setPathFromString("RC30", new Vector(this.x, this.y));
         this.setMover(m);
         m.start();
-    },
-    setRadius: function (radius) {
+    }
+
+    setRadius(radius) {
         this.previousRadius = this.radius;
         this.radius = radius;
 
@@ -502,8 +517,9 @@ const Grab = CTRGameObject.extend({
             this.wheelImage2.visible = false;
             this.wheelDirty = false;
         }
-    },
-    setMoveLength: function (length, vertical, offset) {
+    }
+
+    setMoveLength(length, vertical, offset) {
         this.moveLength = length;
         this.moveVertical = vertical;
         this.moveOffset = offset;
@@ -551,8 +567,9 @@ const Grab = CTRGameObject.extend({
         }
 
         this.moverDragging = Constants.UNDEFINED;
-    },
-    setBee: function () {
+    }
+
+    setBee() {
         this.bee = ImageElement.create(ResourceId.IMG_OBJ_BEE_HD, IMG_OBJ_BEE_HD_obj_bee);
         this.bee.doRestoreCutTransparency();
         this.bee.parentAnchor = Alignment.CENTER;
@@ -582,8 +599,9 @@ const Grab = CTRGameObject.extend({
         this.bee.scaleX = this.bee.scaleY = 1 / 1.3;
 
         this.addChild(this.bee);
-    },
-    setSpider: function (hasSpider) {
+    }
+
+    setSpider(hasSpider) {
         this.hasSpider = hasSpider;
         this.shouldActivate = false;
         this.spiderActive = false;
@@ -615,10 +633,11 @@ const Grab = CTRGameObject.extend({
         this.spider.switchToAnimation(SpiderState.WALK, SpiderState.START, 0.05);
 
         this.addChild(this.spider);
-    },
-    destroyRope: function () {
+    }
+
+    destroyRope() {
         this.rope = null;
-    },
-});
+    }
+}
 
 export default Grab;

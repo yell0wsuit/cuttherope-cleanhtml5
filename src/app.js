@@ -7,16 +7,23 @@ import settings from "@/game/CTRSettings";
 import ZoomManager from "@/ZoomManager";
 import PubSub from "@/utils/PubSub";
 import editionUI from "@/editionUI";
+
+let progressBar, betterLoader, gameFooterSocial;
+
 const App = {
     // Gives the app a chance to begin working before the DOM is ready
-    init: function () {
+    init() {
         preloader.init();
         im.init();
         PubSub.publish(PubSub.ChannelId.AppInit);
     },
 
     // Called by the loader when the DOM is loaded
-    domReady: function () {
+    domReady() {
+        progressBar = document.getElementById("progress");
+        betterLoader = document.getElementById("betterLoader");
+        gameFooterSocial = document.getElementById("gameFooterSocial");
+
         // disable text selection mode in IE9
         if (settings.disableTextSelection) {
             if (typeof document.body["onselectstart"] != "undefined") {
@@ -28,16 +35,16 @@ const App = {
 
         // toggle the active css class when the user clicks
         const ctrCursors = document.querySelectorAll(".ctrCursor");
-        ctrCursors.forEach(function (cursor) {
-            cursor.addEventListener("mousedown", function () {
-                this.classList.toggle("ctrCursorActive");
+        ctrCursors.forEach((cursor) => {
+            cursor.addEventListener("mousedown", () => {
+                cursor.classList.toggle("ctrCursorActive");
             });
-            cursor.addEventListener("mouseup", function () {
-                this.classList.toggle("ctrCursorActive");
+            cursor.addEventListener("mouseup", () => {
+                cursor.classList.toggle("ctrCursorActive");
             });
         });
 
-        document.body.classList.add("ui-" + resolution.UI_WIDTH);
+        document.body.classList.add(`ui-${resolution.UI_WIDTH}`);
         if (IS_XMAS) {
             document.body.classList.add("is-xmas");
         }
@@ -49,8 +56,8 @@ const App = {
         Canvas.element.height = resolution.CANVAS_HEIGHT;
 
         // set the screen (css) dimensions
-        Canvas.element.style.width = resolution.CANVAS_WIDTH + "px";
-        Canvas.element.style.height = resolution.CANVAS_HEIGHT + "px";
+        Canvas.element.style.width = `${resolution.CANVAS_WIDTH}px`;
+        Canvas.element.style.height = `${resolution.CANVAS_HEIGHT}px`;
 
         if (ZoomManager.domReady) {
             ZoomManager.domReady();
@@ -61,12 +68,8 @@ const App = {
         PubSub.publish(PubSub.ChannelId.AppDomReady);
     },
 
-    run: function () {
+    run() {
         // Called by the loader when the app is ready to run
-
-        // Set up progress tracking before loading starts
-        const progressBar = document.getElementById("progress");
-        const betterLoader = document.getElementById("betterLoader");
 
         // Subscribe to preloader progress updates
         const progressSubscription = PubSub.subscribe(
@@ -75,7 +78,7 @@ const App = {
                 if (progressBar && data && typeof data.progress === "number") {
                     const progress = Math.min(100, Math.max(0, data.progress));
                     progressBar.style.transition = "width 0.3s ease-out";
-                    progressBar.style.width = progress + "%";
+                    progressBar.style.width = `${progress}%`;
                 }
             }
         );
@@ -105,7 +108,7 @@ const App = {
 
             // fade in the game
             const hideAfterLoad = document.querySelectorAll(".hideAfterLoad");
-            hideAfterLoad.forEach(function (el) {
+            hideAfterLoad.forEach((el) => {
                 el.style.transition = "opacity 0.5s";
                 el.style.opacity = "0";
                 setTimeout(function () {
@@ -114,7 +117,7 @@ const App = {
             });
 
             const hideBeforeLoad = document.querySelectorAll(".hideBeforeLoad");
-            hideBeforeLoad.forEach(function (el) {
+            hideBeforeLoad.forEach((el) => {
                 // Make sure element is visible first
                 el.style.display = el.style.display || "block";
                 el.style.opacity = "0";
@@ -128,7 +131,7 @@ const App = {
             im.updateDevLink();
 
             // put the social links back into the footer (need to be offscreen instead of hidden during load)
-            const gameFooterSocial = document.getElementById("gameFooterSocial");
+
             if (gameFooterSocial) {
                 gameFooterSocial.style.top = "0";
             }

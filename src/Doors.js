@@ -11,6 +11,8 @@ const tapeImgR = new Image();
 
 const BoxDoors = {};
 
+const isImageReady = (img) => img && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0;
+
 // Initialize when DOM is ready
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initializeDoors);
@@ -40,8 +42,8 @@ BoxDoors.appReady = function () {
         doorImages[i] = doorImg;
     }
 
-    tapeImgL.src = platform.uiImageBaseUrl + "leveltape_left.png";
-    tapeImgR.src = platform.uiImageBaseUrl + "leveltape_right.png";
+    tapeImgL.src = `${platform.uiImageBaseUrl}leveltape_left.png`;
+    tapeImgR.src = `${platform.uiImageBaseUrl}leveltape_right.png`;
 
     BoxDoors.preRenderDoors();
 };
@@ -50,6 +52,33 @@ BoxDoors.preRenderDoors = function () {
     const doorImg = doorImages[BoxManager.currentBoxIndex];
     const leftCtx = BoxDoors.canvasLeft.getContext("2d");
     const rightCtx = BoxDoors.canvasRight.getContext("2d");
+
+    if (!doorImg) {
+        leftCtx.clearRect(0, 0, BoxDoors.canvasLeft.width, BoxDoors.canvasLeft.height);
+        rightCtx.clearRect(0, 0, BoxDoors.canvasRight.width, BoxDoors.canvasRight.height);
+        return;
+    }
+
+    const imagesToWaitFor = [doorImg];
+
+    if (BoxDoors.showTape) {
+        imagesToWaitFor.push(tapeImgL, tapeImgR);
+    }
+
+    const pendingImages = imagesToWaitFor.filter((img) => !isImageReady(img));
+
+    if (pendingImages.length > 0) {
+        pendingImages.forEach((img) => {
+            if (!img) {
+                return;
+            }
+            img.addEventListener("load", BoxDoors.preRenderDoors, { once: true });
+        });
+        return;
+    }
+
+    leftCtx.clearRect(0, 0, BoxDoors.canvasLeft.width, BoxDoors.canvasLeft.height);
+    rightCtx.clearRect(0, 0, BoxDoors.canvasRight.width, BoxDoors.canvasRight.height);
 
     leftCtx.drawImage(doorImg, 0, 0);
 
@@ -136,7 +165,7 @@ BoxDoors.closeBoxAnimation = function (callback) {
 
     // Fade out level results
     fadeOut(levelResults, 400, () => {
-        tapeRoll.style.top = resolution.uiScaledNumber(0) + "px";
+        tapeRoll.style.top = `${resolution.uiScaledNumber(0)}px`;
 
         // Delay and fade in
         setTimeout(() => {
@@ -148,7 +177,7 @@ BoxDoors.closeBoxAnimation = function (callback) {
                 const fromH = resolution.uiScaledNumber(63);
                 const d = 1000;
 
-                tapeSlice.style.height = fromH + "px";
+                tapeSlice.style.height = `${fromH}px`;
                 tapeSlice.style.display = "block";
 
                 function rollTape() {
@@ -157,8 +186,8 @@ BoxDoors.closeBoxAnimation = function (callback) {
                     const v = Easing.easeInOutCubic(diff, from, offset - from, d);
                     const vH = Easing.easeInOutCubic(diff, fromH, offset - fromH, d);
 
-                    tapeRoll.style.top = v + "px";
-                    tapeSlice.style.height = vH + "px";
+                    tapeRoll.style.top = `${v}px`;
+                    tapeSlice.style.height = `${vH}px`;
 
                     if (diff < d) {
                         window.requestAnimationFrame(rollTape);
@@ -191,7 +220,7 @@ BoxDoors.openBoxAnimation = function (callback) {
 
     //cut box open with boxCutter
     const boxCutter = document.getElementById("boxCutter");
-    boxCutter.style.top = resolution.uiScaledNumber(371) + "px";
+    boxCutter.style.top = `${resolution.uiScaledNumber(371)}px`;
 
     setTimeout(() => {
         fadeIn(boxCutter, 200, () => {
@@ -205,7 +234,7 @@ BoxDoors.openBoxAnimation = function (callback) {
                 const diff = now - b;
                 const v = Easing.easeInOutCubic(diff, from, offset - from, d);
 
-                boxCutter.style.top = v + "px";
+                boxCutter.style.top = `${v}px`;
 
                 if (diff < d) {
                     window.requestAnimationFrame(cutBox);

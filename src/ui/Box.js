@@ -1,4 +1,3 @@
-import Class from "@/utils/Class";
 import Easing from "@/ui/Easing";
 import Text from "@/visual/Text";
 import resolution from "@/resolution";
@@ -12,6 +11,7 @@ import MenuStringId from "@/resources/MenuStringId";
 import edition from "@/edition";
 import settings from "@/game/CTRSettings";
 import { IS_XMAS } from "@/resources/ResData";
+
 // cache upgrade UI elements
 let upgradeButton;
 
@@ -69,8 +69,8 @@ PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
 
 const boxImageBase = platform.boxImageBaseUrl || platform.uiImageBaseUrl;
 
-const Box = Class.extend({
-    init: function (boxIndex, bgimg, reqstars, islocked, type) {
+class Box {
+    constructor(boxIndex, bgimg, reqstars, islocked, type) {
         this.index = boxIndex;
         this.islocked = islocked;
         this.visible = true;
@@ -92,20 +92,19 @@ const Box = Class.extend({
 
         const textImg = (this.textImg = new Image()),
             boxWidth = (this.boxWidth = resolution.uiScaledNumber(350)),
-            boxTextMargin = (this.boxTextMargin = resolution.uiScaledNumber(20)),
-            self = this;
+            boxTextMargin = (this.boxTextMargin = resolution.uiScaledNumber(20));
 
         this.textRendered = false;
-        this.renderText = function () {
+        this.renderText = () => {
             Text.drawBig({
-                text: Lang.boxText(boxIndex, self.includeBoxNumberInTitle),
+                text: Lang.boxText(boxIndex, this.includeBoxNumberInTitle),
                 img: textImg,
                 width: (boxWidth - boxTextMargin * 2) / resolution.UI_TEXT_SCALE,
                 alignment: Alignment.HCENTER,
                 scaleToUI: true,
             });
 
-            self.textRendered = true;
+            this.textRendered = true;
         };
 
         this.pubSubSubscriptions.push(
@@ -115,33 +114,33 @@ const Box = Class.extend({
         this.reqImg = Text.drawBig({ text: reqstars, scaleToUI: true });
 
         this.omNomImg = new Image();
-        this.omNomImg.src = platform.uiImageBaseUrl + "box_omnom.png";
+        this.omNomImg.src = `${platform.uiImageBaseUrl}box_omnom.png`;
 
         this.lockImg = new Image();
-        this.lockImg.src = platform.uiImageBaseUrl + "box_lock.png";
+        this.lockImg.src = `${platform.uiImageBaseUrl}box_lock.png`;
 
         this.starImg = new Image();
-        this.starImg.src = platform.uiImageBaseUrl + "star_result_small.png";
+        this.starImg.src = `${platform.uiImageBaseUrl}star_result_small.png`;
 
         this.perfectMark = new Image();
-        this.perfectMark.src = platform.uiImageBaseUrl + "perfect_mark.png";
+        this.perfectMark.src = `${platform.uiImageBaseUrl}perfect_mark.png`;
 
         this.includeBoxNumberInTitle = true;
-    },
+    }
 
-    isRequired: function () {
+    isRequired() {
         return true;
-    },
+    }
 
-    isGameBox: function () {
+    isGameBox() {
         return true;
-    },
+    }
 
-    isClickable: function () {
+    isClickable() {
         return true;
-    },
+    }
 
-    draw: function (ctx, omnomoffset) {
+    draw(ctx, omnomoffset) {
         const prevAlpha = ctx.globalAlpha;
         if (this.opacity !== prevAlpha) {
             ctx.globalAlpha = this.opacity;
@@ -154,9 +153,9 @@ const Box = Class.extend({
         if (this.opacity !== prevAlpha) {
             ctx.globalAlpha = prevAlpha;
         }
-    },
+    }
 
-    render: function (ctx, omnomoffset) {
+    render(ctx, omnomoffset) {
         const isGameBox = this.isGameBox();
         const yOffset = resolution.uiScaledNumber(this.yOffset || 0);
         const shouldHideLockDetails = this.type === BoxType.HOLIDAY && !IS_XMAS;
@@ -190,11 +189,11 @@ const Box = Class.extend({
 
         if (isGameBox) {
             // draw the lock
-        if (this.islocked) {
-            // Get dimensions - prefer naturalWidth/Height, fallback to width/height
-            const textWidth = this.reqImg.naturalWidth || this.reqImg.width || 0;
-            const textHeight = this.reqImg.naturalHeight || this.reqImg.height || 0;
-            const starWidth = this.starImg.naturalWidth || this.starImg.width || 0;
+            if (this.islocked) {
+                // Get dimensions - prefer naturalWidth/Height, fallback to width/height
+                const textWidth = this.reqImg.naturalWidth || this.reqImg.width || 0;
+                const textHeight = this.reqImg.naturalHeight || this.reqImg.height || 0;
+                const starWidth = this.starImg.naturalWidth || this.starImg.width || 0;
 
                 const starLeftMargin = resolution.uiScaledNumber(-6);
                 // center the text and star label
@@ -235,16 +234,16 @@ const Box = Class.extend({
                 }
 
                 /*
-                     // DEBUG: draw red dots to show the label boundaries
-                     ctx.fillStyle= 'red';
-                     ctx.beginPath();
-                     ctx.arc(labelMinX, resolution.uiScaledNumber(220), 5, 0, 2*Math.PI, false);
-                     ctx.fill();
+                // DEBUG: draw red dots to show the label boundaries
+                ctx.fillStyle= 'red';
+                ctx.beginPath();
+                ctx.arc(labelMinX, resolution.uiScaledNumber(220), 5, 0, 2*Math.PI, false);
+                ctx.fill();
 
-                     ctx.beginPath();
-                     ctx.arc(labelMinX + labelMaxWidth, resolution.uiScaledNumber(220), 5, 0, 2*Math.PI, false);
-                     ctx.fill();
-                     */
+                ctx.beginPath();
+                ctx.arc(labelMinX + labelMaxWidth, resolution.uiScaledNumber(220), 5, 0, 2*Math.PI, false);
+                ctx.fill();
+                */
             }
 
             // draw the perfect mark if user got every star in the box
@@ -275,9 +274,9 @@ const Box = Class.extend({
         const y = resolution.uiScaledNumber(70);
 
         ctx.drawImage(this.textImg, x, y);
-    },
+    }
 
-    bounce: function (ctx) {
+    bounce(ctx) {
         if (!ctx) {
             return;
         }
@@ -291,81 +290,80 @@ const Box = Class.extend({
             w = resolution.uiScaledNumber(1024),
             h = resolution.uiScaledNumber(576);
 
-        const self = this,
-            renderBounce = function () {
-                // get the elapsed time
-                const t = Date.now() - self.bounceStartTime;
+        const renderBounce = () => {
+            // get the elapsed time
+            const t = Date.now() - this.bounceStartTime;
 
-                let d, x, y;
+            let d, x, y;
 
-                if (t < s1) {
-                    d = Easing.easeOutSine(t, 0, 0.05, s1); // to 0.95
-                    x = 1.0 - d;
-                    y = 1.0 + d;
-                } else if (t < s2) {
-                    d = Easing.easeInOutCubic(t - s1, 0, 0.11, s2 - s1); // to 0.95
-                    x = 0.95 + d;
-                    y = 1.05 - d;
-                } else if (t < s3) {
-                    // intentionally not ending at 1.0 prevents the animation from "@/snapping" at the end.
-                    d = Easing.easeOutCubic(t - s2, 0, 0.05, s3 - s2); // to 0.95
-                    x = 1.06 - d;
-                    y = 0.94 + d;
-                }
+            if (t < s1) {
+                d = Easing.easeOutSine(t, 0, 0.05, s1); // to 0.95
+                x = 1.0 - d;
+                y = 1.0 + d;
+            } else if (t < s2) {
+                d = Easing.easeInOutCubic(t - s1, 0, 0.11, s2 - s1); // to 0.95
+                x = 0.95 + d;
+                y = 1.05 - d;
+            } else if (t < s3) {
+                // intentionally not ending at 1.0 prevents the animation from "@/snapping" at the end.
+                d = Easing.easeOutCubic(t - s2, 0, 0.05, s3 - s2); // to 0.95
+                x = 1.06 - d;
+                y = 0.94 + d;
+            }
 
-                const tx = (w - w * x) / 2.0,
-                    ty = (h - h * y) / 2.0,
-                    sx = (w - 2.0 * tx) / w,
-                    sy = (h - 2.0 * ty) / h;
+            const tx = (w - w * x) / 2.0,
+                ty = (h - h * y) / 2.0,
+                sx = (w - 2.0 * tx) / w,
+                sy = (h - 2.0 * ty) / h;
 
-                if (!isNaN(sx) && !isNaN(sy)) {
-                    ctx.save();
-                    ctx.setTransform(1, 0, 0, 1, 0, 0);
-                    ctx.clearRect(
-                        resolution.uiScaledNumber(312),
-                        resolution.uiScaledNumber(100),
-                        resolution.uiScaledNumber(400),
-                        resolution.uiScaledNumber(460)
-                    );
-                    ctx.restore();
+            if (!isNaN(sx) && !isNaN(sy)) {
+                ctx.save();
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.clearRect(
+                    resolution.uiScaledNumber(312),
+                    resolution.uiScaledNumber(100),
+                    resolution.uiScaledNumber(400),
+                    resolution.uiScaledNumber(460)
+                );
+                ctx.restore();
 
-                    ctx.save();
-                    ctx.scale(sx, sy);
-                    ctx.translate(tx, ty);
-                    ctx.translate(resolution.uiScaledNumber(312), resolution.uiScaledNumber(130));
-                    self.draw(ctx, resolution.uiScaledNumber(140));
-                    ctx.restore();
-                }
+                ctx.save();
+                ctx.scale(sx, sy);
+                ctx.translate(tx, ty);
+                ctx.translate(resolution.uiScaledNumber(312), resolution.uiScaledNumber(130));
+                this.draw(ctx, resolution.uiScaledNumber(140));
+                ctx.restore();
+            }
 
-                if (t > s3) {
-                    self.bounceStartTime = 0;
-                } else {
-                    window.requestAnimationFrame(renderBounce);
-                }
-            };
+            if (t > s3) {
+                this.bounceStartTime = 0;
+            } else {
+                window.requestAnimationFrame(renderBounce);
+            }
+        };
 
         // start the animation
         renderBounce();
-    },
+    }
 
-    cancelBounce: function () {
+    cancelBounce() {
         this.bounceStartTime = 0;
-    },
+    }
 
-    onSelected: function () {
+    onSelected() {
         if (!this.purchased) {
             if (upgradeButton) {
                 upgradeButton.classList.toggle("purchaseBox", this.isPurchaseBox || false);
                 showPurchaseButton();
             }
         }
-    },
+    }
 
-    onUnselected: function () {
+    onUnselected() {
         hidePurchaseButton();
-    },
+    }
 
-    destroy: function () {
+    destroy() {
         if (!this.pubSubSubscriptions) {
             return;
         }
@@ -373,7 +371,7 @@ const Box = Class.extend({
         while (this.pubSubSubscriptions.length) {
             PubSub.unsubscribe(this.pubSubSubscriptions.pop());
         }
-    },
-});
+    }
+}
 
 export default Box;

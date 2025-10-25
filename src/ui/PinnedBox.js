@@ -9,6 +9,7 @@ import platform from "@/platform";
 import analytics from "@/analytics";
 import resolution from "@/resolution";
 import SettingStorage from "@/core/SettingStorage";
+
 /**
  * @enum {number}
  */
@@ -109,7 +110,7 @@ function animateProperty(element, props, duration, easing = "linear", delay = 0)
                     if (prop === "scale") {
                         element.style.transform = `scale(${value})`;
                     } else {
-                        element.style[prop] = value + "px";
+                        element.style[prop] = `${value}px`;
                     }
                 }
 
@@ -142,23 +143,22 @@ function applyEasing(t, easing) {
     }
 }
 
-const PinnedBox = Box.extend({
-    init: function (boxIndex, bgimg, reqstars, islocked, type) {
-        this._super(boxIndex, bgimg, reqstars, islocked, type);
+class PinnedBox extends Box {
+    constructor(boxIndex, bgimg, reqstars, islocked, type) {
+        super(boxIndex, bgimg, reqstars, islocked, type);
         this.pinnedState = PinnedStates.UNDEFINED;
         this.promptId = null;
 
         // dom ready init
-        const self = this;
 
         function initialize() {
             const showMeBtn = document.getElementById("showMeBtn");
             if (showMeBtn) {
-                showMeBtn.addEventListener("click", function () {
+                showMeBtn.addEventListener("click", () => {
                     if (analytics.onShowPinning) {
                         analytics.onShowPinning();
                     }
-                    self.showMePinning();
+                    this.showMePinning();
                 });
             }
 
@@ -202,18 +202,18 @@ const PinnedBox = Box.extend({
         } else {
             initialize();
         }
-    },
+    }
 
-    isRequired: function () {
+    isRequired() {
         // returns true if the box is enabled on the platform. this doesn't always
         // mean it is unlocked. For example, in Chrome on Windows, we'll tell
         // the user to install IE. On IE, they need to pin the game first. However
         // there is no IE on mac so the box is completely disabled.
 
         return this.pinnedState !== PinnedStates.HIDDEN;
-    },
+    }
 
-    initPinnedState: function () {
+    initPinnedState() {
         // returns the version of Internet Explorer or a -1 if another browser
         const getIEVersion = function () {
             const rv = -1; // Return value assumes failure.
@@ -292,9 +292,7 @@ const PinnedBox = Box.extend({
                 this.opacity = 0.35;
                 this.promptId = "pinPrompt";
 
-                const self = this;
-
-                PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
+                PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
                     const showMeImg = document.querySelector("#showMeBtn img");
                     if (showMeImg) {
                         Text.drawBig({
@@ -322,9 +320,9 @@ const PinnedBox = Box.extend({
         } else {
             return true;
         }
-    },
+    }
 
-    onSelected: function () {
+    onSelected() {
         if (this.promptId != null) {
             const pinningContent = document.getElementById("pinningContent");
             const promptElement = document.getElementById(this.promptId);
@@ -336,19 +334,19 @@ const PinnedBox = Box.extend({
                 promptElement.style.display = "";
             }
         }
-    },
+    }
 
-    onUnselected: function () {
+    onUnselected() {
         if (this.promptId != null) {
             const pinningContent = document.getElementById("pinningContent");
             if (pinningContent) {
                 fadeOut(pinningContent, 300);
             }
         }
-    },
+    }
 
     // runs (and the resets) the "show me" animation for the pinned box
-    showMePinning: function () {
+    showMePinning() {
         const cursor = document.getElementById("pinCursor");
         const omnom = document.getElementById("pinOmNom");
         const shadow = document.getElementById("pinChairShadow");
@@ -379,8 +377,8 @@ const PinnedBox = Box.extend({
                 )
                 .then(() => fadeOut(cursor, 400))
                 .then(() => {
-                    cursor.style.top = resolution.uiScaledNumber(65) + "px";
-                    cursor.style.left = resolution.uiScaledNumber(45) + "px";
+                    cursor.style.top = `${resolution.uiScaledNumber(65)}px`;
+                    cursor.style.left = `${resolution.uiScaledNumber(45)}px`;
                     cursor.style.transform = "scale(1.0)";
                 });
         }
@@ -405,8 +403,8 @@ const PinnedBox = Box.extend({
                 .then(() => new Promise((resolve) => setTimeout(resolve, 1500)))
                 .then(() => fadeOut(omnom, 1000))
                 .then(() => {
-                    omnom.style.top = resolution.uiScaledNumber(115) + "px";
-                    omnom.style.left = resolution.uiScaledNumber(-49) + "px";
+                    omnom.style.top = `${resolution.uiScaledNumber(115)}px`;
+                    omnom.style.left = `${resolution.uiScaledNumber(-49)}px`;
                     omnom.style.transform = "scale(1.0)";
                     return new Promise((resolve) => setTimeout(resolve, 50));
                 })
@@ -419,7 +417,7 @@ const PinnedBox = Box.extend({
                 .then(() => new Promise((resolve) => setTimeout(resolve, 5000)))
                 .then(() => fadeOut(taskbar, 1000));
         }
-    },
-});
+    }
+}
 
 export default PinnedBox;

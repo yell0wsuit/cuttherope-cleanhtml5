@@ -1,8 +1,8 @@
-import Class from "@/utils/Class";
 import MathHelper from "@/utils/MathHelper";
 import Vector from "@/core/Vector";
-const Mover = Class.extend({
-    init: function (pathCapacity, moveSpeed, rotateSpeed) {
+
+class Mover {
+    constructor(pathCapacity, moveSpeed, rotateSpeed) {
         this.pathCapacity = pathCapacity;
         this.rotateSpeed = rotateSpeed || 0;
         this.path = [];
@@ -17,17 +17,19 @@ const Mover = Class.extend({
         this.paused = false;
         this.reverse = false;
         this.overrun = 0;
-    },
-    setMoveSpeed: function (speed) {
+    }
+
+    setMoveSpeed(speed) {
         for (let i = 0, len = this.pathCapacity; i < len; i++) {
             this.moveSpeed[i] = speed;
         }
-    },
+    }
+
     /**
      * @param path {string}
      * @param start {Vector}
      */
-    setPathFromString: function (path, start) {
+    setPathFromString(path, start) {
         if (path[0] === "R") {
             const clockwise = path[1] === "C",
                 rad = parseInt(path.slice(2), 10),
@@ -63,47 +65,57 @@ const Mover = Class.extend({
                 this.addPathPoint(pathPoint);
             }
         }
-    },
+    }
+
     /**
      * @param pathPoint {Vector}
      */
-    addPathPoint: function (pathPoint) {
+    addPathPoint(pathPoint) {
         this.path.push(pathPoint);
-    },
-    start: function () {
+    }
+
+    start() {
         if (this.path.length > 0) {
             this.pos.copyFrom(this.path[0]);
             this.targetPoint = 1;
             this.calculateOffset();
         }
-    },
-    pause: function () {
+    }
+
+    pause() {
         this.paused = true;
-    },
-    unpause: function () {
+    }
+
+    unpause() {
         this.paused = false;
-    },
-    setRotateSpeed: function (rotateSpeed) {
+    }
+
+    setRotateSpeed(rotateSpeed) {
         this.rotateSpeed = rotateSpeed;
-    },
-    jumpToPoint: function (point) {
+    }
+
+    jumpToPoint(point) {
         this.targetPoint = point;
         this.pos.copyFrom(this.path[point]);
         this.calculateOffset();
-    },
-    calculateOffset: function () {
+    }
+
+    calculateOffset() {
         const target = this.path[this.targetPoint];
         this.offset = Vector.subtract(target, this.pos);
         this.offset.normalize();
         this.offset.multiply(this.moveSpeed[this.targetPoint]);
-    },
-    setMoveSpeedAt: function (moveSpeed, index) {
+    }
+
+    setMoveSpeedAt(moveSpeed, index) {
         this.moveSpeed[index] = moveSpeed;
-    },
-    setMoveReverse: function (reverse) {
+    }
+
+    setMoveReverse(reverse) {
         this.reverse = reverse;
-    },
-    update: function (delta) {
+    }
+
+    update(delta) {
         if (this.paused) return;
 
         if (this.path.length > 0) {
@@ -155,59 +167,61 @@ const Mover = Class.extend({
         if (this.rotateSpeed !== 0) {
             this.angle += this.rotateSpeed * delta;
         }
-    },
-});
+    }
+
+    // Static methods
+    static moveToTarget(v, t, speed, delta) {
+        if (t !== v) {
+            if (t > v) {
+                v += speed * delta;
+                if (v > t) {
+                    v = t;
+                }
+            } else {
+                v -= speed * delta;
+                if (v < t) {
+                    v = t;
+                }
+            }
+        }
+        return v;
+    }
+
+    /**
+     *
+     * @param v {number} value
+     * @param t {number} target
+     * @param speed {number}
+     * @param delta {number}
+     * @return {Object}
+     */
+    static moveToTargetWithStatus(v, t, speed, delta) {
+        let reachedZero = false;
+        if (t !== v) {
+            if (t > v) {
+                v += speed * delta;
+                if (v > t) {
+                    v = t;
+                }
+            } else {
+                v -= speed * delta;
+                if (v < t) {
+                    v = t;
+                }
+            }
+            if (t === v) reachedZero = true;
+        }
+
+        return {
+            value: v,
+            reachedZero: reachedZero,
+        };
+    }
+}
 
 // NOTE: sometimes we need the status indicating whether the
 // variable was moved to zero. However, for performance we'll
 // offer another version without status.
-
-Mover.moveToTarget = function (v, t, speed, delta) {
-    if (t !== v) {
-        if (t > v) {
-            v += speed * delta;
-            if (v > t) {
-                v = t;
-            }
-        } else {
-            v -= speed * delta;
-            if (v < t) {
-                v = t;
-            }
-        }
-    }
-    return v;
-};
-/**
- *
- * @param v {number} value
- * @param t {number} target
- * @param speed {number}
- * @param delta {number}
- * @return {Object}
- */
-Mover.moveToTargetWithStatus = function (v, t, speed, delta) {
-    let reachedZero = false;
-    if (t !== v) {
-        if (t > v) {
-            v += speed * delta;
-            if (v > t) {
-                v = t;
-            }
-        } else {
-            v -= speed * delta;
-            if (v < t) {
-                v = t;
-            }
-        }
-        if (t === v) reachedZero = true;
-    }
-
-    return {
-        value: v,
-        reachedZero: reachedZero,
-    };
-};
 
 /**
  * @const

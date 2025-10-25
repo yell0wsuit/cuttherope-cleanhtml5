@@ -1,28 +1,14 @@
 /**
- * Helper class for dealing with radians
+ * Utility for radian–degree conversions
  */
+const DEG_TO_RAD = Math.PI / 180;
+const RAD_TO_DEG = 180 / Math.PI;
+const TAU = Math.PI * 2; // same as 360°
+
 const Radians = {
-    /**
-     * @const
-     * @type {number}
-     */
-    degrees360: 6.283185307179586, // Math.PI * 2
-    /**
-     * Converts degrees to radians
-     * @param degrees {number}
-     * @return {number}
-     */
-    fromDegrees: function (degrees) {
-        return degrees * 0.017453292519943295; // degrees * (Math.PI / 180)
-    },
-    /**
-     * Converts radians to degrees
-     * @param radians {number}
-     * @return {number}
-     */
-    toDegrees: function (radians) {
-        return radians * 57.29577951308232; // radians * 180 / Math.PI
-    },
+    TAU,
+    fromDegrees: (deg) => deg * DEG_TO_RAD,
+    toDegrees: (rad) => rad * RAD_TO_DEG,
 };
 
 export default Radians;

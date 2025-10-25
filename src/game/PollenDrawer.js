@@ -31,9 +31,9 @@ class Pollen {
     }
 }
 
-const PollenDrawer = BaseElement.extend({
-    init: function () {
-        this._super();
+class PollenDrawer extends BaseElement {
+    constructor() {
+        super();
 
         const pollen = ResourceMgr.getTexture(ResourceId.IMG_OBJ_POLLEN_HD);
 
@@ -44,8 +44,9 @@ const PollenDrawer = BaseElement.extend({
         this.drawer.drawPosIncrement = 0.1;
 
         this.pollens = [];
-    },
-    addPollen: function (v, pi) {
+    }
+
+    addPollen(v, pi) {
         const size = [0.3, 0.3, 0.5, 0.5, 0.6],
             sizeCounts = size.length;
         let sX = 1,
@@ -87,8 +88,9 @@ const PollenDrawer = BaseElement.extend({
 
         this.drawer.setTextureQuad(this.pollens.length, tquad, vquad, pollen.alpha);
         this.pollens.push(pollen);
-    },
-    fillWithPollenFromPath: function (fromIndex, toIndex, grab) {
+    }
+
+    fillWithPollenFromPath(fromIndex, toIndex, grab) {
         const MIN_DISTANCE = resolution.POLLEN_MIN_DISTANCE,
             v1 = grab.mover.path[fromIndex],
             v2 = grab.mover.path[toIndex],
@@ -106,9 +108,10 @@ const PollenDrawer = BaseElement.extend({
             vn.y += MathHelper.randomRange(-POLLEN_MAX_OFFSET, POLLEN_MAX_OFFSET);
             this.addPollen(vn, fromIndex);
         }
-    },
-    update: function (delta) {
-        this._super(delta);
+    }
+
+    update(delta) {
+        super.update(delta);
         this.drawer.update(delta);
 
         const len = this.pollens.length;
@@ -155,12 +158,13 @@ const PollenDrawer = BaseElement.extend({
             // update the alpha in the drawer
             this.drawer.alphas[i] = pollen.alpha;
         }
-    },
-    draw: function () {
+    }
+
+    draw() {
         this.preDraw();
         this.drawer.draw();
         this.postDraw();
-    },
-});
+    }
+}
 
 export default PollenDrawer;

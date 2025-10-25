@@ -2,38 +2,43 @@ import ImageElement from "@/visual/ImageElement";
 import Canvas from "@/utils/Canvas";
 import Constants from "@/utils/Constants";
 import Log from "@/utils/Log";
-const Font = ImageElement.extend({
-    init: function () {
-        this._super();
+
+class Font extends ImageElement {
+    constructor() {
+        super();
 
         this.chars = "";
         this.charOffset = 0;
         this.lineOffset = 0;
         this.spaceWidth = 0;
         this.kerning = null;
-    },
-    initWithVariableSizeChars: function (chars, charTexture, kerningDictionary) {
+    }
+
+    initWithVariableSizeChars(chars, charTexture, kerningDictionary) {
         this.chars = chars;
         this.initTexture(charTexture);
         this.kerning = kerningDictionary;
-    },
-    setOffsets: function (charOffset, lineOffset, spaceWidth) {
+    }
+
+    setOffsets(charOffset, lineOffset, spaceWidth) {
         this.charOffset = charOffset;
         this.lineOffset = lineOffset;
         this.spaceWidth = spaceWidth;
-    },
-    getCharQuad: function (c) {
+    }
+
+    getCharQuad(c) {
         const charIndex = this.chars.indexOf(c);
         if (charIndex >= 0) {
             return charIndex;
         }
 
-        Log.alert("Char not found in font:" + c);
+        Log.alert(`Char not found in font: ${c}`);
 
         // replace missing character with a period
         return this.chars.indexOf(".");
-    },
-    drawQuadWOBind: function (index, x, y) {
+    }
+
+    drawQuadWOBind(index, x, y) {
         const rect = this.texture.rects[index],
             quadWidth = Math.ceil(rect.w),
             quadHeight = Math.ceil(rect.h);
@@ -49,8 +54,9 @@ const Font = ImageElement.extend({
             quadWidth,
             quadHeight
         ); // destination coordinates
-    },
-    stringWidth: function (str) {
+    }
+
+    stringWidth(str) {
         let strWidth = 0;
         const len = str.length;
         let lastOffset = 0;
@@ -67,11 +73,13 @@ const Font = ImageElement.extend({
         }
         strWidth -= lastOffset;
         return Math.ceil(strWidth);
-    },
-    fontHeight: function () {
+    }
+
+    fontHeight() {
         return this.texture.rects[0].h;
-    },
-    getCharOffset: function (str, charIndex) {
+    }
+
+    getCharOffset(str, charIndex) {
         // no offset if its the last character
         if (charIndex === str.length - 1) {
             return 0;
@@ -90,7 +98,7 @@ const Font = ImageElement.extend({
         } else {
             return this.charOffset;
         }
-    },
-});
+    }
+}
 
 export default Font;

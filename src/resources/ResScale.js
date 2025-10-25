@@ -6,7 +6,7 @@ const scaleNumber = function (value, scale) {
 };
 
 const ResScaler = {
-    scaleResourceInfos: function (infos, canvasScale) {
+    scaleResourceInfos(infos, canvasScale) {
         // the canvas scale is ratio of the canvas target size compared
         // to the resolution the original assets were designed for. The
         // resource scale handles resources that were designed for a
@@ -21,7 +21,7 @@ const ResScaler = {
         }
     },
 
-    scaleResourceInfo: function (info, scale) {
+    scaleResourceInfo(info, scale) {
         if (info.charOffset) {
             info.charOffset = scaleNumber(info.charOffset, scale);
         }
@@ -51,7 +51,7 @@ const ResScaler = {
         }
     },
 
-    parseOriginalRects: function (rects) {
+    parseOriginalRects(rects) {
         let i = 0;
         const len = rects.length,
             originalRects = [];
@@ -62,7 +62,7 @@ const ResScaler = {
         return originalRects;
     },
 
-    scaleRects: function (originalRects, scale, id) {
+    scaleRects(originalRects, scale, id) {
         const PADDING = 2, // Changed from 4 to 2 to match minified version
             newRects = [],
             numRects = originalRects.length,
@@ -111,7 +111,7 @@ const ResScaler = {
         return newRects;
     },
 
-    parseOriginalOffsets: function (offsets) {
+    parseOriginalOffsets(offsets) {
         let i = 0;
         const len = offsets.length,
             originalOffsets = [];
@@ -122,7 +122,7 @@ const ResScaler = {
         return originalOffsets;
     },
 
-    scaleOffsets: function (info, scale) {
+    scaleOffsets(info, scale) {
         // Previously we chopped the decimal portion of offsets and then
         // offset the image by that amount when scaling the sprite sheet.
         // That allows us to always have round offsets to avoid twitchy

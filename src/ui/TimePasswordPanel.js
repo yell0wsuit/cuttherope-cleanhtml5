@@ -46,8 +46,8 @@ function initialize() {
         // for some reason, chrome isn't rendering the text when its first set
         // we need to do something to trigger layout, so its shown properly
         const width = $message.offsetWidth;
-        $message.style.width = width + 1 + "px";
-        $message.style.width = width - 1 + "px";
+        $message.style.width = `${width + 1}px`;
+        $message.style.width = `${width - 1}px`;
     }
 
     let showValidatingMessage = false;

@@ -7,7 +7,7 @@ import res2560x1440 from "@/config/resolutions/2560x1440";
  * @param base
  * @param target
  */
-function initProfile(base, target) {
+const initProfile = (base, target) => {
     const scale = target.CANVAS_SCALE;
 
     target.BUNGEE_REST_LEN = base.BUNGEE_REST_LEN * scale;
@@ -80,13 +80,13 @@ function initProfile(base, target) {
     target.uiScaledNumber = function (n) {
         return Math.round(n * target.UI_IMAGES_SCALE);
     };
-}
+};
 
 /**
  * Initializes a target profile scaled from the mac version profile
  */
-function initProfileFromMac(target) {
+const initProfileFromMac = (target) => {
     initProfile(res2560x1440, target);
-}
+};
 
 export default initProfileFromMac;

@@ -1,4 +1,3 @@
-import Class from "@/utils/Class";
 import Box from "@/ui/Box";
 import Text from "@/visual/Text";
 import resolution from "@/resolution";
@@ -14,7 +13,8 @@ import edition from "@/edition";
 import MathHelper from "@/utils/MathHelper";
 import SettingStorage from "@/core/SettingStorage";
 import dom from "@/utils/dom";
-// promotion runs from March 4 - April 14
+
+// promotion runs from March 4 - April 14 (2013)
 // using ticks makes finding hacking more difficult because
 // you can't search the code for well known dates
 const BoxOpenDates = [
@@ -90,34 +90,34 @@ const MonthNames = [
     "December",
 ];
 
-const TimeBox = Box.extend({
-    init: function (boxIndex, bgimg, reqstars, islocked, type) {
-        this._super(boxIndex, bgimg, reqstars, islocked, type);
+class TimeBox extends Box {
+    constructor(boxIndex, bgimg, reqstars, islocked, type) {
+        super(boxIndex, bgimg, reqstars, islocked, type);
         this.lockedBoxImg = new Image();
         this.lockedBoxImg.src = this.boxImg.src.replace(".png", "_locked.png");
         this.isBkCodeLocked = isLocked(boxIndex);
         this.isTimeLocked =
             QueryStrings.unlockAllBoxes !== true && Date.now() < BoxOpenDates[boxIndex];
         this.dateImg = null;
-    },
+    }
 
-    isClickable: function () {
+    isClickable() {
         return !this.isTimeLocked && !this.isBkCodeLocked;
-    },
+    }
 
-    onSelected: function () {
+    onSelected() {
         if (!this.isTimeLocked && this.isBkCodeLocked && enterCodeButton) {
             dom.fadeIn(enterCodeButton);
         }
-    },
+    }
 
-    onUnselected: function () {
+    onUnselected() {
         if (enterCodeButton) {
             dom.hide(enterCodeButton);
         }
-    },
+    }
 
-    render: function (ctx, omnomoffset) {
+    render(ctx, omnomoffset) {
         const locked = this.islocked || this.isTimeLocked || this.isBkCodeLocked;
 
         // draw the base box image
@@ -153,7 +153,7 @@ const TimeBox = Box.extend({
                 this.dateImg = new Image();
                 const openDate = new Date(BoxOpenDates[this.index]);
                 Text.drawBig({
-                    text: MonthNames[openDate.getMonth()] + " " + openDate.getDate(),
+                    text: `${MonthNames[openDate.getMonth()]} ${openDate.getDate()}`,
                     img: this.dateImg,
                     width: resolution.uiScaledNumber(200),
                     alignment: Alignment.HCENTER,
@@ -254,8 +254,8 @@ const TimeBox = Box.extend({
                 );
             }
         }
-    },
-});
+    }
+}
 
 TimeBox.unlockBox = unlockBox;
 TimeBox.isLocked = isLocked;

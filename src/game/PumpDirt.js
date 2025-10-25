@@ -9,9 +9,9 @@ const IMG_OBJ_PUMP_pump_start = 0,
     IMG_OBJ_PUMP_particle_2 = 7,
     IMG_OBJ_PUMP_particle_3 = 8;
 
-const PumpDirt = MultiParticles.extend({
-    init: function (numParticles, texture, angle) {
-        this._super(numParticles, texture);
+class PumpDirt extends MultiParticles {
+    constructor(numParticles, texture, angle) {
+        super(numParticles, texture);
 
         this.angle = angle;
         this.angleVar = 10;
@@ -39,9 +39,10 @@ const PumpDirt = MultiParticles.extend({
         this.endColor.a = 0.0;
 
         this.additive = true;
-    },
-    initParticle: function (particle) {
-        this._super(particle);
+    }
+
+    initParticle(particle) {
+        super.initParticle(particle);
 
         const texture = this.imageGrid,
             n = MathHelper.randomRange(IMG_OBJ_PUMP_particle_1, IMG_OBJ_PUMP_particle_3),
@@ -53,13 +54,14 @@ const PumpDirt = MultiParticles.extend({
         const particleSize = resolution.PUMP_DIRT_PARTICLE_SIZE;
         particle.width = particleSize;
         particle.height = particleSize;
-    },
-    updateParticleLocation: function (p, delta) {
+    }
+
+    updateParticleLocation(p, delta) {
         p.dir.multiply(0.9);
         const tmp = Vector.multiply(p.dir, delta);
         tmp.add(this.gravity);
         p.pos.add(tmp);
-    },
-});
+    }
+}
 
 export default PumpDirt;

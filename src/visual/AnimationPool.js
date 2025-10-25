@@ -1,17 +1,19 @@
 import BaseElement from "@/visual/BaseElement";
+
 /**
  * Container to hold animated objects which can be automatically deleted
  * once their animation timelines have completed
  */
-const AnimationPool = BaseElement.extend({
-    init: function () {
-        this._super();
+class AnimationPool extends BaseElement {
+    constructor() {
+        super();
 
         // keeps track of child elements whose timeline has completed
         // and can be removed
         this.removeList = [];
-    },
-    update: function (delta) {
+    }
+
+    update(delta) {
         // remove the children
         for (let i = 0, len = this.removeList.length; i < len; i++) {
             this.removeChild(this.removeList[i]);
@@ -19,42 +21,44 @@ const AnimationPool = BaseElement.extend({
 
         // clear the remove list
         this.removeList.length = 0;
-        this._super(delta);
-    },
+        super.update(delta);
+    }
+
     /**
      * @param timeline {Timeline}
      */
-    timelineFinished: function (timeline) {
+    timelineFinished(timeline) {
         this.removeList.push(timeline.element);
-    },
+    }
+
     /**
      * Returns a delegate that can be invoked when a timeline finishes
      */
-    timelineFinishedDelegate: function () {
+    timelineFinishedDelegate() {
         // save a reference to ourselves since we may be called in a
         // different context (typically by another class)
-        const self = this;
-        return function (timeline) {
-            self.timelineFinished(timeline);
+        return (timeline) => {
+            this.timelineFinished(timeline);
         };
-    },
+    }
+
     /**
      * @param particles {Particles}
      */
-    particlesFinished: function (particles) {
+    particlesFinished(particles) {
         this.removeList.push(particles);
-    },
+    }
+
     /**
      * Returns a delegate that can be invoked when a particle system finishes
      */
-    particlesFinishedDelegate: function () {
+    particlesFinishedDelegate() {
         // save a reference to ourselves since we may be called in a
         // different context (typically by another class)
-        const self = this;
-        return function (particles) {
-            self.particlesFinished(particles);
+        return (particles) => {
+            this.particlesFinished(particles);
         };
-    },
-});
+    }
+}
 
 export default AnimationPool;

@@ -3,16 +3,18 @@ import Rectangle from "@/core/Rectangle";
 import MathHelper from "@/utils/MathHelper";
 import ImageMultiDrawer from "@/visual/ImageMultiDrawer";
 import resolution from "@/resolution";
-const MultiParticles = Particles.extend({
-    init: function (numParticles, texture) {
-        this._super(numParticles);
+
+class MultiParticles extends Particles {
+    constructor(numParticles, texture) {
+        super(numParticles);
 
         this.imageGrid = texture;
         this.drawer = new ImageMultiDrawer(texture);
         this.width = resolution.CANVAS_WIDTH;
         this.height = resolution.CANVAS_HEIGHT;
-    },
-    initParticle: function (particle) {
+    }
+
+    initParticle(particle) {
         const texture = this.imageGrid,
             n = MathHelper.randomRange(0, texture.rects.length - 1),
             tquad = texture.rects[n],
@@ -20,12 +22,13 @@ const MultiParticles = Particles.extend({
 
         this.drawer.setTextureQuad(this.particles.length, tquad, vquad, 1);
 
-        this._super(particle);
+        super.initParticle(particle);
 
         particle.width = tquad.w * particle.size;
         particle.height = tquad.h * particle.size;
-    },
-    updateParticle: function (particle, index) {
+    }
+
+    updateParticle(particle, index) {
         // update the current position
         this.drawer.vertices[index] = new Rectangle(
             particle.pos.x - particle.width / 2,
@@ -39,12 +42,14 @@ const MultiParticles = Particles.extend({
 
         // update the color in the particle system
         this.colors[index] = particle.color;
-    },
-    removeParticle: function (index) {
+    }
+
+    removeParticle(index) {
         this.drawer.removeQuads(index);
-        this._super(index);
-    },
-    draw: function () {
+        super.removeParticle(index);
+    }
+
+    draw() {
         this.preDraw();
 
         /* for debugging rotation: draw a line from origin at 0 degrees
@@ -62,7 +67,7 @@ const MultiParticles = Particles.extend({
 
         this.drawer.draw();
         this.postDraw();
-    },
-});
+    }
+}
 
 export default MultiParticles;

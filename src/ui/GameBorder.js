@@ -62,10 +62,10 @@ function applyFade({ fadeIn, duration = 0, delay = 0 }) {
 }
 
 const GameBorder = {
-    domReady: function () {
+    domReady() {
         ensureBorderElement();
     },
-    setBoxBorder: function (boxIndex) {
+    setBoxBorder(boxIndex) {
         const element = ensureBorderElement();
         if (!element) return;
 
@@ -75,27 +75,27 @@ const GameBorder = {
         element.classList.remove(GAME_COMPLETE_CLASS);
         element.style.backgroundImage = backgroundUrl ? `url("${backgroundUrl}")` : "";
     },
-    setGameCompleteBorder: function () {
+    setGameCompleteBorder() {
         const element = ensureBorderElement();
         if (!element) return;
 
         element.style.backgroundImage = "";
         element.classList.add(GAME_COMPLETE_CLASS);
     },
-    hide: function () {
+    hide() {
         const element = ensureBorderElement();
         if (!element) return;
         element.style.display = "none";
     },
-    show: function () {
+    show() {
         const element = ensureBorderElement();
         if (!element) return;
         element.style.display = "";
     },
-    fadeIn: function (duration, delay) {
+    fadeIn(duration, delay) {
         applyFade({ fadeIn: true, duration, delay });
     },
-    fadeOut: function (duration, delay) {
+    fadeOut(duration, delay) {
         applyFade({ fadeIn: false, duration, delay });
     },
 };

@@ -37,18 +37,18 @@ const getLocalizedText = function (locEntry) {
 };
 
 const Lang = {
-    boxText: function (boxIndex, includeNumber) {
+    boxText(boxIndex, includeNumber) {
         const locEntry = edition.boxText[boxIndex];
         let text = getLocalizedText(locEntry);
 
         // all boxes except last one get prepended numbers
         if (text && includeNumber) {
-            text = boxIndex + 1 + ". " + text;
+            text = `${boxIndex + 1}. ${text}`;
         }
 
         return text;
     },
-    menuText: function (menuStringId) {
+    menuText(menuStringId) {
         let locEntry, i;
         const len = menuStrings.length;
         for (i = 0; i < len; i++) {
@@ -58,11 +58,11 @@ const Lang = {
             }
         }
 
-        Log.debug("Missing menu string for id: " + menuStringId);
+        Log.debug(`Missing menu string for id: ${menuStringId}`);
         return "";
     },
     getText: getLocalizedText,
-    getCurrentId: function () {
+    getCurrentId() {
         return settings.getLangId();
     },
 };

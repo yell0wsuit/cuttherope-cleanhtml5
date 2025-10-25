@@ -76,11 +76,11 @@ LevelPanel.init = function (interfaceManager) {
         }
 
         const levelButton = document.createElement("div");
-        levelButton.id = "option" + (i + 1);
+        levelButton.id = `option${i + 1}`;
         levelButton.dataset.level = i;
-        levelButton.className = "option locked ctrPointer " + modClass;
-        levelButton.style.left = curLeft + (extraPad || 0) + "px";
-        levelButton.style.top = curTop + "px";
+        levelButton.className = `option locked ctrPointer ${modClass}`;
+        levelButton.style.left = `${curLeft + (extraPad || 0)}px`;
+        levelButton.style.top = `${curTop}px`;
         levelButton.addEventListener("click", onLevelClick);
         levelOptions.appendChild(levelButton);
 
@@ -182,7 +182,7 @@ function updateLevelOptions() {
 
     for (i = 0; i < levelCount; i++) {
         // get a reference to the level button
-        const levelElement = document.getElementById("option" + (i + 1));
+        const levelElement = document.getElementById(`option${i + 1}`);
         if (levelElement) {
             // show and prepare the element, otherwise hide it
             if (i < levelCount) {
@@ -197,7 +197,7 @@ function updateLevelOptions() {
                     levelInfo.className = "txt";
                     append(levelInfo, Text.drawBig({ text: i + 1, scaleToUI: true }));
                     const starsElement = document.createElement("div");
-                    addClass(starsElement, "stars" + stars);
+                    addClass(starsElement, `stars${stars}`);
                     levelInfo.appendChild(starsElement);
 
                     removeClass(levelElement, "locked");
@@ -221,10 +221,7 @@ function updateLevelOptions() {
 
     // update the scores
     // currently assuming each level has three stars
-    const text =
-        ScoreManager.achievedStars(BoxManager.currentBoxIndex) +
-        "/" +
-        ScoreManager.levelCount(BoxManager.currentBoxIndex) * 3;
+    const text = `${ScoreManager.achievedStars(BoxManager.currentBoxIndex)}/${ScoreManager.levelCount(BoxManager.currentBoxIndex) * 3}`;
     Text.drawBig({ text: text, imgSel: "#levelScore img", scaleToUI: true });
     BoxManager.updateBoxLocks();
     ScoreManager.updateTotalScoreText();

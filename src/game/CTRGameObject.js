@@ -2,11 +2,13 @@ import GameObject from "@/visual/GameObject";
 import CTRMover from "@/game/CTRMover";
 import resolution from "@/resolution";
 import Mover from "@/utils/Mover";
-const CTRGameObject = GameObject.extend({
-    init: function () {
-        this._super();
-    },
-    parseMover: function (item) {
+
+class CTRGameObject extends GameObject {
+    constructor() {
+        super();
+    }
+
+    parseMover(item) {
         this.rotation = item.angle || 0;
 
         const path = item.path,
@@ -29,7 +31,7 @@ const CTRGameObject = GameObject.extend({
             this.setMover(mover);
             mover.start();
         }
-    },
-});
+    }
+}
 
 export default CTRGameObject;

@@ -4,39 +4,30 @@ import Lang from "@/resources/Lang";
 import MenuStringId from "@/resources/MenuStringId";
 import PubSub from "@/utils/PubSub";
 import analytics from "@/analytics";
-const SocialHelper = new (function () {
-    this.siteUrl = edition.siteUrl;
 
-    // cuttherope.ie and cuttherope.net
-    this.appId = "278847552173744";
+// check for test domain (separate FB app ids)
+const host = window.location.host || "";
+let appId = "278847552173744"; // cuttherope.ie and cuttherope.net
 
-    // check for test domain (seperate FB app ids)
-    const host = window.location.host || "";
-    if (host.indexOf("thinkpixellab") >= 0) {
-        // thinkpixellab.com
-        this.appId = "239041062884795";
-    } else if (host.indexOf(".dev") >= 0) {
-        // ctr-net.dev
-        this.appId = "261043477350153";
-    }
+if (host.indexOf("thinkpixellab") >= 0) {
+    // thinkpixellab.com
+    appId = "239041062884795";
+} else if (host.indexOf(".dev") >= 0) {
+    // ctr-net.dev
+    appId = "261043477350153";
+}
 
-    // listen to language changes
-    const self = this;
-    PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
-        self.siteDescription = Lang.menuText(MenuStringId.SITE_DESC);
-        self.siteName = Lang.menuText(MenuStringId.SITE_TITLE);
-        self.siteActions = [
-            {
-                name: Lang.menuText(MenuStringId.SITE_ACTION),
-                link: edition.siteUrl,
-            },
-        ];
-    });
+const SocialHelper = {
+    siteUrl: edition.siteUrl,
+    appId,
+    siteDescription: undefined,
+    siteName: undefined,
+    siteActions: undefined,
 
-    this.initFB = function () {
+    initFB() {
         // NOTE: must create settings this way to prevent obfuscation
         const fbInitSettings = {};
-        fbInitSettings["appId"] = self.appId;
+        fbInitSettings["appId"] = this.appId;
         fbInitSettings["status"] = true;
         fbInitSettings["cookie"] = true;
         fbInitSettings["xfbml"] = true;
@@ -49,10 +40,10 @@ const SocialHelper = new (function () {
                 analytics.onFacebookLike();
             }
         });
-    };
+    },
 
     // remember to return true in the callback
-    this.postToFeed = function (caption, description, imageurl, callback) {
+    postToFeed(caption, description, imageurl, callback) {
         // see if the platform has custom sharing
         if (platform.customSharing) {
             PubSub.publish(PubSub.ChannelId.Share, caption, description, imageurl);
@@ -62,26 +53,38 @@ const SocialHelper = new (function () {
             // NOTE: must create settings this way to prevent obfuscation
             const publish = {};
             publish["method"] = "feed";
-            publish["name"] = self.siteName;
+            publish["name"] = this.siteName;
             publish["caption"] = caption;
             publish["description"] = description;
-            publish["link"] = self.siteUrl;
+            publish["link"] = this.siteUrl;
             publish["picture"] = imageurl;
-            publish["actions"] = self.siteActions;
+            publish["actions"] = this.siteActions;
 
             let FB;
             FB.ui(publish, callback);
         }
-    };
+    },
 
-    this.initTwitter = function (twttr) {
+    initTwitter(twttr) {
         // report tweets from users
         twttr["events"]["bind"]("tweet", function (event) {
             if (analytics.onTweet) {
                 analytics.onTweet();
             }
         });
-    };
-})();
+    },
+};
+
+// listen to language changes
+PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
+    SocialHelper.siteDescription = Lang.menuText(MenuStringId.SITE_DESC);
+    SocialHelper.siteName = Lang.menuText(MenuStringId.SITE_TITLE);
+    SocialHelper.siteActions = [
+        {
+            name: Lang.menuText(MenuStringId.SITE_ACTION),
+            link: edition.siteUrl,
+        },
+    ];
+});
 
 export default SocialHelper;

@@ -3,12 +3,13 @@ import Timeline from "@/visual/Timeline";
 import KeyFrame from "@/visual/KeyFrame";
 import Alignment from "@/core/Alignment";
 import ResourceId from "@/resources/ResourceId";
+
 const IMG_BGR_08_P1__position_window = 1;
 const IMG_OBJ_STAR_IDLE_window = 58;
 
-const EarthImage = ImageElement.extend({
-    init: function (offsetX, offsetY) {
-        this._super();
+class EarthImage extends ImageElement {
+    constructor(offsetX, offsetY) {
+        super();
         this.initTextureWithId(ResourceId.IMG_OBJ_STAR_IDLE);
         this.setTextureQuad(IMG_OBJ_STAR_IDLE_window);
         this.anchor = Alignment.CENTER;
@@ -26,8 +27,8 @@ const EarthImage = ImageElement.extend({
         this.setElementPositionWithOffset(ResourceId.IMG_BGR_08_P1, IMG_BGR_08_P1__position_window);
         this.x += offsetX;
         this.y += offsetY;
-    },
-});
+    }
+}
 
 /**
  * @enum {number}

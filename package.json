@@ -5,14 +5,15 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build",
+        "build": "vite build && node scripts/compressJson.js",
         "preview": "vite preview"
     },
     "devDependencies": {
         "@eslint/js": "^9.38.0",
         "eslint": "^9.38.0",
         "globals": "^16.4.0",
-        "vite": "npm:rolldown-vite@7.1.19"
+        "vite": "npm:rolldown-vite@7.1.19",
+        "vite-plugin-pwa": "^1.1.0"
     },
     "overrides": {
         "vite": "npm:rolldown-vite@7.1.19"

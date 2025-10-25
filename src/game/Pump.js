@@ -1,16 +1,18 @@
 import GameObject from "@/visual/GameObject";
 import Vector from "@/core/Vector";
 import Radians from "@/utils/Radians";
-const Pump = GameObject.extend({
-    init: function () {
-        this._super();
+
+class Pump extends GameObject {
+    constructor() {
+        super();
         this.angle = 0;
         this.t1 = Vector.newZero();
         this.t2 = Vector.newZero();
         this.touchTimer = 0;
         this.touch = 0;
-    },
-    updateRotation: function () {
+    }
+
+    updateRotation() {
         const bbHalfWidth = this.bb.w / 2;
 
         this.t1.x = this.x - bbHalfWidth;
@@ -21,7 +23,7 @@ const Pump = GameObject.extend({
 
         this.t1.rotateAround(this.angle, this.x, this.y);
         this.t2.rotateAround(this.angle, this.x, this.y);
-    },
-});
+    }
+}
 
 export default Pump;

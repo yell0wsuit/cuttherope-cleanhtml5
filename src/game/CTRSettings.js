@@ -22,31 +22,31 @@ const CTRSettings = {
     showGreeting: true,
 
     // game music
-    getMusicEnabled: function () {
+    getMusicEnabled() {
         return SettingStorage.getBoolOrDefault(SettingKeys.MUSIC, true);
     },
-    setMusicEnabled: function (musicEnabled) {
+    setMusicEnabled(musicEnabled) {
         SettingStorage.set(SettingKeys.MUSIC, musicEnabled);
     },
 
     // sound effects
-    getSoundEnabled: function () {
+    getSoundEnabled() {
         return SettingStorage.getBoolOrDefault(SettingKeys.SOUND, true);
     },
-    setSoundEnabled: function (soundEnabled) {
+    setSoundEnabled(soundEnabled) {
         SettingStorage.set(SettingKeys.SOUND, soundEnabled);
     },
 
     // click-to-cut
-    getClickToCut: function () {
+    getClickToCut() {
         return SettingStorage.getBoolOrDefault(SettingKeys.CLICK_TO_CUT, false);
     },
-    setClickToCut: function (clickToCutEnabled) {
+    setClickToCut(clickToCutEnabled) {
         SettingStorage.set(SettingKeys.CLICK_TO_CUT, clickToCutEnabled);
     },
 
     // locale
-    getLangId: function () {
+    getLangId() {
         // first see if a querystring override was specified
         if (QueryStrings.lang) {
             return LangId.fromString(QueryStrings.lang);
@@ -66,19 +66,19 @@ const CTRSettings = {
 
         return langId;
     },
-    setLangId: function (langId) {
+    setLangId(langId) {
         SettingStorage.set(SettingKeys.LANGUAGE, langId);
     },
 
-    getIsHD: function () {
+    getIsHD() {
         return SettingStorage.getBoolOrDefault(SettingKeys.IS_HD, null);
     },
     // sd or hd resolution
-    setIsHD: function (isHD) {
+    setIsHD(isHD) {
         SettingStorage.set(SettingKeys.IS_HD, isHD);
     },
 
-    clear: function () {
+    clear() {
         SettingStorage.remove(SettingKeys.IS_HD);
     },
 };

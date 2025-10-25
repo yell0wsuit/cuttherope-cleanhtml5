@@ -10,22 +10,24 @@ let progressCallback = null;
 // Cache for loaded JSON data
 const jsonCache = new Map();
 
-const loadJson = (url) => {
-    return fetch(url)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Request failed with status ${response.status}`);
-            }
-            return response.json();
-        })
-        .catch((error) => {
-            window.console?.error?.("Failed to load JSON:", url, error);
-            throw error;
-        });
+const loadJson = async (url) => {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+    }
+
+    const text = await response.text();
+
+    try {
+        return JSON.parse(text);
+    } catch (error) {
+        window.console?.error?.("Failed to parse JSON:", url, error);
+        throw error;
+    }
 };
 
 const JsonLoader = {
-    init: function () {
+    init() {
         menuJsonLoadComplete = false;
         loadedJsonFiles = 0;
         failedJsonFiles = 0;
@@ -33,19 +35,19 @@ const JsonLoader = {
         jsonCache.clear();
     },
 
-    getJsonFileCount: function () {
+    getJsonFileCount() {
         return totalJsonFiles;
     },
 
-    onProgress: function (callback) {
+    onProgress(callback) {
         progressCallback = callback;
     },
 
-    onMenuComplete: function (callback) {
+    onMenuComplete(callback) {
         checkCompleteCallback = callback;
     },
 
-    start: function () {
+    start() {
         // Use the configured base from vite config
         const baseUrl = import.meta.env.BASE_URL || "/";
         const jsonFiles = [];
@@ -108,11 +110,11 @@ const JsonLoader = {
         });
     },
 
-    getJson: function (key) {
+    getJson(key) {
         return jsonCache.get(key);
     },
 
-    getAllLevels: function () {
+    getAllLevels() {
         const levels = new Map();
         for (const [key, value] of jsonCache.entries()) {
             if (key.startsWith("level-")) {
@@ -129,7 +131,7 @@ const JsonLoader = {
         return levels;
     },
 
-    getBoxMetadata: function () {
+    getBoxMetadata() {
         return jsonCache.get("boxMetadata");
     },
 };

@@ -2,10 +2,9 @@ import Rectangle from "@/core/Rectangle";
 import Vector from "@/core/Vector";
 
 const createFrameEntries = (frames) => {
-    if (!frames) {
-        return [];
-    }
+    if (!frames) return [];
 
+    // If frames is an array, preserve its natural order
     if (Array.isArray(frames)) {
         return frames.map((frame, index) => ({
             name: frame?.filename ?? frame?.name ?? String(index),
@@ -13,50 +12,42 @@ const createFrameEntries = (frames) => {
         }));
     }
 
-    return Object.keys(frames).map((name) => ({
-        name,
-        data: frames[name],
-    }));
+    // If frames is an object (unordered), sort alphabetically for stability
+    return Object.keys(frames)
+        .sort()
+        .map((name) => ({
+            name,
+            data: frames[name],
+        }));
 };
 
 const orderFrameEntries = (entries, frameOrder) => {
-    if (!frameOrder || frameOrder.length === 0) {
-        return entries;
-    }
+    if (!frameOrder || frameOrder.length === 0) return entries;
 
-    const orderMap = new Map();
-    frameOrder.forEach((name, index) => {
-        orderMap.set(name, index);
-    });
+    const orderMap = new Map(frameOrder.map((name, i) => [name, i]));
 
     return entries.slice().sort((a, b) => {
-        const indexA = orderMap.has(a.name) ? orderMap.get(a.name) : Number.MAX_SAFE_INTEGER;
-        const indexB = orderMap.has(b.name) ? orderMap.get(b.name) : Number.MAX_SAFE_INTEGER;
-
-        if (indexA === indexB) {
-            return a.name.localeCompare(b.name);
-        }
-
-        return indexA - indexB;
+        const indexA = orderMap.get(a.name) ?? Number.MAX_SAFE_INTEGER;
+        const indexB = orderMap.get(b.name) ?? Number.MAX_SAFE_INTEGER;
+        return indexA === indexB ? a.name.localeCompare(b.name) : indexA - indexB;
     });
 };
 
 export const parseTexturePackerAtlas = (atlasData, options = {}) => {
-    const { existingInfo = {}, frameOrder, offsetNormalization } = options;
+    const { existingInfo = {}, offsetNormalization } = options;
 
-    if (!atlasData || !atlasData.frames) {
-        return existingInfo || {};
-    }
+    if (!atlasData || !atlasData.frames) return existingInfo || {};
+
+    // Auto-detect order directly from JSON array if available
+    const hasArrayFrames = Array.isArray(atlasData.frames);
+    const autoFrameOrder = hasArrayFrames
+        ? atlasData.frames.map((f) => f.filename ?? f.name)
+        : null;
 
     let entries = createFrameEntries(atlasData.frames);
+    if (autoFrameOrder) entries = orderFrameEntries(entries, autoFrameOrder);
 
-    if (frameOrder && frameOrder.length) {
-        entries = orderFrameEntries(entries, frameOrder);
-    }
-
-    if (entries.length === 0) {
-        return existingInfo || {};
-    }
+    if (entries.length === 0) return existingInfo || {};
 
     const info = { ...existingInfo };
     const rects = [];
@@ -70,15 +61,10 @@ export const parseTexturePackerAtlas = (atlasData, options = {}) => {
     entries.forEach((entry, index) => {
         const frameInfo = entry.data || {};
         const frameRect = frameInfo.frame;
-
-        if (!frameRect) {
-            return;
-        }
+        if (!frameRect) return;
 
         if (frameInfo.rotated) {
-            globalThis.console?.warn?.(
-                `TexturePacker frame "${entry.name}" is rotated, which is not currently supported.`
-            );
+            console.warn(`TexturePacker frame "${entry.name}" is rotated — not supported.`);
         }
 
         rects.push(new Rectangle(frameRect.x, frameRect.y, frameRect.w, frameRect.h));
@@ -88,9 +74,7 @@ export const parseTexturePackerAtlas = (atlasData, options = {}) => {
         if (spriteSourceSize) {
             const offset = new Vector(spriteSourceSize.x || 0, spriteSourceSize.y || 0);
             offsets.push(offset);
-            if (offset.x !== 0 || offset.y !== 0) {
-                hasNonZeroOffset = true;
-            }
+            if (offset.x !== 0 || offset.y !== 0) hasNonZeroOffset = true;
         } else {
             offsets.push(new Vector(0, 0));
         }
@@ -104,27 +88,21 @@ export const parseTexturePackerAtlas = (atlasData, options = {}) => {
         frameKeys.push(entry.name ?? String(index));
     });
 
-    info.rects = rects.map((rect) => ({ x: rect.x, y: rect.y, w: rect.w, h: rect.h }));
+    info.rects = rects.map((r) => ({ x: r.x, y: r.y, w: r.w, h: r.h }));
 
-    // Optionally normalize offsets so each frame is perfectly centered
+    // Optional center normalization
     if (offsetNormalization === "center") {
-        const centeredOffsets = rectSizes.map((size) => {
-            const cx = Math.round(((preCutWidth || size.w) - size.w) / 2);
-            const cy = Math.round(((preCutHeight || size.h) - size.h) / 2);
+        const centered = rectSizes.map((s) => {
+            const cx = Math.round(((preCutWidth || s.w) - s.w) / 2);
+            const cy = Math.round(((preCutHeight || s.h) - s.h) / 2);
             return new Vector(cx, cy);
         });
-
-        // Replace offsets with centered values
-        for (let i = 0; i < centeredOffsets.length; i++) {
-            offsets[i] = centeredOffsets[i];
-        }
-
-        // If any centered offset is non-zero, mark flag
-        hasNonZeroOffset = centeredOffsets.some((o) => o.x !== 0 || o.y !== 0);
+        for (let i = 0; i < centered.length; i++) offsets[i] = centered[i];
+        hasNonZeroOffset = centered.some((o) => o.x || o.y);
     }
 
     if (offsets.length && (hasNonZeroOffset || info.offsets)) {
-        info.offsets = offsets.map((offset) => ({ x: offset.x, y: offset.y }));
+        info.offsets = offsets.map((o) => ({ x: o.x, y: o.y }));
     } else {
         delete info.offsets;
     }
@@ -135,9 +113,9 @@ export const parseTexturePackerAtlas = (atlasData, options = {}) => {
     }
 
     info.frameKeys = frameKeys;
-    info.frameIndexByName = frameKeys.reduce((accumulator, name, index) => {
-        accumulator[name] = index;
-        return accumulator;
+    info.frameIndexByName = frameKeys.reduce((acc, name, i) => {
+        acc[name] = i;
+        return acc;
     }, {});
 
     // When frames are trimmed and carry offsets, pad the drawn quad by 1px

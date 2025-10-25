@@ -5,11 +5,9 @@ class PointerCapture {
         this.el = settings.element;
         this.getZoom = settings.getZoom;
 
-        const self = this;
-
         // save references to the event handlers so they can be removed
-        this.startHandler = function (event) {
-            self.preventPanning(event);
+        this.startHandler = (event) => {
+            this.preventPanning(event);
 
             if (singleTouch === false) {
                 singleTouch = event.changedTouches && event.changedTouches[0].identifier;
@@ -17,27 +15,27 @@ class PointerCapture {
                 return false;
             }
 
-            if (settings.onStart) return self.translatePosition(event, settings.onStart);
+            if (settings.onStart) return this.translatePosition(event, settings.onStart);
             else return false; // not handled
         };
-        this.moveHandler = function (event) {
-            self.preventPanning(event);
+        this.moveHandler = (event) => {
+            this.preventPanning(event);
 
             if (event.changedTouches && event.changedTouches[0].identifier !== singleTouch)
                 return false;
 
-            if (settings.onMove) return self.translatePosition(event, settings.onMove);
+            if (settings.onMove) return this.translatePosition(event, settings.onMove);
             else return false; // not handled
         };
-        this.endHandler = function (event) {
-            self.preventPanning(event);
+        this.endHandler = (event) => {
+            this.preventPanning(event);
             singleTouch = false;
 
-            if (settings.onEnd) return self.translatePosition(event, settings.onEnd);
+            if (settings.onEnd) return this.translatePosition(event, settings.onEnd);
             else return false; // not handled
         };
-        this.outHandler = function (event) {
-            if (settings.onOut) return self.translatePosition(event, settings.onOut);
+        this.outHandler = (event) => {
+            if (settings.onOut) return this.translatePosition(event, settings.onOut);
             else return false; // not handled
         };
     }

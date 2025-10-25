@@ -1,6 +1,6 @@
 import LangId from "@/resources/LangId";
 const DefaultLoc = {
-    getDefaultLangId: function () {
+    getDefaultLangId() {
         return LangId.EN;
     },
 };
