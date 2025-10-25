@@ -18,6 +18,13 @@ const res2560x1440 = {
     CANVAS_SCALE: 1,
 
     /**
+     * UI images scale factor
+     * @const
+     * @type {number}
+     */
+    UI_IMAGES_SCALE: 1,
+
+    /**
      * Platform multiplier (maps the height of the level to the height of the canvas).
      * Map height is 480 and canvas height is 576.
      * @const

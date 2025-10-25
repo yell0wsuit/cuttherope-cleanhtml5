@@ -1,13 +1,101 @@
 import Rectangle from "@/core/Rectangle";
 import res2560x1440 from "@/config/resolutions/2560x1440";
+
 /**
- * Initializes the target device profile using a base profile. A set of properties
- * will be scaled (based on the difference between the base and target resolutions)
- * and then added to the target.
- * @param base
- * @param target
+ * Represents a rectangle-like structure with scaling support.
  */
-const initProfile = (base, target) => {
+interface ScalableRectangle {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+}
+
+/**
+ * Represents a resolution profile definition.
+ * This covers all numeric and rectangular values that can be scaled.
+ */
+interface ResolutionProfile {
+    CANVAS_SCALE: number;
+    UI_IMAGES_SCALE: number;
+
+    BUNGEE_REST_LEN: number;
+    MOVER_SCALE: number;
+    STAR_RADIUS: number;
+    MOUTH_OPEN_RADIUS: number;
+    OUT_OF_SCREEN_ADJUSTMENT_TOP: number;
+    OUT_OF_SCREEN_ADJUSTMENT_BOTTOM: number;
+    CLICK_TO_CUT_SEARCH_RADIUS: number;
+
+    TARGET_BB: ScalableRectangle;
+    TARGET2_BB: ScalableRectangle;
+
+    TUTORIAL_HAND_TARGET_X_1: number;
+    TUTORIAL_HAND_TARGET_X_2: number;
+
+    BUBBLE_SIZE: number;
+    BUBBLE_TOUCH_OFFSET: number;
+    BUBBLE_TOUCH_SIZE: number;
+    BUBBLE_BB: ScalableRectangle;
+    BUBBLE_RADIUS: number;
+
+    STAR_SPIKE_RADIUS: number;
+    STAR_BB: ScalableRectangle;
+    STAR_DEFAULT_BB: ScalableRectangle;
+
+    BOUNCER_RADIUS: number;
+
+    PUMP_POWER_RADIUS?: number;
+    PUMP_BB: ScalableRectangle;
+    PUMP_DIRT_SPEED: number;
+    PUMP_DIRT_PARTICLE_SIZE: number;
+    PUMP_DIRT_OFFSET: number;
+
+    CANDY_BB: ScalableRectangle;
+    CANDY_LR_BB: ScalableRectangle;
+    CANDY_BUBBLE_TUTORIAL_LIMIT_Y: number;
+    CANDY_BUBBLE_TUTORIAL_LIMIT_X: number;
+
+    IGNORE_TOUCHES_DISTANCE: number;
+    PREVIEW_CAMERA_SPEED: number;
+    PREVIEW_CAMERA_SPEED2: number;
+    MAX_PREVIEW_CAMERA_SPEED: number;
+    MIN_PREVIEW_CAMERA_SPEED: number;
+    CAMERA_SPEED_THRESHOLD: number;
+    CAMERA_SPEED: number;
+
+    GRAB_WHEEL_MAX_ROTATION: number;
+    GRAB_WHEEL_SCALE_DIVISOR: number;
+    GRAB_WHEEL_RADIUS: number;
+    GRAB_ROPE_ROLL_MAX_LENGTH: number;
+    GRAB_MOVE_BG_WIDTH: number;
+    GRAB_MOVE_BG_X_OFFSET: number;
+    GRAB_MOVE_RADIUS: number;
+    SPIDER_SPEED: number;
+
+    POLLEN_MIN_DISTANCE: number;
+    POLLEN_MAX_OFFSET: number;
+
+    RC_CONTROLLER_RADIUS: number;
+
+    SOCK_LIGHT_Y: number;
+    SOCK_WIDTH: number;
+    SOCK_ROTATION_Y_OFFSET: number;
+    STAR_SOCK_RADIUS: number;
+    SOCK_TELEPORT_Y: number;
+
+    CUT_MAX_SIZE: number;
+
+    uiScaledNumber?: (n: number) => number;
+    //[key: string]: any;
+}
+
+/**
+ * Initializes the target device profile using a base profile.
+ * All numeric and rectangular fields are scaled based on the
+ * difference between the base and target resolutions.
+ */
+const initProfile = (base: ResolutionProfile, target: ResolutionProfile): void => {
     const scale = target.CANVAS_SCALE;
 
     target.BUNGEE_REST_LEN = base.BUNGEE_REST_LEN * scale;
@@ -36,7 +124,7 @@ const initProfile = (base, target) => {
 
     target.BOUNCER_RADIUS = base.BOUNCER_RADIUS * scale;
 
-    target.PUMP_POWER_RADIUS = target.PUMP_POWER_RADIUS || base.PUMP_POWER_RADIUS * scale;
+    target.PUMP_POWER_RADIUS = target.PUMP_POWER_RADIUS ?? (base.PUMP_POWER_RADIUS ?? 0) * scale;
     target.PUMP_BB = Rectangle.scaleCopy(base.PUMP_BB, scale);
     target.PUMP_DIRT_SPEED = base.PUMP_DIRT_SPEED * scale;
     target.PUMP_DIRT_PARTICLE_SIZE = base.PUMP_DIRT_PARTICLE_SIZE * scale;
@@ -77,16 +165,17 @@ const initProfile = (base, target) => {
 
     target.CUT_MAX_SIZE = base.CUT_MAX_SIZE * scale;
 
-    target.uiScaledNumber = function (n) {
+    target.uiScaledNumber = function (n: number): number {
         return Math.round(n * target.UI_IMAGES_SCALE);
     };
 };
 
 /**
- * Initializes a target profile scaled from the mac version profile
+ * Initializes a target profile scaled from the mac version profile.
  */
-const initProfileFromMac = (target) => {
-    initProfile(res2560x1440, target);
+const initProfileFromMac = (target: ResolutionProfile): void => {
+    initProfile(res2560x1440 as ResolutionProfile, target);
 };
 
 export default initProfileFromMac;
+export type { ResolutionProfile, ScalableRectangle };
