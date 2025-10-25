@@ -198,6 +198,10 @@ const ResourceId = {
 
     // Total number of resources
     RESOURCES_COUNT: 198,
-};
+} as const;
+
+export function isValidResourceId(key: string): key is keyof typeof ResourceId {
+    return key in ResourceId;
+}
 
 export default ResourceId;

@@ -1,8 +1,8 @@
 import boxes from "@/boxes";
 import JsonLoader from "@/resources/JsonLoader";
 import ResourcePacks from "@/resources/ResourcePacks";
-import ResourceId from "@/resources/ResourceId";
-import BoxType from "@/ui/BoxType";
+import ResourceId, { isValidResourceId } from "@/resources/ResourceId";
+import BoxType, { isValidBoxType } from "@/ui/BoxType";
 import LangId from "@/resources/LangId";
 import { IS_JANUARY } from "@/resources/ResData";
 
@@ -29,7 +29,7 @@ interface NormalizedBoxMetadata {
     boxText?: LocalizationEntry;
     boxImage?: string;
     boxDoor?: string | null;
-    boxType: string | number;
+    boxType: string;
     unlockStars?: number | null;
     support?: number | null;
     showEarth?: boolean;
@@ -45,14 +45,19 @@ const getNormalizedBoxMetadata = () => {
     }
 
     const boxMetadata = JsonLoader.getBoxMetadata() || [];
-    cachedNormalizedMetadata = boxMetadata.map((box) => {
+    cachedNormalizedMetadata = boxMetadata.map((box: NormalizedBoxMetadata) => {
         const isHolidayBox = box.id === HOLIDAY_GIFT_BOX_ID;
         let modifiedBox = {
             ...box,
-            boxType: BoxType[box.boxType] ?? box.boxType,
+            boxType: isValidBoxType(box.boxType) ? BoxType[box.boxType] : box.boxType,
             levelBackgroundId:
-                box.levelBackgroundId == null ? null : ResourceId[box.levelBackgroundId],
-            levelOverlayId: box.levelOverlayId == null ? null : ResourceId[box.levelOverlayId],
+                box.levelBackgroundId == null || !isValidResourceId(box.levelBackgroundId)
+                    ? null
+                    : ResourceId[box.levelBackgroundId],
+            levelOverlayId:
+                box.levelOverlayId == null || !isValidResourceId(box.levelOverlayId)
+                    ? null
+                    : ResourceId[box.levelOverlayId],
         };
 
         if (IS_JANUARY && isHolidayBox) {
