@@ -185,7 +185,7 @@ ResourcePacks.StandardMenuImageFilenames = [
     "menu_result_fr.png",
     "menu_result_gr.png",
     "menu_result_ru.png",
-    "menubg.jpg",
+    "menubg.webp",
     "options_stars_bgd.png",
     "options_stars_bgd_small.png",
     "perfect_mark.png",
@@ -195,7 +195,7 @@ ResourcePacks.StandardMenuImageFilenames = [
     "shadow.png",
     "star_result.png",
     "star_result_small.png",
-    "startbg.jpg",
+    "startbg.webp",
     "taperoll.png",
 ];
 

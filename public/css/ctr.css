@@ -3128,7 +3128,7 @@ body {
 
 .ui-1920 #startBackground {
     display: none;
-    background: url(../images/1920/ui/startbg.jpg);
+    background: url(../images/1920/ui/startbg.webp);
 }
 
 .ui-1920.is-xmas #startBackground {
@@ -3137,7 +3137,7 @@ body {
 
 .ui-1920 #menuBackground {
     display: none;
-    background: url(../images/1920/ui/menubg.jpg);
+    background: url(../images/1920/ui/menubg.webp);
 }
 
 .ui-1920.is-xmas #menuBackground {
