@@ -4256,7 +4256,7 @@ body {
     background-position: 0 0;
     display: inline-block;
     width: 94px;
-    height: 71px;
+    height: 70px;
     position: relative;
     top: -23px;
     margin-left: 19px;
@@ -4272,7 +4272,15 @@ body {
 }
 
 .ui-1920 .lang-fr #flag {
-    background-position: 0 -75px;
+    background-position: 0 -68px;
+}
+
+.ui-1920 .lang-it #resultImproved {
+    background-image: url(../images/1920/ui/menu_result_it.png);
+}
+
+.ui-1920 .lang-it #flag {
+    background-position: 0 -136px;
 }
 
 .ui-1920 .lang-de #resultImproved {
@@ -4280,7 +4288,7 @@ body {
 }
 
 .ui-1920 .lang-de #flag {
-    background-position: 0 -150px;
+    background-position: 0 -204px;
 }
 
 .ui-1920 .lang-de #gameMenuBtn {
@@ -4292,11 +4300,72 @@ body {
 }
 
 .ui-1920 .lang-ru #flag {
-    background-position: 0 -225px;
+    background-position: 0 -340px;
 }
 
 .ui-1920 .lang-ru #gameMenuBtn {
     background-position: -1875px 0;
+}
+
+.ui-1920 .lang-nl #flag {
+    background-position: 0 -272px;
+}
+
+.ui-1920 .lang-nl #resultImproved {
+    background-image: url(../images/1920/ui/menu_result_nl.png);
+}
+
+.ui-1920 .lang-es #flag {
+    background-position: 0 -408px;
+}
+
+.ui-1920 .lang-es #resultImproved {
+    background-image: url(../images/1920/ui/menu_result_es.png);
+}
+
+.ui-1920 .lang-br #flag {
+    background-position: 0 -476px;
+}
+
+.ui-1920 .lang-br #resultImproved {
+    background-image: url(../images/1920/ui/menu_result_br.png);
+}
+
+.ui-1920 .lang-ca #flag {
+    background-position: 0 -408px;
+}
+
+.ui-1920 .lang-ca #resultImproved {
+    background-image: url(../images/1920/ui/menu_result_br.png);
+}
+
+.ui-1920 .lang-ko #flag {
+    background-position: 0 -544px;
+}
+
+.ui-1920 .lang-ko #resultImproved {
+    background-image: url(../images/1920/ui/menu_result_ko.png);
+}
+
+.ui-1920 .lang-zh #flag {
+    background-position: 0 -612px;
+}
+
+.ui-1920 .lang-zh #resultImproved {
+    background-image: url(../images/1920/ui/menu_result_zh.png);
+}
+
+.ui-1920 .lang-ja #flag {
+    background-position: 0 -680px;
+}
+
+.ui-1920 .lang-ja #resultImproved {
+    background-image: url(../images/1920/ui/menu_result_ja.png);
+}
+
+.ui-1920 .lang-system #flag {
+    position: static;
+    top: auto;
 }
 
 .ui-1920 #loaderWindow {
