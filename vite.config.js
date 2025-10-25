@@ -6,7 +6,7 @@ import { VitePWA } from "vite-plugin-pwa";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const base = "cuttherope-cleanhtml5";
-const APP_VERSION = "2";
+const APP_VERSION = "3";
 
 export default defineConfig({
     base: `/${base}/`,

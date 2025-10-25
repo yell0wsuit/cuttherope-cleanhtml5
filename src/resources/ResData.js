@@ -87,7 +87,11 @@ RES_DATA[ResourceId.IMG_OBJ_CANDY_01] = new ResEntry("obj_candy_01.png", Resourc
 RES_DATA[ResourceId.IMG_OBJ_SPIDER] = new ResEntry("obj_spider.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_CONFETTI_PARTICLES] = new ResEntry(
     "confetti_particles.png",
-    ResourceType.IMAGE
+    ResourceType.IMAGE,
+    {
+        atlasPath: "confetti_particles.json",
+        atlasFormat: "texture-packer",
+    }
 );
 RES_DATA[ResourceId.IMG_MENU_PAUSE] = new ResEntry("menu_pause.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_MENU_RESULT] = new ResEntry("menu_result.png", ResourceType.IMAGE);
