@@ -15,7 +15,7 @@ export default defineConfig({
             registerType: "autoUpdate",
             includeAssets: ["favicon.ico", "css/ctr.css"],
             devOptions: {
-                enabled: true,
+                enabled: false,
             },
             manifest: {
                 id: base,
