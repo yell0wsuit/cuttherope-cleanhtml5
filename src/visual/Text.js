@@ -289,13 +289,19 @@ function setupFont(ctx, options) {
 
     ctx.fillStyle = color;
 
+    // Scale factor for 1920x1080 (1920/1024 = 1.875)
+    const scaleFactor = resolution.CANVAS_WIDTH / 1024;
+
     // Font ID 4 uses larger font size, Font ID 5 uses 22px
+    // Base sizes are for 1024x576, scale them for higher resolutions
     if (options.fontId === 4) {
-        ctx.font = "bold 32px 'gooddognew', sans-serif";
+        const fontSize = Math.round(32 * scaleFactor);
+        ctx.font = `bold ${fontSize}px 'gooddognew', sans-serif`;
         ctx.strokeStyle = "rgba(0,0,0,1)";
-        ctx.lineWidth = 3;
+        ctx.lineWidth = Math.round(3 * scaleFactor);
     } else {
-        ctx.font = "normal 22px 'gooddognew', sans-serif";
+        const fontSize = Math.round(22 * scaleFactor);
+        ctx.font = `normal ${fontSize}px 'gooddognew', sans-serif`;
     }
 
     if (options.alpha) {
@@ -304,13 +310,24 @@ function setupFont(ctx, options) {
 }
 
 Text.drawSystem = function (options) {
-    // Use different line heights based on font ID
-    const lineHeight = options.fontId === 4 ? 28 : 22;
-    const topPadding = 8; // Add top padding to prevent text cutoff
+    // Scale factor for 1920x1080 (1920/1024 = 1.875)
+    const scaleFactor = resolution.CANVAS_WIDTH / 1024;
+
+    // Use different line heights based on font ID, scaled for resolution
+    const baseLineHeight = options.fontId === 4 ? 28 : 22;
+    const lineHeight = Math.round(baseLineHeight * scaleFactor);
+
+    // Add top padding to prevent text cutoff, more for big font with CJK
+    const baseTopPadding = options.fontId === 4 ? 12 : 8;
+    const topPadding = Math.round(baseTopPadding * scaleFactor);
+
+    // Add bottom padding for small font to prevent cutoff for descenders like "g", "y", "p"
+    const baseBottomPadding = options.fontId === 4 ? 0 : 6;
+    const bottomPadding = Math.round(baseBottomPadding * scaleFactor);
 
     const cnv = options.canvas ? options.img : document.createElement("canvas");
-    cnv.width = options.width || options.maxScaleWidth || options.text.length * 16;
-    cnv.height = lineHeight + topPadding;
+    cnv.width = options.width || options.maxScaleWidth || options.text.length * 16 * scaleFactor;
+    cnv.height = lineHeight + topPadding + bottomPadding;
 
     const ctx = cnv.getContext("2d");
     let x = cnv.width / 2;
@@ -325,12 +342,13 @@ Text.drawSystem = function (options) {
     const metric = ctx.measureText(options.text);
     if (options.text.indexOf("\n") > 0 || (options.width && metric.width > options.width)) {
         const text = stringToArray(ctx, options.text, options.width);
-        cnv.height = lineHeight * text.length + topPadding;
+        cnv.height = lineHeight * text.length + topPadding + bottomPadding;
 
         setupFont(ctx, options);
 
         for (let i = 0; i < text.length; ++i) {
-            const yPos = topPadding + (i + 1) * lineHeight - (lineHeight - 18);
+            const yPos =
+                topPadding + (i + 1) * lineHeight - (lineHeight - Math.round(18 * scaleFactor));
             if (options.fontId === 4) {
                 ctx.strokeText(text[i], x, yPos);
             }
@@ -339,11 +357,11 @@ Text.drawSystem = function (options) {
     } else {
         // use the measured width
         if (!options.width || !options.maxScaleWidth) {
-            cnv.width = metric.width + 5;
+            cnv.width = metric.width + Math.round(5 * scaleFactor);
             setupFont(ctx, options);
             if (options.alignment !== 1) x = cnv.width / 2;
         }
-        const yPos = topPadding + lineHeight - (lineHeight - 18);
+        const yPos = topPadding + lineHeight - (lineHeight - Math.round(18 * scaleFactor));
         if (options.fontId === 4) {
             ctx.strokeText(options.text, x, yPos);
         }
@@ -352,7 +370,7 @@ Text.drawSystem = function (options) {
 
     if (!options.canvas) {
         options.img.src = cnv.toDataURL("image/png");
-        options.img.style.paddingTop = "14px";
+        options.img.style.paddingTop = "18px";
     }
 
     options.img.style.height = "auto";

@@ -6,7 +6,7 @@ import { VitePWA } from "vite-plugin-pwa";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const base = "cuttherope-cleanhtml5";
-const APP_VERSION = "1";
+const APP_VERSION = "2";
 
 export default defineConfig({
     base: `/${base}/`,
@@ -15,7 +15,7 @@ export default defineConfig({
             registerType: "autoUpdate",
             includeAssets: ["favicon.ico", "css/ctr.css"],
             devOptions: {
-                enabled: true,
+                enabled: false,
             },
             manifest: {
                 id: base,
