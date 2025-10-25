@@ -9,6 +9,7 @@ import VideoManager from "@/ui/VideoManager";
 import analytics from "@/analytics";
 import dom from "@/utils/dom";
 import { IS_MSIE_BROWSER } from "@/ui/InterfaceManager/constants";
+import ConfettiManager from "@/ui/ConfettiManager";
 
 const { removeClass, addClass, hide, empty, fadeOut, fadeIn, getElement, show } = dom;
 
@@ -18,6 +19,7 @@ const lbldiv = getElement("#resultTickerLabel");
 const resdiv = getElement("#resultScore");
 const stamp = getElement("#resultImproved");
 const msgdiv = getElement("#resultTickerMessage");
+const levelPanel = document.getElementById("levelPanel");
 
 export default function createResultsHandler(manager) {
     const onLevelWon = (info) => {
@@ -199,11 +201,23 @@ export default function createResultsHandler(manager) {
             });
         }
 
+        // Trigger confetti for 3-star completion
+        let confettiManager = null;
+        if (stars === 3) {
+            confettiManager = new ConfettiManager();
+        }
+
         // run the animation sequence
         setTimeout(() => {
             fadeIn(lbldiv, 300);
             fadeIn(valdiv, 300);
             fadeIn(resdiv, 300).then(() => {
+                // Start confetti when results panel appears (3 stars only)
+                if (stars === 3 && confettiManager) {
+                    if (levelPanel) {
+                        confettiManager.start(levelPanel);
+                    }
+                }
                 doStarCountdown(totalStarPoints, () => {
                     Text.drawSmall({
                         text: Lang.menuText(MenuStringId.TIME),
