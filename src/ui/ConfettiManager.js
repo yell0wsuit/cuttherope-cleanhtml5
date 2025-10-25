@@ -117,7 +117,7 @@ class ConfettiManager {
         this.lastTime = 0;
         this.emissionTimer = 0;
         this.emissionRate = 200; // particles per second
-        this.duration = 3; // seconds
+        this.duration = 1; // seconds
         this.elapsed = 0;
         this.totalParticles = 50;
         this.initialBurst = 15;
@@ -171,7 +171,6 @@ class ConfettiManager {
     createParticle() {
         if (this.particles.length >= this.totalParticles) return;
 
-        // Select random particle type (matching C# logic)
         const typeIndex = MathHelper.randomRange(0, 2);
         const type = PARTICLE_TYPES[typeIndex];
 
