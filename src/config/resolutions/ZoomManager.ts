@@ -1,4 +1,12 @@
 class ZoomManager {
+    $el: HTMLElement | null;
+    zoom: number;
+    transformOrigin: string;
+    nativeWidth: number;
+    nativeHeight: number;
+    originalHeight: number;
+    bgZoom: number;
+
     constructor() {
         this.$el = null;
         this.zoom = 1;
@@ -6,15 +14,16 @@ class ZoomManager {
         this.nativeWidth = 0;
         this.nativeHeight = 0;
         this.originalHeight = 270;
+        this.bgZoom = 1;
     }
 
     /** Assign element by ID */
-    setElementId(elementId) {
+    setElementId(elementId: string) {
         this.$el = document.getElementById(elementId);
     }
 
     /** Assign element directly */
-    setElement(element) {
+    setElement(element: HTMLElement | null) {
         this.$el = element;
     }
 
@@ -22,7 +31,7 @@ class ZoomManager {
     updateCss(css = {}) {
         if (!this.$el) return;
 
-        const prefixes = ["ms", "o", "webkit", "moz"];
+        // const prefixes = ["ms", "o", "webkit", "moz"];
         const scaleValue = this.zoom === 1 ? "" : `scale(${this.zoom})`;
         const originValue = this.zoom === 1 ? "" : this.transformOrigin;
 
@@ -84,11 +93,11 @@ class ZoomManager {
     }
 
     /** Private helper: apply transform to background elements */
-    #applyBackgroundScale(selector, transformValue) {
+    #applyBackgroundScale(selector: string, transformValue: string) {
         document.querySelectorAll(selector).forEach((el) => {
-            el.style.transform = transformValue;
-            el.style.webkitTransform = transformValue;
-            el.style.mozTransform = transformValue;
+            if (el instanceof HTMLElement) {
+                el.style.transform = transformValue;
+            }
         });
     }
 }
