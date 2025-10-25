@@ -7,9 +7,18 @@
  * @param h {number} height
  */
 class Quad2D {
-    constructor(x, y, w, h) {
-        const rightX = x + w,
-            bottomY = y + h;
+    tlX: number;
+    tlY: number;
+    trX: number;
+    trY: number;
+    blX: number;
+    blY: number;
+    brX: number;
+    brY: number;
+
+    constructor(x: number, y: number, w: number, h: number) {
+        const rightX = x + w;
+        const bottomY = y + h;
 
         // top left
         this.tlX = x;
