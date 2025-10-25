@@ -5,6 +5,40 @@ import MenuStringId from "@/resources/MenuStringId";
 import Alignment from "@/core/Alignment";
 import edition from "@/edition";
 
+interface WebPlatformType {
+    // Constants
+    ENABLE_ANALYTICS: boolean;
+    ENABLE_ZOOM: boolean;
+    ZOOM_BOX_CANVAS: boolean;
+
+    // URL properties
+    imageBaseUrl: string;
+    resolutionBaseUrl: string;
+    uiImageBaseUrl: string;
+    boxImageBaseUrl: string;
+    audioBaseUrl: string;
+    videoBaseUrl: string;
+
+    // Methods
+    getAudioExtension: () => string;
+    getVideoExtension: () => string;
+    getDrawingBaseUrl: () => string;
+    getScoreImageBaseUrl: () => string;
+    setSoundButtonChange: (button: HTMLElement, callback: () => void) => void;
+    setMusicButtonChange: (button: HTMLElement, callback: () => void) => void;
+    updateSoundOption: (el: HTMLElement, isSoundOn: boolean) => void;
+    updateMusicOption: (el: HTMLElement, isMusicOn: boolean) => void;
+    toggleLangUI: (show: boolean) => void;
+    setLangOptionClick: (callback: (langId: string | null) => void) => void;
+    updateLangSetting: () => void;
+    setCutOptionClick: (callback: () => void) => void;
+    updateCutSetting: (isClickToCut: boolean) => void;
+    setResetText: (el: HTMLElement, text: string) => void;
+    setOptionText: (button: HTMLElement, text: string) => void;
+    getGameCompleteShareText: (totalStars: number, possibleStars: number) => string;
+    meetsRequirements: () => boolean;
+}
+
 // loc entries that are specific to the web platform
 const locEntries = {
     GAME_COMPLETE: {
@@ -20,7 +54,7 @@ const langBtn = document.getElementById("langBtn");
 const flag = document.getElementById("flag");
 const cutBtn = document.getElementById("cutBtn");
 
-const WebPlatform = {
+const WebPlatform: WebPlatformType = {
     /**
      * @const
      * @type {boolean}
@@ -91,7 +125,7 @@ const WebPlatform = {
         // forces the browser to query location which fixes layout.
 
         if (flag) {
-            flag.offsetTop; // Force layout recalculation
+            void flag.offsetTop; // Force layout recalculation
         }
     },
     setCutOptionClick: (callback) => {
@@ -143,8 +177,8 @@ const WebPlatform = {
     },
     getGameCompleteShareText: (totalStars, possibleStars) => {
         const text = Lang.getText(locEntries.GAME_COMPLETE)
-            .replace("%d", totalStars)
-            .replace("%d", possibleStars);
+            .replace("%d", totalStars.toString())
+            .replace("%d", possibleStars.toString());
         return text;
     },
     meetsRequirements: () => {
