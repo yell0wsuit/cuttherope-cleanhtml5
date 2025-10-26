@@ -8,7 +8,6 @@ import Rectangle from "@/core/Rectangle";
  * @returns {value is HTMLImageElement}
  */
 const isHtmlImageElement = (value) => {
-    console.log(value);
     return typeof HTMLImageElement !== "undefined" && value instanceof HTMLImageElement;
 };
 
