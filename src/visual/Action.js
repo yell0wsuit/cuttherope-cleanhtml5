@@ -19,6 +19,21 @@ class Action {
     constructor(target, data) {
         this.actionTarget = target;
         this.data = data;
+
+        /**
+         * @type {string}
+         */
+        this.actionName = "";
+
+        /**
+         * @type {number}
+         */
+        this.actionParam = 0;
+
+        /**
+         * @type {number}
+         */
+        this.actionSubParam = 0;
     }
     /**
      * @param {import("@/visual/GameObject").default | import("@/visual/Animation").default} target
