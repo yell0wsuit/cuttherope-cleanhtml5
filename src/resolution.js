@@ -9,6 +9,6 @@ import res1920 from "@/config/resolutions/1920x1080";
 const resolution = res1920;
 
 scaleResolution(resolution);
-resolution.isHD = true;
+settings.setIsHD(true);
 
 export default resolution;
