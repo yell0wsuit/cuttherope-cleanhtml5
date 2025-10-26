@@ -1,4 +1,5 @@
 import Vector from "@/core/Vector";
+
 /**
  * Rectangle constructor
  * @constructor
@@ -8,15 +9,31 @@ import Vector from "@/core/Vector";
  * @param h {number} height
  */
 class Rectangle {
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} w
+     * @param {number} h
+     */
+
     constructor(x, y, w, h) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
     }
+
+    /**
+     * @param {{ x: number; y: number; w: number; h: number; }} r
+     */
     static copy(r) {
         return new Rectangle(r.x, r.y, r.w, r.h);
     }
+
+    /**
+     * @param {{ x: number; y: number; w: number; h: number; }} r
+     * @param {number} scale
+     */
     static scaleCopy(r, scale) {
         return new Rectangle(r.x * scale, r.y * scale, r.w * scale, r.h * scale);
     }
@@ -72,6 +89,14 @@ class Rectangle {
 
         return res;
     }
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} checkX
+     * @param {number} checkY
+     * @param {number} checkWidth
+     * @param {number} checkHeight
+     */
     static pointInRect(x, y, checkX, checkY, checkWidth, checkHeight) {
         return x >= checkX && x < checkX + checkWidth && y >= checkY && y < checkY + checkHeight;
     }
