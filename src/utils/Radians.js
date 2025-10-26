@@ -7,8 +7,8 @@ const TAU = Math.PI * 2; // same as 360°
 
 const Radians = {
     TAU,
-    fromDegrees: (deg) => deg * DEG_TO_RAD,
-    toDegrees: (rad) => rad * RAD_TO_DEG,
+    fromDegrees: (/** @type {number} */ deg) => deg * DEG_TO_RAD,
+    toDegrees: (/** @type {number} */ rad) => rad * RAD_TO_DEG,
 };
 
 export default Radians;
