@@ -25,7 +25,7 @@ class RGBAColor {
     }
 
     rgbaStyle() {
-        return `rgba(${(this.r * 255) >> 0},${(this.g * 255) >> 0},${(this.b * 255) >> 0},${this.a.toFixed(2)})`;
+        return `rgba(${Math.round(this.r * 255)},${Math.round(this.g * 255)},${Math.round(this.b * 255)},${this.a.toFixed(2)})`;
     }
 
     /**
