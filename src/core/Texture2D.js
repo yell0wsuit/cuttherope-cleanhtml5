@@ -1,9 +1,18 @@
 import Vector from "@/core/Vector";
 import Quad2D from "@/core/Quad2D";
-const isHtmlImageElement = (value) =>
-    typeof HTMLImageElement !== "undefined" && value instanceof HTMLImageElement;
+import Rectangle from "@/core/Rectangle";
 
-const getComputedDimension = (image) => {
+/**
+ * Type guard to check if value is an HTMLImageElement
+ * @param {unknown} value
+ * @returns {value is HTMLImageElement}
+ */
+const isHtmlImageElement = (value) => {
+    console.log(value);
+    return typeof HTMLImageElement !== "undefined" && value instanceof HTMLImageElement;
+};
+
+const getComputedDimension = (/** @type {Element} */ image) => {
     if (!image || typeof window === "undefined" || !window.getComputedStyle) {
         return { width: 0, height: 0 };
     }
@@ -20,6 +29,11 @@ const getComputedDimension = (image) => {
     }
 };
 
+/**
+ * Normalizes image input to a standard format
+ * @param {HTMLImageElement | ImageBitmap | { drawable: HTMLImageElement | ImageBitmap; width?: number; height?: number; sourceUrl?: string; }} input
+ * @returns {{ drawable: HTMLImageElement | ImageBitmap | null; width: number; height: number; sourceUrl: string; }}
+ */
 const normalizeImageInput = (input) => {
     if (!input) {
         return {
@@ -32,9 +46,16 @@ const normalizeImageInput = (input) => {
 
     if (typeof input === "object" && "drawable" in input) {
         const drawable = input.drawable;
-        const width = input.width || drawable?.naturalWidth || drawable?.width || 0;
-        const height = input.height || drawable?.naturalHeight || drawable?.height || 0;
-        const sourceUrl = input.sourceUrl || drawable?.src || "";
+        const width =
+            input.width ||
+            (isHtmlImageElement(drawable) ? drawable.naturalWidth : drawable?.width) ||
+            0;
+        const height =
+            input.height ||
+            (isHtmlImageElement(drawable) ? drawable.naturalHeight : drawable?.height) ||
+            0;
+        const sourceUrl =
+            input.sourceUrl || (isHtmlImageElement(drawable) ? drawable.src : "") || "";
 
         return {
             drawable,
@@ -45,9 +66,9 @@ const normalizeImageInput = (input) => {
     }
 
     const drawable = input;
-    const width = drawable?.naturalWidth || drawable?.width || 0;
-    const height = drawable?.naturalHeight || drawable?.height || 0;
-    const sourceUrl = drawable?.src || "";
+    const width = isHtmlImageElement(drawable) ? drawable.naturalWidth : drawable?.width || 0;
+    const height = isHtmlImageElement(drawable) ? drawable.naturalHeight : drawable?.height || 0;
+    const sourceUrl = isHtmlImageElement(drawable) ? drawable.src : "";
 
     return {
         drawable,
@@ -58,11 +79,54 @@ const normalizeImageInput = (input) => {
 };
 
 class Texture2D {
+    /** @type {HTMLImageElement | ImageBitmap | null} */
+    image;
+
+    /** @type {number} */
+    imageWidth;
+
+    /** @type {number} */
+    imageHeight;
+
+    /** @type {number} */
+    _invWidth;
+
+    /** @type {number} */
+    _invHeight;
+
+    /** @type {string} */
+    imageSrc;
+
+    /** @type {Rectangle[]} */
+    rects;
+
+    /** @type {Vector[]} */
+    offsets;
+
+    /** @type {Vector} */
+    preCutSize;
+
+    /** @type {number} */
+    adjustmentMaxX;
+
+    /** @type {number} */
+    adjustmentMaxY;
+
+    /**
+     * @param {HTMLImageElement | ImageBitmap | { drawable: HTMLImageElement | ImageBitmap; width?: number; height?: number; sourceUrl?: string; }} imageInput
+     */
     constructor(imageInput) {
         const { drawable, width, height, sourceUrl } = normalizeImageInput(imageInput);
 
         this.image = drawable;
+
+        /**
+         * @type {Rectangle[]}
+         */
         this.rects = [];
+        /**
+         * @type {Vector[]}
+         */
         this.offsets = [];
         this.preCutSize = Vector.newUndefined();
         this.imageSrc = sourceUrl;
@@ -86,15 +150,26 @@ class Texture2D {
         this.adjustmentMaxX = 0;
         this.adjustmentMaxY = 0;
     }
+    /**
+     * @param {Rectangle} rect
+     */
     addRect(rect) {
         this.rects.push(rect);
         this.offsets.push(new Vector(0, 0));
     }
+    /**
+     * @param {number} index
+     * @param {number} x
+     * @param {number} y
+     */
     setOffset(index, x, y) {
         const offset = this.offsets[index];
         offset.x = x;
         offset.y = y;
     }
+    /**
+     * @param {{ x: number; y: number; w: number; h: number; }} rect
+     */
     getCoordinates(rect) {
         return new Quad2D(
             this._invWidth * rect.x,
