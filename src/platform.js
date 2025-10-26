@@ -8,7 +8,7 @@ GeckoPlatform.getAudioExtension = function () {
 };
 
 GeckoPlatform.getVideoExtension = function () {
-    return ".webm";
+    return ".mp4";
 };
 
 GeckoPlatform.disableSlowWarning = true;
