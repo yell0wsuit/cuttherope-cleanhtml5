@@ -5,6 +5,10 @@
  * @param y {number}
  */
 class Vector {
+    /**
+     * @param {number} x
+     * @param {number} y
+     */
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -24,36 +28,42 @@ class Vector {
     // have static methods below which return a new vector without
     // modifying any source vectors.
     /**
-     * @param v1 {Vector}
-     * @param v2 {Vector}
+     * @param {Vector} v1
+     * @param {Vector} v2
      * @return {Vector}
      */
     static add(v1, v2) {
         return new Vector(v1.x + v2.x, v1.y + v2.y);
     }
     /**
-     * @param v1 {Vector}
-     * @param v2 {Vector}
+     * @param {Vector} v1
+     * @param {Vector} v2
      * @return {Vector}
      */
     static subtract(v1, v2) {
         return new Vector(v1.x - v2.x, v1.y - v2.y);
     }
     /**
-     * @param v {Vector}
-     * @param s {number} scalar multiplier
+     * @param {Vector} v
+     * @param {number} s scalar multiplier
      */
     static multiply(v, s) {
         return new Vector(v.x * s, v.y * s);
     }
     /**
-     * @param v {Vector} source vector
-     * @param s {number} scalar divisor
+     * @param {Vector} v source vector
+     * @param {number} s scalar divisor
      * @return {Vector}
      */
     static divide(v, s) {
         return new Vector(v.x / s, v.y / s);
     }
+    /**
+     * @param {number} x1
+     * @param {number} y1
+     * @param {number} x2
+     * @param {number} y2
+     */
     static distance(x1, y1, x2, y2) {
         const tx = x1 - x2,
             ty = y1 - y2,
@@ -61,7 +71,7 @@ class Vector {
         return Math.sqrt(dot);
     }
     /**
-     * @param v {Vector}
+     * @param {Vector} v
      * @return {Vector}
      */
     static perpendicular(v) {
@@ -69,7 +79,7 @@ class Vector {
         return new Vector(-v.y, v.x);
     }
     /**
-     * @param v {Vector}
+     * @param {Vector} v
      * @return {Vector}
      */
     static rPerpendicular(v) {
@@ -77,19 +87,23 @@ class Vector {
         return new Vector(v.y, -v.x);
     }
     /**
-     * @param v {Vector}
+     * @param {Vector} v
      * @return {Vector}
      */
     static normalize(v) {
         return this.multiply(v, 1 / v.getLength());
     }
     /**
-     * @param v {Vector}
+     * @param {Vector} v
      * @return {Vector}
      */
     static negate(v) {
         return new Vector(-v.x, -v.y);
     }
+    /**
+     * @param {Vector[]} points
+     * @param {number} delta
+     */
     static calcPathBezier(points, delta) {
         const result = new Vector(0, 0);
         Vector.setCalcPathBezier(points, delta, result);
@@ -97,9 +111,9 @@ class Vector {
     }
     /**
      * Calculates the bezier path vector
-     * @param points {Array.<Vector>}
-     * @param delta {number}
-     * @param result {Vector}
+     * @param {Vector[]} points
+     * @param {number} delta
+     * @param {Vector} result
      */
     static setCalcPathBezier(points, delta, result) {
         let count = points.length;
@@ -131,7 +145,7 @@ class Vector {
         result.y = ys[0];
     }
     /**
-     * @param angle {number}
+     * @param {number} angle
      * @return {Vector}
      */
     static forAngle(angle) {
@@ -142,7 +156,7 @@ class Vector {
         return Math.sqrt(dot);
     }
     /**
-     * @param v2 {Vector}
+     * @param {Vector} v2
      * @return {number}
      */
     getDot(v2) {
@@ -155,7 +169,7 @@ class Vector {
         return this.x === 0 && this.y === 0;
     }
     /**
-     * @param v2 {Vector}
+     * @param {Vector} v2
      * @return {boolean}
      */
     equals(v2) {
@@ -180,7 +194,7 @@ class Vector {
     }
     /**
      * Copies the values from another vector
-     * @param v {Vector} source vector
+     * @param {Vector} v source vector
      */
     copyFrom(v) {
         this.x = v.x;
@@ -191,6 +205,9 @@ class Vector {
         //noinspection JSSuspiciousNameCombination
         this.y = Math.round(this.y);
     }
+    /**
+     * @param {number} rad
+     */
     rotate(rad) {
         //noinspection UnnecessaryLocalVariableJS
         const cosA = Math.cos(rad),
@@ -201,6 +218,11 @@ class Vector {
         this.x = nx;
         this.y = ny;
     }
+    /**
+     * @param {number} rad
+     * @param {number} cx
+     * @param {number} cy
+     */
     rotateAround(rad, cx, cy) {
         // shift to the rotation point
         this.x -= cx;
@@ -218,7 +240,7 @@ class Vector {
     }
     /**
      * Add another vector to this vector (modifies this vector)
-     * @param v2 {Vector}
+     * @param {Vector} v2
      */
     add(v2) {
         this.x += v2.x;
@@ -226,7 +248,7 @@ class Vector {
     }
     /**
      * Subtract another vector from this vector (modifies this vector)
-     * @param v2 {Vector}
+     * @param {Vector} v2
      */
     subtract(v2) {
         this.x -= v2.x;
@@ -234,7 +256,7 @@ class Vector {
     }
     /**
      * Multiply this vector by a scalar (modifies this vector)
-     * @param s {number} scalar multiplier
+     * @param {number} s scalar multiplier
      */
     multiply(s) {
         this.x *= s;
@@ -242,7 +264,7 @@ class Vector {
     }
     /**
      * Divide this vector by a scalar (modifies this vector)
-     * @param s {number} scalar divisor
+     * @param {number} s scalar divisor
      */
     divide(s) {
         this.x /= s;
@@ -250,7 +272,7 @@ class Vector {
     }
     /**
      * Calculate distance to another vector
-     * @param v2 {Vector}
+     * @param {Vector} v2
      * @return {number}
      */
     distance(v2) {
