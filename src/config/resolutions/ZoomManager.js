@@ -8,12 +8,18 @@ class ZoomManager {
         this.originalHeight = 270;
     }
 
-    /** Assign element by ID */
+    /**
+     * Assign element by ID
+     * @param {string} elementId
+     */
     setElementId(elementId) {
         this.$el = document.getElementById(elementId);
     }
 
-    /** Assign element directly */
+    /**
+     * Assign element directly
+     * @param {HTMLImageElement} element
+     */
     setElement(element) {
         this.$el = element;
     }
@@ -22,7 +28,7 @@ class ZoomManager {
     updateCss(css = {}) {
         if (!this.$el) return;
 
-        const prefixes = ["ms", "o", "webkit", "moz"];
+        // const prefixes = ["ms", "o", "webkit", "moz"];
         const scaleValue = this.zoom === 1 ? "" : `scale(${this.zoom})`;
         const originValue = this.zoom === 1 ? "" : this.transformOrigin;
 
@@ -83,12 +89,16 @@ class ZoomManager {
         });
     }
 
-    /** Private helper: apply transform to background elements */
+    /**
+     * Private helper: apply transform to background elements
+     * @param {string} selector
+     * @param {string} transformValue
+     */
     #applyBackgroundScale(selector, transformValue) {
         document.querySelectorAll(selector).forEach((el) => {
-            el.style.transform = transformValue;
-            el.style.webkitTransform = transformValue;
-            el.style.mozTransform = transformValue;
+            if (el instanceof HTMLElement) {
+                el.style.transform = transformValue;
+            }
         });
     }
 }
