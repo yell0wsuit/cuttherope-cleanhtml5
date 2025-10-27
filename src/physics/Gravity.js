@@ -1,27 +1,35 @@
 import Vector from "@/core/Vector";
 import Constants from "@/utils/Constants";
+
 const GCONST = 9.8 * Constants.PIXEL_TO_SI_METERS_K;
 
-const Gravity = {
+class Gravity {
     /**
      * @const
      * @type {number}
      */
-    EARTH_Y: GCONST,
-    current: new Vector(0, GCONST),
+    static EARTH_Y = GCONST;
+
+    constructor() {
+        this.current = new Vector(0, GCONST);
+    }
+
     toggle() {
-        Gravity.current.y = -Gravity.current.y;
-    },
+        this.current.y = -this.current.y;
+    }
+
     isZero() {
-        return Gravity.current.y === 0 && Gravity.current.x === 0;
-    },
+        return this.current.y === 0 && this.current.x === 0;
+    }
+
     isNormal() {
-        return Gravity.current.y === Gravity.EARTH_Y && Gravity.current.x === 0;
-    },
+        return this.current.y === Gravity.EARTH_Y && this.current.x === 0;
+    }
+
     reset() {
-        Gravity.current.x = 0;
-        Gravity.current.y = GCONST;
-    },
-};
+        this.current.x = 0;
+        this.current.y = GCONST;
+    }
+}
 
 export default Gravity;
