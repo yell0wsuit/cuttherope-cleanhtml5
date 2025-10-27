@@ -28,10 +28,12 @@ class GameView extends View {
                 alpha = 1 - alpha;
             }
 
-            const ctx = Canvas.context,
-                color = new RGBAColor(1, 1, 1, alpha);
-            ctx.fillStyle = color.rgbaStyle();
-            ctx.fillRect(0, 0, resolution.CANVAS_WIDTH, resolution.CANVAS_HEIGHT);
+            const ctx = Canvas.context;
+            const color = new RGBAColor(1, 1, 1, alpha);
+            if (ctx) {
+                ctx.fillStyle = color.rgbaStyle();
+                ctx.fillRect(0, 0, resolution.CANVAS_WIDTH, resolution.CANVAS_HEIGHT);
+            }
         }
     }
 
