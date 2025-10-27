@@ -92,7 +92,6 @@ class BaseElement {
         this.currentTimelineIndex = Constants.UNDEFINED;
 
         /**
-         * @private
          * @type {Timeline}
          */
         this.currentTimeline = null;
