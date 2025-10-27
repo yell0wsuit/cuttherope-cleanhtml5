@@ -148,10 +148,10 @@ class BaseElement {
         this.calculateTopLeft();
 
         const changeScale =
-                this.scaleX !== 0 && this.scaleY !== 0 && (this.scaleX !== 1 || this.scaleY !== 1),
-            changeRotation = this.rotation !== 0,
-            changeTranslate = this.translateX !== 0 || this.translateY !== 0,
-            ctx = Canvas.context;
+            this.scaleX !== 0 && this.scaleY !== 0 && (this.scaleX !== 1 || this.scaleY !== 1);
+        const changeRotation = this.rotation !== 0;
+        const changeTranslate = this.translateX !== 0 || this.translateY !== 0;
+        const ctx = Canvas.context;
 
         // save existing canvas state first and then reset
         if (ctx) {
