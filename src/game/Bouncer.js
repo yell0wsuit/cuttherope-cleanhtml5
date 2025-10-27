@@ -6,6 +6,7 @@ import Radians from "@/utils/Radians";
 import Constants from "@/utils/Constants";
 import ResourceId from "@/resources/ResourceId";
 import Timeline from "@/visual/Timeline";
+
 /**
  * @const
  * @type {number}
@@ -25,6 +26,12 @@ const IMG_OBJ_BOUNCER_02_Frame_4 = 3;
 const IMG_OBJ_BOUNCER_02_end = 4;
 
 class Bouncer extends CTRGameObject {
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} width
+     * @param {number} angle
+     */
     constructor(x, y, width, angle) {
         super();
 
@@ -72,7 +79,7 @@ class Bouncer extends CTRGameObject {
         this.b2.x = this.t2.x;
         this.b1.y = this.b2.y = y + BOUNCER_HEIGHT / 2.0;
 
-        const angle = (this.angle = this.rotation * 0.017453292519943295);
+        const angle = (this.angle = Radians.fromDegrees(this.rotation));
 
         this.t1.rotateAround(angle, x, y);
         this.t2.rotateAround(angle, x, y);
@@ -80,6 +87,9 @@ class Bouncer extends CTRGameObject {
         this.b2.rotateAround(angle, x, y);
     }
 
+    /**
+     * @param {number} delta
+     */
     update(delta) {
         super.update(delta);
         if (this.mover) {
