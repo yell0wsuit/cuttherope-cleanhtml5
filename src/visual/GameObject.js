@@ -14,6 +14,9 @@ class GameObject extends Animation {
         this.isDrawBB = false;
     }
 
+    /**
+     * @param {Texture2D} texture
+     */
     initTexture(texture) {
         super.initTexture(texture);
         this.bb = new Rectangle(0, 0, this.width, this.height);
@@ -37,6 +40,9 @@ class GameObject extends Animation {
         this.rbb = new Quad2D(this.bb.x, this.bb.y, this.bb.width, this.bb.height);
     }
 
+    /**
+     * @param {{ angle: number; path: string; moveSpeed: number; rotateSpeed: number; }} item
+     */
     parseMover(item) {
         this.rotation = item.angle || 0;
 
@@ -56,6 +62,9 @@ class GameObject extends Animation {
         }
     }
 
+    /**
+     * @param {Mover} mover
+     */
     setMover(mover) {
         this.mover = mover;
 
@@ -63,6 +72,9 @@ class GameObject extends Animation {
         this.drawPosIncrement = 0.0001;
     }
 
+    /**
+     * @param {number} delta
+     */
     update(delta) {
         super.update(delta);
 
@@ -82,22 +94,30 @@ class GameObject extends Animation {
         }
     }
 
+    /**
+     * @param {number} angle
+     */
     rotateWithBB(angle) {
         if (!this.rotatedBB) {
             this.rotatedBB = true;
         }
         this.rotation = angle;
 
-        const bb = this.bb,
-            tl = new Vector(bb.x, bb.y),
-            tr = new Vector(bb.x + bb.w, bb.y),
-            br = new Vector(tr.x, bb.y + bb.h),
-            bl = new Vector(bb.x, br.y);
+        const bb = this.bb;
+
+        if (!bb) {
+            return;
+        }
+
+        const tl = new Vector(bb.x, bb.y);
+        const tr = new Vector(bb.x + bb.w, bb.y);
+        const br = new Vector(tr.x, bb.y + bb.h);
+        const bl = new Vector(bb.x, br.y);
 
         // calculate the angle and offset for rotation
-        const rad = Radians.fromDegrees(angle),
-            offsetX = this.width / 2 + this.rotationCenterX,
-            offsetY = this.height / 2 + this.rotationCenterY;
+        const rad = Radians.fromDegrees(angle);
+        const offsetX = this.width / 2 + this.rotationCenterX;
+        const offsetY = this.height / 2 + this.rotationCenterY;
 
         tl.rotateAround(rad, offsetX, offsetY);
         tr.rotateAround(rad, offsetX, offsetY);
@@ -105,34 +125,44 @@ class GameObject extends Animation {
         tl.rotateAround(rad, offsetX, offsetY);
 
         const rbb = this.rbb;
-        rbb.tlX = tl.x;
-        rbb.tlY = tl.y;
-        rbb.trX = tr.x;
-        rbb.trY = tr.y;
-        rbb.brX = br.x;
-        rbb.brY = br.y;
-        rbb.blX = bl.x;
-        rbb.blY = bl.y;
+        if (rbb) {
+            rbb.tlX = tl.x;
+            rbb.tlY = tl.y;
+            rbb.trX = tr.x;
+            rbb.trY = tr.y;
+            rbb.brX = br.x;
+            rbb.brY = br.y;
+            rbb.blX = bl.x;
+            rbb.blY = bl.y;
+        }
     }
 
     drawBB() {
-        const ctx = Canvas.context,
-            drawX = this.drawX,
-            drawY = this.drawY,
-            bb = this.bb,
-            rbb = this.rbb;
-        ctx.strokeStyle = "red";
-        ctx.lineWidth = 2;
-        if (this.rotatedBB) {
-            ctx.beginPath();
-            ctx.moveTo(drawX + rbb.tlX, drawY + rbb.tlY);
-            ctx.lineTo(drawX + rbb.trX, drawY + rbb.trY);
-            ctx.lineTo(drawX + rbb.brX, drawY + rbb.brY);
-            ctx.lineTo(drawX + rbb.blX, drawY + rbb.blY);
-            ctx.stroke();
-            ctx.closePath();
-        } else {
-            ctx.strokeRect(drawX + bb.x, drawY + bb.y, bb.w, bb.h);
+        const ctx = Canvas.context;
+        const drawX = this.drawX;
+        const drawY = this.drawY;
+        const bb = this.bb;
+        const rbb = this.rbb;
+        if (ctx) {
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 2;
+            if (this.rotatedBB) {
+                ctx.beginPath();
+                if (rbb) {
+                    ctx.moveTo(drawX + rbb.tlX, drawY + rbb.tlY);
+                    ctx.lineTo(drawX + rbb.trX, drawY + rbb.trY);
+                    ctx.lineTo(drawX + rbb.brX, drawY + rbb.brY);
+                    ctx.lineTo(drawX + rbb.blX, drawY + rbb.blY);
+                    ctx.stroke();
+                    ctx.closePath();
+                }
+            } else {
+                if (!bb) {
+                    return;
+                }
+
+                ctx.strokeRect(drawX + bb.x, drawY + bb.y, bb.w, bb.h);
+            }
         }
     }
 
@@ -143,9 +173,9 @@ class GameObject extends Animation {
      * @return {boolean}
      */
     pointInObject(x, y) {
-        const bb = this.bb,
-            ox = this.drawX + bb.x,
-            oy = this.drawY + bb.y;
+        const bb = this.bb;
+        const ox = this.drawX + bb.x;
+        const oy = this.drawY + bb.y;
 
         return Rectangle.pointInRect(x, y, ox, oy, bb.w, bb.h);
     }
@@ -157,17 +187,31 @@ class GameObject extends Animation {
      * @param {number} r2y
      */
     rectInObject(r1x, r1y, r2x, r2y) {
-        const ox = this.drawX + this.bb.x,
-            oy = this.drawY + this.bb.y;
+        if (!this.bb) {
+            return;
+        }
+
+        const ox = this.drawX + this.bb.x;
+        const oy = this.drawY + this.bb.y;
 
         return Rectangle.rectInRect(r1x, r1y, r2x, r2y, ox, oy, ox + this.bb.w, oy + this.bb.h);
     }
 
+    /**
+     *
+     * @param {GameObject} o1
+     * @param {GameObject | Star} o2
+     * @returns
+     */
     static intersect(o1, o2) {
-        const o1x = o1.drawX + o1.bb.x,
-            o1y = o1.drawY + o1.bb.y,
-            o2x = o2.drawX + o2.bb.x,
-            o2y = o2.drawY + o2.bb.y;
+        if (!o1.bb) {
+            return;
+        }
+
+        const o1x = o1.drawX + o1.bb.x;
+        const o1y = o1.drawY + o1.bb.y;
+        const o2x = o2.drawX + o2.bb.x;
+        const o2y = o2.drawY + o2.bb.y;
 
         return Rectangle.rectInRect(
             o1x,

@@ -104,9 +104,6 @@ class BaseElement {
         this.previousAlpha = 1;
     }
 
-    /**
-     * @private
-     */
     calculateTopLeft() {
         const parentAnchor = this.parentAnchor;
         const parent = this.parent;
