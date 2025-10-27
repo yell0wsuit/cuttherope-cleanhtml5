@@ -189,20 +189,20 @@ export const GameSceneLoaders = {
         this.ropePhysicsSpeed *= resolution.PHYSICS_SPEED_MULTIPLIER;
     },
     loadGrab(item) {
-        const gx = item.x * this.PM + this.PMX,
-            gy = item.y * this.PM + this.PMY,
-            l = item.length * this.PM,
-            wheel = item.wheel,
-            kickable = item.kickable,
-            invisible = item.invisible,
-            ml = item.moveLength * this.PM || -1,
-            v = item.moveVertical,
-            o = item.moveOffset * this.PM || 0,
-            spider = item.spider,
-            left = item.part === "L",
-            hidePath = item.hidePath,
-            gun = item.gun,
-            g = new Grab();
+        const gx = item.x * this.PM + this.PMX;
+        const gy = item.y * this.PM + this.PMY;
+        const l = item.length * this.PM;
+        const wheel = item.wheel;
+        const kickable = item.kickable;
+        const invisible = item.invisible;
+        const ml = item.moveLength * this.PM || -1;
+        const v = item.moveVertical;
+        const o = item.moveOffset * this.PM || 0;
+        const spider = item.spider;
+        const left = item.part === "L";
+        const hidePath = item.hidePath;
+        const gun = item.gun;
+        const g = new Grab();
         let r = item.radius;
 
         g.x = gx;
