@@ -20,7 +20,7 @@ class ImageElement extends BaseElement {
 
     /**
      * Set the texture for this image element
-     * @param texture {Texture2D}
+     * @param {Texture2D} texture
      */
     initTexture(texture) {
         this.texture = texture;
