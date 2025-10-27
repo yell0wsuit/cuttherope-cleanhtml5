@@ -5,6 +5,11 @@ import Constants from "@/utils/Constants";
 import Gravity from "@/physics/Gravity";
 
 class Constraint {
+    /**
+     * @param {ConstrainedPoint} cp
+     * @param {number} restLength
+     * @param {number} type
+     */
     constructor(cp, restLength, type) {
         this.cp = cp;
         this.restLength = restLength;
@@ -17,6 +22,9 @@ class ConstrainedPoint extends MaterialPoint {
         super();
         this.prevPos = new Vector(Constants.INT_MAX, Constants.INT_MAX);
         this.pin = new Vector(Constants.UNDEFINED, Constants.UNDEFINED);
+        /**
+         * @type {Constraint[]}
+         */
         this.constraints = [];
         this.totalForce = Vector.newZero();
     }
@@ -267,6 +275,9 @@ class ConstrainedPoint extends MaterialPoint {
         }
     }
 
+    /**
+     * @param {number} delta
+     */
     qcpUpdate(delta) {
         // qcpUpdate only differs from update in that it includes material
         // force calculations, however those don't appear to be used. So
