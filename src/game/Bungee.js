@@ -488,11 +488,11 @@ class Bungee extends ConstraintSystem {
             return;
         }
 
-        const firstPoint = pts[0],
-            secondPoint = pts[1],
-            tx = firstPoint.x - secondPoint.x,
-            ty = firstPoint.y - secondPoint.y,
-            ptsDistance = Math.sqrt(tx * tx + ty * ty);
+        const firstPoint = pts[0];
+        const secondPoint = pts[1];
+        const tx = firstPoint.x - secondPoint.x;
+        const ty = firstPoint.y - secondPoint.y;
+        const ptsDistance = Math.sqrt(tx * tx + ty * ty);
 
         //Log.debug('DrawBungee - point1: ' + firstPoint + ' point2: ' + secondPoint);
 
