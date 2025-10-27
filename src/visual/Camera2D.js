@@ -6,7 +6,7 @@ class Camera2D {
     /**
      * Camera2D constructor
      * @param {number} speed
-     * @param {CameraSpeed} cameraSpeed
+     * @param {number} cameraSpeed
      */
     constructor(speed, cameraSpeed) {
         this.speed = speed;
@@ -61,13 +61,13 @@ class Camera2D {
 
     applyCameraTransformation() {
         if (this.pos.x !== 0 || this.pos.y !== 0) {
-            Canvas.context.translate(-this.pos.x, -this.pos.y);
+            Canvas.context && Canvas.context.translate(-this.pos.x, -this.pos.y);
         }
     }
 
     cancelCameraTransformation() {
         if (this.pos.x !== 0 || this.pos.y !== 0) {
-            Canvas.context.translate(this.pos.x, this.pos.y);
+            Canvas.context && Canvas.context.translate(this.pos.x, this.pos.y);
         }
     }
 }
