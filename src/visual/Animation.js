@@ -91,7 +91,7 @@ class Animation extends ImageElement {
      * @param {number} count
      * @param {number} start
      * @param {number} end
-     * @param {number[]} argumentList
+     * @param {number[] | undefined} argumentList
      * @param {number | undefined} resourceId
      */
     addAnimation(animationId, delay, loopType, count, start, end, argumentList, resourceId) {
