@@ -8,7 +8,7 @@ import Radians from "@/utils/Radians";
 
 class BaseElement {
     constructor() {
-        /** @type {BaseElement} */
+        /** @type {BaseElement | null} */
         this.parent = null;
 
         /** @type {boolean} */
@@ -18,7 +18,7 @@ class BaseElement {
         /** @type {boolean} */
         this.updateable = true;
 
-        /** @type {string} */
+        /** @type {string | null} */
         this.name = null;
 
         /** @type {number} */
@@ -87,7 +87,6 @@ class BaseElement {
         this.timelines = [];
 
         /**
-         * @private
          * @type {number}
          */
         this.currentTimelineIndex = Constants.UNDEFINED;
