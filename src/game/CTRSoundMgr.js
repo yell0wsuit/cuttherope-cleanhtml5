@@ -4,6 +4,46 @@ import ResourceId from "@/resources/ResourceId";
 import { IS_XMAS } from "@/resources/ResData";
 
 class SoundManager {
+    /**
+     * @type {boolean}
+     */
+    audioPaused;
+
+    /**
+     * @type {boolean | null}
+     */
+    soundEnabled;
+
+    /**
+     * @type {boolean | null}
+     */
+    musicEnabled;
+
+    /**
+     * @type {number | null}
+     */
+    musicId;
+
+    /**
+     * @type {number}
+     */
+    musicResumeOffset;
+
+    /**
+     * @type {number[]}
+     */
+    gameMusicLibrary;
+
+    /**
+     * @type {number | null}
+     */
+    currentGameMusicId;
+
+    /**
+     * @type {Map<string, { active: boolean; soundId: number; timeoutId: ReturnType<typeof setTimeout> | null; loopFn: Function }>}
+     */
+    loopingSounds;
+
     constructor() {
         this.audioPaused = false;
         this.soundEnabled = settings.getSoundEnabled();
@@ -35,8 +75,11 @@ class SoundManager {
         return soundIds;
     }
 
+    /**
+     * @param {string} instanceId
+     * @param {{ active: boolean; soundId: number; timeoutId: ReturnType<typeof setTimeout> | null; loopFn: Function }} entry
+     */
     _deactivateLoopEntry(instanceId, entry) {
-        console.log(entry);
         if (!entry) {
             return;
         }
@@ -51,18 +94,27 @@ class SoundManager {
         this.loopingSounds.delete(instanceId);
     }
 
+    /**
+     * @param {number} soundId
+     */
     playSound(soundId) {
         if (this.soundEnabled) {
             Sounds.play(soundId);
         }
     }
 
+    /**
+     * @param {number} soundId
+     */
     pauseSound(soundId) {
         if (this.soundEnabled && Sounds.isPlaying(soundId)) {
             Sounds.pause(soundId);
         }
     }
 
+    /**
+     * @param {number} soundId
+     */
     resumeSound(soundId) {
         if (this.soundEnabled && Sounds.isPaused(soundId)) {
             Sounds.play(soundId);
@@ -73,7 +125,7 @@ class SoundManager {
      * Play a sound that loops until explicitly stopped
      * Supports multiple concurrent instances
      *
-     * @param {string} soundId - The sound resource ID
+     * @param {number} soundId - The sound resource ID
      * @param {string} instanceKey - Unique identifier for this loop instance (e.g., spark position or ID)
      * @param {number} delayMs - Optional delay before starting the loop (for staggered sounds)
      */
@@ -94,6 +146,7 @@ class SoundManager {
 
         const loop = () => {
             const entry = this.loopingSounds.get(instanceId);
+            console.log(entry);
             if (!entry || !entry.active) {
                 return;
             }
@@ -103,6 +156,7 @@ class SoundManager {
             }
         };
 
+        /** @type {{ active: boolean; soundId: number; timeoutId: ReturnType<typeof setTimeout> | null; loopFn: Function }} */
         const entry = { active: true, loopFn: loop, soundId, timeoutId: null };
         this.loopingSounds.set(instanceId, entry);
 
@@ -116,14 +170,16 @@ class SoundManager {
     /**
      * Stop a specific looping instance
      *
-     * @param {string} soundId - The sound resource ID
+     * @param {number} soundId - The sound resource ID
      * @param {string} instanceKey - The unique identifier for this instance
      */
     stopLoopedSoundInstance(soundId, instanceKey) {
         const instanceId = `${soundId}_${instanceKey}`;
         const entry = this.loopingSounds.get(instanceId);
 
-        this._deactivateLoopEntry(instanceId, entry);
+        if (entry) {
+            this._deactivateLoopEntry(instanceId, entry);
+        }
 
         Sounds.stopInstance(soundId, instanceId);
 
@@ -143,6 +199,7 @@ class SoundManager {
 
     /**
      * Stop all looping instances of a sound
+     * @param {number} soundId
      */
     stopLoopedSound(soundId) {
         const matchingInstanceIds = [];
@@ -155,12 +212,17 @@ class SoundManager {
 
         for (const id of matchingInstanceIds) {
             const entry = this.loopingSounds.get(id);
-            this._deactivateLoopEntry(id, entry);
+            if (entry) {
+                this._deactivateLoopEntry(id, entry);
+            }
         }
 
         Sounds.stop(soundId);
     }
 
+    /**
+     * @param {number} soundId
+     */
     stopSound(soundId) {
         this.stopLoopedSound(soundId);
     }
@@ -208,6 +270,9 @@ class SoundManager {
         this.playMusic(trackId);
     }
 
+    /**
+     * @param {number} soundId
+     */
     playMusic(soundId) {
         const previousMusicId = this.musicId;
 
@@ -281,6 +346,9 @@ class SoundManager {
         }
     }
 
+    /**
+     * @param {boolean} musicEnabled
+     */
     setMusicEnabled(musicEnabled) {
         this.musicEnabled = musicEnabled;
         settings.setMusicEnabled(musicEnabled);
@@ -291,6 +359,9 @@ class SoundManager {
         }
     }
 
+    /**
+     * @param {boolean} soundEnabled
+     */
     setSoundEnabled(soundEnabled) {
         this.soundEnabled = soundEnabled;
         settings.setSoundEnabled(soundEnabled);
