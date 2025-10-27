@@ -6,6 +6,10 @@ const LevelState = {
     level: 0,
     survival: false,
 
+    /**
+     * @param {number} pack
+     * @param {number} level
+     */
     loadLevel(pack, level) {
         this.pack = pack - 1;
         this.level = level - 1;
