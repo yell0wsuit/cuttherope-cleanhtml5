@@ -15,17 +15,17 @@ const IMG_OBJ_VINIL_obj_vinil_center = 3;
 const IMG_OBJ_VINIL_obj_controller_active = 4;
 const IMG_OBJ_VINIL_obj_controller = 5;
 
-const CONTOUR_ALPHA = 0.2,
-    CONTROLLER_MIN_SCALE = 0.75,
-    STICKER_MIN_SCALE = 0.4,
-    CENTER_SCALE_FACTOR = 0.5,
-    HUNDRED_PERCENT_SCALE_SIZE = 167.0,
-    CIRCLE_VERTEX_COUNT = 80,
-    INNER_CIRCLE_WIDTH = 15 * resolution.PM,
-    OUTER_CIRCLE_WIDTH = 7 * resolution.PM,
-    ACTIVE_CIRCLE_WIDTH = 3 * resolution.PM,
-    CONTROLLER_SHIFT_PARAM1 = 22.5 * resolution.PM,
-    CONTROLLER_SHIFT_PARAM2 = 0.03 * resolution.PM;
+const CONTOUR_ALPHA = 0.2;
+const CONTROLLER_MIN_SCALE = 0.75;
+const STICKER_MIN_SCALE = 0.4;
+const CENTER_SCALE_FACTOR = 0.5;
+const HUNDRED_PERCENT_SCALE_SIZE = 167.0;
+const CIRCLE_VERTEX_COUNT = 80;
+const INNER_CIRCLE_WIDTH = 15 * resolution.PM;
+const OUTER_CIRCLE_WIDTH = 7 * resolution.PM;
+const ACTIVE_CIRCLE_WIDTH = 3 * resolution.PM;
+const CONTROLLER_SHIFT_PARAM1 = 22.5 * resolution.PM;
+const CONTROLLER_SHIFT_PARAM2 = 0.03 * resolution.PM;
 
 class StickerImage extends ImageElement {
     constructor() {
@@ -36,6 +36,56 @@ class StickerImage extends ImageElement {
 }
 
 class RotatedCircle extends BaseElement {
+    /**
+     * @type {string[]}
+     */
+    containedObjects;
+
+    /**
+     * @type {RotatedCircle[]}
+     */
+    circles;
+
+    /**
+     * @type {number}
+     */
+    soundPlaying;
+
+    /**
+     * @type {Vector}
+     */
+    lastTouch;
+
+    /**
+     * @type {StickerImage}
+     */
+    vinilStickerL;
+
+    /**
+     * @type {StickerImage}
+     */
+    vinilStickerR;
+
+    /**
+     * @type {ImageElement}
+     */
+    vinilActiveControllerL;
+
+    /**
+     * @type {ImageElement}
+     */
+    vinilActiveControllerR;
+
+    /**
+     * @type {ImageElement}
+     */
+    vinil;
+
+    /**
+     * @type {boolean}
+     */
+    passColorToChilds;
+
     constructor() {
         super();
         this.containedObjects = [];
@@ -119,6 +169,9 @@ class RotatedCircle extends BaseElement {
         this.addChild(this.vinilControllerR);
     }
 
+    /**
+     * @param {number} value
+     */
     setSize(value) {
         this.size = value;
 
@@ -163,6 +216,9 @@ class RotatedCircle extends BaseElement {
         return !this.vinilControllerL.visible;
     }
 
+    /**
+     * @param {boolean} value
+     */
     setHasOneHandle(value) {
         this.vinilControllerL.visible = !value;
     }
@@ -171,6 +227,9 @@ class RotatedCircle extends BaseElement {
         return this.vinilActiveControllerL.visible;
     }
 
+    /**
+     * @param {boolean} value
+     */
     setIsLeftControllerActive(value) {
         this.vinilActiveControllerL.visible = value;
     }
@@ -179,12 +238,16 @@ class RotatedCircle extends BaseElement {
         return this.vinilActiveControllerR.visible;
     }
 
+    /**
+     * @param {boolean} value
+     */
     setIsRightControllerActive(value) {
         this.vinilActiveControllerR.visible = value;
     }
 
     containsSameObjectWithAnotherCircle() {
         const len = this.circles.length;
+        console.log(this.circles);
         let i, anotherCircle;
         for (i = 0; i < len; i++) {
             anotherCircle = this.circles[i];
@@ -198,12 +261,17 @@ class RotatedCircle extends BaseElement {
     draw() {
         const ctx = Canvas.context;
         if (this.isRightControllerActive() || this.isLeftControllerActive()) {
-            const lineWidth = (ACTIVE_CIRCLE_WIDTH + resolution.PM) * this.vinilControllerL.scaleX,
-                radius = this.sizeInPixels + ~~(lineWidth / 2);
-            ctx.beginPath();
-            ctx.lineWidth = lineWidth;
-            ctx.arc(this.x, this.y, radius, 0, 2 * Math.PI, false);
-            ctx.stroke();
+            const lineWidth = (ACTIVE_CIRCLE_WIDTH + resolution.PM) * this.vinilControllerL.scaleX;
+            if (!this.sizeInPixels) {
+                return;
+            }
+            const radius = this.sizeInPixels + ~~(lineWidth / 2);
+            if (ctx) {
+                ctx.beginPath();
+                ctx.lineWidth = lineWidth;
+                ctx.arc(this.x, this.y, radius, 0, 2 * Math.PI, false);
+                ctx.stroke();
+            }
         }
 
         this.vinilHighlightL.color = this.color;
@@ -213,9 +281,12 @@ class RotatedCircle extends BaseElement {
         this.vinil.color = this.color;
         this.vinil.draw();
 
-        const len = this.circles.length,
-            selfIndex = this.circles.indexOf(this),
-            previousAlpha = ctx.globalAlpha;
+        const len = this.circles.length;
+        const selfIndex = this.circles.indexOf(this);
+        if (!ctx) {
+            return;
+        }
+        const previousAlpha = ctx.globalAlpha;
         let i, anotherCircle;
 
         if (previousAlpha !== CONTOUR_ALPHA) {
@@ -224,6 +295,11 @@ class RotatedCircle extends BaseElement {
 
         for (i = 0; i < len; i++) {
             anotherCircle = this.circles[i];
+
+            if (!this.sizeInPixels || !anotherCircle.sizeInPixels) {
+                return;
+            }
+
             if (
                 anotherCircle != this &&
                 anotherCircle.containsSameObjectWithAnotherCircle() &&
@@ -253,6 +329,15 @@ class RotatedCircle extends BaseElement {
         this.vinilCenter.draw();
     }
 
+    /**
+     * @param {number} cx1
+     * @param {number} cy1
+     * @param {number} radius1
+     * @param {number} cx2
+     * @param {number} cy2
+     * @param {number} radius2
+     * @param {number} width
+     */
     drawCircleIntersection(cx1, cy1, radius1, cx2, cy2, radius2, width) {
         const circleDistance = Vector.distance(cx1, cy1, cx2, cy2);
         if (circleDistance >= radius1 + radius2 || radius1 >= circleDistance + radius2) {
@@ -261,14 +346,15 @@ class RotatedCircle extends BaseElement {
 
         //circleDistance = a + b
         const a =
-                (radius1 * radius1 - radius2 * radius2 + circleDistance * circleDistance) /
-                (2 * circleDistance),
-            b = circleDistance - a,
-            beta = Math.acos(b / radius2),
-            diff = new Vector(cx1 - cx2, cy1 - cy2),
-            centersAngle = diff.angle();
-        let startAngle = centersAngle - beta,
-            endAngle = centersAngle + beta;
+            (radius1 * radius1 - radius2 * radius2 + circleDistance * circleDistance) /
+            (2 * circleDistance);
+        const b = circleDistance - a;
+        const beta = Math.acos(b / radius2);
+        const diff = new Vector(cx1 - cx2, cy1 - cy2);
+        const centersAngle = diff.angle();
+
+        let startAngle = centersAngle - beta;
+        let endAngle = centersAngle + beta;
 
         if (cx2 > cx1) {
             startAngle += Math.PI;
@@ -276,10 +362,12 @@ class RotatedCircle extends BaseElement {
         }
 
         const ctx = Canvas.context;
-        ctx.beginPath();
-        ctx.lineWidth = width;
-        ctx.arc(cx2, cy2, radius2, startAngle, endAngle, false);
-        ctx.stroke();
+        if (ctx) {
+            ctx.beginPath();
+            ctx.lineWidth = width;
+            ctx.arc(cx2, cy2, radius2, startAngle, endAngle, false);
+            ctx.stroke();
+        }
     }
 
     updateChildPositions() {
@@ -287,13 +375,18 @@ class RotatedCircle extends BaseElement {
         this.vinil.y = this.vinilCenter.y = this.y;
 
         const highlightDeltaX =
-                (this.vinilHighlightL.width / 2) * (1.0 - this.vinilHighlightL.scaleX),
-            highlightDeltaY =
-                (this.vinilHighlightL.height / 2) * (1.0 - this.vinilHighlightL.scaleY),
-            controllerDeltaX =
-                this.sizeInPixels -
-                (CONTROLLER_SHIFT_PARAM1 - CONTROLLER_SHIFT_PARAM2 * this.size) +
-                (1.0 - this.vinilControllerL.scaleX) * (this.vinilControllerL.width / 2);
+            (this.vinilHighlightL.width / 2) * (1.0 - this.vinilHighlightL.scaleX);
+        const highlightDeltaY =
+            (this.vinilHighlightL.height / 2) * (1.0 - this.vinilHighlightL.scaleY);
+
+        if (!this.sizeInPixels || !this.size) {
+            return;
+        }
+
+        const controllerDeltaX =
+            this.sizeInPixels -
+            (CONTROLLER_SHIFT_PARAM1 - CONTROLLER_SHIFT_PARAM2 * this.size) +
+            (1.0 - this.vinilControllerL.scaleX) * (this.vinilControllerL.width / 2);
 
         this.vinilHighlightL.x = this.x + highlightDeltaX;
         this.vinilHighlightR.x = this.x - highlightDeltaX;
@@ -309,6 +402,9 @@ class RotatedCircle extends BaseElement {
         this.vinilActiveControllerR.y = this.vinilControllerR.y;
     }
 
+    /**
+     * @param {RotatedCircle} anotherCircle
+     */
     containsSameObjectWithCircle(anotherCircle) {
         // check for copy of self
         if (
@@ -329,6 +425,9 @@ class RotatedCircle extends BaseElement {
         return false;
     }
 
+    /**
+     * @param {RotatedCircle} zone
+     */
     copy(zone) {
         const copiedCircle = new RotatedCircle();
         copiedCircle.zone = zone;
@@ -339,8 +438,12 @@ class RotatedCircle extends BaseElement {
         copiedCircle.containedObjects = this.containedObjects;
         copiedCircle.operating = Constants.UNDEFINED;
 
-        const copiedSize = this.size * resolution.PM,
-            copiedRadians = Radians.fromDegrees(copiedCircle.rotation);
+        if (!this.size) {
+            return;
+        }
+
+        const copiedSize = this.size * resolution.PM;
+        const copiedRadians = Radians.fromDegrees(copiedCircle.rotation);
         copiedCircle.handle1 = new Vector(copiedCircle.x - copiedSize, copiedCircle.y);
         copiedCircle.handle2 = new Vector(copiedCircle.x + copiedSize, copiedCircle.y);
         copiedCircle.handle1.rotateAround(copiedRadians, copiedCircle.x, copiedCircle.y);
