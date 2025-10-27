@@ -3,23 +3,26 @@ import Sounds from "@/resources/Sounds";
 import ResourceId from "@/resources/ResourceId";
 import { IS_XMAS } from "@/resources/ResData";
 
-const SoundMgr = {
-    audioPaused: false,
-    soundEnabled: settings.getSoundEnabled(),
-    musicEnabled: settings.getMusicEnabled(),
-    musicId: null,
-    musicResumeOffset: 0,
-    gameMusicLibrary: IS_XMAS
-        ? [ResourceId.SND_GAME_MUSIC_XMAS]
-        : [
-              ResourceId.SND_GAME_MUSIC,
-              ResourceId.SND_GAME_MUSIC2,
-              ResourceId.SND_GAME_MUSIC3,
-              ResourceId.SND_GAME_MUSIC4,
-          ],
+class SoundManager {
+    constructor() {
+        this.audioPaused = false;
+        this.soundEnabled = settings.getSoundEnabled();
+        this.musicEnabled = settings.getMusicEnabled();
+        this.musicId = null;
+        this.musicResumeOffset = 0;
+        this.gameMusicLibrary = IS_XMAS
+            ? [ResourceId.SND_GAME_MUSIC_XMAS]
+            : [
+                  ResourceId.SND_GAME_MUSIC,
+                  ResourceId.SND_GAME_MUSIC2,
+                  ResourceId.SND_GAME_MUSIC3,
+                  ResourceId.SND_GAME_MUSIC4,
+              ];
 
-    currentGameMusicId: ResourceId.SND_GAME_MUSIC,
-    loopingSounds: new Map(), // Track looping sound state by instance
+        this.currentGameMusicId = ResourceId.SND_GAME_MUSIC;
+        this.loopingSounds = new Map(); // Track looping sound state by instance
+    }
+
     _getActiveLoopSoundIds() {
         const soundIds = new Set();
 
@@ -30,8 +33,10 @@ const SoundMgr = {
         }
 
         return soundIds;
-    },
+    }
+
     _deactivateLoopEntry(instanceId, entry) {
+        console.log(entry);
         if (!entry) {
             return;
         }
@@ -44,25 +49,25 @@ const SoundMgr = {
         }
 
         this.loopingSounds.delete(instanceId);
-    },
+    }
 
     playSound(soundId) {
         if (this.soundEnabled) {
             Sounds.play(soundId);
         }
-    },
+    }
 
     pauseSound(soundId) {
         if (this.soundEnabled && Sounds.isPlaying(soundId)) {
             Sounds.pause(soundId);
         }
-    },
+    }
 
     resumeSound(soundId) {
         if (this.soundEnabled && Sounds.isPaused(soundId)) {
             Sounds.play(soundId);
         }
-    },
+    }
 
     /**
      * Play a sound that loops until explicitly stopped
@@ -106,7 +111,7 @@ const SoundMgr = {
         } else {
             loop();
         }
-    },
+    }
 
     /**
      * Stop a specific looping instance
@@ -134,7 +139,7 @@ const SoundMgr = {
         if (!hasOtherInstances) {
             Sounds.stop(soundId);
         }
-    },
+    }
 
     /**
      * Stop all looping instances of a sound
@@ -154,11 +159,11 @@ const SoundMgr = {
         }
 
         Sounds.stop(soundId);
-    },
+    }
 
     stopSound(soundId) {
         this.stopLoopedSound(soundId);
-    },
+    }
 
     _getAvailableGameMusic() {
         if (!this.gameMusicLibrary || this.gameMusicLibrary.length === 0) {
@@ -166,7 +171,7 @@ const SoundMgr = {
         }
 
         return this.gameMusicLibrary;
-    },
+    }
 
     selectRandomGameMusic() {
         const availableTracks = this._getAvailableGameMusic();
@@ -186,7 +191,7 @@ const SoundMgr = {
         const nextId = pool[Math.floor(Math.random() * pool.length)];
         this.currentGameMusicId = nextId;
         return nextId;
-    },
+    }
 
     playGameMusic() {
         const availableTracks = this._getAvailableGameMusic();
@@ -201,7 +206,7 @@ const SoundMgr = {
 
         this.currentGameMusicId = trackId;
         this.playMusic(trackId);
-    },
+    }
 
     playMusic(soundId) {
         const previousMusicId = this.musicId;
@@ -227,7 +232,7 @@ const SoundMgr = {
                 { offset }
             );
         }
-    },
+    }
 
     pauseAudio() {
         if (this.audioPaused) return; // Don't pause if already paused
@@ -238,14 +243,14 @@ const SoundMgr = {
         for (const soundId of this._getActiveLoopSoundIds()) {
             Sounds.pause(soundId);
         }
-    },
+    }
 
     pauseMusic() {
         if (this.musicId && Sounds.isPlaying(this.musicId)) {
             Sounds.pause(this.musicId);
             this.musicResumeOffset = Sounds.getResumeOffset(this.musicId);
         }
-    },
+    }
 
     resumeAudio() {
         if (!this.audioPaused) return;
@@ -261,20 +266,20 @@ const SoundMgr = {
                 }
             }
         }
-    },
+    }
 
     resumeMusic() {
         if (this.musicId && !Sounds.isPlaying(this.musicId)) {
             this.playMusic(this.musicId);
         }
-    },
+    }
 
     stopMusic() {
         if (this.musicId) {
             Sounds.stop(this.musicId);
             this.musicResumeOffset = 0;
         }
-    },
+    }
 
     setMusicEnabled(musicEnabled) {
         this.musicEnabled = musicEnabled;
@@ -284,7 +289,7 @@ const SoundMgr = {
         } else {
             this.pauseMusic();
         }
-    },
+    }
 
     setSoundEnabled(soundEnabled) {
         this.soundEnabled = soundEnabled;
@@ -297,7 +302,10 @@ const SoundMgr = {
                 this.stopLoopedSound(soundId);
             }
         }
-    },
-};
+    }
+}
+
+// Export a singleton instance to maintain the same usage pattern
+const SoundMgr = new SoundManager();
 
 export default SoundMgr;
