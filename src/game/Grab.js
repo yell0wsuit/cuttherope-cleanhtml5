@@ -374,17 +374,19 @@ class Grab extends CTRGameObject {
                 // only draw every other segment for dashed circle
                 if (i % 2 === 0) {
                     const startRadians = (i / segments) * totalRadians;
-                    ctx.beginPath();
-                    ctx.arc(
-                        radius + 2,
-                        radius + 2,
-                        radius,
-                        startRadians,
-                        startRadians + segmentRadians,
-                        false
-                    );
-                    ctx.stroke();
-                    ctx.closePath();
+                    if (ctx) {
+                        ctx.beginPath();
+                        ctx.arc(
+                            radius + 2,
+                            radius + 2,
+                            radius,
+                            startRadians,
+                            startRadians + segmentRadians,
+                            false
+                        );
+                        ctx.stroke();
+                        ctx.closePath();
+                    }
                 }
             }
 
