@@ -1,5 +1,5 @@
-const PubSub = {},
-    subscriptions = [];
+const PubSub = {};
+const subscriptions = [];
 
 /**
  * Subscribe to a channel and receive a handle that should be passed to
