@@ -10,6 +10,13 @@ const PARTICLE_TYPES = [
 ];
 
 class ConfettiParticle {
+    /**
+     * @param {number} canvasWidth
+     * @param {number} canvasHeight
+     * @param {number} frameIndex
+     * @param {{ start: number; end: number; }} frameRange
+     * @param {Texture2D} texture
+     */
     constructor(canvasWidth, canvasHeight, frameIndex, frameRange, texture) {
         this.frameIndex = frameIndex;
         this.frameRange = frameRange; // {start, end} for animation
@@ -51,6 +58,9 @@ class ConfettiParticle {
         this.age = 0;
     }
 
+    /**
+     * @param {number} delta
+     */
     update(delta) {
         this.age += delta;
 
@@ -88,6 +98,10 @@ class ConfettiParticle {
         return this.age < this.duration;
     }
 
+    /**
+     * Draws the confetti particle to the canvas
+     * @param {CanvasRenderingContext2D} ctx
+     */
     draw(ctx) {
         const frame = this.texture.rects[this.frameIndex];
         if (!frame) return;
@@ -111,6 +125,9 @@ class ConfettiManager {
     constructor() {
         this.canvas = null;
         this.ctx = null;
+        /**
+         * @type {Particle[]}
+         */
         this.particles = [];
         this.active = false;
         this.animationFrame = null;
@@ -123,6 +140,9 @@ class ConfettiManager {
         this.initialBurst = 15;
     }
 
+    /**
+     * @param {HTMLElement} containerElement
+     */
     start(containerElement) {
         // Create canvas overlay
         this.canvas = document.createElement("canvas");
@@ -177,6 +197,10 @@ class ConfettiManager {
         // Start with a random frame from the selected type
         const initialFrameIndex = MathHelper.randomRange(type.start, type.end);
 
+        if (!this.canvas) {
+            return;
+        }
+
         this.particles.push(
             new ConfettiParticle(
                 this.canvas.width,
@@ -209,6 +233,10 @@ class ConfettiManager {
                 this.createParticle();
                 this.emissionTimer -= emissionInterval;
             }
+        }
+
+        if (!this.ctx || !this.canvas) {
+            return;
         }
 
         // Clear canvas
