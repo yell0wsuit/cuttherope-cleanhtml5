@@ -575,7 +575,7 @@ export const GameSceneLoaders = {
         s.parseMover(item);
 
         if (tg) {
-            s.onRotateButtonPressed = this.rotateAllSpikesWithId.bind(this);
+            s.onButtonPressed = this.rotateAllSpikesWithId.bind(this);
         }
 
         if (item.name === MapItem.ELECTRO) {

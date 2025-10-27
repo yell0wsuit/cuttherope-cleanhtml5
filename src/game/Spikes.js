@@ -279,8 +279,10 @@ class Spikes extends CTRGameObject {
      */
     onButtonPressed(n) {
         if (n === SPIKES_ROTATION_BUTTON) {
-            if (this.onRotateButtonPressed) {
-                this.onRotateButtonPressed(this.toggled);
+            if (this.onButtonPressed) {
+                if (this.toggled) {
+                    this.onButtonPressed(this.toggled);
+                }
             }
 
             if (this.spikesNormal) {
