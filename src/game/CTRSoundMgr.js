@@ -146,7 +146,7 @@ class SoundManager {
 
         const loop = () => {
             const entry = this.loopingSounds.get(instanceId);
-            console.log(entry);
+
             if (!entry || !entry.active) {
                 return;
             }
