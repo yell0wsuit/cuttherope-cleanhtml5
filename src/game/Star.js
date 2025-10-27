@@ -9,6 +9,7 @@ import Rectangle from "@/core/Rectangle";
 import MathHelper from "@/utils/MathHelper";
 import Mover from "@/utils/Mover";
 import resolution from "@/resolution";
+
 const IMG_OBJ_STAR_IDLE_glow = 0;
 const IMG_OBJ_STAR_IDLE_idle_start = 1;
 const IMG_OBJ_STAR_IDLE_idle_end = 18;
@@ -116,6 +117,9 @@ class Star extends CTRGameObject {
         this.addChild(sr);
     }
 
+    /**
+     * @param {number} delta
+     */
     update(delta) {
         if (this.timeout > 0) {
             if (this.time > 0) {
