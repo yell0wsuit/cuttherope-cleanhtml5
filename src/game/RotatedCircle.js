@@ -247,7 +247,6 @@ class RotatedCircle extends BaseElement {
 
     containsSameObjectWithAnotherCircle() {
         const len = this.circles.length;
-        console.log(this.circles);
         let i, anotherCircle;
         for (i = 0; i < len; i++) {
             anotherCircle = this.circles[i];
