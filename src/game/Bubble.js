@@ -1,6 +1,16 @@
 import GameObject from "@/visual/GameObject";
 
 class Bubble extends GameObject {
+    /**
+     * @type {boolean}
+     */
+    popped;
+
+    /**
+     * @type {boolean}
+     */
+    withoutShadow;
+
     constructor() {
         super();
         this.popped = false;
