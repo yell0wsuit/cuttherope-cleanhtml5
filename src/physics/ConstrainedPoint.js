@@ -168,8 +168,8 @@ class ConstrainedPoint extends MaterialPoint {
      * @param {number} delta
      */
     update(delta) {
-        const totalForce = this.totalForce,
-            currentGravity = Gravity.current;
+        const totalForce = this.totalForce;
+        const currentGravity = Gravity.current;
 
         if (!this.disableGravity) {
             if (!this.gravity || !this.invWeight) {
