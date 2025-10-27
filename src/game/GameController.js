@@ -4,6 +4,7 @@ import GameView from "@/game/GameView";
 import SoundMgr from "@/game/CTRSoundMgr";
 import ResourceId from "@/resources/ResourceId";
 import Constants from "@/utils/Constants";
+
 /**
  * @enum {number}
  */
@@ -30,6 +31,9 @@ const ExitCodeFrom = {
 };
 
 class GameController extends ViewController {
+    /**
+     * @param {CTRRootController} parent
+     */
     constructor(parent) {
         super(parent);
         this.animateRestart = false;
@@ -76,6 +80,9 @@ class GameController extends ViewController {
         this.restartLevel();
     }
 
+    /**
+     * @param {boolean} paused
+     */
     setPaused(paused) {
         this.isGamePaused = paused;
 
