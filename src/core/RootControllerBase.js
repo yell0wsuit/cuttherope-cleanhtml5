@@ -7,7 +7,6 @@ import resolution from "@/resolution";
 import PubSub from "@/utils/PubSub";
 import Canvas from "@/utils/Canvas";
 import RGBAColor from "@/core/RGBAColor";
-import GameView from "@/game/GameView";
 
 /**
  * @const
