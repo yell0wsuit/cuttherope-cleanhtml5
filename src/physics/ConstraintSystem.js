@@ -5,15 +5,25 @@ import satisfyConstraintArray from "@/physics/satisfyConstraintArray";
 class ConstraintSystem {
     constructor() {
         this.relaxationTimes = 1;
+        /**
+         * @type {ConstrainedPoint[]}
+         */
         this.parts = [];
     }
 
+    /**
+     * @param {ConstrainedPoint} cp
+     * @param {number} index
+     */
     addPartAtIndex(cp, index) {
         // splice with removeLength=0 means we just insert
         // the additional element (cp) at the index
         this.parts.splice(index, 0, cp);
     }
 
+    /**
+     * @param {ConstrainedPoint} cp
+     */
     addPart(cp) {
         this.parts[this.parts.length] = cp;
     }
@@ -31,14 +41,20 @@ class ConstraintSystem {
         }
     }
 
+    /**
+     * @param {number} index
+     */
     removePartAtIndex(index) {
         this.parts.splice(index, 1);
     }
 
+    /**
+     * @param {number} delta
+     */
     update(delta) {
-        const parts = this.parts,
-            numParts = parts.length,
-            relaxationTimes = this.relaxationTimes;
+        const parts = this.parts;
+        const numParts = parts.length;
+        const relaxationTimes = this.relaxationTimes;
 
         // update each part
         for (let i = 0; i < numParts; i++) {
