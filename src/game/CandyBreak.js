@@ -4,7 +4,7 @@ import MathHelper from "@/utils/MathHelper";
 import Rectangle from "@/core/Rectangle";
 import RES_DATA from "@/resources/ResData";
 import ResourceId from "@/resources/ResourceId";
-import verifyType from "@/utils/TypeVerify";
+
 const IMG_OBJ_CANDY_01_piece_01 = 3;
 const IMG_OBJ_CANDY_01_piece_02 = 4;
 const IMG_OBJ_CANDY_01_piece_03 = 5;
