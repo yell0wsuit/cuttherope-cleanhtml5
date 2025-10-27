@@ -8,6 +8,10 @@ const IMG_BGR_08_P1__position_window = 1;
 const IMG_OBJ_STAR_IDLE_window = 58;
 
 class EarthImage extends ImageElement {
+    /**
+     * @param {number} offsetX
+     * @param {number} offsetY
+     */
     constructor(offsetX, offsetY) {
         super();
         this.initTextureWithId(ResourceId.IMG_OBJ_STAR_IDLE);
