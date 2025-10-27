@@ -14,28 +14,87 @@ import PubSub from "@/utils/PubSub";
  * @constructor
  */
 class ViewController {
+    /**
+     * @param {CTRRootController} parent
+     */
     constructor(parent) {
+        /**
+         * @type {number}
+         */
         this.controllerState = ViewController.StateType.INACTIVE;
+
+        /**
+         * @type {(GameView)[]}
+         */
         this.views = [];
+
+        /**
+         * @type {(GameController)[]}
+         */
         this.children = [];
+
+        /**
+         * @type {number}
+         */
         this.activeViewID = Constants.UNDEFINED;
+
+        /**
+         * @type {number}
+         */
         this.activeChildID = Constants.UNDEFINED;
+
+        /**
+         * @type {number}
+         */
         this.pausedViewID = Constants.UNDEFINED;
+
+        /**
+         * @type {CTRRootController}
+         */
         this.parent = parent;
+
+        /**
+         * @type {number}
+         */
         this.lastTime = Constants.UNDEFINED;
+
+        /**
+         * @type {number}
+         */
         this.delta = 0;
+
+        /**
+         * @type {number}
+         */
         this.frames = 0;
+
+        /**
+         * @type {number}
+         */
         this.accumDt = 0;
+
+        /**
+         * @type {number}
+         */
         this.frameRate = 0;
 
         // like a bank account for frame updates. we try to keep our
         // balance under 1 by doing extra frame updates when above 1
+        /**
+         * @type {number}
+         */
         this.frameBalance = 0;
 
         // initially assume we are getting 60 fps
+        /**
+         * @type {number}
+         */
         this.avgDelta = 1 / 60;
 
         // keep the last five deltas (init with target fps)
+        /**
+         * @type {number[]}
+         */
         this.pastDeltas = [
             this.avgDelta,
             this.avgDelta,
@@ -61,7 +120,7 @@ class ViewController {
             this.hideActiveView();
         }
         // notify root and parent controllers
-        PubSub.publish(PubSub.ChannelId.ControllerDeactivate, this);
+        PubSub.publish(PubSub.ChannelId.ControllerDeactivated, this);
         this.parent.onChildDeactivated(this.parent.activeChildID);
     }
 
@@ -109,9 +168,14 @@ class ViewController {
         this.lastTime = Constants.UNDEFINED;
     }
 
+    /**
+     * @param {number | undefined} [time]
+     */
     calculateTimeDelta(time) {
-        this.delta = this.lastTime !== Constants.UNDEFINED ? (time - this.lastTime) / 1000 : 0;
-        this.lastTime = time;
+        if (time) {
+            this.delta = this.lastTime !== Constants.UNDEFINED ? (time - this.lastTime) / 1000 : 0;
+            this.lastTime = time;
+        }
 
         // if the physics engine requires 60 fps, how many frames do
         // we need to update?
@@ -161,10 +225,18 @@ class ViewController {
         }
     }
 
+    /**
+     * @param {GameView} v
+     * @param {number} index
+     */
+
     addView(v, index) {
         this.views[index] = v;
     }
 
+    /**
+     * @param {number} viewIndex
+     */
     deleteView(viewIndex) {
         this.views[viewIndex] = null;
     }
@@ -178,6 +250,9 @@ class ViewController {
         }
     }
 
+    /**
+     * @param {number} index
+     */
     showView(index) {
         if (this.activeViewID != Constants.UNDEFINED) {
             this.hideActiveView();
@@ -192,14 +267,24 @@ class ViewController {
         return this.views[this.activeViewID];
     }
 
+    /**
+     * @param {number} index
+     */
     getView(index) {
         return this.views[index];
     }
 
+    /**
+     * @param {GameController} controller
+     * @param {number} index
+     */
     addChildWithID(controller, index) {
         this.children[index] = controller;
     }
 
+    /**
+     * @param {number} index
+     */
     deleteChild(index) {
         this.children[index] = null;
         if (this.activeChildID === index) {
@@ -217,6 +302,9 @@ class ViewController {
         }
     }
 
+    /**
+     * @param {number} index
+     */
     activateChild(index) {
         if (this.activeChildID !== Constants.UNDEFINED) {
             this.deactivateActiveChild();
@@ -227,6 +315,9 @@ class ViewController {
         this.children[index].activate();
     }
 
+    /**
+     * @param {number} childType
+     */
     onChildDeactivated(childType) {
         this.unpause();
     }
@@ -235,6 +326,9 @@ class ViewController {
         return this.children[this.activeChildID];
     }
 
+    /**
+     * @param {number} index
+     */
     getChild(index) {
         return this.children[index];
     }
