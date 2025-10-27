@@ -27,10 +27,10 @@ class CTRSettings {
     }
 
     /**
-     * @param {string} musicEnabled
+     * @param {boolean} musicEnabled
      */
     static setMusicEnabled(musicEnabled) {
-        SettingStorage.set(this.SettingKeys.MUSIC, musicEnabled);
+        SettingStorage.set(this.SettingKeys.MUSIC, musicEnabled.toString());
     }
 
     // sound effects
