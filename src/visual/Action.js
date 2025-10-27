@@ -13,7 +13,7 @@ class ActionData {
 
 class Action {
     /**
-     * @param {import('@/visual/GameObject').default | import('@/visual/Animation').default} target
+     * @param {GameObject | Animation} target
      * @param {ActionData} data
      */
     constructor(target, data) {
@@ -36,7 +36,7 @@ class Action {
         this.actionSubParam = 0;
     }
     /**
-     * @param {import("@/visual/GameObject").default | import("@/visual/Animation").default} target
+     * @param {GameObject | Animation} target
      * @param {string} actionName
      * @param {number} param
      * @param {number} subParam
