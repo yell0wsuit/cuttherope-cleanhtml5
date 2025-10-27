@@ -1,8 +1,8 @@
 /**
  * Quad2D constructor
  * @constructor
- * @param x {number}
- * @param y {number}
+ * @param {number} x
+ * @param {number} y
  * @param w {number} width
  * @param h {number} height
  */

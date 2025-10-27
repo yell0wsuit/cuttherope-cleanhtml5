@@ -1,8 +1,8 @@
 /**
  * Vector constructor
  * @constructor
- * @param x {number}
- * @param y {number}
+ * @param {number} x
+ * @param {number} y
  */
 class Vector {
     /**

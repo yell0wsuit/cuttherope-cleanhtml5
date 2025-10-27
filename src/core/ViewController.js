@@ -240,8 +240,8 @@ class ViewController {
     }
 
     /**
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @return {boolean} true if event was handled
      */
     mouseDown(x, y) {
@@ -252,8 +252,8 @@ class ViewController {
     }
 
     /**
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @return {boolean} true if event was handled
      */
     mouseUp(x, y) {
@@ -264,8 +264,8 @@ class ViewController {
     }
 
     /**
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @return {boolean} true if event was handled
      */
     mouseDragged(x, y) {
@@ -276,8 +276,8 @@ class ViewController {
     }
 
     /**
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @return {boolean} true if event was handled
      */
     mouseMoved(x, y) {
@@ -286,8 +286,8 @@ class ViewController {
     }
 
     /**
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @return {boolean} true if event was handled
      */
     doubleClick(x, y) {

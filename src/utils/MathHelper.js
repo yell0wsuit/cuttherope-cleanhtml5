@@ -12,8 +12,8 @@ const MathHelper = {
     },
     /**
      * Returns true if values have the same sign
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @return {boolean}
      */
     sameSign(x, y) {

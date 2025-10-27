@@ -479,8 +479,8 @@ class BaseElement {
     }
 
     /**
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @return {boolean} true if event was handled
      */
     onTouchDown(x, y) {
@@ -501,8 +501,8 @@ class BaseElement {
     }
 
     /**
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @return {boolean} true if event was handled
      */
     onTouchUp(x, y) {
@@ -523,8 +523,8 @@ class BaseElement {
     }
 
     /**
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @return {boolean} true if event was handled
      */
     onTouchMove(x, y) {
@@ -545,8 +545,8 @@ class BaseElement {
     }
 
     /**
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @return {boolean} true if event was handled
      */
     onDoubleClick(x, y) {

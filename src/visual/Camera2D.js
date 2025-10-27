@@ -18,8 +18,8 @@ class Camera2D {
 
     /**
      * Changes the camera position (but doesn't actually transform the canvas)
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @param immediate {boolean}
      */
     moveTo(x, y, immediate) {

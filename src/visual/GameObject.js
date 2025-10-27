@@ -138,8 +138,8 @@ class GameObject extends Animation {
 
     /**
      * Returns true if the point is inside the object's bounding box
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @return {boolean}
      */
     pointInObject(x, y) {
