@@ -72,10 +72,6 @@ class Animation extends ImageElement {
     addAnimationEndpoints(animationId, delay, loopType, start, end, argumentList, resourceId) {
         const count = end - start + 1;
 
-        if (!argumentList) {
-            return;
-        }
-
         this.addAnimation(
             animationId,
             delay,
