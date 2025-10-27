@@ -12,7 +12,6 @@ import Alignment from "@/core/Alignment";
 import KeyFrame from "@/visual/KeyFrame";
 import Canvas from "@/utils/Canvas";
 import resolution from "@/resolution";
-import verifyType from "@/utils/TypeVerify";
 
 /**
  * @const
