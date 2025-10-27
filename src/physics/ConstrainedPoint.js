@@ -40,9 +40,9 @@ class ConstrainedPoint extends MaterialPoint {
 
     /**
      * Add a new constraint
-     * @param cp {ConstrainedPoint}
-     * @param restLength {number}
-     * @param type {ConstraintType}
+     * @param {ConstrainedPoint} cp
+     * @param {number} restLength
+     * @param {ConstraintType} type
      */
     addConstraint(cp, restLength, type) {
         const ct = new Constraint(cp, restLength, type);
@@ -51,7 +51,7 @@ class ConstrainedPoint extends MaterialPoint {
 
     /**
      * Removes the specified constraint
-     * @param cp {ConstrainedPoint}
+     * @param {ConstrainedPoint} cp
      */
     removeConstraint(cp) {
         const constraints = this.constraints,
@@ -66,15 +66,15 @@ class ConstrainedPoint extends MaterialPoint {
 
     /**
      * Removes the constraint at the specified index
-     * @param index {number}
+     * @param {number} index
      */
     removeConstraintAtIndex(index) {
         this.constraints.splice(index, 1);
     }
 
     /**
-     * @param fromCp {ConstrainedPoint}
-     * @param toCp {ConstrainedPoint}
+     * @param {ConstrainedPoint} fromCp
+     * @param {ConstrainedPoint} toCp
      */
     changeConstraint(fromCp, toCp) {
         const constraints = this.constraints,
@@ -90,7 +90,7 @@ class ConstrainedPoint extends MaterialPoint {
 
     /**
      * Returns true if the constrained point is used by a constraint in the system
-     * @param cp {ConstrainedPoint}
+     * @param {ConstrainedPoint} cp
      * @return {boolean}
      */
     hasConstraint(cp) {
@@ -106,8 +106,8 @@ class ConstrainedPoint extends MaterialPoint {
     }
 
     /**
-     * @param cp {ConstrainedPoint}
-     * @param restLength {number}
+     * @param {ConstrainedPoint} cp
+     * @param {number} restLength
      */
     changeRestLength(cp, restLength) {
         const constraints = this.constraints,
@@ -122,9 +122,9 @@ class ConstrainedPoint extends MaterialPoint {
     }
 
     /**
-     * @param fromCp {ConstrainedPoint}
-     * @param toCp {ConstrainedPoint}
-     * @param restLength {number}
+     * @param {ConstrainedPoint} fromCp
+     * @param {ConstrainedPoint} toCp
+     * @param {number} restLength
      */
     changeConstraintAndLength(fromCp, toCp, restLength) {
         const constraints = this.constraints,
@@ -140,7 +140,7 @@ class ConstrainedPoint extends MaterialPoint {
     }
 
     /**
-     * @param cp {ConstrainedPoint}
+     * @param {ConstrainedPoint} cp
      * @return {number}
      */
     restLength(cp) {
@@ -157,7 +157,7 @@ class ConstrainedPoint extends MaterialPoint {
     }
 
     /**
-     * @param delta {number}
+     * @param {number} delta
      */
     update(delta) {
         const totalForce = this.totalForce,

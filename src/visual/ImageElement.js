@@ -238,7 +238,7 @@ class ImageElement extends BaseElement {
 
     /**
      * Returns true if the action was handled
-     * @param actionData {ActionData}
+     * @param {ActionData} actionData
      * @return {boolean}
      */
     handleAction(actionData) {

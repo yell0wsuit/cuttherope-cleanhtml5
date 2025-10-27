@@ -100,7 +100,7 @@ const ResourceMgr = {
     },
     /**
      * Sets texture quads from xml info
-     * @param resource {ResEntry}
+     * @param {ResEntry} resource
      */
     setQuads(resource) {
         if (!resource || !resource.texture) {

@@ -259,7 +259,7 @@ class BaseElement {
 
     /**
      * Updates timelines with the elapsed time
-     * @param delta {number}
+     * @param {number} delta
      */
     update(delta) {
         const children = this.children,
@@ -275,7 +275,7 @@ class BaseElement {
     }
 
     /**
-     * @param name {string}
+     * @param {string} name
      * @return {BaseElement}
      */
     getChildWithName(name) {
@@ -320,7 +320,7 @@ class BaseElement {
     }
 
     /**
-     * @param a {ActionData} action data
+     * @param {ActionData} a action data
      * @return {boolean} true if an action was handled
      */
     handleAction(a) {
@@ -356,7 +356,7 @@ class BaseElement {
     }
 
     /**
-     * @param child {BaseElement} child to add
+     * @param {BaseElement} child child to add
      * @return {number} index of added child
      */
     addChild(child) {
@@ -371,7 +371,7 @@ class BaseElement {
     }
 
     /**
-     * @param i {number} index of the child to remove
+     * @param {number} i index of the child to remove
      */
     removeChildWithID(i) {
         const child = this.children.splice(i, 1);
@@ -383,7 +383,7 @@ class BaseElement {
     }
 
     /**
-     * @param c {BaseElement} child to remove
+     * @param {BaseElement} c child to remove
      */
     removeChild(c) {
         const children = this.children,
@@ -398,7 +398,7 @@ class BaseElement {
     }
 
     /**
-     * @param i {number} index of child
+     * @param {number} i index of child
      * @return {BaseElement}
      */
     getChild(i) {
@@ -471,7 +471,7 @@ class BaseElement {
     }
 
     /**
-     * @param index {number}
+     * @param {number} index
      * @return {Timeline}
      */
     getTimeline(index) {
@@ -567,7 +567,7 @@ class BaseElement {
     }
 
     /**
-     * @param enabled {boolean}
+     * @param {boolean} enabled
      */
     setEnabled(enabled) {
         this.visible = enabled;

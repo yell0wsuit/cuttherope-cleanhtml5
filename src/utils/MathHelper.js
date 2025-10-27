@@ -2,9 +2,9 @@ import Constants from "@/utils/Constants";
 const MathHelper = {
     /**
      * Fits value v to [minV, maxV]
-     * @param v {number} value
-     * @param minV {number}
-     * @param maxV {number}
+     * @param {number} v value
+     * @param {number} minV
+     * @param {number} maxV
      * @return {number}
      */
     fitToBoundaries(v, minV, maxV) {
@@ -21,8 +21,8 @@ const MathHelper = {
     },
     /**
      * Returns a random integer from the interval
-     * @param from {number}
-     * @param to {number}
+     * @param {number} from
+     * @param {number} to
      */
     randomRange(from, to) {
         return ~~(Math.random() * (to - from + 1) + from);
@@ -35,10 +35,10 @@ const MathHelper = {
     },
     /**
      * Returns the max of 4 numbers
-     * @param v1 {number}
-     * @param v2 {number}
-     * @param v3 {number}
-     * @param v4 {number}
+     * @param {number} v1
+     * @param {number} v2
+     * @param {number} v3
+     * @param {number} v4
      * @return {number}
      */
     maxOf4(v1, v2, v3, v4) {
@@ -51,10 +51,10 @@ const MathHelper = {
     },
     /**
      * Returns the minimum of 4 numbers
-     * @param v1 {number}
-     * @param v2 {number}
-     * @param v3 {number}
-     * @param v4 {number}
+     * @param {number} v1
+     * @param {number} v2
+     * @param {number} v3
+     * @param {number} v4
      * @return {number}
      */
     minOf4(v1, v2, v3, v4) {
@@ -66,14 +66,14 @@ const MathHelper = {
         return Constants.UNDEFINED;
     },
     /**
-     * @param x1 {number}
-     * @param y1 {number}
-     * @param x2 {number}
-     * @param y2 {number}
-     * @param x3 {number}
-     * @param y3 {number}
-     * @param x4 {number}
-     * @param y4 {number}
+     * @param {number} x1
+     * @param {number} y1
+     * @param {number} x2
+     * @param {number} y2
+     * @param {number} x3
+     * @param {number} y3
+     * @param {number} x4
+     * @param {number} y4
      * @return {boolean}
      */
     lineInLine(x1, y1, x2, y2, x3, y3, x4, y4) {

@@ -123,7 +123,7 @@ class ViewController {
      * Delta changes might be large if we are using requestAnimationFrame
      * and the user switches tabs (the browser will stop calling us to
      * preserve power).
-     * @param delta {number}
+     * @param {number} delta
      */
     clampDelta(delta) {
         if (delta < 0.016) {

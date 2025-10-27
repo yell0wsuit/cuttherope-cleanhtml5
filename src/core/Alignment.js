@@ -32,7 +32,7 @@ const Alignment = {
      */
     CENTER: 18, // 2 | 16
     /**
-     * @param s {string} input string
+     * @param {string} s input string
      * @return {number}
      */
     parse(s) {

@@ -112,9 +112,9 @@ class Grab extends CTRGameObject {
 
     /**
      *
-     * @param v1 {Vector} start
-     * @param v2 {Vector} end
-     * @param c {Vector} center
+     * @param {Vector} v1 start
+     * @param {Vector} v2 end
+     * @param {Vector} c center
      */
     getRotateAngle(v1, v2, c) {
         const m1 = Vector.subtract(v1, c);
@@ -126,7 +126,7 @@ class Grab extends CTRGameObject {
 
     /**
      *
-     * @param v {Vector}
+     * @param {Vector} v
      */
     handleWheelTouch(x, y) {
         this.lastWheelTouch.x = x;

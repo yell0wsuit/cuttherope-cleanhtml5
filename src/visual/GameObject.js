@@ -151,10 +151,10 @@ class GameObject extends Animation {
     }
 
     /**
-     * @param r1x {number}
-     * @param r1y {number}
-     * @param r2x {number}
-     * @param r2y {number}
+     * @param {number} r1x
+     * @param {number} r1y
+     * @param {number} r2x
+     * @param {number} r2y
      */
     rectInObject(r1x, r1y, r2x, r2y) {
         const ox = this.drawX + this.bb.x,

@@ -3,8 +3,8 @@
  * @constructor
  * @param {number} x
  * @param {number} y
- * @param w {number} width
- * @param h {number} height
+ * @param {number} w width
+ * @param {number} h height
  */
 class Quad2D {
     /**

@@ -25,7 +25,7 @@ class AnimationPool extends BaseElement {
     }
 
     /**
-     * @param timeline {Timeline}
+     * @param {Timeline} timeline
      */
     timelineFinished(timeline) {
         this.removeList.push(timeline.element);
@@ -43,7 +43,7 @@ class AnimationPool extends BaseElement {
     }
 
     /**
-     * @param particles {Particles}
+     * @param {Particles} particles
      */
     particlesFinished(particles) {
         this.removeList.push(particles);

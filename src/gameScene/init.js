@@ -116,7 +116,7 @@ export const GameSceneInit = {
             : ResourceId.IMG_OBJ_CANDY_01;
     },
     /**
-     * @param p {ConstrainedPoint}
+     * @param {ConstrainedPoint} p
      * @return {boolean}
      */
     pointOutOfScreen(p) {

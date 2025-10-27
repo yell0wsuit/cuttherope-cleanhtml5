@@ -70,13 +70,13 @@ const drawBlack = new RGBAColor(0, 0, 0, 1),
 class Bungee extends ConstraintSystem {
     /**
      * Create a new Rope
-     * @param headCp {ConstrainedPoint} head constrained point
-     * @param hx {number} head location: x
-     * @param hy {number} head location: y
-     * @param tailCp {ConstrainedPoint} tail constrained point
-     * @param tx {number} tail location: x
-     * @param ty {number} tail location: y
-     * @param len {number} length of the rope
+     * @param {ConstrainedPoint} headCp head constrained point
+     * @param {number} hx head location: x
+     * @param {number} hy head location: y
+     * @param {ConstrainedPoint} tailCp tail constrained point
+     * @param {number} tx tail location: x
+     * @param {number} ty tail location: y
+     * @param {number} len length of the rope
      */
     constructor(headCp, hx, hy, tailCp, tx, ty, len) {
         super();
@@ -242,7 +242,7 @@ class Bungee extends ConstraintSystem {
 
     /**
      * Updates the rope based on the time delta
-     * @param delta {number}
+     * @param {number} delta
      */
     update(delta) {
         if (this.cutTime > 0) {

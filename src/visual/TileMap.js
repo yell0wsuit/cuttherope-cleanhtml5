@@ -9,8 +9,8 @@ import Vector from "@/core/Vector";
 /**
  * An entry in the tile map
  * @constructor
- * @param drawerIndex {number}
- * @param quadIndex {number}
+ * @param {number} drawerIndex
+ * @param {number} quadIndex
  */
 class TileEntry {
     constructor(drawerIndex, quadIndex) {
@@ -98,11 +98,11 @@ class TileMap extends BaseElement {
 
     /**
      * Fills the tilemap matrix with the specified tile entry index
-     * @param startRow {number}
-     * @param startCol {number}
-     * @param numRows {number}
-     * @param numCols {number}
-     * @param tileIndex {number}
+     * @param {number} startRow
+     * @param {number} startCol
+     * @param {number} numRows
+     * @param {number} numCols
+     * @param {number} tileIndex
      */
     fill(startRow, startCol, numRows, numCols, tileIndex) {
         for (let i = startCol, colEnd = startCol + numCols; i < colEnd; i++) {
@@ -131,7 +131,7 @@ class TileMap extends BaseElement {
 
     /**
      * Updates the tile map based on the current camera position
-     * @param pos {Vector}
+     * @param {Vector} pos
      */
     updateWithCameraPos(pos) {
         const mx = Math.round(pos.x / this.parallaxRatio),

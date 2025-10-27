@@ -16,10 +16,10 @@ class Animation extends ImageElement {
     }
 
     /**
-     * @param delay {number}
-     * @param loop {number}
-     * @param start {number}
-     * @param end {number}
+     * @param {number} delay
+     * @param {number} loop
+     * @param {number} start
+     * @param {number} end
      * @return {number}
      */
     addAnimationDelay(delay, loop, start, end) {
@@ -46,15 +46,7 @@ class Animation extends ImageElement {
         );
     }
 
-    addAnimationEndpoints(
-        animationId,
-        delay,
-        loopType,
-        start,
-        end,
-        argumentList,
-        resourceId
-    ) {
+    addAnimationEndpoints(animationId, delay, loopType, start, end, argumentList, resourceId) {
         const count = end - start + 1;
         this.addAnimation(
             animationId,
@@ -69,24 +61,15 @@ class Animation extends ImageElement {
     }
 
     /**
-     * @param animationId {number}
-     * @param delay {number}
+     * @param {number} animationId
+     * @param {number} delay
      * @param loopType
-     * @param count {number}
-     * @param start {number}
-     * @param end {number}
+     * @param {number} count
+     * @param {number} start
+     * @param {number} end
      * @param argumentList
      */
-    addAnimation(
-        animationId,
-        delay,
-        loopType,
-        count,
-        start,
-        end,
-        argumentList,
-        resourceId
-    ) {
+    addAnimation(animationId, delay, loopType, count, start, end, argumentList, resourceId) {
         const t = new Timeline();
         let as = [Action.create(this, ActionType.SET_DRAWQUAD, start, 0)];
 
@@ -148,7 +131,7 @@ class Animation extends ImageElement {
 
     /**
      * Go to the specified sequence frame of the current animation
-     * @param index {number}
+     * @param {number} index
      */
     jumpTo(index) {
         const timeline = this.currentTimeline;

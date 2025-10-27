@@ -1,10 +1,10 @@
 /**
  * RGBAColor constructor
  * @constructor
- * @param r {number} red
- * @param g {number} green
- * @param b {number} blue
- * @param a {number} alpha
+ * @param {number} r red
+ * @param {number} g green
+ * @param {number} b blue
+ * @param {number} a alpha
  */
 class RGBAColor {
     /**

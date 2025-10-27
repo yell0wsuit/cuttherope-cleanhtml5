@@ -1,10 +1,10 @@
 /**
  * @constructor
- * @param start {Vector}
- * @param end {Vector}
- * @param startSize {number}
- * @param endSize {number}
- * @param color {RGBAColor}
+ * @param {Vector} start
+ * @param {Vector} end
+ * @param {number} startSize
+ * @param {number} endSize
+ * @param {RGBAColor} color
  */
 class FingerCut {
     constructor(start, end, startSize, endSize, color) {

@@ -25,10 +25,10 @@ class KeyFrameValue {
 
 /**
  * KeyFrame constructor
- * @param time {number}
- * @param trackType {TrackType}
+ * @param {number} time
+ * @param {TrackType} trackType
  * @param transitionType {KeyFrame.TransitionType}
- * @param value {KeyFrameValue}
+ * @param {KeyFrameValue} value
  */
 class KeyFrame {
     constructor(time, trackType, transitionType, value) {

@@ -298,7 +298,7 @@ class TimelineTrack {
     }
 
     /**
-     * @param kf {KeyFrame}
+     * @param {KeyFrame} kf
      */
     setElementFromKeyFrame(kf) {
         switch (this.type) {

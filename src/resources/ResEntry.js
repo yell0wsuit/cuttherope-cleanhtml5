@@ -1,7 +1,7 @@
 /**
  * ResEntry constructor
- * @param path {string} location of the file
- * @param type {ResourceType} resource type (IMAGE, SOUND, etc)
+ * @param {string} path location of the file
+ * @param {ResourceType} type resource type (IMAGE, SOUND, etc)
  */
 class ResEntry {
     constructor(path, type, options = {}) {

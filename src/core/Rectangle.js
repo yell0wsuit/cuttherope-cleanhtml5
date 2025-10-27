@@ -5,10 +5,30 @@ import Vector from "@/core/Vector";
  * @constructor
  * @param {number} x
  * @param {number} y
- * @param w {number} width
- * @param h {number} height
+ * @param {number} w width
+ * @param {number} h height
  */
 class Rectangle {
+    /**
+     * @type {number}
+     */
+    x;
+
+    /**
+     * @type {number}
+     */
+    y;
+
+    /**
+     * @type {number}
+     */
+    w;
+
+    /**
+     * @type {number}
+     */
+    h;
+
     /**
      * @param {number} x
      * @param {number} y
@@ -39,14 +59,14 @@ class Rectangle {
     }
     /**
      * Returns true if rectangles overlap (used in collision detection)
-     * @param x1l {number}
-     * @param y1t {number}
-     * @param x1r {number}
-     * @param y1b {number}
-     * @param x2l {number}
-     * @param y2t {number}
-     * @param x2r {number}
-     * @param y2b {number}
+     * @param {number} x1l
+     * @param {number} y1t
+     * @param {number} x1r
+     * @param {number} y1b
+     * @param {number} x2l
+     * @param {number} y2t
+     * @param {number} x2r
+     * @param {number} y2b
      * @return {boolean}
      */
     static rectInRect(x1l, y1t, x1r, y1b, x2l, y2t, x2r, y2b) {
@@ -56,16 +76,16 @@ class Rectangle {
      * get intersection rectangle, it's 0,0 is in the r1 top left corner
      *
      * // first rectangle
-     * @param r1x {number}
-     * @param r1y {number}
-     * @param r1w {number}
-     * @param r1h {number}
+     * @param {number} r1x
+     * @param {number} r1y
+     * @param {number} r1w
+     * @param {number} r1h
      *
      * // second rectangle
-     * @param r2x {number}
-     * @param r2y {number}
-     * @param r2w {number}
-     * @param r2h {number}
+     * @param {number} r2x
+     * @param {number} r2y
+     * @param {number} r2w
+     * @param {number} r2h
      *
      * @return {Rectangle}
      */
@@ -102,14 +122,14 @@ class Rectangle {
     }
     /**
      * Cohen-Sutherland algorithm from russian wikipedia
-     * @param x1 {number}
-     * @param y1 {number}
-     * @param x2 {number}
-     * @param y2 {number}
-     * @param rx {number}
-     * @param ry {number}
-     * @param w {number}
-     * @param h {number}
+     * @param {number} x1
+     * @param {number} y1
+     * @param {number} x2
+     * @param {number} y2
+     * @param {number} rx
+     * @param {number} ry
+     * @param {number} w
+     * @param {number} h
      * @return {boolean}
      */
     static lineInRect(x1, y1, x2, y2, rx, ry, w, h) {
@@ -192,11 +212,11 @@ const COHEN_BOT = 4;
 const COHEN_TOP = 8;
 
 /**
- * @param x_min {number}
- * @param y_min {number}
- * @param x_max {number}
- * @param y_max {number}
- * @param p {Vector}
+ * @param {number} x_min
+ * @param {number} y_min
+ * @param {number} x_max
+ * @param {number} y_max
+ * @param {Vector} p
  * @return {number}
  */
 function vcode(x_min, y_min, x_max, y_max, p) {

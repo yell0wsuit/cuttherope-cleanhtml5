@@ -26,8 +26,8 @@ class Mover {
     }
 
     /**
-     * @param path {string}
-     * @param start {Vector}
+     * @param {string} path
+     * @param {Vector} start
      */
     setPathFromString(path, start) {
         if (path[0] === "R") {
@@ -68,7 +68,7 @@ class Mover {
     }
 
     /**
-     * @param pathPoint {Vector}
+     * @param {Vector} pathPoint
      */
     addPathPoint(pathPoint) {
         this.path.push(pathPoint);
@@ -189,10 +189,10 @@ class Mover {
 
     /**
      *
-     * @param v {number} value
-     * @param t {number} target
-     * @param speed {number}
-     * @param delta {number}
+     * @param {number} v value
+     * @param {number} t target
+     * @param {number} speed
+     * @param {number} delta
      * @return {Object}
      */
     static moveToTargetWithStatus(v, t, speed, delta) {
