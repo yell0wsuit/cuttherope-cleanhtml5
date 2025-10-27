@@ -5,7 +5,7 @@ const getQueryStrings = () => {
     const assoc = {};
     const queryString = location.search.substring(1) || "";
     const keyValues = queryString.split("&");
-    const decode = (s) => decodeURIComponent(s.replace(/\+/g, " "));
+    const decode = (/** @type {string} */ s) => decodeURIComponent(s.replace(/\+/g, " "));
 
     for (let i = 0, len = keyValues.length; i < len; i++) {
         const kv = keyValues[i].split("=");
@@ -19,7 +19,7 @@ const getQueryStrings = () => {
 const qs = getQueryStrings();
 
 // case insensitive lookup
-const urlContains = (val) => {
+const urlContains = (/** @type {string} */ val) => {
     const url = window.location.href.toLowerCase();
     return url.indexOf(val.toLowerCase()) >= 0;
 };
@@ -45,6 +45,7 @@ const QueryStrings = {
 
     // for testing
     unlockAllBoxes: import.meta.env.DEV || undefined,
+    createScoresForBox: undefined,
 };
 
 export default QueryStrings;
