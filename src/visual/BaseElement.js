@@ -52,7 +52,7 @@ class BaseElement {
         /** @type {number} */
         this.scaleY = 1;
 
-        /** type {RGBAColor} */
+        /** @type {RGBAColor} */
         this.color = RGBAColor.solidOpaque.copy();
 
         /** type {number} */
@@ -61,28 +61,30 @@ class BaseElement {
 
         /**
          * Sets the anchor on the element
-         *  type {number}
+         *  @type {number}
          */
         this.anchor = Alignment.TOP | Alignment.LEFT;
-        /** type {number} */
+        /** @type {number} */
         this.parentAnchor = Alignment.UNDEFINED;
 
-        /** type {bool} children will inherit transformations of the parent */
+        /** @type {boolean} children will inherit transformations of the parent */
         this.passTransformationsToChilds = true;
 
-        /** type {boolean} children will inherit color of the parent */
+        /** @type {boolean} children will inherit color of the parent */
         this.passColorToChilds = true;
 
-        /** type {boolean} touch events can be handled by multiple children */
+        /** @type {boolean} touch events can be handled by multiple children */
         this.passTouchEventsToAllChilds = false;
 
         /**
          * @protected
+         * @type {BaseElement[]}
          */
         this.children = [];
 
         /**
          * @protected
+         * @type {Timeline[]}
          */
         this.timelines = [];
 
@@ -92,21 +94,26 @@ class BaseElement {
         this.currentTimelineIndex = Constants.UNDEFINED;
 
         /**
-         * @type {Timeline}
+         * @type {Timeline | null}
          */
         this.currentTimeline = null;
+
+        /**
+         * @type {number}
+         */
+        this.previousAlpha = 1;
     }
 
     /**
      * @private
      */
     calculateTopLeft() {
-        const parentAnchor = this.parentAnchor,
-            parent = this.parent,
-            anchor = this.anchor;
+        const parentAnchor = this.parentAnchor;
+        const parent = this.parent;
+        const anchor = this.anchor;
 
         // align to parent
-        if (parentAnchor !== 0 /*Alignment.UNDEFINED*/) {
+        if (parentAnchor !== 0 /*Alignment.UNDEFINED*/ && parent) {
             // calculate the x offset first
             if (parentAnchor & 1 /*Alignment.LEFT*/) this.drawX = parent.drawX + this.x;
             else if (parentAnchor & 2 /*Alignment.HCENTER*/)
@@ -147,13 +154,19 @@ class BaseElement {
             ctx = Canvas.context;
 
         // save existing canvas state first and then reset
-        ctx.save();
+        if (ctx) {
+            ctx.save();
+        }
 
         // apply transformations
         if (changeScale || changeRotation) {
-            const rotationOffsetX = ~~(this.drawX + this.width / 2 + this.rotationCenterX),
-                rotationOffsetY = ~~(this.drawY + this.height / 2 + this.rotationCenterY),
-                translatedRotation = rotationOffsetX !== 0 || rotationOffsetY !== 0;
+            const rotationOffsetX = ~~(this.drawX + this.width / 2 + this.rotationCenterX);
+            const rotationOffsetY = ~~(this.drawY + this.height / 2 + this.rotationCenterY);
+            const translatedRotation = rotationOffsetX !== 0 || rotationOffsetY !== 0;
+
+            if (!ctx) {
+                return;
+            }
 
             // move to the right position in the canvas before changes
             if (translatedRotation) {
@@ -171,6 +184,10 @@ class BaseElement {
             if (translatedRotation) {
                 ctx.translate(-rotationOffsetX, -rotationOffsetY);
             }
+        }
+
+        if (!ctx) {
+            return;
         }
 
         if (changeTranslate) {
@@ -191,28 +208,32 @@ class BaseElement {
 
     drawBB() {
         const ctx = Canvas.context;
-        ctx.strokeStyle = "red";
-        ctx.strokeRect(this.drawX, this.drawY, this.width, this.height);
+        if (ctx) {
+            ctx.strokeStyle = "red";
+            ctx.strokeRect(this.drawX, this.drawY, this.width, this.height);
+        }
     }
 
     postDraw() {
-        const ctx = Canvas.context,
-            alphaChanged = this.color.a !== 1 && this.color.a !== this.previousAlpha;
+        const ctx = Canvas.context;
+        const alphaChanged = this.color.a !== 1 && this.color.a !== this.previousAlpha;
 
         // for debugging, draw vector from the origin towards 0 degrees
         if (this.drawZeroDegreesLine) {
-            const originX = this.drawX + (this.width >> 1) + this.rotationCenterX,
-                originY = this.drawY + (this.height >> 1) + this.rotationCenterY;
+            const originX = this.drawX + (this.width >> 1) + this.rotationCenterX;
+            const originY = this.drawY + (this.height >> 1) + this.rotationCenterY;
 
-            ctx.save();
-            ctx.lineWidth = 5;
-            ctx.strokeStyle = "#ff0000"; // red line
-            ctx.beginPath();
-            ctx.moveTo(originX, originY);
-            ctx.lineTo(originX, originY - 100);
-            ctx.closePath();
-            ctx.stroke();
-            ctx.restore();
+            if (ctx) {
+                ctx.save();
+                ctx.lineWidth = 5;
+                ctx.strokeStyle = "#ff0000"; // red line
+                ctx.beginPath();
+                ctx.moveTo(originX, originY);
+                ctx.lineTo(originX, originY - 100);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.restore();
+            }
         }
 
         if (!this.passTransformationsToChilds) {
@@ -220,23 +241,25 @@ class BaseElement {
                 this.drawBB();
             }
 
-            ctx.restore();
+            if (ctx) {
+                ctx.restore();
+            }
 
             if (this.passColorToChilds) {
                 // canvas state includes alpha so we have to set it again
                 if (alphaChanged) {
-                    Canvas.context.globalAlpha = this.color.a;
+                    Canvas.context && (Canvas.context.globalAlpha = this.color.a);
                 }
             }
         } else if (!this.passColorToChilds) {
             if (alphaChanged) {
-                Canvas.context.globalAlpha = this.previousAlpha;
+                Canvas.context && (Canvas.context.globalAlpha = this.previousAlpha);
             }
         }
 
         // draw children
-        const children = this.children,
-            numChildren = children.length;
+        const children = this.children;
+        const numChildren = children.length;
         for (let i = 0; i < numChildren; i++) {
             const child = children[i];
             if (child.visible) child.draw();
@@ -247,10 +270,12 @@ class BaseElement {
                 this.drawBB();
             }
 
-            ctx.restore();
+            if (ctx) {
+                ctx.restore();
+            }
         } else if (this.passColorToChilds) {
             if (alphaChanged) {
-                Canvas.context.globalAlpha = this.previousAlpha;
+                Canvas.context && (Canvas.context.globalAlpha = this.previousAlpha);
             }
         }
     }
@@ -274,11 +299,11 @@ class BaseElement {
 
     /**
      * @param {string} name
-     * @return {BaseElement}
+     * @return {BaseElement | null}
      */
     getChildWithName(name) {
-        const children = this.children,
-            numChildren = children.length;
+        const children = this.children;
+        const numChildren = children.length;
         for (let i = 0; i < numChildren; i++) {
             const child = children[i];
             if (child.name === name) return child;
@@ -293,12 +318,12 @@ class BaseElement {
     setSizeToChildsBounds() {
         this.calculateTopLeft();
 
-        let minX = this.drawX,
-            minY = this.drawY,
-            maxX = this.drawX + this.width,
-            maxY = this.drawY + this.height;
-        const children = this.children,
-            numChildren = children.length;
+        let minX = this.drawX;
+        let minY = this.drawY;
+        let maxX = this.drawX + this.width;
+        let maxY = this.drawY + this.height;
+        const children = this.children;
+        const numChildren = children.length;
 
         for (let i = 0; i < numChildren; i++) {
             const child = children[i];
@@ -343,7 +368,9 @@ class BaseElement {
                 break;
             case ActionType.JUMP_TO_TIMELINE_FRAME: {
                 const timeline = this.currentTimeline;
-                timeline.jumpToTrack(a.actionParam, a.actionSubParam);
+                if (timeline) {
+                    timeline.jumpToTrack(a.actionParam, a.actionSubParam);
+                }
                 break;
             }
             default:
@@ -363,6 +390,10 @@ class BaseElement {
         return this.children.length - 1;
     }
 
+    /**
+     * @param {BaseElement} child
+     * @param {number} index
+     */
     addChildWithID(child, index) {
         this.children[index] = child;
         child.parent = this;
@@ -417,17 +448,27 @@ class BaseElement {
         return this.children;
     }
 
+    /**
+     * @param {Timeline} timeline
+     */
     addTimeline(timeline) {
         const index = this.timelines.length;
         this.addTimelineWithID(timeline, index);
         return index;
     }
 
+    /**
+     * @param {Timeline} timeline
+     * @param {number} index
+     */
     addTimelineWithID(timeline, index) {
         timeline.element = this;
         this.timelines[index] = timeline;
     }
 
+    /**
+     * @param {number} index
+     */
     removeTimeline(index) {
         if (this.currentTimelineIndex === index) this.stopCurrentTimeline();
 
@@ -436,6 +477,9 @@ class BaseElement {
         }
     }
 
+    /**
+     * @param {number} index
+     */
     playTimeline(index) {
         if (this.currentTimeline) {
             if (this.currentTimeline.state !== Timeline.StateType.STOPPED) {
@@ -459,12 +503,16 @@ class BaseElement {
     }
 
     pauseCurrentTimeline() {
-        this.currentTimeline.pause();
+        if (this.currentTimeline) {
+            this.currentTimeline.pause();
+        }
     }
 
     stopCurrentTimeline() {
-        this.currentTimeline.stop();
-        this.currentTimeline = null;
+        if (this.currentTimeline) {
+            this.currentTimeline.stop();
+            this.currentTimeline = null;
+        }
         this.currentTimelineIndex = Constants.UNDEFINED;
     }
 
