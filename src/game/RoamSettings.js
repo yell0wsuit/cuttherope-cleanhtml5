@@ -1,31 +1,41 @@
 import edition from "@/edition";
 import PubSub from "@/utils/PubSub";
 let currentUserId = "";
-PubSub.subscribe(PubSub.ChannelId.UserIdChanged, function (userId) {
+PubSub.subscribe(PubSub.ChannelId.UserIdChanged, function (/** @type {string} */ userId) {
     currentUserId = userId;
 });
 
+/**
+ * @type {{ get: any; remove: any; set: any; } | null}
+ */
 let roamingProvider = null;
-PubSub.subscribe(PubSub.ChannelId.RoamingSettingProvider, function (provider) {
-    // copy methods (which will be minified)
-    if (provider) {
-        roamingProvider = {
-            set: provider["set"],
-            get: provider["get"],
-            remove: provider["remove"],
-        };
-    } else {
-        roamingProvider = null;
-    }
+PubSub.subscribe(
+    PubSub.ChannelId.RoamingSettingProvider,
+    function (/** @type {{ [x: string]: any; }} */ provider) {
+        // copy methods (which will be minified)
+        if (provider) {
+            roamingProvider = {
+                set: provider["set"],
+                get: provider["get"],
+                remove: provider["remove"],
+            };
+        } else {
+            roamingProvider = null;
+        }
 
-    PubSub.publish(PubSub.ChannelId.RoamingDataChanged);
-});
+        PubSub.publish(PubSub.ChannelId.RoamingDataChanged);
+    }
+);
 
 const SCORES_PREFIX = "scores",
     STARS_PREFIX = "stars",
     ACHIEVEMENTS_PREFIX = "achievements";
 
 // appends the current user's id to the key prefix
+/**
+ * @param {string} prefix
+ * @param {number} [boxIndex]
+ */
 function getFullKey(prefix, boxIndex) {
     let key = prefix;
     if (currentUserId) {
@@ -64,15 +74,19 @@ function getFullKey(prefix, boxIndex) {
     */
 
 // deserializes hex (and possibly undefined or null values) from a string
+/**
+ * @param {string} keyPrefix
+ */
 function getHexValues(keyPrefix) {
     if (!roamingProvider) {
         return null;
     }
 
-    const key = getFullKey(keyPrefix),
-        values = [],
-        rawValues = (roamingProvider.get(key) || "").split(","), // split csv
-        len = rawValues.length;
+    const key = getFullKey(keyPrefix);
+    const values = [];
+    const rawValues = (roamingProvider.get(key) || "").split(","); // split csv
+    const len = rawValues.length;
+
     let i, val;
 
     for (i = 0; i < len; i++) {
@@ -92,6 +106,10 @@ function getHexValues(keyPrefix) {
 }
 
 // serializes numbers into hex CSVs with compact nulls
+/**
+ * @param {string} keyPrefix
+ * @param {string | any[] | null} values
+ */
 function saveHexValues(keyPrefix, values) {
     if (!roamingProvider) {
         return null;
@@ -122,22 +140,36 @@ function saveHexValues(keyPrefix, values) {
     }
 }
 
+/**
+ * @param {string} keyPrefix
+ * @param {number} index
+ */
 function getValue(keyPrefix, index) {
     if (!roamingProvider) {
         return null;
     }
 
     const values = getHexValues(keyPrefix);
-    return values.length > index ? values[index] : null;
+    if (values) {
+        return values.length > index ? values[index] : null;
+    }
 }
 
+/**
+ * @param {string} keyPrefix
+ * @param {number} index
+ * @param {number | null} value
+ */
 function saveValue(keyPrefix, index, value) {
     if (!roamingProvider) {
         return;
     }
 
-    const values = getHexValues(keyPrefix),
-        prevValue = values[index];
+    const values = getHexValues(keyPrefix);
+    if (!values) {
+        return;
+    }
+    const prevValue = values[index];
 
     // only write if value has changed
     if (prevValue !== value) {
@@ -148,25 +180,50 @@ function saveValue(keyPrefix, index, value) {
 
 const RoamingSettings = {
     // scores
+    /**
+     * @param {number} boxIndex
+     * @param {number} levelIndex
+     */
     getScore(boxIndex, levelIndex) {
         return getValue(`${SCORES_PREFIX}-${boxIndex}`, levelIndex);
     },
+    /**
+     * @param {number} boxIndex
+     * @param {number} levelIndex
+     * @param {number} score
+     */
     setScore(boxIndex, levelIndex, score) {
         saveValue(`${SCORES_PREFIX}-${boxIndex}`, levelIndex, score);
     },
 
     // stars
+    /**
+     * @param {number} boxIndex
+     * @param {number} levelIndex
+     */
     getStars(boxIndex, levelIndex) {
         return getValue(`${STARS_PREFIX}-${boxIndex}`, levelIndex);
     },
+    /**
+     * @param {number} boxIndex
+     * @param {number} levelIndex
+     * @param {number} stars
+     */
     setStars(boxIndex, levelIndex, stars) {
         saveValue(`${STARS_PREFIX}-${boxIndex}`, levelIndex, stars);
     },
 
     // achievement counts
+    /**
+     * @param {number} achievementIndex
+     */
     getAchievementCount(achievementIndex) {
         return getValue(ACHIEVEMENTS_PREFIX, achievementIndex);
     },
+    /**
+     * @param {number} achievementIndex
+     * @param {number} count
+     */
     setAchievementCount(achievementIndex, count) {
         saveValue(ACHIEVEMENTS_PREFIX, achievementIndex, count);
     },
