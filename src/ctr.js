@@ -1,4 +1,4 @@
-import app from "@/app.js";
+import App from "@/app.js";
 import platform from "@/platform.js";
 import "./ctrExports.js";
 import RootController from "@/game/CTRRootController";
@@ -12,9 +12,8 @@ window.addEventListener("contextmenu", (event) => {
 
 const boot = () => {
     if (!platform.meetsRequirements()) return;
-    app.init();
-    app.domReady();
-    app.run();
+    App.domReady();
+    App.run();
 };
 
 if (document.readyState === "loading") {

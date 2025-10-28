@@ -8,32 +8,32 @@ import ZoomManager from "@/ZoomManager";
 import PubSub from "@/utils/PubSub";
 import editionUI from "@/editionUI";
 
-/**
- * @type {HTMLElement | null}
- */
-let progressBar;
-/**
- * @type {HTMLElement | null}
- */
-let betterLoader;
-/**
- * @type {HTMLElement | null}
- */
-let gameFooterSocial;
+class App {
+    constructor() {
+        /**
+         * @type {HTMLElement | null}
+         */
+        this.progressBar = null;
+        /**
+         * @type {HTMLElement | null}
+         */
+        this.betterLoader = null;
+        /**
+         * @type {HTMLElement | null}
+         */
+        this.gameFooterSocial = null;
 
-const App = {
-    // Gives the app a chance to begin working before the DOM is ready
-    init() {
+        // Gives the app a chance to begin working before the DOM is ready
         preloader.init();
         im.init();
         PubSub.publish(PubSub.ChannelId.AppInit);
-    },
+    }
 
     // Called by the loader when the DOM is loaded
     domReady() {
-        progressBar = document.getElementById("progress");
-        betterLoader = document.getElementById("betterLoader");
-        gameFooterSocial = document.getElementById("gameFooterSocial");
+        this.progressBar = document.getElementById("progress");
+        this.betterLoader = document.getElementById("betterLoader");
+        this.gameFooterSocial = document.getElementById("gameFooterSocial");
 
         // disable text selection mode in IE9
         if (settings.disableTextSelection) {
@@ -83,7 +83,7 @@ const App = {
         preloader.domReady();
         im.domReady();
         PubSub.publish(PubSub.ChannelId.AppDomReady);
-    },
+    }
 
     run() {
         // Called by the loader when the app is ready to run
@@ -92,10 +92,10 @@ const App = {
         const progressSubscription = PubSub.subscribe(
             PubSub.ChannelId.PreloaderProgress,
             (/** @type {{ progress: number; }} */ data) => {
-                if (progressBar && data && typeof data.progress === "number") {
+                if (this.progressBar && data && typeof data.progress === "number") {
                     const progress = Math.min(100, Math.max(0, data.progress));
-                    progressBar.style.transition = "width 0.3s ease-out";
-                    progressBar.style.width = `${progress}%`;
+                    this.progressBar.style.transition = "width 0.3s ease-out";
+                    this.progressBar.style.width = `${progress}%`;
                 }
             }
         );
@@ -105,17 +105,17 @@ const App = {
             PubSub.unsubscribe(progressSubscription);
 
             // Ensure progress bar is at 100%
-            if (progressBar) {
-                progressBar.style.width = "100%";
+            if (this.progressBar) {
+                this.progressBar.style.width = "100%";
             }
 
             // Hide the loader after a brief delay
             setTimeout(() => {
-                if (betterLoader) {
-                    betterLoader.style.transition = "opacity 0.5s";
-                    betterLoader.style.opacity = "0";
+                if (this.betterLoader) {
+                    this.betterLoader.style.transition = "opacity 0.5s";
+                    this.betterLoader.style.opacity = "0";
                     setTimeout(() => {
-                        betterLoader && (betterLoader.style.display = "none");
+                        this.betterLoader && (this.betterLoader.style.display = "none");
                     }, 500);
                 }
             }, 200);
@@ -153,11 +153,11 @@ const App = {
 
             // put the social links back into the footer (need to be offscreen instead of hidden during load)
 
-            if (gameFooterSocial) {
-                gameFooterSocial.style.top = "0";
+            if (this.gameFooterSocial) {
+                this.gameFooterSocial.style.top = "0";
             }
         });
-    },
-};
+    }
+}
 
-export default App;
+export default new App();
