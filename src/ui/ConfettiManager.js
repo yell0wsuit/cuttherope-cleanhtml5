@@ -126,7 +126,7 @@ class ConfettiManager {
         this.canvas = null;
         this.ctx = null;
         /**
-         * @type {Particle[]}
+         * @type {Particles[]}
          */
         this.particles = [];
         this.active = false;

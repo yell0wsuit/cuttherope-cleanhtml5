@@ -160,7 +160,7 @@ class CandyBreak extends RotateableMultiParticles {
     }
 
     /**
-     * @param {Particle} particle
+     * @param {Particles} particle
      */
     initParticle(particle) {
         super.initParticle(particle);
