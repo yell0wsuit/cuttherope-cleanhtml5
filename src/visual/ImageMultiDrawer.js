@@ -8,6 +8,9 @@ import Rectangle from "@/core/Rectangle";
  * shared source image texture
  */
 class ImageMultiDrawer extends BaseElement {
+    /**
+     * @param {Texture2D} texture
+     */
     constructor(texture) {
         super();
 
@@ -15,39 +18,66 @@ class ImageMultiDrawer extends BaseElement {
         this.numberOfQuadsToDraw = Constants.UNDEFINED;
 
         // holds the position in the texture that should be drawn
+        /**
+         * @type {Rectangle[]}
+         */
         this.texCoordinates = [];
 
         // holds the position on the canvas to render the texture quad
+        /**
+         * @type {Rectangle[]}
+         */
         this.vertices = [];
 
         // hold the alpha for each quad (if null then we assume alpha=1)
+        /**
+         * @type {(number | null | undefined)[]}
+         */
         this.alphas = [];
 
         // NOTE: in OpenGL its possible to draw multiple quads at once. In
         // canvas we'll just draw them sequentially (no need for indices buffer)
     }
 
+    /**
+     * @param {number} index
+     * @param {Rectangle} textureQuad
+     * @param {Rectangle} vertexQuad
+     * @param {number | null | undefined} [alpha]
+     */
     setTextureQuad(index, textureQuad, vertexQuad, alpha) {
         this.texCoordinates[index] = textureQuad;
         this.vertices[index] = vertexQuad;
         this.alphas[index] = alpha != null ? alpha : 1;
     }
 
+    /**
+     * @param {number} index
+     */
     removeQuads(index) {
         this.texCoordinates.splice(index, 1);
         this.vertices.splice(index, 1);
         this.alphas.splice(index, 1);
     }
 
+    /**
+     * @param {number} quadIndex
+     * @param {number} dx
+     * @param {number} dy
+     * @param {number} index
+     */
     mapTextureQuad(quadIndex, dx, dy, index) {
         this.texCoordinates[index] = Rectangle.copy(this.texture.rects[quadIndex]);
 
-        const offset = this.texture.offsets[quadIndex],
-            rect = this.texture.rects[quadIndex];
+        const offset = this.texture.offsets[quadIndex];
+        const rect = this.texture.rects[quadIndex];
         this.vertices[index] = new Rectangle(dx + offset.x, dy + offset.y, rect.w, rect.h);
         this.alphas[index] = 1;
     }
 
+    /**
+     * @param {number} n
+     */
     drawNumberOfQuads(n) {
         if (n > this.texCoordinates.length) {
             n = this.texCoordinates.length;
@@ -55,12 +85,18 @@ class ImageMultiDrawer extends BaseElement {
 
         //console.log("DRAW NO OF QUADS", n)
         const ctx = Canvas.context;
+
+        if (!ctx) {
+            return;
+        }
+
         for (let i = 0; i < n; i++) {
-            const source = this.texCoordinates[i],
-                dest = this.vertices[i],
-                previousAlpha = ctx.globalAlpha,
-                sourceW = Math.ceil(source.w),
-                sourceH = Math.ceil(source.h);
+            const source = this.texCoordinates[i];
+            const dest = this.vertices[i];
+
+            const previousAlpha = ctx.globalAlpha;
+            const sourceW = Math.ceil(source.w);
+            const sourceH = Math.ceil(source.h);
             let alpha = this.alphas[i];
 
             // verify we need to draw the source
@@ -111,11 +147,11 @@ class ImageMultiDrawer extends BaseElement {
             // }
             // else {
             // otherwise by default we snap to pixel boundaries for perf
-            const qx = ~~dest.x,
-                qy = ~~dest.y,
-                // use ceil so that we match the source when scale is equal
-                qw = 1 + ~~dest.w,
-                qh = 1 + ~~dest.h;
+            const qx = ~~dest.x;
+            const qy = ~~dest.y;
+            // use ceil so that we match the source when scale is equal
+            const qw = 1 + ~~dest.w;
+            const qh = 1 + ~~dest.h;
             //}
 
             ctx.drawImage(
@@ -153,8 +189,12 @@ class ImageMultiDrawer extends BaseElement {
 
         // only draw if the image is non-transparent
         if (this.color.a !== 0) {
-            const ctx = Canvas.context,
-                shouldTranslate = this.drawX !== 0 || this.drawY !== 0;
+            const ctx = Canvas.context;
+            const shouldTranslate = this.drawX !== 0 || this.drawY !== 0;
+
+            if (!ctx) {
+                return;
+            }
 
             if (shouldTranslate) {
                 ctx.translate(this.drawX, this.drawY);
