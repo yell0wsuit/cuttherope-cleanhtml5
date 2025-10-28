@@ -1,12 +1,20 @@
 import BaseElement from "@/visual/BaseElement";
 import GenericButton from "@/visual/GenericButton";
 import Alignment from "@/core/Alignment";
+
 const ToggleButtonId = {
     FACE1: 0,
     FACE2: 1,
 };
 
 class ToggleButton extends BaseElement {
+    /**
+     * @param {ImageElement} up1
+     * @param {ImageElement} down1
+     * @param {ImageElement} up2
+     * @param {ImageElement} down2
+     * @param {number} id
+     */
     constructor(up1, down1, up2, down2, id) {
         super();
 
@@ -30,6 +38,9 @@ class ToggleButton extends BaseElement {
         this.b2.onButtonPressed = this.onButtonPressed.bind(this);
     }
 
+    /**
+     * @param {number} n
+     */
     onButtonPressed(n) {
         switch (n) {
             case ToggleButtonId.FACE1:
@@ -42,6 +53,12 @@ class ToggleButton extends BaseElement {
         }
     }
 
+    /**
+     * @param {number} left
+     * @param {number} right
+     * @param {number} top
+     * @param {number} bottom
+     */
     setTouchIncrease(left, right, top, bottom) {
         this.b1.setTouchIncrease(left, right, top, bottom);
         this.b2.setTouchIncrease(left, right, top, bottom);
