@@ -28,9 +28,9 @@ class GameObject extends Animation {
     }
 
     setBBFromFirstQuad() {
-        const firstOffset = this.texture.offsets[0],
-            firstRect = this.texture.rects[0];
-        //noinspection JSSuspiciousNameCombination
+        const firstOffset = this.texture.offsets[0];
+        const firstRect = this.texture.rects[0];
+
         this.bb = new Rectangle(
             Math.round(firstOffset.x),
             Math.round(firstOffset.y),
@@ -122,7 +122,7 @@ class GameObject extends Animation {
         tl.rotateAround(rad, offsetX, offsetY);
         tr.rotateAround(rad, offsetX, offsetY);
         br.rotateAround(rad, offsetX, offsetY);
-        tl.rotateAround(rad, offsetX, offsetY);
+        bl.rotateAround(rad, offsetX, offsetY);
 
         const rbb = this.rbb;
         if (rbb) {
@@ -173,6 +173,11 @@ class GameObject extends Animation {
      */
     pointInObject(x, y) {
         const bb = this.bb;
+
+        if (!bb) {
+            return false;
+        }
+
         const ox = this.drawX + bb.x;
         const oy = this.drawY + bb.y;
 
@@ -180,10 +185,12 @@ class GameObject extends Animation {
     }
 
     /**
+     * Check if a rectangle intersects with this object
      * @param {number} r1x
      * @param {number} r1y
      * @param {number} r2x
      * @param {number} r2y
+     * @returns {boolean | undefined}
      */
     rectInObject(r1x, r1y, r2x, r2y) {
         if (!this.bb) {
@@ -197,13 +204,13 @@ class GameObject extends Animation {
     }
 
     /**
-     *
+     * Check if two game objects intersect
      * @param {GameObject} o1
      * @param {GameObject | Star} o2
-     * @returns
+     * @returns {boolean | undefined}
      */
     static intersect(o1, o2) {
-        if (!o1.bb) {
+        if (!o1.bb || !o2.bb) {
             return;
         }
 
