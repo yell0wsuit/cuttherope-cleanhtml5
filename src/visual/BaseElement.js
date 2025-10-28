@@ -55,8 +55,9 @@ class BaseElement {
         /** @type {RGBAColor} */
         this.color = RGBAColor.solidOpaque.copy();
 
-        /** type {number} */
+        /** @type {number} */
         this.translateX = 0;
+        /** @type {number} */
         this.translateY = 0;
 
         /**
@@ -150,20 +151,18 @@ class BaseElement {
         const changeTranslate = this.translateX !== 0 || this.translateY !== 0;
         const ctx = Canvas.context;
 
-        // save existing canvas state first and then reset
-        if (ctx) {
-            ctx.save();
+        if (!ctx) {
+            return; // Exit before any ctx operations
         }
+
+        // save existing canvas state first and then reset
+        ctx.save();
 
         // apply transformations
         if (changeScale || changeRotation) {
             const rotationOffsetX = ~~(this.drawX + this.width / 2 + this.rotationCenterX);
             const rotationOffsetY = ~~(this.drawY + this.height / 2 + this.rotationCenterY);
             const translatedRotation = rotationOffsetX !== 0 || rotationOffsetY !== 0;
-
-            if (!ctx) {
-                return;
-            }
 
             // move to the right position in the canvas before changes
             if (translatedRotation) {
@@ -181,10 +180,6 @@ class BaseElement {
             if (translatedRotation) {
                 ctx.translate(-rotationOffsetX, -rotationOffsetY);
             }
-        }
-
-        if (!ctx) {
-            return;
         }
 
         if (changeTranslate) {
@@ -400,8 +395,10 @@ class BaseElement {
      * @param {number} i index of the child to remove
      */
     removeChildWithID(i) {
-        const child = this.children.splice(i, 1);
-        child.parent = null;
+        const removed = this.children.splice(i, 1);
+        if (removed.length > 0) {
+            removed[0].parent = null;
+        }
     }
 
     removeAllChildren() {
