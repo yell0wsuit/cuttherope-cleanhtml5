@@ -133,6 +133,11 @@ function matchesPrimitiveType(value, type) {
     const normalizedType = type.toLowerCase().trim();
     const actualType = getActualType(value);
 
+    // Handle function signatures like ((t: Timeline) => void) or (arg: Type) => ReturnType
+    if (normalizedType.startsWith('(') && normalizedType.includes('=>')) {
+        return typeof value === 'function';
+    }
+
     switch (normalizedType) {
         case 'number':
             return typeof value === 'number' && !isNaN(value);
