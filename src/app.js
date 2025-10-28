@@ -8,7 +8,18 @@ import ZoomManager from "@/ZoomManager";
 import PubSub from "@/utils/PubSub";
 import editionUI from "@/editionUI";
 
-let progressBar, betterLoader, gameFooterSocial;
+/**
+ * @type {HTMLElement | null}
+ */
+let progressBar;
+/**
+ * @type {HTMLElement | null}
+ */
+let betterLoader;
+/**
+ * @type {HTMLElement | null}
+ */
+let gameFooterSocial;
 
 const App = {
     // Gives the app a chance to begin working before the DOM is ready
@@ -27,7 +38,7 @@ const App = {
         // disable text selection mode in IE9
         if (settings.disableTextSelection) {
             if (typeof document.body["onselectstart"] != "undefined") {
-                document.body["onselectstart"] = function () {
+                document.body["onselectstart"] = () => {
                     return false;
                 };
             }
@@ -50,6 +61,10 @@ const App = {
         }
 
         Canvas.domReady("c");
+
+        if (!Canvas.element) {
+            throw new Error("Canvas element not found");
+        }
 
         // set the canvas drawing dimensions
         Canvas.element.width = resolution.CANVAS_WIDTH;
@@ -74,7 +89,7 @@ const App = {
         // Subscribe to preloader progress updates
         const progressSubscription = PubSub.subscribe(
             PubSub.ChannelId.PreloaderProgress,
-            function (data) {
+            (/** @type {{ progress: number; }} */ data) => {
                 if (progressBar && data && typeof data.progress === "number") {
                     const progress = Math.min(100, Math.max(0, data.progress));
                     progressBar.style.transition = "width 0.3s ease-out";
@@ -83,7 +98,7 @@ const App = {
             }
         );
 
-        preloader.run(function () {
+        preloader.run(() => {
             // Unsubscribe from progress updates
             PubSub.unsubscribe(progressSubscription);
 
@@ -93,12 +108,12 @@ const App = {
             }
 
             // Hide the loader after a brief delay
-            setTimeout(function () {
+            setTimeout(() => {
                 if (betterLoader) {
                     betterLoader.style.transition = "opacity 0.5s";
                     betterLoader.style.opacity = "0";
-                    setTimeout(function () {
-                        betterLoader.style.display = "none";
+                    setTimeout(() => {
+                        betterLoader && (betterLoader.style.display = "none");
                     }, 500);
                 }
             }, 200);
@@ -111,7 +126,7 @@ const App = {
             hideAfterLoad.forEach((el) => {
                 el.style.transition = "opacity 0.5s";
                 el.style.opacity = "0";
-                setTimeout(function () {
+                setTimeout(() => {
                     el.style.display = "none";
                 }, 500);
             });

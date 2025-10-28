@@ -6,6 +6,10 @@ class ZoomManager {
         this.nativeWidth = 0;
         this.nativeHeight = 0;
         this.originalHeight = 270;
+        /**
+         * @type {(() => void) | undefined}
+         */
+        this.domReady = undefined;
     }
 
     /**
