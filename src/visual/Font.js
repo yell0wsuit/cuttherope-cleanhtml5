@@ -14,18 +14,34 @@ class Font extends ImageElement {
         this.kerning = null;
     }
 
+    /**
+     * @param {string} chars
+     * @param {Texture2D} charTexture
+     * @param {Object.<string, number>|null} kerningDictionary
+     * @returns {void}
+     */
     initWithVariableSizeChars(chars, charTexture, kerningDictionary) {
         this.chars = chars;
         this.initTexture(charTexture);
         this.kerning = kerningDictionary;
     }
 
+    /**
+     * @param {number} charOffset
+     * @param {number} lineOffset
+     * @param {number} spaceWidth
+     * @returns {void}
+     */
     setOffsets(charOffset, lineOffset, spaceWidth) {
         this.charOffset = charOffset;
         this.lineOffset = lineOffset;
         this.spaceWidth = spaceWidth;
     }
 
+    /**
+     * @param {string} c
+     * @returns {number}
+     */
     getCharQuad(c) {
         const charIndex = this.chars.indexOf(c);
         if (charIndex >= 0) {
@@ -38,10 +54,20 @@ class Font extends ImageElement {
         return this.chars.indexOf(".");
     }
 
+    /**
+     * @param {number} index
+     * @param {number} x
+     * @param {number} y
+     * @returns {void}
+     */
     drawQuadWOBind(index, x, y) {
-        const rect = this.texture.rects[index],
-            quadWidth = Math.ceil(rect.w),
-            quadHeight = Math.ceil(rect.h);
+        const rect = this.texture.rects[index];
+        const quadWidth = Math.ceil(rect.w);
+        const quadHeight = Math.ceil(rect.h);
+
+        if (!Canvas.context) {
+            return;
+        }
 
         Canvas.context.drawImage(
             this.texture.image,
@@ -56,6 +82,10 @@ class Font extends ImageElement {
         ); // destination coordinates
     }
 
+    /**
+     * @param {string} str
+     * @returns {number}
+     */
     stringWidth(str) {
         let strWidth = 0;
         const len = str.length;
@@ -75,10 +105,18 @@ class Font extends ImageElement {
         return Math.ceil(strWidth);
     }
 
+    /**
+     * @returns {number}
+     */
     fontHeight() {
         return this.texture.rects[0].h;
     }
 
+    /**
+     * @param {string} str
+     * @param {number} charIndex
+     * @returns {number}
+     */
     getCharOffset(str, charIndex) {
         // no offset if its the last character
         if (charIndex === str.length - 1) {
@@ -91,8 +129,8 @@ class Font extends ImageElement {
         }
 
         // see if kerning is specified for char pair or use the default offset
-        const chars = str[charIndex] + str[charIndex + 1],
-            v = this.kerning[chars];
+        const chars = str[charIndex] + str[charIndex + 1];
+        const v = this.kerning[chars];
         if (v != null) {
             return v;
         } else {
