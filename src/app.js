@@ -47,12 +47,14 @@ const App = {
         // toggle the active css class when the user clicks
         const ctrCursors = document.querySelectorAll(".ctrCursor");
         ctrCursors.forEach((cursor) => {
-            cursor.addEventListener("mousedown", () => {
-                cursor.classList.toggle("ctrCursorActive");
-            });
-            cursor.addEventListener("mouseup", () => {
-                cursor.classList.toggle("ctrCursorActive");
-            });
+            if (cursor instanceof HTMLElement) {
+                cursor.addEventListener("mousedown", () => {
+                    cursor.classList.toggle("ctrCursorActive");
+                });
+                cursor.addEventListener("mouseup", () => {
+                    cursor.classList.toggle("ctrCursorActive");
+                });
+            }
         });
 
         document.body.classList.add(`ui-${resolution.UI_WIDTH}`);
@@ -124,22 +126,26 @@ const App = {
             // fade in the game
             const hideAfterLoad = document.querySelectorAll(".hideAfterLoad");
             hideAfterLoad.forEach((el) => {
-                el.style.transition = "opacity 0.5s";
-                el.style.opacity = "0";
-                setTimeout(() => {
-                    el.style.display = "none";
-                }, 500);
+                if (el instanceof HTMLElement) {
+                    el.style.transition = "opacity 0.5s";
+                    el.style.opacity = "0";
+                    setTimeout(() => {
+                        el.style.display = "none";
+                    }, 500);
+                }
             });
 
             const hideBeforeLoad = document.querySelectorAll(".hideBeforeLoad");
             hideBeforeLoad.forEach((el) => {
-                // Make sure element is visible first
-                el.style.display = el.style.display || "block";
-                el.style.opacity = "0";
-                el.style.transition = "opacity 0.5s";
-                // Trigger reflow before starting fade
-                el.offsetHeight;
-                el.style.opacity = "1";
+                if (el instanceof HTMLElement) {
+                    // Make sure element is visible first
+                    el.style.display = el.style.display || "block";
+                    el.style.opacity = "0";
+                    el.style.transition = "opacity 0.5s";
+                    // Trigger reflow before starting fade
+                    el.offsetHeight;
+                    el.style.opacity = "1";
+                }
             });
 
             // show hide behind the scenes when we first load
