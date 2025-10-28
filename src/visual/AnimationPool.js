@@ -10,9 +10,15 @@ class AnimationPool extends BaseElement {
 
         // keeps track of child elements whose timeline has completed
         // and can be removed
+        /**
+         * @type {(BaseElement)[]}
+         */
         this.removeList = [];
     }
 
+    /**
+     * @param {number} delta
+     */
     update(delta) {
         // remove the children
         for (let i = 0, len = this.removeList.length; i < len; i++) {
@@ -37,7 +43,7 @@ class AnimationPool extends BaseElement {
     timelineFinishedDelegate() {
         // save a reference to ourselves since we may be called in a
         // different context (typically by another class)
-        return (timeline) => {
+        return (/** @type {Timeline} */ timeline) => {
             this.timelineFinished(timeline);
         };
     }
@@ -55,7 +61,7 @@ class AnimationPool extends BaseElement {
     particlesFinishedDelegate() {
         // save a reference to ourselves since we may be called in a
         // different context (typically by another class)
-        return (particles) => {
+        return (/** @type {Particles} */ particles) => {
             this.particlesFinished(particles);
         };
     }
