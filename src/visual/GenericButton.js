@@ -6,6 +6,9 @@ import Alignment from "@/core/Alignment";
 const TOUCH_MOVE_AND_UP_ZONE_INCREASE = 15;
 
 class GenericButton extends BaseElement {
+    /**
+     * @param {number} id
+     */
     constructor(id) {
         super();
 
@@ -17,6 +20,9 @@ class GenericButton extends BaseElement {
         this.touchTopInc = 0.0;
         this.touchBottomInc = 0.0;
 
+        /**
+         * @type {((n: number) => void) | null}
+         */
         this.onButtonPressed = null;
 
         this.forcedTouchZone = new Rectangle(
@@ -27,6 +33,10 @@ class GenericButton extends BaseElement {
         );
     }
 
+    /**
+     * @param {ImageElement} up
+     * @param {ImageElement} down
+     */
     initWithElements(up, down) {
         up.parentAnchor = down.parentAnchor = Alignment.TOP | Alignment.LEFT;
         this.addChildWithID(up, GenericButton.StateType.UP);
@@ -34,6 +44,10 @@ class GenericButton extends BaseElement {
         this.setState(GenericButton.StateType.UP);
     }
 
+    /**
+     * @param {Texture2D} upTexture
+     * @param {Texture2D} downTexture
+     */
     initWithTextures(upTexture, downTexture) {
         const up = new ImageElement();
         up.initTexture(upTexture);
@@ -44,10 +58,19 @@ class GenericButton extends BaseElement {
         this.initWithElements(up, down);
     }
 
+    /**
+     * @param {Rectangle} rect
+     */
     forceTouchRect(rect) {
         this.forcedTouchZone = rect;
     }
 
+    /**
+     * @param {number} left
+     * @param {number} right
+     * @param {number} top
+     * @param {number} bottom
+     */
     setTouchIncrease(left, right, top, bottom) {
         this.touchLeftInc = left;
         this.touchRightInc = right;
@@ -55,6 +78,9 @@ class GenericButton extends BaseElement {
         this.touchBottomInc = bottom;
     }
 
+    /**
+     * @param {number} s
+     */
     setState(s) {
         this.state = s;
         const up = this.getChild(GenericButton.StateType.UP),
@@ -64,6 +90,11 @@ class GenericButton extends BaseElement {
         down.setEnabled(s === GenericButton.StateType.DOWN);
     }
 
+    /**
+     * @param {number} tx
+     * @param {number} ty
+     * @param {boolean} td
+     */
     isInTouchZone(tx, ty, td) {
         const tzIncrease = td ? 0 : TOUCH_MOVE_AND_UP_ZONE_INCREASE;
 
@@ -88,6 +119,10 @@ class GenericButton extends BaseElement {
         }
     }
 
+    /**
+     * @param {number} tx
+     * @param {number} ty
+     */
     onTouchDown(tx, ty) {
         super.onTouchDown(tx, ty);
 
@@ -101,6 +136,10 @@ class GenericButton extends BaseElement {
         return false;
     }
 
+    /**
+     * @param {number} tx
+     * @param {number} ty
+     */
     onTouchUp(tx, ty) {
         super.onTouchUp(tx, ty);
 
@@ -117,6 +156,10 @@ class GenericButton extends BaseElement {
         return false;
     }
 
+    /**
+     * @param {number} tx
+     * @param {number} ty
+     */
     onTouchMove(tx, ty) {
         super.onTouchMove(tx, ty);
 
@@ -131,6 +174,10 @@ class GenericButton extends BaseElement {
         return false;
     }
 
+    /**
+     * @param {BaseElement} child
+     * @param {number} id
+     */
     addChildWithID(child, id) {
         super.addChildWithID(child, id);
 
