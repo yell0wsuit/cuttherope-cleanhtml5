@@ -20,7 +20,7 @@ class GameObject extends Animation {
     initTexture(texture) {
         super.initTexture(texture);
         this.bb = new Rectangle(0, 0, this.width, this.height);
-        this.rbb = new Quad2D(this.bb.x, this.bb.y, this.bb.width, this.bb.height);
+        this.rbb = new Quad2D(this.bb.x, this.bb.y, this.bb.w, this.bb.h);
         this.anchor = Alignment.CENTER;
 
         this.rotatedBB = false;
@@ -37,7 +37,7 @@ class GameObject extends Animation {
             firstRect.width,
             firstRect.height
         );
-        this.rbb = new Quad2D(this.bb.x, this.bb.y, this.bb.width, this.bb.height);
+        this.rbb = new Quad2D(this.bb.x, this.bb.y, this.bb.w, this.bb.h);
     }
 
     /**
