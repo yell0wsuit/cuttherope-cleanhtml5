@@ -17,11 +17,11 @@ class HorizontallyTiledImage extends ImageElement {
         /**
          * @type {number[]}
          */
-        this.tiles = [];
+        this.tiles = [0, 0, 0];
         /**
          * @type {number[]}
          */
-        this.offsets = [];
+        this.offsets = [0, 0, 0];
         this.align = Alignment.CENTER;
     }
 
