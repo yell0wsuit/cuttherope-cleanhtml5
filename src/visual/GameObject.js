@@ -143,26 +143,25 @@ class GameObject extends Animation {
         const drawY = this.drawY;
         const bb = this.bb;
         const rbb = this.rbb;
-        if (ctx) {
-            ctx.strokeStyle = "red";
-            ctx.lineWidth = 2;
-            if (this.rotatedBB) {
-                ctx.beginPath();
-                if (rbb) {
-                    ctx.moveTo(drawX + rbb.tlX, drawY + rbb.tlY);
-                    ctx.lineTo(drawX + rbb.trX, drawY + rbb.trY);
-                    ctx.lineTo(drawX + rbb.brX, drawY + rbb.brY);
-                    ctx.lineTo(drawX + rbb.blX, drawY + rbb.blY);
-                    ctx.stroke();
-                    ctx.closePath();
-                }
-            } else {
-                if (!bb) {
-                    return;
-                }
 
-                ctx.strokeRect(drawX + bb.x, drawY + bb.y, bb.w, bb.h);
+        if (!ctx || !bb) {
+            return; // Exit early before any ctx operations
+        }
+
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 2;
+        if (this.rotatedBB) {
+            ctx.beginPath();
+            if (rbb) {
+                ctx.moveTo(drawX + rbb.tlX, drawY + rbb.tlY);
+                ctx.lineTo(drawX + rbb.trX, drawY + rbb.trY);
+                ctx.lineTo(drawX + rbb.brX, drawY + rbb.brY);
+                ctx.lineTo(drawX + rbb.blX, drawY + rbb.blY);
+                ctx.stroke();
+                ctx.closePath();
             }
+        } else {
+            ctx.strokeRect(drawX + bb.x, drawY + bb.y, bb.w, bb.h);
         }
     }
 
