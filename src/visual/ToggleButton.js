@@ -20,6 +20,12 @@ class ToggleButton extends BaseElement {
 
         this.buttonId = id;
 
+        /**
+         * Callback function when button is pressed
+         * @type {((buttonId: number) => void)|null}
+         */
+        this.onButtonPressedCallback = null;
+
         this.b1 = new GenericButton(ToggleButtonId.FACE1);
         this.b1.initWithElements(up1, down1);
 
@@ -39,7 +45,8 @@ class ToggleButton extends BaseElement {
     }
 
     /**
-     * @param {number} n
+     * Internal method called when either button face is pressed
+     * @param {number} n - The button face ID that was pressed
      */
     onButtonPressed(n) {
         switch (n) {
@@ -48,8 +55,8 @@ class ToggleButton extends BaseElement {
                 this.toggle();
                 break;
         }
-        if (this.onButtonPressed) {
-            this.onButtonPressed(this.buttonId);
+        if (this.onButtonPressedCallback) {
+            this.onButtonPressedCallback(this.buttonId);
         }
     }
 
