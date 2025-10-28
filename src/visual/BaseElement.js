@@ -335,7 +335,7 @@ class BaseElement {
     }
 
     /**
-     * @param {ActionData} a action data
+     * @param {Action} a action data
      * @return {boolean} true if an action was handled
      */
     handleAction(a) {

@@ -56,7 +56,7 @@ class Particles extends BaseElement {
 
         this.totalParticles = numParticles;
         /**
-         * @type {any[]}
+         * @type {Particle[]}
          */
         this.particles = [];
 
@@ -134,7 +134,7 @@ class Particles extends BaseElement {
         this.vertices = [];
         // Array of colors
         /**
-         * @type {any[]}
+         * @type {RGBAColor[]}
          */
         this.colors = [];
 
@@ -171,9 +171,9 @@ class Particles extends BaseElement {
         particle.pos.y = this.y + this.posVar.y * MathHelper.randomMinus1to1();
         particle.startPos.copyFrom(particle.pos);
 
-        const a = Radians.fromDegrees(this.angle + this.angleVar * MathHelper.randomMinus1to1()),
-            v = new Vector(Math.cos(a), Math.sin(a)),
-            s = this.speed + this.speedVar * MathHelper.randomMinus1to1();
+        const a = Radians.fromDegrees(this.angle + this.angleVar * MathHelper.randomMinus1to1());
+        const v = new Vector(Math.cos(a), Math.sin(a));
+        const s = this.speed + this.speedVar * MathHelper.randomMinus1to1();
 
         // direction
         v.multiply(s);
@@ -264,7 +264,7 @@ class Particles extends BaseElement {
     }
 
     /**
-     * @param {{ pos: { x: any; y: any; copy: () => any; add: (arg0: Vector) => void; }; radialAccel: any; tangentialAccel: any; dir: Vector; }} p
+     * @param {Particle} p
      * @param {number} delta
      */
     updateParticleLocation(p, delta) {
@@ -298,10 +298,11 @@ class Particles extends BaseElement {
     }
 
     /**
-     * @param {{ pos: { x: any; y: any; }; size: any; color: any; }} particle
+     * @param {Particle} particle
      * @param {number} index
+     * @param {number} delta
      */
-    updateParticle(particle, index) {
+    updateParticle(particle, index, delta) {
         this.vertices[this.particleIdx] = new PointSprite(
             particle.pos.x,
             particle.pos.y,
