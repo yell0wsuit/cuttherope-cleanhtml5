@@ -38,8 +38,9 @@ class MultiParticles extends Particles {
     /**
      * @param {Particle} particle
      * @param {number} index
+     * @param {number} delta
      */
-    updateParticle(particle, index) {
+    updateParticle(particle, index, delta) {
         // update the current position
         this.drawer.vertices[index] = new Rectangle(
             particle.pos.x - particle.width / 2,

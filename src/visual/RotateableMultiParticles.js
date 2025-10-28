@@ -4,6 +4,10 @@ import MathHelper from "@/utils/MathHelper";
 import Vector from "@/core/Vector";
 
 class RotateableMultiParticles extends MultiParticles {
+    /**
+     * @param {number} numParticles
+     * @param {Texture2D} texture
+     */
     constructor(numParticles, texture) {
         super(numParticles, texture);
         this.drawer.rotationAngles = [];
@@ -22,17 +26,29 @@ class RotateableMultiParticles extends MultiParticles {
         this.drawer.rotationPositions[index] = new Vector(0, 0);
     }
 
+    /**
+     * @param {Vector} v
+     * @param {number} cosA
+     * @param {number} sinA
+     * @param {number} cx
+     * @param {number} cy
+     */
     rotatePreCalc(v, cosA, sinA, cx, cy) {
         v.x -= cx;
         v.y -= cy;
 
-        const nx = v.x * cosA - v.y * sinA,
-            ny = v.x * sinA + v.y * cosA;
+        const nx = v.x * cosA - v.y * sinA;
+        const ny = v.x * sinA + v.y * cosA;
 
         v.x = nx + cx;
         v.y = ny + cy;
     }
 
+    /**
+     * @param {Particle} particle
+     * @param {number} index
+     * @param {number} delta
+     */
     updateParticle(particle, index, delta) {
         super.updateParticle(particle, index, delta);
         particle.angle += particle.deltaAngle * delta;
@@ -42,6 +58,9 @@ class RotateableMultiParticles extends MultiParticles {
         this.drawer.rotationPositions[index].copyFrom(particle.pos);
     }
 
+    /**
+     * @param {number} index
+     */
     removeParticle(index) {
         this.drawer.rotationAngles.splice(index, 1);
         this.drawer.rotationPositions.splice(index, 1);
