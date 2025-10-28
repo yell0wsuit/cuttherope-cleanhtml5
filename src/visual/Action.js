@@ -13,7 +13,7 @@ class ActionData {
 
 class Action {
     /**
-     * @param {GameObject | Animation} target
+     * @param {Object} target
      * @param {ActionData} data
      */
     constructor(target, data) {
@@ -36,7 +36,7 @@ class Action {
         this.actionSubParam = 0;
     }
     /**
-     * @param {GameObject | Animation} target
+     * @param {Object} target
      * @param {string} actionName
      * @param {number} param
      * @param {number} subParam

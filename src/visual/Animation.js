@@ -150,7 +150,7 @@ class Animation extends ImageElement {
 
     /**
      * @param {string} actionName
-     * @param {Animation | GameObject} target
+     * @param {Object} target
      * @param {number} param
      * @param {number} subParam
      * @param {number} index
