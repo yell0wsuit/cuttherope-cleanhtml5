@@ -135,6 +135,7 @@ class Animation extends ImageElement {
     setDelay(delay, index, animationId) {
         const timeline = this.getTimeline(animationId);
         const track = timeline.getTrack(TrackType.ACTION);
+        if (!track) return;
         const kf = track.keyFrames[index];
         kf.timeOffset = delay;
     }
@@ -158,6 +159,7 @@ class Animation extends ImageElement {
     setAction(actionName, target, param, subParam, index, animationId) {
         const timeline = this.getTimeline(animationId);
         const track = timeline.getTrack(TrackType.ACTION);
+        if (!track) return;
         const kf = track.keyFrames[index];
         const action = Action.create(target, actionName, param, subParam);
 
