@@ -10,6 +10,11 @@ import Radians from "@/utils/Radians";
  * @constructor
  */
 class PointSprite {
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} size
+     */
     constructor(x, y, size) {
         this.x = x;
         this.y = y;
@@ -41,12 +46,18 @@ class Particle {
 }
 
 class Particles extends BaseElement {
+    /**
+     * @param {number} numParticles
+     */
     constructor(numParticles) {
         super();
         this.width = resolution.CANVAS_WIDTH;
         this.height = resolution.CANVAS_HEIGHT;
 
         this.totalParticles = numParticles;
+        /**
+         * @type {any[]}
+         */
         this.particles = [];
 
         // not active by default
@@ -111,17 +122,29 @@ class Particles extends BaseElement {
         this.emitCounter = 0;
 
         // Texture of the particles
+        /**
+         * @type {Texture2D | null}
+         */
         this.texture = null;
 
         // Array of (x,y,size)
+        /**
+         * @type {PointSprite[]}
+         */
         this.vertices = [];
         // Array of colors
+        /**
+         * @type {any[]}
+         */
         this.colors = [];
 
         //  particle idx
         this.particleIdx = 0;
 
         // callback when particle system has finished
+        /**
+         * @type {((arg0: this) => void) | null}
+         */
         this.onFinished = null;
     }
 
@@ -140,6 +163,9 @@ class Particles extends BaseElement {
         return true;
     }
 
+    /**
+     * @param {Particle} particle
+     */
     initParticle(particle) {
         particle.pos.x = this.x + this.posVar.x * MathHelper.randomMinus1to1();
         particle.pos.y = this.y + this.posVar.y * MathHelper.randomMinus1to1();
@@ -189,6 +215,9 @@ class Particles extends BaseElement {
         particle.size = this.size + this.sizeVar * MathHelper.randomMinus1to1();
     }
 
+    /**
+     * @param {number} delta
+     */
     update(delta) {
         super.update(delta);
         if (this.onFinished) {
@@ -234,6 +263,10 @@ class Particles extends BaseElement {
         }
     }
 
+    /**
+     * @param {{ pos: { x: any; y: any; copy: () => any; add: (arg0: Vector) => void; }; radialAccel: any; tangentialAccel: any; dir: Vector; }} p
+     * @param {number} delta
+     */
     updateParticleLocation(p, delta) {
         let radial;
 
@@ -264,6 +297,10 @@ class Particles extends BaseElement {
         p.pos.add(tmp);
     }
 
+    /**
+     * @param {{ pos: { x: any; y: any; }; size: any; color: any; }} particle
+     * @param {number} index
+     */
     updateParticle(particle, index) {
         this.vertices[this.particleIdx] = new PointSprite(
             particle.pos.x,
@@ -274,10 +311,16 @@ class Particles extends BaseElement {
         this.colors[this.particleIdx] = particle.color;
     }
 
+    /**
+     * @param {number} index
+     */
     removeParticle(index) {
         this.particles.splice(index, 1);
     }
 
+    /**
+     * @param {number} initialParticles
+     */
     startSystem(initialParticles) {
         this.particles.length = 0;
         for (let i = 0; i < initialParticles; i++) {
@@ -302,8 +345,13 @@ class Particles extends BaseElement {
 
         // only draw if the image is non-transparent
         if (this.color.a !== 0) {
-            const ctx = Canvas.context,
-                image = this.texture.image;
+            const ctx = Canvas.context;
+            const image = this.texture.image;
+
+            if (!ctx) {
+                return;
+            }
+
             for (let i = 0, len = this.particleIdx; i < len; i++) {
                 const p = this.particles[i];
                 ctx.drawImage(image, Math.round(p.x), Math.round(p.y));
