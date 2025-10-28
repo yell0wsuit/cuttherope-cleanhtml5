@@ -205,8 +205,8 @@ class GameObject extends Animation {
 
     /**
      * Check if two game objects intersect
-     * @param {GameObject} o1
-     * @param {GameObject | Star} o2
+     * @param {Object} o1
+     * @param {Object} o2
      * @returns {boolean | undefined}
      */
     static intersect(o1, o2) {
