@@ -9,19 +9,18 @@ import RootController from "@/game/CTRRootController";
 import Lang from "@/resources/Lang";
 import MenuStringId from "@/resources/MenuStringId";
 import { drawOmNom } from "@/ui/EasterEggOmNom";
-import dom from "@/utils/dom";
 
-const canvas = dom.getElement("#e");
-const devCanvas = dom.getElement("#moreCanvas");
-const dShareBtn = dom.getElement("#dshareBtn");
-const drawingElement = dom.getElement("#d");
-const moreLink = dom.getElement("#moreLink");
-const d = dom.getElement("#d");
-const dframe = dom.getElement("#dframe");
-const dmsg = dom.getElement("#dmsg");
-const dshareBtn = dom.getElement("#dshareBtn");
-const dpic = dom.getElement("#dpic");
-const gameBtnTray = dom.getElement("#gameBtnTray");
+const canvas = document.querySelector("#e");
+const devCanvas = document.querySelector("#moreCanvas");
+const dShareBtn = document.querySelector("#dshareBtn");
+const drawingElement = document.querySelector("#d");
+const moreLink = document.querySelector("#moreLink");
+const d = document.querySelector("#d");
+const dframe = document.querySelector("#dframe");
+const dmsg = document.querySelector("#dmsg");
+const dshareBtn = document.querySelector("#dshareBtn");
+const dpic = document.querySelector("#dpic");
+const gameBtnTray = document.querySelector("#gameBtnTray");
 
 class EasterEggManager {
     constructor() {
@@ -42,12 +41,16 @@ class EasterEggManager {
                 return Promise.resolve();
             }
             if (display) {
-                dom.show(element, display);
+                element.style.removeProperty("display");
+                const computedDisplay = window.getComputedStyle(element).display;
+                if (computedDisplay === "none") {
+                    element.style.display = display;
+                }
             }
             const startOpacity =
                 from !== null ? from : Number.parseFloat(getComputedStyle(element).opacity) || 0;
             if (from !== null) {
-                dom.setStyle(element, "opacity", from);
+                element.style.opacity = String(from);
             }
             const animation = element.animate([{ opacity: startOpacity }, { opacity: to }], {
                 duration,
@@ -59,7 +62,7 @@ class EasterEggManager {
                 .catch(() => {})
                 .then(() => {
                     if (to === 0 && display === "none") {
-                        dom.hide(element);
+                        element.style.display = "none";
                     }
                 });
         };
@@ -152,7 +155,7 @@ class EasterEggManager {
                     const resolvedDisplay = getComputedStyle(gameBtnTray).display;
                     gameBtnTrayDisplay = resolvedDisplay === "none" ? "" : resolvedDisplay;
                 }
-                dom.hide(gameBtnTray);
+                gameBtnTray.style.display = "none";
             }
 
             if (dpic) {
@@ -170,21 +173,21 @@ class EasterEggManager {
             if (dframe) {
                 dframe.style.top = frameTopStart;
                 dframe.style.transform = "scale(0.35)";
-                dom.setStyle(dframe, "opacity", "0");
+                dframe.style.opacity = "0";
             }
             if (dmsg) {
                 dmsg.style.top = msgTopStart;
                 dmsg.style.transform = "scale(0.5)";
-                dom.setStyle(dmsg, "opacity", "0");
+                dmsg.style.opacity = "0";
             }
             if (dshareBtn) {
-                dom.setStyle(dshareBtn, "opacity", "0");
+                dshareBtn.style.opacity = "0";
                 dshareBtn.style.pointerEvents = "none";
             }
 
             fadeElementCustom(d, { from: 0, to: 1, duration: 100, display: "block" }).then(() => {
                 if (dframe) {
-                    dom.setStyle(dframe, "opacity", "1");
+                    dframe.style.opacity = "1";
                     animateElement(
                         dframe,
                         [
@@ -198,7 +201,7 @@ class EasterEggManager {
                     });
                 }
                 if (dmsg) {
-                    dom.setStyle(dmsg, "opacity", "1");
+                    dmsg.style.opacity = "1";
                     animateElement(
                         dmsg,
                         [
@@ -214,7 +217,7 @@ class EasterEggManager {
                 if (dshareBtn) {
                     setTimeout(() => {
                         fadeElementCustom(dshareBtn, { from: 0, to: 1, duration: 200 }).then(() => {
-                            dom.setStyle(dshareBtn, "opacity", "1");
+                            dshareBtn.style.opacity = "1";
                             dshareBtn.style.pointerEvents = "";
                         });
                     }, 600);
@@ -232,7 +235,7 @@ class EasterEggManager {
             if (dshareBtn) {
                 dshareBtn.style.pointerEvents = "none";
                 fadeElementCustom(dshareBtn, { from: 1, to: 0, duration: 200 }).then(() => {
-                    dom.setStyle(dshareBtn, "opacity", "0");
+                    dshareBtn.style.opacity = "0";
                 });
             }
 
@@ -267,13 +270,17 @@ class EasterEggManager {
             setTimeout(() => {
                 fadeElementCustom(d, { from: 1, to: 0, duration: 200 }).then(() => {
                     if (d) {
-                        dom.hide(d);
-                        dom.setStyle(d, "opacity", "");
+                        d.style.display = "none";
+                        d.style.opacity = "";
                     }
                     RootController.resumeLevel();
                     drawingNum = null;
                     if (gameBtnTray) {
-                        dom.show(gameBtnTray, gameBtnTrayDisplay || "");
+                        gameBtnTray.style.removeProperty("display");
+                        const computedDisplay = window.getComputedStyle(gameBtnTray).display;
+                        if (computedDisplay === "none") {
+                            gameBtnTray.style.display = gameBtnTrayDisplay || "";
+                        }
                     }
                 });
             }, 200);
@@ -480,7 +487,7 @@ class EasterEggManager {
                         fadeElementCustom(canvas, { from: 1, to: 0, duration: 200 }).then(() => {
                             ctx.setTransform(1, 0, 0, 1, 0, 0);
                             ctx.clearRect(0, 0, canvas.width, canvas.height);
-                            dom.hide(canvas);
+                            canvas.style.display = "none";
                         });
                         RootController.resumeLevel();
                     }
