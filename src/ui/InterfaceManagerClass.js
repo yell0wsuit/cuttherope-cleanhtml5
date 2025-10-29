@@ -1,4 +1,4 @@
-import resolution from "@/resolution";
+import settings from "@/game/CTRSettings";
 import PubSub from "@/utils/PubSub";
 import QueryStrings from "@/ui/QueryStrings";
 import dom from "@/utils/dom";
@@ -13,7 +13,7 @@ const { toggleClass } = dom;
 
 class InterfaceManager {
     constructor() {
-        this.useHDVersion = resolution.isHD;
+        this.useHDVersion = settings.getIsHD();
         this.isInLevelSelectMode = false;
         this.isInMenuSelectMode = false;
         this.isInAdvanceBoxMode = false;
