@@ -190,6 +190,7 @@ panels.push(new Panel(PanelId.ACHIEVEMENTS, "achievementsPanel", "menuBackground
 panels.push(PasswordPanel);
 
 const PanelManager = {
+    /** @type {((panelId: number) => void) | null} */
     onShowPanel: null,
     currentPanelId: PanelId.MENU,
 
