@@ -13,20 +13,19 @@ import MenuStringId from "@/resources/MenuStringId";
 import edition from "@/edition";
 import Alignment from "@/core/Alignment";
 import Dialogs from "@/ui/Dialogs";
-import dom from "@/utils/dom";
-const {
+import {
+    getElement,
     addClass,
+    removeClass,
+    toggleClass,
+    show,
+    hide,
+    empty,
     append,
-    delay,
     fadeIn,
     fadeOut,
-    getElement,
-    hide,
-    removeClass,
-    show,
-    toggleClass,
-    empty,
-} = dom;
+    delay,
+} from "@/utils/domHelpers";
 
 const backgroundId = edition.levelBackgroundId || "levelBackground",
     LevelPanel = new Panel(PanelId.LEVELS, "levelPanel", backgroundId, true);

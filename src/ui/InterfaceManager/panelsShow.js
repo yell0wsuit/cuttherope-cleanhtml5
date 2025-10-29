@@ -11,10 +11,8 @@ import Lang from "@/resources/Lang";
 import MenuStringId from "@/resources/MenuStringId";
 import Text from "@/visual/Text";
 import PubSub from "@/utils/PubSub";
-import dom from "@/utils/dom";
 import { MENU_MUSIC_ID } from "@/ui/InterfaceManager/constants";
-
-const { hide, append, empty, getElement } = dom;
+import { hide, append, empty, getElement } from "@/utils/domHelpers";
 
 const congratsElement = getElement("#congrats");
 

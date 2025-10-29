@@ -21,12 +21,9 @@ import SocialHelper from "@/ui/SocialHelper";
 import GameBorder from "@/ui/GameBorder";
 import Doors from "@/Doors";
 import Dialogs from "@/ui/Dialogs";
-import dom from "@/utils/dom";
 import analytics from "@/analytics";
 import { getDefaultBoxIndex } from "@/ui/InterfaceManager/constants";
-
-const { addClass, append, empty, fadeIn, fadeOut, hide, hover, on, removeClass, stopAnimations } =
-    dom;
+import { addClass, append, empty, fadeIn, fadeOut, hide, hover, on, removeClass, stopAnimations } from "@/utils/domHelpers";
 
 /**
  * @param {InterfaceManager} manager

@@ -1,15 +1,13 @@
 import settings from "@/game/CTRSettings";
 import PubSub from "@/utils/PubSub";
 import QueryStrings from "@/ui/QueryStrings";
-import dom from "@/utils/dom";
 import createAudioOptions from "@/ui/InterfaceManager/audioOptions";
 import { setImageBigText } from "@/ui/InterfaceManager/text";
 import createPanelInitializer from "@/ui/InterfaceManager/panelsInitialize";
 import createPanelShowHandler from "@/ui/InterfaceManager/panelsShow";
 import createGameFlow from "@/ui/InterfaceManager/gameFlow";
 import createResultsHandler from "@/ui/InterfaceManager/results";
-
-const { toggleClass } = dom;
+import { toggleClass } from "@/utils/domHelpers";
 
 class InterfaceManager {
     constructor() {

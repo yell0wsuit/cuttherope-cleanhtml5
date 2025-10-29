@@ -12,14 +12,11 @@ import RootController from "@/game/CTRRootController";
 import Doors from "@/Doors";
 import PubSub from "@/utils/PubSub";
 import EasterEggManager from "@/ui/EasterEggManager";
-import dom from "@/utils/dom";
 import settings from "@/game/CTRSettings";
 import SnowfallOverlay from "@/ui/SnowfallOverlay";
 import { IS_XMAS } from "@/resources/ResData";
 import { MENU_MUSIC_ID, startSnow, stopSnow } from "@/ui/InterfaceManager/constants";
-import BoxDoors from "../../Doors";
-
-const { fadeIn, fadeOut, delay, show, hide, text, width, getElement } = dom;
+import { fadeIn, fadeOut, delay, show, hide, getElement, text, width } from "@/utils/domHelpers";
 
 const levelResults = getElement("#levelResults");
 const levelMenu = getElement("#levelMenu");
