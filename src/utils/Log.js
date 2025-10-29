@@ -4,7 +4,7 @@ const Log = {
      */
     debug(message) {
         if (import.meta.env.DEV) {
-            console.log(message);
+            console.log(`CTR debug: ${message}`);
         }
     },
     /**
@@ -12,7 +12,7 @@ const Log = {
      */
     alert(message) {
         if (import.meta.env.DEV) {
-            alert(message);
+            console.error(`CTR encountered an error: ${message}`);
             Log.debug(message);
         }
     },
