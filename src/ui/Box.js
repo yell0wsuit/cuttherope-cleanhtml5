@@ -13,6 +13,9 @@ import settings from "@/game/CTRSettings";
 import { IS_XMAS } from "@/resources/ResData";
 
 // cache upgrade UI elements
+/**
+ * @type {HTMLElement | null}
+ */
 let upgradeButton;
 
 function initializeUpgradeButton() {
@@ -35,8 +38,8 @@ function hidePurchaseButton() {
         upgradeButton.style.transition = "opacity 200ms";
         upgradeButton.style.opacity = "0";
         setTimeout(() => {
-            upgradeButton.style.display = "none";
-            upgradeButton.style.opacity = "1"; // Reset for next time
+            upgradeButton && (upgradeButton.style.display = "none");
+            upgradeButton && (upgradeButton.style.opacity = "1"); // Reset for next time
         }, 200);
     }
 }
@@ -52,7 +55,7 @@ function showPurchaseButton() {
     }
 }
 
-PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, function (paid) {
+PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, function (/** @type {boolean} */ paid) {
     if (paid) {
         hidePurchaseButton();
     }
@@ -70,6 +73,13 @@ PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
 const boxImageBase = platform.boxImageBaseUrl || platform.uiImageBaseUrl;
 
 class Box {
+    /**
+     * @param {number} boxIndex
+     * @param {string} bgimg
+     * @param {number} reqstars
+     * @param {boolean} islocked
+     * @param {any} type
+     */
     constructor(boxIndex, bgimg, reqstars, islocked, type) {
         this.index = boxIndex;
         this.islocked = islocked;
@@ -140,6 +150,10 @@ class Box {
         return true;
     }
 
+    /**
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {any} omnomoffset
+     */
     draw(ctx, omnomoffset) {
         const prevAlpha = ctx.globalAlpha;
         if (this.opacity !== prevAlpha) {
@@ -155,6 +169,10 @@ class Box {
         }
     }
 
+    /**
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} omnomoffset
+     */
     render(ctx, omnomoffset) {
         const isGameBox = this.isGameBox();
         const yOffset = resolution.uiScaledNumber(this.yOffset || 0);
@@ -276,6 +294,9 @@ class Box {
         ctx.drawImage(this.textImg, x, y);
     }
 
+    /**
+     * @param {CanvasRenderingContext2D} ctx
+     */
     bounce(ctx) {
         if (!ctx) {
             return;
@@ -284,11 +305,11 @@ class Box {
         this.bounceStartTime = Date.now();
 
         // stage boundaries in msec
-        const s1 = 100,
-            s2 = 300,
-            s3 = 600,
-            w = resolution.uiScaledNumber(1024),
-            h = resolution.uiScaledNumber(576);
+        const s1 = 100;
+        const s2 = 300;
+        const s3 = 600;
+        const w = resolution.uiScaledNumber(1024);
+        const h = resolution.uiScaledNumber(576);
 
         const renderBounce = () => {
             // get the elapsed time
