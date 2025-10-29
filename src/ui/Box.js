@@ -161,7 +161,7 @@ class Box {
         }
 
         // render the box
-        this.render(ctx, omnomoffset ?? 0);
+        this.render(ctx, omnomoffset);
 
         // restore alpha
         if (this.opacity !== prevAlpha) {
