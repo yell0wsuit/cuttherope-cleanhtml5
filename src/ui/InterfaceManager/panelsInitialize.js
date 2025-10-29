@@ -26,10 +26,14 @@ import { getDefaultBoxIndex } from "@/ui/InterfaceManager/constants";
 import { addClass, append, empty, fadeIn, fadeOut, hide, hover, on, removeClass, stopAnimations } from "@/utils/domHelpers";
 
 /**
- * @param {InterfaceManager} manager
+ * Base class for panel initialization
  */
-export default function createPanelInitializer(manager) {
-    return (/** @type {number} */ panelId) => {
+export default class PanelInitializer {
+    /**
+     * Initializes a panel
+     * @param {number} panelId - The ID of the panel to initialize
+     */
+    _onInitializePanel(panelId) {
         const panel = PanelManager.getPanelById(panelId);
         const soundBtn = document.getElementById("soundBtn");
         const musicBtn = document.getElementById("musicBtn");
@@ -54,7 +58,7 @@ export default function createPanelInitializer(manager) {
                         const firstLevelStars = ScoreManager.getStars(getDefaultBoxIndex(), 0) || 0;
                         if (firstLevelStars === 0) {
                             // start the first level immediately for the default box
-                            manager.noMenuStartLevel(getDefaultBoxIndex(), 0);
+                            this.noMenuStartLevel(getDefaultBoxIndex(), 0);
                         } else {
                             const nextPanelId = edition.disableBoxMenu
                                 ? PanelId.LEVELS
@@ -75,22 +79,22 @@ export default function createPanelInitializer(manager) {
                 });
 
                 on("#achievementsBtn", "click", () => {
-                    if (!manager._signedIn) {
+                    if (!this._signedIn) {
                         return;
                     }
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.ACHIEVEMENTS);
                 });
-                manager._updateSignInControls();
+                this._updateSignInControls();
 
                 on("#leaderboardsBtn", "click", () => {
-                    if (!manager._signedIn) {
+                    if (!this._signedIn) {
                         return;
                     }
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.LEADERBOARDS);
                 });
-                manager._updateSignInControls();
+                this._updateSignInControls();
 
                 // reset popup buttons
                 /**
@@ -121,20 +125,20 @@ export default function createPanelInitializer(manager) {
                 });
 
                 // mini options panel
-                manager._updateMiniSoundButton(false, "optionSound");
+                this._updateMiniSoundButton(false, "optionSound");
                 on("#optionSound", "click", () => {
-                    manager._updateMiniSoundButton(true, "optionSound", "optionMsg");
+                    this._updateMiniSoundButton(true, "optionSound", "optionMsg");
                 });
 
                 let hdtoggle;
-                if (manager.useHDVersion) {
+                if (this.useHDVersion) {
                     addClass("#optionHd", "activeResolution");
                     addClass("#optionSd", "inActiveResolution");
                     addClass("#optionSd", "ctrPointer");
                     hover(
                         "#optionSd",
                         () => {
-                            manager._showMiniOptionMessage(
+                            this._showMiniOptionMessage(
                                 "optionMsg",
                                 Lang.menuText(MenuStringId.RELOAD_SD),
                                 4000
@@ -155,7 +159,7 @@ export default function createPanelInitializer(manager) {
                     hover(
                         "#optionHd",
                         () => {
-                            manager._showMiniOptionMessage(
+                            this._showMiniOptionMessage(
                                 "optionMsg",
                                 Lang.menuText(MenuStringId.RELOAD_HD),
                                 4000
@@ -172,16 +176,16 @@ export default function createPanelInitializer(manager) {
                 }
 
                 on(`#${hdtoggle}`, "click", () => {
-                    settings.setIsHD(!manager.useHDVersion);
+                    settings.setIsHD(!this.useHDVersion);
                     window.location.reload();
                 });
 
                 // handle language changes
                 PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
-                    manager._setImageBigText("#playBtn img", MenuStringId.PLAY);
-                    manager._setImageBigText("#optionsBtn img", MenuStringId.OPTIONS);
-                    manager._setImageBigText("#resetYesBtn img", MenuStringId.YES);
-                    manager._setImageBigText("#resetNoBtn img", MenuStringId.NO);
+                    this._setImageBigText("#playBtn img", MenuStringId.PLAY);
+                    this._setImageBigText("#optionsBtn img", MenuStringId.OPTIONS);
+                    this._setImageBigText("#resetYesBtn img", MenuStringId.YES);
+                    this._setImageBigText("#resetNoBtn img", MenuStringId.NO);
 
                     Text.drawBig({
                         text: Lang.menuText(MenuStringId.LEADERBOARDS),
@@ -207,7 +211,7 @@ export default function createPanelInitializer(manager) {
                     PanelManager.showPanel(PanelId.MENU);
                 });
 
-                panel.init(manager);
+                panel.init(this);
 
                 break;
             }
@@ -223,7 +227,7 @@ export default function createPanelInitializer(manager) {
                     PanelManager.showPanel(PanelId.BOXES);
                 });
 
-                panel.init(manager);
+                panel.init(this);
 
                 break;
             }
@@ -238,22 +242,22 @@ export default function createPanelInitializer(manager) {
 
                 // render the canvas all the way closed
                 Doors.renderDoors(true, 0.0);
-                panel.init(manager);
+                panel.init(this);
 
                 break;
             }
 
             case PanelId.GAME: {
                 on("#gameRestartBtn", "click", () => {
-                    if (manager.isTransitionActive) return;
+                    if (this.isTransitionActive) return;
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    manager._openLevel(BoxManager.currentLevelIndex, true);
+                    this._openLevel(BoxManager.currentLevelIndex, true);
                 });
 
                 on("#gameMenuBtn", "click", () => {
-                    if (manager.isTransitionActive) return;
+                    if (this.isTransitionActive) return;
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    manager._openLevelMenu();
+                    this._openLevelMenu();
                 });
 
                 break;
@@ -262,13 +266,13 @@ export default function createPanelInitializer(manager) {
             case PanelId.GAMEMENU: {
                 on("#continueBtn", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    manager._closeLevelMenu();
+                    this._closeLevelMenu();
                     RootController.resumeLevel();
                 });
 
                 on("#skipBtn", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    manager._closeLevelMenu();
+                    this._closeLevelMenu();
 
                     // unlock next level
                     if (BoxManager.isNextLevelPlayable()) {
@@ -277,44 +281,44 @@ export default function createPanelInitializer(manager) {
                             BoxManager.currentLevelIndex,
                             0
                         );
-                        manager._openLevel(BoxManager.currentLevelIndex + 1, false, true);
+                        this._openLevel(BoxManager.currentLevelIndex + 1, false, true);
                     } else {
                         hide("#gameBtnTray");
-                        manager._completeBox();
+                        this._completeBox();
                     }
                 });
 
                 on("#selectBtn", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    manager._closeLevelMenu();
-                    manager._closeLevel();
-                    manager.isInLevelSelectMode = true;
-                    manager.isInMenuSelectMode = false;
-                    manager.closeBox();
+                    this._closeLevelMenu();
+                    this._closeLevel();
+                    this.isInLevelSelectMode = true;
+                    this.isInMenuSelectMode = false;
+                    this.closeBox();
                 });
 
                 on("#menuBtn", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    manager._closeLevelMenu();
-                    manager._closeLevel();
-                    manager.isInLevelSelectMode = true;
-                    manager.isInMenuSelectMode = true;
-                    manager.closeBox();
+                    this._closeLevelMenu();
+                    this._closeLevel();
+                    this.isInLevelSelectMode = true;
+                    this.isInMenuSelectMode = true;
+                    this.closeBox();
                 });
 
                 // mini options panel
-                manager._updateMiniSoundButton(false, "gameSound");
+                this._updateMiniSoundButton(false, "gameSound");
 
                 on("#gameSound", "click", () => {
-                    manager._updateMiniSoundButton(true, "gameSound", "gameMsg");
+                    this._updateMiniSoundButton(true, "gameSound", "gameMsg");
                 });
 
                 // language changes
                 PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
-                    manager._setImageBigText("#continueBtn img", MenuStringId.CONTINUE);
-                    manager._setImageBigText("#skipBtn img", MenuStringId.SKIP_LEVEL);
-                    manager._setImageBigText("#selectBtn img", MenuStringId.LEVEL_SELECT);
-                    manager._setImageBigText("#menuBtn img", MenuStringId.MAIN_MENU);
+                    this._setImageBigText("#continueBtn img", MenuStringId.CONTINUE);
+                    this._setImageBigText("#skipBtn img", MenuStringId.SKIP_LEVEL);
+                    this._setImageBigText("#selectBtn img", MenuStringId.LEVEL_SELECT);
+                    this._setImageBigText("#menuBtn img", MenuStringId.MAIN_MENU);
                 });
 
                 break;
@@ -322,36 +326,36 @@ export default function createPanelInitializer(manager) {
 
             case PanelId.LEVELCOMPLETE: {
                 on("#nextBtn", "click", () => {
-                    if (manager.isTransitionActive) return;
-                    manager._notifyBeginTransition(1000, "next level");
+                    if (this.isTransitionActive) return;
+                    this._notifyBeginTransition(1000, "next level");
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     if (BoxManager.isNextLevelPlayable()) {
-                        manager._openLevel(BoxManager.currentLevelIndex + 1);
+                        this._openLevel(BoxManager.currentLevelIndex + 1);
                     } else {
-                        manager._completeBox();
+                        this._completeBox();
                     }
                 });
 
                 on("#replayBtn", "click", () => {
-                    if (manager.isTransitionActive) return;
-                    manager._notifyBeginTransition(1000, "replay");
+                    if (this.isTransitionActive) return;
+                    this._notifyBeginTransition(1000, "replay");
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    manager._openLevel(BoxManager.currentLevelIndex);
+                    this._openLevel(BoxManager.currentLevelIndex);
                 });
 
                 on("#lrMenuBtn", "click", () => {
-                    if (manager.isTransitionActive) return;
-                    manager._notifyBeginTransition(1000, "level menu");
+                    if (this.isTransitionActive) return;
+                    this._notifyBeginTransition(1000, "level menu");
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    manager.isInLevelSelectMode = true;
-                    manager.isInMenuSelectMode = false;
-                    manager.tapeBox();
+                    this.isInLevelSelectMode = true;
+                    this.isInMenuSelectMode = false;
+                    this.tapeBox();
                 });
 
                 PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
-                    manager._setImageBigText("#nextBtn img", MenuStringId.NEXT);
-                    manager._setImageBigText("#replayBtn img", MenuStringId.REPLAY);
-                    manager._setImageBigText("#lrMenuBtn img", MenuStringId.MENU);
+                    this._setImageBigText("#nextBtn img", MenuStringId.NEXT);
+                    this._setImageBigText("#replayBtn img", MenuStringId.REPLAY);
+                    this._setImageBigText("#lrMenuBtn img", MenuStringId.MENU);
                     Text.drawSmall({
                         text: Lang.menuText(MenuStringId.FINAL_SCORE),
                         imgId: "resultTickerMessage",
@@ -393,8 +397,8 @@ export default function createPanelInitializer(manager) {
                     SoundMgr.setSoundEnabled(isSoundOn);
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     updateSoundOption(soundBtn, isSoundOn);
-                    manager._updateMiniSoundButton(false, "gameSound");
-                    manager._updateMiniSoundButton(false, "optionSound");
+                    this._updateMiniSoundButton(false, "gameSound");
+                    this._updateMiniSoundButton(false, "optionSound");
                 };
                 platform.setSoundButtonChange(soundBtn, onSoundButtonChange);
 
@@ -406,8 +410,8 @@ export default function createPanelInitializer(manager) {
                     const isMusicOn = !settings.getMusicEnabled();
                     SoundMgr.setMusicEnabled(isMusicOn);
                     updateMusicOption(musicBtn, isMusicOn);
-                    manager._updateMiniSoundButton(false, "gameSound");
-                    manager._updateMiniSoundButton(false, "optionSound");
+                    this._updateMiniSoundButton(false, "gameSound");
+                    this._updateMiniSoundButton(false, "optionSound");
                 };
                 platform.setMusicButtonChange(musicBtn, onMusicButtonChange);
 
@@ -483,7 +487,7 @@ export default function createPanelInitializer(manager) {
 
                 // update options menu when the language changes
                 const refreshOptionsButtons = () => {
-                    manager._setImageBigText("#optionsTitle img", MenuStringId.OPTIONS);
+                    this._setImageBigText("#optionsTitle img", MenuStringId.OPTIONS);
                     updateSoundOption(soundBtn, settings.getSoundEnabled());
                     updateMusicOption(musicBtn, settings.getMusicEnabled());
                     updateLangOption();
@@ -529,5 +533,5 @@ export default function createPanelInitializer(manager) {
                 break;
             }
         }
-    };
+    }
 }

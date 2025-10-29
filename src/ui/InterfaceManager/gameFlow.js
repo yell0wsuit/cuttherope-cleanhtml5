@@ -29,37 +29,42 @@ const levelMenu = document.getElementById("levelMenu");
  * @property {number} fps - Average frames per second during gameplay
  */
 
-// UI methods
-
-// Sets the isTransitionActive flag to true and then back to false after the timeout. The
-// reason for using a timer here is to ensure that we always clear the flag since some UI
-// will be disabled until the flag gets cleared. This is an attempt to prevent new bugs.
-
 /**
- * @param {InterfaceManager} manager
+ * Base class for game flow management
  */
-export default function createGameFlow(manager) {
-    const notifyBeginTransition = (/** @type {number} */ timeout) => {
-        manager.isTransitionActive = true;
-        if (manager._transitionTimeout != null) {
-            clearTimeout(manager._transitionTimeout);
+export default class GameFlow {
+    /**
+     * Sets the isTransitionActive flag to true and then back to false after the timeout.
+     * @param {number} timeout - Timeout in milliseconds
+     */
+    _notifyBeginTransition(timeout) {
+        this.isTransitionActive = true;
+        if (this._transitionTimeout != null) {
+            clearTimeout(this._transitionTimeout);
         }
-        manager._transitionTimeout = setTimeout(() => {
-            manager.isTransitionActive = false;
-            manager._transitionTimeout = null;
+        this._transitionTimeout = setTimeout(() => {
+            this.isTransitionActive = false;
+            this._transitionTimeout = null;
         }, timeout);
-    };
+    }
 
-    const runScoreTicker = () => {
-        text("#resultScore", manager._resultBottomLines[manager._currentResultLine]);
-        manager._currentResultLine++;
-        if (manager._currentResultLine < manager._resultTopLines.length) {
-            const delayMs = manager._currentResultLine < manager._resultTimeShiftIndex ? 10 : 167;
-            setTimeout(runScoreTicker, delayMs);
+    /**
+     * Runs the score ticker animation
+     */
+    _runScoreTicker() {
+        text("#resultScore", this._resultBottomLines[this._currentResultLine]);
+        this._currentResultLine++;
+        if (this._currentResultLine < this._resultTopLines.length) {
+            const delayMs = this._currentResultLine < this._resultTimeShiftIndex ? 10 : 167;
+            setTimeout(() => this._runScoreTicker(), delayMs);
         }
-    };
+    }
 
-    const isLastLevel = () => {
+    /**
+     * Checks if the current level is the last level
+     * @returns {boolean} True if this is the last level
+     */
+    _isLastLevel() {
         // see if we are on the last box
         const lastPlayableBoxIndex = BoxManager.requiredCount() - 1;
         if (BoxManager.currentBoxIndex !== lastPlayableBoxIndex) {
@@ -75,18 +80,20 @@ export default function createGameFlow(manager) {
         }
 
         return BoxManager.currentLevelIndex === numLevels;
-    };
+    }
 
-    const openLevel = (
-        /** @type {number} */ level,
-        /** @type {boolean} */ isRestart,
-        /** @type {boolean} */ isSkip
-    ) => {
+    /**
+     * Opens a level
+     * @param {number} level - Level index
+     * @param {boolean} isRestart - Whether this is a restart
+     * @param {boolean} isSkip - Whether this is skipping a level
+     */
+    _openLevel(level, isRestart, isSkip) {
         GameBorder.fadeIn(650, 100);
         BoxManager.currentLevelIndex = level;
 
         // when we start the last level we should begin loading the outro video
-        if (isLastLevel()) {
+        if (this._isLastLevel()) {
             VideoManager.loadOutroVideo();
         }
 
@@ -95,16 +102,32 @@ export default function createGameFlow(manager) {
         } else {
             PanelManager.showPanel(PanelId.GAME, true);
             setTimeout(() => {
-                manager.openBox(isSkip);
+                this.openBox(isSkip);
             }, 200);
         }
-    };
+    }
 
-    const closeLevel = () => {
+    /**
+     * Alias for _openLevel to maintain public API
+     * @param {number} level
+     * @param {boolean} isRestart
+     * @param {boolean} isSkip
+     */
+    openLevel(level, isRestart, isSkip) {
+        this._openLevel(level, isRestart, isSkip);
+    }
+
+    /**
+     * Closes the current level
+     */
+    _closeLevel() {
         RootController.stopLevel();
-    };
+    }
 
-    const completeBox = () => {
+    /**
+     * Completes the current box and advances
+     */
+    _completeBox() {
         //attempt to move to the next box
         const boxIndex = BoxManager.currentBoxIndex;
 
@@ -116,46 +139,61 @@ export default function createGameFlow(manager) {
             GameBorder.hide();
             VideoManager.playOutroVideo();
         } else {
-            manager.isInAdvanceBoxMode = true;
+            this.isInAdvanceBoxMode = true;
             const targetPanelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
             PanelManager.showPanel(targetPanelId, false);
         }
-    };
+    }
 
-    const openLevelMenu = () => {
+    /**
+     * Opens the level menu (pause menu)
+     */
+    _openLevelMenu() {
         RootController.pauseLevel();
         SoundMgr.pauseMusic();
         show("#levelMenu");
-    };
+    }
 
-    const closeLevelMenu = () => {
+    /**
+     * Closes the level menu
+     */
+    _closeLevelMenu() {
         hide("#levelMenu");
         if (
             PanelManager.currentPanelId === PanelId.GAME &&
-            manager.gameEnabled &&
+            this.gameEnabled &&
             RootController.isLevelActive()
         ) {
             SoundMgr.resumeMusic();
         }
-    };
+    }
 
-    const showLevelBackground = () => {
+    /**
+     * Shows the level background
+     */
+    _showLevelBackground() {
         show("#levelBackground");
-    };
+    }
 
-    const hideLevelBackground = () => {
+    /**
+     * Hides the level background
+     */
+    _hideLevelBackground() {
         hide("#levelBackground");
-    };
+    }
 
-    const tapeBox = () => {
-        if (manager.isInMenuSelectMode) {
+    /**
+     * Tapes the box closed
+     */
+    tapeBox() {
+        if (this.isInMenuSelectMode) {
             GameBorder.fadeOut(800, 400);
             SoundMgr.playMusic(MENU_MUSIC_ID);
         }
 
         Doors.closeBoxAnimation(() => {
-            manager.isBoxOpen = false;
-            if (manager.isInMenuSelectMode) {
+            this.isBoxOpen = false;
+            if (this.isInMenuSelectMode) {
                 PanelManager.showPanel(PanelId.MENU, false);
             } else {
                 Doors.renderDoors(true, 0);
@@ -163,29 +201,39 @@ export default function createGameFlow(manager) {
             }
             startSnow();
         });
-    };
+    }
 
-    const showGameUI = () => {
-        hideLevelBackground();
+    /**
+     * Shows the game UI
+     */
+    showGameUI() {
+        this._hideLevelBackground();
         if (QueryStrings.showBoxBackgrounds && edition.enableBoxBackgroundEasterEgg) {
             show("#bg");
         }
         fadeIn("#gameBtnTray");
         startSnow();
-    };
+    }
 
-    const closeGameUI = () => {
+    /**
+     * Closes the game UI
+     */
+    closeGameUI() {
         stopSnow();
         Doors.renderDoors(false, 1);
-        notifyBeginTransition(1000);
-        showLevelBackground();
+        this._notifyBeginTransition(1000);
+        this._showLevelBackground();
         if (QueryStrings.showBoxBackgrounds && edition.enableBoxBackgroundEasterEgg) {
             hide("#bg");
         }
         fadeOut("#gameBtnTray");
-    };
+    }
 
-    const openBox = (/** @type {boolean} */ skip = false) => {
+    /**
+     * Opens the box
+     * @param {boolean} skip - Whether to skip intro
+     */
+    openBox(skip = false) {
         stopSnow();
         const timeout = PanelManager.currentPanelId === PanelId.LEVELS ? 400 : 0;
 
@@ -194,7 +242,7 @@ export default function createGameFlow(manager) {
         fadeOut("#levelBack");
 
         fadeOut("#levelOptions", timeout).then(() => {
-            if (manager.isBoxOpen) {
+            if (this.isBoxOpen) {
                 fadeOut("#levelResults", 800);
                 setTimeout(() => {
                     RootController.startLevel(
@@ -202,142 +250,144 @@ export default function createGameFlow(manager) {
                         BoxManager.currentLevelIndex
                     );
                     Doors.openDoors(false, () => {
-                        showGameUI();
+                        this.showGameUI();
                     });
                 }, 400);
             } else {
                 Doors.openBoxAnimation(() => {
-                    manager.isBoxOpen = true;
+                    this.isBoxOpen = true;
                     RootController.startLevel(
                         BoxManager.currentBoxIndex + 1,
                         BoxManager.currentLevelIndex
                     );
                     Doors.openDoors(true, () => {
-                        showGameUI();
+                        this.showGameUI();
                     });
                 });
             }
         });
-    };
+    }
 
-    const closeBox = () => {
+    /**
+     * Closes the box
+     */
+    closeBox() {
         stopSnow();
-        closeGameUI();
+        this.closeGameUI();
 
         setTimeout(() => {
             // animating from game to results
-            if (!manager.isInLevelSelectMode) {
+            if (!this.isInLevelSelectMode) {
                 if (levelResults) {
                     delay(levelResults, 750).then(() => fadeIn(levelResults, 250));
                 }
             }
 
             Doors.closeDoors(false, () => {
-                if (manager.isInLevelSelectMode) {
-                    tapeBox();
+                if (this.isInLevelSelectMode) {
+                    this.tapeBox();
                 } else {
                     Doors.showGradient();
                     setTimeout(() => {
-                        runScoreTicker();
+                        this._runScoreTicker();
                         startSnow();
                     }, 250);
                 }
             });
         }, 250);
-    };
+    }
 
-    // show hide the "behind the scenes" link and the feedback tab when the screen changes size
-    const updateDevLink = () => {
-        if (width(window) < resolution.uiScaledNumber(1024) + 120 && manager._isDevLinkVisible) {
+    /**
+     * Updates the dev link visibility based on window size
+     */
+    updateDevLink() {
+        if (width(window) < resolution.uiScaledNumber(1024) + 120 && this._isDevLinkVisible) {
             fadeOut("#moreLink").then(() => {
-                manager._isDevLinkVisible = false;
+                this._isDevLinkVisible = false;
             });
             fadeOut("#zenbox_tab");
         } else if (
             width(window) > resolution.uiScaledNumber(1024) + 120 &&
-            !manager._isDevLinkVisible
+            !this._isDevLinkVisible
         ) {
             fadeIn("#moreLink").then(() => {
-                manager._isDevLinkVisible = true;
+                this._isDevLinkVisible = true;
             });
             fadeIn("#zenbox_tab");
         }
-    };
+    }
 
-    // we'll only resume when the game is enabled
-    //this.gameEnabled = true;
-
-    const pauseGame = () => {
+    /**
+     * Pauses the game
+     */
+    pauseGame() {
         // make sure the game is active and no transitions are pending
         if (
             PanelManager.currentPanelId === PanelId.GAME &&
             RootController.isLevelActive() &&
-            !manager.isTransitionActive
+            !this.isTransitionActive
         ) {
-            openLevelMenu();
+            this._openLevelMenu();
         } else {
             SoundMgr.pauseMusic();
         }
-    };
+    }
 
-    const resumeGame = () => {
+    /**
+     * Resumes the game
+     */
+    resumeGame() {
         const isLevelMenuVisible = levelMenu && levelMenu.style.display !== "none";
         if (
             !isLevelMenuVisible &&
             PanelManager.currentPanelId !== PanelId.GAMEMENU &&
-            manager.gameEnabled
+            this.gameEnabled
         ) {
             SoundMgr.resumeMusic();
         }
-    };
+    }
 
-    // Object management stuff
-
-    const init = () => {
-        PanelManager.onShowPanel = (/** @type {number} */ panelId) => manager._onShowPanel(panelId);
-    };
-
-    const domReady = () => {
+    /**
+     * Called when DOM is ready
+     */
+    domReady() {
         VideoManager.domReady();
         EasterEggManager.domReady();
         PanelManager.domReady();
         GameBorder.domReady();
         SnowfallOverlay.domReady();
 
-        // pause game / music when the user switches tabs
-        //window.addEventListener("blur", _this.pauseGame);
-
-        // when returning to the tab, resume music (except when on game menu - no music there)
-        //window.addEventListener("focus", _this.resumeGame);
-
         const onVisibilityChange = () => {
             if (document.hidden || document.visibilityState === "hidden") {
-                pauseGame();
+                this.pauseGame();
             } else {
-                resumeGame();
+                this.resumeGame();
             }
         };
         document.addEventListener("visibilitychange", onVisibilityChange);
 
         // hide behind the scenes when we update the page
         window.addEventListener("resize", () => {
-            updateDevLink();
+            this.updateDevLink();
         });
-    };
+    }
 
-    const appReady = () => {
-        PubSub.subscribe(PubSub.ChannelId.LevelWon, (/** @type {LevelWonInfo} */ info) =>
-            manager.onLevelWon(info)
-        );
+    /**
+     * Called when app is ready
+     */
+    appReady() {
+        PubSub.subscribe(PubSub.ChannelId.LevelWon, (/** @type {LevelWonInfo} */ info) => {
+            this.onLevelWon(info);
+        });
 
         // Load scores now that JSON data is available
         ScoreManager.load();
 
         Doors.appReady();
         EasterEggManager.appReady();
-        PanelManager.appReady((/** @type {number} */ panelId) =>
-            manager._onInitializePanel(panelId)
-        );
+        PanelManager.appReady((/** @type {number} */ panelId) => {
+            this._onInitializePanel(panelId);
+        });
         BoxManager.appReady();
         if (IS_XMAS) {
             startSnow();
@@ -350,7 +400,7 @@ export default function createGameFlow(manager) {
 
         // start a specific level?
         if (QueryStrings.box != null && QueryStrings.level != null) {
-            manager.noMenuStartLevel(QueryStrings.box - 1, QueryStrings.level - 1);
+            this.noMenuStartLevel(QueryStrings.box - 1, QueryStrings.level - 1);
         } else if (settings.showMenu) {
             // make sure the game is not password locked
             const passwordPanel = PanelManager.getPanelById(PanelId.PASSWORD);
@@ -363,20 +413,24 @@ export default function createGameFlow(manager) {
         }
 
         PubSub.subscribe(PubSub.ChannelId.PauseGame, () => {
-            pauseGame();
+            this.pauseGame();
         });
         PubSub.subscribe(PubSub.ChannelId.EnableGame, () => {
-            manager.gameEnabled = true;
-            resumeGame();
+            this.gameEnabled = true;
+            this.resumeGame();
         });
         PubSub.subscribe(PubSub.ChannelId.DisableGame, () => {
-            manager.gameEnabled = false;
-            pauseGame();
+            this.gameEnabled = false;
+            this.pauseGame();
         });
-    };
+    }
 
-    // used for debug and in level editor to start a level w/o menus
-    const noMenuStartLevel = (/** @type {number} */ boxIndex, /** @type {number} */ levelIndex) => {
+    /**
+     * Used for debug and in level editor to start a level w/o menus
+     * @param {number} boxIndex - Box index (zero-based)
+     * @param {number} levelIndex - Level index (zero-based)
+     */
+    noMenuStartLevel(boxIndex, levelIndex) {
         PanelManager.showPanel(PanelId.GAME, true);
 
         // unfortunate that box manager is zero index for box and 1 based for level
@@ -384,40 +438,17 @@ export default function createGameFlow(manager) {
         BoxManager.currentLevelIndex = levelIndex + 1;
 
         SoundMgr.selectRandomGameMusic();
-        openBox();
-    };
+        this.openBox();
+    }
 
-    const openLevelMenuPublic = (/** @type {number} */ boxIndex) => {
-        manager.isBoxOpen = false;
+    /**
+     * Opens the level menu for a specific box
+     * @param {number} boxIndex - Box index
+     */
+    openLevelMenu(boxIndex) {
+        this.isBoxOpen = false;
         Doors.renderDoors(true, 0);
         PanelManager.showPanel(PanelId.LEVELS);
         GameBorder.setBoxBorder(boxIndex);
-    };
-
-    return {
-        _notifyBeginTransition: notifyBeginTransition,
-        _runScoreTicker: runScoreTicker,
-        _openLevel: openLevel,
-        openLevel,
-        _closeLevel: closeLevel,
-        _isLastLevel: isLastLevel,
-        _completeBox: completeBox,
-        _openLevelMenu: openLevelMenu,
-        _closeLevelMenu: closeLevelMenu,
-        _showLevelBackground: showLevelBackground,
-        _hideLevelBackground: hideLevelBackground,
-        tapeBox,
-        openBox,
-        closeBox,
-        showGameUI,
-        closeGameUI,
-        updateDevLink,
-        pauseGame,
-        resumeGame,
-        init,
-        domReady,
-        appReady,
-        noMenuStartLevel,
-        openLevelMenu: openLevelMenuPublic,
-    };
+    }
 }

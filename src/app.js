@@ -25,7 +25,6 @@ class App {
 
         // Gives the app a chance to begin working before the DOM is ready
         preloader.init();
-        im.init();
         PubSub.publish(PubSub.ChannelId.AppInit);
     }
 

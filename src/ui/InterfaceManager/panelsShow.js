@@ -17,10 +17,14 @@ import { hide, append, empty } from "@/utils/domHelpers";
 const congratsElement = document.getElementById("congrats");
 
 /**
- * @param {InterfaceManager} manager
+ * Base class for handling panel show events
  */
-export default function createPanelShowHandler(manager) {
-    return (/** @type {number} */ panelId) => {
+export default class PanelShowHandler {
+    /**
+     * Handles showing a panel
+     * @param {number} panelId - The ID of the panel to show
+     */
+    _onShowPanel(panelId) {
         const panel = PanelManager.getPanelById(panelId);
 
         switch (panelId) {
@@ -36,7 +40,7 @@ export default function createPanelShowHandler(manager) {
 
         // make sure the pause level panel is closed
         if (panelId !== PanelId.GAMEMENU) {
-            manager._closeLevelMenu();
+            this._closeLevelMenu();
         }
 
         // make sure the menu music is started on main menu and level selection
@@ -51,8 +55,8 @@ export default function createPanelShowHandler(manager) {
             ScoreManager.updateTotalScoreText();
             boxPanel.onShow();
 
-            if (manager.isInAdvanceBoxMode) {
-                manager.isInAdvanceBoxMode = false;
+            if (this.isInAdvanceBoxMode) {
+                this.isInAdvanceBoxMode = false;
                 setTimeout(() => {
                     hide("#levelResults");
                     boxPanel.slideToNextBox();
@@ -63,8 +67,8 @@ export default function createPanelShowHandler(manager) {
                     }
                 }, 800);
             } else {
-                clearTimeout(manager._bounceTimeOut);
-                manager._bounceTimeOut = setTimeout(() => {
+                clearTimeout(this._bounceTimeOut);
+                this._bounceTimeOut = setTimeout(() => {
                     boxPanel.bounceCurrentBox();
                 }, 300);
             }
@@ -88,7 +92,7 @@ export default function createPanelShowHandler(manager) {
                 break;
 
             case PanelId.GAME:
-                manager._updateMiniSoundButton(false, "optionSound");
+                this._updateMiniSoundButton(false, "optionSound");
                 break;
 
             case PanelId.GAMECOMPLETE: {
@@ -141,5 +145,5 @@ export default function createPanelShowHandler(manager) {
                 PubSub.publish(PubSub.ChannelId.UpdateCandyScroller);
                 break;
         }
-    };
+    }
 }

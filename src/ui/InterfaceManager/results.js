@@ -24,12 +24,14 @@ const msgdiv = document.getElementById("resultTickerMessage");
 const levelPanel = document.getElementById("levelPanel");
 
 /**
- * @param {InterfaceManager} manager
+ * Base class for handling level results
  */
-export default function createResultsHandler(manager) {
-    const onLevelWon = (
-        /** @type {{ stars: number; score: number; time: number; fps: number; }} */ info
-    ) => {
+export default class ResultsHandler {
+    /**
+     * Handles level won event
+     * @param {{ stars: number; score: number; time: number; fps: number; }} info - Level completion info
+     */
+    onLevelWon(info) {
         const stars = info.stars;
         const score = info.score;
         const levelTime = info.time;
@@ -308,8 +310,8 @@ export default function createResultsHandler(manager) {
             ScoreManager.setStars(boxIndex, levelIndex, 0);
         }
 
-        manager.isInLevelSelectMode = false;
-        manager.closeBox();
+        this.isInLevelSelectMode = false;
+        this.closeBox();
 
         // events that occur after completing the first level
         if (boxIndex === 0 && levelIndex === 1) {
@@ -318,13 +320,12 @@ export default function createResultsHandler(manager) {
             }
 
             // tell the user if the fps was low on the first level
-            if (info.fps < manager._MIN_FPS && !platform.disableSlowWarning) {
+            if (info.fps < this._MIN_FPS && !platform.disableSlowWarning) {
                 setTimeout(() => {
                     Dialogs.showSlowComputerPopup();
                 }, 3000);
             }
             VideoManager.removeIntroVideo();
         }
-    };
-    return { onLevelWon };
+    }
 }
