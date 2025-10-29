@@ -172,7 +172,7 @@ class BoxDoors {
         const easing = runInReverse ? Easing.easeOutCubic : Easing.easeInOutCubic;
         const levelPanel = document.getElementById("levelPanel");
 
-        function openBoxDoors() {
+        const openBoxDoors = () => {
             const now = Date.now();
             const p = now - begin;
             const v = easing(p, 0, 1, dur);
@@ -193,7 +193,7 @@ class BoxDoors {
 
                 if (callback != null) callback();
             }
-        }
+        };
 
         window.requestAnimationFrame(openBoxDoors);
     }
@@ -239,7 +239,7 @@ class BoxDoors {
                     tapeSlice.style.height = `${fromH}px`;
                     tapeSlice.style.display = "block";
 
-                    function rollTape() {
+                    const rollTape = () => {
                         const now = Date.now();
                         const diff = now - b;
                         const v = Easing.easeInOutCubic(diff, from, offset - from, d);
@@ -266,7 +266,7 @@ class BoxDoors {
                                 }
                             });
                         }
-                    }
+                    };
 
                     window.requestAnimationFrame(rollTape);
                 });
@@ -301,7 +301,7 @@ class BoxDoors {
                 const from = parseInt(boxCutter.style.top, 10);
                 const d = 1000;
 
-                function cutBox() {
+                const cutBox = () => {
                     const now = Date.now();
                     const diff = now - b;
                     const v = Easing.easeInOutCubic(diff, from, offset - from, d);
@@ -314,7 +314,7 @@ class BoxDoors {
                         //fade out cutter and open doors
                         fadeOut(boxCutter, 300, callback);
                     }
-                }
+                };
 
                 window.requestAnimationFrame(cutBox);
             });
@@ -346,7 +346,7 @@ if (document.readyState === "loading") {
  * @param {number} duration - Duration in milliseconds
  * @param {(() => void) | null | undefined} [callback] - Optional callback when complete
  */
-function fadeOut(element, duration, callback) {
+const fadeOut = (element, duration, callback) => {
     element.style.transition = `opacity ${duration}ms`;
     element.style.opacity = "0";
 
@@ -355,7 +355,7 @@ function fadeOut(element, duration, callback) {
         element.style.transition = "";
         if (callback) callback();
     }, duration);
-}
+};
 
 /**
  * Fade in an element
@@ -363,7 +363,7 @@ function fadeOut(element, duration, callback) {
  * @param {number} duration - Duration in milliseconds
  * @param {(() => void) | null | undefined} [callback] - Optional callback when complete
  */
-function fadeIn(element, duration, callback) {
+const fadeIn = (element, duration, callback) => {
     element.style.opacity = "0";
     element.style.display = "block";
     element.style.transition = `opacity ${duration}ms`;
@@ -377,6 +377,6 @@ function fadeIn(element, duration, callback) {
         element.style.transition = "";
         if (callback) callback();
     }, duration);
-}
+};
 
 export default BoxDoors;
