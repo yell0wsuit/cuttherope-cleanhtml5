@@ -48,6 +48,8 @@ const QueryStrings = {
     unlockAllBoxes: import.meta.env.DEV || undefined,
     createScoresForBox: undefined,
     minFps: qs["minFps"] == null ? null : parseInt(qs["minFps"], 10),
+    box: qs["box"] == null ? null : parseInt(qs["box"], 10),
+    level: qs["level"] == null ? null : parseInt(qs["level"], 10),
 };
 
 export default QueryStrings;
