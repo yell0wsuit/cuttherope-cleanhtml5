@@ -25,19 +25,8 @@ import dom from "@/utils/dom";
 import analytics from "@/analytics";
 import { getDefaultBoxIndex } from "@/ui/InterfaceManager/constants";
 
-const {
-    addClass,
-    append,
-    empty,
-    fadeIn,
-    fadeOut,
-    getElement,
-    hide,
-    hover,
-    on,
-    removeClass,
-    stopAnimations,
-} = dom;
+const { addClass, append, empty, fadeIn, fadeOut, hide, hover, on, removeClass, stopAnimations } =
+    dom;
 
 /**
  * @param {InterfaceManager} manager
@@ -49,10 +38,10 @@ export default function createPanelInitializer(manager) {
         const musicBtn = document.getElementById("musicBtn");
         const resetBtn = document.getElementById("resetBtn");
         const backBtn = document.getElementById("optionsBack");
-        const optionMsg = getElement("#optionMsg");
-        const resetTextContainer = getElement("#resetText");
-        const resetHoldYesContainer = getElement("#resetHoldYes");
-        const langElement = getElement("#lang");
+        const optionMsg = document.getElementById("optionMsg");
+        const resetTextContainer = document.getElementById("resetText");
+        const resetHoldYesContainer = document.getElementById("resetHoldYes");
+        const langElement = document.getElementById("lang");
 
         switch (panelId) {
             case PanelId.MENU: {
