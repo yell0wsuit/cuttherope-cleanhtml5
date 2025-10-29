@@ -12,7 +12,6 @@ import QueryStrings from "@/ui/QueryStrings";
 import edition from "@/edition";
 import MathHelper from "@/utils/MathHelper";
 import SettingStorage from "@/core/SettingStorage";
-import dom from "@/utils/dom";
 
 // promotion runs from March 4 - April 14 (2013)
 // using ticks makes finding hacking more difficult because
@@ -65,7 +64,7 @@ let enterCodeButton = null;
 document.addEventListener("DOMContentLoaded", function () {
     enterCodeButton = document.getElementById("boxEnterCodeButton");
     if (enterCodeButton) {
-        dom.hide(enterCodeButton);
+        enterCodeButton.style.display = "none";
     }
 });
 
@@ -107,13 +106,22 @@ class TimeBox extends Box {
 
     onSelected() {
         if (!this.isTimeLocked && this.isBkCodeLocked && enterCodeButton) {
-            dom.fadeIn(enterCodeButton);
+            enterCodeButton.style.removeProperty("display");
+            const computedDisplay = window.getComputedStyle(enterCodeButton).display;
+            if (computedDisplay === "none") {
+                enterCodeButton.style.display = "block";
+            }
+            enterCodeButton.style.transition = "opacity 400ms ease";
+            enterCodeButton.style.opacity = "0";
+            enterCodeButton.getBoundingClientRect(); // force reflow
+            enterCodeButton.style.opacity = "1";
         }
     }
 
     onUnselected() {
         if (enterCodeButton) {
-            dom.hide(enterCodeButton);
+            enterCodeButton.style.display = "none";
+            enterCodeButton.style.transition = "";
         }
     }
 
