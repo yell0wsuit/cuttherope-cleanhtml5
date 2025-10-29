@@ -5,8 +5,13 @@ import Alignment from "@/core/Alignment";
 import Text from "@/visual/Text";
 import dom from "@/utils/dom";
 const { addClass, removeClass, setStyle, stopAnimations, fadeIn, fadeOut, delay } = dom;
+
 export default function createAudioOptions() {
-    const showMiniOptionMessage = (msgId, messageText, delayDuration) => {
+    const showMiniOptionMessage = (
+        /** @type {string} */ msgId,
+        /** @type {string} */ messageText,
+        /** @type {number} */ delayDuration
+    ) => {
         if (msgId === undefined) {
             return;
         }
@@ -36,9 +41,14 @@ export default function createAudioOptions() {
             .then(() => fadeOut(msg, 750));
     };
 
-    const updateMiniSoundButton = (doToggle, buttonId, msgId) => {
+    const updateMiniSoundButton = (
+        /** @type {boolean} */ doToggle,
+        /** @type {string} */ buttonId,
+        /** @type {string} */ msgId
+    ) => {
         let isSoundOn = SoundMgr.soundEnabled;
         let isMusicOn = SoundMgr.musicEnabled;
+
         if (doToggle) {
             if (isSoundOn && isMusicOn) {
                 isSoundOn = true;
@@ -80,7 +90,7 @@ export default function createAudioOptions() {
                 .replace("{0}", Lang.menuText(musicId).toLowerCase())
                 .replace("{1}", Lang.menuText(soundId).toLowerCase());
         }
-        showMiniOptionMessage(msgId, text);
+        showMiniOptionMessage(msgId, text, 500);
     };
 
     return {
