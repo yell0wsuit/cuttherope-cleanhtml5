@@ -49,6 +49,22 @@ import settings from "@/game/CTRSettings";
  */
 
 /**
+ * @typedef {Object} DrawSmallOptions - Options for drawSmall method (fontId is set automatically)
+ * @property {HTMLImageElement | HTMLCanvasElement} [img] - Image or canvas element
+ * @property {string} [imgId] - Image element ID
+ * @property {string} [imgSel] - Image selector
+ * @property {string} [imgParentId] - Parent element ID
+ * @property {boolean} [canvas] - Whether to use canvas rendering
+ * @property {string | number} text - Text to render
+ * @property {number} [width] - Optional width constraint
+ * @property {number} [alignment] - Text alignment
+ * @property {boolean} [scaleToUI] - Whether to scale to UI
+ * @property {number | null} [alpha] - Opacity value (0-1)
+ * @property {number} [scale] - Custom scale factor
+ * @property {number} [maxScaleWidth] - Optional maximum scaled width
+ */
+
+/**
  * @typedef {Object} FontOptions
  * @property {number} fontId - Font resource ID
  * @property {number | undefined} [alignment] - Text alignment
@@ -521,12 +537,15 @@ class Text extends BaseElement {
     }
 
     /**
-     * @param {DrawImgOptions} options
+     * @param {DrawSmallOptions} options
      * @returns {HTMLImageElement | HTMLCanvasElement}
      */
     static drawSmall(options) {
-        options.fontId = ResourceId.FNT_SMALL_FONT;
-        return Text.drawImg(options);
+        const fullOptions = /** @type {DrawImgOptions} */ ({
+            ...options,
+            fontId: ResourceId.FNT_SMALL_FONT,
+        });
+        return Text.drawImg(fullOptions);
     }
 
     /**
