@@ -28,6 +28,10 @@ class WebPlatform {
      */
     static ENABLE_ZOOM = false;
 
+    /**
+     * @const
+     * @type {boolean}
+     */
     static ZOOM_BOX_CANVAS = false;
 
     static imageBaseUrl = "images/";
@@ -57,22 +61,41 @@ class WebPlatform {
         return `${baseUrl}/images/scores/`;
     }
 
+    /**
+     * @param {HTMLElement | null} button
+     * @param {() => void} callback
+     */
     static setSoundButtonChange(button, callback) {
-        button.addEventListener("click", callback);
+        button?.addEventListener("click", callback);
     }
 
+    /**
+     * @param {HTMLElement | null} button
+     * @param {() => void} callback
+     */
     static setMusicButtonChange(button, callback) {
-        button.addEventListener("click", callback);
+        button?.addEventListener("click", callback);
     }
 
+    /**
+     * @param {Element | null} el
+     * @param {boolean} isSoundOn
+     */
     static updateSoundOption(el, isSoundOn) {
-        el.classList.toggle("disabled", !isSoundOn);
+        el?.classList.toggle("disabled", !isSoundOn);
     }
 
+    /**
+     * @param {Element | null} el
+     * @param {boolean} isMusicOn
+     */
     static updateMusicOption(el, isMusicOn) {
-        el.classList.toggle("disabled", !isMusicOn);
+        el?.classList.toggle("disabled", !isMusicOn);
     }
 
+    /**
+     * @param {boolean} show
+     */
     static toggleLangUI(show) {
         const langBtn = document.getElementById("langBtn");
         if (langBtn) {
@@ -80,6 +103,9 @@ class WebPlatform {
         }
     }
 
+    /**
+     * @param {(langId: null) => void} callback
+     */
     static setLangOptionClick(callback) {
         const langBtn = document.getElementById("langBtn");
         if (langBtn) {
@@ -107,6 +133,9 @@ class WebPlatform {
         }
     }
 
+    /**
+     * @param {() => void} callback
+     */
     static setCutOptionClick(callback) {
         const cutBtn = document.getElementById("cutBtn");
         if (cutBtn) {
@@ -114,6 +143,9 @@ class WebPlatform {
         }
     }
 
+    /**
+     * @param {boolean} isClickToCut
+     */
     static updateCutSetting(isClickToCut) {
         const cutBtn = document.getElementById("cutBtn");
 
@@ -146,12 +178,20 @@ class WebPlatform {
         }
     }
 
+    /**
+     * @param {HTMLElement | null} el
+     * @param {string} text
+     */
     static setResetText(el, text) {
         WebPlatform.setOptionText(el, text);
     }
 
+    /**
+     * @param {HTMLElement | null} button
+     * @param {string} text
+     */
     static setOptionText(button, text) {
-        const img = button.querySelector("img");
+        const img = button?.querySelector("img");
         if (img) {
             Text.drawBig({
                 text: text,
@@ -161,6 +201,10 @@ class WebPlatform {
         }
     }
 
+    /**
+     * @param {number} totalStars
+     * @param {number} possibleStars
+     */
     static getGameCompleteShareText(totalStars, possibleStars) {
         const text = Lang.getText(locEntries.GAME_COMPLETE)
             .replace("%d", totalStars)
