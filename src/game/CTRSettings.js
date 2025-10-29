@@ -22,8 +22,11 @@ class CTRSettings {
     static showGreeting = true;
 
     // game music
+    /**
+     * @returns {boolean}
+     */
     static getMusicEnabled() {
-        return SettingStorage.getBoolOrDefault(this.SettingKeys.MUSIC, true);
+        return /** @type {boolean} */ (SettingStorage.getBoolOrDefault(this.SettingKeys.MUSIC, true));
     }
 
     /**
@@ -34,8 +37,11 @@ class CTRSettings {
     }
 
     // sound effects
+    /**
+     * @returns {boolean}
+     */
     static getSoundEnabled() {
-        return SettingStorage.getBoolOrDefault(this.SettingKeys.SOUND, true);
+        return /** @type {boolean} */ (SettingStorage.getBoolOrDefault(this.SettingKeys.SOUND, true));
     }
 
     /**
@@ -46,8 +52,11 @@ class CTRSettings {
     }
 
     // click-to-cut
+    /**
+     * @returns {boolean}
+     */
     static getClickToCut() {
-        return SettingStorage.getBoolOrDefault(this.SettingKeys.CLICK_TO_CUT, false);
+        return /** @type {boolean} */ (SettingStorage.getBoolOrDefault(this.SettingKeys.CLICK_TO_CUT, false));
     }
 
     /**
