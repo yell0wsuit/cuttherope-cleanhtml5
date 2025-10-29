@@ -65,6 +65,38 @@ import settings from "@/game/CTRSettings";
  */
 
 /**
+ * @typedef {Object} DrawBigOptions - Options for drawBig method (fontId is set automatically)
+ * @property {HTMLImageElement | HTMLCanvasElement} [img] - Image or canvas element
+ * @property {string} [imgId] - Image element ID
+ * @property {string} [imgSel] - Image selector
+ * @property {string} [imgParentId] - Parent element ID
+ * @property {boolean} [canvas] - Whether to use canvas rendering
+ * @property {string | number} text - Text to render
+ * @property {number} [width] - Optional width constraint
+ * @property {number} [alignment] - Text alignment
+ * @property {boolean} [scaleToUI] - Whether to scale to UI
+ * @property {number | null} [alpha] - Opacity value (0-1)
+ * @property {number} [scale] - Custom scale factor
+ * @property {number} [maxScaleWidth] - Optional maximum scaled width
+ */
+
+/**
+ * @typedef {Object} DrawBigNumbersOptions - Options for drawBigNumbers method (fontId is set automatically)
+ * @property {HTMLImageElement | HTMLCanvasElement} [img] - Image or canvas element
+ * @property {string} [imgId] - Image element ID
+ * @property {string} [imgSel] - Image selector
+ * @property {string} [imgParentId] - Parent element ID
+ * @property {boolean} [canvas] - Whether to use canvas rendering
+ * @property {string | number} text - Text to render
+ * @property {number} [width] - Optional width constraint
+ * @property {number} [alignment] - Text alignment
+ * @property {boolean} [scaleToUI] - Whether to scale to UI
+ * @property {number | null} [alpha] - Opacity value (0-1)
+ * @property {number} [scale] - Custom scale factor
+ * @property {number} [maxScaleWidth] - Optional maximum scaled width
+ */
+
+/**
  * @typedef {Object} FontOptions
  * @property {number} fontId - Font resource ID
  * @property {number | undefined} [alignment] - Text alignment
@@ -549,21 +581,27 @@ class Text extends BaseElement {
     }
 
     /**
-     * @param {DrawImgOptions} options
+     * @param {DrawBigOptions} options
      * @returns {HTMLImageElement | HTMLCanvasElement}
      */
     static drawBig(options) {
-        options.fontId = ResourceId.FNT_BIG_FONT;
-        return Text.drawImg(options);
+        const fullOptions = /** @type {DrawImgOptions} */ ({
+            ...options,
+            fontId: ResourceId.FNT_BIG_FONT,
+        });
+        return Text.drawImg(fullOptions);
     }
 
     /**
-     * @param {DrawImgOptions} options
+     * @param {DrawBigNumbersOptions} options
      * @returns {HTMLImageElement | HTMLCanvasElement}
      */
     static drawBigNumbers(options) {
-        options.fontId = ResourceId.FNT_FONT_NUMBERS_BIG;
-        return Text.drawImg(options);
+        const fullOptions = /** @type {DrawImgOptions} */ ({
+            ...options,
+            fontId: ResourceId.FNT_FONT_NUMBERS_BIG,
+        });
+        return Text.drawImg(fullOptions);
     }
 }
 
