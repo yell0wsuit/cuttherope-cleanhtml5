@@ -67,10 +67,16 @@ class CTRSettings {
     }
 
     // locale
+    /**
+     * @returns {number}
+     */
     static getLangId() {
         // first see if a querystring override was specified
         if (QueryStrings.lang) {
-            return LangId.fromString(QueryStrings.lang);
+            const queryLangId = LangId.fromString(QueryStrings.lang);
+            if (queryLangId != null) {
+                return queryLangId;
+            }
         }
 
         // next, check the local storage setting
@@ -85,7 +91,7 @@ class CTRSettings {
             }
         }
 
-        return langId;
+        return /** @type {number} */ (langId);
     }
 
     /**
