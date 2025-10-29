@@ -3,8 +3,15 @@ import Lang from "@/resources/Lang";
 import MenuStringId from "@/resources/MenuStringId";
 import Alignment from "@/core/Alignment";
 import Text from "@/visual/Text";
-import dom from "@/utils/dom";
-const { addClass, removeClass, setStyle, stopAnimations, fadeIn, fadeOut, delay } = dom;
+import {
+    addClass,
+    removeClass,
+    setStyle,
+    stopAnimations,
+    fadeIn,
+    fadeOut,
+    delay,
+} from "@/utils/domHelpers";
 
 export default function createAudioOptions() {
     const showMiniOptionMessage = (
