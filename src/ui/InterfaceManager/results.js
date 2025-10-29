@@ -12,8 +12,8 @@ import { IS_MSIE_BROWSER } from "@/ui/InterfaceManager/constants";
 import ConfettiManager from "@/ui/ConfettiManager";
 
 // result elements
-const valdiv = document.getElementById("resultTickerValue");
-const lbldiv = document.getElementById("resultTickerLabel");
+const valdiv = /** @type {HTMLCanvasElement | null} */ (document.getElementById("resultTickerValue"));
+const lbldiv = /** @type {HTMLCanvasElement | null} */ (document.getElementById("resultTickerLabel"));
 /** @type {HTMLElement | null} */
 const resdiv = document.getElementById("resultScore");
 /** @type {HTMLElement | null} */
