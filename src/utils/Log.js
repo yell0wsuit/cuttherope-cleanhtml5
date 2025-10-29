@@ -1,11 +1,17 @@
 const Log = {
+    /**
+     * @param {string} message
+     */
     debug(message) {
-        if (false && window.console) {
+        if (import.meta.env.DEV) {
             console.log(message);
         }
     },
+    /**
+     * @param {string} message
+     */
     alert(message) {
-        if (false) {
+        if (import.meta.env.DEV) {
             alert(message);
             Log.debug(message);
         }
