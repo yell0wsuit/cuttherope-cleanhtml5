@@ -79,15 +79,15 @@ const MathHelper = {
     lineInLine(x1, y1, x2, y2, x3, y3, x4, y4) {
         //let DPx, DPy, QAx, QAy, QBx, QBy, d, la, lb;
 
-        const DPx = x3 - x1 + x4 - x2,
-            DPy = y3 - y1 + y4 - y2,
-            QAx = x2 - x1,
-            QAy = y2 - y1,
-            QBx = x4 - x3,
-            QBy = y4 - y3,
-            d = QAy * QBx - QBy * QAx,
-            la = QBx * DPy - QBy * DPx,
-            lb = QAx * DPy - QAy * DPx;
+        const DPx = x3 - x1 + x4 - x2;
+        const DPy = y3 - y1 + y4 - y2;
+        const QAx = x2 - x1;
+        const QAy = y2 - y1;
+        const QBx = x4 - x3;
+        const QBy = y4 - y3;
+        const d = QAy * QBx - QBy * QAx;
+        const la = QBx * DPy - QBy * DPx;
+        const lb = QAx * DPy - QAy * DPx;
 
         const absD = Math.abs(d);
         return Math.abs(la) <= absD && Math.abs(lb) <= absD;
