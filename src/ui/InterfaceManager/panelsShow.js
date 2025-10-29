@@ -12,9 +12,9 @@ import MenuStringId from "@/resources/MenuStringId";
 import Text from "@/visual/Text";
 import PubSub from "@/utils/PubSub";
 import { MENU_MUSIC_ID } from "@/ui/InterfaceManager/constants";
-import { hide, append, empty, getElement } from "@/utils/domHelpers";
+import { hide, append, empty } from "@/utils/domHelpers";
 
-const congratsElement = getElement("#congrats");
+const congratsElement = document.getElementById("congrats");
 
 /**
  * @param {InterfaceManager} manager
