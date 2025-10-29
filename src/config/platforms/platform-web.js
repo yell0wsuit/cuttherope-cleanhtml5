@@ -15,73 +15,85 @@ const locEntries = {
     },
 };
 
-const baseUrl = `${window.location.protocol}//${window.location.host}`;
-const langBtn = document.getElementById("langBtn");
-const flag = document.getElementById("flag");
-const cutBtn = document.getElementById("cutBtn");
-
-const WebPlatform = {
+class WebPlatform {
     /**
      * @const
      * @type {boolean}
      */
-    ENABLE_ANALYTICS: true,
+    static ENABLE_ANALYTICS = true;
 
     /**
      * @const
      * @type {boolean}
      */
-    ENABLE_ZOOM: false,
+    static ENABLE_ZOOM = false;
 
-    ZOOM_BOX_CANVAS: false,
+    static ZOOM_BOX_CANVAS = false;
 
-    imageBaseUrl: "images/",
-    resolutionBaseUrl: `images/${resolution.UI_WIDTH}/`,
-    uiImageBaseUrl: `images/${resolution.UI_WIDTH}/ui/`,
-    boxImageBaseUrl: `images/${resolution.UI_WIDTH}/${edition.boxDirectory || "ui/"}`,
+    static imageBaseUrl = "images/";
+    static resolutionBaseUrl = `images/${resolution.UI_WIDTH}/`;
+    static uiImageBaseUrl = `images/${resolution.UI_WIDTH}/ui/`;
+    static boxImageBaseUrl = `images/${resolution.UI_WIDTH}/${edition.boxDirectory || "ui/"}`;
 
-    audioBaseUrl: "audio/",
-    getAudioExtension: () => {
+    static audioBaseUrl = "audio/";
+
+    static videoBaseUrl = "video/";
+
+    static getAudioExtension() {
         return ".ogg";
-    },
+    }
 
-    videoBaseUrl: "video/",
-    getVideoExtension: () => {
+    static getVideoExtension() {
         return ".mp4";
-    },
+    }
 
-    getDrawingBaseUrl: () => {
+    static getDrawingBaseUrl() {
+        const baseUrl = `${window.location.protocol}//${window.location.host}`;
         return `${baseUrl}/images/${resolution.UI_WIDTH}/ui/`;
-    },
-    getScoreImageBaseUrl: () => {
+    }
+
+    static getScoreImageBaseUrl() {
+        const baseUrl = `${window.location.protocol}//${window.location.host}`;
         return `${baseUrl}/images/scores/`;
-    },
-    setSoundButtonChange: (button, callback) => {
+    }
+
+    static setSoundButtonChange(button, callback) {
         button.addEventListener("click", callback);
-    },
-    setMusicButtonChange: (button, callback) => {
+    }
+
+    static setMusicButtonChange(button, callback) {
         button.addEventListener("click", callback);
-    },
-    updateSoundOption: (el, isSoundOn) => {
+    }
+
+    static updateSoundOption(el, isSoundOn) {
         el.classList.toggle("disabled", !isSoundOn);
-    },
-    updateMusicOption: (el, isMusicOn) => {
+    }
+
+    static updateMusicOption(el, isMusicOn) {
         el.classList.toggle("disabled", !isMusicOn);
-    },
-    toggleLangUI: (show) => {
+    }
+
+    static toggleLangUI(show) {
+        const langBtn = document.getElementById("langBtn");
         if (langBtn) {
             langBtn.style.display = show ? "" : "none";
         }
-    },
-    setLangOptionClick: (callback) => {
+    }
+
+    static setLangOptionClick(callback) {
+        const langBtn = document.getElementById("langBtn");
         if (langBtn) {
             langBtn.addEventListener("click", () => {
                 const langId = null; // just advance to next supported language
                 callback(langId);
             });
         }
-    },
-    updateLangSetting: () => {
+    }
+
+    static updateLangSetting() {
+        const langBtn = document.getElementById("langBtn");
+        const flag = document.getElementById("flag");
+
         if (langBtn) {
             WebPlatform.setOptionText(langBtn, `${Lang.menuText(MenuStringId.LANGUAGE)}:`);
         }
@@ -93,13 +105,18 @@ const WebPlatform = {
         if (flag) {
             flag.offsetTop; // Force layout recalculation
         }
-    },
-    setCutOptionClick: (callback) => {
+    }
+
+    static setCutOptionClick(callback) {
+        const cutBtn = document.getElementById("cutBtn");
         if (cutBtn) {
             cutBtn.addEventListener("click", callback);
         }
-    },
-    updateCutSetting: (isClickToCut) => {
+    }
+
+    static updateCutSetting(isClickToCut) {
+        const cutBtn = document.getElementById("cutBtn");
+
         // fonts use game sized assets based on canvas size
         const textWidth = 400 * resolution.CANVAS_SCALE,
             // scale need to take UI size into account
@@ -127,11 +144,13 @@ const WebPlatform = {
         if (cutBtn) {
             cutBtn.classList.toggle("disabled", !isClickToCut);
         }
-    },
-    setResetText: (el, text) => {
+    }
+
+    static setResetText(el, text) {
         WebPlatform.setOptionText(el, text);
-    },
-    setOptionText: (button, text) => {
+    }
+
+    static setOptionText(button, text) {
         const img = button.querySelector("img");
         if (img) {
             Text.drawBig({
@@ -140,14 +159,16 @@ const WebPlatform = {
                 scaleToUI: true,
             });
         }
-    },
-    getGameCompleteShareText: (totalStars, possibleStars) => {
+    }
+
+    static getGameCompleteShareText(totalStars, possibleStars) {
         const text = Lang.getText(locEntries.GAME_COMPLETE)
             .replace("%d", totalStars)
             .replace("%d", possibleStars);
         return text;
-    },
-    meetsRequirements: () => {
+    }
+
+    static meetsRequirements() {
         // does the browser have the HTML5 features we need?
         /*const meetsReqs =
             Modernizr.canvas &&
@@ -186,7 +207,7 @@ const WebPlatform = {
         }*/
 
         return true;
-    },
-};
+    }
+}
 
 export default WebPlatform;
