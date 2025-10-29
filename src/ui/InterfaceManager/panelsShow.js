@@ -18,8 +18,11 @@ const { hide, append, empty, getElement } = dom;
 
 const congratsElement = getElement("#congrats");
 
+/**
+ * @param {InterfaceManager} manager
+ */
 export default function createPanelShowHandler(manager) {
-    return (panelId) => {
+    return (/** @type {number} */ panelId) => {
         const panel = PanelManager.getPanelById(panelId);
 
         switch (panelId) {
@@ -80,55 +83,65 @@ export default function createPanelShowHandler(manager) {
             }
         }
 
-        if (panelId === PanelId.LEVELS) {
-            Doors.renderDoors(true, 0);
-            panel.onShow();
-        } else if (panelId === PanelId.GAME) {
-            manager._updateMiniSoundButton(false, "optionSound");
-        } else if (panelId === PanelId.GAMECOMPLETE) {
-            hide("#levelResults");
+        switch (panelId) {
+            case PanelId.LEVELS:
+                Doors.renderDoors(true, 0);
+                panel.onShow();
+                break;
 
-            GameBorder.setGameCompleteBorder();
+            case PanelId.GAME:
+                manager._updateMiniSoundButton(false, "optionSound");
+                break;
 
-            const gameWonText = Lang.menuText(MenuStringId.GAME_FINISHED_TEXT).replace(
-                "%d",
-                ScoreManager.totalStars()
-            );
-            Text.drawBig({
-                text: gameWonText,
-                imgSel: "#finalScore img",
-                scale: 0.8 * resolution.UI_TEXT_SCALE,
-                alignment: 1,
-            });
+            case PanelId.GAMECOMPLETE: {
+                hide("#levelResults");
 
-            if (congratsElement) {
-                empty(congratsElement);
-                append(
-                    congratsElement,
-                    Text.drawBig({
-                        text: Lang.menuText(MenuStringId.CONGRATULATIONS),
-                        scale: 1.2 * resolution.UI_TEXT_SCALE,
-                    })
+                GameBorder.setGameCompleteBorder();
+
+                const gameWonText = Lang.menuText(MenuStringId.GAME_FINISHED_TEXT).replace(
+                    "%d",
+                    ScoreManager.totalStars()
                 );
+                Text.drawBig({
+                    text: gameWonText,
+                    imgSel: "#finalScore img",
+                    scale: 0.8 * resolution.UI_TEXT_SCALE,
+                    alignment: 1,
+                });
+
+                if (congratsElement) {
+                    empty(congratsElement);
+                    append(
+                        congratsElement,
+                        Text.drawBig({
+                            text: Lang.menuText(MenuStringId.CONGRATULATIONS),
+                            scale: 1.2 * resolution.UI_TEXT_SCALE,
+                        })
+                    );
+                }
+                Text.drawBig({
+                    text: Lang.menuText(MenuStringId.SHARE_ELLIPSIS),
+                    imgSel: "#finalShareBtn img",
+                    scale: 0.8 * resolution.UI_TEXT_SCALE,
+                    maxScaleWidth: resolution.uiScaledNumber(130),
+                });
+                Text.drawBig({
+                    text: Lang.menuText(MenuStringId.MORE_CTR_FUN),
+                    imgSel: "#finalFunBtn img",
+                    scale: 0.8 * resolution.UI_TEXT_SCALE,
+                    maxScaleWidth: resolution.uiScaledNumber(310),
+                });
+                break;
             }
-            Text.drawBig({
-                text: Lang.menuText(MenuStringId.SHARE_ELLIPSIS),
-                imgSel: "#finalShareBtn img",
-                scale: 0.8 * resolution.UI_TEXT_SCALE,
-                maxScaleWidth: resolution.uiScaledNumber(130),
-            });
-            Text.drawBig({
-                text: Lang.menuText(MenuStringId.MORE_CTR_FUN),
-                imgSel: "#finalFunBtn img",
-                scale: 0.8 * resolution.UI_TEXT_SCALE,
-                maxScaleWidth: resolution.uiScaledNumber(310),
-            });
-        } else if (panelId === PanelId.OPTIONS) {
-            PubSub.publish(PubSub.ChannelId.ShowOptionsPage);
-        } else if (panelId === PanelId.ACHIEVEMENTS) {
-            PubSub.publish(PubSub.ChannelId.UpdateCandyScroller);
-        } else if (panelId === PanelId.LEADERBOARDS) {
-            PubSub.publish(PubSub.ChannelId.UpdateCandyScroller);
+
+            case PanelId.OPTIONS:
+                PubSub.publish(PubSub.ChannelId.ShowOptionsPage);
+                break;
+
+            case PanelId.ACHIEVEMENTS:
+            case PanelId.LEADERBOARDS:
+                PubSub.publish(PubSub.ChannelId.UpdateCandyScroller);
+                break;
         }
     };
 }
