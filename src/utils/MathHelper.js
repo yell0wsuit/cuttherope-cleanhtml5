@@ -94,12 +94,19 @@ const MathHelper = {
     },
 
     // round to arbitrary precision
+    /**
+     * @param {number} value
+     * @param {number} precision
+     */
     roundPrecision(value, precision) {
         const scalar = Math.pow(10, precision);
         return Math.round(value * scalar) / scalar;
     },
 
     // round to 2 decimals of precision
+    /**
+     * @param {number} value
+     */
     roundP2(value) {
         return Math.round(value * 100) / 100;
     },
