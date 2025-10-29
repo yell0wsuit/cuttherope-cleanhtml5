@@ -78,7 +78,7 @@ class Box {
      * @param {string} bgimg
      * @param {number} reqstars
      * @param {boolean} islocked
-     * @param {any} type
+     * @param {string} type
      */
     constructor(boxIndex, bgimg, reqstars, islocked, type) {
         this.index = boxIndex;
@@ -152,7 +152,7 @@ class Box {
 
     /**
      * @param {CanvasRenderingContext2D} ctx
-     * @param {any} omnomoffset
+     * @param {number | null} omnomoffset
      */
     draw(ctx, omnomoffset) {
         const prevAlpha = ctx.globalAlpha;
@@ -161,7 +161,7 @@ class Box {
         }
 
         // render the box
-        this.render(ctx, omnomoffset);
+        this.render(ctx, omnomoffset ?? 0);
 
         // restore alpha
         if (this.opacity !== prevAlpha) {
@@ -171,7 +171,7 @@ class Box {
 
     /**
      * @param {CanvasRenderingContext2D} ctx
-     * @param {number} omnomoffset
+     * @param {number | null} omnomoffset
      */
     render(ctx, omnomoffset) {
         const isGameBox = this.isGameBox();
