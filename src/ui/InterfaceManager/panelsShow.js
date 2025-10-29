@@ -21,10 +21,17 @@ const congratsElement = document.getElementById("congrats");
  */
 export default class PanelShowHandler {
     /**
+     * @param {import("@/ui/InterfaceManagerClass").default} manager
+     */
+    constructor(manager) {
+        this.manager = manager;
+    }
+
+    /**
      * Handles showing a panel
      * @param {number} panelId - The ID of the panel to show
      */
-    _onShowPanel(panelId) {
+    onShowPanel(panelId) {
         const panel = PanelManager.getPanelById(panelId);
 
         switch (panelId) {
@@ -40,7 +47,7 @@ export default class PanelShowHandler {
 
         // make sure the pause level panel is closed
         if (panelId !== PanelId.GAMEMENU) {
-            this._closeLevelMenu();
+            this.manager.gameFlow._closeLevelMenu();
         }
 
         // make sure the menu music is started on main menu and level selection
@@ -55,8 +62,8 @@ export default class PanelShowHandler {
             ScoreManager.updateTotalScoreText();
             boxPanel.onShow();
 
-            if (this.isInAdvanceBoxMode) {
-                this.isInAdvanceBoxMode = false;
+            if (this.manager.isInAdvanceBoxMode) {
+                this.manager.isInAdvanceBoxMode = false;
                 setTimeout(() => {
                     hide("#levelResults");
                     boxPanel.slideToNextBox();
@@ -67,8 +74,8 @@ export default class PanelShowHandler {
                     }
                 }, 800);
             } else {
-                clearTimeout(this._bounceTimeOut);
-                this._bounceTimeOut = setTimeout(() => {
+                clearTimeout(this.manager._bounceTimeOut);
+                this.manager._bounceTimeOut = setTimeout(() => {
                     boxPanel.bounceCurrentBox();
                 }, 300);
             }
@@ -92,7 +99,7 @@ export default class PanelShowHandler {
                 break;
 
             case PanelId.GAME:
-                this._updateMiniSoundButton(false, "optionSound");
+                this.manager._updateMiniSoundButton(false, "optionSound");
                 break;
 
             case PanelId.GAMECOMPLETE: {

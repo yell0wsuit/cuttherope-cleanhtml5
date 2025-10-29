@@ -9,56 +9,27 @@ import PanelShowHandler from "@/ui/InterfaceManager/panelsShow";
 import GameFlow from "@/ui/InterfaceManager/gameFlow";
 import ResultsHandler from "@/ui/InterfaceManager/results";
 import { toggleClass } from "@/utils/domHelpers";
-import applyMixins from "@/utils/applyMixins";
 
 /**
- * InterfaceManager - Main UI management class
- * Extends AudioOptions and includes methods from PanelInitializer, PanelShowHandler, GameFlow, and ResultsHandler
+ * InterfaceManager - Main UI management class using composition pattern
+ *
+ * This class uses composition to organize functionality into clear, separate modules.
+ * Each module is responsible for a specific aspect of the UI.
  *
  * @class
- * @extends AudioOptions
+ * @extends AudioOptions - Handles audio UI controls (sound/music buttons)
  *
- * Inherited methods from AudioOptions:
- * @method _showMiniOptionMessage
- * @method _updateMiniSoundButton
- *
- * Mixed-in methods from PanelInitializer:
- * @method _onInitializePanel
- *
- * Mixed-in methods from PanelShowHandler:
- * @method _onShowPanel
- *
- * Mixed-in methods from GameFlow:
- * @method _notifyBeginTransition
- * @method _runScoreTicker
- * @method _isLastLevel
- * @method _openLevel
- * @method openLevel
- * @method _closeLevel
- * @method _completeBox
- * @method _openLevelMenu
- * @method _closeLevelMenu
- * @method _showLevelBackground
- * @method _hideLevelBackground
- * @method tapeBox
- * @method showGameUI
- * @method closeGameUI
- * @method openBox
- * @method closeBox
- * @method updateDevLink
- * @method pauseGame
- * @method resumeGame
- * @method domReady
- * @method appReady
- * @method noMenuStartLevel
- * @method openLevelMenu
- *
- * Mixed-in methods from ResultsHandler:
- * @method onLevelWon
+ * Composed modules (accessed via properties):
+ * @property {GameFlow} gameFlow - Game state, levels, boxes, and UI transitions
+ * @property {ResultsHandler} results - Level completion and scoring display
+ * @property {PanelInitializer} panels - Panel event handler initialization
+ * @property {PanelShowHandler} panelShow - Panel visibility management
  */
 class InterfaceManager extends AudioOptions {
     constructor() {
         super();
+
+        // Core state properties
         this.useHDVersion = settings.getIsHD();
         this.isInLevelSelectMode = false;
         this.isInMenuSelectMode = false;
@@ -77,9 +48,16 @@ class InterfaceManager extends AudioOptions {
         this._isDevLinkVisible = true;
         this._setImageBigText = setImageBigText;
 
-        // Initialize PanelManager callback (moved from init() method)
-        PanelManager.onShowPanel = (panelId) => this._onShowPanel(panelId);
+        // Create composed module instances with explicit manager delegation
+        this.gameFlow = new GameFlow(this);
+        this.results = new ResultsHandler(this);
+        this.panels = new PanelInitializer(this);
+        this.panelShow = new PanelShowHandler(this);
 
+        // Initialize PanelManager callback
+        PanelManager.onShowPanel = (panelId) => this.panelShow.onShowPanel(panelId);
+
+        // Subscribe to authentication events
         PubSub.subscribe(PubSub.ChannelId.SignIn, () => {
             this._signedIn = true;
             this._updateSignInControls();
@@ -95,8 +73,5 @@ class InterfaceManager extends AudioOptions {
         toggleClass("#leaderboardsBtn", "disabled", !this._signedIn);
     }
 }
-
-// Apply mixins to add methods from other classes
-applyMixins(InterfaceManager, [PanelInitializer, PanelShowHandler, GameFlow, ResultsHandler]);
 
 export default InterfaceManager;

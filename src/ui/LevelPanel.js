@@ -162,7 +162,7 @@ function onLevelClick(event) {
     const levelIndex = parseInt(event.currentTarget.dataset.level, 10);
     if (ScoreManager.isLevelUnlocked(BoxManager.currentBoxIndex, levelIndex)) {
         SoundMgr.selectRandomGameMusic();
-        im.openLevel(levelIndex + 1);
+        im.gameFlow.openLevel(levelIndex + 1);
     } else if (requiresPurchase(levelIndex)) {
         Dialogs.showPayDialog();
     } else {

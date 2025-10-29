@@ -80,7 +80,7 @@ class App {
         }
 
         preloader.domReady();
-        im.domReady();
+        im.gameFlow.domReady();
         PubSub.publish(PubSub.ChannelId.AppDomReady);
     }
 
@@ -119,7 +119,7 @@ class App {
                 }
             }, 200);
 
-            im.appReady();
+            im.gameFlow.appReady();
             PubSub.publish(PubSub.ChannelId.AppRun);
 
             // fade in the game
@@ -148,7 +148,7 @@ class App {
             });
 
             // show hide behind the scenes when we first load
-            im.updateDevLink();
+            im.gameFlow.updateDevLink();
 
             // put the social links back into the footer (need to be offscreen instead of hidden during load)
 

@@ -137,7 +137,7 @@ function boxClicked(visibleBoxIndex) {
             showLockDialog(editionBoxIndex);
         }
     } else {
-        im.openLevelMenu(editionBoxIndex);
+        im.gameFlow.openLevelMenu(editionBoxIndex);
     }
 }
 

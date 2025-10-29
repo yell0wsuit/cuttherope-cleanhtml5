@@ -12,8 +12,12 @@ import { IS_MSIE_BROWSER } from "@/ui/InterfaceManager/constants";
 import ConfettiManager from "@/ui/ConfettiManager";
 
 // result elements
-const valdiv = /** @type {HTMLCanvasElement | null} */ (document.getElementById("resultTickerValue"));
-const lbldiv = /** @type {HTMLCanvasElement | null} */ (document.getElementById("resultTickerLabel"));
+const valdiv = /** @type {HTMLCanvasElement | null} */ (
+    document.getElementById("resultTickerValue")
+);
+const lbldiv = /** @type {HTMLCanvasElement | null} */ (
+    document.getElementById("resultTickerLabel")
+);
 /** @type {HTMLElement | null} */
 const resdiv = document.getElementById("resultScore");
 /** @type {HTMLElement | null} */
@@ -27,6 +31,13 @@ const levelPanel = document.getElementById("levelPanel");
  * Base class for handling level results
  */
 export default class ResultsHandler {
+    /**
+     * @param {import("@/ui/InterfaceManagerClass").default} manager
+     */
+    constructor(manager) {
+        this.manager = manager;
+    }
+
     /**
      * Handles level won event
      * @param {{ stars: number; score: number; time: number; fps: number; }} info - Level completion info
@@ -310,8 +321,8 @@ export default class ResultsHandler {
             ScoreManager.setStars(boxIndex, levelIndex, 0);
         }
 
-        this.isInLevelSelectMode = false;
-        this.closeBox();
+        this.manager.isInLevelSelectMode = false;
+        this.manager.gameFlow.closeBox();
 
         // events that occur after completing the first level
         if (boxIndex === 0 && levelIndex === 1) {
@@ -320,7 +331,7 @@ export default class ResultsHandler {
             }
 
             // tell the user if the fps was low on the first level
-            if (info.fps < this._MIN_FPS && !platform.disableSlowWarning) {
+            if (info.fps < this.manager._MIN_FPS && !platform.disableSlowWarning) {
                 setTimeout(() => {
                     Dialogs.showSlowComputerPopup();
                 }, 3000);

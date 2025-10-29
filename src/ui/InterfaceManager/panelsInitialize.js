@@ -23,17 +23,37 @@ import Doors from "@/Doors";
 import Dialogs from "@/ui/Dialogs";
 import analytics from "@/analytics";
 import { getDefaultBoxIndex } from "@/ui/InterfaceManager/constants";
-import { addClass, append, empty, fadeIn, fadeOut, hide, hover, on, removeClass, stopAnimations } from "@/utils/domHelpers";
+import {
+    addClass,
+    append,
+    empty,
+    fadeIn,
+    fadeOut,
+    hide,
+    hover,
+    on,
+    removeClass,
+    stopAnimations,
+} from "@/utils/domHelpers";
 
 /**
  * Base class for panel initialization
  */
 export default class PanelInitializer {
     /**
+     * @param {import("@/ui/InterfaceManagerClass").default} manager
+     */
+    constructor(manager) {
+        this.manager = manager;
+    }
+
+    /**
      * Initializes a panel
      * @param {number} panelId - The ID of the panel to initialize
      */
-    _onInitializePanel(panelId) {
+    onInitializePanel(panelId) {
+        const manager = this.manager;
+        const { gameFlow } = manager;
         const panel = PanelManager.getPanelById(panelId);
         const soundBtn = document.getElementById("soundBtn");
         const musicBtn = document.getElementById("musicBtn");
@@ -58,7 +78,7 @@ export default class PanelInitializer {
                         const firstLevelStars = ScoreManager.getStars(getDefaultBoxIndex(), 0) || 0;
                         if (firstLevelStars === 0) {
                             // start the first level immediately for the default box
-                            this.noMenuStartLevel(getDefaultBoxIndex(), 0);
+                            gameFlow.noMenuStartLevel(getDefaultBoxIndex(), 0);
                         } else {
                             const nextPanelId = edition.disableBoxMenu
                                 ? PanelId.LEVELS
@@ -79,22 +99,22 @@ export default class PanelInitializer {
                 });
 
                 on("#achievementsBtn", "click", () => {
-                    if (!this._signedIn) {
+                    if (!manager._signedIn) {
                         return;
                     }
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.ACHIEVEMENTS);
                 });
-                this._updateSignInControls();
+                manager._updateSignInControls();
 
                 on("#leaderboardsBtn", "click", () => {
-                    if (!this._signedIn) {
+                    if (!manager._signedIn) {
                         return;
                     }
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.LEADERBOARDS);
                 });
-                this._updateSignInControls();
+                manager._updateSignInControls();
 
                 // reset popup buttons
                 /**
@@ -125,20 +145,20 @@ export default class PanelInitializer {
                 });
 
                 // mini options panel
-                this._updateMiniSoundButton(false, "optionSound");
+                manager._updateMiniSoundButton(false, "optionSound");
                 on("#optionSound", "click", () => {
-                    this._updateMiniSoundButton(true, "optionSound", "optionMsg");
+                    manager._updateMiniSoundButton(true, "optionSound", "optionMsg");
                 });
 
                 let hdtoggle;
-                if (this.useHDVersion) {
+                if (manager.useHDVersion) {
                     addClass("#optionHd", "activeResolution");
                     addClass("#optionSd", "inActiveResolution");
                     addClass("#optionSd", "ctrPointer");
                     hover(
                         "#optionSd",
                         () => {
-                            this._showMiniOptionMessage(
+                            manager._showMiniOptionMessage(
                                 "optionMsg",
                                 Lang.menuText(MenuStringId.RELOAD_SD),
                                 4000
@@ -159,7 +179,7 @@ export default class PanelInitializer {
                     hover(
                         "#optionHd",
                         () => {
-                            this._showMiniOptionMessage(
+                            manager._showMiniOptionMessage(
                                 "optionMsg",
                                 Lang.menuText(MenuStringId.RELOAD_HD),
                                 4000
@@ -176,16 +196,16 @@ export default class PanelInitializer {
                 }
 
                 on(`#${hdtoggle}`, "click", () => {
-                    settings.setIsHD(!this.useHDVersion);
+                    settings.setIsHD(!manager.useHDVersion);
                     window.location.reload();
                 });
 
                 // handle language changes
                 PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
-                    this._setImageBigText("#playBtn img", MenuStringId.PLAY);
-                    this._setImageBigText("#optionsBtn img", MenuStringId.OPTIONS);
-                    this._setImageBigText("#resetYesBtn img", MenuStringId.YES);
-                    this._setImageBigText("#resetNoBtn img", MenuStringId.NO);
+                    manager._setImageBigText("#playBtn img", MenuStringId.PLAY);
+                    manager._setImageBigText("#optionsBtn img", MenuStringId.OPTIONS);
+                    manager._setImageBigText("#resetYesBtn img", MenuStringId.YES);
+                    manager._setImageBigText("#resetNoBtn img", MenuStringId.NO);
 
                     Text.drawBig({
                         text: Lang.menuText(MenuStringId.LEADERBOARDS),
@@ -211,7 +231,7 @@ export default class PanelInitializer {
                     PanelManager.showPanel(PanelId.MENU);
                 });
 
-                panel.init(this);
+                panel.init(manager);
 
                 break;
             }
@@ -227,7 +247,7 @@ export default class PanelInitializer {
                     PanelManager.showPanel(PanelId.BOXES);
                 });
 
-                panel.init(this);
+                panel.init(manager);
 
                 break;
             }
@@ -242,22 +262,22 @@ export default class PanelInitializer {
 
                 // render the canvas all the way closed
                 Doors.renderDoors(true, 0.0);
-                panel.init(this);
+                panel.init(manager);
 
                 break;
             }
 
             case PanelId.GAME: {
                 on("#gameRestartBtn", "click", () => {
-                    if (this.isTransitionActive) return;
+                    if (manager.isTransitionActive) return;
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    this._openLevel(BoxManager.currentLevelIndex, true);
+                    gameFlow._openLevel(BoxManager.currentLevelIndex, true);
                 });
 
                 on("#gameMenuBtn", "click", () => {
-                    if (this.isTransitionActive) return;
+                    if (manager.isTransitionActive) return;
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    this._openLevelMenu();
+                    gameFlow._openLevelMenu();
                 });
 
                 break;
@@ -266,13 +286,13 @@ export default class PanelInitializer {
             case PanelId.GAMEMENU: {
                 on("#continueBtn", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    this._closeLevelMenu();
+                    gameFlow._closeLevelMenu();
                     RootController.resumeLevel();
                 });
 
                 on("#skipBtn", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    this._closeLevelMenu();
+                    gameFlow._closeLevelMenu();
 
                     // unlock next level
                     if (BoxManager.isNextLevelPlayable()) {
@@ -281,44 +301,44 @@ export default class PanelInitializer {
                             BoxManager.currentLevelIndex,
                             0
                         );
-                        this._openLevel(BoxManager.currentLevelIndex + 1, false, true);
+                        gameFlow._openLevel(BoxManager.currentLevelIndex + 1, false, true);
                     } else {
                         hide("#gameBtnTray");
-                        this._completeBox();
+                        gameFlow._completeBox();
                     }
                 });
 
                 on("#selectBtn", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    this._closeLevelMenu();
-                    this._closeLevel();
-                    this.isInLevelSelectMode = true;
-                    this.isInMenuSelectMode = false;
-                    this.closeBox();
+                    gameFlow._closeLevelMenu();
+                    gameFlow._closeLevel();
+                    manager.isInLevelSelectMode = true;
+                    manager.isInMenuSelectMode = false;
+                    gameFlow.closeBox();
                 });
 
                 on("#menuBtn", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    this._closeLevelMenu();
-                    this._closeLevel();
-                    this.isInLevelSelectMode = true;
-                    this.isInMenuSelectMode = true;
-                    this.closeBox();
+                    gameFlow._closeLevelMenu();
+                    gameFlow._closeLevel();
+                    manager.isInLevelSelectMode = true;
+                    manager.isInMenuSelectMode = true;
+                    gameFlow.closeBox();
                 });
 
                 // mini options panel
-                this._updateMiniSoundButton(false, "gameSound");
+                manager._updateMiniSoundButton(false, "gameSound");
 
                 on("#gameSound", "click", () => {
-                    this._updateMiniSoundButton(true, "gameSound", "gameMsg");
+                    manager._updateMiniSoundButton(true, "gameSound", "gameMsg");
                 });
 
                 // language changes
                 PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
-                    this._setImageBigText("#continueBtn img", MenuStringId.CONTINUE);
-                    this._setImageBigText("#skipBtn img", MenuStringId.SKIP_LEVEL);
-                    this._setImageBigText("#selectBtn img", MenuStringId.LEVEL_SELECT);
-                    this._setImageBigText("#menuBtn img", MenuStringId.MAIN_MENU);
+                    manager._setImageBigText("#continueBtn img", MenuStringId.CONTINUE);
+                    manager._setImageBigText("#skipBtn img", MenuStringId.SKIP_LEVEL);
+                    manager._setImageBigText("#selectBtn img", MenuStringId.LEVEL_SELECT);
+                    manager._setImageBigText("#menuBtn img", MenuStringId.MAIN_MENU);
                 });
 
                 break;
@@ -326,36 +346,36 @@ export default class PanelInitializer {
 
             case PanelId.LEVELCOMPLETE: {
                 on("#nextBtn", "click", () => {
-                    if (this.isTransitionActive) return;
-                    this._notifyBeginTransition(1000, "next level");
+                    if (manager.isTransitionActive) return;
+                    gameFlow._notifyBeginTransition(1000, "next level");
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     if (BoxManager.isNextLevelPlayable()) {
-                        this._openLevel(BoxManager.currentLevelIndex + 1);
+                        gameFlow._openLevel(BoxManager.currentLevelIndex + 1);
                     } else {
-                        this._completeBox();
+                        gameFlow._completeBox();
                     }
                 });
 
                 on("#replayBtn", "click", () => {
-                    if (this.isTransitionActive) return;
-                    this._notifyBeginTransition(1000, "replay");
+                    if (manager.isTransitionActive) return;
+                    gameFlow._notifyBeginTransition(1000, "replay");
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    this._openLevel(BoxManager.currentLevelIndex);
+                    gameFlow._openLevel(BoxManager.currentLevelIndex);
                 });
 
                 on("#lrMenuBtn", "click", () => {
-                    if (this.isTransitionActive) return;
-                    this._notifyBeginTransition(1000, "level menu");
+                    if (manager.isTransitionActive) return;
+                    gameFlow._notifyBeginTransition(1000, "level menu");
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    this.isInLevelSelectMode = true;
-                    this.isInMenuSelectMode = false;
-                    this.tapeBox();
+                    manager.isInLevelSelectMode = true;
+                    manager.isInMenuSelectMode = false;
+                    gameFlow.tapeBox();
                 });
 
                 PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
-                    this._setImageBigText("#nextBtn img", MenuStringId.NEXT);
-                    this._setImageBigText("#replayBtn img", MenuStringId.REPLAY);
-                    this._setImageBigText("#lrMenuBtn img", MenuStringId.MENU);
+                    manager._setImageBigText("#nextBtn img", MenuStringId.NEXT);
+                    manager._setImageBigText("#replayBtn img", MenuStringId.REPLAY);
+                    manager._setImageBigText("#lrMenuBtn img", MenuStringId.MENU);
                     Text.drawSmall({
                         text: Lang.menuText(MenuStringId.FINAL_SCORE),
                         imgId: "resultTickerMessage",
@@ -397,8 +417,8 @@ export default class PanelInitializer {
                     SoundMgr.setSoundEnabled(isSoundOn);
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     updateSoundOption(soundBtn, isSoundOn);
-                    this._updateMiniSoundButton(false, "gameSound");
-                    this._updateMiniSoundButton(false, "optionSound");
+                    manager._updateMiniSoundButton(false, "gameSound");
+                    manager._updateMiniSoundButton(false, "optionSound");
                 };
                 platform.setSoundButtonChange(soundBtn, onSoundButtonChange);
 
@@ -410,8 +430,8 @@ export default class PanelInitializer {
                     const isMusicOn = !settings.getMusicEnabled();
                     SoundMgr.setMusicEnabled(isMusicOn);
                     updateMusicOption(musicBtn, isMusicOn);
-                    this._updateMiniSoundButton(false, "gameSound");
-                    this._updateMiniSoundButton(false, "optionSound");
+                    manager._updateMiniSoundButton(false, "gameSound");
+                    manager._updateMiniSoundButton(false, "optionSound");
                 };
                 platform.setMusicButtonChange(musicBtn, onMusicButtonChange);
 
@@ -487,7 +507,7 @@ export default class PanelInitializer {
 
                 // update options menu when the language changes
                 const refreshOptionsButtons = () => {
-                    this._setImageBigText("#optionsTitle img", MenuStringId.OPTIONS);
+                    manager._setImageBigText("#optionsTitle img", MenuStringId.OPTIONS);
                     updateSoundOption(soundBtn, settings.getSoundEnabled());
                     updateMusicOption(musicBtn, settings.getMusicEnabled());
                     updateLangOption();
