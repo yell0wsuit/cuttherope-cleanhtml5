@@ -16,10 +16,10 @@ import settings from "@/game/CTRSettings";
 import SnowfallOverlay from "@/ui/SnowfallOverlay";
 import { IS_XMAS } from "@/resources/ResData";
 import { MENU_MUSIC_ID, startSnow, stopSnow } from "@/ui/InterfaceManager/constants";
-import { fadeIn, fadeOut, delay, show, hide, getElement, text, width } from "@/utils/domHelpers";
+import { fadeIn, fadeOut, delay, show, hide, text, width } from "@/utils/domHelpers";
 
-const levelResults = getElement("#levelResults");
-const levelMenu = getElement("#levelMenu");
+const levelResults = document.getElementById("levelResults");
+const levelMenu = document.getElementById("levelMenu");
 
 /**
  * @typedef {Object} LevelWonInfo
