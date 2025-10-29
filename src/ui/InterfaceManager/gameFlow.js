@@ -24,14 +24,25 @@ const { fadeIn, fadeOut, delay, show, hide, text, width, getElement } = dom;
 const levelResults = getElement("#levelResults");
 const levelMenu = getElement("#levelMenu");
 
+/**
+ * @typedef {Object} LevelWonInfo
+ * @property {number} stars - Number of stars earned (0-3)
+ * @property {number} time - Time taken to complete the level in seconds
+ * @property {number} score - Final score for the level
+ * @property {number} fps - Average frames per second during gameplay
+ */
+
 // UI methods
 
 // Sets the isTransitionActive flag to true and then back to false after the timeout. The
 // reason for using a timer here is to ensure that we always clear the flag since some UI
 // will be disabled until the flag gets cleared. This is an attempt to prevent new bugs.
 
+/**
+ * @param {InterfaceManager} manager
+ */
 export default function createGameFlow(manager) {
-    const notifyBeginTransition = (timeout) => {
+    const notifyBeginTransition = (/** @type {number} */ timeout) => {
         manager.isTransitionActive = true;
         if (manager._transitionTimeout != null) {
             clearTimeout(manager._transitionTimeout);
@@ -69,7 +80,11 @@ export default function createGameFlow(manager) {
         return BoxManager.currentLevelIndex === numLevels;
     };
 
-    const openLevel = (level, isRestart, isSkip) => {
+    const openLevel = (
+        /** @type {number} */ level,
+        /** @type {boolean} */ isRestart,
+        /** @type {boolean} */ isSkip
+    ) => {
         GameBorder.fadeIn(650, 100);
         BoxManager.currentLevelIndex = level;
 
@@ -173,7 +188,7 @@ export default function createGameFlow(manager) {
         fadeOut("#gameBtnTray");
     };
 
-    const openBox = (skip) => {
+    const openBox = (/** @type {boolean} */ skip = false) => {
         stopSnow();
         const timeout = PanelManager.currentPanelId === PanelId.LEVELS ? 400 : 0;
 
@@ -282,7 +297,7 @@ export default function createGameFlow(manager) {
     // Object management stuff
 
     const init = () => {
-        PanelManager.onShowPanel = (panelId) => manager._onShowPanel(panelId);
+        PanelManager.onShowPanel = (/** @type {number} */ panelId) => manager._onShowPanel(panelId);
     };
 
     const domReady = () => {
@@ -314,14 +329,18 @@ export default function createGameFlow(manager) {
     };
 
     const appReady = () => {
-        PubSub.subscribe(PubSub.ChannelId.LevelWon, (info) => manager.onLevelWon(info));
+        PubSub.subscribe(PubSub.ChannelId.LevelWon, (/** @type {LevelWonInfo} */ info) =>
+            manager.onLevelWon(info)
+        );
 
         // Load scores now that JSON data is available
         ScoreManager.load();
 
         Doors.appReady();
         EasterEggManager.appReady();
-        PanelManager.appReady((panelId) => manager._onInitializePanel(panelId));
+        PanelManager.appReady((/** @type {number} */ panelId) =>
+            manager._onInitializePanel(panelId)
+        );
         BoxManager.appReady();
         if (IS_XMAS) {
             startSnow();
@@ -360,7 +379,7 @@ export default function createGameFlow(manager) {
     };
 
     // used for debug and in level editor to start a level w/o menus
-    const noMenuStartLevel = (boxIndex, levelIndex) => {
+    const noMenuStartLevel = (/** @type {number} */ boxIndex, /** @type {number} */ levelIndex) => {
         PanelManager.showPanel(PanelId.GAME, true);
 
         // unfortunate that box manager is zero index for box and 1 based for level
@@ -371,7 +390,7 @@ export default function createGameFlow(manager) {
         openBox();
     };
 
-    const openLevelMenuPublic = (boxIndex) => {
+    const openLevelMenuPublic = (/** @type {number} */ boxIndex) => {
         manager.isBoxOpen = false;
         Doors.renderDoors(true, 0);
         PanelManager.showPanel(PanelId.LEVELS);
