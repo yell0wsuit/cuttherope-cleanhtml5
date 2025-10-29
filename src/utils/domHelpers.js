@@ -74,7 +74,7 @@ export const toggleClass = (selector, className, force) => {
 export const setStyle = (selector, property, value) => {
     const el = getElement(selector);
     if (!el || !(el instanceof HTMLElement)) return;
-    el.style[property] = value;
+    el.style.setProperty(property, value);
 };
 
 /**
