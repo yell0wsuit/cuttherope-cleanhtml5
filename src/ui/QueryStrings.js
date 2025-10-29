@@ -2,6 +2,7 @@
 
 // parse the query strings into a dictionary
 const getQueryStrings = () => {
+    /** @type {Record<string, string>} */
     const assoc = {};
     const queryString = location.search.substring(1) || "";
     const keyValues = queryString.split("&");
@@ -46,6 +47,7 @@ const QueryStrings = {
     // for testing
     unlockAllBoxes: import.meta.env.DEV || undefined,
     createScoresForBox: undefined,
+    minFps: qs["minFps"] == null ? null : parseInt(qs["minFps"], 10),
 };
 
 export default QueryStrings;
