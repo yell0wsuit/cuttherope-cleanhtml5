@@ -8,7 +8,6 @@ import platform from "@/platform";
 import Easing from "@/ui/Easing";
 import PubSub from "@/utils/PubSub";
 import edition from "@/edition";
-import dom from "@/utils/dom";
 
 // Panel state
 const panels = [];
@@ -54,7 +53,7 @@ const showShadow = () => {
         shadowIsVisible = true;
 
         if (shadowPanelElement) {
-            dom.show(shadowPanelElement, "block");
+            shadowPanelElement.style.display = "block";
         }
         if (!shadowIsRotating) {
             beginRotateShadow();
@@ -66,7 +65,7 @@ const hideShadow = () => {
     shadowIsVisible = false;
     shadowIsRotating = false;
     if (shadowPanelElement) {
-        dom.hide(shadowPanelElement);
+        shadowPanelElement.style.display = "none";
     }
 };
 
@@ -128,8 +127,8 @@ const runBlackFadeIn = (callback) => {
 
     isFading = true;
 
-    dom.setStyle(fadeToBlack, "opacity", "0");
-    dom.show(fadeToBlack, "block");
+    fadeToBlack.style.opacity = "0";
+    fadeToBlack.style.display = "block";
 
     // our loop
     const loop = () => {
@@ -137,12 +136,12 @@ const runBlackFadeIn = (callback) => {
         const diff = now - startTime;
         const v = Easing.noEase(diff, 0, fadeTo, fadeInDur);
 
-        dom.setStyle(fadeToBlack, "opacity", String(v));
+        fadeToBlack.style.opacity = String(v);
 
         if (diff < fadeInDur) {
             window.requestAnimationFrame(loop);
         } else {
-            dom.setStyle(fadeToBlack, "opacity", String(fadeTo));
+            fadeToBlack.style.opacity = String(fadeTo);
             if (callback != null) callback();
         }
     };
@@ -159,13 +158,13 @@ const runBlackFadeOut = () => {
         const diff = now - startTime;
         const v = fadeTo - Easing.noEase(diff, 0, fadeTo, fadeInDur);
 
-        dom.setStyle(fadeToBlack, "opacity", String(v));
+        fadeToBlack.style.opacity = String(v);
 
         if (diff < fadeInDur) {
             window.requestAnimationFrame(loop);
         } else {
-            dom.setStyle(fadeToBlack, "opacity", "0");
-            dom.hide(fadeToBlack);
+            fadeToBlack.style.opacity = "0";
+            fadeToBlack.style.display = "none";
             isFading = false;
         }
     };
@@ -240,10 +239,12 @@ const PanelManager = {
         setTimeout(() => {
             // show the panel
             if (panel.bgDivId) {
-                dom.show(`#${panel.bgDivId}`, "block");
+                const bgElement = document.getElementById(panel.bgDivId);
+                if (bgElement) bgElement.style.display = "block";
             }
             if (panel.panelDivId) {
-                dom.show(`#${panel.panelDivId}`, "block");
+                const panelElement = document.getElementById(panel.panelDivId);
+                if (panelElement) panelElement.style.display = "block";
             }
 
             // hide other panels
@@ -251,11 +252,13 @@ const PanelManager = {
                 const otherPanel = panels[i];
 
                 if (otherPanel.panelDivId != null && otherPanel.panelDivId != panel.panelDivId) {
-                    dom.hide(`#${otherPanel.panelDivId}`);
+                    const otherPanelElement = document.getElementById(otherPanel.panelDivId);
+                    if (otherPanelElement) otherPanelElement.style.display = "none";
                 }
 
                 if (otherPanel.bgDivId != null && otherPanel.bgDivId != panel.bgDivId) {
-                    dom.hide(`#${otherPanel.bgDivId}`);
+                    const otherBgElement = document.getElementById(otherPanel.bgDivId);
+                    if (otherBgElement) otherBgElement.style.display = "none";
                 }
             }
 
