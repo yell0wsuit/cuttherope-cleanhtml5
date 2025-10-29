@@ -1,3 +1,5 @@
+import resolution from "@/resolution";
+
 class ZoomManager {
     constructor() {
         this.$el = null;
@@ -6,10 +8,13 @@ class ZoomManager {
         this.nativeWidth = 0;
         this.nativeHeight = 0;
         this.originalHeight = 270;
-        /**
-         * @type {(() => void) | undefined}
-         */
-        this.domReady = undefined;
+    }
+
+    domReady() {
+        this.setElementId("gameContainer");
+        this.nativeWidth = resolution.UI_WIDTH;
+        this.nativeHeight = resolution.UI_HEIGHT;
+        this.autoResize();
     }
 
     /**
