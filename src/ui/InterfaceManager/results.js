@@ -7,23 +7,19 @@ import Text from "@/visual/Text";
 import Dialogs from "@/ui/Dialogs";
 import VideoManager from "@/ui/VideoManager";
 import analytics from "@/analytics";
-import dom from "@/utils/dom";
+import { removeClass, addClass, hide, empty, fadeOut, fadeIn, show } from "@/utils/domHelpers";
 import { IS_MSIE_BROWSER } from "@/ui/InterfaceManager/constants";
 import ConfettiManager from "@/ui/ConfettiManager";
 
-const { removeClass, addClass, hide, empty, fadeOut, fadeIn, getElement, show } = dom;
-
 // result elements
-/** @type {HTMLCanvasElement | null} */
-const valdiv = getElement("#resultTickerValue");
-/** @type {HTMLCanvasElement | null} */
-const lbldiv = getElement("#resultTickerLabel");
+const valdiv = document.getElementById("resultTickerValue");
+const lbldiv = document.getElementById("resultTickerLabel");
 /** @type {HTMLElement | null} */
-const resdiv = getElement("#resultScore");
+const resdiv = document.getElementById("resultScore");
 /** @type {HTMLElement | null} */
-const stamp = getElement("#resultImproved");
+const stamp = document.getElementById("resultImproved");
 /** @type {HTMLElement | null} */
-const msgdiv = getElement("#resultTickerMessage");
+const msgdiv = document.getElementById("resultTickerMessage");
 /** @type {HTMLElement | null} */
 const levelPanel = document.getElementById("levelPanel");
 
