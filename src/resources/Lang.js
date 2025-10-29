@@ -3,8 +3,9 @@ import settings from "@/game/CTRSettings";
 import LangId from "@/resources/LangId";
 import menuStrings from "@/resources/MenuStrings";
 import Log from "@/utils/Log";
+
 // helper to return the correct string from a loc entry
-const getLocalizedText = function (locEntry) {
+const getLocalizedText = function (/** @type {BoxText} */ locEntry) {
     // note: we default to english if entry is blank
     // !LANG
     switch (settings.getLangId()) {
@@ -37,6 +38,10 @@ const getLocalizedText = function (locEntry) {
 };
 
 const Lang = {
+    /**
+     * @param {number} boxIndex
+     * @param {boolean} includeNumber
+     */
     boxText(boxIndex, includeNumber) {
         const locEntry = edition.boxText[boxIndex];
         let text = getLocalizedText(locEntry);
@@ -48,6 +53,9 @@ const Lang = {
 
         return text;
     },
+    /**
+     * @param {number} menuStringId
+     */
     menuText(menuStringId) {
         let locEntry, i;
         const len = menuStrings.length;
