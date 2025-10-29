@@ -38,8 +38,12 @@ const {
     removeClass,
     stopAnimations,
 } = dom;
+
+/**
+ * @param {InterfaceManager} manager
+ */
 export default function createPanelInitializer(manager) {
-    return (panelId) => {
+    return (/** @type {number} */ panelId) => {
         const panel = PanelManager.getPanelById(panelId);
         const soundBtn = document.getElementById("soundBtn");
         const musicBtn = document.getElementById("musicBtn");
@@ -56,9 +60,9 @@ export default function createPanelInitializer(manager) {
                 on("#playBtn", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
 
-                    if (analytics.onPlayClicked) {
+                    /*if (analytics.onPlayClicked) {
                         analytics.onPlayClicked();
-                    }
+                    }*/
 
                     VideoManager.playIntroVideo(() => {
                         const firstLevelStars = ScoreManager.getStars(getDefaultBoxIndex(), 0) || 0;
@@ -103,6 +107,9 @@ export default function createPanelInitializer(manager) {
                 manager._updateSignInControls();
 
                 // reset popup buttons
+                /**
+                 * @type {ReturnType<typeof setTimeout> | null}
+                 */
                 let resetTimer = null;
                 on("#resetYesBtn", PointerCapture.startEventName, () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
@@ -420,15 +427,18 @@ export default function createPanelInitializer(manager) {
 
                 // change language
                 const updateLangOption = platform.updateLangSetting;
-                platform.setLangOptionClick((newLangId) => {
+                platform.setLangOptionClick((/** @type {number | null} */ langParam) => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
 
                     // if not specified we'll assume that we should advance to
                     // the next language (so we cycle through as user clicks)
-                    if (newLangId == null) {
+                    let newLangId;
+                    if (langParam == null) {
                         const currentIndex = edition.languages.indexOf(settings.getLangId());
                         newLangId =
                             edition.languages[(currentIndex + 1) % edition.languages.length];
+                    } else {
+                        newLangId = langParam;
                     }
                     settings.setLangId(newLangId);
 
@@ -445,7 +455,7 @@ export default function createPanelInitializer(manager) {
                     updateCutOption(isClickToCut);
                 });
 
-                resetBtn.addEventListener("click", () => {
+                resetBtn?.addEventListener("click", () => {
                     // create localized text images
                     const resetTextImg = Text.drawBig({
                         text: Lang.menuText(MenuStringId.RESET_TEXT),
@@ -477,7 +487,7 @@ export default function createPanelInitializer(manager) {
                     Dialogs.showPopup("resetGame");
                 });
 
-                backBtn.addEventListener("click", () => {
+                backBtn?.addEventListener("click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     PanelManager.showPanel(PanelId.MENU);
                 });
