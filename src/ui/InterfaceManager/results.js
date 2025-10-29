@@ -14,15 +14,26 @@ import ConfettiManager from "@/ui/ConfettiManager";
 const { removeClass, addClass, hide, empty, fadeOut, fadeIn, getElement, show } = dom;
 
 // result elements
+/** @type {HTMLCanvasElement | null} */
 const valdiv = getElement("#resultTickerValue");
+/** @type {HTMLCanvasElement | null} */
 const lbldiv = getElement("#resultTickerLabel");
+/** @type {HTMLElement | null} */
 const resdiv = getElement("#resultScore");
+/** @type {HTMLElement | null} */
 const stamp = getElement("#resultImproved");
+/** @type {HTMLElement | null} */
 const msgdiv = getElement("#resultTickerMessage");
+/** @type {HTMLElement | null} */
 const levelPanel = document.getElementById("levelPanel");
 
+/**
+ * @param {InterfaceManager} manager
+ */
 export default function createResultsHandler(manager) {
-    const onLevelWon = (info) => {
+    const onLevelWon = (
+        /** @type {{ stars: number; score: number; time: number; fps: number; }} */ info
+    ) => {
         const stars = info.stars;
         const score = info.score;
         const levelTime = info.time;
@@ -89,17 +100,20 @@ export default function createResultsHandler(manager) {
 
         // Helper functions
 
-        const secondsToMin = (sec) => {
+        const secondsToMin = (/** @type {number} */ sec) => {
             const minutes = (sec / 60) | 0;
             const seconds = Math.round(sec % 60);
             return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
         };
 
-        const doStarCountdown = (from, callback) => {
+        const doStarCountdown = (
+            /** @type {number} */ from,
+            /** @type {(() => void) | null | undefined} */ callback
+        ) => {
             let countDownPoints = from;
             const duration = 1000;
             let lastRender = Date.now();
-            const raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame;
+            const raf = window.requestAnimationFrame;
 
             const renderCount = () => {
                 const now = Date.now();
@@ -121,12 +135,14 @@ export default function createResultsHandler(manager) {
                     raf(renderCount);
                 }
 
-                Text.drawSmall({
-                    text: countDownPoints,
-                    img: valdiv,
-                    scaleToUI: true,
-                    canvas: true,
-                });
+                if (valdiv) {
+                    Text.drawSmall({
+                        text: countDownPoints,
+                        img: valdiv,
+                        scaleToUI: true,
+                        canvas: true,
+                    });
+                }
                 Text.drawBigNumbers({
                     text: currentPoints,
                     imgParentId: "resultScore",
@@ -137,13 +153,17 @@ export default function createResultsHandler(manager) {
             renderCount();
         };
 
-        const doTimeCountdown = (fromsec, frompoints, callback) => {
+        const doTimeCountdown = (
+            /** @type {number} */ fromsec,
+            /** @type {number} */ frompoints,
+            /** @type {(() => void) | null | undefined} */ callback
+        ) => {
             const finalPoints = currentPoints + frompoints;
             let countDownSecs = fromsec;
             // between 1 and 2 secs depending on time
             const duration = Math.max(1000, 2000 - fromsec * 50);
             let lastRender = Date.now();
-            const raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame;
+            const raf = window.requestAnimationFrame;
 
             const renderScore = () => {
                 const now = Date.now();
@@ -161,12 +181,14 @@ export default function createResultsHandler(manager) {
                     raf(renderScore);
                 }
 
-                Text.drawSmall({
-                    text: secondsToMin(countDownSecs),
-                    img: valdiv,
-                    scaleToUI: true,
-                    canvas: true,
-                });
+                if (valdiv) {
+                    Text.drawSmall({
+                        text: secondsToMin(countDownSecs),
+                        img: valdiv,
+                        scaleToUI: true,
+                        canvas: true,
+                    });
+                }
                 Text.drawBigNumbers({
                     text: currentPoints,
                     imgParentId: "resultScore",
@@ -180,25 +202,33 @@ export default function createResultsHandler(manager) {
         // ANIMATION
 
         // set up the star bonus countdown
-        Text.drawSmall({
-            text: Lang.menuText(MenuStringId.STAR_BONUS),
-            img: lbldiv,
-            scaleToUI: true,
-            canvas: true,
-        });
-        Text.drawSmall({
-            text: totalStarPoints,
-            img: valdiv,
-            scaleToUI: true,
-            canvas: true,
-        });
+        if (lbldiv) {
+            Text.drawSmall({
+                text: Lang.menuText(MenuStringId.STAR_BONUS),
+                img: lbldiv,
+                scaleToUI: true,
+                canvas: true,
+            });
+        }
+        if (valdiv) {
+            Text.drawSmall({
+                text: totalStarPoints,
+                img: valdiv,
+                scaleToUI: true,
+                canvas: true,
+            });
+        }
         if (resdiv) {
-            resdiv.querySelectorAll("img").forEach((node) => {
-                node.remove();
-            });
-            resdiv.querySelectorAll("canvas").forEach((node) => {
-                node.remove();
-            });
+            resdiv
+                .querySelectorAll("img")
+                .forEach((/** @type {{ remove: () => void; }} */ node) => {
+                    node.remove();
+                });
+            resdiv
+                .querySelectorAll("canvas")
+                .forEach((/** @type {{ remove: () => void; }} */ node) => {
+                    node.remove();
+                });
         }
 
         // Trigger confetti for 3-star completion
@@ -219,19 +249,23 @@ export default function createResultsHandler(manager) {
                     }
                 }
                 doStarCountdown(totalStarPoints, () => {
-                    Text.drawSmall({
-                        text: Lang.menuText(MenuStringId.TIME),
-                        img: lbldiv,
-                        scaleToUI: true,
-                        canvas: true,
-                    });
+                    if (lbldiv) {
+                        Text.drawSmall({
+                            text: Lang.menuText(MenuStringId.TIME),
+                            img: lbldiv,
+                            scaleToUI: true,
+                            canvas: true,
+                        });
+                    }
                     fadeIn(lbldiv, 300);
-                    Text.drawSmall({
-                        text: secondsToMin(Math.ceil(levelTime)),
-                        img: valdiv,
-                        scaleToUI: true,
-                        canvas: true,
-                    });
+                    if (valdiv) {
+                        Text.drawSmall({
+                            text: secondsToMin(Math.ceil(levelTime)),
+                            img: valdiv,
+                            scaleToUI: true,
+                            canvas: true,
+                        });
+                    }
                     fadeIn(valdiv, 300).then(() => {
                         doTimeCountdown(Math.ceil(levelTime), score - currentPoints, () => {
                             fadeIn(msgdiv, 300);
@@ -273,7 +307,8 @@ export default function createResultsHandler(manager) {
         ScoreManager.setStars(boxIndex, levelIndex - 1, stars);
 
         // unlock next level
-        if (ScoreManager.levelCount(boxIndex) > levelIndex && BoxManager.isNextLevelPlayable()) {
+        const levelCount = ScoreManager.levelCount(boxIndex);
+        if (levelCount != null && levelCount > levelIndex && BoxManager.isNextLevelPlayable()) {
             ScoreManager.setStars(boxIndex, levelIndex, 0);
         }
 
