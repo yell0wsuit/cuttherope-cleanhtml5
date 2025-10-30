@@ -7,6 +7,9 @@ import { updateTargetState } from "./targetState";
 import { updateSpecial } from "./special";
 import { updateClickToCut } from "./clickToCut";
 
+/**
+ * @param {number} delta
+ */
 export function update(delta) {
     updateBasics.call(this, delta);
     updateCamera.call(this, delta);
