@@ -2,7 +2,7 @@ import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 import Radians from "@/utils/Radians";
 
-export const GameSceneTeleport = {
+class GameSceneTeleport {
     teleport() {
         if (!this.targetSock) {
             return;
@@ -29,8 +29,13 @@ export const GameSceneTeleport = {
         this.star.posDelta.divide(60);
         this.star.prevPos.copyFrom(this.star.pos);
         this.star.prevPos.subtract(this.star.posDelta);
+        /**
+         * @type {Sock | null}
+         */
         this.targetSock = null;
 
         //Achievements.increment(AchievementId.MAGICIAN);
-    },
-};
+    }
+}
+
+export default GameSceneTeleport;
