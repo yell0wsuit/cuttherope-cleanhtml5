@@ -19,6 +19,22 @@ import Radians from "@/utils/Radians";
 import GameSceneUpdate from "./update";
 
 class GameSceneTouch extends GameSceneUpdate {
+    /**
+     * Number of ropes cut in quick succession (initialized in parent class)
+     * @type {number}
+     */
+    ropesCutAtOnce = 0;
+
+    /**
+     * Timer for tracking concurrent rope cuts (initialized in parent class)
+     * @type {number}
+     */
+    ropesAtOnceTimer = 0;
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} touchIndex
+     */
     touchDown(x, y, touchIndex) {
         if (this.ignoreTouches) {
             if (this.camera.type === Camera2D.SpeedType.PIXELS) {
@@ -238,6 +254,11 @@ class GameSceneTouch extends GameSceneUpdate {
 
         return true;
     }
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} touchIndex
+     */
     doubleClick(x, y, touchIndex) {
         if (this.ignoreTouches) {
             return true;
@@ -245,6 +266,11 @@ class GameSceneTouch extends GameSceneUpdate {
 
         return true;
     }
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} touchIndex
+     */
     touchUp(x, y, touchIndex) {
         if (this.ignoreTouches) {
             return true;
@@ -321,6 +347,11 @@ class GameSceneTouch extends GameSceneUpdate {
 
         return true;
     }
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} touchIndex
+     */
     touchMove(x, y, touchIndex) {
         if (this.ignoreTouches) {
             return true;
@@ -523,6 +554,11 @@ class GameSceneTouch extends GameSceneUpdate {
 
         return true;
     }
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} touchIndex
+     */
     touchDragged(x, y, touchIndex) {
         if (touchIndex > Constants.MAX_TOUCHES) {
             return false;
@@ -532,6 +568,9 @@ class GameSceneTouch extends GameSceneUpdate {
         this.slastTouch.y = y;
         return true;
     }
+    /**
+     * @param {number} n
+     */
     onButtonPressed(n) {
         Gravity.toggle();
         this.gravityNormal = Gravity.isNormal();
@@ -548,6 +587,9 @@ class GameSceneTouch extends GameSceneUpdate {
             }
         }
     }
+    /**
+     * @param {number} sid - The toggle ID to match against spikes
+     */
     rotateAllSpikesWithId(sid) {
         for (let i = 0, len = this.spikes.length; i < len; i++) {
             if (this.spikes[i].getToggled() === sid) {
