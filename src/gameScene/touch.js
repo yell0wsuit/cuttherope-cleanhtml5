@@ -193,10 +193,10 @@ class GameSceneTouch extends GameSceneUpdate {
             activeCircle = null;
         }
 
-        const GRAB_WHEEL_RADIUS = resolution.GRAB_WHEEL_RADIUS,
-            GRAB_WHEEL_DIAMETER = GRAB_WHEEL_RADIUS * 2,
-            GRAB_MOVE_RADIUS = resolution.GRAB_MOVE_RADIUS,
-            GRAB_MOVE_DIAMETER = GRAB_MOVE_RADIUS * 2;
+        const GRAB_WHEEL_RADIUS = resolution.GRAB_WHEEL_RADIUS;
+        const GRAB_WHEEL_DIAMETER = GRAB_WHEEL_RADIUS * 2;
+        const GRAB_MOVE_RADIUS = resolution.GRAB_MOVE_RADIUS;
+        const GRAB_MOVE_DIAMETER = GRAB_MOVE_RADIUS * 2;
         for (i = 0, len = this.bungees.length; i < len; i++) {
             const grab = this.bungees[i];
             if (grab.wheel) {
