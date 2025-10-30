@@ -137,9 +137,9 @@ class GameSceneInit extends BaseElement {
      * @return {boolean}
      */
     pointOutOfScreen(p) {
-        const bottomY = this.mapHeight + resolution.OUT_OF_SCREEN_ADJUSTMENT_BOTTOM,
-            topY = resolution.OUT_OF_SCREEN_ADJUSTMENT_TOP,
-            outOfScreen = p.pos.y > bottomY || p.pos.y < topY;
+        const bottomY = this.mapHeight + resolution.OUT_OF_SCREEN_ADJUSTMENT_BOTTOM;
+        const topY = resolution.OUT_OF_SCREEN_ADJUSTMENT_TOP;
+        const outOfScreen = p.pos.y > bottomY || p.pos.y < topY;
         return outOfScreen;
     }
     restart() {
@@ -234,6 +234,9 @@ class GameSceneInit extends BaseElement {
             this.bgTexture = ResourceMgr.getTexture(bgrID);
             const canvasBackground = document.getElementById("c");
             const backgroundSource = this.bgTexture?.imageSrc || this.bgTexture?.image?.src || "";
+            if (!canvasBackground) {
+                return;
+            }
             canvasBackground.style.background = backgroundSource
                 ? `url('${backgroundSource}')`
                 : "";
@@ -254,7 +257,7 @@ class GameSceneInit extends BaseElement {
         this.back.fill(0, 0, 1, 1, 0);
 
         /**
-         * @type {null}
+         * @type {BaseElement | null}
          */
         this.gravityButton = null;
         this.gravityTouchDown = Constants.UNDEFINED;
