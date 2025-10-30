@@ -9,7 +9,10 @@ import * as GameSceneConstants from "@/gameScene/constants";
 import resolution from "@/resolution";
 import Constants from "@/utils/Constants";
 
-export const GameSceneSpiderHandlers = {
+class GameSceneSpiderHandlers {
+    /**
+     * @param {Grab} g
+     */
     spiderBusted(g) {
         SoundMgr.playSound(ResourceId.SND_SPIDER_FALL);
         g.hasSpider = false;
@@ -65,7 +68,11 @@ export const GameSceneSpiderHandlers = {
         // spider achievements
         // Achievements.increment(AchievementId.SPIDER_BUSTER);
         // Achievements.increment(AchievementId.SPIDER_TAMER);
-    },
+    }
+
+    /**
+     * @param {Grab} sg
+     */
     spiderWon(sg) {
         SoundMgr.playSound(ResourceId.SND_SPIDER_WIN);
 
@@ -158,5 +165,7 @@ export const GameSceneSpiderHandlers = {
         }
 
         // Achievements.increment(AchievementId.SPIDER_LOVER);
-    },
-};
+    }
+}
+
+export default GameSceneSpiderHandlers;
