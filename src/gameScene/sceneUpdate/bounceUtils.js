@@ -3,7 +3,8 @@ import SoundMgr from "@/game/CTRSoundMgr";
 import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 
-class GameSceneBounceUtils {
+const GameSceneBounceUtils = (Base) =>
+    class extends Base {
     /**
      * @param {Bouncer} bouncer
      * @param {ConstrainedPoint} star
@@ -44,6 +45,6 @@ class GameSceneBounceUtils {
 
         SoundMgr.playSound(ResourceId.SND_BOUNCER);
     }
-}
+    };
 
 export default GameSceneBounceUtils;

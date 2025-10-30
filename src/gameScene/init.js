@@ -1,3 +1,4 @@
+import BaseElement from "@/visual/BaseElement";
 import Animation from "@/visual/Animation";
 import AnimationPool from "@/visual/AnimationPool";
 import Alignment from "@/core/Alignment";
@@ -32,8 +33,9 @@ import Gravity from "@/physics/Gravity";
 
 let currentPack = -1;
 
-class GameSceneInit {
-    init() {
+class GameSceneInit extends BaseElement {
+    constructor() {
+        super();
         this.dd = DelayedDispatcher;
 
         this.initialCameraToStarDistance = Constants.UNDEFINED;

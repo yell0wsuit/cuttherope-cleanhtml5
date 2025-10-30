@@ -2,7 +2,8 @@ import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 import Radians from "@/utils/Radians";
 
-class GameSceneTeleport {
+const GameSceneTeleport = (Base) =>
+    class extends Base {
     teleport() {
         if (!this.targetSock) {
             return;
@@ -36,6 +37,6 @@ class GameSceneTeleport {
 
         //Achievements.increment(AchievementId.MAGICIAN);
     }
-}
+    };
 
 export default GameSceneTeleport;

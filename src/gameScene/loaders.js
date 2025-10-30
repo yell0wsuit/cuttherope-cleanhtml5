@@ -36,8 +36,9 @@ import settings from "@/game/CTRSettings";
 import KeyFrame from "@/visual/KeyFrame";
 import ActionType from "@/visual/ActionType";
 import BoxType from "@/ui/BoxType";
+import GameSceneInit from "./init";
 
-class GameSceneLoaders {
+class GameSceneLoaders extends GameSceneInit {
     loadMap(map) {
         const layers = [];
 

@@ -4,7 +4,8 @@ import ResourceId from "@/resources/ResourceId";
 import SoundMgr from "@/game/CTRSoundMgr";
 import resolution from "@/resolution";
 
-class GameSceneBubbles {
+const GameSceneBubbles = (Base) =>
+    class extends Base {
     /**
      * @param {Bubble} b
      * @param {GameObject} candy
@@ -113,6 +114,6 @@ class GameSceneBubbles {
         }
         return false;
     }
-}
+    };
 
 export default GameSceneBubbles;

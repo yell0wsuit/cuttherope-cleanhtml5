@@ -9,7 +9,8 @@ import * as GameSceneConstants from "@/gameScene/constants";
 import resolution from "@/resolution";
 import Constants from "@/utils/Constants";
 
-class GameSceneSpiderHandlers {
+const GameSceneSpiderHandlers = (Base) =>
+    class extends Base {
     /**
      * @param {Grab} g
      */
@@ -166,6 +167,6 @@ class GameSceneSpiderHandlers {
 
         // Achievements.increment(AchievementId.SPIDER_LOVER);
     }
-}
+    };
 
 export default GameSceneSpiderHandlers;

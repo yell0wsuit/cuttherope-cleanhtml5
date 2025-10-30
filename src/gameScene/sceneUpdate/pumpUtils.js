@@ -9,7 +9,8 @@ import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 import * as GameSceneConstants from "@/gameScene/constants";
 
-class GameScenePumpUtils {
+const GameScenePumpUtils = (Base) =>
+    class extends Base {
     /**
      * @param {BaseElement} p
      * @param {MaterialPoint} s
@@ -96,6 +97,6 @@ class GameScenePumpUtils {
             }
         }
     }
-}
+    };
 
 export default GameScenePumpUtils;

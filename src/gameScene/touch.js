@@ -16,8 +16,9 @@ import EarthImage from "@/game/EarthImage";
 import Timeline from "@/visual/Timeline";
 import KeyFrame from "@/visual/KeyFrame";
 import Radians from "@/utils/Radians";
+import GameSceneUpdate from "./update";
 
-class GameSceneTouch {
+class GameSceneTouch extends GameSceneUpdate {
     touchDown(x, y, touchIndex) {
         if (this.ignoreTouches) {
             if (this.camera.type === Camera2D.SpeedType.PIXELS) {

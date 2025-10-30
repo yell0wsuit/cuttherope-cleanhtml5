@@ -1,8 +1,9 @@
 import MathHelper from "@/utils/MathHelper";
 import * as GameSceneConstants from "@/gameScene/constants";
 import { IS_XMAS, IS_JANUARY } from "@/resources/ResData";
+import GameSceneLoaders from "./loaders";
 
-class GameSceneCharacter {
+class GameSceneCharacter extends GameSceneLoaders {
     /**
      * @param {Timeline} timeline
      * @param {KeyFrame} keyFrame

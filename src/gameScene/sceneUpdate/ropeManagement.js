@@ -1,6 +1,7 @@
 import Constants from "@/utils/Constants";
 
-class GameSceneRopeManagement {
+const GameSceneRopeManagement = (Base) =>
+    class extends Base {
     /**
      * @param {boolean} left
      */
@@ -37,6 +38,6 @@ class GameSceneRopeManagement {
         this.attachCount -= 1;
         this.juggleTimer = 0;
     }
-}
+    };
 
 export default GameSceneRopeManagement;

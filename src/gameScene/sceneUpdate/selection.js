@@ -3,7 +3,8 @@ import Vector from "@/core/Vector";
 import Constants from "@/utils/Constants";
 import resolution from "@/resolution";
 
-class GameSceneSelection {
+const GameSceneSelection = (Base) =>
+    class extends Base {
     resetBungeeHighlight() {
         for (let i = 0, len = this.bungees.length; i < len; i++) {
             const grab = this.bungees[i];
@@ -87,6 +88,6 @@ class GameSceneSelection {
 
         return nb;
     }
-}
+    };
 
 export default GameSceneSelection;

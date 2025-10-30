@@ -5,7 +5,8 @@ import RGBAColor from "@/core/RGBAColor";
 import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 
-class GameSceneDraw {
+const GameSceneDraw = (Base) =>
+    class extends Base {
     draw() {
         // reset any canvas transformations and clear everything
         const ctx = Canvas.context;
@@ -242,6 +243,6 @@ class GameSceneDraw {
             }
         }
     }
-}
+    };
 
 export default GameSceneDraw;

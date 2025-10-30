@@ -5,7 +5,8 @@ import ResourceId from "@/resources/ResourceId";
 import SoundMgr from "@/game/CTRSoundMgr";
 import resolution from "@/resolution";
 
-class GameSceneCut {
+const GameSceneCut = (Base) =>
+    class extends Base {
     /**
      * @param {BaseElement | null} razor
      * @param {Vector} v1
@@ -118,6 +119,6 @@ class GameSceneCut {
 
         return cutCount;
     }
-}
+    };
 
 export default GameSceneCut;

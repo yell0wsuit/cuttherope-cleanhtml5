@@ -8,7 +8,8 @@ import SoundMgr from "@/game/CTRSoundMgr";
 import Timeline from "@/visual/Timeline";
 import settings from "@/game/CTRSettings";
 
-class GameSceneLifecycle {
+const GameSceneLifecycle = (Base) =>
+    class extends Base {
     animateLevelRestart() {
         this.restartState = GameSceneConstants.RestartState.FADE_IN;
         this.dimTime = Constants.DIM_TIMEOUT;
@@ -110,6 +111,6 @@ class GameSceneLifecycle {
         };
         this.dd.callObject(this, onLevelLost, null, 1);
     }
-}
+    };
 
 export default GameSceneLifecycle;
