@@ -17,7 +17,7 @@ import Timeline from "@/visual/Timeline";
 import KeyFrame from "@/visual/KeyFrame";
 import Radians from "@/utils/Radians";
 
-export const GameSceneTouch = {
+class GameSceneTouch {
     touchDown(x, y, touchIndex) {
         if (this.ignoreTouches) {
             if (this.camera.type === Camera2D.SpeedType.PIXELS) {
@@ -236,14 +236,14 @@ export const GameSceneTouch = {
         }
 
         return true;
-    },
+    }
     doubleClick(x, y, touchIndex) {
         if (this.ignoreTouches) {
             return true;
         }
 
         return true;
-    },
+    }
     touchUp(x, y, touchIndex) {
         if (this.ignoreTouches) {
             return true;
@@ -319,7 +319,7 @@ export const GameSceneTouch = {
         }
 
         return true;
-    },
+    }
     touchMove(x, y, touchIndex) {
         if (this.ignoreTouches) {
             return true;
@@ -521,7 +521,7 @@ export const GameSceneTouch = {
         }
 
         return true;
-    },
+    }
     touchDragged(x, y, touchIndex) {
         if (touchIndex > Constants.MAX_TOUCHES) {
             return false;
@@ -530,7 +530,7 @@ export const GameSceneTouch = {
         this.slastTouch.x = x;
         this.slastTouch.y = y;
         return true;
-    },
+    }
     onButtonPressed(n) {
         Gravity.toggle();
         this.gravityNormal = Gravity.isNormal();
@@ -546,12 +546,14 @@ export const GameSceneTouch = {
                 earthImage.playTimeline(EarthImage.TimelineId.UPSIDE_DOWN);
             }
         }
-    },
+    }
     rotateAllSpikesWithId(sid) {
         for (let i = 0, len = this.spikes.length; i < len; i++) {
             if (this.spikes[i].getToggled() === sid) {
                 this.spikes[i].rotateSpikes();
             }
         }
-    },
-};
+    }
+}
+
+export default GameSceneTouch;

@@ -5,10 +5,11 @@ import RGBAColor from "@/core/RGBAColor";
 import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 
-export const GameSceneDraw = {
+class GameSceneDraw {
     draw() {
         // reset any canvas transformations and clear everything
         const ctx = Canvas.context;
+        if (!ctx) return;
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, resolution.CANVAS_WIDTH, resolution.CANVAS_HEIGHT);
 
@@ -161,7 +162,7 @@ export const GameSceneDraw = {
         }
 
         this.postDraw();
-    },
+    }
     drawCuts() {
         const maxSize = resolution.CUT_MAX_SIZE;
         for (let i = 0; i < Constants.MAX_TOUCHES; i++) {
@@ -240,5 +241,7 @@ export const GameSceneDraw = {
                 Canvas.fillTriangleStrip(verts, RGBAColor.styles.SOLID_OPAQUE);
             }
         }
-    },
-};
+    }
+}
+
+export default GameSceneDraw;

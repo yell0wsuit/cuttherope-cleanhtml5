@@ -8,21 +8,24 @@ import SoundMgr from "@/game/CTRSoundMgr";
 import Timeline from "@/visual/Timeline";
 import settings from "@/game/CTRSettings";
 
-export const GameSceneLifecycle = {
+class GameSceneLifecycle {
     animateLevelRestart() {
         this.restartState = GameSceneConstants.RestartState.FADE_IN;
         this.dimTime = Constants.DIM_TIMEOUT;
-    },
+    }
+
     isFadingIn() {
         return this.restartState === GameSceneConstants.RestartState.FADE_IN;
-    },
+    }
+
     calculateScore() {
         this.timeBonus = Math.max(0, 30 - this.time) * 100;
         this.timeBonus /= 10;
         this.timeBonus *= 10;
         this.starBonus = 1000 * this.starsCollected;
         this.score = Math.ceil(this.timeBonus + this.starBonus);
-    },
+    }
+
     gameWon() {
         this.dd.cancelAllDispatches();
 
@@ -93,7 +96,8 @@ export const GameSceneLifecycle = {
             this.gameController.onLevelWon.call(this.gameController);
         };
         this.dd.callObject(this, onLevelWon, null, 1.8);
-    },
+    }
+
     gameLost() {
         this.dd.cancelAllDispatches();
         this.target.playTimeline(GameSceneConstants.CharAnimation.FAIL);
@@ -105,5 +109,7 @@ export const GameSceneLifecycle = {
             PubSub.publish(PubSub.ChannelId.LevelLost, { time: this.time });
         };
         this.dd.callObject(this, onLevelLost, null, 1);
-    },
-};
+    }
+}
+
+export default GameSceneLifecycle;

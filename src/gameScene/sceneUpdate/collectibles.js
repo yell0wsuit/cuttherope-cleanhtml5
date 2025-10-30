@@ -11,6 +11,9 @@ import Timeline from "@/visual/Timeline";
 import Vector from "@/core/Vector";
 import ResourceId from "@/resources/ResourceId";
 
+/**
+ * @param {number} delta
+ */
 export function updateCollectibles(delta) {
     let moveResult;
     if (!this.noCandy) {
@@ -43,9 +46,7 @@ export function updateCollectibles(delta) {
                 //Achievements.increment(AchievementId.ROMANTIC_SOUL);
 
                 if (this.candyBubbleL || this.candyBubbleR) {
-                    this.candyBubble = this.candyBubbleL
-                        ? this.candyBubbleL
-                        : this.candyBubbleR;
+                    this.candyBubble = this.candyBubbleL ? this.candyBubbleL : this.candyBubbleR;
                     this.candyBubbleAnimation.visible = true;
                 }
 
@@ -158,8 +159,7 @@ export function updateCollectibles(delta) {
                     SoundMgr.playSound(ResourceId.SND_STAR_1 + this.starsCollected - 1);
 
                     if (
-                        this.target.currentTimelineIndex ===
-                        GameSceneConstants.CharAnimation.IDLE
+                        this.target.currentTimelineIndex === GameSceneConstants.CharAnimation.IDLE
                     ) {
                         this.target.playTimeline(GameSceneConstants.CharAnimation.EXCITED);
                     }
@@ -235,4 +235,4 @@ export function updateCollectibles(delta) {
     }
 
     return true;
-    }
+}
