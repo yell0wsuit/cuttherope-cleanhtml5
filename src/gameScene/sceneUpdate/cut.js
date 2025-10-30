@@ -92,7 +92,6 @@ class GameSceneCut {
                         p2.pos.x,
                         p2.pos.y
                     );
-                    console.log(v1);
                 }
 
                 if (cut) {
