@@ -3,7 +3,7 @@ import Vector from "@/core/Vector";
 import Constants from "@/utils/Constants";
 import resolution from "@/resolution";
 
-export const GameSceneSelection = {
+class GameSceneSelection {
     resetBungeeHighlight() {
         for (let i = 0, len = this.bungees.length; i < len; i++) {
             const grab = this.bungees[i];
@@ -13,7 +13,13 @@ export const GameSceneSelection = {
             }
             bungee.highlighted = false;
         }
-    },
+    }
+
+    /**
+     * @param {Vector} s
+     * @param {number} tx
+     * @param {number} ty
+     */
     getNearestBungeeGrabByBezierPoints(s, tx, ty) {
         const SEARCH_RADIUS = resolution.CLICK_TO_CUT_SEARCH_RADIUS;
         let grab = null;
@@ -38,7 +44,12 @@ export const GameSceneSelection = {
         }
 
         return grab;
-    },
+    }
+
+    /**
+     * @param {Vector} s
+     * @param {Grab} g
+     */
     getNearestBungeeSegmentByConstraints(s, g) {
         const SEARCH_RADIUS = Number.MAX_VALUE;
         let nb = null;
@@ -75,5 +86,7 @@ export const GameSceneSelection = {
         }
 
         return nb;
-    },
-};
+    }
+}
+
+export default GameSceneSelection;
