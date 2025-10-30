@@ -1,6 +1,9 @@
 import Constants from "@/utils/Constants";
 
-export const GameSceneRopeManagement = {
+class GameSceneRopeManagement {
+    /**
+     * @param {boolean} left
+     */
     releaseAllRopes(left) {
         for (let l = 0, len = this.bungees.length; l < len; l++) {
             const g = this.bungees[l];
@@ -24,12 +27,16 @@ export const GameSceneRopeManagement = {
                 }
             }
         }
-    },
+    }
+
     attachCandy() {
         this.attachCount += 1;
-    },
+    }
+
     detachCandy() {
         this.attachCount -= 1;
         this.juggleTimer = 0;
-    },
-};
+    }
+}
+
+export default GameSceneRopeManagement;
