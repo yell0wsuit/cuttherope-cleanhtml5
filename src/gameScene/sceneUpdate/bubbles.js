@@ -30,8 +30,6 @@ class GameSceneBubbles {
             }
             candyBubbleAnimation.visible = true;
 
-            console.log(candyBubbleAnimation);
-
             SoundMgr.playSound(ResourceId.SND_BUBBLE);
 
             b.popped = true;
@@ -96,7 +94,6 @@ class GameSceneBubbles {
      * @param {number} ty
      */
     handleBubbleTouch(s, tx, ty) {
-        console.log(s);
         if (
             Rectangle.pointInRect(
                 tx + this.camera.pos.x,
