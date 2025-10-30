@@ -4,6 +4,9 @@ import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 import * as GameSceneConstants from "@/gameScene/constants";
 
+/**
+ * @param {number} delta
+ */
 export function updateCamera(delta) {
     const SCREEN_WIDTH = resolution.CANVAS_WIDTH;
     const SCREEN_HEIGHT = resolution.CANVAS_HEIGHT;
