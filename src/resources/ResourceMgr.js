@@ -215,7 +215,7 @@ class ResourceMgr {
 }
 
 // Initialize resource infos - merge and scale resource entries
-(function initializeResources() {
+export const initializeResources = () => {
     const infos = ResInfo;
     ResScaler.scaleResourceInfos(infos, resolution.CANVAS_SCALE);
     for (let i = 0, len = infos.length; i < len; i++) {
@@ -225,6 +225,6 @@ class ResourceMgr {
 
         RES_DATA[info.id].info = info;
     }
-})();
+};
 
 export default ResourceMgr;

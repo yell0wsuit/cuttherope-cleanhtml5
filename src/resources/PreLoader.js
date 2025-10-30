@@ -6,7 +6,7 @@ import resData from "@/resources/ResData";
 import SoundLoader from "@/resources/SoundLoader";
 import JsonLoader from "@/resources/JsonLoader";
 import LoadAnimation from "@/LoadAnimation";
-import ResourceMgr from "@/resources/ResourceMgr";
+import ResourceMgr, { initializeResources } from "@/resources/ResourceMgr";
 import ResourcePacks from "@/resources/ResourcePacks";
 import PubSub from "@/utils/PubSub";
 
@@ -333,6 +333,7 @@ const loadImages = function () {
 
 const PreLoader = {
     init() {
+        initializeResources();
         JsonLoader.init();
 
         // start the loading animation images first
