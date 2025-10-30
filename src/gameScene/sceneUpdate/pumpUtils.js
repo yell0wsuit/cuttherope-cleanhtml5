@@ -9,7 +9,13 @@ import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 import * as GameSceneConstants from "@/gameScene/constants";
 
-export const GameScenePumpUtils = {
+class GameScenePumpUtils {
+    /**
+     * @param {BaseElement} p
+     * @param {MaterialPoint} s
+     * @param {GameObject} c
+     * @param {number} delta
+     */
     handlePumpFlow(p, s, c, delta) {
         const powerRadius = resolution.PUMP_POWER_RADIUS;
         if (
@@ -53,7 +59,12 @@ export const GameScenePumpUtils = {
                 s.applyImpulse(pumpForce, delta);
             }
         }
-    },
+    }
+
+    /**
+     * @param {BaseElement} pump
+     * @param {number} delta
+     */
     operatePump(pump, delta) {
         pump.playTimeline(0);
         const soundId = MathHelper.randomRange(ResourceId.SND_PUMP_1, ResourceId.SND_PUMP_4);
@@ -84,5 +95,7 @@ export const GameScenePumpUtils = {
                 this.handlePumpFlow(pump, this.starR, this.candyR, delta);
             }
         }
-    },
-};
+    }
+}
+
+export default GameScenePumpUtils;
