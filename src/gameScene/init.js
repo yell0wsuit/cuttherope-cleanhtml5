@@ -32,7 +32,7 @@ import Gravity from "@/physics/Gravity";
 
 let currentPack = -1;
 
-export const GameSceneInit = {
+class GameSceneInit {
     init() {
         this.dd = DelayedDispatcher;
 
@@ -51,7 +51,13 @@ export const GameSceneInit = {
         this.camera = new Camera2D(resolution.CAMERA_SPEED, Camera2D.SpeedType.DELAY);
 
         this.starsCollected = 0;
+        /**
+         * @type {Animation[]}
+         */
         this.hudStars = [];
+        /**
+         * @type {Animation[]}
+         */
         this.starDisappearPool = [];
 
         for (let i = 0; i < GameSceneConstants.HUD_STARS_COUNT; i++) {
@@ -75,6 +81,9 @@ export const GameSceneInit = {
         }
 
         this.slastTouch = Vector.newZero();
+        /**
+         * @type {import('@/game/FingerCut').default[][]}
+         */
         this.fingerCuts = [];
         let i;
         for (i = 0; i < Constants.MAX_TOUCHES; i++) {
@@ -87,8 +96,14 @@ export const GameSceneInit = {
         this.PMY = resolution.PMY;
         this.PMX = 0;
 
+        /**
+         * @type {import('@/game/EarthImage').default[]}
+         */
         this.earthAnims = [];
 
+        /**
+         * @type {{ visible: boolean; } | null}
+         */
         this.paddingtonFinalFrame = null;
         this.pendingPaddingtonIdleTransition = false;
 
@@ -107,14 +122,14 @@ export const GameSceneInit = {
             this.startPos[i] = Vector.newZero();
             this.prevStartPos[i] = Vector.newZero();
         }
-    },
+    }
     getCandyResourceId() {
         const boxType = edition.boxTypes?.[LevelState.pack];
         const isHolidayBox = boxType === BoxType.HOLIDAY;
         return IS_JANUARY && isHolidayBox
             ? ResourceId.IMG_OBJ_CANDY_PADDINGTON
             : ResourceId.IMG_OBJ_CANDY_01;
-    },
+    }
     /**
      * @param {ConstrainedPoint} p
      * @return {boolean}
@@ -124,11 +139,11 @@ export const GameSceneInit = {
             topY = resolution.OUT_OF_SCREEN_ADJUSTMENT_TOP,
             outOfScreen = p.pos.y > bottomY || p.pos.y < topY;
         return outOfScreen;
-    },
+    }
     restart() {
         this.hide();
         this.show();
-    },
+    }
     showGreeting() {
         const boxType = edition.boxTypes?.[LevelState.pack];
         const isHolidayBox = boxType === BoxType.HOLIDAY;
@@ -144,42 +159,48 @@ export const GameSceneInit = {
         } else {
             this.target.playTimeline(GameSceneConstants.CharAnimation.GREETING);
         }
-    },
+    }
     hidePaddingtonFinalFrame() {
         if (this.paddingtonFinalFrame) {
             this.paddingtonFinalFrame.visible = false;
         }
-    },
+    }
     showPaddingtonFinalFrame() {
         if (this.paddingtonFinalFrame) {
             this.paddingtonFinalFrame.visible = true;
         }
-    },
+    }
     preparePaddingtonIntro() {
         this.pendingPaddingtonIdleTransition = false;
         if (this.dd && this.dd.cancelDispatch) {
             this.dd.cancelDispatch(this, this.playRegularIdleAfterPaddington, null);
         }
         this.hidePaddingtonFinalFrame();
-    },
+    }
     playPaddingtonIntro() {
         if (!this.target) {
             return;
         }
         this.preparePaddingtonIntro();
         this.target.playTimeline(GameSceneConstants.CharAnimation.IDLEPADDINGTON);
-    },
+    }
+    /**
+     * @param {{ locale: string; }} element
+     */
     shouldSkipTutorialElement(element) {
-        const langId = settings.getLangId(),
-            tl = element.locale;
+        const langId = settings.getLangId();
+        const tl = element.locale;
 
         if (LangId.fromString(tl) !== langId) {
             return true;
         }
 
         return false;
-    },
+    }
     show() {
+        /**
+         * @type {Animation[]}
+         */
         this.starDisappearPool = [];
 
         //create bubble animation
@@ -230,29 +251,77 @@ export const GameSceneInit = {
         this.back.addTile(this.bgTexture, GameSceneConstants.IMG_BGR_01_bgr);
         this.back.fill(0, 0, 1, 1, 0);
 
+        /**
+         * @type {null}
+         */
         this.gravityButton = null;
         this.gravityTouchDown = Constants.UNDEFINED;
 
         this.twoParts = GameSceneConstants.PartsType.NONE;
         this.partsDist = 0;
 
+        /**
+         * @type {import('@/game/Sock').default | null}
+         */
         this.targetSock = null;
 
         SoundMgr.stopSound(ResourceId.SND_ELECTRIC);
 
+        /**
+         * @type {import('@/game/Grab').default[]}
+         */
         this.bungees = [];
+        /**
+         * @type {never[]}
+         */
         this.razors = [];
+        /**
+         * @type {import('@/game/Spikes').default[]}
+         */
         this.spikes = [];
+        /**
+         * @type {import('@/game/Star').default[]}
+         */
         this.stars = [];
+        /**
+         * @type {import('@/game/Bubble').default[]}
+         */
         this.bubbles = [];
+        /**
+         * @type {import('@/game/Pump').default[]}
+         */
         this.pumps = [];
+        /**
+         * @type {never[]}
+         */
         this.rockets = [];
+        /**
+         * @type {import('@/game/Sock').default[]}
+         */
         this.socks = [];
+        /**
+         * @type {import('@/game/CTRGameObject').default[]}
+         */
         this.tutorialImages = [];
+        /**
+         * @type {import('@/game/TutorialText').default[]}
+         */
         this.tutorials = [];
+        /**
+         * @type {import('@/game/Drawing').default[]}
+         */
         this.drawings = [];
+        /**
+         * @type {import('@/game/Bouncer').default[]}
+         */
         this.bouncers = [];
+        /**
+         * @type {import('@/game/RotatedCircle').default[]}
+         */
         this.rotatedCircles = [];
+        /**
+         * @type {import('@/game/PollenDrawer').default | null}
+         */
         this.pollenDrawer = null;
 
         this.star = new ConstrainedPoint();
@@ -357,6 +426,9 @@ export const GameSceneInit = {
 
         // add the animations for the bubbles
         if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
+            /**
+             * @type {Animation}
+             */
             this.candyBubbleAnimationL = new Animation();
             this.candyBubbleAnimationL.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
             this.candyBubbleAnimationL.parentAnchor = this.candyBubbleAnimationL.anchor =
@@ -372,6 +444,9 @@ export const GameSceneInit = {
             this.candyBubbleAnimationL.visible = false;
             this.candyBubbleAnimationL.drawPosIncrement = 0.0001;
 
+            /**
+             * @type {Animation}
+             */
             this.candyBubbleAnimationR = new Animation();
             this.candyBubbleAnimationR.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
             this.candyBubbleAnimationR.parentAnchor = this.candyBubbleAnimationR.anchor =
@@ -401,8 +476,17 @@ export const GameSceneInit = {
         this.tummyTeasers = 0;
 
         this.starsCollected = 0;
+        /**
+         * @type {Bubble | null}
+         */
         this.candyBubble = null;
+        /**
+         * @type {Bubble | null}
+         */
         this.candyBubbleL = null;
+        /**
+         * @type {Bubble | null}
+         */
         this.candyBubbleR = null;
 
         this.mouthOpen = false;
@@ -425,8 +509,8 @@ export const GameSceneInit = {
         // delay start candy blink
         this.dd.callObject(this, this.doCandyBlink, null, 1);
 
-        const levelLabel = new TextImage(),
-            levelText = `${LevelState.pack + 1} - ${LevelState.level + 1}`;
+        const levelLabel = new TextImage();
+        const levelText = `${LevelState.pack + 1} - ${LevelState.level + 1}`;
         levelLabel.setText(ResourceId.FNT_BIG_FONT, levelText);
         levelLabel.anchor = Alignment.BOTTOM | Alignment.LEFT;
         levelLabel.x = 37 * resolution.CANVAS_SCALE;
@@ -465,10 +549,10 @@ export const GameSceneInit = {
         if (this.clickToCut) {
             this.resetBungeeHighlight();
         }
-    },
+    }
     startCamera() {
-        const SCREEN_WIDTH = resolution.CANVAS_WIDTH,
-            SCREEN_HEIGHT = resolution.CANVAS_HEIGHT;
+        const SCREEN_WIDTH = resolution.CANVAS_WIDTH;
+        const SCREEN_HEIGHT = resolution.CANVAS_HEIGHT;
 
         if (this.mapWidth > SCREEN_WIDTH || this.mapHeight > SCREEN_HEIGHT) {
             this.ignoreTouches = true;
@@ -499,10 +583,10 @@ export const GameSceneInit = {
                 }
             }
 
-            const xScroll = cameraTarget.pos.x - SCREEN_WIDTH / 2,
-                yScroll = cameraTarget.pos.y - SCREEN_HEIGHT / 2,
-                targetX = MathHelper.fitToBoundaries(xScroll, 0, this.mapWidth - SCREEN_WIDTH),
-                targetY = MathHelper.fitToBoundaries(yScroll, 0, this.mapHeight - SCREEN_HEIGHT);
+            const xScroll = cameraTarget.pos.x - SCREEN_WIDTH / 2;
+            const yScroll = cameraTarget.pos.y - SCREEN_HEIGHT / 2;
+            const targetX = MathHelper.fitToBoundaries(xScroll, 0, this.mapWidth - SCREEN_WIDTH);
+            const targetY = MathHelper.fitToBoundaries(yScroll, 0, this.mapHeight - SCREEN_HEIGHT);
 
             this.camera.moveTo(startX, startY, true);
 
@@ -513,8 +597,10 @@ export const GameSceneInit = {
             this.ignoreTouches = false;
             this.camera.moveTo(0, 0, true);
         }
-    },
+    }
     doCandyBlink() {
         this.candyBlink.playTimeline(GameSceneConstants.CandyBlink.INITIAL);
-    },
-};
+    }
+}
+
+export default GameSceneInit;
