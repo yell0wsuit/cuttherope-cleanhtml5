@@ -2,7 +2,12 @@ import MathHelper from "@/utils/MathHelper";
 import * as GameSceneConstants from "@/gameScene/constants";
 import { IS_XMAS, IS_JANUARY } from "@/resources/ResData";
 
-export const GameSceneCharacter = {
+class GameSceneCharacter {
+    /**
+     * @param {Timeline} timeline
+     * @param {KeyFrame} keyFrame
+     * @param {number} index
+     */
     onIdleOmNomKeyFrame(timeline, keyFrame, index) {
         if (index === 1) {
             // om-nom blink
@@ -28,7 +33,13 @@ export const GameSceneCharacter = {
                 this.idlesTimer = MathHelper.randomRange(5, 20);
             }
         }
-    },
+    }
+
+    /**
+     * @param {Timeline} timeline
+     * @param {KeyFrame} keyFrame
+     * @param {number} index
+     */
     onPaddingtonIdleKeyFrame(timeline, keyFrame, index) {
         if (!IS_JANUARY) {
             return;
@@ -50,15 +61,22 @@ export const GameSceneCharacter = {
                 this.dd.callObject(this, this.playRegularIdleAfterPaddington, null, 0.05);
             }
         }
-    },
+    }
+
     playRegularIdleAfterPaddington() {
         if (this.target) {
             this.target.playTimeline(GameSceneConstants.CharAnimation.IDLE);
         }
         this.pendingPaddingtonIdleTransition = false;
-    },
+    }
+
+    /**
+     * @param {Timeline} t
+     */
     onRotatedCircleTimelineFinished(t) {
         const circleToRemove = t.element;
         circleToRemove.removeOnNextUpdate = true;
-    },
-};
+    }
+}
+
+export default GameSceneCharacter;
