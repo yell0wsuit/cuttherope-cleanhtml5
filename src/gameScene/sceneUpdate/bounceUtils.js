@@ -3,7 +3,12 @@ import SoundMgr from "@/game/CTRSoundMgr";
 import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 
-export const GameSceneBounceUtils = {
+class GameSceneBounceUtils {
+    /**
+     * @param {Bouncer} bouncer
+     * @param {ConstrainedPoint} star
+     * @param {number} delta
+     */
     handleBounce(bouncer, star, delta) {
         if (bouncer.skip) {
             return;
@@ -38,5 +43,7 @@ export const GameSceneBounceUtils = {
         bouncer.playTimeline(0);
 
         SoundMgr.playSound(ResourceId.SND_BOUNCER);
-    },
-};
+    }
+}
+
+export default GameSceneBounceUtils;
