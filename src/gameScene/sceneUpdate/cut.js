@@ -5,7 +5,13 @@ import ResourceId from "@/resources/ResourceId";
 import SoundMgr from "@/game/CTRSoundMgr";
 import resolution from "@/resolution";
 
-export const GameSceneCut = {
+class GameSceneCut {
+    /**
+     * @param {BaseElement | null} razor
+     * @param {Vector} v1
+     * @param {Vector} v2
+     * @param {boolean} immediate
+     */
     cut(razor, v1, v2, immediate) {
         let cutCount = 0;
         for (let l = 0, len = this.bungees.length; l < len; l++) {
@@ -86,6 +92,7 @@ export const GameSceneCut = {
                         p2.pos.x,
                         p2.pos.y
                     );
+                    console.log(v1);
                 }
 
                 if (cut) {
@@ -111,5 +118,7 @@ export const GameSceneCut = {
         }
 
         return cutCount;
-    },
-};
+    }
+}
+
+export default GameSceneCut;
