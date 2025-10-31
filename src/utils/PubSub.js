@@ -1,5 +1,13 @@
 const PubSub = {};
-const subscriptions = [];
+
+/**
+ * Store subscriptions grouped by channel so we do not need to iterate the
+ * entire subscription list for every publish or unsubscribe call. The value is
+ * an array rather than a Set to preserve call ordering for listeners that were
+ * registered multiple times.
+ * @type {Map<number, Function[]>}
+ */
+const subscriptions = new Map();
 
 /**
  * Subscribe to a channel and receive a handle that should be passed to
@@ -15,7 +23,12 @@ PubSub.subscribe = function (name, callback) {
     }
 
     const handle = Object.freeze({ name: name, callback: callback });
-    subscriptions.push(handle);
+    const callbacks = subscriptions.get(name);
+    if (callbacks) {
+        callbacks.push(callback);
+    } else {
+        subscriptions.set(name, [callback]);
+    }
     return handle;
 };
 
@@ -39,28 +52,33 @@ PubSub.unsubscribe = function (subscription) {
         return;
     }
 
-    for (let i = subscriptions.length - 1; i >= 0; i--) {
-        const sub = subscriptions[i];
-        if (sub.name === name && sub.callback === callback) {
-            subscriptions.splice(i, 1);
+    const callbacks = subscriptions.get(name);
+    if (!callbacks) {
+        return;
+    }
+
+    for (let i = callbacks.length - 1; i >= 0; i--) {
+        if (callbacks[i] === callback) {
+            callbacks.splice(i, 1);
+            if (callbacks.length === 0) {
+                subscriptions.delete(name);
+            }
             break;
         }
     }
 };
 
-PubSub.publish = function (name) {
-    const callbacks = [],
-        args = Array.prototype.slice.call(arguments, 1);
-    let i, len;
-    if (subscriptions.length > 0) {
-        for (i = 0, len = subscriptions.length; i < len; i++) {
-            if (subscriptions[i].name === name) {
-                callbacks.push(subscriptions[i].callback);
-            }
-        }
-        for (i = 0, len = callbacks.length; i < len; i++) {
-            callbacks[i].apply(this, args);
-        }
+PubSub.publish = function (name, ...args) {
+    const callbacks = subscriptions.get(name);
+    if (!callbacks || callbacks.length === 0) {
+        return;
+    }
+
+    // Create a shallow copy so callbacks can safely unsubscribe themselves or
+    // register additional listeners without affecting the active iteration.
+    const listeners = callbacks.slice();
+    for (let i = 0, len = listeners.length; i < len; i++) {
+        listeners[i].apply(this, args);
     }
 };
 
