@@ -110,7 +110,7 @@ class ConfettiParticle {
         ctx.globalAlpha = this.opacity;
         ctx.translate(this.x, this.y);
         ctx.rotate((this.rotation * Math.PI) / 180);
-        ctx.scale(this.scale, this.scale);
+        // ctx.scale(this.scale, this.scale);
 
         // Draw the confetti piece centered
         const w = frame.w;
