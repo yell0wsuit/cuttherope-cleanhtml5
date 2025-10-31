@@ -1,7 +1,6 @@
 import Text from "@/visual/Text";
 import platform from "@/config/platforms/platform-web";
 import resolution from "@/resolution";
-import analytics from "@/analytics";
 import Easing from "@/ui/Easing";
 import PubSub from "@/utils/PubSub";
 import RootController from "@/game/CTRRootController";
@@ -115,9 +114,9 @@ class EasterEggManager {
                         });
                     }
                 });
-                moreLink.addEventListener("click", () => {
+                /*moreLink.addEventListener("click", () => {
                     analytics.atlasAction("SMG_MRTINX_CTR_SITE_BehindtheScenes");
-                });
+                });*/
             }
         };
 

@@ -20,7 +20,7 @@ class WebPlatform {
      * @const
      * @type {boolean}
      */
-    static ENABLE_ANALYTICS = true;
+    static ENABLE_ANALYTICS = false;
 
     /**
      * @const
