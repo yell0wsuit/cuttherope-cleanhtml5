@@ -1,6 +1,5 @@
 import platform from "@/platform";
 import edition from "@/edition";
-import editionUI from "@/editionUI";
 import resolution from "@/resolution";
 import resData from "@/resources/ResData";
 import SoundLoader from "@/resources/SoundLoader";
@@ -200,15 +199,15 @@ class PreLoader {
         };
 
         // Menu UI images
-        const pwdPath = platform.imageBaseUrl + (editionUI.passwordDirectory || "");
-        queueMenu(editionUI.passwordImageNames, pwdPath);
+        //const pwdPath = platform.imageBaseUrl + (editionUI.passwordDirectory || "");
+        //queueMenu(editionUI.passwordImageNames, pwdPath);
 
-        const pwdResPath =
-            platform.resolutionBaseUrl + (editionUI.passwordResolutionDirectory || "");
-        queueMenu(editionUI.passwordResolutionImageNames, pwdResPath);
+        /*const pwdResPath =
+            platform.resolutionBaseUrl + (editionUI.passwordResolutionDirectory || "");*/
+        //queueMenu(editionUI.passwordResolutionImageNames, pwdResPath);
 
-        queueMenu(editionUI.pageImageNames, `${platform.imageBaseUrl}page/`);
-        queueMenu(editionUI.pageResolutionImageNames, `${platform.resolutionBaseUrl}page/`);
+        //queueMenu(editionUI.pageImageNames, `${platform.imageBaseUrl}page/`);
+        //queueMenu(editionUI.pageResolutionImageNames, `${platform.resolutionBaseUrl}page/`);
         queueMenu(edition.menuImageFilenames);
         queueMenu(edition.boxImages, platform.boxImageBaseUrl);
         queueMenu(edition.boxBorders);
