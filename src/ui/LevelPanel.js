@@ -10,7 +10,7 @@ import ResourceId from "@/resources/ResourceId";
 import Lang from "@/resources/Lang";
 import Text from "@/visual/Text";
 import MenuStringId from "@/resources/MenuStringId";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import Alignment from "@/core/Alignment";
 import Dialogs from "@/ui/Dialogs";
 import {

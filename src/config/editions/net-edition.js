@@ -105,6 +105,12 @@ class NetEdition {
 
         /** @type {string} */
         this.editionImageDirectory = "";
+
+        /** @type {boolean} */
+        this.disableBoxMenu = false;
+
+        /** @type {boolean} */
+        this.enableBoxBackgroundEasterEgg = false;
     }
 
     /**

@@ -1,4 +1,4 @@
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import settings from "@/game/CTRSettings";
 import LangId from "@/resources/LangId";
 import menuStrings from "@/resources/MenuStrings";

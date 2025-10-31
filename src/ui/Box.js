@@ -8,7 +8,7 @@ import Lang from "@/resources/Lang";
 import Alignment from "@/core/Alignment";
 import ScoreManager from "@/ui/ScoreManager";
 import MenuStringId from "@/resources/MenuStringId";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import settings from "@/game/CTRSettings";
 import { IS_XMAS } from "@/resources/ResData";
 

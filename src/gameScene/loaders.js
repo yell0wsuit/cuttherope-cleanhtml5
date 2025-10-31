@@ -28,7 +28,7 @@ import * as GameSceneConstants from "@/gameScene/constants";
 import Constants from "@/utils/Constants";
 import resolution from "@/resolution";
 import LevelState from "@/game/LevelState";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import { IS_XMAS, IS_JANUARY } from "@/resources/ResData";
 import Bungee from "@/game/Bungee";
 import PollenDrawer from "@/game/PollenDrawer";

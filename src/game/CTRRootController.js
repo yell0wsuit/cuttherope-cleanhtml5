@@ -1,7 +1,7 @@
 import ViewController from "@/core/ViewController";
 import RootControllerBase from "@/core/RootControllerBase";
 import GameController from "@/game/GameController";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import LevelState from "@/game/LevelState";
 
 /**

@@ -17,7 +17,7 @@ import Vector from "@/core/Vector";
 import Rectangle from "@/core/Rectangle";
 import DelayedDispatcher from "@/utils/DelayedDispatcher";
 import settings from "@/game/CTRSettings";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import BoxType from "@/ui/BoxType";
 import { IS_XMAS, IS_JANUARY } from "@/resources/ResData";
 import resolution from "@/resolution";

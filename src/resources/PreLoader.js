@@ -1,5 +1,5 @@
 import platform from "@/platform";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import resolution from "@/resolution";
 import resData from "@/resources/ResData";
 import SoundLoader from "@/resources/SoundLoader";

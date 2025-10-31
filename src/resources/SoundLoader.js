@@ -1,5 +1,5 @@
 import platform from "@/platform";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import resData from "@/resources/ResData";
 import Sounds from "@/resources/Sounds";
 import { getAudioContext } from "@/utils/audioContext";

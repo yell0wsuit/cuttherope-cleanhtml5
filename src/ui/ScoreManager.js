@@ -2,7 +2,7 @@ import QueryStrings from "@/ui/QueryStrings";
 import PubSub from "@/utils/PubSub";
 import MathHelper from "@/utils/MathHelper";
 import SettingStorage from "@/core/SettingStorage";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import Text from "@/visual/Text";
 import Lang from "@/resources/Lang";
 import LangId from "@/resources/LangId";

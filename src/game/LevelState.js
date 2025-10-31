@@ -1,4 +1,4 @@
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 // manages state of the current level
 const LevelState = {
     loadedMap: null,

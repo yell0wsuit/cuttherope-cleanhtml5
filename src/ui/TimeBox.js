@@ -9,7 +9,7 @@ import Alignment from "@/core/Alignment";
 import ScoreManager from "@/ui/ScoreManager";
 import MenuStringId from "@/resources/MenuStringId";
 import QueryStrings from "@/ui/QueryStrings";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import MathHelper from "@/utils/MathHelper";
 import SettingStorage from "@/core/SettingStorage";
 

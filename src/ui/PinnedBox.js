@@ -3,7 +3,7 @@ import QueryStrings from "@/ui/QueryStrings";
 import Lang from "@/resources/Lang";
 import MenuStringId from "@/resources/MenuStringId";
 import PubSub from "@/utils/PubSub";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import Text from "@/visual/Text";
 import platform from "@/platform";
 import analytics from "@/analytics";

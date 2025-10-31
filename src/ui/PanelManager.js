@@ -6,7 +6,7 @@ import resolution from "@/resolution";
 import platform from "@/platform";
 import Easing from "@/ui/Easing";
 import PubSub from "@/utils/PubSub";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 
 class PanelManager {
     constructor() {

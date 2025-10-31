@@ -3,7 +3,7 @@ import PinnedBox from "@/ui/PinnedBox";
 import BoxType from "@/ui/BoxType";
 import ScoreManager from "@/ui/ScoreManager";
 import PubSub from "@/utils/PubSub";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import QueryStrings from "@/ui/QueryStrings";
 import PurchaseBox from "@/ui/PurchaseBox";
 import MoreComingBox from "@/ui/MoreComingBox";

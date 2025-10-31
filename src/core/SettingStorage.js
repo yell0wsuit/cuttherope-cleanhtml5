@@ -1,4 +1,4 @@
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import PubSub from "@/utils/PubSub";
 
 /**

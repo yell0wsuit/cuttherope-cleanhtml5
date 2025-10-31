@@ -6,7 +6,7 @@ import SoundMgr from "@/game/CTRSoundMgr";
 import Text from "@/visual/Text";
 import TimeBox from "@/ui/TimeBox";
 import Doors from "@/Doors";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import QueryStrings from "@/ui/QueryStrings";
 
 const TimePasswordPanel = new Panel(PanelId.PASSWORD, "codePanel", "levelBackground", false);

@@ -1,5 +1,5 @@
 import resolution from "@/resolution";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import platform from "@/platform";
 import BoxManager from "@/ui/BoxManager";
 import Easing from "@/ui/Easing";

@@ -3,7 +3,7 @@ import resolution from "@/resolution";
 import Lang from "@/resources/Lang";
 import MenuStringId from "@/resources/MenuStringId";
 import Alignment from "@/core/Alignment";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 
 // loc entries that are specific to the web platform
 const locEntries = {
