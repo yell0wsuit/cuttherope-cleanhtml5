@@ -142,16 +142,16 @@ const Dialogs = {
 };
 
 // ---------- Event Logic ----------
-function onPayClick() {
+/*function onPayClick() {
     PubSub.publish(PubSub.ChannelId.PurchaseBoxesPrompt);
     Dialogs.closePopup();
-}
+}*/
 
 function initEventListeners() {
     const ids = [
-        ["payImg", onPayClick],
-        ["payBtn", onPayClick],
-        ["payClose", Dialogs.closePopup],
+        //["payImg", onPayClick],
+        //["payBtn", onPayClick],
+        //["payClose", Dialogs.closePopup],
         ["slowComputerBtn", Dialogs.closePopup],
         ["missingOkBtn", Dialogs.closePopup],
         ["resetNoBtn", Dialogs.closePopup],

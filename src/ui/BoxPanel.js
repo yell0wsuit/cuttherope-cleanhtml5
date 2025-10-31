@@ -132,9 +132,10 @@ class BoxPanel extends Panel {
 
         SoundMgr.playSound(ResourceId.SND_TAP);
 
-        if (box.purchased === false) {
+        /*if (box.purchased === false) {
             PubSub.publish(PubSub.ChannelId.PurchaseBoxesPrompt);
-        } else if (ScoreManager.isBoxLocked(editionBoxIndex)) {
+        } else*/
+        if (ScoreManager.isBoxLocked(editionBoxIndex)) {
             const isHolidayBox = box.type === BoxType.HOLIDAY;
             if (isHolidayBox && !IS_XMAS) {
                 this.showHolidayUnavailableDialog();

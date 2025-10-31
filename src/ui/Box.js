@@ -32,7 +32,7 @@ if (document.readyState === "loading") {
     initializeUpgradeButton();
 }
 
-function hidePurchaseButton() {
+/*function hidePurchaseButton() {
     if (upgradeButton) {
         // Vanilla fade out
         upgradeButton.style.transition = "opacity 200ms";
@@ -42,9 +42,9 @@ function hidePurchaseButton() {
             upgradeButton && (upgradeButton.style.opacity = "1"); // Reset for next time
         }, 200);
     }
-}
+}*/
 
-function showPurchaseButton() {
+/*function showPurchaseButton() {
     if (upgradeButton) {
         upgradeButton.style.display = "";
         upgradeButton.style.transition = "opacity 200ms";
@@ -53,13 +53,13 @@ function showPurchaseButton() {
         upgradeButton.offsetHeight;
         upgradeButton.style.opacity = "1";
     }
-}
+}*/
 
-PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, function (/** @type {boolean} */ paid) {
-    if (paid) {
-        hidePurchaseButton();
-    }
-});
+//PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, function (/** @type {boolean} */ paid) {
+//  if (paid) {
+//     hidePurchaseButton();
+// }
+//});
 
 // localize UI element text
 PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
@@ -371,18 +371,18 @@ class Box {
         this.bounceStartTime = 0;
     }
 
-    onSelected() {
+    /*onSelected() {
         if (!this.purchased) {
             if (upgradeButton) {
                 upgradeButton.classList.toggle("purchaseBox", this.isPurchaseBox || false);
-                showPurchaseButton();
+                //showPurchaseButton();
             }
         }
-    }
+    }*/
 
-    onUnselected() {
-        hidePurchaseButton();
-    }
+    //onUnselected() {
+    //hidePurchaseButton();
+    //}
 
     destroy() {
         if (!this.pubSubSubscriptions) {

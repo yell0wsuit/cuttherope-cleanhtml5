@@ -6,7 +6,6 @@ import MenuStringId from "@/resources/MenuStringId";
 import Text from "@/visual/Text";
 import Dialogs from "@/ui/Dialogs";
 import VideoManager from "@/ui/VideoManager";
-import analytics from "@/analytics";
 import { removeClass, addClass, hide, empty, fadeOut, fadeIn, show } from "@/utils/domHelpers";
 import { IS_MSIE_BROWSER } from "@/ui/InterfaceManager/constants";
 import ConfettiManager from "@/ui/ConfettiManager";
@@ -326,9 +325,9 @@ export default class ResultsHandler {
 
         // events that occur after completing the first level
         if (boxIndex === 0 && levelIndex === 1) {
-            if (analytics.onFirstLevelComplete) {
+            /*if (analytics.onFirstLevelComplete) {
                 analytics.onFirstLevelComplete(info.fps);
-            }
+            }*/
 
             // tell the user if the fps was low on the first level
             if (info.fps < this.manager._MIN_FPS && !platform.disableSlowWarning) {

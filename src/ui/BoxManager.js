@@ -1,11 +1,9 @@
 import Box from "@/ui/Box";
-import PinnedBox from "@/ui/PinnedBox";
 import BoxType from "@/ui/BoxType";
 import ScoreManager from "@/ui/ScoreManager";
 import PubSub from "@/utils/PubSub";
 import edition from "@/config/editions/net-edition";
 import QueryStrings from "@/ui/QueryStrings";
-import PurchaseBox from "@/ui/PurchaseBox";
 import MoreComingBox from "@/ui/MoreComingBox";
 import TimeBox from "@/ui/TimeBox";
 import BoxPanel from "@/ui/BoxPanel";
@@ -59,15 +57,15 @@ const createBoxes = () => {
         let box;
 
         switch (type) {
-            case BoxType.IEPINNED:
+            /*case BoxType.IEPINNED:
                 box = new PinnedBox(i, images[i], requiredStars, isLocked, type);
                 if (!box.initPinnedState()) {
                     box = null; // don't add if we can't init pinned state
                 }
-                break;
-            case BoxType.PURCHASE:
+                break;*/
+            /*case BoxType.PURCHASE:
                 box = new PurchaseBox(i, images[i], requiredStars, isLocked, type);
-                break;
+                break;*/
             case BoxType.MORECOMING:
                 box = new MoreComingBox(i, images[i], requiredStars, isLocked, type);
                 break;

@@ -20,7 +20,6 @@ import Alignment from "@/core/Alignment";
 import GameBorder from "@/ui/GameBorder";
 import Doors from "@/Doors";
 import Dialogs from "@/ui/Dialogs";
-import analytics from "@/analytics";
 import { getDefaultBoxIndex } from "@/ui/InterfaceManager/constants";
 import {
     addClass,
