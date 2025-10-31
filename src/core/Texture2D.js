@@ -1,6 +1,10 @@
 import Vector from "@/core/Vector";
 import Quad2D from "@/core/Quad2D";
 
+/**
+ * @typedef {import("@/core/Rectangle").default} Rectangle
+ */
+
 const isHtmlImageElement = (/** @type {unknown} */ value) =>
     typeof HTMLImageElement !== "undefined" && value instanceof HTMLImageElement;
 
@@ -151,7 +155,7 @@ class Texture2D {
     }
 
     /**
-     * @param {{ x: number; y: number; w: number; h: number; }} rect
+     * @param {Rectangle} rect
      */
     getCoordinates(rect) {
         return new Quad2D(
