@@ -4,10 +4,15 @@ import LangId from "@/resources/LangId";
 import menuStrings from "@/resources/MenuStrings";
 import Log from "@/utils/Log";
 
-// helper to return the correct string from a loc entry
-const getLocalizedText = function (/** @type {BoxText} */ locEntry) {
-    // note: we default to english if entry is blank
-    // !LANG
+/**
+ * @typedef {import('@/config/editions/net-edition').BoxText} BoxText
+ */
+
+/**
+ * Helper to return the correct string from a localized entry.
+ * Defaults to English if no translation is available.
+ */
+const getLocalizedText = (/** @type {BoxText} */ locEntry) => {
     switch (settings.getLangId()) {
         case LangId.FR:
             return locEntry.fr || locEntry.en;
@@ -37,30 +42,34 @@ const getLocalizedText = function (/** @type {BoxText} */ locEntry) {
     }
 };
 
-const Lang = {
+/**
+ * Language manager class that handles localization text lookups.
+ */
+class Lang {
     /**
+     * Get localized box text.
      * @param {number} boxIndex
      * @param {boolean} includeNumber
+     * @returns {string}
      */
     boxText(boxIndex, includeNumber) {
         const locEntry = edition.boxText[boxIndex];
         let text = getLocalizedText(locEntry);
 
-        // all boxes except last one get prepended numbers
         if (text && includeNumber) {
             text = `${boxIndex + 1}. ${text}`;
         }
 
         return text;
-    },
+    }
+
     /**
+     * Get localized menu text.
      * @param {number} menuStringId
+     * @returns {string}
      */
     menuText(menuStringId) {
-        let locEntry, i;
-        const len = menuStrings.length;
-        for (i = 0; i < len; i++) {
-            locEntry = menuStrings[i];
+        for (const locEntry of menuStrings) {
             if (locEntry.id === menuStringId) {
                 return getLocalizedText(locEntry);
             }
@@ -68,11 +77,24 @@ const Lang = {
 
         Log.debug(`Missing menu string for id: ${menuStringId}`);
         return "";
-    },
-    getText: getLocalizedText,
+    }
+
+    /**
+     * Direct access to the text resolver.
+     * @param {BoxText} locEntry
+     * @returns {string}
+     */
+    getText(locEntry) {
+        return getLocalizedText(locEntry);
+    }
+
+    /**
+     * Get the current language ID.
+     * @returns {LangId}
+     */
     getCurrentId() {
         return settings.getLangId();
-    },
-};
+    }
+}
 
-export default Lang;
+export default new Lang();
