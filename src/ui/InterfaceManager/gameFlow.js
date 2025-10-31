@@ -2,7 +2,7 @@ import edition from "@/config/editions/net-edition";
 import resolution from "@/resolution";
 import QueryStrings from "@/ui/QueryStrings";
 import PanelId from "@/ui/PanelId";
-import PanelManager from "@/ui/PanelManager";
+import panelManager from "@/ui/PanelManager";
 import BoxManager from "@/ui/BoxManager";
 import ScoreManager from "@/ui/ScoreManager";
 import GameBorder from "@/ui/GameBorder";
@@ -109,7 +109,7 @@ export default class GameFlow {
         if (isRestart) {
             RootController.restartLevel();
         } else {
-            PanelManager.showPanel(PanelId.GAME, true);
+            panelManager.showPanel(PanelId.GAME, true);
             setTimeout(() => {
                 this.openBox(isSkip);
             }, 200);
@@ -150,7 +150,7 @@ export default class GameFlow {
         } else {
             this.manager.isInAdvanceBoxMode = true;
             const targetPanelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
-            PanelManager.showPanel(targetPanelId, false);
+            panelManager.showPanel(targetPanelId, false);
             console.log(targetPanelId);
         }
     }
@@ -170,7 +170,7 @@ export default class GameFlow {
     _closeLevelMenu() {
         hide("#levelMenu");
         if (
-            PanelManager.currentPanelId === PanelId.GAME &&
+            panelManager.currentPanelId === PanelId.GAME &&
             this.manager.gameEnabled &&
             RootController.isLevelActive()
         ) {
@@ -205,10 +205,10 @@ export default class GameFlow {
         Doors.closeBoxAnimation(() => {
             manager.isBoxOpen = false;
             if (manager.isInMenuSelectMode) {
-                PanelManager.showPanel(PanelId.MENU, false);
+                panelManager.showPanel(PanelId.MENU, false);
             } else {
                 Doors.renderDoors(true, 0);
-                PanelManager.showPanel(PanelId.LEVELS, true);
+                panelManager.showPanel(PanelId.LEVELS, true);
             }
             startSnow();
         });
@@ -246,7 +246,7 @@ export default class GameFlow {
      */
     openBox(skip = false) {
         stopSnow();
-        const timeout = PanelManager.currentPanelId === PanelId.LEVELS ? 400 : 0;
+        const timeout = panelManager.currentPanelId === PanelId.LEVELS ? 400 : 0;
 
         //fade out options elements
         fadeOut("#levelScore");
@@ -335,7 +335,7 @@ export default class GameFlow {
     pauseGame() {
         // make sure the game is active and no transitions are pending
         if (
-            PanelManager.currentPanelId === PanelId.GAME &&
+            panelManager.currentPanelId === PanelId.GAME &&
             RootController.isLevelActive() &&
             !this.manager.isTransitionActive
         ) {
@@ -352,7 +352,7 @@ export default class GameFlow {
         const isLevelMenuVisible = levelMenu && levelMenu.style.display !== "none";
         if (
             !isLevelMenuVisible &&
-            PanelManager.currentPanelId !== PanelId.GAMEMENU &&
+            panelManager.currentPanelId !== PanelId.GAMEMENU &&
             this.manager.gameEnabled
         ) {
             SoundMgr.resumeMusic();
@@ -365,7 +365,7 @@ export default class GameFlow {
     domReady() {
         VideoManager.domReady();
         EasterEggManager.domReady();
-        PanelManager.domReady();
+        panelManager.domReady();
         GameBorder.domReady();
         SnowfallOverlay.domReady();
 
@@ -397,7 +397,7 @@ export default class GameFlow {
 
         Doors.appReady();
         EasterEggManager.appReady();
-        PanelManager.appReady((/** @type {number} */ panelId) => {
+        panelManager.appReady((/** @type {number} */ panelId) => {
             this.manager.panels.onInitializePanel(panelId);
         });
         BoxManager.appReady();
@@ -415,12 +415,12 @@ export default class GameFlow {
             this.noMenuStartLevel(QueryStrings.box - 1, QueryStrings.level - 1);
         } else if (settings.showMenu) {
             // make sure the game is not password locked
-            /*const passwordPanel = PanelManager.getPanelById(PanelId.PASSWORD);
+            /*const passwordPanel = panelManager.getPanelById(PanelId.PASSWORD);
             if (passwordPanel && passwordPanel.isGameLocked && passwordPanel.isGameLocked()) {
                 Doors.renderDoors(true, 0);
-                PanelManager.showPanel(PanelId.PASSWORD, true);
+                panelManager.showPanel(PanelId.PASSWORD, true);
             } else {*/
-            PanelManager.showPanel(PanelId.MENU, true);
+            panelManager.showPanel(PanelId.MENU, true);
         }
 
         PubSub.subscribe(PubSub.ChannelId.PauseGame, () => {
@@ -442,7 +442,7 @@ export default class GameFlow {
      * @param {number} levelIndex - Level index (zero-based)
      */
     noMenuStartLevel(boxIndex, levelIndex) {
-        PanelManager.showPanel(PanelId.GAME, true);
+        panelManager.showPanel(PanelId.GAME, true);
 
         // unfortunate that box manager is zero index for box and 1 based for level
         BoxManager.currentBoxIndex = boxIndex;
@@ -459,7 +459,7 @@ export default class GameFlow {
     openLevelMenu(boxIndex) {
         this.manager.isBoxOpen = false;
         Doors.renderDoors(true, 0);
-        PanelManager.showPanel(PanelId.LEVELS);
+        panelManager.showPanel(PanelId.LEVELS);
         GameBorder.setBoxBorder(boxIndex);
     }
 }

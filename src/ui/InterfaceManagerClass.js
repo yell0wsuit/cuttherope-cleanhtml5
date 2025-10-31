@@ -1,7 +1,7 @@
 import settings from "@/game/CTRSettings";
 import PubSub from "@/utils/PubSub";
 import QueryStrings from "@/ui/QueryStrings";
-import PanelManager from "@/ui/PanelManager";
+import panelManager from "@/ui/PanelManager";
 import AudioOptions from "@/ui/InterfaceManager/audioOptions";
 import { setImageBigText } from "@/ui/InterfaceManager/text";
 import PanelInitializer from "@/ui/InterfaceManager/panelsInitialize";
@@ -55,7 +55,7 @@ class InterfaceManager extends AudioOptions {
         this.panelShow = new PanelShowHandler(this);
 
         // Initialize PanelManager callback
-        PanelManager.onShowPanel = (/** @type {number} */ panelId) =>
+        panelManager.onShowPanel = (/** @type {number} */ panelId) =>
             this.panelShow.onShowPanel(panelId);
 
         // Subscribe to authentication events

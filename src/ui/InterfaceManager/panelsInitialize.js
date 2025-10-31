@@ -4,7 +4,7 @@ import platform from "@/platform";
 import ScoreManager from "@/ui/ScoreManager";
 import BoxManager from "@/ui/BoxManager";
 import PanelId from "@/ui/PanelId";
-import PanelManager from "@/ui/PanelManager";
+import panelManager from "@/ui/PanelManager";
 import Text from "@/visual/Text";
 import PointerCapture from "@/utils/PointerCapture";
 import settings from "@/game/CTRSettings";
@@ -53,7 +53,7 @@ export default class PanelInitializer {
     onInitializePanel(panelId) {
         const manager = this.manager;
         const { gameFlow } = manager;
-        const panel = PanelManager.getPanelById(panelId);
+        const panel = panelManager.getPanelById(panelId);
         const soundBtn = document.getElementById("soundBtn");
         const musicBtn = document.getElementById("musicBtn");
         const resetBtn = document.getElementById("resetBtn");
@@ -82,7 +82,7 @@ export default class PanelInitializer {
                             const nextPanelId = edition.disableBoxMenu
                                 ? PanelId.LEVELS
                                 : PanelId.BOXES;
-                            PanelManager.showPanel(nextPanelId, true);
+                            panelManager.showPanel(nextPanelId, true);
                         }
                     });
                 });
@@ -93,7 +93,7 @@ export default class PanelInitializer {
                     if (platform.customOptions) {
                         PubSub.publish(PubSub.ChannelId.ShowOptions);
                     } else {
-                        PanelManager.showPanel(PanelId.OPTIONS);
+                        panelManager.showPanel(PanelId.OPTIONS);
                     }
                 });
 
@@ -102,7 +102,7 @@ export default class PanelInitializer {
                         return;
                     }
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.ACHIEVEMENTS);
+                    panelManager.showPanel(PanelId.ACHIEVEMENTS);
                 });
                 manager._updateSignInControls();
 
@@ -111,7 +111,7 @@ export default class PanelInitializer {
                         return;
                     }
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.LEADERBOARDS);
+                    panelManager.showPanel(PanelId.LEADERBOARDS);
                 });
                 manager._updateSignInControls();
 
@@ -227,7 +227,7 @@ export default class PanelInitializer {
                 // handles clicking on the circular back button
                 on("#boxBack", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.MENU);
+                    panelManager.showPanel(PanelId.MENU);
                 });
 
                 panel.init(manager);
@@ -238,12 +238,12 @@ export default class PanelInitializer {
             case PanelId.PASSWORD: {
                 on("#boxEnterCodeButton", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.PASSWORD);
+                    panelManager.showPanel(PanelId.PASSWORD);
                 });
 
                 on("#codeBack", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.BOXES);
+                    panelManager.showPanel(PanelId.BOXES);
                 });
 
                 panel.init(manager);
@@ -256,7 +256,7 @@ export default class PanelInitializer {
                 on("#levelBack", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     const targetPanelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
-                    PanelManager.showPanel(targetPanelId);
+                    panelManager.showPanel(targetPanelId);
                 });
 
                 // render the canvas all the way closed
@@ -389,7 +389,7 @@ export default class PanelInitializer {
             case PanelId.GAMECOMPLETE: {
                 on("#gameCompleteBack", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.MENU);
+                    panelManager.showPanel(PanelId.MENU);
                     GameBorder.hide();
                 });
 
@@ -498,7 +498,7 @@ export default class PanelInitializer {
 
                 backBtn?.addEventListener("click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.MENU);
+                    panelManager.showPanel(PanelId.MENU);
                 });
 
                 // hide the language if not supported by the edition
@@ -537,7 +537,7 @@ export default class PanelInitializer {
             case PanelId.LEADERBOARDS: {
                 on("#leaderboardBack", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.MENU);
+                    panelManager.showPanel(PanelId.MENU);
                 });
 
                 break;
@@ -546,7 +546,7 @@ export default class PanelInitializer {
             case PanelId.ACHIEVEMENTS: {
                 on("#achievementsBack", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.MENU);
+                    panelManager.showPanel(PanelId.MENU);
                 });
 
                 break;

@@ -2,7 +2,7 @@ import edition from "@/config/editions/net-edition";
 import resolution from "@/resolution";
 import platform from "@/platform";
 import PanelId from "@/ui/PanelId";
-import PanelManager from "@/ui/PanelManager";
+import panelManager from "@/ui/PanelManager";
 import settings from "@/game/CTRSettings";
 import SoundMgr from "@/game/CTRSoundMgr";
 import PubSub from "@/utils/PubSub";
@@ -195,13 +195,13 @@ const VideoManager = {
                 vid.addEventListener("mousedown", VideoManager.closeOutroVideo);
             } else {
                 vid.remove();
-                PanelManager.showPanel(PanelId.GAMECOMPLETE, false);
+                panelManager.showPanel(PanelId.GAMECOMPLETE, false);
             }
         }
     },
 
     closeOutroVideo() {
-        PanelManager.showPanel(PanelId.GAMECOMPLETE, true);
+        panelManager.showPanel(PanelId.GAMECOMPLETE, true);
         const vid = document.getElementById("vid");
         if (vid) {
             fadeOut(vid, 500, function () {

@@ -1,6 +1,6 @@
 import resolution from "@/resolution";
 import PanelId from "@/ui/PanelId";
-import PanelManager from "@/ui/PanelManager";
+import panelManager from "@/ui/PanelManager";
 import GameBorder from "@/ui/GameBorder";
 import SoundMgr from "@/game/CTRSoundMgr";
 import BoxManager from "@/ui/BoxManager";
@@ -32,7 +32,7 @@ export default class PanelShowHandler {
      * @param {number} panelId - The ID of the panel to show
      */
     onShowPanel(panelId) {
-        const panel = PanelManager.getPanelById(panelId);
+        const panel = panelManager.getPanelById(panelId);
 
         switch (panelId) {
             case PanelId.MENU:
@@ -56,7 +56,7 @@ export default class PanelShowHandler {
             SoundMgr.playMusic(MENU_MUSIC_ID);
         }
 
-        const boxPanel = PanelManager.getPanelById(PanelId.BOXES);
+        const boxPanel = panelManager.getPanelById(PanelId.BOXES);
         if (panelId === PanelId.BOXES) {
             BoxManager.updateBoxLocks();
             ScoreManager.updateTotalScoreText();
@@ -83,7 +83,7 @@ export default class PanelShowHandler {
             boxPanel.onHide();
         }
 
-        const codePanel = PanelManager.getPanelById(PanelId.PASSWORD);
+        const codePanel = panelManager.getPanelById(PanelId.PASSWORD);
         if (codePanel) {
             if (panelId === PanelId.PASSWORD) {
                 codePanel.onShow();
