@@ -144,7 +144,7 @@ export default class PanelInitializer {
                 });
 
                 // mini options panel
-                manager._updateMiniSoundButton(false, "optionSound");
+                manager._updateMiniSoundButton(false, "optionSound", "");
                 on("#optionSound", "click", () => {
                     manager._updateMiniSoundButton(true, "optionSound", "optionMsg");
                 });
@@ -326,7 +326,7 @@ export default class PanelInitializer {
                 });
 
                 // mini options panel
-                manager._updateMiniSoundButton(false, "gameSound");
+                manager._updateMiniSoundButton(false, "gameSound", "");
 
                 on("#gameSound", "click", () => {
                     manager._updateMiniSoundButton(true, "gameSound", "gameMsg");
@@ -416,8 +416,8 @@ export default class PanelInitializer {
                     SoundMgr.setSoundEnabled(isSoundOn);
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     updateSoundOption(soundBtn, isSoundOn);
-                    manager._updateMiniSoundButton(false, "gameSound");
-                    manager._updateMiniSoundButton(false, "optionSound");
+                    manager._updateMiniSoundButton(false, "gameSound", "");
+                    manager._updateMiniSoundButton(false, "optionSound", "");
                 };
                 platform.setSoundButtonChange(soundBtn, onSoundButtonChange);
 
@@ -429,8 +429,8 @@ export default class PanelInitializer {
                     const isMusicOn = !settings.getMusicEnabled();
                     SoundMgr.setMusicEnabled(isMusicOn);
                     updateMusicOption(musicBtn, isMusicOn);
-                    manager._updateMiniSoundButton(false, "gameSound");
-                    manager._updateMiniSoundButton(false, "optionSound");
+                    manager._updateMiniSoundButton(false, "gameSound", "");
+                    manager._updateMiniSoundButton(false, "optionSound", "");
                 };
                 platform.setMusicButtonChange(musicBtn, onMusicButtonChange);
 

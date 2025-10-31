@@ -99,7 +99,7 @@ export default class PanelShowHandler {
                 break;
 
             case PanelId.GAME:
-                this.manager._updateMiniSoundButton(false, "optionSound");
+                this.manager._updateMiniSoundButton(false, "optionSound", "");
                 break;
 
             case PanelId.GAMECOMPLETE: {
