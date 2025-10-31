@@ -17,7 +17,6 @@ import Lang from "@/resources/Lang";
 import LangId from "@/resources/LangId";
 import MenuStringId from "@/resources/MenuStringId";
 import Alignment from "@/core/Alignment";
-import SocialHelper from "@/ui/SocialHelper";
 import GameBorder from "@/ui/GameBorder";
 import Doors from "@/Doors";
 import Dialogs from "@/ui/Dialogs";
@@ -394,7 +393,7 @@ export default class PanelInitializer {
                     GameBorder.hide();
                 });
 
-                on("#finalShareBtn", "click", () => {
+                /*on("#finalShareBtn", "click", () => {
                     const possibleStars = BoxManager.possibleStars();
                     const totalStars = ScoreManager.totalStars();
                     SocialHelper.postToFeed(
@@ -403,7 +402,7 @@ export default class PanelInitializer {
                         `${platform.getScoreImageBaseUrl()}score${totalStars}.png`,
                         () => true
                     );
-                });
+                });*/
 
                 break;
             }

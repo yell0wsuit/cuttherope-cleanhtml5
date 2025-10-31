@@ -1,5 +1,4 @@
 import Text from "@/visual/Text";
-import SocialHelper from "@/ui/SocialHelper";
 import platform from "@/platform";
 import resolution from "@/resolution";
 import analytics from "@/analytics";
@@ -85,7 +84,7 @@ class EasterEggManager {
 
             // event handlers
 
-            if (dShareBtn) {
+            /*if (dShareBtn) {
                 dShareBtn.addEventListener("click", () => {
                     SocialHelper.postToFeed(
                         Lang.menuText(MenuStringId.SHARE_DRAWING),
@@ -99,7 +98,7 @@ class EasterEggManager {
 
                     return false; // cancel bubbling
                 });
-            }
+            }*/
 
             if (drawingElement) {
                 drawingElement.addEventListener("click", () => {
