@@ -17,7 +17,6 @@ import {
     getElement,
     addClass,
     removeClass,
-    toggleClass,
     show,
     hide,
     empty,
@@ -27,8 +26,8 @@ import {
     delay,
 } from "@/utils/domHelpers";
 
-const backgroundId = edition.levelBackgroundId || "levelBackground",
-    LevelPanel = new Panel(PanelId.LEVELS, "levelPanel", backgroundId, true);
+const backgroundId = edition.levelBackgroundId || "levelBackground";
+const LevelPanel = new Panel(PanelId.LEVELS, "levelPanel", backgroundId, true);
 
 // cache interface manager reference
 let im = null;
@@ -135,18 +134,18 @@ LevelPanel.onShow = function () {
 };
 
 // listen to purchase event
-let isPaid = false;
+/*let isPaid = false;
 PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, function (paid) {
     isPaid = paid;
     updateLevelOptions();
-});
+});*/
 
 // update level UI when boxes are updated (paid upgrade or roaming data change)
 PubSub.subscribe(PubSub.ChannelId.UpdateVisibleBoxes, function (visibleBoxes) {
     updateLevelOptions();
 });
 
-function requiresPurchase(levelIndex) {
+/*function requiresPurchase(levelIndex) {
     if (isPaid) {
         return false;
     }
@@ -156,16 +155,16 @@ function requiresPurchase(levelIndex) {
     }
 
     return false;
-}
+}*/
 
 function onLevelClick(event) {
     const levelIndex = parseInt(event.currentTarget.dataset.level, 10);
     if (ScoreManager.isLevelUnlocked(BoxManager.currentBoxIndex, levelIndex)) {
         SoundMgr.selectRandomGameMusic();
         im.gameFlow.openLevel(levelIndex + 1);
-    } else if (requiresPurchase(levelIndex)) {
+    } /*else if (requiresPurchase(levelIndex)) {
         Dialogs.showPayDialog();
-    } else {
+    }*/ else {
         // no action
         return;
     }
@@ -187,7 +186,7 @@ function updateLevelOptions() {
             if (i < levelCount) {
                 show(levelElement);
 
-                levelRequiresPurchase = requiresPurchase(i);
+                //levelRequiresPurchase = requiresPurchase(i);
 
                 // if the level has a score show it, otherwise make it locked
                 stars = ScoreManager.getStars(boxIndex, i);
@@ -208,8 +207,8 @@ function updateLevelOptions() {
                 } else {
                     removeClass(levelElement, "open");
                     addClass(levelElement, "locked");
-                    toggleClass(levelElement, "purchase", levelRequiresPurchase);
-                    toggleClass(levelElement, "ctrPointer", levelRequiresPurchase);
+                    //toggleClass(levelElement, "purchase", levelRequiresPurchase);
+                    //toggleClass(levelElement, "ctrPointer", levelRequiresPurchase);
                     empty(levelElement);
                 }
             } else {
