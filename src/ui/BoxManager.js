@@ -8,243 +8,241 @@ import TimeBox from "@/ui/TimeBox";
 import BoxPanel from "@/ui/BoxPanel";
 import { IS_XMAS } from "@/resources/ResData";
 
-const boxes = [];
+/**
+ * Manages all game boxes — creation, visibility, locks, and events.
+ */
+class BoxManager {
+    /** @type {Box[]} */
+    static boxes = [];
 
-// Helper function to get the default box index based on holiday period
-// During Christmas season (Dec/Jan), default to Holiday Gift Box (index 0)
-// Otherwise, default to Cardboard Box (index 1)
-const getDefaultBoxIndex = () => {
-    return IS_XMAS ? 0 : 1;
-};
+    /** @type {boolean} */
+    static isPaid = false;
 
-// listen to purchase event
-let isPaid = false;
-let appIsReady = false;
+    /** @type {boolean} */
+    static appIsReady = false;
 
-const loadBoxes = () => {
-    // only load boxes if app is ready
-    if (!appIsReady) {
-        return;
+    /** @type {number} */
+    static currentBoxIndex = BoxManager.getDefaultBoxIndex();
+
+    /** @type {number} */
+    static currentLevelIndex = 1; // TODO: should be zero-based
+
+    // ---------------------------------------------------------------------
+    // Initialization
+    // ---------------------------------------------------------------------
+
+    /**
+     * Returns the default box index.
+     * Defaults to the Holiday Gift box (index 0) during Christmas season.
+     * @returns {number}
+     */
+    static getDefaultBoxIndex() {
+        return IS_XMAS ? 0 : 1;
     }
 
-    BoxManager.currentBoxIndex = getDefaultBoxIndex();
+    /**
+     * Marks the app as ready and loads all boxes.
+     */
+    static appReady() {
+        this.appIsReady = true;
+        this.loadBoxes();
+    }
 
-    // TODO: the current level index starts at 1, should be zero-based
-    BoxManager.currentLevelIndex = 1;
+    /**
+     * Loads boxes only if the app is ready.
+     */
+    static loadBoxes() {
+        if (!this.appIsReady) return;
 
-    createBoxes();
-    updateVisibleBoxes();
-};
+        this.currentBoxIndex = this.getDefaultBoxIndex();
+        this.currentLevelIndex = 1;
+        this.createBoxes();
+        this.updateVisibleBoxes();
+    }
 
-const createBoxes = () => {
-    const images = edition.boxImages;
-    const boxtypes = edition.boxTypes;
+    // ---------------------------------------------------------------------
+    // Box creation & management
+    // ---------------------------------------------------------------------
 
-    // clear any existing boxes
-    while (boxes.length) {
-        const existingBox = boxes.pop();
-        if (existingBox && typeof existingBox.destroy === "function") {
-            existingBox.destroy();
+    /**
+     * Creates all boxes according to edition configuration.
+     */
+    static createBoxes() {
+        const { boxImages: images, boxTypes: boxtypes } = edition;
+
+        // Clean up existing boxes
+        while (this.boxes.length) {
+            const existingBox = this.boxes.pop();
+            if (existingBox?.destroy) existingBox.destroy();
+        }
+
+        // Create new boxes
+        for (let i = 0; i < boxtypes.length; i++) {
+            const type = boxtypes[i];
+            const requiredStars = ScoreManager.requiredStars(i);
+            const isLocked = ScoreManager.isBoxLocked(i);
+            let box;
+
+            switch (type) {
+                case BoxType.MORECOMING:
+                    box = new MoreComingBox(i, images[i], requiredStars, isLocked, type);
+                    break;
+                case BoxType.TIME:
+                    box = new TimeBox(i, images[i], requiredStars, isLocked, type);
+                    break;
+                case BoxType.HOLIDAY:
+                    box = new Box(i, images[i], requiredStars, isLocked, type);
+                    box.yOffset = -26;
+                    break;
+                default:
+                    box = new Box(i, images[i], requiredStars, isLocked, type);
+                    break;
+            }
+
+            if (box) this.boxes.push(box);
         }
     }
 
-    // create each box
-    for (let i = 0, len = boxtypes.length; i < len; i++) {
-        const type = boxtypes[i];
-        const requiredStars = ScoreManager.requiredStars(i);
-        const isLocked = ScoreManager.isBoxLocked(i);
-        let box;
+    /**
+     * Updates the list of visible boxes and publishes via PubSub.
+     */
+    static updateVisibleBoxes() {
+        /** @type {Box[]} */
+        const visibleBoxes = [];
 
-        switch (type) {
-            /*case BoxType.IEPINNED:
-                box = new PinnedBox(i, images[i], requiredStars, isLocked, type);
-                if (!box.initPinnedState()) {
-                    box = null; // don't add if we can't init pinned state
-                }
-                break;*/
-            /*case BoxType.PURCHASE:
-                box = new PurchaseBox(i, images[i], requiredStars, isLocked, type);
-                break;*/
-            case BoxType.MORECOMING:
-                box = new MoreComingBox(i, images[i], requiredStars, isLocked, type);
-                break;
-            case BoxType.TIME:
-                box = new TimeBox(i, images[i], requiredStars, isLocked, type);
-                break;
-            case BoxType.HOLIDAY:
-                box = new Box(i, images[i], requiredStars, isLocked, type);
-                box.yOffset = -26;
-                break;
-            default:
-                box = new Box(i, images[i], requiredStars, isLocked, type);
-                break;
+        for (let i = 0; i < this.boxes.length; i++) {
+            const box = this.boxes[i];
+            box.index = i;
+            if (box.visible) visibleBoxes.push(box);
         }
 
-        if (box) {
-            boxes.push(box);
-        }
-    }
-};
-
-const updateVisibleBoxes = () => {
-    const visibleBoxes = [];
-    for (let i = 0, len = boxes.length; i < len; i++) {
-        const box = boxes[i];
-        box.index = i;
-        if (box.visible) {
-            visibleBoxes.push(box);
-        }
+        PubSub.publish(PubSub.ChannelId.UpdateVisibleBoxes, visibleBoxes);
     }
 
-    PubSub.publish(PubSub.ChannelId.UpdateVisibleBoxes, visibleBoxes);
-};
+    // ---------------------------------------------------------------------
+    // Gameplay helpers
+    // ---------------------------------------------------------------------
 
-/*const onPaidBoxesChange = (paid) => {
-    paid = paid || QueryStrings.unlockAllBoxes === true;
+    /**
+     * Checks if the next level is playable (i.e., not locked or paid-only).
+     * @returns {boolean}
+     */
+    static isNextLevelPlayable() {
+        const levelCount = ScoreManager.levelCount(this.currentBoxIndex);
 
-    const requiresPurchase =
-        edition.levelRequiresPurchase ||
-        function () {
-            return false;
-        };
-
-    // first box is always unlocked
-    for (let i = 1, len = boxes.length; i < len; i++) {
-        const box = boxes[i];
-
-        // hide unpurchased boxes and show upgrade prompt
-        switch (box.type) {
-            case BoxType.PURCHASE:
-                box.visible = !paid;
-                break;
-            case BoxType.MORECOMING:
-                box.visible = paid;
-                break;
-            default:
-                // if not paid, check to see if level 1 of the box requires payment
-                box.purchased = paid || !requiresPurchase(i, 0);
-                box.islocked = !box.purchased || ScoreManager.isBoxLocked(i);
-                break;
-        }
-    }
-
-    updateVisibleBoxes();
-};*/
-
-const BoxManager = {
-    currentBoxIndex: getDefaultBoxIndex(),
-
-    // TODO: the current level index starts at 1, should be zero-based
-    currentLevelIndex: 1,
-
-    appReady: () => {
-        appIsReady = true;
-        loadBoxes();
-    },
-
-    isNextLevelPlayable() {
-        // check to make sure we aren't on the last level of the box
-        if (ScoreManager.levelCount(this.currentBoxIndex) <= this.currentLevelIndex) {
+        // If box is missing or current level is the last one
+        if (levelCount == null || levelCount <= this.currentLevelIndex) {
             return false;
         }
 
-        // see if the game requires purchase of some levels
-        if (isPaid || !edition.levelRequiresPurchase) {
-            return true; // already purchased or none required
-        }
+        // If already paid or no purchase required
+        /*if (this.isPaid || !edition.levelRequiresPurchase) {
+            return true;
+        }*/
 
-        // check whether next level is free
-        return !edition.levelRequiresPurchase(this.currentBoxIndex, this.currentLevelIndex); // NOTE: checking next level since this index is 1 based (TODO: fix!)
-    },
+        // Otherwise, check next level's requirement
+        //return !edition.levelRequiresPurchase(this.currentBoxIndex, this.currentLevelIndex);
 
-    // returns the number of boxes required to win the game
-    requiredCount: () => {
-        let count = 0;
-        for (let i = 0, len = boxes.length; i < len; i++) {
-            if (boxes[i].isRequired()) {
-                count++;
-            }
-        }
-        return count;
-    },
+        // Web edition: all levels are free
+        return true;
+    }
 
-    possibleStars: () => {
-        let count = 0;
-        const len = boxes.length;
-        for (let i = 0; i < len; i++) {
-            // we'll count every box except for the hidden pinned box
-            if (boxes[i].isRequired()) {
-                count += ScoreManager.possibleStarsForBox(i);
-            }
-        }
-        return count;
-    },
+    /**
+     * Returns the number of boxes required to win the game.
+     * @returns {number}
+     */
+    static requiredCount() {
+        return this.boxes.filter((box) => box.isRequired()).length;
+    }
 
-    visibleGameBoxes: () => {
-        let count = 0;
-        for (let i = 0, len = boxes.length; i < len; i++) {
-            const box = boxes[i];
+    /**
+     * Returns total possible stars across all required boxes.
+     * @returns {number}
+     */
+    static possibleStars() {
+        return this.boxes.reduce((sum, box, i) => {
+            return box.isRequired() ? sum + ScoreManager.possibleStarsForBox(i) : sum;
+        }, 0);
+    }
 
-            // count boxes that are required to finish the game
-            // and also purchased
-            if (box.isRequired() && box.purchased !== false) {
-                count++;
-            }
-        }
-        return count;
-    },
+    /**
+     * Returns the count of visible and required game boxes.
+     * @returns {number}
+     */
+    static visibleGameBoxes() {
+        return this.boxes.filter((box) => box.isRequired() && box.purchased !== false).length;
+    }
 
-    resetLocks: () => {
-        // don't lock the first box
-        for (let i = 1, len = boxes.length; i < len; i++) {
-            const box = boxes[i];
+    // ---------------------------------------------------------------------
+    // Lock handling
+    // ---------------------------------------------------------------------
 
-            // only lock game boxes
+    /**
+     * Locks all boxes except the first one.
+     */
+    static resetLocks() {
+        for (let i = 1; i < this.boxes.length; i++) {
+            const box = this.boxes[i];
             if (box.isGameBox()) {
                 box.islocked = true;
             }
         }
 
         BoxPanel.redraw();
-    },
+    }
 
-    updateBoxLocks: () => {
-        const numBoxes = boxes.length;
+    /**
+     * Unlocks boxes based on score and purchase state.
+     */
+    static updateBoxLocks() {
         let shouldRedraw = false;
 
-        // unlock new boxes if visual state has not been updated yet
-        // (first box is always unlocked)
-        for (let boxIndex = 1; boxIndex < numBoxes; boxIndex++) {
-            const box = boxes[boxIndex];
-            if (!ScoreManager.isBoxLocked(boxIndex) && box.purchased && box.islocked) {
+        for (let i = 1; i < this.boxes.length; i++) {
+            const box = this.boxes[i];
+            if (!ScoreManager.isBoxLocked(i) && box.purchased && box.islocked) {
                 box.islocked = false;
                 shouldRedraw = true;
-                ScoreManager.setStars(boxIndex, 0, 0);
+                ScoreManager.setStars(i, 0, 0);
             }
         }
 
         if (shouldRedraw) {
             BoxPanel.redraw();
         }
-    },
-};
+    }
 
-// Subscribe to events
-PubSub.subscribe(PubSub.ChannelId.SelectedBoxChanged, (boxIndex) => {
-    BoxManager.currentBoxIndex = boxIndex;
-    BoxManager.currentLevelIndex = 1;
-});
+    // ---------------------------------------------------------------------
+    // Event bindings
+    // ---------------------------------------------------------------------
 
-PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, (paid) => {
-    isPaid = paid;
-});
+    /**
+     * Initializes event subscriptions for box-related updates.
+     */
+    static initializeEventSubscriptions() {
+        PubSub.subscribe(PubSub.ChannelId.SelectedBoxChanged, (/** @type {number} */ boxIndex) => {
+            this.currentBoxIndex = boxIndex;
+            this.currentLevelIndex = 1;
+        });
 
-// reload boxes when user signs in or out
-PubSub.subscribe(PubSub.ChannelId.SignIn, loadBoxes);
-PubSub.subscribe(PubSub.ChannelId.SignOut, loadBoxes);
-PubSub.subscribe(PubSub.ChannelId.RoamingDataChanged, loadBoxes);
-PubSub.subscribe(PubSub.ChannelId.BoxesUnlocked, loadBoxes);
+        PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, (/** @type {boolean} */ paid) => {
+            this.isPaid = paid;
+        });
 
-// PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, onPaidBoxesChange);
+        // Reload boxes on user state changes
+        const reloadChannels = [
+            PubSub.ChannelId.SignIn,
+            PubSub.ChannelId.SignOut,
+            PubSub.ChannelId.RoamingDataChanged,
+            PubSub.ChannelId.BoxesUnlocked,
+        ];
+
+        for (const ch of reloadChannels) {
+            PubSub.subscribe(ch, () => this.loadBoxes());
+        }
+    }
+}
+
+// Auto-register event subscriptions
+BoxManager.initializeEventSubscriptions();
 
 export default BoxManager;
