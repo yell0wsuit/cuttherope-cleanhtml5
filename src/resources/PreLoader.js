@@ -5,418 +5,348 @@ import resolution from "@/resolution";
 import resData from "@/resources/ResData";
 import SoundLoader from "@/resources/SoundLoader";
 import JsonLoader from "@/resources/JsonLoader";
-import LoadAnimation from "@/LoadAnimation";
 import ResourceMgr, { initializeResources } from "@/resources/ResourceMgr";
 import ResourcePacks from "@/resources/ResourcePacks";
 import PubSub from "@/utils/PubSub";
 
-let menuImagesLoadComplete = false,
-    menuSoundLoadComplete = false,
-    menuJsonLoadComplete = false,
-    completeCallback = null,
-    totalResources = 0,
-    loadedImages = 0,
-    loadedSounds = 0,
-    loadedJsonFiles = 0,
-    failedImages = 0,
-    failedSounds,
-    checkMenuLoadComplete = function () {
-        if (!menuImagesLoadComplete || !menuSoundLoadComplete || !menuJsonLoadComplete) {
-            return;
+class PreLoader {
+    constructor() {
+        // State tracking
+        this.menuImagesLoadComplete = false;
+        this.menuSoundLoadComplete = false;
+        this.menuJsonLoadComplete = false;
+
+        /**
+         * @type {(() => void) | null}
+         */
+        this.completeCallback = null;
+
+        this.totalResources = 0;
+        this.loadedImages = 0;
+        this.loadedSounds = 0;
+        this.loadedJsonFiles = 0;
+        this.failedImages = 0;
+        this.failedSounds = 0;
+
+        this.MENU_TAG = "MENU";
+        this.FONT_TAG = "FONT";
+        this.GAME_TAG = "GAME";
+        this.supportsImageBitmap = typeof createImageBitmap === "function";
+    }
+
+    // === Utility helpers ===
+    getUrlFacade() {
+        if (typeof URL !== "undefined" && typeof URL.createObjectURL === "function") return URL;
+        if (typeof window !== "undefined") {
+            const legacy = window.URL || window.webkitURL;
+            if (legacy && typeof legacy.createObjectURL === "function") return legacy;
+        }
+        return null;
+    }
+
+    /**
+     * @param {string} url
+     */
+    async loadImageElement(url) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.decoding = "async";
+
+            const cleanup = () => {
+                img.removeEventListener("load", onLoad);
+                img.removeEventListener("error", onError);
+            };
+
+            const onLoad = () => {
+                cleanup();
+                resolve(img);
+            };
+
+            const onError = () => {
+                cleanup();
+                reject(new Error(`Failed to load image: ${url}`));
+            };
+
+            img.addEventListener("load", onLoad);
+            img.addEventListener("error", onError);
+            img.src = url;
+        });
+    }
+
+    /**
+     * @param {ImageBitmap} drawable
+     * @param {string} sourceUrl
+     */
+    createImageAsset(drawable, sourceUrl) {
+        const naturalWidth = drawable.naturalWidth ?? drawable.videoWidth ?? drawable.width ?? 0;
+        const naturalHeight =
+            drawable.naturalHeight ?? drawable.videoHeight ?? drawable.height ?? 0;
+
+        return { drawable, width: naturalWidth, height: naturalHeight, sourceUrl };
+    }
+
+    /**
+     * @param {string | URL | Request} url
+     */
+    async fetchImageBlob(url) {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
+        return await response.blob();
+    }
+
+    /**
+     * @param {Blob} blob
+     * @param {string} fallbackUrl
+     */
+    async loadImageFromBlob(blob, fallbackUrl) {
+        const urlFacade = this.getUrlFacade();
+        if (!urlFacade) {
+            if (fallbackUrl) return await this.loadImageElement(fallbackUrl);
+            throw new Error("Object URL API not available");
+        }
+        const objectUrl = urlFacade.createObjectURL(blob);
+        try {
+            return await this.loadImageElement(objectUrl);
+        } finally {
+            urlFacade.revokeObjectURL(objectUrl);
+        }
+    }
+
+    /**
+     * @param {string} url
+     */
+    async loadImageAsset(url) {
+        if (!url) throw new Error("Image URL must be provided");
+
+        if (!this.supportsImageBitmap && !this.getUrlFacade()) {
+            const img = await this.loadImageElement(url);
+            return this.createImageAsset(img, url);
         }
 
-        // Log any failures
-        if (failedImages > 0 || failedSounds > 0) {
-            window.console?.warn?.(
-                `Loading completed with failures - Images: ${failedImages}, Sounds: ${failedSounds}`
+        const blob = await this.fetchImageBlob(url);
+
+        if (this.supportsImageBitmap) {
+            try {
+                const bitmap = await createImageBitmap(blob);
+                return this.createImageAsset(bitmap, url);
+            } catch (err) {
+                console.warn("Falling back to HTMLImageElement for", url, err);
+            }
+        }
+
+        const img = await this.loadImageFromBlob(blob, url);
+        return this.createImageAsset(img, url);
+    }
+
+    /**
+     * @param {string | URL | Request} url
+     */
+    async loadJson(url) {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
+        const text = await res.text();
+        return JSON.parse(text);
+    }
+
+    // === Progress handling ===
+    updateProgress() {
+        if (this.totalResources === 0) return;
+        const progress =
+            ((this.loadedImages + this.loadedSounds + this.loadedJsonFiles) / this.totalResources) *
+            100;
+        PubSub.publish(PubSub.ChannelId.PreloaderProgress, { progress });
+        /*LoadAnimation?.notifyLoadProgress?.(progress);*/
+    }
+
+    checkMenuLoadComplete() {
+        if (
+            !this.menuImagesLoadComplete ||
+            !this.menuSoundLoadComplete ||
+            !this.menuJsonLoadComplete
+        )
+            return;
+
+        if (this.failedImages > 0 || this.failedSounds > 0) {
+            console.warn(
+                `Loading completed with failures - Images: ${this.failedImages}, Sounds: ${this.failedSounds}`
             );
         }
 
-        if (LoadAnimation) {
-            LoadAnimation.notifyLoaded();
-            LoadAnimation.hide();
-        }
+        /*LoadAnimation?.notifyLoaded?.();
+        LoadAnimation?.hide?.();*/
 
-        if (completeCallback) {
-            // queue the execution of the callback so the loader can
-            // finish notifying listeners first
-            setTimeout(completeCallback, 0);
-        }
+        if (this.completeCallback) setTimeout(this.completeCallback, 0);
 
-        // ensure the completion is only run once
-        checkMenuLoadComplete = function () {};
-    };
-
-const updateProgress = function () {
-    if (totalResources === 0) return;
-    const progress = ((loadedImages + loadedSounds + loadedJsonFiles) / totalResources) * 100;
-    PubSub.publish(PubSub.ChannelId.PreloaderProgress, { progress: progress });
-
-    if (LoadAnimation) {
-        LoadAnimation.notifyLoadProgress(progress);
+        // lock once
+        this.checkMenuLoadComplete = () => {};
     }
-};
 
-const MENU_TAG = "MENU";
-const FONT_TAG = "FONT";
-const GAME_TAG = "GAME";
-
-const supportsImageBitmap = typeof createImageBitmap === "function";
-
-const loadImageElement = (url) =>
-    new Promise((resolve, reject) => {
-        const img = new Image();
-        img.decoding = "async";
-
-        const cleanup = () => {
-            img.removeEventListener("load", onLoad);
-            img.removeEventListener("error", onError);
+    // === Resource collection ===
+    /**
+     * @param {string} gameBaseUrl
+     */
+    collectImageResources(gameBaseUrl) {
+        const resources = [];
+        let menuResourceCount = 0;
+        const add = (url, tag, resId = null) => {
+            if (!url) return;
+            resources.push({ url, tag, resId });
+            if (tag === this.MENU_TAG || tag === this.FONT_TAG) menuResourceCount++;
         };
 
-        const onLoad = () => {
-            cleanup();
-            resolve(img);
+        const queueMenu = (arr, base = platform.uiImageBaseUrl) => {
+            if (!arr) return;
+            for (const name of arr) name && add(base + name, this.MENU_TAG);
         };
 
-        const onError = () => {
-            cleanup();
-            reject(new Error(`Failed to load image: ${url}`));
+        // Menu UI images
+        const pwdPath = platform.imageBaseUrl + (editionUI.passwordDirectory || "");
+        queueMenu(editionUI.passwordImageNames, pwdPath);
+
+        const pwdResPath =
+            platform.resolutionBaseUrl + (editionUI.passwordResolutionDirectory || "");
+        queueMenu(editionUI.passwordResolutionImageNames, pwdResPath);
+
+        queueMenu(editionUI.pageImageNames, `${platform.imageBaseUrl}page/`);
+        queueMenu(editionUI.pageResolutionImageNames, `${platform.resolutionBaseUrl}page/`);
+        queueMenu(edition.menuImageFilenames);
+        queueMenu(edition.boxImages, platform.boxImageBaseUrl);
+        queueMenu(edition.boxBorders);
+        queueMenu(edition.boxDoors);
+        queueMenu(edition.drawingImageNames);
+        queueMenu(
+            edition.editionImages,
+            platform.resolutionBaseUrl + (edition.editionImageDirectory || "")
+        );
+
+        const queueForResMgr = (ids, tag) => {
+            if (!ids) return;
+            for (const id of ids) {
+                const res = resData[id];
+                if (!res) continue;
+                add(gameBaseUrl + res.path, tag, id);
+                if (res.atlasPath) {
+                    this.loadJson(gameBaseUrl + res.atlasPath)
+                        .then((atlas) => ResourceMgr.onAtlasLoaded(id, atlas))
+                        .catch((err) => ResourceMgr.onAtlasError(id, err));
+                }
+            }
         };
 
-        img.addEventListener("load", onLoad);
-        img.addEventListener("error", onError);
-        img.src = url;
-    });
+        queueForResMgr(ResourcePacks.StandardFonts, this.FONT_TAG);
+        queueForResMgr(edition.gameImageIds, this.GAME_TAG);
+        queueForResMgr(edition.levelBackgroundIds, this.GAME_TAG);
+        queueForResMgr(edition.levelOverlayIds, this.GAME_TAG);
 
-const createImageAsset = (drawable, sourceUrl) => {
-    if (!drawable) {
-        throw new Error("Drawable image asset is required");
+        return { resources, menuResourceCount };
     }
 
-    const naturalWidth = drawable.naturalWidth ?? drawable.videoWidth ?? drawable.width ?? 0;
-    const naturalHeight = drawable.naturalHeight ?? drawable.videoHeight ?? drawable.height ?? 0;
+    // === Image loading ===
+    loadImages() {
+        const gameBaseUrl = `${platform.imageBaseUrl}${resolution.CANVAS_WIDTH}/game/`;
+        const { resources, menuResourceCount } = this.collectImageResources(gameBaseUrl);
 
-    return {
-        drawable,
-        width: naturalWidth,
-        height: naturalHeight,
-        sourceUrl,
-    };
-};
+        let menuLoaded = 0;
+        let menuFailed = 0;
 
-const getUrlFacade = () => {
-    if (typeof URL !== "undefined" && typeof URL.createObjectURL === "function") {
-        return URL;
-    }
+        const tracked = (tag) => tag === this.MENU_TAG || tag === this.FONT_TAG;
+        const finalize = () => {
+            this.loadedImages = menuLoaded + menuFailed;
+            this.failedImages = menuFailed;
+            this.updateProgress();
 
-    if (typeof window !== "undefined") {
-        const legacyUrl = window.URL || window.webkitURL;
-        if (legacyUrl && typeof legacyUrl.createObjectURL === "function") {
-            return legacyUrl;
-        }
-    }
-
-    return null;
-};
-
-const loadImageFromBlob = async (blob, fallbackUrl) => {
-    if (!blob) {
-        throw new Error("Image blob must be provided");
-    }
-
-    const urlFacade = getUrlFacade();
-    if (!urlFacade) {
-        if (fallbackUrl) {
-            return await loadImageElement(fallbackUrl);
-        }
-        throw new Error("Object URL API is not available");
-    }
-
-    const objectUrl = urlFacade.createObjectURL(blob);
-    try {
-        return await loadImageElement(objectUrl);
-    } finally {
-        urlFacade.revokeObjectURL(objectUrl);
-    }
-};
-
-const fetchImageBlob = async (url) => {
-    const response = await fetch(url);
-    if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-    }
-    return await response.blob();
-};
-
-const loadImageAsset = async (url) => {
-    if (!url) {
-        throw new Error("Image URL must be provided");
-    }
-
-    if (!supportsImageBitmap && !getUrlFacade()) {
-        const img = await loadImageElement(url);
-        return createImageAsset(img, url);
-    }
-
-    const blob = await fetchImageBlob(url);
-
-    if (supportsImageBitmap) {
-        try {
-            const bitmap = await createImageBitmap(blob);
-            return createImageAsset(bitmap, url);
-        } catch (error) {
-            window.console?.warn?.("Falling back to HTMLImageElement for", url, "due to", error);
-        }
-    }
-
-    const img = await loadImageFromBlob(blob, url);
-    return createImageAsset(img, url);
-};
-
-const loadJson = async (url) => {
-    const response = await fetch(url);
-    if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-    }
-
-    const jsonText = await response.text();
-
-    try {
-        return JSON.parse(jsonText);
-    } catch (error) {
-        window.console?.error?.("Failed to parse JSON asset", url, error);
-        throw error;
-    }
-};
-
-const collectImageResources = (gameBaseUrl) => {
-    const resources = [];
-    let menuResourceCount = 0;
-
-    const addResource = (url, tag, resId = null) => {
-        if (!url) {
-            return;
-        }
-
-        resources.push({ url, tag, resId });
-
-        if (tag === MENU_TAG || tag === FONT_TAG) {
-            menuResourceCount++;
-        }
-    };
-
-    const queueMenuImages = (imageFilenames, menuBaseUrl) => {
-        if (!imageFilenames) {
-            return;
-        }
-
-        const baseUrl = menuBaseUrl || platform.uiImageBaseUrl;
-        for (let i = 0, len = imageFilenames.length; i < len; i++) {
-            const filename = imageFilenames[i];
-            if (!filename) {
-                continue;
+            if (menuLoaded + menuFailed === menuResourceCount) {
+                this.menuImagesLoadComplete = true;
+                this.checkMenuLoadComplete();
             }
-            addResource(baseUrl + filename, MENU_TAG);
-        }
-    };
+        };
 
-    // queue page images first, the game can wait (we have a load animation)
-    const passwordPath = platform.imageBaseUrl + (editionUI.passwordDirectory || "");
-    queueMenuImages(editionUI.passwordImageNames, passwordPath);
-
-    const passwordResolutionPath =
-        platform.resolutionBaseUrl + (editionUI.passwordResolutionDirectory || "");
-    queueMenuImages(editionUI.passwordResolutionImageNames, passwordResolutionPath);
-
-    queueMenuImages(editionUI.pageImageNames, `${platform.imageBaseUrl}page/`);
-    queueMenuImages(editionUI.pageResolutionImageNames, `${platform.resolutionBaseUrl}page/`);
-    queueMenuImages(edition.menuImageFilenames);
-    queueMenuImages(edition.boxImages, platform.boxImageBaseUrl);
-    queueMenuImages(edition.boxBorders);
-    queueMenuImages(edition.boxDoors);
-    queueMenuImages(edition.drawingImageNames);
-
-    const editionBaseUrl = platform.resolutionBaseUrl + (edition.editionImageDirectory || "");
-    queueMenuImages(edition.editionImages, editionBaseUrl);
-
-    const queueForResMgr = (ids, tag) => {
-        if (!ids) {
-            return;
+        if (menuResourceCount === 0) {
+            this.menuImagesLoadComplete = true;
+            this.checkMenuLoadComplete();
         }
 
-        for (let i = 0, len = ids.length; i < len; i++) {
-            const imageId = ids[i];
-            const resource = resData[imageId];
-            if (!resource) {
-                continue;
-            }
-
-            const imageUrl = gameBaseUrl + resource.path;
-            addResource(imageUrl, tag, imageId);
-
-            if (resource.atlasPath) {
-                const atlasUrl = gameBaseUrl + resource.atlasPath;
-                loadJson(atlasUrl)
-                    .then((atlasData) => {
-                        ResourceMgr.onAtlasLoaded(imageId, atlasData);
-                    })
-                    .catch((error) => {
-                        ResourceMgr.onAtlasError(imageId, error);
-                    });
-            }
+        for (const { url, tag, resId } of resources) {
+            this.loadImageAsset(url)
+                .then((asset) => {
+                    if ((tag === this.FONT_TAG || tag === this.GAME_TAG) && resId !== null)
+                        ResourceMgr.onResourceLoaded(resId, asset);
+                    if (tracked(tag)) menuLoaded++;
+                })
+                .catch((err) => {
+                    console.error("Failed to load image:", url, err);
+                    if (tracked(tag)) menuFailed++;
+                })
+                .finally(() => {
+                    if (tracked(tag)) finalize();
+                });
         }
-    };
 
-    queueForResMgr(ResourcePacks.StandardFonts, FONT_TAG);
-    queueForResMgr(edition.gameImageIds, GAME_TAG);
-    queueForResMgr(edition.levelBackgroundIds, GAME_TAG);
-    queueForResMgr(edition.levelOverlayIds, GAME_TAG);
-
-    return { resources, menuResourceCount };
-};
-
-const loadImages = function () {
-    const gameBaseUrl = `${platform.imageBaseUrl}${resolution.CANVAS_WIDTH}/game/`;
-
-    const { resources, menuResourceCount } = collectImageResources(gameBaseUrl);
-    let menuResourcesLoaded = 0;
-    let menuResourcesFailed = 0;
-
-    const finalizeMenuResource = () => {
-        loadedImages = menuResourcesLoaded + menuResourcesFailed;
-        failedImages = menuResourcesFailed;
-        updateProgress();
-
-        if (menuResourcesLoaded + menuResourcesFailed === menuResourceCount) {
-            menuImagesLoadComplete = true;
-            checkMenuLoadComplete();
-        }
-    };
-
-    const trackedTag = (tag) => tag === MENU_TAG || tag === FONT_TAG;
-
-    for (let i = 0, len = resources.length; i < len; i++) {
-        const { url, tag, resId } = resources[i];
-        loadImageAsset(url)
-            .then((asset) => {
-                if ((tag === FONT_TAG || tag === GAME_TAG) && resId !== null) {
-                    ResourceMgr.onResourceLoaded(resId, asset);
-                }
-
-                if (trackedTag(tag)) {
-                    menuResourcesLoaded++;
-                }
-            })
-            .catch((error) => {
-                window.console?.error?.("Failed to load image:", url, error);
-
-                if (trackedTag(tag)) {
-                    menuResourcesFailed++;
-                }
-            })
-            .finally(() => {
-                if (trackedTag(tag)) {
-                    finalizeMenuResource();
-                }
-            });
+        return { trackedResourceCount: menuResourceCount };
     }
 
-    if (menuResourceCount === 0) {
-        menuImagesLoadComplete = true;
-        checkMenuLoadComplete();
-    }
-
-    return {
-        trackedResourceCount: menuResourceCount,
-    };
-};
-
-const PreLoader = {
-    init() {
+    // === Lifecycle ===
+    start() {
         initializeResources();
+        // LoadAnimation?.init?.();
+    }
 
-        // start the loading animation images first
-        if (LoadAnimation) {
-            LoadAnimation.init();
-        }
-    },
     domReady() {
-        if (LoadAnimation) {
-            LoadAnimation.domReady();
-            LoadAnimation.show();
-        }
-
-        // Wait for the loader background image to load before starting resource loading
         const betterLoader = document.getElementById("betterLoader");
-        if (betterLoader) {
-            const loaderStyle = window.getComputedStyle(betterLoader);
-            const backgroundImage = loaderStyle.backgroundImage;
+        const start = () => this.startResourceLoading();
 
-            // Extract URL from background-image CSS property
-            const match = backgroundImage.match(/url\(["']?([^"']*)["']?\)/);
-            if (match && match[1]) {
-                const img = new Image();
-                img.onload = function () {
-                    // Start loading resources after loader image is ready
-                    startResourceLoading();
-                };
-                img.onerror = function () {
-                    // Start anyway if image fails to load
-                    startResourceLoading();
-                };
-                img.src = match[1];
-            } else {
-                // No background image found, start immediately
-                startResourceLoading();
-            }
+        if (!betterLoader) return start();
+
+        const bg = window.getComputedStyle(betterLoader).backgroundImage;
+        const match = bg.match(/url\(["']?([^"']*)["']?\)/);
+        if (match && match[1]) {
+            const img = new Image();
+            img.onload = start;
+            img.onerror = start;
+            img.src = match[1];
         } else {
-            // No loader element, start immediately
-            startResourceLoading();
+            start();
         }
-    },
+    }
+
+    /**
+     * @param {(() => void) | null} onComplete
+     */
     run(onComplete) {
-        completeCallback = onComplete;
-        checkMenuLoadComplete();
-    },
-};
+        this.completeCallback = onComplete;
+        this.checkMenuLoadComplete();
+    }
 
-const startResourceLoading = function () {
-    // Set initial total resources for JSON loading only
-    totalResources = JsonLoader.getJsonFileCount();
+    startResourceLoading() {
+        this.totalResources = JsonLoader.getJsonFileCount();
 
-    // Track JSON loading progress
-    JsonLoader.onProgress(function (completed) {
-        loadedJsonFiles = completed;
-        updateProgress();
-    });
-
-    // Load JSON first, then start loading images and sounds
-    JsonLoader.onMenuComplete(function () {
-        menuJsonLoadComplete = true;
-
-        // Now that JSON is loaded, start loading images and sounds
-        const { trackedResourceCount } = loadImages();
-
-        // Update total resources to include images and sounds
-        totalResources =
-            trackedResourceCount + SoundLoader.getSoundCount() + JsonLoader.getJsonFileCount();
-
-        // Track sound loading progress
-        SoundLoader.onProgress(function (completed) {
-            loadedSounds = completed;
-            updateProgress();
+        JsonLoader.onProgress((completed) => {
+            this.loadedJsonFiles = completed;
+            this.updateProgress();
         });
 
-        SoundLoader.onMenuComplete(function () {
-            menuSoundLoadComplete = true;
-            checkMenuLoadComplete();
+        JsonLoader.onMenuComplete(() => {
+            this.menuJsonLoadComplete = true;
+            const { trackedResourceCount } = this.loadImages();
+
+            this.totalResources =
+                trackedResourceCount + SoundLoader.getSoundCount() + JsonLoader.getJsonFileCount();
+
+            SoundLoader.onProgress((/** @type {number} */ completed) => {
+                this.loadedSounds = completed;
+                this.updateProgress();
+            });
+
+            SoundLoader.onMenuComplete(() => {
+                this.menuSoundLoadComplete = true;
+                this.checkMenuLoadComplete();
+            });
+
+            SoundLoader.start();
         });
 
-        SoundLoader.start();
-    });
+        JsonLoader.start();
+    }
+}
 
-    // Start JSON loading first
-    JsonLoader.start();
-};
-
-export default PreLoader;
+export default new PreLoader();

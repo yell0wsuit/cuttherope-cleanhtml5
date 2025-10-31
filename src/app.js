@@ -1,4 +1,4 @@
-import preloader from "@/resources/PreLoader";
+import PreLoader from "@/resources/PreLoader";
 import { IS_XMAS } from "@/resources/ResData";
 import resolution from "@/resolution";
 import im from "@/ui/InterfaceManager";
@@ -24,7 +24,7 @@ class App {
         this.gameFooterSocial = null;
 
         // Gives the app a chance to begin working before the DOM is ready
-        preloader.init();
+        PreLoader.start();
         PubSub.publish(PubSub.ChannelId.AppInit);
     }
 
@@ -79,7 +79,7 @@ class App {
             ZoomManager.domReady();
         }
 
-        preloader.domReady();
+        PreLoader.domReady();
         im.gameFlow.domReady();
         PubSub.publish(PubSub.ChannelId.AppDomReady);
     }
@@ -99,7 +99,7 @@ class App {
             }
         );
 
-        preloader.run(() => {
+        PreLoader.run(() => {
             // Unsubscribe from progress updates
             PubSub.unsubscribe(progressSubscription);
 
