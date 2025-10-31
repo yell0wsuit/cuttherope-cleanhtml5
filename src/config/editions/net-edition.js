@@ -99,6 +99,12 @@ class NetEdition {
 
         /** @type {string[]} */
         this.drawingImageNames = [];
+
+        /** @type {string} */
+        this.editionImages = "";
+
+        /** @type {string} */
+        this.editionImageDirectory = "";
     }
 
     /**
