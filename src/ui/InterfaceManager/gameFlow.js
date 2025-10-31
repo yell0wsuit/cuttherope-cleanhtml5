@@ -1,4 +1,4 @@
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import resolution from "@/resolution";
 import QueryStrings from "@/ui/QueryStrings";
 import PanelId from "@/ui/PanelId";
@@ -151,6 +151,7 @@ export default class GameFlow {
             this.manager.isInAdvanceBoxMode = true;
             const targetPanelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
             PanelManager.showPanel(targetPanelId, false);
+            console.log(targetPanelId);
         }
     }
 
@@ -414,13 +415,12 @@ export default class GameFlow {
             this.noMenuStartLevel(QueryStrings.box - 1, QueryStrings.level - 1);
         } else if (settings.showMenu) {
             // make sure the game is not password locked
-            const passwordPanel = PanelManager.getPanelById(PanelId.PASSWORD);
+            /*const passwordPanel = PanelManager.getPanelById(PanelId.PASSWORD);
             if (passwordPanel && passwordPanel.isGameLocked && passwordPanel.isGameLocked()) {
                 Doors.renderDoors(true, 0);
                 PanelManager.showPanel(PanelId.PASSWORD, true);
-            } else {
-                PanelManager.showPanel(PanelId.MENU, true);
-            }
+            } else {*/
+            PanelManager.showPanel(PanelId.MENU, true);
         }
 
         PubSub.subscribe(PubSub.ChannelId.PauseGame, () => {
