@@ -16,343 +16,344 @@ import Dialogs from "@/ui/Dialogs";
 import Alignment from "@/core/Alignment";
 import BoxType from "@/ui/BoxType";
 import { IS_XMAS } from "@/resources/ResData";
-// BoxPanel displays the set of visible boxes (which may not include all boxes)
 
-// Helper function to get the default box index based on holiday period
-// During Christmas season (Dec/Jan), default to Holiday Gift Box (index 0)
-// Otherwise, default to Cardboard Box (index 1)
-const getDefaultBoxIndex = function () {
-    return IS_XMAS ? 0 : 1;
-};
+class BoxPanel extends Panel {
+    constructor() {
+        super(PanelId.BOXES, "boxPanel", "menuBackground", true);
 
-let boxes = [],
-    currentBoxIndex = getDefaultBoxIndex(),
-    currentOffset = 0,
-    isBoxCentered = true,
-    bouncebox = null,
-    im = null,
-    canvas,
-    ctx,
-    $navBack,
-    $navForward;
+        // State
+        this.boxes = [];
+        this.currentBoxIndex = this.getDefaultBoxIndex();
+        this.currentOffset = 0;
+        this.isBoxCentered = true;
+        this.bounceBox = null;
+        this.ctx = null;
+        this.canvas = null;
+        this.$navBack = null;
+        this.$navForward = null;
+        this.pointerCapture = null;
+        this.im = null;
 
-const cancelSlideFlag = false,
-    isAnimationActive = false,
-    spacing = resolution.uiScaledNumber(600),
-    centeroffset = resolution.uiScaledNumber(312);
+        // Slide animation
+        this.slideInProgress = false;
+        this.from = 0;
+        this.to = 0;
+        this.startTime = 0;
 
-const BoxPanel = new Panel(PanelId.BOXES, "boxPanel", "menuBackground", true);
+        // Constants
+        this.spacing = resolution.uiScaledNumber(600);
+        this.centerOffset = resolution.uiScaledNumber(312);
 
-// dom ready events
-function initializeDOMElements() {
-    canvas = document.getElementById("boxCanvas");
-    ctx = canvas.getContext("2d");
+        // Pointer
+        this.isMouseDown = false;
+        this.downX = null;
+        this.downY = null;
+        this.delta = 0;
+        this.downOffset = 0;
 
-    // size the canvas (only do this once)
-    canvas.width = resolution.uiScaledNumber(1024);
-    canvas.height = resolution.uiScaledNumber(576);
-
-    // handles clicking on the prev box button
-    $navBack = document.getElementById("boxNavBack");
-    $navBack.addEventListener("click", function () {
-        if (currentBoxIndex > 0) {
-            slideToBox(currentBoxIndex - 1);
-            SoundMgr.playSound(ResourceId.SND_TAP);
-        }
-    });
-
-    // handles clicking on the next box button
-    $navForward = document.getElementById("boxNavForward");
-    $navForward.addEventListener("click", function () {
-        if (currentBoxIndex < boxes.length - 1) {
-            slideToBox(currentBoxIndex + 1);
-            SoundMgr.playSound(ResourceId.SND_TAP);
-        }
-    });
-
-    const boxUpgradePlate = document.getElementById("boxUpgradePlate");
-    if (boxUpgradePlate) {
-        boxUpgradePlate.addEventListener("click", function () {
-            boxClicked(currentBoxIndex);
+        this.initializeDOM();
+        PubSub.subscribe(PubSub.ChannelId.UpdateVisibleBoxes, (visibleBoxes) => {
+            this.boxes = visibleBoxes;
+            this.redraw();
         });
     }
-}
 
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initializeDOMElements);
-} else {
-    initializeDOMElements();
-}
-
-PubSub.subscribe(PubSub.ChannelId.UpdateVisibleBoxes, function (visibleBoxes) {
-    boxes = visibleBoxes;
-    BoxPanel.redraw();
-});
-
-BoxPanel.init = function (interfaceManager) {
-    im = interfaceManager;
-};
-
-BoxPanel.onShow = function () {
-    this.activate();
-};
-
-BoxPanel.onHide = function () {
-    this.deactivate();
-};
-
-BoxPanel.slideToNextBox = function () {
-    slideToBox(currentBoxIndex + 1);
-};
-
-BoxPanel.bounceCurrentBox = function () {
-    bounceCurrentBox();
-};
-
-// handles clicking on a box
-function boxClicked(visibleBoxIndex) {
-    if (visibleBoxIndex !== currentBoxIndex) {
-        // only open the selected box (otherwise navigate to different box)
-        return;
+    getDefaultBoxIndex() {
+        return IS_XMAS ? 0 : 1;
     }
 
-    // we have to translate from visible box index to edition box index
-    const box = boxes[visibleBoxIndex],
-        editionBoxIndex = box.index;
+    initializeDOM() {
+        const init = () => {
+            this.canvas = document.getElementById("boxCanvas");
+            this.ctx = this.canvas?.getContext("2d");
 
-    // make sure the box is clickable
-    if (!box.isClickable()) {
-        return;
-    }
+            if (!this.canvas || !this.ctx) return;
 
-    SoundMgr.playSound(ResourceId.SND_TAP);
+            this.canvas.width = resolution.uiScaledNumber(1024);
+            this.canvas.height = resolution.uiScaledNumber(576);
 
-    if (box.purchased === false) {
-        PubSub.publish(PubSub.ChannelId.PurchaseBoxesPrompt);
-    } else if (ScoreManager.isBoxLocked(editionBoxIndex)) {
-        const isHolidayBox = box.type === BoxType.HOLIDAY;
-        if (isHolidayBox && !IS_XMAS) {
-            showHolidayUnavailableDialog();
+            this.$navBack = document.getElementById("boxNavBack");
+            this.$navForward = document.getElementById("boxNavForward");
+
+            this.$navBack?.addEventListener("click", () => {
+                if (this.currentBoxIndex > 0) {
+                    this.slideToBox(this.currentBoxIndex - 1);
+                    SoundMgr.playSound(ResourceId.SND_TAP);
+                }
+            });
+
+            this.$navForward?.addEventListener("click", () => {
+                if (this.currentBoxIndex < this.boxes.length - 1) {
+                    this.slideToBox(this.currentBoxIndex + 1);
+                    SoundMgr.playSound(ResourceId.SND_TAP);
+                }
+            });
+
+            const plate = document.getElementById("boxUpgradePlate");
+            plate?.addEventListener("click", () => {
+                this.boxClicked(this.currentBoxIndex);
+            });
+        };
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", init);
         } else {
-            showLockDialog(editionBoxIndex);
-        }
-    } else {
-        im.gameFlow.openLevelMenu(editionBoxIndex);
-    }
-}
-
-function showLockDialog(boxIndex) {
-    // create localized text images
-    Text.drawBig({
-        text: Lang.menuText(MenuStringId.CANT_UNLOCK_TEXT1),
-        imgParentId: "missingLine1",
-        scaleToUI: true,
-    });
-    Text.drawBig({
-        text: ScoreManager.requiredStars(boxIndex) - ScoreManager.totalStars(),
-        imgParentId: "missingCount",
-        scaleToUI: true,
-    });
-    Text.drawBig({
-        text: Lang.menuText(MenuStringId.CANT_UNLOCK_TEXT2),
-        imgParentId: "missingLine2",
-        scaleToUI: true,
-    });
-    Text.drawSmall({
-        text: Lang.menuText(MenuStringId.CANT_UNLOCK_TEXT3),
-        imgParentId: "missingLine3",
-        // width: 260,
-        scaleToUI: true,
-    });
-
-    Text.drawBig({
-        text: Lang.menuText(MenuStringId.OK),
-        imgParentId: "missingOkBtn",
-        scaleToUI: true,
-    });
-
-    SoundMgr.playSound(ResourceId.SND_TAP);
-    Dialogs.showPopup("missingStars");
-}
-
-function showHolidayUnavailableDialog() {
-    const titleImg = Text.drawBig({
-        text: Lang.menuText(MenuStringId.HOLIDAY_LEVELS_UNAVAILABLE_TITLE),
-        imgParentId: "holidayLine1",
-        alignment: Alignment.CENTER,
-        scaleToUI: true,
-    });
-    if (titleImg) {
-        titleImg.style.display = "block";
-        titleImg.style.margin = "0 auto";
-    }
-
-    const bodyImg = Text.drawSmall({
-        text: Lang.menuText(MenuStringId.HOLIDAY_LEVELS_UNAVAILABLE_TEXT),
-        imgParentId: "holidayLine2",
-        alignment: Alignment.CENTER,
-        width: resolution.uiScaledNumber(420),
-        scaleToUI: true,
-    });
-    if (bodyImg) {
-        bodyImg.style.display = "block";
-        bodyImg.style.margin = `${resolution.uiScaledNumber(16)}px auto 0`;
-    }
-    Text.drawBig({
-        text: Lang.menuText(MenuStringId.OK),
-        imgParentId: "holidayOkBtn",
-        scaleToUI: true,
-    });
-    const okBtn = document.getElementById("holidayOkBtn");
-    if (okBtn) {
-        okBtn.style.display = "block";
-        okBtn.style.margin = `${resolution.uiScaledNumber(24)}px auto 0`;
-        okBtn.style.textAlign = "center";
-        const okBtnImg = okBtn.querySelector("img");
-        if (okBtnImg) {
-            okBtnImg.style.display = "block";
-            okBtnImg.style.margin = "0 auto";
+            init();
         }
     }
 
-    SoundMgr.playSound(ResourceId.SND_TAP);
-    Dialogs.showPopup("holidayUnavailable");
-}
-
-function bounceCurrentBox() {
-    if (bouncebox != null && ctx != null) {
-        bouncebox.cancelBounce();
-        bouncebox.bounce(ctx);
+    init(interfaceManager) {
+        this.im = interfaceManager;
     }
-}
 
-// render the boxes with the given offset
-function render(offset) {
-    currentOffset = offset;
+    onShow() {
+        this.activate();
+    }
 
-    // clear the canvas
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    onHide() {
+        this.deactivate();
+    }
 
-    const offsetX = centeroffset + offset,
-        offsetY = resolution.uiScaledNumber(130);
-    ctx.translate(offsetX, offsetY);
+    slideToNextBox() {
+        this.slideToBox(this.currentBoxIndex + 1);
+    }
 
-    let boxoffset = 0;
+    bounceCurrentBox() {
+        this.doBounceCurrentBox();
+    }
 
-    for (let i = 0; i < boxes.length; i++) {
-        let omnomoffset = null;
-        const relboxoffset = offset + boxoffset,
-            box = boxes[i];
+    boxClicked(visibleBoxIndex) {
+        if (visibleBoxIndex !== this.currentBoxIndex) return;
 
-        if (box.visible) {
-            // calculate location of omnom if the box in the middle
-            if (
-                relboxoffset > resolution.uiScaledNumber(-100) &&
-                relboxoffset < resolution.uiScaledNumber(100)
-            ) {
-                omnomoffset =
-                    (centeroffset + offset) * -1 - boxoffset + resolution.uiScaledNumber(452);
+        const box = this.boxes[visibleBoxIndex];
+        const editionBoxIndex = box.index;
+
+        if (!box.isClickable()) return;
+
+        SoundMgr.playSound(ResourceId.SND_TAP);
+
+        if (box.purchased === false) {
+            PubSub.publish(PubSub.ChannelId.PurchaseBoxesPrompt);
+        } else if (ScoreManager.isBoxLocked(editionBoxIndex)) {
+            const isHolidayBox = box.type === BoxType.HOLIDAY;
+            if (isHolidayBox && !IS_XMAS) {
+                this.showHolidayUnavailableDialog();
+            } else {
+                this.showLockDialog(editionBoxIndex);
             }
-
-            ctx.translate(boxoffset, 0);
-            box.draw(ctx, omnomoffset);
-            ctx.translate(-boxoffset, 0);
-
-            boxoffset += spacing;
-        }
-    }
-
-    ctx.translate(-offsetX, -offsetY);
-}
-
-let slideInProgress = false,
-    from,
-    to,
-    startTime;
-
-function slideToBox(index) {
-    // clamp index
-    if (index < 0) index = 0;
-    if (index > boxes.length - 1) index = boxes.length - 1;
-
-    // if we don't need to move the boxes, we still render them but only one frame
-    const duration = index == currentBoxIndex ? 0 : 550;
-
-    if (bouncebox && bouncebox != boxes[index] && bouncebox.onUnselected) {
-        bouncebox.onUnselected();
-    }
-
-    // update the current boxindex
-    currentBoxIndex = index;
-
-    // publish new box index
-    PubSub.publish(PubSub.ChannelId.SelectedBoxChanged, boxes[currentBoxIndex].index); // need to translate to edition box index
-
-    from = currentOffset;
-    to = -1.0 * spacing * index;
-    startTime = Date.now();
-
-    const renderSlide = function () {
-        if (!slideInProgress) {
-            return;
-        }
-
-        const elapsed = Date.now() - startTime;
-        currentOffset = Easing.easeOutExpo(elapsed, from, to - from, duration);
-        render(currentOffset);
-
-        // We need to detect whether the box animation has completed for hit testing. If we
-        // wait until the animaiton is completely done, though, it feels unresponsive
-        const d = Math.abs(currentOffset - to);
-        if (d < 5) isBoxCentered = true;
-
-        if (elapsed >= duration) {
-            if (bouncebox != boxes[currentBoxIndex]) {
-                bouncebox = boxes[currentBoxIndex];
-                bouncebox.bounce(ctx);
-            }
-            if (bouncebox && bouncebox.onSelected) {
-                bouncebox.onSelected();
-            }
-            slideInProgress = false;
         } else {
-            window.requestAnimationFrame(renderSlide);
+            this.im?.gameFlow.openLevelMenu(editionBoxIndex);
         }
-    };
-
-    slideInProgress = true;
-    renderSlide();
-
-    // update the back/forward buttons
-    const navBackDiv = $navBack.querySelector("div");
-    const navForwardDiv = $navForward.querySelector("div");
-
-    if (index <= 0) {
-        navBackDiv.classList.add("boxNavDisabled");
-    } else {
-        navBackDiv.classList.remove("boxNavDisabled");
     }
 
-    if (index >= boxes.length - 1) {
-        navForwardDiv.classList.add("boxNavDisabled");
-    } else {
-        navForwardDiv.classList.remove("boxNavDisabled");
+    showLockDialog(boxIndex) {
+        Text.drawBig({
+            text: Lang.menuText(MenuStringId.CANT_UNLOCK_TEXT1),
+            imgParentId: "missingLine1",
+            scaleToUI: true,
+        });
+        Text.drawBig({
+            text: ScoreManager.requiredStars(boxIndex) - ScoreManager.totalStars(),
+            imgParentId: "missingCount",
+            scaleToUI: true,
+        });
+        Text.drawBig({
+            text: Lang.menuText(MenuStringId.CANT_UNLOCK_TEXT2),
+            imgParentId: "missingLine2",
+            scaleToUI: true,
+        });
+        Text.drawSmall({
+            text: Lang.menuText(MenuStringId.CANT_UNLOCK_TEXT3),
+            imgParentId: "missingLine3",
+            scaleToUI: true,
+        });
+        Text.drawBig({
+            text: Lang.menuText(MenuStringId.OK),
+            imgParentId: "missingOkBtn",
+            scaleToUI: true,
+        });
+        SoundMgr.playSound(ResourceId.SND_TAP);
+        Dialogs.showPopup("missingStars");
     }
-}
 
-// cancels any current animations
-function cancelSlideToBox() {
-    slideInProgress = false;
+    showHolidayUnavailableDialog() {
+        const titleImg = Text.drawBig({
+            text: Lang.menuText(MenuStringId.HOLIDAY_LEVELS_UNAVAILABLE_TITLE),
+            imgParentId: "holidayLine1",
+            alignment: Alignment.CENTER,
+            scaleToUI: true,
+        });
+        if (titleImg) {
+            Object.assign(titleImg.style, {
+                display: "block",
+                margin: "0 auto",
+            });
+        }
 
-    if (bouncebox != null) {
-        bouncebox.cancelBounce();
+        const bodyImg = Text.drawSmall({
+            text: Lang.menuText(MenuStringId.HOLIDAY_LEVELS_UNAVAILABLE_TEXT),
+            imgParentId: "holidayLine2",
+            alignment: Alignment.CENTER,
+            width: resolution.uiScaledNumber(420),
+            scaleToUI: true,
+        });
+        if (bodyImg) {
+            Object.assign(bodyImg.style, {
+                display: "block",
+                margin: `${resolution.uiScaledNumber(16)}px auto 0`,
+            });
+        }
+
+        Text.drawBig({
+            text: Lang.menuText(MenuStringId.OK),
+            imgParentId: "holidayOkBtn",
+            scaleToUI: true,
+        });
+
+        const okBtn = document.getElementById("holidayOkBtn");
+        if (okBtn) {
+            Object.assign(okBtn.style, {
+                display: "block",
+                margin: `${resolution.uiScaledNumber(24)}px auto 0`,
+                textAlign: "center",
+            });
+            const img = okBtn.querySelector("img");
+            if (img) {
+                Object.assign(img.style, {
+                    display: "block",
+                    margin: "0 auto",
+                });
+            }
+        }
+
+        SoundMgr.playSound(ResourceId.SND_TAP);
+        Dialogs.showPopup("holidayUnavailable");
     }
-}
 
-function isMouseOverBox(x, y) {
-    if (isBoxCentered && bouncebox != null && bouncebox.isClickable()) {
+    doBounceCurrentBox() {
+        if (this.bounceBox && this.ctx) {
+            this.bounceBox.cancelBounce();
+            this.bounceBox.bounce(this.ctx);
+        }
+    }
+
+    render(offset) {
+        if (!this.ctx || !this.canvas) return;
+        this.currentOffset = offset;
+
+        const { ctx, canvas, boxes, spacing, centerOffset } = this;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const offsetX = centerOffset + offset;
+        const offsetY = resolution.uiScaledNumber(130);
+        ctx.translate(offsetX, offsetY);
+
+        let boxOffset = 0;
+
+        for (const box of boxes) {
+            let omnomOffset = null;
+            const relBoxOffset = offset + boxOffset;
+
+            if (box.visible) {
+                if (
+                    relBoxOffset > resolution.uiScaledNumber(-100) &&
+                    relBoxOffset < resolution.uiScaledNumber(100)
+                ) {
+                    omnomOffset =
+                        (centerOffset + offset) * -1 - boxOffset + resolution.uiScaledNumber(452);
+                }
+
+                ctx.translate(boxOffset, 0);
+                box.draw(ctx, omnomOffset);
+                ctx.translate(-boxOffset, 0);
+
+                boxOffset += spacing;
+            }
+        }
+
+        ctx.translate(-offsetX, -offsetY);
+    }
+
+    slideToBox(index) {
+        if (!this.ctx) return;
+
+        index = Math.max(0, Math.min(index, this.boxes.length - 1));
+        const duration = index === this.currentBoxIndex ? 0 : 550;
+
+        if (this.bounceBox && this.bounceBox !== this.boxes[index] && this.bounceBox.onUnselected) {
+            this.bounceBox.onUnselected();
+        }
+
+        this.currentBoxIndex = index;
+        PubSub.publish(PubSub.ChannelId.SelectedBoxChanged, this.boxes[index].index);
+
+        this.from = this.currentOffset;
+        this.to = -1.0 * this.spacing * index;
+        this.startTime = Date.now();
+        this.slideInProgress = true;
+
+        const renderSlide = () => {
+            if (!this.slideInProgress) return;
+            const elapsed = Date.now() - this.startTime;
+            this.currentOffset = Easing.easeOutExpo(
+                elapsed,
+                this.from,
+                this.to - this.from,
+                duration
+            );
+            this.render(this.currentOffset);
+
+            const d = Math.abs(this.currentOffset - this.to);
+            if (d < 5) this.isBoxCentered = true;
+
+            if (elapsed >= duration) {
+                if (this.bounceBox !== this.boxes[this.currentBoxIndex]) {
+                    this.bounceBox = this.boxes[this.currentBoxIndex];
+                    this.bounceBox.bounce(this.ctx);
+                }
+                if (this.bounceBox?.onSelected) {
+                    this.bounceBox.onSelected();
+                }
+                this.slideInProgress = false;
+            } else {
+                window.requestAnimationFrame(renderSlide);
+            }
+        };
+
+        renderSlide();
+        this.updateNavButtons();
+    }
+
+    updateNavButtons() {
+        if (!this.$navBack || !this.$navForward) return;
+
+        const backDiv = this.$navBack.querySelector("div");
+        const forwardDiv = this.$navForward.querySelector("div");
+
+        if (this.currentBoxIndex <= 0) {
+            backDiv.classList.add("boxNavDisabled");
+        } else {
+            backDiv.classList.remove("boxNavDisabled");
+        }
+
+        if (this.currentBoxIndex >= this.boxes.length - 1) {
+            forwardDiv.classList.add("boxNavDisabled");
+        } else {
+            forwardDiv.classList.remove("boxNavDisabled");
+        }
+    }
+
+    cancelSlideToBox() {
+        this.slideInProgress = false;
+        this.bounceBox?.cancelBounce();
+    }
+
+    isMouseOverBox(x, y) {
         if (
+            this.isBoxCentered &&
+            this.bounceBox &&
+            this.bounceBox.isClickable() &&
             x > resolution.uiScaledNumber(340) &&
             x < resolution.uiScaledNumber(680) &&
             y > resolution.uiScaledNumber(140) &&
@@ -360,128 +361,87 @@ function isMouseOverBox(x, y) {
         ) {
             return true;
         }
+        return false;
     }
-    return false;
-}
 
-let ismousedown = false,
-    upoffset = 0,
-    downoffset = 0,
-    delta = 0,
-    downx = null,
-    downy = null;
-const imousedragging = false;
-
-function pointerDown(x, y) {
-    if (ismousedown) {
-        return;
+    pointerDown(x, y) {
+        if (this.isMouseDown) return;
+        this.cancelSlideToBox();
+        this.downX = x;
+        this.downY = y;
+        this.downOffset = this.currentOffset;
+        this.isMouseDown = true;
     }
-    //console.log('box canvas down: ' + x + ', ' + y);
-    cancelSlideToBox();
 
-    downx = x;
-    downy = y;
-    downoffset = currentOffset;
-    ismousedown = true;
-}
-
-function pointerMove(x, y) {
-    if (ismousedown) {
-        cancelSlideToBox();
-        delta = x - downx;
-        if (Math.abs(delta) > 5) {
-            //$navBack.hide();
-            //$navForward.hide();
-
-            isBoxCentered = false;
-            render(downoffset + delta);
-        }
-    } else {
-        if (isMouseOverBox(x, y)) {
-            canvas.classList.add("ctrPointer");
+    pointerMove(x, y) {
+        if (!this.canvas) return;
+        if (this.isMouseDown) {
+            this.cancelSlideToBox();
+            this.delta = x - this.downX;
+            if (Math.abs(this.delta) > 5) {
+                this.isBoxCentered = false;
+                this.render(this.downOffset + this.delta);
+            }
         } else {
-            canvas.classList.remove("ctrPointer");
-        }
-    }
-}
-
-function pointerUp(x, y) {
-    //console.log('box canvas up: ' + x + ', ' + y);
-    if (ismousedown) {
-        cancelSlideToBox();
-        delta = x - downx;
-
-        if (Math.abs(delta) > spacing / 2) {
-            // if we've passed the rounding threshold then snap to the nearest box (this is for drags)
-            upoffset = currentOffset;
-            const index = Math.round((-1 * upoffset) / spacing);
-
-            //console.log('box canvas drag to box: ' + index);
-            slideToBox(index);
-        } else if (Math.abs(delta) > 5) {
-            // otherwise, we look for an action more like a flick and go to the next box
-            const max = resolution.uiScaledNumber(30),
-                min = max * -1,
-                targetBoxIndex =
-                    delta > max
-                        ? currentBoxIndex - 1
-                        : delta < min
-                          ? currentBoxIndex + 1
-                          : currentBoxIndex;
-
-            //console.log('box canvas flick to box: ' + targetBoxIndex);
-            slideToBox(targetBoxIndex);
-        } else {
-            //console.log('box click: ' + currentBoxIndex);
-            const currentBox = boxes[currentBoxIndex];
-            if (currentBox.isClickable()) {
-                if (!currentBox.islocked) {
-                    slideToBox(currentBoxIndex);
-                }
-
-                if (isMouseOverBox(x, y)) {
-                    boxClicked(currentBoxIndex);
-                }
+            if (this.isMouseOverBox(x, y)) {
+                this.canvas.classList.add("ctrPointer");
+            } else {
+                this.canvas.classList.remove("ctrPointer");
             }
         }
     }
-    //$navBack.show();
-    //$navForward.show();
-    ismousedown = false;
-}
 
-function pointerOut(x, y) {
-    //console.log('box canvas out: ' + x + ', ' + y);
-    pointerUp(x, y);
-}
+    pointerUp(x, y) {
+        if (!this.isMouseDown) return;
 
-BoxPanel.pointerCapture = null;
-BoxPanel.activate = function () {
-    // ensure capture helper exists to handle mouse+touch movements
-    if (!this.pointerCapture) {
-        this.pointerCapture = new PointerCapture({
-            element: canvas,
-            onStart: pointerDown.bind(this),
-            onMove: pointerMove.bind(this),
-            onEnd: pointerUp.bind(this),
-            onOut: pointerOut.bind(this),
-            getZoom() {
-                return ZoomManager.getUIZoom();
-            },
-        });
+        this.cancelSlideToBox();
+        this.delta = x - this.downX;
+
+        if (Math.abs(this.delta) > this.spacing / 2) {
+            const upOffset = this.currentOffset;
+            const index = Math.round((-1 * upOffset) / this.spacing);
+            this.slideToBox(index);
+        } else if (Math.abs(this.delta) > 5) {
+            const max = resolution.uiScaledNumber(30);
+            const targetIndex =
+                this.delta > max
+                    ? this.currentBoxIndex - 1
+                    : this.delta < -max
+                      ? this.currentBoxIndex + 1
+                      : this.currentBoxIndex;
+            this.slideToBox(targetIndex);
+        } else if (this.isMouseOverBox(x, y)) {
+            this.boxClicked(this.currentBoxIndex);
+        }
+
+        this.isMouseDown = false;
     }
 
-    this.pointerCapture.activate();
-};
-
-BoxPanel.deactivate = function () {
-    if (this.pointerCapture) {
-        this.pointerCapture.deactivate();
+    pointerOut(x, y) {
+        this.pointerUp(x, y);
     }
-};
 
-BoxPanel.redraw = function () {
-    slideToBox(currentBoxIndex);
-};
+    activate() {
+        if (!this.pointerCapture) {
+            this.pointerCapture = new PointerCapture({
+                element: this.canvas,
+                onStart: this.pointerDown.bind(this),
+                onMove: this.pointerMove.bind(this),
+                onEnd: this.pointerUp.bind(this),
+                onOut: this.pointerOut.bind(this),
+                getZoom: () => ZoomManager.getUIZoom(),
+            });
+        }
+        this.pointerCapture.activate();
+    }
 
-export default BoxPanel;
+    deactivate() {
+        this.pointerCapture?.deactivate();
+    }
+
+    redraw() {
+        this.slideToBox(this.currentBoxIndex);
+    }
+}
+
+export default new BoxPanel();
