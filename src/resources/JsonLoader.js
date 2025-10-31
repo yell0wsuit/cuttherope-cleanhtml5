@@ -4,13 +4,19 @@ let menuJsonLoadComplete = false;
 let loadedJsonFiles = 0;
 let failedJsonFiles = 0;
 let totalJsonFiles = 0;
+/**
+ * @type {(() => void) | null}
+ */
 let checkCompleteCallback = null;
+/**
+ * @type {((loaded: number, total: number) => void) | null}
+ */
 let progressCallback = null;
 
 // Cache for loaded JSON data
 const jsonCache = new Map();
 
-const loadJson = async (url) => {
+const loadJson = async (/** @type {string | URL | Request} */ url) => {
     const response = await fetch(url);
     if (!response.ok) {
         throw new Error(`Request failed with status ${response.status}`);
@@ -39,10 +45,16 @@ const JsonLoader = {
         return totalJsonFiles;
     },
 
+    /**
+     * @param {(loaded: number, total: number) => void} callback
+     */
     onProgress(callback) {
         progressCallback = callback;
     },
 
+    /**
+     * @param {() => void} callback
+     */
     onMenuComplete(callback) {
         checkCompleteCallback = callback;
     },
@@ -73,33 +85,32 @@ const JsonLoader = {
         totalJsonFiles = jsonFiles.length;
 
         // Load all JSON files
-        const promises = jsonFiles.map(({ url, key }) => {
-            return loadJson(url)
-                .then((data) => {
-                    jsonCache.set(key, data);
+        const promises = jsonFiles.map(async ({ url, key }) => {
+            try {
+                const data = await loadJson(url);
+                jsonCache.set(key, data);
+                loadedJsonFiles++;
+                if (progressCallback) {
+                    progressCallback(loadedJsonFiles, totalJsonFiles);
+                }
+                return { success: true, key };
+            } catch (error) {
+                // Silent fail for level files that might not exist
+                if (key.startsWith("level-")) {
                     loadedJsonFiles++;
                     if (progressCallback) {
                         progressCallback(loadedJsonFiles, totalJsonFiles);
                     }
-                    return { success: true, key };
-                })
-                .catch((error) => {
-                    // Silent fail for level files that might not exist
-                    if (key.startsWith("level-")) {
-                        loadedJsonFiles++;
-                        if (progressCallback) {
-                            progressCallback(loadedJsonFiles, totalJsonFiles);
-                        }
-                        return { success: false, key, silent: true };
-                    }
+                    return { success: false, key, silent: true };
+                }
 
-                    failedJsonFiles++;
-                    window.console?.error?.(`Failed to load JSON: ${key}`, error);
-                    if (progressCallback) {
-                        progressCallback(loadedJsonFiles, totalJsonFiles);
-                    }
-                    return { success: false, key };
-                });
+                failedJsonFiles++;
+                window.console?.error?.(`Failed to load JSON: ${key}`, error);
+                if (progressCallback) {
+                    progressCallback(loadedJsonFiles, totalJsonFiles);
+                }
+                return { success: false, key };
+            }
         });
 
         Promise.all(promises).then(() => {
@@ -110,6 +121,9 @@ const JsonLoader = {
         });
     },
 
+    /**
+     * @param {string} key
+     */
     getJson(key) {
         return jsonCache.get(key);
     },
