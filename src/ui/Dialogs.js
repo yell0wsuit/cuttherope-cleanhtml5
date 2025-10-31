@@ -13,10 +13,12 @@ import MenuStringId from "@/resources/MenuStringId";
 import edition from "@/config/editions/net-edition";
 import Alignment from "@/core/Alignment";
 
+/**
+ * @class Dialogs
+ * @classdesc Handles all popup dialog logic, including fade animations,
+ * localization updates, and user interaction bindings.
+ */
 class Dialogs {
-    /** @type {WeakMap<HTMLElement, {frameId: number}>} */
-    static ACTIVE_ANIMATIONS = new WeakMap();
-
     /** @type {number} */
     static FADE_DURATION_MS = 200;
 
@@ -27,16 +29,19 @@ class Dialogs {
         popupWindow: "#popupWindow",
     };
 
+    /** @type {WeakMap<HTMLElement, AbortController>} */
+    static activeControllers = new WeakMap();
+
     /**
-     * Cancels a running fade animation on an element.
+     * Cancels any ongoing fade animation on an element.
      * @param {HTMLElement} el
      * @param {number} [finalOpacity]
      */
     static cancelAnimation(el, finalOpacity) {
-        const anim = Dialogs.ACTIVE_ANIMATIONS.get(el);
-        if (anim) {
-            cancelAnimationFrame(anim.frameId);
-            Dialogs.ACTIVE_ANIMATIONS.delete(el);
+        const controller = Dialogs.activeControllers.get(el);
+        if (controller) {
+            controller.abort();
+            Dialogs.activeControllers.delete(el);
         }
         if (typeof finalOpacity === "number") {
             el.style.opacity = finalOpacity.toString();
@@ -44,7 +49,7 @@ class Dialogs {
     }
 
     /**
-     * Fades an element's opacity between two values over a duration.
+     * Smoothly fades an element between two opacity values.
      * @param {HTMLElement} el
      * @param {{from?: number, to: number, duration: number, display?: string}} options
      * @returns {Promise<void>}
@@ -58,33 +63,36 @@ class Dialogs {
         const target = to;
         el.style.opacity = String(start);
 
-        /**
-         * @type {number}
-         */
+        const controller = new AbortController();
+        Dialogs.activeControllers.set(el, controller);
+
+        const signal = controller.signal;
         let startTime;
+
         return new Promise((resolve) => {
-            const step = (/** @type {number} */ timestamp) => {
+            const step = (timestamp) => {
+                if (signal.aborted) return resolve();
+
                 if (!startTime) startTime = timestamp;
                 const progress = Math.min((timestamp - startTime) / duration, 1);
                 const current = start + (target - start) * progress;
                 el.style.opacity = String(current);
 
-                if (progress < 1) {
-                    const frameId = requestAnimationFrame(step);
-                    Dialogs.ACTIVE_ANIMATIONS.set(el, { frameId });
+                if (progress < 1 && !signal.aborted) {
+                    requestAnimationFrame(step);
                 } else {
-                    Dialogs.ACTIVE_ANIMATIONS.delete(el);
+                    Dialogs.activeControllers.delete(el);
                     resolve();
                 }
             };
-            const frameId = requestAnimationFrame(step);
-            Dialogs.ACTIVE_ANIMATIONS.set(el, { frameId });
+
+            requestAnimationFrame(step);
         });
     }
 
     /**
      * Displays a popup dialog by ID with fade animation.
-     * @param {string} contentId - The ID of the popup content element to display.
+     * @param {string} contentId
      * @returns {Promise<void>}
      */
     async showPopup(contentId) {
@@ -96,6 +104,7 @@ class Dialogs {
         document
             .querySelectorAll(Dialogs.SELECTORS.popupOuter)
             .forEach((el) => Dialogs.cancelAnimation(el, 0));
+
         document
             .querySelectorAll(Dialogs.SELECTORS.popupInner)
             .forEach((el) => (el.style.display = "none"));
@@ -154,7 +163,7 @@ class Dialogs {
     }
 
     /**
-     * Shows a "Slow Computer" popup with localized text and title.
+     * Shows a "Slow Computer" popup with localized content.
      */
     showSlowComputerPopup() {
         const slowComputer = document.getElementById("slowComputer");
@@ -168,6 +177,7 @@ class Dialogs {
             width: 1200 * resolution.CANVAS_SCALE,
             scale: 1.25 * resolution.UI_TEXT_SCALE,
         });
+
         const textImg = Text.drawBig({
             text: Lang.menuText(MenuStringId.SLOW_TEXT),
             width: 1200 * resolution.CANVAS_SCALE,
@@ -217,8 +227,7 @@ class Dialogs {
     }
 
     /**
-     * Localizes the text content of all dialog popups on language change.
-     * Should be called once at startup.
+     * Localizes dialog text content on language changes.
      */
     initLocalization() {
         PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
@@ -239,7 +248,7 @@ class Dialogs {
     }
 
     /**
-     * Initializes dialog system on DOM ready.
+     * Initializes the Dialogs system (event listeners + localization).
      */
     init() {
         if (document.readyState === "loading") {
