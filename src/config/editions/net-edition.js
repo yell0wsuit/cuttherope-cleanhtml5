@@ -114,6 +114,9 @@ class NetEdition {
 
         /** @type {string} */
         this.boxDirectory = "ui/";
+
+        /** @type {string} */
+        this.settingPrefix = "";
     }
 
     /**
