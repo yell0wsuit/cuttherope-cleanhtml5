@@ -63,7 +63,7 @@ class BoxPanel extends Panel {
     }
 
     initializeDOM() {
-        const init = () => {
+        const start = () => {
             this.canvas = document.getElementById("boxCanvas");
             this.ctx = this.canvas?.getContext("2d");
 
@@ -98,7 +98,7 @@ class BoxPanel extends Panel {
         if (document.readyState === "loading") {
             document.addEventListener("DOMContentLoaded", init);
         } else {
-            init();
+            start();
         }
     }
 
