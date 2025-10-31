@@ -55,7 +55,8 @@ class InterfaceManager extends AudioOptions {
         this.panelShow = new PanelShowHandler(this);
 
         // Initialize PanelManager callback
-        PanelManager.onShowPanel = (panelId) => this.panelShow.onShowPanel(panelId);
+        PanelManager.onShowPanel = (/** @type {number} */ panelId) =>
+            this.panelShow.onShowPanel(panelId);
 
         // Subscribe to authentication events
         PubSub.subscribe(PubSub.ChannelId.SignIn, () => {
