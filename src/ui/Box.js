@@ -16,7 +16,7 @@ import { IS_XMAS } from "@/resources/ResData";
 /**
  * @type {HTMLElement | null}
  */
-let upgradeButton;
+/*let upgradeButton;
 
 function initializeUpgradeButton() {
     upgradeButton = document.getElementById("boxUpgradePlate");
@@ -30,7 +30,7 @@ if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initializeUpgradeButton);
 } else {
     initializeUpgradeButton();
-}
+}*/
 
 /*function hidePurchaseButton() {
     if (upgradeButton) {
@@ -332,10 +332,10 @@ class Box {
                 y = 0.94 + d;
             }
 
-            const tx = (w - w * x) / 2.0,
-                ty = (h - h * y) / 2.0,
-                sx = (w - 2.0 * tx) / w,
-                sy = (h - 2.0 * ty) / h;
+            const tx = (w - w * x) / 2.0;
+            const ty = (h - h * y) / 2.0;
+            const sx = (w - 2.0 * tx) / w;
+            const sy = (h - 2.0 * ty) / h;
 
             if (!isNaN(sx) && !isNaN(sy)) {
                 ctx.save();
