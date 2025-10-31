@@ -75,7 +75,7 @@ const boxImageBase = platform.boxImageBaseUrl || platform.uiImageBaseUrl;
 class Box {
     /**
      * @param {number} boxIndex
-     * @param {string} bgimg
+     * @param {string | null} bgimg
      * @param {number} reqstars
      * @param {boolean} islocked
      * @param {string} type
