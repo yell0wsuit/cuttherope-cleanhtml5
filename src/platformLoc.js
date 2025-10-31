@@ -1,8 +1,13 @@
 import LangId from "@/resources/LangId";
-const DefaultLoc = {
+
+class DefaultLoc {
+    /**
+     * Returns the default language ID.
+     * @returns {LangId}
+     */
     getDefaultLangId() {
         return LangId.EN;
-    },
-};
+    }
+}
 
-export default DefaultLoc;
+export default new DefaultLoc();
