@@ -1,34 +1,32 @@
 import ctrExport from "@/config/exports/CtrExport";
 import QueryStrings from "@/ui/QueryStrings";
-import SocialHelper from "@/ui/SocialHelper";
-import settings from "@/game/CTRSettings";
 import PubSub from "@/utils/PubSub";
 ctrExport("forceHTML5Audio", QueryStrings.forceHtml5Audio);
 
-window["showFpsCounter"] = function () {
+/*window["showFpsCounter"] = () => {
     settings.fpsEnabled = true;
-};
+};*/
 
-ctrExport("initFB", SocialHelper.initFB);
-ctrExport("initTwitter", SocialHelper.initTwitter);
+/*ctrExport("initFB", SocialHelper.initFB);
+ctrExport("initTwitter", SocialHelper.initTwitter);*/
 
-ctrExport("onLevelWon", function (callback) {
-    PubSub.subscribe(PubSub.ChannelId.LevelWon, function (info) {
+ctrExport("onLevelWon", function (/** @type {() => void} */ callback) {
+    PubSub.subscribe(PubSub.ChannelId.LevelWon, () => {
         // don't pass along the level info, just tell subscriber
         // that the level completed
         callback();
     });
 });
 
-ctrExport("pauseGame", function () {
+ctrExport("pauseGame", () => {
     PubSub.publish(PubSub.ChannelId.PauseGame);
 });
 
-ctrExport("enable", function () {
+ctrExport("enable", () => {
     PubSub.publish(PubSub.ChannelId.EnableGame);
 });
 
-ctrExport("disable", function () {
+ctrExport("disable", () => {
     PubSub.publish(PubSub.ChannelId.DisableGame);
 });
 
