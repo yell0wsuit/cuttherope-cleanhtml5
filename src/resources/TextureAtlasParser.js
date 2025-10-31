@@ -1,13 +1,77 @@
 import Rectangle from "@/core/Rectangle";
 import Vector from "@/core/Vector";
 
+/**
+ * A single frame entry (after parsing).
+ * @typedef {Object} FrameEntry
+ * @property {string} name - The frame’s identifier or filename.
+ * @property {FrameData} data - Frame metadata.
+ */
+
+/**
+ * Frame data structure from TexturePacker JSON.
+ * @typedef {Object} FrameData
+ * @property {Rectangle} frame - Frame rectangle within atlas.
+ * @property {boolean} [rotated] - Whether the frame was rotated.
+ * @property {Rectangle} [spriteSourceSize] - Original source rect before trimming.
+ * @property {{w:number, h:number}} [sourceSize] - Original full image size.
+ * @property {boolean} [trimmed] - Whether the frame was trimmed.
+ * @property {string} [filename] - Frame filename.
+ * @property {string} [name] - Optional alternate name.
+ */
+
+/**
+ * Metadata block from TexturePacker JSON.
+ * @typedef {Object} TexturePackerMeta
+ * @property {string} app
+ * @property {string} version
+ * @property {string} image
+ * @property {string} format
+ * @property {{w:number, h:number}} size
+ * @property {string} scale
+ * @property {string} [smartupdate]
+ */
+
+/**
+ * Complete TexturePacker JSON structure.
+ * @typedef {Object} TexturePackerAtlas
+ * @property {Record<string, FrameData> | FrameData[]} frames
+ * @property {TexturePackerMeta} [meta]
+ */
+
+/**
+ * Extra options for parseTexturePackerAtlas.
+ * @typedef {Object} ParseAtlasOptions
+ * @property {object} [existingInfo] - Optional previously parsed data to merge.
+ * @property {"center"} [offsetNormalization] - Optional normalization behavior.
+ */
+
+/**
+ * Parsed result info.
+ * @typedef {Object} ParsedAtlasInfo
+ * @property {Rectangle[]} rects
+ * @property {{x:number, y:number}[]} [offsets]
+ * @property {number} [preCutWidth]
+ * @property {number} [preCutHeight]
+ * @property {string[]} frameKeys
+ * @property {Record<string, number>} frameIndexByName
+ * @property {number} [adjustmentMaxX]
+ * @property {number} [adjustmentMaxY]
+ * @property {TexturePackerMeta|null} [atlasMeta]
+ */
+
+/**
+ * Builds frame entries from the TexturePacker frames block.
+ * @param {Record<string, FrameData> | FrameData[]} frames
+ * @returns {FrameEntry[]}
+ */
 const createFrameEntries = (frames) => {
     if (!frames) return [];
 
     // If frames is an array, preserve its natural order
     if (Array.isArray(frames)) {
         return frames.map((frame, index) => ({
-            name: frame?.filename ?? frame?.name ?? String(index),
+            name: frame.filename ?? frame.name ?? String(index),
             data: frame,
         }));
     }
@@ -21,6 +85,12 @@ const createFrameEntries = (frames) => {
         }));
 };
 
+/**
+ * Orders frame entries according to a defined sequence.
+ * @param {FrameEntry[]} entries
+ * @param {string[]} [frameOrder]
+ * @returns {FrameEntry[]}
+ */
 const orderFrameEntries = (entries, frameOrder) => {
     if (!frameOrder || frameOrder.length === 0) return entries;
 
@@ -33,33 +103,52 @@ const orderFrameEntries = (entries, frameOrder) => {
     });
 };
 
+/**
+ * Parses a TexturePacker JSON atlas into a normalized info object.
+ * @param {TexturePackerAtlas} atlasData
+ * @param {ParseAtlasOptions} [options]
+ * @returns {ParsedAtlasInfo}
+ */
 export const parseTexturePackerAtlas = (atlasData, options = {}) => {
     const { existingInfo = {}, offsetNormalization } = options;
 
-    if (!atlasData || !atlasData.frames) return existingInfo || {};
+    if (!atlasData || !atlasData.frames) return /** @type {ParsedAtlasInfo} */ (existingInfo);
 
     // Auto-detect order directly from JSON array if available
-    const hasArrayFrames = Array.isArray(atlasData.frames);
-    const autoFrameOrder = hasArrayFrames
-        ? atlasData.frames.map((f) => f.filename ?? f.name)
-        : null;
+    let autoFrameOrder = null;
+    if (Array.isArray(atlasData.frames)) {
+        autoFrameOrder = atlasData.frames
+            .map((f) => f.filename ?? f.name)
+            .filter((name) => typeof name === "string");
+    }
 
     let entries = createFrameEntries(atlasData.frames);
     if (autoFrameOrder) entries = orderFrameEntries(entries, autoFrameOrder);
+    if (entries.length === 0) return /** @type {ParsedAtlasInfo} */ (existingInfo);
 
-    if (entries.length === 0) return existingInfo || {};
+    /** @type {ParsedAtlasInfo} */
+    const info = {
+        ...existingInfo,
+        rects: [],
+        frameKeys: [],
+        frameIndexByName: {},
+    };
 
-    const info = { ...existingInfo };
+    /** @type {Rectangle[]} */
     const rects = [];
+    /** @type {Vector[]} */
     const offsets = [];
+    /** @type {{w:number,h:number}[]} */
     const rectSizes = [];
+    /** @type {string[]} */
     const frameKeys = [];
+
     let hasNonZeroOffset = false;
     let preCutWidth = info.preCutWidth ?? 0;
     let preCutHeight = info.preCutHeight ?? 0;
 
     entries.forEach((entry, index) => {
-        const frameInfo = entry.data || {};
+        const frameInfo = entry.data;
         const frameRect = frameInfo.frame;
         if (!frameRect) return;
 
@@ -101,10 +190,8 @@ export const parseTexturePackerAtlas = (atlasData, options = {}) => {
         hasNonZeroOffset = centered.some((o) => o.x || o.y);
     }
 
-    if (offsets.length && (hasNonZeroOffset || info.offsets)) {
+    if (offsets.length && hasNonZeroOffset) {
         info.offsets = offsets.map((o) => ({ x: o.x, y: o.y }));
-    } else {
-        delete info.offsets;
     }
 
     if (preCutWidth && preCutHeight) {
@@ -116,7 +203,7 @@ export const parseTexturePackerAtlas = (atlasData, options = {}) => {
     info.frameIndexByName = frameKeys.reduce((acc, name, i) => {
         acc[name] = i;
         return acc;
-    }, {});
+    }, /** @type {Record<string, number>} */ ({}));
 
     // When frames are trimmed and carry offsets, pad the drawn quad by 1px
     // so restored transparency aligns perfectly with the untrimmed size.
@@ -127,7 +214,6 @@ export const parseTexturePackerAtlas = (atlasData, options = {}) => {
     }
 
     info.atlasMeta = atlasData.meta || null;
-
     return info;
 };
 
