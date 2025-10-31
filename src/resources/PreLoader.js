@@ -1,4 +1,4 @@
-import platform from "@/platform";
+import platform from "@/config/platforms/platform-web";
 import edition from "@/config/editions/net-edition";
 import resolution from "@/resolution";
 import resData from "@/resources/ResData";

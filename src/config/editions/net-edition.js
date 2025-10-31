@@ -111,6 +111,9 @@ class NetEdition {
 
         /** @type {boolean} */
         this.enableBoxBackgroundEasterEgg = false;
+
+        /** @type {string} */
+        this.boxDirectory = "ui/";
     }
 
     /**

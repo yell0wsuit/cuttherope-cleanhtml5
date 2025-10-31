@@ -51,6 +51,8 @@ class WebPlatform {
         return ".mp4";
     }
 
+    static disableSlowWarning = false;
+
     static getDrawingBaseUrl() {
         const baseUrl = `${window.location.protocol}//${window.location.host}`;
         return `${baseUrl}/images/${resolution.UI_WIDTH}/ui/`;

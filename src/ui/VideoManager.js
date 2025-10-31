@@ -1,6 +1,6 @@
 import edition from "@/config/editions/net-edition";
 import resolution from "@/resolution";
-import platform from "@/platform";
+import platform from "@/config/platforms/platform-web";
 import PanelId from "@/ui/PanelId";
 import panelManager from "@/ui/PanelManager";
 import settings from "@/game/CTRSettings";

@@ -1,4 +1,4 @@
-import platform from "@/platform";
+import platform from "@/config/platforms/platform-web";
 import BoxManager from "@/ui/BoxManager";
 import ScoreManager from "@/ui/ScoreManager";
 import Lang from "@/resources/Lang";

@@ -1,4 +1,4 @@
-import platform from "@/platform";
+import platform from "@/config/platforms/platform-web";
 
 /**
  * Helper function to load and parse JSON from a URL

@@ -1,5 +1,5 @@
 import Text from "@/visual/Text";
-import platform from "@/platform";
+import platform from "@/config/platforms/platform-web";
 import resolution from "@/resolution";
 import analytics from "@/analytics";
 import Easing from "@/ui/Easing";

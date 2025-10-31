@@ -3,7 +3,7 @@ import Panel from "@/ui/Panel";
 import BoxPanel from "@/ui/BoxPanel";
 import LevelPanel from "@/ui/LevelPanel";
 import resolution from "@/resolution";
-import platform from "@/platform";
+import platform from "@/config/platforms/platform-web";
 import Easing from "@/ui/Easing";
 import PubSub from "@/utils/PubSub";
 import edition from "@/config/editions/net-edition";

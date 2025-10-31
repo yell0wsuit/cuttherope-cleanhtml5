@@ -4,7 +4,7 @@ import Easing from "@/ui/Easing";
 import PointerCapture from "@/utils/PointerCapture";
 import resolution from "@/resolution";
 import ZoomManager from "@/ZoomManager";
-import platform from "@/platform";
+import platform from "@/config/platforms/platform-web";
 import ScoreManager from "@/ui/ScoreManager";
 import PubSub from "@/utils/PubSub";
 import SoundMgr from "@/game/CTRSoundMgr";

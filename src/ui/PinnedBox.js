@@ -5,7 +5,7 @@ import MenuStringId from "@/resources/MenuStringId";
 import PubSub from "@/utils/PubSub";
 import edition from "@/config/editions/net-edition";
 import Text from "@/visual/Text";
-import platform from "@/platform";
+import platform from "@/config/platforms/platform-web";
 import analytics from "@/analytics";
 import resolution from "@/resolution";
 import SettingStorage from "@/core/SettingStorage";
