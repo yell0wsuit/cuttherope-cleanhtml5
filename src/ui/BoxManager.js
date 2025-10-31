@@ -3,7 +3,6 @@ import BoxType from "@/ui/BoxType";
 import ScoreManager from "@/ui/ScoreManager";
 import PubSub from "@/utils/PubSub";
 import edition from "@/config/editions/net-edition";
-import QueryStrings from "@/ui/QueryStrings";
 import MoreComingBox from "@/ui/MoreComingBox";
 import TimeBox from "@/ui/TimeBox";
 import BoxPanel from "@/ui/BoxPanel";
@@ -100,7 +99,7 @@ const updateVisibleBoxes = () => {
     PubSub.publish(PubSub.ChannelId.UpdateVisibleBoxes, visibleBoxes);
 };
 
-const onPaidBoxesChange = (paid) => {
+/*const onPaidBoxesChange = (paid) => {
     paid = paid || QueryStrings.unlockAllBoxes === true;
 
     const requiresPurchase =
@@ -130,7 +129,7 @@ const onPaidBoxesChange = (paid) => {
     }
 
     updateVisibleBoxes();
-};
+};*/
 
 const BoxManager = {
     currentBoxIndex: getDefaultBoxIndex(),
@@ -246,6 +245,6 @@ PubSub.subscribe(PubSub.ChannelId.SignOut, loadBoxes);
 PubSub.subscribe(PubSub.ChannelId.RoamingDataChanged, loadBoxes);
 PubSub.subscribe(PubSub.ChannelId.BoxesUnlocked, loadBoxes);
 
-PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, onPaidBoxesChange);
+// PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, onPaidBoxesChange);
 
 export default BoxManager;
