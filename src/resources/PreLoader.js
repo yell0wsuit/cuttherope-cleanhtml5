@@ -334,7 +334,6 @@ const loadImages = function () {
 const PreLoader = {
     init() {
         initializeResources();
-        JsonLoader.init();
 
         // start the loading animation images first
         if (LoadAnimation) {

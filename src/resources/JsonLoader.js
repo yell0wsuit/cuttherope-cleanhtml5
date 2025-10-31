@@ -1,22 +1,11 @@
 import platform from "@/platform";
 
-let menuJsonLoadComplete = false;
-let loadedJsonFiles = 0;
-let failedJsonFiles = 0;
-let totalJsonFiles = 0;
 /**
- * @type {(() => void) | null}
+ * Helper function to load and parse JSON from a URL
+ * @param {string | URL | Request} url
+ * @returns {Promise<any>}
  */
-let checkCompleteCallback = null;
-/**
- * @type {((loaded: number, total: number) => void) | null}
- */
-let progressCallback = null;
-
-// Cache for loaded JSON data
-const jsonCache = new Map();
-
-const loadJson = async (/** @type {string | URL | Request} */ url) => {
+const loadJson = async (url) => {
     const response = await fetch(url);
     if (!response.ok) {
         throw new Error(`Request failed with status ${response.status}`);
@@ -32,32 +21,47 @@ const loadJson = async (/** @type {string | URL | Request} */ url) => {
     }
 };
 
-const JsonLoader = {
-    init() {
-        menuJsonLoadComplete = false;
-        loadedJsonFiles = 0;
-        failedJsonFiles = 0;
-        totalJsonFiles = 0;
-        jsonCache.clear();
-    },
+class JsonLoader {
+    constructor() {
+        /** @type {boolean} */
+        this.menuJsonLoadComplete = false;
+
+        /** @type {number} */
+        this.loadedJsonFiles = 0;
+
+        /** @type {number} */
+        this.failedJsonFiles = 0;
+
+        /** @type {number} */
+        this.totalJsonFiles = 0;
+
+        /** @type {(() => void) | null} */
+        this.checkCompleteCallback = null;
+
+        /** @type {((loaded: number, total: number) => void) | null} */
+        this.progressCallback = null;
+
+        /** @type {Map<string, any>} */
+        this.jsonCache = new Map();
+    }
 
     getJsonFileCount() {
-        return totalJsonFiles;
-    },
+        return this.totalJsonFiles;
+    }
 
     /**
      * @param {(loaded: number, total: number) => void} callback
      */
     onProgress(callback) {
-        progressCallback = callback;
-    },
+        this.progressCallback = callback;
+    }
 
     /**
      * @param {() => void} callback
      */
     onMenuComplete(callback) {
-        checkCompleteCallback = callback;
-    },
+        this.checkCompleteCallback = callback;
+    }
 
     start() {
         // Use the configured base from vite config
@@ -82,55 +86,59 @@ const JsonLoader = {
             }
         }
 
-        totalJsonFiles = jsonFiles.length;
+        this.totalJsonFiles = jsonFiles.length;
 
         // Load all JSON files
         const promises = jsonFiles.map(async ({ url, key }) => {
             try {
                 const data = await loadJson(url);
-                jsonCache.set(key, data);
-                loadedJsonFiles++;
-                if (progressCallback) {
-                    progressCallback(loadedJsonFiles, totalJsonFiles);
+                this.jsonCache.set(key, data);
+                this.loadedJsonFiles++;
+                if (this.progressCallback) {
+                    this.progressCallback(this.loadedJsonFiles, this.totalJsonFiles);
                 }
                 return { success: true, key };
             } catch (error) {
                 // Silent fail for level files that might not exist
                 if (key.startsWith("level-")) {
-                    loadedJsonFiles++;
-                    if (progressCallback) {
-                        progressCallback(loadedJsonFiles, totalJsonFiles);
+                    this.loadedJsonFiles++;
+                    if (this.progressCallback) {
+                        this.progressCallback(this.loadedJsonFiles, this.totalJsonFiles);
                     }
                     return { success: false, key, silent: true };
                 }
 
-                failedJsonFiles++;
+                this.failedJsonFiles++;
                 window.console?.error?.(`Failed to load JSON: ${key}`, error);
-                if (progressCallback) {
-                    progressCallback(loadedJsonFiles, totalJsonFiles);
+                if (this.progressCallback) {
+                    this.progressCallback(this.loadedJsonFiles, this.totalJsonFiles);
                 }
                 return { success: false, key };
             }
         });
 
         Promise.all(promises).then(() => {
-            menuJsonLoadComplete = true;
-            if (checkCompleteCallback) {
-                checkCompleteCallback();
+            this.menuJsonLoadComplete = true;
+            if (this.checkCompleteCallback) {
+                this.checkCompleteCallback();
             }
         });
-    },
+    }
 
     /**
      * @param {string} key
+     * @returns {any}
      */
     getJson(key) {
-        return jsonCache.get(key);
-    },
+        return this.jsonCache.get(key);
+    }
 
+    /**
+     * @returns {Map<string, Array<{levelNumber: string, level: any}>>}
+     */
     getAllLevels() {
         const levels = new Map();
-        for (const [key, value] of jsonCache.entries()) {
+        for (const [key, value] of this.jsonCache.entries()) {
             if (key.startsWith("level-")) {
                 const match = key.match(/level-(\d{2})-(\d{2})/);
                 if (match) {
@@ -143,11 +151,15 @@ const JsonLoader = {
             }
         }
         return levels;
-    },
+    }
 
+    /**
+     * @returns {any}
+     */
     getBoxMetadata() {
-        return jsonCache.get("boxMetadata");
-    },
-};
+        return this.jsonCache.get("boxMetadata");
+    }
+}
 
-export default JsonLoader;
+// Export a singleton instance
+export default new JsonLoader();
