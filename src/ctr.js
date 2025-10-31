@@ -1,6 +1,5 @@
 import App from "@/app.js";
 import platform from "@/config/platforms/platform-web";
-import "./ctrExports.js";
 import RootController from "@/game/CTRRootController";
 import SoundMgr from "@/game/CTRSoundMgr";
 import { registerSW } from "virtual:pwa-register";
