@@ -2,7 +2,6 @@ import PanelId from "@/ui/PanelId";
 import Panel from "@/ui/Panel";
 import BoxPanel from "@/ui/BoxPanel";
 import LevelPanel from "@/ui/LevelPanel";
-import PasswordPanel from "@/ui/TimePasswordPanel";
 import resolution from "@/resolution";
 import platform from "@/platform";
 import Easing from "@/ui/Easing";
@@ -186,7 +185,7 @@ panels.push(new Panel(PanelId.OPTIONS, "optionsPanel", "menuBackground", true));
 panels.push(new Panel(PanelId.CREDITS, null, null, false));
 panels.push(new Panel(PanelId.LEADERBOARDS, "leaderboardPanel", "menuBackground", true));
 panels.push(new Panel(PanelId.ACHIEVEMENTS, "achievementsPanel", "menuBackground", true));
-panels.push(PasswordPanel);
+//panels.push(PasswordPanel);
 
 const PanelManager = {
     /** @type {((panelId: number) => void) | null} */
