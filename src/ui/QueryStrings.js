@@ -19,37 +19,75 @@ const getQueryStrings = () => {
 
 const qs = getQueryStrings();
 
-// case insensitive lookup
-const urlContains = (/** @type {string} */ val) => {
-    const url = window.location.href.toLowerCase();
-    return url.indexOf(val.toLowerCase()) >= 0;
-};
+class QueryStrings {
+    /**
+     * Parsed query string parameters.
+     * @type {Record<string, string>}
+     */
+    static #params = qs;
 
-// debug querystrings
-/*if (false || false) {
-    QueryStrings.box = qs["box"] == null ? null : parseInt(qs["box"], 10);
-    QueryStrings.level = qs["level"] == null ? null : parseInt(qs["level"], 10);
-    QueryStrings.minFps = qs["minFps"] == null ? null : parseInt(qs["minFps"], 10);
-    QueryStrings.unlockAllBoxes =
-        (QueryStrings.box != null && QueryStrings.level != null) || urlContains("unlockAllBoxes=true");
-    QueryStrings.forcePinnedBox = QueryStrings.unlockAllBoxes || urlContains("enablePinnedBox=true");
-    QueryStrings.createScoresForBox =
-        qs["createScoresForBox"] == null ? null : parseInt(qs["createScoresForBox"], 10);
-}*/
+    /**
+     * Perform a case-insensitive substring check against the current URL.
+     * @param {string} val
+     */
+    static #urlContains(val) {
+        return window.location.href.toLowerCase().includes(val.toLowerCase());
+    }
 
-const QueryStrings = {
-    // these are ok to leave in for ship
-    lang: qs["lang"],
-    showBoxBackgrounds: urlContains("boxBackgrounds=true"),
-    showFrameRate: import.meta.env.DEV || urlContains("showFrameRate=true"),
-    forceHtml5Audio: urlContains("html5audio=true"),
+    /**
+     * Parse a numeric parameter.
+     * @param {string} key
+     * @returns {number | null}
+     */
+    static #getInt(key) {
+        const raw = QueryStrings.#params[key];
+        return raw == null || raw === "" ? null : parseInt(raw, 10);
+    }
 
-    // for testing
-    unlockAllBoxes: import.meta.env.DEV || undefined,
-    createScoresForBox: undefined,
-    minFps: qs["minFps"] == null ? null : parseInt(qs["minFps"], 10),
-    box: qs["box"] == null ? null : parseInt(qs["box"], 10),
-    level: qs["level"] == null ? null : parseInt(qs["level"], 10),
-};
+    /**
+     * Evaluate a boolean flag encoded as `flagName=true`.
+     * @param {string} flagName
+     * @returns {boolean}
+     */
+    static #getFlag(flagName) {
+        return QueryStrings.#urlContains(`${flagName}=true`);
+    }
+
+    /** @type {string | undefined} */
+    static lang = QueryStrings.#params["lang"];
+
+    /** @type {boolean} */
+    static showBoxBackgrounds = QueryStrings.#getFlag("boxBackgrounds");
+
+    /** @type {boolean} */
+    static showFrameRate = Boolean(import.meta.env.DEV || QueryStrings.#getFlag("showFrameRate"));
+
+    /** @type {boolean} */
+    static forceHtml5Audio = QueryStrings.#getFlag("html5audio");
+
+    /**
+     * Unlock all boxes (dev-only; returns undefined unless explicitly requested).
+     * @type {true | undefined}
+     */
+    static unlockAllBoxes = import.meta.env.DEV || (QueryStrings.#getFlag("unlockAllBoxes") ? true : undefined);
+
+    /**
+     * Force the pinned box UI to display.
+     * @type {boolean}
+     */
+    static forcePinnedBox = Boolean(QueryStrings.unlockAllBoxes || QueryStrings.#getFlag("enablePinnedBox"));
+
+    /** @type {number | undefined} */
+    static createScoresForBox = QueryStrings.#getInt("createScoresForBox") ?? undefined;
+
+    /** @type {number | null} */
+    static minFps = QueryStrings.#getInt("minFps");
+
+    /** @type {number | null} */
+    static box = QueryStrings.#getInt("box");
+
+    /** @type {number | null} */
+    static level = QueryStrings.#getInt("level");
+}
 
 export default QueryStrings;
