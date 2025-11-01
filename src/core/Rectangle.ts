@@ -12,22 +12,22 @@ class Rectangle {
     /**
      * @type {number}
      */
-    x;
+    x: number;
 
     /**
      * @type {number}
      */
-    y;
+    y: number;
 
     /**
      * @type {number}
      */
-    w;
+    w: number;
 
     /**
      * @type {number}
      */
-    h;
+    h: number;
 
     /**
      * @param {number} x
@@ -36,7 +36,7 @@ class Rectangle {
      * @param {number} h
      */
 
-    constructor(x, y, w, h) {
+    constructor(x: number, y: number, w: number, h: number) {
         this.x = x;
         this.y = y;
         this.w = w;
@@ -46,7 +46,7 @@ class Rectangle {
     /**
      * @param {{ x: number; y: number; w: number; h: number; }} r
      */
-    static copy(r) {
+    static copy(r: { x: number; y: number; w: number; h: number }) {
         return new Rectangle(r.x, r.y, r.w, r.h);
     }
 
@@ -54,7 +54,7 @@ class Rectangle {
      * @param {{ x: number; y: number; w: number; h: number; }} r
      * @param {number} scale
      */
-    static scaleCopy(r, scale) {
+    static scaleCopy(r: { x: number; y: number; w: number; h: number }, scale: number) {
         return new Rectangle(r.x * scale, r.y * scale, r.w * scale, r.h * scale);
     }
     /**
@@ -69,7 +69,16 @@ class Rectangle {
      * @param {number} y2b
      * @return {boolean}
      */
-    static rectInRect(x1l, y1t, x1r, y1b, x2l, y2t, x2r, y2b) {
+    static rectInRect(
+        x1l: number,
+        y1t: number,
+        x1r: number,
+        y1b: number,
+        x2l: number,
+        y2t: number,
+        x2r: number,
+        y2b: number
+    ): boolean {
         return !(x1l > x2r || x1r < x2l || y1t > y2b || y1b < y2t);
     }
     /**
@@ -89,7 +98,16 @@ class Rectangle {
      *
      * @return {Rectangle}
      */
-    static rectInRectIntersection(r1x, r1y, r1w, r1h, r2x, r2y, r2w, r2h) {
+    static rectInRectIntersection(
+        r1x: number,
+        r1y: number,
+        r1w: number,
+        r1h: number,
+        r2x: number,
+        r2y: number,
+        r2w: number,
+        r2h: number
+    ): Rectangle {
         const res = new Rectangle(r2x - r1x, r2y - r1y, r2w, r2h);
 
         if (res.x < 0) {
@@ -117,7 +135,14 @@ class Rectangle {
      * @param {number} checkWidth
      * @param {number} checkHeight
      */
-    static pointInRect(x, y, checkX, checkY, checkWidth, checkHeight) {
+    static pointInRect(
+        x: number,
+        y: number,
+        checkX: number,
+        checkY: number,
+        checkWidth: number,
+        checkHeight: number
+    ) {
         return x >= checkX && x < checkX + checkWidth && y >= checkY && y < checkY + checkHeight;
     }
     /**
@@ -132,7 +157,16 @@ class Rectangle {
      * @param {number} h
      * @return {boolean}
      */
-    static lineInRect(x1, y1, x2, y2, rx, ry, w, h) {
+    static lineInRect(
+        x1: number,
+        y1: number,
+        x2: number,
+        y2: number,
+        rx: number,
+        ry: number,
+        w: number,
+        h: number
+    ): boolean {
         let code_a, code_b, code;
         const a = new Vector(x1, y1),
             b = new Vector(x2, y2);
@@ -192,24 +226,24 @@ class Rectangle {
  * @const
  * @type {number}
  */
-const COHEN_LEFT = 1;
+const COHEN_LEFT: number = 1;
 
 /**
  * @const
  * @type {number}
  */
-const COHEN_RIGHT = 2;
+const COHEN_RIGHT: number = 2;
 
 /**
  * @const
  * @type {number}
  */
-const COHEN_BOT = 4;
+const COHEN_BOT: number = 4;
 /**
  * @const
  * @type {number}
  */
-const COHEN_TOP = 8;
+const COHEN_TOP: number = 8;
 
 /**
  * @param {number} x_min
@@ -219,13 +253,13 @@ const COHEN_TOP = 8;
  * @param {Vector} p
  * @return {number}
  */
-function vcode(x_min, y_min, x_max, y_max, p) {
+const vcode = (x_min: number, y_min: number, x_max: number, y_max: number, p: Vector): number => {
     return (
         (p.x < x_min ? COHEN_LEFT : 0) +
         (p.x > x_max ? COHEN_RIGHT : 0) +
         (p.y < y_min ? COHEN_BOT : 0) +
         (p.y > y_max ? COHEN_TOP : 0)
     );
-}
+};
 
 export default Rectangle;
