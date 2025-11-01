@@ -11,7 +11,7 @@ import Timeline from "@/visual/Timeline";
  * @const
  * @type {number}
  */
-const BOUNCER_HEIGHT = 10;
+const BOUNCER_HEIGHT: number = 10;
 
 const IMG_OBJ_BOUNCER_01_start = 0;
 const IMG_OBJ_BOUNCER_01_Frame_2 = 1;
@@ -26,13 +26,25 @@ const IMG_OBJ_BOUNCER_02_Frame_4 = 3;
 const IMG_OBJ_BOUNCER_02_end = 4;
 
 class Bouncer extends CTRGameObject {
+    angle: number;
+    skip: number;
+    t1: Vector;
+    t2: Vector;
+    b1: Vector;
+    b2: Vector;
+    rotation: number;
+    x: number;
+    y: number;
+    width: number = 1;
+    mover: any;
+
     /**
      * @param {number} x
      * @param {number} y
      * @param {number} width
      * @param {number} angle
      */
-    constructor(x, y, width, angle) {
+    constructor(x: number, y: number, width: number, angle: number) {
         super();
 
         this.angle = 0;
@@ -55,14 +67,14 @@ class Bouncer extends CTRGameObject {
         this.y = y;
 
         this.updateRotation();
-        const delay = 0.04,
-            k = this.addAnimationDelay(
-                delay,
-                Timeline.LoopType.NO_LOOP,
-                IMG_OBJ_BOUNCER_01_start,
-                IMG_OBJ_BOUNCER_01_end
-            ),
-            t = this.getTimeline(k);
+        const delay = 0.04;
+        const k = this.addAnimationDelay(
+            delay,
+            Timeline.LoopType.NO_LOOP,
+            IMG_OBJ_BOUNCER_01_start,
+            IMG_OBJ_BOUNCER_01_end
+        );
+        const t = this.getTimeline(k);
         t.addKeyFrame(KeyFrame.makeSingleAction(this, ActionType.SET_DRAWQUAD, 0, 0, delay));
     }
 
@@ -90,7 +102,7 @@ class Bouncer extends CTRGameObject {
     /**
      * @param {number} delta
      */
-    update(delta) {
+    override update(delta: number) {
         super.update(delta);
         if (this.mover) {
             this.updateRotation();
