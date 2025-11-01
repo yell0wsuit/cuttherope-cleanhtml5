@@ -6,6 +6,9 @@ const IMG_OBJ_STAR_IDLE_gravity_down = 56;
 const IMG_OBJ_STAR_IDLE_gravity_up = 57;
 
 class GravityButton extends ToggleButton {
+    static DefaultId(DefaultId: any) {
+        throw new Error("Method not implemented.");
+    }
     constructor() {
         const itn = ImageElement.create(
             ResourceId.IMG_OBJ_STAR_IDLE,

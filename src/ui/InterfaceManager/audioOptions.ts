@@ -23,7 +23,7 @@ export default class AudioOptions {
      * @param {string} messageText - The text to display
      * @param {number} delayDuration - How long to show the message
      */
-    _showMiniOptionMessage(msgId, messageText, delayDuration) {
+    _showMiniOptionMessage(msgId: string, messageText: string, delayDuration: number) {
         if (msgId === undefined) {
             return;
         }
@@ -59,7 +59,7 @@ export default class AudioOptions {
      * @param {string} buttonId - The ID of the button
      * @param {string} msgId - The ID of the message element
      */
-    _updateMiniSoundButton(doToggle, buttonId, msgId) {
+    _updateMiniSoundButton(doToggle: boolean, buttonId: string, msgId: string) {
         let isSoundOn = SoundMgr.soundEnabled;
         let isMusicOn = SoundMgr.musicEnabled;
 

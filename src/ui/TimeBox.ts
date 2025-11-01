@@ -48,7 +48,7 @@ const XOR_VALUE = ScoreManager.getXorValue();
  * @param {number} boxIndex
  * @returns {string}
  */
-const getLockKey = function (boxIndex) {
+const getLockKey = function (boxIndex: number): string {
     return LOCK_KEY_PREFIX + (BoxKeySeeds[boxIndex] ^ XOR_VALUE);
 };
 
@@ -56,7 +56,7 @@ const getLockKey = function (boxIndex) {
  * @param {number} boxIndex
  * @returns {boolean}
  */
-const isLocked = function (boxIndex) {
+const isLocked = function (boxIndex: number): boolean {
     const key = getLockKey(boxIndex);
     const value = SettingStorage.getIntOrDefault(key, 0);
     const correctValue = (BoxKeySeeds[boxIndex] - 1000) ^ XOR_VALUE;
@@ -67,7 +67,7 @@ const isLocked = function (boxIndex) {
 /**
  * @param {number} boxIndex
  */
-const unlockBox = function (boxIndex) {
+const unlockBox = function (boxIndex: number) {
     const key = getLockKey(boxIndex);
     const value = (BoxKeySeeds[boxIndex] - 1000) ^ XOR_VALUE;
 
@@ -75,7 +75,7 @@ const unlockBox = function (boxIndex) {
 };
 
 /** @type {HTMLElement | null} */
-let enterCodeButton = null;
+let enterCodeButton: HTMLElement | null = null;
 document.addEventListener("DOMContentLoaded", function () {
     enterCodeButton = document.getElementById("boxEnterCodeButton");
     if (enterCodeButton) {
@@ -85,13 +85,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // cache text images shared between boxes
 /** @type {HTMLImageElement | null} */
-let availableTextImg = null;
+let availableTextImg: HTMLImageElement | null = null;
 /** @type {HTMLImageElement | null} */
-let collectTextImg = null;
+let collectTextImg: HTMLImageElement | null = null;
 /** @type {HTMLImageElement | null} */
-let toUnlockTextImg = null;
+let toUnlockTextImg: HTMLImageElement | null = null;
 /** @type {HTMLImageElement | null} */
-let bkCodeTextImg = null;
+let bkCodeTextImg: HTMLImageElement | null = null;
 
 const MonthNames = [
     "January",
@@ -109,6 +109,12 @@ const MonthNames = [
 ];
 
 class TimeBox extends Box {
+    lockedBoxImg: HTMLImageElement;
+    isBkCodeLocked: boolean;
+    isTimeLocked: boolean;
+    dateImg: null;
+    static unlockBox: (boxIndex: number) => void;
+    static isLocked: (boxIndex: number) => boolean;
     /**
      * @param {number} boxIndex
      * @param {string | null} bgimg
@@ -116,7 +122,13 @@ class TimeBox extends Box {
      * @param {boolean} islocked
      * @param {string} type
      */
-    constructor(boxIndex, bgimg, reqstars, islocked, type) {
+    constructor(
+        boxIndex: number,
+        bgimg: string | null,
+        reqstars: number,
+        islocked: boolean,
+        type: string
+    ) {
         super(boxIndex, bgimg, reqstars, islocked, type);
         this.lockedBoxImg = new Image();
         this.lockedBoxImg.src = this.boxImg.src.replace(".png", "_locked.png");
@@ -155,7 +167,7 @@ class TimeBox extends Box {
      * @param {CanvasRenderingContext2D} ctx
      * @param {number} omnomoffset
      */
-    render(ctx, omnomoffset) {
+    render(ctx: CanvasRenderingContext2D, omnomoffset: number) {
         const locked = this.islocked || this.isTimeLocked || this.isBkCodeLocked;
 
         // draw the base box image

@@ -4,6 +4,7 @@
  */
 class PubSub {
     ChannelId: any;
+    subscriptions: Map<number, Function[]>;
     constructor() {
         /**
          * Store subscriptions grouped by channel so we do not need to iterate the
@@ -67,7 +68,7 @@ class PubSub {
      * @param {Function} callback Listener that will receive all published values.
      * @returns {{name: number, callback: Function}} Subscription handle.
      */
-    subscribe(name, callback) {
+    subscribe(name: number, callback: Function): { name: number; callback: Function } {
         if (typeof callback !== "function") {
             throw new TypeError("PubSub.subscribe requires a callback function");
         }
@@ -89,7 +90,7 @@ class PubSub {
      *
      * @param {{name: number, callback: Function}|[number, Function]} subscription
      */
-    unsubscribe(subscription) {
+    unsubscribe(subscription: { name: number; callback: Function } | [number, Function]) {
         if (!subscription) return;
 
         const name =
@@ -121,7 +122,7 @@ class PubSub {
      * @param {number} name Channel identifier.
      * @param {...any} args Arguments to pass to listeners.
      */
-    publish(name, ...args) {
+    publish(name: number, ...args: any[]) {
         const callbacks = this.subscriptions.get(name);
         if (!callbacks || callbacks.length === 0) return;
 
@@ -143,7 +144,7 @@ class PubSub {
      * Retrieve all current subscriptions (for debugging/testing).
      * @returns {Map<number, Function[]>}
      */
-    getAll() {
+    getAll(): Map<number, Function[]> {
         return this.subscriptions;
     }
 }

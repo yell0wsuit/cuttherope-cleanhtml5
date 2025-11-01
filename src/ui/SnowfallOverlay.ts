@@ -20,6 +20,19 @@ const TWINKLE_SPEED_MAX = 1;
 const START_DELAY_MS = 2000;
 
 class SnowfallOverlay {
+    canvas: HTMLCanvasElement | null;
+    ctx: CanvasRenderingContext2D | null;
+    snowflakes: never[];
+    texture: null;
+    running: boolean;
+    frameHandle: null;
+    retryHandle: null;
+    lastTimestamp: number;
+    fading: boolean;
+    fadeElapsed: number;
+    fadeDuration: number;
+    globalAlpha: number;
+    startTimeout: null;
     constructor() {
         this.canvas = null;
         this.ctx = null;

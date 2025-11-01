@@ -2,13 +2,17 @@
  * Represents a single delayed dispatch operation.
  */
 class Dispatch {
+    object: object;
+    callback: () => void;
+    param: any[] | null;
+    delay: number;
     /**
      * @param {object} object - The context in which the callback is executed.
      * @param {() => void} callback - The function to call after the delay.
      * @param {any[] | null} param - The arguments to pass to the callback.
      * @param {number} delay - The delay time (in milliseconds or time units) before dispatching.
      */
-    constructor(object, callback, param, delay) {
+    constructor(object: object, callback: () => void, param: any[] | null, delay: number) {
         /** @type {object} */
         this.object = object;
         /** @type {() => void} */
@@ -32,6 +36,7 @@ class Dispatch {
  * Use `update(delta)` each frame/tick to process active dispatches.
  */
 class DelayedDispatcher {
+    dispatchers: never[];
     constructor() {
         /** @type {Dispatch[]} */
         this.dispatchers = [];
@@ -44,7 +49,7 @@ class DelayedDispatcher {
      * @param {any[] | null} param - The arguments to pass to the callback.
      * @param {number} delay - The delay time before execution.
      */
-    callObject(object, callback, param, delay) {
+    callObject(object: object, callback: () => void, param: any[] | null, delay: number) {
         const dp = new Dispatch(object, callback, param, delay);
         this.dispatchers.push(dp);
     }
@@ -62,7 +67,7 @@ class DelayedDispatcher {
      * @param {() => void} callback - The callback to cancel.
      * @param {any[] | null} param - The parameter used during registration.
      */
-    cancelDispatch(object, callback, param) {
+    cancelDispatch(object: object, callback: () => void, param: any[] | null) {
         for (let i = 0; i < this.dispatchers.length; i++) {
             const dp = this.dispatchers[i];
             if (dp.object === object && dp.callback === callback && dp.param === param) {
@@ -77,7 +82,7 @@ class DelayedDispatcher {
      * Executes and removes any whose delay reaches zero or below.
      * @param {number} delta - The time increment (usually per frame).
      */
-    update(delta) {
+    update(delta: number) {
         // Make a shallow copy since dispatchers may be modified during iteration
         const currentDps = this.dispatchers.slice();
 

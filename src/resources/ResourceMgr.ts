@@ -13,6 +13,9 @@ import { parseTexturePackerAtlas } from "@/resources/TextureAtlasParser";
  * Resource manager for handling game assets including textures, fonts, and atlases
  */
 class ResourceMgr {
+    static getString(strId: number) {
+        throw new Error("Method not implemented.");
+    }
     /**
      * Handles loaded image resources
      * @param {string} resId - Resource identifier

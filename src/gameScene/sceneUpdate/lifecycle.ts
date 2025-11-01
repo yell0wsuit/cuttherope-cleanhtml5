@@ -8,14 +8,12 @@ import SoundMgr from "@/game/CTRSoundMgr";
 import Timeline from "@/visual/Timeline";
 import settings from "@/game/CTRSettings";
 
-/**
- * @typedef {import("@/types/game-scene").GameScene} GameScene
- */
+type GameScene = import("@/types/game-scene").GameScene;
 
 /**
  * @param {GameScene} scene
  */
-function animateLevelRestart(scene) {
+function animateLevelRestart(scene: GameScene) {
     scene.restartState = GameSceneConstants.RestartState.FADE_IN;
     scene.dimTime = Constants.DIM_TIMEOUT;
 }
@@ -23,14 +21,14 @@ function animateLevelRestart(scene) {
 /**
  * @param {GameScene} scene
  */
-function isFadingIn(scene) {
+function isFadingIn(scene: GameScene) {
     return scene.restartState === GameSceneConstants.RestartState.FADE_IN;
 }
 
 /**
  * @param {GameScene} scene
  */
-function calculateScore(scene) {
+function calculateScore(scene: GameScene) {
     scene.timeBonus = Math.max(0, 30 - scene.time) * 100;
     scene.timeBonus /= 10;
     scene.timeBonus *= 10;
@@ -41,7 +39,7 @@ function calculateScore(scene) {
 /**
  * @param {GameScene} scene
  */
-function gameWon(scene) {
+function gameWon(scene: GameScene) {
     scene.dd.cancelAllDispatches();
 
     scene.target.playTimeline(GameSceneConstants.CharAnimation.WIN);
@@ -62,12 +60,7 @@ function gameWon(scene) {
         KeyFrame.makePos(scene.candy.x, scene.candy.y, KeyFrame.TransitionType.LINEAR, 0)
     );
     tl.addKeyFrame(
-        KeyFrame.makePos(
-            scene.target.x,
-            scene.target.y + 10,
-            KeyFrame.TransitionType.LINEAR,
-            0.1
-        )
+        KeyFrame.makePos(scene.target.x, scene.target.y + 10, KeyFrame.TransitionType.LINEAR, 0.1)
     );
     tl.addKeyFrame(KeyFrame.makeScale(0.71, 0.71, KeyFrame.TransitionType.LINEAR, 0));
     tl.addKeyFrame(KeyFrame.makeScale(0, 0, KeyFrame.TransitionType.LINEAR, 0.1));
@@ -75,11 +68,7 @@ function gameWon(scene) {
         KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0)
     );
     tl.addKeyFrame(
-        KeyFrame.makeColor(
-            RGBAColor.transparent.copy(),
-            KeyFrame.TransitionType.LINEAR,
-            0.1
-        )
+        KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.1)
     );
     scene.candy.addTimelineWithID(tl, 0);
     scene.candy.playTimeline(0);
@@ -125,7 +114,7 @@ function gameWon(scene) {
 /**
  * @param {GameScene} scene
  */
-function gameLost(scene) {
+function gameLost(scene: GameScene) {
     scene.dd.cancelAllDispatches();
     scene.target.playTimeline(GameSceneConstants.CharAnimation.FAIL);
     SoundMgr.playSound(ResourceId.SND_MONSTER_SAD);
@@ -142,7 +131,7 @@ class GameSceneLifecycleDelegate {
     /**
      * @param {GameScene} scene
      */
-    constructor(scene) {
+    constructor(scene: GameScene) {
         /** @type {GameScene} */
         this.scene = scene;
     }

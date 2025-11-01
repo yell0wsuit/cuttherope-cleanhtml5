@@ -4,6 +4,7 @@ import GameView from "@/game/GameView";
 import SoundMgr from "@/game/CTRSoundMgr";
 import ResourceId from "@/resources/ResourceId";
 import Constants from "@/utils/Constants";
+import CTRRootController from "@/game/CTRRootController";
 
 /**
  * @enum {number}
@@ -34,12 +35,12 @@ class GameController extends ViewController {
     /**
      * @param {CTRRootController} parent
      */
-    constructor(parent) {
+    constructor(parent: typeof CTRRootController) {
         super(parent);
         this.animateRestart = false;
     }
 
-    activate() {
+    override activate() {
         super.activate();
         SoundMgr.playGameMusic();
         this.createGameView();
@@ -83,7 +84,7 @@ class GameController extends ViewController {
     /**
      * @param {boolean} paused
      */
-    setPaused(paused) {
+    setPaused(paused: boolean) {
         this.isGamePaused = paused;
 
         const view = this.getView(0);
@@ -128,7 +129,7 @@ class GameController extends ViewController {
      * @param {number} y
      * @return {boolean} true if event was handled
      */
-    mouseDown(x, y) {
+    override mouseDown(x: number, y: number): boolean {
         // see if the event was handled by the base class
         const res = super.mouseDown(x, y);
         if (res) {
@@ -153,7 +154,7 @@ class GameController extends ViewController {
      * @param {number} y
      * @return {boolean} true if event was handled
      */
-    mouseDragged(x, y) {
+    override mouseDragged(x: number, y: number): boolean {
         // see if the event was handled by the base class
         const res = super.mouseDragged(x, y);
         if (res) {
@@ -178,7 +179,7 @@ class GameController extends ViewController {
      * @param {number} y
      * @return {boolean} true if event was handled
      */
-    mouseMoved(x, y) {
+    override mouseMoved(x: number, y: number): boolean {
         // see if the event was handled by the base class
         const res = super.mouseMoved(x, y);
         if (res) {
@@ -203,7 +204,7 @@ class GameController extends ViewController {
      * @param {number} y
      * @return {boolean} true if event was handled
      */
-    mouseUp(x, y) {
+    override mouseUp(x: number, y: number): boolean {
         // see if the event was handled by the base class
         const res = super.mouseUp(x, y);
         if (res) {
@@ -228,7 +229,7 @@ class GameController extends ViewController {
      * @param {number} y
      * @return {boolean} true if event was handled
      */
-    doubleClick(x, y) {
+    override doubleClick(x: number, y: number): boolean {
         // see if the event was handled by the base class
         const res = super.doubleClick(x, y);
         if (res) {

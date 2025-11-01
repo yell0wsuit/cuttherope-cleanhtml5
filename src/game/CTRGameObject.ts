@@ -4,6 +4,8 @@ import resolution from "@/resolution";
 import Mover from "@/utils/Mover";
 
 class CTRGameObject extends GameObject {
+    color: import("/Users/yell0wsuitMac/Documents/GitHub/cuttherope-cleanhtml5/src/core/RGBAColor").default;
+    special: any;
     constructor() {
         super();
     }
@@ -11,7 +13,12 @@ class CTRGameObject extends GameObject {
     /**
      * @param {{ angle: number; path: string; moveSpeed: number; rotateSpeed: number; }} item
      */
-    parseMover(item) {
+    override parseMover(item: {
+        angle: number;
+        path: string;
+        moveSpeed: number;
+        rotateSpeed: number;
+    }) {
         this.rotation = item.angle || 0;
 
         const path = item.path;

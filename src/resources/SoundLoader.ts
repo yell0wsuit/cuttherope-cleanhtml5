@@ -10,7 +10,10 @@ import { soundRegistry } from "@/utils/soundRegistry";
  * @param {ArrayBuffer} arrayBuffer
  * @returns {Promise<AudioBuffer>}
  */
-const decodeAudioBuffer = (context, arrayBuffer) => {
+const decodeAudioBuffer = (
+    context: BaseAudioContext,
+    arrayBuffer: ArrayBuffer
+): Promise<AudioBuffer> => {
     return new Promise((resolve, reject) => {
         let decodePromise;
         try {
@@ -30,6 +33,15 @@ const decodeAudioBuffer = (context, arrayBuffer) => {
 };
 
 class SoundLoader {
+    completeListeners: never[];
+    progressListeners: never[];
+    startRequested: boolean;
+    soundManagerReady: boolean;
+    hasStartedLoading: boolean;
+    currentCompleted: number;
+    currentFailed: number;
+    currentTotal: number;
+
     constructor() {
         /** @type {(() => void)[]} */
         this.completeListeners = [];
@@ -61,14 +73,14 @@ class SoundLoader {
     /**
      * @param {{ (): void; (): void; }} callback
      */
-    onMenuComplete(callback) {
+    onMenuComplete(callback: { (): void; (): void }) {
         this.completeListeners.push(callback);
     }
 
     /**
      * @param {{ (completed: number): void; (completed: number, total: number): void; }} callback
      */
-    onProgress(callback) {
+    onProgress(callback: { (completed: number): void; (completed: number, total: number): void }) {
         this.progressListeners.push(callback);
         if (this.currentTotal > 0) {
             try {
@@ -132,7 +144,7 @@ class SoundLoader {
         /**
          * @param {{ id: number }} param0
          */
-        const loadSound = async ({ id }) => {
+        const loadSound = async ({ id }: { id: number }) => {
             const resource = resData[id];
             if (!resource) throw new Error(`Resource not found for sound ID: ${id}`);
 

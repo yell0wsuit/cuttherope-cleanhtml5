@@ -17,13 +17,24 @@ import GameSceneCharacter from "./character";
  * @param {T} delegate
  * @param {(keyof T & string)[]} methods
  */
-const bindDelegate = (scene, delegate, methods) => {
+const bindDelegate = <T>(scene: GameSceneUpdate, delegate: T, methods: (keyof T & string)[]) => {
     for (const method of methods) {
-        scene[method] = /** @type {any} */ (delegate[method]).bind(delegate);
+        scene[method] = /** @type {any} */ delegate[method].bind(delegate);
     }
 };
 
 class GameSceneUpdate extends GameSceneCharacter {
+    drawDelegate: GameSceneDrawDelegate;
+    bubblesDelegate: GameSceneBubblesDelegate;
+    teleportDelegate: GameSceneTeleportDelegate;
+    lifecycleDelegate: GameSceneLifecycleDelegate;
+    ropeManagementDelegate: GameSceneRopeManagementDelegate;
+    pumpUtilsDelegate: GameScenePumpUtilsDelegate;
+    bounceUtilsDelegate: GameSceneBounceUtilsDelegate;
+    cutDelegate: GameSceneCutDelegate;
+    spiderHandlersDelegate: GameSceneSpiderHandlersDelegate;
+    selectionDelegate: GameSceneSelectionDelegate;
+
     constructor() {
         super();
 
@@ -80,7 +91,7 @@ class GameSceneUpdate extends GameSceneCharacter {
     /**
      * @param {number} delta
      */
-    update(delta) {
+    override update(delta: number) {
         update.call(this, delta);
     }
 }

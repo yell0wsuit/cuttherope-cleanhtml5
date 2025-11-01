@@ -1,4 +1,4 @@
-let cachedAudioContext = null;
+let cachedAudioContext: AudioContext | null = null;
 
 export function getAudioContext() {
     if (cachedAudioContext) {

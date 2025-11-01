@@ -5,12 +5,15 @@ import Constants from "@/utils/Constants";
 import Gravity from "@/physics/Gravity";
 
 class Constraint {
+    cp: ConstrainedPoint;
+    restLength: number;
+    type: number;
     /**
      * @param {ConstrainedPoint} cp
      * @param {number} restLength
      * @param {number} type
      */
-    constructor(cp, restLength, type) {
+    constructor(cp: ConstrainedPoint, restLength: number, type: number) {
         this.cp = cp;
         this.restLength = restLength;
         this.type = type;
@@ -18,6 +21,17 @@ class Constraint {
 }
 
 class ConstrainedPoint extends MaterialPoint {
+    pos: Vector;
+    prevPos: any;
+    pin: any;
+    constraints: never[];
+    totalForce: Vector;
+    disableGravity: any;
+    gravity: any;
+    invWeight: any;
+    a: any;
+    posDelta: any;
+    v: any;
     constructor() {
         super();
         this.prevPos = new Vector(Constants.INT_MAX, Constants.INT_MAX);
@@ -32,7 +46,7 @@ class ConstrainedPoint extends MaterialPoint {
     /**
      * Resets the point by clearing previous position and removing constraints
      */
-    resetAll() {
+    override resetAll() {
         super.resetAll();
         this.prevPos.x = Constants.INT_MAX;
         this.prevPos.y = Constants.INT_MAX;
@@ -52,7 +66,7 @@ class ConstrainedPoint extends MaterialPoint {
      * @param {number} restLength
      * @param {ConstraintType} type
      */
-    addConstraint(cp, restLength, type) {
+    addConstraint(cp: ConstrainedPoint, restLength: number, type: ConstraintType) {
         const ct = new Constraint(cp, restLength, type);
         this.constraints.push(ct);
     }
@@ -61,7 +75,7 @@ class ConstrainedPoint extends MaterialPoint {
      * Removes the specified constraint
      * @param {ConstrainedPoint} cp
      */
-    removeConstraint(cp) {
+    removeConstraint(cp: ConstrainedPoint) {
         const constraints = this.constraints;
         const len = constraints.length;
         for (let i = 0; i < len; i++) {
@@ -76,7 +90,7 @@ class ConstrainedPoint extends MaterialPoint {
      * Removes the constraint at the specified index
      * @param {number} index
      */
-    removeConstraintAtIndex(index) {
+    removeConstraintAtIndex(index: number) {
         this.constraints.splice(index, 1);
     }
 
@@ -84,7 +98,7 @@ class ConstrainedPoint extends MaterialPoint {
      * @param {ConstrainedPoint} fromCp
      * @param {ConstrainedPoint} toCp
      */
-    changeConstraint(fromCp, toCp) {
+    changeConstraint(fromCp: ConstrainedPoint, toCp: ConstrainedPoint) {
         const constraints = this.constraints;
         const len = constraints.length;
         for (let i = 0; i < len; i++) {
@@ -101,7 +115,7 @@ class ConstrainedPoint extends MaterialPoint {
      * @param {ConstrainedPoint} cp
      * @return {boolean}
      */
-    hasConstraint(cp) {
+    hasConstraint(cp: ConstrainedPoint): boolean {
         const constraints = this.constraints;
         const len = constraints.length;
         for (let i = 0; i < len; i++) {
@@ -117,7 +131,7 @@ class ConstrainedPoint extends MaterialPoint {
      * @param {ConstrainedPoint} cp
      * @param {number} restLength
      */
-    changeRestLength(cp, restLength) {
+    changeRestLength(cp: ConstrainedPoint, restLength: number) {
         const constraints = this.constraints;
         const len = constraints.length;
         for (let i = 0; i < len; i++) {
@@ -134,7 +148,11 @@ class ConstrainedPoint extends MaterialPoint {
      * @param {ConstrainedPoint} toCp
      * @param {number} restLength
      */
-    changeConstraintAndLength(fromCp, toCp, restLength) {
+    changeConstraintAndLength(
+        fromCp: ConstrainedPoint,
+        toCp: ConstrainedPoint,
+        restLength: number
+    ) {
         const constraints = this.constraints;
         const len = constraints.length;
         for (let i = 0; i < len; i++) {
@@ -151,7 +169,7 @@ class ConstrainedPoint extends MaterialPoint {
      * @param {ConstrainedPoint} cp
      * @return {number}
      */
-    restLength(cp) {
+    restLength(cp: ConstrainedPoint): number {
         const constraints = this.constraints;
         const len = constraints.length;
         for (let i = 0; i < len; i++) {
@@ -167,7 +185,7 @@ class ConstrainedPoint extends MaterialPoint {
     /**
      * @param {number} delta
      */
-    update(delta) {
+    override update(delta: number) {
         const totalForce = this.totalForce;
         const currentGravity = Gravity.current;
 
@@ -296,7 +314,7 @@ class ConstrainedPoint extends MaterialPoint {
     /**
      * @param {number} delta
      */
-    qcpUpdate(delta) {
+    qcpUpdate(delta: number) {
         // qcpUpdate only differs from update in that it includes material
         // force calculations, however those don't appear to be used. So
         // for now, qcpUpdate simply calls update

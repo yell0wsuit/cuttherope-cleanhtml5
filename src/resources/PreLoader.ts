@@ -9,6 +9,21 @@ import ResourcePacks from "@/resources/ResourcePacks";
 import PubSub from "@/utils/PubSub";
 
 class PreLoader {
+    menuImagesLoadComplete: boolean;
+    menuSoundLoadComplete: boolean;
+    menuJsonLoadComplete: boolean;
+    completeCallback: (() => void) | null;
+    totalResources: number;
+    loadedImages: number;
+    loadedSounds: number;
+    loadedJsonFiles: number;
+    failedImages: number;
+    failedSounds: number;
+    MENU_TAG: string;
+    FONT_TAG: string;
+    GAME_TAG: string;
+    supportsImageBitmap: boolean;
+
     constructor() {
         // State tracking
         this.menuImagesLoadComplete = false;
@@ -46,7 +61,7 @@ class PreLoader {
     /**
      * @param {string} url
      */
-    async loadImageElement(url) {
+    async loadImageElement(url: string) {
         return new Promise((resolve, reject) => {
             const img = new Image();
             img.decoding = "async";
@@ -76,7 +91,7 @@ class PreLoader {
      * @param {ImageBitmap} drawable
      * @param {string} sourceUrl
      */
-    createImageAsset(drawable, sourceUrl) {
+    createImageAsset(drawable: ImageBitmap, sourceUrl: string) {
         const naturalWidth = drawable.naturalWidth ?? drawable.videoWidth ?? drawable.width ?? 0;
         const naturalHeight =
             drawable.naturalHeight ?? drawable.videoHeight ?? drawable.height ?? 0;
@@ -87,7 +102,7 @@ class PreLoader {
     /**
      * @param {string | URL | Request} url
      */
-    async fetchImageBlob(url) {
+    async fetchImageBlob(url: string | URL | Request) {
         const response = await fetch(url);
         if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
         return await response.blob();
@@ -97,7 +112,7 @@ class PreLoader {
      * @param {Blob} blob
      * @param {string} fallbackUrl
      */
-    async loadImageFromBlob(blob, fallbackUrl) {
+    async loadImageFromBlob(blob: Blob, fallbackUrl: string) {
         const urlFacade = this.getUrlFacade();
         if (!urlFacade) {
             if (fallbackUrl) return await this.loadImageElement(fallbackUrl);
@@ -114,7 +129,7 @@ class PreLoader {
     /**
      * @param {string} url
      */
-    async loadImageAsset(url) {
+    async loadImageAsset(url: string) {
         if (!url) throw new Error("Image URL must be provided");
 
         if (!this.supportsImageBitmap && !this.getUrlFacade()) {
@@ -140,7 +155,7 @@ class PreLoader {
     /**
      * @param {string | URL | Request} url
      */
-    async loadJson(url) {
+    async loadJson(url: string | URL | Request) {
         const res = await fetch(url);
         if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
         const text = await res.text();
@@ -184,7 +199,7 @@ class PreLoader {
     /**
      * @param {string} gameBaseUrl
      */
-    collectImageResources(gameBaseUrl) {
+    collectImageResources(gameBaseUrl: string) {
         const resources = [];
         let menuResourceCount = 0;
         const add = (url, tag, resId = null) => {
@@ -311,7 +326,7 @@ class PreLoader {
     /**
      * @param {(() => void) | null} onComplete
      */
-    run(onComplete) {
+    run(onComplete: (() => void) | null) {
         this.completeCallback = onComplete;
         this.checkMenuLoadComplete();
     }
@@ -331,7 +346,7 @@ class PreLoader {
             this.totalResources =
                 trackedResourceCount + SoundLoader.getSoundCount() + JsonLoader.getJsonFileCount();
 
-            SoundLoader.onProgress((/** @type {number} */ completed) => {
+            SoundLoader.onProgress((/** @type {number} */ completed: number) => {
                 this.loadedSounds = completed;
                 this.updateProgress();
             });

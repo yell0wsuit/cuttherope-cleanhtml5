@@ -5,11 +5,11 @@ import ResourceId from "@/resources/ResourceId";
 import SoundMgr from "@/game/CTRSoundMgr";
 import resolution from "@/resolution";
 
-/**
- * @typedef {import("@/types/game-scene").GameScene} GameScene
- * @typedef {import("@/visual/BaseElement").default} BaseElement
- * @typedef {import("@/core/Vector").default} Vector
- */
+type GameScene = import("@/types/game-scene").GameScene;
+
+type BaseElement = import("@/visual/BaseElement").default;
+
+type Vector = import("@/core/Vector").default;
 
 /**
  * @param {GameScene} scene
@@ -18,7 +18,13 @@ import resolution from "@/resolution";
  * @param {Vector} v2
  * @param {boolean} immediate
  */
-function cut(scene, razor, v1, v2, immediate) {
+function cut(
+    scene: GameScene,
+    razor: BaseElement | null,
+    v1: Vector,
+    v2: Vector,
+    immediate: boolean
+) {
     let cutCount = 0;
     for (let l = 0, len = scene.bungees.length; l < len; l++) {
         const g = scene.bungees[l];
@@ -37,30 +43,10 @@ function cut(scene, razor, v1, v2, immediate) {
 
             if (razor) {
                 if (p1.prevPos.x !== Constants.INT_MAX) {
-                    const minX = MathHelper.minOf4(
-                        p1.pos.x,
-                        p1.prevPos.x,
-                        p2.pos.x,
-                        p2.prevPos.x
-                    );
-                    const minY = MathHelper.minOf4(
-                        p1.pos.y,
-                        p1.prevPos.y,
-                        p2.pos.y,
-                        p2.prevPos.y
-                    );
-                    const maxX = MathHelper.maxOf4(
-                        p1.pos.x,
-                        p1.prevPos.x,
-                        p2.pos.x,
-                        p2.prevPos.x
-                    );
-                    const maxY = MathHelper.maxOf4(
-                        p1.pos.y,
-                        p1.prevPos.y,
-                        p2.pos.y,
-                        p2.prevPos.y
-                    );
+                    const minX = MathHelper.minOf4(p1.pos.x, p1.prevPos.x, p2.pos.x, p2.prevPos.x);
+                    const minY = MathHelper.minOf4(p1.pos.y, p1.prevPos.y, p2.pos.y, p2.prevPos.y);
+                    const maxX = MathHelper.maxOf4(p1.pos.x, p1.prevPos.x, p2.pos.x, p2.prevPos.x);
+                    const maxY = MathHelper.maxOf4(p1.pos.y, p1.prevPos.y, p2.pos.y, p2.prevPos.y);
 
                     cut = Rectangle.rectInRect(
                         minX,
@@ -129,7 +115,7 @@ class GameSceneCutDelegate {
     /**
      * @param {GameScene} scene
      */
-    constructor(scene) {
+    constructor(scene: GameScene) {
         /** @type {GameScene} */
         this.scene = scene;
     }
@@ -140,7 +126,7 @@ class GameSceneCutDelegate {
      * @param {Vector} v2
      * @param {boolean} immediate
      */
-    cut(razor, v1, v2, immediate) {
+    cut(razor: BaseElement | null, v1: Vector, v2: Vector, immediate: boolean) {
         return cut(this.scene, razor, v1, v2, immediate);
     }
 }

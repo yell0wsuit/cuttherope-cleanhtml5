@@ -85,6 +85,12 @@ class RotatedCircle extends BaseElement {
      * @type {boolean}
      */
     passColorToChilds;
+    anchor: number;
+    x: any;
+    y: any;
+    rotation: number;
+    handle1: Vector;
+    handle2: Vector;
 
     constructor() {
         super();

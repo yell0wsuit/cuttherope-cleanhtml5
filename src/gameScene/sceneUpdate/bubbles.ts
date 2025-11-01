@@ -4,13 +4,15 @@ import ResourceId from "@/resources/ResourceId";
 import SoundMgr from "@/game/CTRSoundMgr";
 import resolution from "@/resolution";
 
-/**
- * @typedef {import("@/types/game-scene").GameScene} GameScene
- * @typedef {import("@/game/Bubble").default} Bubble
- * @typedef {import("@/visual/AnimationPool").default} AnimationPool
- * @typedef {import("@/game/CTRGameObject").default} GameObject
- * @typedef {import("@/physics/ConstrainedPoint").default} ConstrainedPoint
- */
+type GameScene = import("@/types/game-scene").GameScene;
+
+type Bubble = import("@/game/Bubble").default;
+
+type AnimationPool = import("@/visual/AnimationPool").default;
+
+type GameObject = import("@/game/CTRGameObject").default;
+
+type ConstrainedPoint = import("@/physics/ConstrainedPoint").default;
 
 /**
  * @param {GameScene} scene
@@ -19,7 +21,13 @@ import resolution from "@/resolution";
  * @param {Bubble | null} candyBubble
  * @param {AnimationPool} candyBubbleAnimation
  */
-function isBubbleCapture(scene, b, candy, candyBubble, candyBubbleAnimation) {
+function isBubbleCapture(
+    scene: GameScene,
+    b: Bubble,
+    candy: GameObject,
+    candyBubble: Bubble | null,
+    candyBubbleAnimation: AnimationPool
+) {
     const bubbleSize = resolution.BUBBLE_SIZE;
     const bubbleSizeDouble = bubbleSize * 2;
 
@@ -54,7 +62,7 @@ function isBubbleCapture(scene, b, candy, candyBubble, candyBubbleAnimation) {
  * @param {GameScene} scene
  * @param {boolean} isLeft
  */
-function popCandyBubble(scene, isLeft) {
+function popCandyBubble(scene: GameScene, isLeft: boolean) {
     if (scene.twoParts !== GameSceneConstants.PartsType.NONE) {
         if (isLeft) {
             /**
@@ -86,7 +94,7 @@ function popCandyBubble(scene, isLeft) {
  * @param {number} x
  * @param {number} y
  */
-function popBubble(scene, x, y) {
+function popBubble(scene: GameScene, x: number, y: number) {
     scene.detachCandy();
 
     SoundMgr.playSound(ResourceId.SND_BUBBLE_BREAK);
@@ -104,7 +112,7 @@ function popBubble(scene, x, y) {
  * @param {number} tx
  * @param {number} ty
  */
-function handleBubbleTouch(scene, s, tx, ty) {
+function handleBubbleTouch(scene: GameScene, s: ConstrainedPoint, tx: number, ty: number) {
     if (
         Rectangle.pointInRect(
             tx + scene.camera.pos.x,
@@ -129,7 +137,7 @@ class GameSceneBubblesDelegate {
     /**
      * @param {GameScene} scene
      */
-    constructor(scene) {
+    constructor(scene: GameScene) {
         /** @type {GameScene} */
         this.scene = scene;
     }
@@ -140,14 +148,19 @@ class GameSceneBubblesDelegate {
      * @param {Bubble | null} candyBubble
      * @param {AnimationPool} candyBubbleAnimation
      */
-    isBubbleCapture(b, candy, candyBubble, candyBubbleAnimation) {
+    isBubbleCapture(
+        b: Bubble,
+        candy: GameObject,
+        candyBubble: Bubble | null,
+        candyBubbleAnimation: AnimationPool
+    ) {
         return isBubbleCapture(this.scene, b, candy, candyBubble, candyBubbleAnimation);
     }
 
     /**
      * @param {boolean} isLeft
      */
-    popCandyBubble(isLeft) {
+    popCandyBubble(isLeft: boolean) {
         return popCandyBubble(this.scene, isLeft);
     }
 
@@ -155,7 +168,7 @@ class GameSceneBubblesDelegate {
      * @param {number} x
      * @param {number} y
      */
-    popBubble(x, y) {
+    popBubble(x: number, y: number) {
         return popBubble(this.scene, x, y);
     }
 
@@ -164,7 +177,7 @@ class GameSceneBubblesDelegate {
      * @param {number} tx
      * @param {number} ty
      */
-    handleBubbleTouch(s, tx, ty) {
+    handleBubbleTouch(s: ConstrainedPoint, tx: number, ty: number) {
         return handleBubbleTouch(this.scene, s, tx, ty);
     }
 }

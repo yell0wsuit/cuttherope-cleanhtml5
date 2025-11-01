@@ -5,16 +5,15 @@ import RGBAColor from "@/core/RGBAColor";
 import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 
-/**
- * @typedef {import("@/types/game-scene").GameScene} GameScene
- * @typedef {import("@/types/game-scene").FingerCutTrail} FingerCutTrail
- */
+type GameScene = import("@/types/game-scene").GameScene;
+
+type FingerCutTrail = import("@/types/game-scene").FingerCutTrail;
 
 /**
  * Draws every animated element that belongs to the game scene.
  * @param {GameScene} scene
  */
-const drawImpl = function drawImpl(scene) {
+const drawImpl = function drawImpl(scene: GameScene) {
     // reset any canvas transformations and clear everything
     const ctx = Canvas.context;
     if (!ctx) return;
@@ -176,7 +175,7 @@ const drawImpl = function drawImpl(scene) {
  * Renders the finger cut trails currently tracked by the scene.
  * @param {GameScene} scene
  */
-const drawCuts = function drawCuts(scene) {
+const drawCuts = function drawCuts(scene: GameScene) {
     const maxSize = resolution.CUT_MAX_SIZE;
     for (let i = 0; i < Constants.MAX_TOUCHES; i++) {
         const cuts = scene.fingerCuts[i];
@@ -184,7 +183,7 @@ const drawCuts = function drawCuts(scene) {
         if (count > 0) {
             let perpSize = 1;
             /** @type {FingerCutTrail[number] | null} */
-            let fc = null;
+            let fc: FingerCutTrail[number] | null = null;
             let pc = 0;
             const v = 0;
             const pts = [];
@@ -261,7 +260,7 @@ class GameSceneDrawDelegate {
     /**
      * @param {GameScene} scene
      */
-    constructor(scene) {
+    constructor(scene: GameScene) {
         /** @type {GameScene} */
         this.scene = scene;
     }

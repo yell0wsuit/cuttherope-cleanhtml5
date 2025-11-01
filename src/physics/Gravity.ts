@@ -10,7 +10,8 @@ class Gravity {
      * @const
      * @type {number}
      */
-    static EARTH_Y = GCONST;
+    static EARTH_Y: number = GCONST;
+    current: Vector;
 
     /**
      * Creates a new Gravity instance.
@@ -30,7 +31,7 @@ class Gravity {
      * Checks if gravity is zero.
      * @returns {boolean} True if both x and y components are zero.
      */
-    isZero() {
+    isZero(): boolean {
         return this.current.y === 0 && this.current.x === 0;
     }
 
@@ -38,7 +39,7 @@ class Gravity {
      * Checks if gravity is at normal Earth gravity.
      * @returns {boolean} True if gravity matches Earth's gravity pointing downward.
      */
-    isNormal() {
+    isNormal(): boolean {
         return this.current.y === Gravity.EARTH_Y && this.current.x === 0;
     }
 

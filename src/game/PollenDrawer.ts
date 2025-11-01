@@ -12,6 +12,18 @@ import Rectangle from "@/core/Rectangle";
 const IMG_OBJ_POLLEN_HD_obj_pollen = 0;
 
 class Pollen {
+    parentIndex: number;
+    x: number;
+    y: number;
+    scaleX: number;
+    startScaleX: number;
+    endScaleX: number;
+    scaleY: number;
+    startScaleY: number;
+    endScaleY: number;
+    alpha: number;
+    startAlpha: number;
+    endAlpha: number;
     constructor() {
         this.parentIndex = 0;
         this.x = 0;
@@ -32,6 +44,10 @@ class Pollen {
 }
 
 class PollenDrawer extends BaseElement {
+    qw: any;
+    qh: any;
+    drawer: ImageMultiDrawer;
+    pollens: never[];
     constructor() {
         super();
 
@@ -46,9 +62,9 @@ class PollenDrawer extends BaseElement {
         this.pollens = [];
     }
 
-    addPollen(v, pi) {
-        const size = [0.3, 0.3, 0.5, 0.5, 0.6],
-            sizeCounts = size.length;
+    addPollen(v: Vector, pi: number) {
+        const size = [0.3, 0.3, 0.5, 0.5, 0.6];
+        const sizeCounts = size.length;
         let sX = 1,
             sY = 1,
             rx = size[MathHelper.randomRange(0, sizeCounts - 1)],
@@ -90,7 +106,11 @@ class PollenDrawer extends BaseElement {
         this.pollens.push(pollen);
     }
 
-    fillWithPollenFromPath(fromIndex, toIndex, grab) {
+    fillWithPollenFromPath(
+        fromIndex: number,
+        toIndex: string | number,
+        grab: { mover: { path: { [x: string]: any } } }
+    ) {
         const MIN_DISTANCE = resolution.POLLEN_MIN_DISTANCE,
             v1 = grab.mover.path[fromIndex],
             v2 = grab.mover.path[toIndex],
@@ -110,7 +130,7 @@ class PollenDrawer extends BaseElement {
         }
     }
 
-    update(delta) {
+    override update(delta: number) {
         super.update(delta);
         this.drawer.update(delta);
 
@@ -160,7 +180,7 @@ class PollenDrawer extends BaseElement {
         }
     }
 
-    draw() {
+    override draw() {
         this.preDraw();
         this.drawer.draw();
         this.postDraw();

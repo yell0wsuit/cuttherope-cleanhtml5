@@ -3,13 +3,17 @@ import Rectangle from "@/core/Rectangle";
 import MathHelper from "@/utils/MathHelper";
 import ImageMultiDrawer from "@/visual/ImageMultiDrawer";
 import resolution from "@/resolution";
+import type Texture2D from "@/core/Texture2D";
 
 class MultiParticles extends Particles {
+    imageGrid: Texture2D;
+    drawer: ImageMultiDrawer;
+
     /**
      * @param {number} numParticles
      * @param {Texture2D} texture
      */
-    constructor(numParticles, texture) {
+    constructor(numParticles: number, texture: Texture2D) {
         super(numParticles);
 
         this.imageGrid = texture;
@@ -21,7 +25,7 @@ class MultiParticles extends Particles {
     /**
      * @param {Particle} particle
      */
-    initParticle(particle) {
+    override initParticle(particle: Particles) {
         const texture = this.imageGrid;
         const n = MathHelper.randomRange(0, texture.rects.length - 1);
         const tquad = texture.rects[n];
@@ -40,7 +44,7 @@ class MultiParticles extends Particles {
      * @param {number} index
      * @param {number} delta
      */
-    updateParticle(particle, index, delta) {
+    override updateParticle(particle: Particles, index: number, delta: number) {
         // update the current position
         this.drawer.vertices[index] = new Rectangle(
             particle.pos.x - particle.width / 2,
@@ -59,12 +63,12 @@ class MultiParticles extends Particles {
     /**
      * @param {number} index
      */
-    removeParticle(index) {
+    override removeParticle(index: number) {
         this.drawer.removeQuads(index);
         super.removeParticle(index);
     }
 
-    draw() {
+    override draw() {
         this.preDraw();
 
         /* for debugging rotation: draw a line from origin at 0 degrees

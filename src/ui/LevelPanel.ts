@@ -30,7 +30,7 @@ const backgroundId = edition.levelBackgroundId || "levelBackground";
 const LevelPanel = new Panel(PanelId.LEVELS, "levelPanel", backgroundId, true);
 
 // cache interface manager reference
-let im = null;
+let im: { gameFlow: { openLevel: (arg0: number) => void } } | null = null;
 
 LevelPanel.init = function (interfaceManager) {
     im = interfaceManager;
@@ -68,7 +68,11 @@ LevelPanel.init = function (interfaceManager) {
         curLeft = leftOffset,
         el;
 
-    const adLevel = function $addLevel(i, inc, extraPad) {
+    const adLevel = function $addLevel(
+        i: string | number | undefined,
+        inc: number,
+        extraPad: number | undefined
+    ) {
         if (!levelOptions) {
             return;
         }
@@ -141,7 +145,7 @@ PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, function (paid) {
 });*/
 
 // update level UI when boxes are updated (paid upgrade or roaming data change)
-PubSub.subscribe(PubSub.ChannelId.UpdateVisibleBoxes, function (visibleBoxes) {
+PubSub.subscribe(PubSub.ChannelId.UpdateVisibleBoxes, function (visibleBoxes: any) {
     updateLevelOptions();
 });
 
@@ -157,7 +161,7 @@ PubSub.subscribe(PubSub.ChannelId.UpdateVisibleBoxes, function (visibleBoxes) {
     return false;
 }*/
 
-function onLevelClick(event) {
+function onLevelClick(event: { currentTarget: { dataset: { level: string } } }) {
     const levelIndex = parseInt(event.currentTarget.dataset.level, 10);
     if (ScoreManager.isLevelUnlocked(BoxManager.currentBoxIndex, levelIndex)) {
         SoundMgr.selectRandomGameMusic();

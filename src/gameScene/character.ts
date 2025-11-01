@@ -2,6 +2,8 @@ import MathHelper from "@/utils/MathHelper";
 import * as GameSceneConstants from "@/gameScene/constants";
 import { IS_XMAS, IS_JANUARY } from "@/resources/ResData";
 import GameSceneLoaders from "./loaders";
+import type KeyFrame from "@/visual/KeyFrame";
+import type Timeline from "@/visual/Timeline";
 
 class GameSceneCharacter extends GameSceneLoaders {
     /**
@@ -9,7 +11,7 @@ class GameSceneCharacter extends GameSceneLoaders {
      * @param {KeyFrame} keyFrame
      * @param {number} index
      */
-    onIdleOmNomKeyFrame(timeline, keyFrame, index) {
+    override onIdleOmNomKeyFrame(timeline: Timeline, keyFrame: KeyFrame, index: number) {
         if (index === 1) {
             // om-nom blink
             this.blinkTimer--;
@@ -41,7 +43,7 @@ class GameSceneCharacter extends GameSceneLoaders {
      * @param {KeyFrame} keyFrame
      * @param {number} index
      */
-    onPaddingtonIdleKeyFrame(timeline, keyFrame, index) {
+    override onPaddingtonIdleKeyFrame(timeline: Timeline, keyFrame: KeyFrame, index: number) {
         if (!IS_JANUARY) {
             return;
         }
@@ -64,7 +66,7 @@ class GameSceneCharacter extends GameSceneLoaders {
         }
     }
 
-    playRegularIdleAfterPaddington() {
+    override playRegularIdleAfterPaddington() {
         if (this.target) {
             this.target.playTimeline(GameSceneConstants.CharAnimation.IDLE);
         }
@@ -74,7 +76,7 @@ class GameSceneCharacter extends GameSceneLoaders {
     /**
      * @param {Timeline} t
      */
-    onRotatedCircleTimelineFinished(t) {
+    onRotatedCircleTimelineFinished(t: Timeline) {
         const circleToRemove = t.element;
         circleToRemove.removeOnNextUpdate = true;
     }

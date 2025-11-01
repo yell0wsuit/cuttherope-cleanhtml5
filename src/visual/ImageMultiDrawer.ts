@@ -2,16 +2,28 @@ import BaseElement from "@/visual/BaseElement";
 import Canvas from "@/utils/Canvas";
 import Constants from "@/utils/Constants";
 import Rectangle from "@/core/Rectangle";
+import type Texture2D from "@/core/Texture2D";
 
 /**
  * Holds the information necessary to draw multiple quads from a
  * shared source image texture
  */
 class ImageMultiDrawer extends BaseElement {
+    texture: Texture2D;
+    numberOfQuadsToDraw: number;
+    texCoordinates: never[];
+    vertices: never[];
+    alphas: never[];
+    rotationAngles: boolean;
+    rotationPositions: any;
+    color: any;
+    drawX: number;
+    drawY: number;
+
     /**
      * @param {Texture2D} texture
      */
-    constructor(texture) {
+    constructor(texture: Texture2D) {
         super();
 
         this.texture = texture;
@@ -45,7 +57,12 @@ class ImageMultiDrawer extends BaseElement {
      * @param {Rectangle} vertexQuad
      * @param {number | null | undefined} [alpha]
      */
-    setTextureQuad(index, textureQuad, vertexQuad, alpha) {
+    setTextureQuad(
+        index: number,
+        textureQuad: Rectangle,
+        vertexQuad: Rectangle,
+        alpha: number | null | undefined
+    ) {
         this.texCoordinates[index] = textureQuad;
         this.vertices[index] = vertexQuad;
         this.alphas[index] = alpha != null ? alpha : 1;
@@ -54,7 +71,7 @@ class ImageMultiDrawer extends BaseElement {
     /**
      * @param {number} index
      */
-    removeQuads(index) {
+    removeQuads(index: number) {
         this.texCoordinates.splice(index, 1);
         this.vertices.splice(index, 1);
         this.alphas.splice(index, 1);
@@ -66,7 +83,7 @@ class ImageMultiDrawer extends BaseElement {
      * @param {number} dy
      * @param {number} index
      */
-    mapTextureQuad(quadIndex, dx, dy, index) {
+    mapTextureQuad(quadIndex: number, dx: number, dy: number, index: number) {
         this.texCoordinates[index] = Rectangle.copy(this.texture.rects[quadIndex]);
 
         const offset = this.texture.offsets[quadIndex];
@@ -78,7 +95,7 @@ class ImageMultiDrawer extends BaseElement {
     /**
      * @param {number} n
      */
-    drawNumberOfQuads(n) {
+    drawNumberOfQuads(n: number) {
         if (n > this.texCoordinates.length) {
             n = this.texCoordinates.length;
         }
@@ -184,7 +201,7 @@ class ImageMultiDrawer extends BaseElement {
         }
     }
 
-    draw() {
+    override draw() {
         this.preDraw();
 
         // only draw if the image is non-transparent

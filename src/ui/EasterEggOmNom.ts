@@ -1,11 +1,40 @@
 export const drawOmNom = (
-    ctx,
-    scaleX,
-    scaleY,
-    translateX,
-    translateY,
-    leftEyeOffset,
-    rightEyeOffset
+    ctx: {
+        save: () => void;
+        setTransform: (
+            arg0: number,
+            arg1: number,
+            arg2: number,
+            arg3: number,
+            arg4: number,
+            arg5: number
+        ) => void;
+        clearRect: (arg0: number, arg1: number, arg2: any, arg3: any) => void;
+        canvas: { width: any; height: any };
+        restore: () => void;
+        translate: (arg0: any, arg1: number) => void;
+        scale: (arg0: any, arg1: any) => void;
+        beginPath: () => void;
+        moveTo: (arg0: number, arg1: number) => void;
+        bezierCurveTo: (
+            arg0: number,
+            arg1: number,
+            arg2: number,
+            arg3: number,
+            arg4: number,
+            arg5: number
+        ) => void;
+        lineTo: (arg0: number, arg1: number) => void;
+        closePath: () => void;
+        fillStyle: string;
+        fill: () => void;
+    },
+    scaleX: number,
+    scaleY: number,
+    translateX: number,
+    translateY: number,
+    leftEyeOffset: number,
+    rightEyeOffset: number
 ) => {
     // clear the canvas
     ctx.save();

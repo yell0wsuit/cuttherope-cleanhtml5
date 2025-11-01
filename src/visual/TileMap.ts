@@ -5,6 +5,7 @@ import resolution from "@/resolution";
 import Constants from "@/utils/Constants";
 import MathHelper from "@/utils/MathHelper";
 import Vector from "@/core/Vector";
+import type Texture2D from "@/core/Texture2D";
 
 /**
  * An entry in the tile map
@@ -13,22 +14,52 @@ import Vector from "@/core/Vector";
  * @param {number} quadIndex
  */
 class TileEntry {
+    drawerIndex: number;
+    quad: number;
     /**
      * @param {number} drawerIndex
      * @param {number} quadIndex
      */
-    constructor(drawerIndex, quadIndex) {
+    constructor(drawerIndex: number, quadIndex: number) {
         this.drawerIndex = drawerIndex;
         this.quad = quadIndex;
     }
 }
 
 class TileMap extends BaseElement {
+    rows: number;
+    columns: number;
+    cameraViewWidth: number;
+    cameraViewHeight: number;
+    parallaxRatio: number;
+    drawers: ImageMultiDrawer[];
+    tiles: TileEntry[];
+    matrix: number[][];
+    repeatedVertically: number;
+    static RepeatType: {
+        NONE: 0;
+        ALL: 1;
+        EDGES: 2;
+    };
+    repeatedHorizontally: number;
+    horizontalRandom: boolean;
+    verticalRandom: boolean;
+    restoreTileTransparency: boolean;
+    randomSeed: number;
+    tileWidth: number;
+    tileHeight: number;
+    tileMapWidth: number;
+    tileMapHeight: number;
+    maxColsOnScreen: number;
+    maxRowsOnScreen: number;
+    x?: number;
+    y?: number;
+
     /**
      * @param {number} rows
      * @param {number} columns
      */
-    constructor(rows, columns) {
+    constructor(rows: number, columns: number) {
         super();
 
         this.rows = rows;
@@ -57,7 +88,7 @@ class TileMap extends BaseElement {
             /**
              * @type {number[]}
              */
-            const column = (this.matrix[i] = []);
+            const column: number[] = (this.matrix[i] = []);
             for (let k = 0; k < rows; k++) {
                 column[k] = Constants.UNDEFINED;
             }
@@ -82,7 +113,7 @@ class TileMap extends BaseElement {
      * @param {Texture2D} texture
      * @param {number} quadIndex
      */
-    addTile(texture, quadIndex) {
+    addTile(texture: Texture2D, quadIndex: number) {
         if (quadIndex === Constants.UNDEFINED) {
             this.tileWidth = texture.imageWidth;
             this.tileHeight = texture.imageHeight;
@@ -136,7 +167,7 @@ class TileMap extends BaseElement {
      * @param {number} numCols
      * @param {number} tileIndex
      */
-    fill(startRow, startCol, numRows, numCols, tileIndex) {
+    fill(startRow: number, startCol: number, numRows: number, numCols: number, tileIndex: number) {
         for (let i = startCol, colEnd = startCol + numCols; i < colEnd; i++) {
             for (let k = startRow, rowEnd = startRow + numRows; k < rowEnd; k++) {
                 this.matrix[i][k] = tileIndex;
@@ -147,14 +178,14 @@ class TileMap extends BaseElement {
     /**
      * @param {number} ratio
      */
-    setParallaxRation(ratio) {
+    setParallaxRation(ratio: number) {
         this.parallaxRatio = ratio;
     }
 
     /**
      * @param repeatType {TileMap.RepeatType}
      */
-    setRepeatHorizontally(repeatType) {
+    setRepeatHorizontally(repeatType: TileMap.RepeatType) {
         this.repeatedHorizontally = repeatType;
         this.updateVars();
     }
@@ -162,7 +193,7 @@ class TileMap extends BaseElement {
     /**
      * @param {number} repeatType
      */
-    setRepeatVertically(repeatType) {
+    setRepeatVertically(repeatType: number) {
         this.repeatedVertically = repeatType;
         this.updateVars();
     }
@@ -171,7 +202,7 @@ class TileMap extends BaseElement {
      * Updates the tile map based on the current camera position
      * @param {Vector} pos
      */
-    updateWithCameraPos(pos) {
+    updateWithCameraPos(pos: Vector) {
         const mx = Math.round(pos.x / this.parallaxRatio);
         const my = Math.round(pos.y / this.parallaxRatio);
         let tileMapStartX = this.x;
@@ -323,7 +354,7 @@ class TileMap extends BaseElement {
                 /**
                  * @type {number}
                  */
-                const tile = this.matrix[ri][rj];
+                const tile: number = this.matrix[ri][rj];
                 if (tile >= 0) {
                     const entry = this.tiles[tile],
                         drawer = this.drawers[entry.drawerIndex],

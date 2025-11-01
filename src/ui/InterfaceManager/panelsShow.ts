@@ -13,6 +13,7 @@ import Text from "@/visual/Text";
 import PubSub from "@/utils/PubSub";
 import { MENU_MUSIC_ID } from "@/ui/InterfaceManager/constants";
 import { hide, append, empty } from "@/utils/domHelpers";
+import type InterfaceManager from "../InterfaceManagerClass";
 
 const congratsElement = document.getElementById("congrats");
 
@@ -23,7 +24,7 @@ export default class PanelShowHandler {
     /**
      * @param {import("@/ui/InterfaceManagerClass").default} manager
      */
-    constructor(manager) {
+    constructor(manager: InterfaceManager) {
         this.manager = manager;
     }
 
@@ -31,7 +32,7 @@ export default class PanelShowHandler {
      * Handles showing a panel
      * @param {number} panelId - The ID of the panel to show
      */
-    onShowPanel(panelId) {
+    onShowPanel(panelId: number) {
         const panel = panelManager.getPanelById(panelId);
 
         switch (panelId) {

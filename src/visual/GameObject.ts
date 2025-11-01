@@ -7,8 +7,29 @@ import Vector from "@/core/Vector";
 import Radians from "@/utils/Radians";
 import Canvas from "@/utils/Canvas";
 import RGBAcolor from "@/core/RGBAColor";
+import Texture2D from "@/core/Texture2D";
 
 class GameObject extends Animation {
+    override isDrawBB: boolean;
+    bb: Rectangle;
+    override width: number;
+    override height: number;
+    rbb: Quad2D;
+    override anchor: number;
+    rotatedBB: boolean;
+    topLeftCalculated: boolean;
+    texture: any;
+    override rotation: number;
+    override x: number;
+    override y: number;
+    mover: Mover;
+    drawPosIncrement: number;
+    override rotationCenterX: number;
+    override rotationCenterY: number;
+    override drawX: any;
+    override drawY: any;
+    bbOverride: Rectangle;
+
     constructor() {
         super();
         this.isDrawBB = false;
@@ -17,7 +38,7 @@ class GameObject extends Animation {
     /**
      * @param {Texture2D} texture
      */
-    initTexture(texture) {
+    override initTexture(texture: Texture2D) {
         super.initTexture(texture);
         this.bb = new Rectangle(0, 0, this.width, this.height);
         this.rbb = new Quad2D(this.bb.x, this.bb.y, this.bb.w, this.bb.h);
@@ -43,7 +64,7 @@ class GameObject extends Animation {
     /**
      * @param {{ angle: number; path: string; moveSpeed: number; rotateSpeed: number; }} item
      */
-    parseMover(item) {
+    parseMover(item: { angle: number; path: string; moveSpeed: number; rotateSpeed: number }) {
         this.rotation = item.angle || 0;
 
         const path = item.path;
@@ -65,7 +86,7 @@ class GameObject extends Animation {
     /**
      * @param {Mover} mover
      */
-    setMover(mover) {
+    setMover(mover: Mover) {
         this.mover = mover;
 
         // turn high precision coordinates on for moving objects
@@ -75,7 +96,7 @@ class GameObject extends Animation {
     /**
      * @param {number} delta
      */
-    update(delta) {
+    override update(delta: number) {
         super.update(delta);
 
         if (!this.topLeftCalculated) {
@@ -97,7 +118,7 @@ class GameObject extends Animation {
     /**
      * @param {number} angle
      */
-    rotateWithBB(angle) {
+    rotateWithBB(angle: number) {
         if (!this.rotatedBB) {
             this.rotatedBB = true;
         }
@@ -137,7 +158,7 @@ class GameObject extends Animation {
         }
     }
 
-    drawBB() {
+    override drawBB() {
         const ctx = Canvas.context;
         const drawX = this.drawX;
         const drawY = this.drawY;
@@ -171,7 +192,7 @@ class GameObject extends Animation {
      * @param {number} y
      * @return {boolean}
      */
-    pointInObject(x, y) {
+    pointInObject(x: number, y: number): boolean {
         const bb = this.bb;
 
         if (!bb) {
@@ -192,7 +213,7 @@ class GameObject extends Animation {
      * @param {number} r2y
      * @returns {boolean | undefined}
      */
-    rectInObject(r1x, r1y, r2x, r2y) {
+    rectInObject(r1x: number, r1y: number, r2x: number, r2y: number): boolean | undefined {
         if (!this.bb) {
             return;
         }
@@ -209,7 +230,7 @@ class GameObject extends Animation {
      * @param {GameObject} o2
      * @returns {boolean | undefined}
      */
-    static intersect(o1, o2) {
+    static intersect(o1: GameObject, o2: GameObject): boolean | undefined {
         if (!o1.bb || !o2.bb) {
             return;
         }

@@ -1,5 +1,8 @@
 import Constants from "@/utils/Constants";
 import PubSub from "@/utils/PubSub";
+import type CTRRootController from "@/game/CTRRootController";
+import type GameView from "@/game/GameView";
+import type GameController from "@/game/GameController";
 
 // COMMENTS from iOS sources:
 // controller philosophy
@@ -14,10 +17,30 @@ import PubSub from "@/utils/PubSub";
  * @constructor
  */
 class ViewController {
+    controllerState: any;
+    static StateType: {
+        INACTIVE: 0;
+        ACTIVE: 1;
+        PAUSED: 2;
+    };
+    views: GameView[];
+    children: GameController[];
+    activeViewID: number;
+    activeChildID: number;
+    pausedViewID: number;
+    parent: typeof CTRRootController;
+    lastTime: number;
+    delta: number;
+    frames: number;
+    accumDt: number;
+    frameRate: number;
+    frameBalance: number;
+    avgDelta: number;
+    pastDeltas: number[];
     /**
      * @param {CTRRootController} parent
      */
-    constructor(parent) {
+    constructor(parent: typeof CTRRootController) {
         /**
          * @type {number}
          */
@@ -171,7 +194,7 @@ class ViewController {
     /**
      * @param {number | undefined} [time]
      */
-    calculateTimeDelta(time) {
+    calculateTimeDelta(time: number | undefined) {
         if (time) {
             this.delta = this.lastTime !== Constants.UNDEFINED ? (time - this.lastTime) / 1000 : 0;
             this.lastTime = time;
@@ -189,7 +212,7 @@ class ViewController {
      * preserve power).
      * @param {number} delta
      */
-    clampDelta(delta) {
+    clampDelta(delta: number) {
         if (delta < 0.016) {
             // sometimes we'll get a bunch of frames batched together
             // but we don't want to go below the 60 fps delta
@@ -230,14 +253,14 @@ class ViewController {
      * @param {number} index
      */
 
-    addView(v, index) {
+    addView(v: GameView, index: number) {
         this.views[index] = v;
     }
 
     /**
      * @param {number} viewIndex
      */
-    deleteView(viewIndex) {
+    deleteView(viewIndex: number) {
         this.views[viewIndex] = null;
     }
 
@@ -253,7 +276,7 @@ class ViewController {
     /**
      * @param {number} index
      */
-    showView(index) {
+    showView(index: number) {
         if (this.activeViewID != Constants.UNDEFINED) {
             this.hideActiveView();
         }
@@ -270,7 +293,7 @@ class ViewController {
     /**
      * @param {number} index
      */
-    getView(index) {
+    getView(index: number) {
         return this.views[index];
     }
 
@@ -278,14 +301,14 @@ class ViewController {
      * @param {GameController} controller
      * @param {number} index
      */
-    addChildWithID(controller, index) {
+    addChildWithID(controller: GameController, index: number) {
         this.children[index] = controller;
     }
 
     /**
      * @param {number} index
      */
-    deleteChild(index) {
+    deleteChild(index: number) {
         this.children[index] = null;
         if (this.activeChildID === index) {
             this.activeChildID = Constants.UNDEFINED;
@@ -305,7 +328,7 @@ class ViewController {
     /**
      * @param {number} index
      */
-    activateChild(index) {
+    activateChild(index: number) {
         if (this.activeChildID !== Constants.UNDEFINED) {
             this.deactivateActiveChild();
         }
@@ -318,7 +341,7 @@ class ViewController {
     /**
      * @param {number} childType
      */
-    onChildDeactivated(childType) {
+    onChildDeactivated(childType: number) {
         this.unpause();
     }
 
@@ -329,7 +352,7 @@ class ViewController {
     /**
      * @param {number} index
      */
-    getChild(index) {
+    getChild(index: number) {
         return this.children[index];
     }
 
@@ -338,7 +361,7 @@ class ViewController {
      * @param {number} y
      * @return {boolean} true if event was handled
      */
-    mouseDown(x, y) {
+    mouseDown(x: number, y: number): boolean {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
@@ -350,7 +373,7 @@ class ViewController {
      * @param {number} y
      * @return {boolean} true if event was handled
      */
-    mouseUp(x, y) {
+    mouseUp(x: number, y: number): boolean {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
@@ -362,7 +385,7 @@ class ViewController {
      * @param {number} y
      * @return {boolean} true if event was handled
      */
-    mouseDragged(x, y) {
+    mouseDragged(x: number, y: number): boolean {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
@@ -374,7 +397,7 @@ class ViewController {
      * @param {number} y
      * @return {boolean} true if event was handled
      */
-    mouseMoved(x, y) {
+    mouseMoved(x: number, y: number): boolean {
         // only drag events are used
         return false;
     }
@@ -384,7 +407,7 @@ class ViewController {
      * @param {number} y
      * @return {boolean} true if event was handled
      */
-    doubleClick(x, y) {
+    doubleClick(x: number, y: number): boolean {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }

@@ -10,10 +10,10 @@ import edition from "@/config/editions/net-edition";
 import QueryStrings from "@/ui/QueryStrings";
 
 const TimePasswordPanel = new Panel(PanelId.PASSWORD, "codePanel", "levelBackground", false);
-let $message = null,
-    $codeText = null,
+let $message: HTMLElement | null = null,
+    $codeText: HTMLElement | null = null,
     $okButton = null,
-    $backButton = null;
+    $backButton: HTMLElement | null = null;
 
 TimePasswordPanel.isGameLocked = function () {
     if (!edition.enablePasswordPanel) {
@@ -38,7 +38,7 @@ function initialize() {
         $backButton.style.display = TimePasswordPanel.isGameLocked() ? "none" : "";
     }
 
-    function setMessageHtml(html) {
+    function setMessageHtml(html: string) {
         if (!$message) return;
 
         $message.innerHTML = html;
@@ -62,7 +62,7 @@ function initialize() {
         setTimeout(pulseWhileValidating, showValidatingMessage ? 600 : 250);
     }
 
-    function validationComplete(boxIndex, isValid) {
+    function validationComplete(boxIndex: number, isValid: boolean) {
         validating = false;
         if ($codeText) {
             $codeText.disabled = false;

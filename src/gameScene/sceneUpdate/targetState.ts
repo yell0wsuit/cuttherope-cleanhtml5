@@ -9,7 +9,7 @@ import ResourceId from "@/resources/ResourceId";
 /**
  * @param {number} delta
  */
-export function updateTargetState(delta) {
+export function updateTargetState(delta: number) {
     let targetVector;
     if (!this.noCandy) {
         const MOUTH_OPEN_RADIUS = resolution.MOUTH_OPEN_RADIUS;

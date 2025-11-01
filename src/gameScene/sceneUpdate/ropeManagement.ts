@@ -1,14 +1,11 @@
+import type GameScene from "@/GameScene";
 import Constants from "@/utils/Constants";
-
-/**
- * @typedef {import("@/types/game-scene").GameScene} GameScene
- */
 
 /**
  * @param {GameScene} scene
  * @param {boolean} left
  */
-function releaseAllRopes(scene, left) {
+function releaseAllRopes(scene: GameScene, left: boolean) {
     for (let l = 0, len = scene.bungees.length; l < len; l++) {
         const g = scene.bungees[l];
         const b = g.rope;
@@ -36,14 +33,14 @@ function releaseAllRopes(scene, left) {
 /**
  * @param {GameScene} scene
  */
-function attachCandy(scene) {
+function attachCandy(scene: GameScene) {
     scene.attachCount += 1;
 }
 
 /**
  * @param {GameScene} scene
  */
-function detachCandy(scene) {
+function detachCandy(scene: GameScene) {
     scene.attachCount -= 1;
     scene.juggleTimer = 0;
 }
@@ -52,7 +49,7 @@ class GameSceneRopeManagementDelegate {
     /**
      * @param {GameScene} scene
      */
-    constructor(scene) {
+    constructor(scene: GameScene) {
         /** @type {GameScene} */
         this.scene = scene;
     }
@@ -60,7 +57,7 @@ class GameSceneRopeManagementDelegate {
     /**
      * @param {boolean} left
      */
-    releaseAllRopes(left) {
+    releaseAllRopes(left: boolean) {
         return releaseAllRopes(this.scene, left);
     }
 

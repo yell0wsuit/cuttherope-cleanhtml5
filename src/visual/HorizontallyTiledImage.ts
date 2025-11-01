@@ -1,8 +1,14 @@
 import ImageElement from "@/visual/ImageElement";
 import Canvas from "@/utils/Canvas";
 import Alignment from "@/core/Alignment";
+import type Texture2D from "@/core/Texture2D";
 
 class HorizontallyTiledImage extends ImageElement {
+    tiles: number[] = [0, 0, 0];
+    offsets: number[] = [0, 0, 0];
+    align: number = Alignment.CENTER;
+    texture?: Texture2D;
+
     constructor() {
         super();
     }
@@ -11,7 +17,7 @@ class HorizontallyTiledImage extends ImageElement {
      * Set the texture for this image element
      * @param {Texture2D} texture
      */
-    initTexture(texture) {
+    override initTexture(texture: Texture2D) {
         super.initTexture(texture);
 
         /**
@@ -30,7 +36,7 @@ class HorizontallyTiledImage extends ImageElement {
      * @param {number} center
      * @param {number} right
      */
-    setTileHorizontally(left, center, right) {
+    setTileHorizontally(left: number, center: number, right: number) {
         if (!this.tiles || this.tiles.length === 0) {
             return;
         }
@@ -60,7 +66,7 @@ class HorizontallyTiledImage extends ImageElement {
         this.offsets[2] = ~~((this.height - h3) / 2.0);
     }
 
-    draw() {
+    override draw() {
         this.preDraw();
 
         if (!this.tiles || this.tiles.length === 0) {
@@ -155,7 +161,7 @@ class HorizontallyTiledImage extends ImageElement {
      * Draw the tile image to an offscreen canvas and return an Image
      * @return {HTMLImageElement | undefined}
      */
-    getImage() {
+    getImage(): HTMLImageElement | undefined {
         // save the existing canvas id and switch to the hidden canvas
         const existingCanvas = Canvas.element;
 

@@ -5,8 +5,46 @@ import Canvas from "@/utils/Canvas";
 import ActionType from "@/visual/ActionType";
 import Timeline from "@/visual/Timeline";
 import Radians from "@/utils/Radians";
+import type Action from "./Action";
 
 class BaseElement {
+    isInTouchZone(arg0: any, arg1: any, arg2: boolean) {
+        throw new Error("Method not implemented.");
+    }
+    parentAnchor: number;
+    width: number;
+    height: number;
+    parent: BaseElement | null;
+    visible: boolean;
+    touchable: boolean;
+    updateable: boolean;
+    name: string | null;
+    x: number;
+    y: number;
+    drawX: number;
+    drawY: number;
+    rotation: number;
+    rotationCenterX: number;
+    rotationCenterY: number;
+    scaleX: number;
+    scaleY: number;
+    color: RGBAColor;
+    translateX: number;
+    translateY: number;
+    anchor: number;
+    passTransformationsToChilds: boolean;
+    passColorToChilds: boolean;
+    passTouchEventsToAllChilds: boolean;
+    children: BaseElement[];
+    timelines: Timeline[];
+    currentTimelineIndex: number;
+    currentTimeline: number | null;
+    previousAlpha: number;
+    drawZeroDegreesLine: any;
+    isDrawBB?: boolean;
+    resId: any;
+    restoreCutTransparency?: boolean;
+
     constructor() {
         /** @type {BaseElement | null} */
         this.parent = null;
@@ -276,7 +314,7 @@ class BaseElement {
      * Updates timelines with the elapsed time
      * @param {number} delta
      */
-    update(delta) {
+    update(delta: number) {
         const children = this.children,
             numChildren = children.length;
         for (let i = 0; i < numChildren; i++) {
@@ -293,7 +331,7 @@ class BaseElement {
      * @param {string} name
      * @return {BaseElement | null}
      */
-    getChildWithName(name) {
+    getChildWithName(name: string): BaseElement | null {
         const children = this.children;
         const numChildren = children.length;
         for (let i = 0; i < numChildren; i++) {
@@ -338,7 +376,7 @@ class BaseElement {
      * @param {Action} a action data
      * @return {boolean} true if an action was handled
      */
-    handleAction(a) {
+    handleAction(a: Action): boolean {
         switch (a.actionName) {
             case ActionType.SET_VISIBLE:
                 this.visible = a.actionSubParam !== 0;
@@ -376,7 +414,7 @@ class BaseElement {
      * @param {BaseElement} child child to add
      * @return {number} index of added child
      */
-    addChild(child) {
+    addChild(child: BaseElement): number {
         this.children.push(child);
         child.parent = this;
         return this.children.length - 1;
@@ -386,7 +424,7 @@ class BaseElement {
      * @param {BaseElement} child
      * @param {number} index
      */
-    addChildWithID(child, index) {
+    addChildWithID(child: BaseElement, index: number) {
         this.children[index] = child;
         child.parent = this;
     }
@@ -394,7 +432,7 @@ class BaseElement {
     /**
      * @param {number} i index of the child to remove
      */
-    removeChildWithID(i) {
+    removeChildWithID(i: number) {
         const removed = this.children.splice(i, 1);
         if (removed.length > 0) {
             removed[0].parent = null;
@@ -408,7 +446,7 @@ class BaseElement {
     /**
      * @param {BaseElement} c child to remove
      */
-    removeChild(c) {
+    removeChild(c: BaseElement) {
         const children = this.children,
             numChildren = children.length;
         for (let i = 0; i < numChildren; i++) {
@@ -424,28 +462,28 @@ class BaseElement {
      * @param {number} i index of child
      * @return {BaseElement}
      */
-    getChild(i) {
+    getChild(i: number): BaseElement {
         return this.children[i];
     }
 
     /**
      * @return {number} number of children
      */
-    childCount() {
+    childCount(): number {
         return this.children.length;
     }
 
     /**
      * @return {Array.<BaseElement>} children
      */
-    getChildren() {
+    getChildren(): Array<BaseElement> {
         return this.children;
     }
 
     /**
      * @param {Timeline} timeline
      */
-    addTimeline(timeline) {
+    addTimeline(timeline: Timeline) {
         const index = this.timelines.length;
         this.addTimelineWithID(timeline, index);
         return index;
@@ -455,7 +493,7 @@ class BaseElement {
      * @param {Timeline} timeline
      * @param {number} index
      */
-    addTimelineWithID(timeline, index) {
+    addTimelineWithID(timeline: Timeline, index: number) {
         timeline.element = this;
         this.timelines[index] = timeline;
     }
@@ -463,7 +501,7 @@ class BaseElement {
     /**
      * @param {number} index
      */
-    removeTimeline(index) {
+    removeTimeline(index: number) {
         if (this.currentTimelineIndex === index) this.stopCurrentTimeline();
 
         if (index < this.timelines.length) {
@@ -474,7 +512,7 @@ class BaseElement {
     /**
      * @param {number} index
      */
-    playTimeline(index) {
+    playTimeline(index: number) {
         if (this.currentTimeline) {
             if (this.currentTimeline.state !== Timeline.StateType.STOPPED) {
                 this.currentTimeline.stop();
@@ -495,6 +533,12 @@ class BaseElement {
             this.currentTimeline.play();
         }
     }
+    initTextureWithId(timelineResource: any) {
+        throw new Error("Method not implemented.");
+    }
+    doRestoreCutTransparency() {
+        throw new Error("Method not implemented.");
+    }
 
     pauseCurrentTimeline() {
         if (this.currentTimeline) {
@@ -514,7 +558,7 @@ class BaseElement {
      * @param {number} index
      * @return {Timeline}
      */
-    getTimeline(index) {
+    getTimeline(index: number): Timeline {
         return this.timelines[index];
     }
 
@@ -523,7 +567,7 @@ class BaseElement {
      * @param {number} y
      * @return {boolean} true if event was handled
      */
-    onTouchDown(x, y) {
+    onTouchDown(x: number, y: number): boolean {
         let ret = false;
         const count = this.children.length;
         for (let i = count - 1; i >= 0; i--) {
@@ -545,7 +589,7 @@ class BaseElement {
      * @param {number} y
      * @return {boolean} true if event was handled
      */
-    onTouchUp(x, y) {
+    onTouchUp(x: number, y: number): boolean {
         let ret = false;
         const count = this.children.length;
         for (let i = count - 1; i >= 0; i--) {
@@ -567,7 +611,7 @@ class BaseElement {
      * @param {number} y
      * @return {boolean} true if event was handled
      */
-    onTouchMove(x, y) {
+    onTouchMove(x: number, y: number): boolean {
         let ret = false;
         const count = this.children.length;
         for (let i = count - 1; i >= 0; i--) {
@@ -589,7 +633,7 @@ class BaseElement {
      * @param {number} y
      * @return {boolean} true if event was handled
      */
-    onDoubleClick(x, y) {
+    onDoubleClick(x: number, y: number): boolean {
         let ret = false;
         const count = this.children.length;
         for (let i = count - 1; i >= 0; i--) {
@@ -609,7 +653,7 @@ class BaseElement {
     /**
      * @param {boolean} enabled
      */
-    setEnabled(enabled) {
+    setEnabled(enabled: boolean) {
         this.visible = enabled;
         this.touchable = enabled;
         this.updateable = enabled;
@@ -618,7 +662,7 @@ class BaseElement {
     /**
      * @return {boolean}
      */
-    isEnabled() {
+    isEnabled(): boolean {
         return this.visible && this.touchable && this.updateable;
     }
 

@@ -33,6 +33,7 @@ import {
     removeClass,
     stopAnimations,
 } from "@/utils/domHelpers";
+import type InterfaceManager from "../InterfaceManagerClass";
 
 /**
  * Base class for panel initialization
@@ -41,7 +42,7 @@ export default class PanelInitializer {
     /**
      * @param {import("@/ui/InterfaceManagerClass").default} manager
      */
-    constructor(manager) {
+    constructor(manager: InterfaceManager) {
         this.manager = manager;
     }
 
@@ -49,7 +50,7 @@ export default class PanelInitializer {
      * Initializes a panel
      * @param {number} panelId - The ID of the panel to initialize
      */
-    onInitializePanel(panelId) {
+    onInitializePanel(panelId: number) {
         const manager = this.manager;
         const { gameFlow } = manager;
         const panel = panelManager.getPanelById(panelId);
@@ -118,7 +119,7 @@ export default class PanelInitializer {
                 /**
                  * @type {ReturnType<typeof setTimeout> | null}
                  */
-                let resetTimer = null;
+                let resetTimer: ReturnType<typeof setTimeout> | null = null;
                 on("#resetYesBtn", PointerCapture.startEventName, () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     resetTimer = setTimeout(() => {
@@ -435,24 +436,26 @@ export default class PanelInitializer {
 
                 // change language
                 const updateLangOption = platform.updateLangSetting;
-                platform.setLangOptionClick((/** @type {number | null} */ langParam) => {
-                    SoundMgr.playSound(ResourceId.SND_TAP);
+                platform.setLangOptionClick(
+                    (/** @type {number | null} */ langParam: number | null) => {
+                        SoundMgr.playSound(ResourceId.SND_TAP);
 
-                    // if not specified we'll assume that we should advance to
-                    // the next language (so we cycle through as user clicks)
-                    let newLangId;
-                    if (langParam == null) {
-                        const currentIndex = edition.languages.indexOf(settings.getLangId());
-                        newLangId =
-                            edition.languages[(currentIndex + 1) % edition.languages.length];
-                    } else {
-                        newLangId = langParam;
+                        // if not specified we'll assume that we should advance to
+                        // the next language (so we cycle through as user clicks)
+                        let newLangId;
+                        if (langParam == null) {
+                            const currentIndex = edition.languages.indexOf(settings.getLangId());
+                            newLangId =
+                                edition.languages[(currentIndex + 1) % edition.languages.length];
+                        } else {
+                            newLangId = langParam;
+                        }
+                        settings.setLangId(newLangId);
+
+                        // send the notification that language has changed
+                        PubSub.publish(PubSub.ChannelId.LanguageChanged);
                     }
-                    settings.setLangId(newLangId);
-
-                    // send the notification that language has changed
-                    PubSub.publish(PubSub.ChannelId.LanguageChanged);
-                });
+                );
 
                 // click or drag to cut
                 const updateCutOption = platform.updateCutSetting;

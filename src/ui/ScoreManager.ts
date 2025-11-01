@@ -12,7 +12,7 @@ import BoxType from "@/ui/BoxType";
 import { IS_XMAS } from "@/resources/ResData";
 
 // Helper to add prefix for Holiday Gift box
-const getBoxPrefix = function (/** @type {number} */ box) {
+const getBoxPrefix = function (/** @type {number} */ box: number) {
     const boxType = edition.boxTypes?.[box];
     if (boxType === BoxType.HOLIDAY) {
         return "holidaygiftbox_";
@@ -38,7 +38,10 @@ if (XOR_VALUE == null) {
 }
 
 // helper functions to get/set score
-const getScoreKey = function (/** @type {number} */ box, /** @type {number} */ level) {
+const getScoreKey = function (
+    /** @type {number} */ box: number,
+    /** @type {number} */ level: number
+) {
     const val = (box * 1000 + level) ^ XOR_VALUE;
     const key = getBoxPrefix(box) + SCORE_PREFIX + val;
 
@@ -51,9 +54,9 @@ const getScoreKey = function (/** @type {number} */ box, /** @type {number} */ l
 };
 
 const setScore = function (
-    /** @type {number} */ box,
-    /** @type {number} */ level,
-    /** @type {number} */ points
+    /** @type {number} */ box: number,
+    /** @type {number} */ level: number,
+    /** @type {number} */ points: number
 ) {
     SettingStorage.set(
         getScoreKey(box, level),
@@ -64,7 +67,7 @@ const setScore = function (
     RoamSettings.setScore(box, level, points);
 };
 
-const getScore = function (/** @type {number} */ box, /** @type {number} */ level) {
+const getScore = function (/** @type {number} */ box: number, /** @type {number} */ level: number) {
     // fetch both roaming and local scores
     const roamScore = RoamSettings.getScore(box, level) || 0;
     const localKey = getScoreKey(box, level);
@@ -76,15 +79,18 @@ const getScore = function (/** @type {number} */ box, /** @type {number} */ leve
 
 // helper functions to get/set stars
 const STARS_UNKNOWN = -1; // needs to be a number but can't be null
-const getStarsKey = function (/** @type {number} */ box, /** @type {number} */ level) {
+const getStarsKey = function (
+    /** @type {number} */ box: number,
+    /** @type {number} */ level: number
+) {
     // NOTE: we intentionally swap multiplier from whats used for points
     const key = (level * 1000 + box) ^ XOR_VALUE;
     return getBoxPrefix(box) + STARS_PREFIX + key;
 };
 const setStars = function (
-    /** @type {number} */ box,
-    /** @type {number} */ level,
-    /** @type {number | null} */ stars
+    /** @type {number} */ box: number,
+    /** @type {number} */ level: number,
+    /** @type {number | null} */ stars: number | null
 ) {
     const localStars = stars == null ? STARS_UNKNOWN : stars;
     SettingStorage.set(
@@ -102,7 +108,7 @@ const setStars = function (
  * @param {number} level
  * @returns {number | null}
  */
-const getStars = function (box, level) {
+const getStars = function (box: number, level: number): number | null {
     const roamStars = RoamSettings.getStars(box, level);
     const localKey = getStarsKey(box, level);
     const localVal = SettingStorage.getIntOrDefault(localKey, null);
@@ -117,7 +123,10 @@ const getStars = function (box, level) {
     return Math.max(roamStars, localStars);
 };
 
-const resetLevel = function (/** @type {number} */ boxIndex, /** @type {number} */ levelIndex) {
+const resetLevel = function (
+    /** @type {number} */ boxIndex: number,
+    /** @type {number} */ levelIndex: number
+) {
     // first level gets 0 stars, otherwise null
     const stars = levelIndex === 0 ? 0 : null;
 
@@ -126,13 +135,22 @@ const resetLevel = function (/** @type {number} */ boxIndex, /** @type {number} 
 };
 
 class ScoreBox {
+    levelCount: number;
+    requiredStars: number;
+    scores: number[];
+    stars: (number | null)[];
     /**
      * @param {number} levelCount
      * @param {number} requiredStars
      * @param {number[]} scores
      * @param {(number | null)[]} stars
      */
-    constructor(levelCount, requiredStars, scores, stars) {
+    constructor(
+        levelCount: number,
+        requiredStars: number,
+        scores: number[],
+        stars: (number | null)[]
+    ) {
         this.levelCount = levelCount;
         this.requiredStars = requiredStars;
         this.scores = scores || [];
@@ -141,6 +159,8 @@ class ScoreBox {
 }
 
 class ScoreManager {
+    boxes: never[];
+    appReady: boolean;
     constructor() {
         /**
          * @type {ScoreBox[]}
@@ -163,7 +183,7 @@ class ScoreManager {
      * @param {number} boxIndex
      * @returns {ScoreBox}
      */
-    loadBox(boxIndex) {
+    loadBox(boxIndex: number): ScoreBox {
         // see if the box exists by checking for a level 1 star record
         const boxExists = getStars(boxIndex, 0) !== null;
         const levelCount = edition.boxes[boxIndex].levels.length;
@@ -221,7 +241,7 @@ class ScoreManager {
      * Retrieve the obfuscation value used for score persistence.
      * @returns {number}
      */
-    getXorValue() {
+    getXorValue(): number {
         return XOR_VALUE;
     }
 
@@ -234,7 +254,7 @@ class ScoreManager {
      * @param {number} boxIndex
      * @returns {number | null}
      */
-    levelCount(boxIndex) {
+    levelCount(boxIndex: number): number | null {
         const box = this.boxes[boxIndex];
         if (box != null) return box.levelCount;
         return null;
@@ -244,7 +264,7 @@ class ScoreManager {
      * @param {number} boxIndex
      * @returns {number}
      */
-    requiredStars(boxIndex) {
+    requiredStars(boxIndex: number): number {
         const box = this.boxes[boxIndex];
         if (box != null) return box.requiredStars;
         return 0;
@@ -254,7 +274,7 @@ class ScoreManager {
      * @param {number} boxIndex
      * @returns {number}
      */
-    achievedStars(boxIndex) {
+    achievedStars(boxIndex: number): number {
         const box = this.boxes[boxIndex];
         if (box != null) {
             let count = 0;
@@ -270,7 +290,7 @@ class ScoreManager {
     /**
      * @returns {number}
      */
-    totalStars() {
+    totalStars(): number {
         let total = 0;
         for (let i = 0; i < this.boxes.length; i++) {
             total += this.achievedStars(i);
@@ -282,7 +302,7 @@ class ScoreManager {
      * @param {number} boxIndex
      * @returns {number}
      */
-    possibleStarsForBox(boxIndex) {
+    possibleStarsForBox(boxIndex: number): number {
         const box = this.boxes[boxIndex];
         if (box != null) {
             return box.levelCount * 3;
@@ -294,7 +314,7 @@ class ScoreManager {
      * @param {number} boxIndex
      * @returns {boolean}
      */
-    isBoxLocked(boxIndex) {
+    isBoxLocked(boxIndex: number): boolean {
         if (QueryStrings.unlockAllBoxes) return false;
 
         const isHolidayBox = edition.boxTypes?.[boxIndex] === BoxType.HOLIDAY;
@@ -315,7 +335,7 @@ class ScoreManager {
      * @param {number} levelindex
      * @returns {boolean}
      */
-    isLevelUnlocked(boxIndex, levelindex) {
+    isLevelUnlocked(boxIndex: number, levelindex: number): boolean {
         const box = this.boxes[boxIndex];
         if (QueryStrings.unlockAllBoxes) return true;
         if (box != null) {
@@ -330,7 +350,7 @@ class ScoreManager {
      * @param {number} levelScore
      * @param {boolean} [overridePrevious]
      */
-    setScore(boxIndex, levelIndex, levelScore, overridePrevious) {
+    setScore(boxIndex: number, levelIndex: number, levelScore: number, overridePrevious: boolean) {
         const box = this.boxes[boxIndex];
         if (box != null) {
             if (overridePrevious) {
@@ -360,7 +380,7 @@ class ScoreManager {
      * @param {number} levelIndex
      * @returns {number | null}
      */
-    getScore(boxIndex, levelIndex) {
+    getScore(boxIndex: number, levelIndex: number): number | null {
         const box = this.boxes[boxIndex];
         if (box != null) return box.scores[levelIndex];
         return null;
@@ -372,7 +392,7 @@ class ScoreManager {
      * @param {number} score
      * @param {boolean} [overridePrevious]
      */
-    setStars(boxIndex, levelIndex, score, overridePrevious) {
+    setStars(boxIndex: number, levelIndex: number, score: number, overridePrevious: boolean) {
         const previousStars = this.totalStars();
         const box = this.boxes[boxIndex];
         if (box != null) {
@@ -397,7 +417,7 @@ class ScoreManager {
      * @param {number} levelIndex
      * @returns {number | null}
      */
-    getStars(boxIndex, levelIndex) {
+    getStars(boxIndex: number, levelIndex: number): number | null {
         const box = this.boxes[boxIndex];
         if (box != null) return box.stars[levelIndex];
         return null;

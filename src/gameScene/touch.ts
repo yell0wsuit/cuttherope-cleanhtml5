@@ -23,19 +23,36 @@ class GameSceneTouch extends GameSceneUpdate {
      * Number of ropes cut in quick succession (initialized in parent class)
      * @type {number}
      */
-    ropesCutAtOnce = 0;
+    ropesCutAtOnce: number = 0;
 
     /**
      * Timer for tracking concurrent rope cuts (initialized in parent class)
      * @type {number}
      */
-    ropesAtOnceTimer = 0;
+    ropesAtOnceTimer: number = 0;
+    ignoreTouches: any;
+    camera: any;
+    fastenCamera?: boolean;
+    overOmNom?: boolean;
+    gravityTouchDown?: number;
+    candyBubble: any;
+    candyBubbleL: any;
+    candyBubbleR: any;
+    dragging: any;
+    startPos: any;
+    prevStartPos: any;
+    clickToCut: any;
+    slastTouch: any;
+    fingerCuts: any;
+    freezeCamera?: boolean;
+    gravityNormal?: boolean;
+
     /**
      * @param {number} x
      * @param {number} y
      * @param {number} touchIndex
      */
-    touchDown(x, y, touchIndex) {
+    touchDown(x: number, y: number, touchIndex: number) {
         if (this.ignoreTouches) {
             if (this.camera.type === Camera2D.SpeedType.PIXELS) {
                 this.fastenCamera = true;
@@ -254,12 +271,24 @@ class GameSceneTouch extends GameSceneUpdate {
 
         return true;
     }
+    handleBubbleTouch(star: any, x: number, y: number) {
+        throw new Error("Method not implemented.");
+    }
+    getNearestBungeeGrabByBezierPoints(cutPos: Vector, cameraAdjustedX: any, cameraAdjustedY: any) {
+        throw new Error("Method not implemented.");
+    }
+    getNearestBungeeSegmentByConstraints(cutPos: Vector, grab: any) {
+        throw new Error("Method not implemented.");
+    }
+    cut(arg0: null, cutPos: Vector, cutPos1: Vector, arg3: boolean) {
+        throw new Error("Method not implemented.");
+    }
     /**
      * @param {number} x
      * @param {number} y
      * @param {number} touchIndex
      */
-    doubleClick(x, y, touchIndex) {
+    doubleClick(x: number, y: number, touchIndex: number) {
         if (this.ignoreTouches) {
             return true;
         }
@@ -271,7 +300,7 @@ class GameSceneTouch extends GameSceneUpdate {
      * @param {number} y
      * @param {number} touchIndex
      */
-    touchUp(x, y, touchIndex) {
+    touchUp(x: number, y: number, touchIndex: number) {
         if (this.ignoreTouches) {
             return true;
         }
@@ -352,7 +381,7 @@ class GameSceneTouch extends GameSceneUpdate {
      * @param {number} y
      * @param {number} touchIndex
      */
-    touchMove(x, y, touchIndex) {
+    touchMove(x: number, y: number, touchIndex: number) {
         if (this.ignoreTouches) {
             return true;
         }
@@ -559,7 +588,7 @@ class GameSceneTouch extends GameSceneUpdate {
      * @param {number} y
      * @param {number} touchIndex
      */
-    touchDragged(x, y, touchIndex) {
+    touchDragged(x: number, y: number, touchIndex: number) {
         if (touchIndex > Constants.MAX_TOUCHES) {
             return false;
         }
@@ -571,7 +600,7 @@ class GameSceneTouch extends GameSceneUpdate {
     /**
      * @param {number} n
      */
-    onButtonPressed(n) {
+    onButtonPressed(n: number) {
         Gravity.toggle();
         this.gravityNormal = Gravity.isNormal();
         SoundMgr.playSound(
@@ -590,7 +619,7 @@ class GameSceneTouch extends GameSceneUpdate {
     /**
      * @param {number} sid - The toggle ID to match against spikes
      */
-    rotateAllSpikesWithId(sid) {
+    rotateAllSpikesWithId(sid: number) {
         for (let i = 0, len = this.spikes.length; i < len; i++) {
             if (this.spikes[i].getToggled() === sid) {
                 this.spikes[i].rotateSpikes();

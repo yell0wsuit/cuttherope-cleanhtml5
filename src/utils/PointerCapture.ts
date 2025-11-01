@@ -1,12 +1,19 @@
 let singleTouch = false;
 
 class PointerCapture {
-    constructor(settings) {
+    constructor(settings: {
+        element: any;
+        onStart: any;
+        onMove: any;
+        onEnd: any;
+        onOut: any;
+        getZoom: any;
+    }) {
         this.el = settings.element;
         this.getZoom = settings.getZoom;
 
         // save references to the event handlers so they can be removed
-        this.startHandler = (event) => {
+        this.startHandler = (event: { changedTouches: { identifier: any }[] }) => {
             this.preventPanning(event);
 
             if (singleTouch === false) {
@@ -18,7 +25,7 @@ class PointerCapture {
             if (settings.onStart) return this.translatePosition(event, settings.onStart);
             else return false; // not handled
         };
-        this.moveHandler = (event) => {
+        this.moveHandler = (event: { changedTouches: { identifier: boolean }[] }) => {
             this.preventPanning(event);
 
             if (event.changedTouches && event.changedTouches[0].identifier !== singleTouch)
@@ -27,20 +34,20 @@ class PointerCapture {
             if (settings.onMove) return this.translatePosition(event, settings.onMove);
             else return false; // not handled
         };
-        this.endHandler = (event) => {
+        this.endHandler = (event: any) => {
             this.preventPanning(event);
             singleTouch = false;
 
             if (settings.onEnd) return this.translatePosition(event, settings.onEnd);
             else return false; // not handled
         };
-        this.outHandler = (event) => {
+        this.outHandler = (event: any) => {
             if (settings.onOut) return this.translatePosition(event, settings.onOut);
             else return false; // not handled
         };
     }
     // translates from page relative to element relative position
-    translatePosition(event, callback) {
+    translatePosition(event: Event | undefined, callback: (arg0: number, arg1: number) => any) {
         // get the mouse coordinate relative to the page
         // http://www.quirksmode.org/js/events_properties.html
         let posx = 0,
@@ -78,7 +85,7 @@ class PointerCapture {
         return callback(mouseX, mouseY);
     }
     // prevent touches from panning the page
-    preventPanning(event) {
+    preventPanning(event: { [x: string]: () => void; preventDefault: () => void }) {
         if (event["preventManipulation"]) {
             event["preventManipulation"]();
         } else {

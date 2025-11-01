@@ -24,7 +24,11 @@ class EasterEggManager {
     constructor() {
         const scaleTo = resolution.uiScaledNumber(2.2);
 
-        const animateElement = (element, keyframes, options = {}) => {
+        const animateElement = (
+            element: Element | null,
+            keyframes: { top: string; transform: string }[],
+            options = {}
+        ) => {
             if (!element) {
                 return Promise.resolve();
             }
@@ -32,7 +36,7 @@ class EasterEggManager {
             return animation.finished.catch(() => {});
         };
         const fadeElementCustom = (
-            element,
+            element: Element | null,
             { from = null, to = 1, duration = 200, delay = 0, display } = {}
         ) => {
             if (!element) {
@@ -64,13 +68,13 @@ class EasterEggManager {
                     }
                 });
         };
-        const toPx = (value) => `${value}px`;
+        const toPx = (value: number) => `${value}px`;
         const easings = {
             easeOutBack: "cubic-bezier(0.175, 0.885, 0.32, 1.275)",
             easeInExpo: "cubic-bezier(0.95, 0.05, 0.795, 0.035)",
         };
-        let dpicBaseClassName = null;
-        let gameBtnTrayDisplay = null;
+        let dpicBaseClassName: string | null = null;
+        let gameBtnTrayDisplay: string | null = null;
 
         this.domReady = () => {
             canvas.width = resolution.uiScaledNumber(1024);
@@ -144,7 +148,7 @@ class EasterEggManager {
         // ------------------------------------------------------------------------
         // show a drawing
         let drawingNum = null;
-        this.showDrawing = (drawingIndex) => {
+        this.showDrawing = (drawingIndex: number) => {
             drawingNum = drawingIndex + 1;
             RootController.pauseLevel();
 
@@ -290,7 +294,7 @@ class EasterEggManager {
         // mouse over for dev link
         let omNomShowing = false;
 
-        const showDevLinkOmNom = (onComplete) => {
+        const showDevLinkOmNom = (onComplete: { (): void; (): void }) => {
             const ctx = devCanvas.getContext("2d");
             const begin = Date.now();
             const sx = 0.1;

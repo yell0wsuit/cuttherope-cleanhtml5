@@ -9,6 +9,7 @@ import PubSub from "@/utils/PubSub";
 import edition from "@/config/editions/net-edition";
 
 class PanelManager {
+    onShowPanel: (panelId: any) => any;
     constructor() {
         // panel list
         this.panels = [

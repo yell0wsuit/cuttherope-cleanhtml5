@@ -9,12 +9,13 @@ import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 import * as GameSceneConstants from "@/gameScene/constants";
 
-/**
- * @typedef {import("@/types/game-scene").GameScene} GameScene
- * @typedef {import("@/visual/BaseElement").default} BaseElement
- * @typedef {import("@/physics/MaterialPoint").default} MaterialPoint
- * @typedef {import("@/game/CTRGameObject").default} GameObject
- */
+type GameScene = import("@/types/game-scene").GameScene;
+
+type BaseElement = import("@/visual/BaseElement").default;
+
+type MaterialPoint = import("@/physics/MaterialPoint").default;
+
+type GameObject = import("@/game/CTRGameObject").default;
 
 /**
  * @param {GameScene} scene
@@ -23,15 +24,16 @@ import * as GameSceneConstants from "@/gameScene/constants";
  * @param {GameObject} c
  * @param {number} delta
  */
-function handlePumpFlow(scene, p, s, c, delta) {
+function handlePumpFlow(
+    scene: GameScene,
+    p: BaseElement,
+    s: MaterialPoint,
+    c: GameObject,
+    delta: number
+) {
     const powerRadius = resolution.PUMP_POWER_RADIUS;
     if (
-        c.rectInObject(
-            p.x - powerRadius,
-            p.y - powerRadius,
-            p.x + powerRadius,
-            p.y + powerRadius
-        )
+        c.rectInObject(p.x - powerRadius, p.y - powerRadius, p.x + powerRadius, p.y + powerRadius)
     ) {
         const tn1 = new Vector(0, 0);
         const tn2 = new Vector(0, 0);
@@ -73,7 +75,7 @@ function handlePumpFlow(scene, p, s, c, delta) {
  * @param {BaseElement} pump
  * @param {number} delta
  */
-function operatePump(scene, pump, delta) {
+function operatePump(scene: GameScene, pump: BaseElement, delta: number) {
     pump.playTimeline(0);
     const soundId = MathHelper.randomRange(ResourceId.SND_PUMP_1, ResourceId.SND_PUMP_4);
     SoundMgr.playSound(soundId);
@@ -109,7 +111,7 @@ class GameScenePumpUtilsDelegate {
     /**
      * @param {GameScene} scene
      */
-    constructor(scene) {
+    constructor(scene: GameScene) {
         /** @type {GameScene} */
         this.scene = scene;
     }
@@ -120,7 +122,7 @@ class GameScenePumpUtilsDelegate {
      * @param {GameObject} candy
      * @param {number} delta
      */
-    handlePumpFlow(pump, star, candy, delta) {
+    handlePumpFlow(pump: BaseElement, star: MaterialPoint, candy: GameObject, delta: number) {
         return handlePumpFlow(this.scene, pump, star, candy, delta);
     }
 
@@ -128,7 +130,7 @@ class GameScenePumpUtilsDelegate {
      * @param {BaseElement} pump
      * @param {number} delta
      */
-    operatePump(pump, delta) {
+    operatePump(pump: BaseElement, delta: number) {
         return operatePump(this.scene, pump, delta);
     }
 }

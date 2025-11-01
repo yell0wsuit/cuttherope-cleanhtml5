@@ -1,8 +1,30 @@
 import TimelineTrack from "@/visual/TimelineTrack";
 import TrackType from "@/visual/TrackType";
 import Constants from "@/utils/Constants";
+import type KeyFrame from "./KeyFrame";
 
 class Timeline {
+    static LoopType: {
+        NO_LOOP: 0;
+        REPLAY: 1;
+        PING_PONG: 2;
+    };
+    time: number;
+    length: number;
+    loopsLimit: number;
+    state: number;
+    static StateType: {
+        STOPPED: 0;
+        PLAYING: 1;
+        PAUSED: 2;
+    };
+    loopType: number;
+    tracks: (TimelineTrack | undefined)[];
+    onFinished: ((t: Timeline) => void) | null;
+    onKeyFrame: ((t: Timeline, k: KeyFrame) => void) | null;
+    timelineDirReverse: boolean;
+    element: null;
+
     constructor() {
         this.time = 0;
         this.length = 0;
@@ -31,7 +53,7 @@ class Timeline {
     /**
      * @param {KeyFrame} keyFrame
      */
-    addKeyFrame(keyFrame) {
+    addKeyFrame(keyFrame: KeyFrame) {
         const track = this.tracks[keyFrame.trackType];
         const index = track == null ? 0 : track.keyFrames.length;
         this.setKeyFrame(keyFrame, index);
@@ -41,7 +63,7 @@ class Timeline {
      * @param {KeyFrame} keyFrame
      * @param {number} index
      */
-    setKeyFrame(keyFrame, index) {
+    setKeyFrame(keyFrame: KeyFrame, index: number) {
         let track = this.tracks[keyFrame.trackType];
         if (!track) {
             this.tracks[keyFrame.trackType] = track = new TimelineTrack(this, keyFrame.trackType);
@@ -52,7 +74,7 @@ class Timeline {
     /**
      * @param {number} index
      */
-    getTrack(index) {
+    getTrack(index: number) {
         return this.tracks[index];
     }
 
@@ -84,7 +106,7 @@ class Timeline {
      * @param {number} trackIndex
      * @param {number} keyFrame
      */
-    jumpToTrack(trackIndex, keyFrame) {
+    jumpToTrack(trackIndex: number, keyFrame: number) {
         if (this.state === Timeline.StateType.STOPPED) {
             this.state = Timeline.StateType.PAUSED;
         }
@@ -111,7 +133,7 @@ class Timeline {
     /**
      * @param {number} delta
      */
-    update(delta) {
+    update(delta: number) {
         if (this.state !== Timeline.StateType.PLAYING) return;
 
         if (!this.timelineDirReverse) this.time += delta;

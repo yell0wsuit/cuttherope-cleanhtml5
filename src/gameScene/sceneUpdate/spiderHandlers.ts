@@ -8,17 +8,14 @@ import Timeline from "@/visual/Timeline";
 import * as GameSceneConstants from "@/gameScene/constants";
 import resolution from "@/resolution";
 import Constants from "@/utils/Constants";
-
-/**
- * @typedef {import("@/types/game-scene").GameScene} GameScene
- * @typedef {import("@/game/Grab").default} Grab
- */
+import type Grab from "@/game/Grab";
+import type GameScene from "@/GameScene";
 
 /**
  * @param {GameScene} scene
  * @param {Grab} g
  */
-function spiderBusted(scene, g) {
+function spiderBusted(scene: GameScene, g: Grab) {
     SoundMgr.playSound(ResourceId.SND_SPIDER_FALL);
     g.hasSpider = false;
     const s = ImageElement.create(
@@ -32,12 +29,7 @@ function spiderBusted(scene, g) {
             KeyFrame.makePos(g.spider.x, g.spider.y, KeyFrame.TransitionType.EASE_OUT, 0)
         );
         tl.addKeyFrame(
-            KeyFrame.makePos(
-                g.spider.x,
-                g.spider.y + 50,
-                KeyFrame.TransitionType.EASE_OUT,
-                0.3
-            )
+            KeyFrame.makePos(g.spider.x, g.spider.y + 50, KeyFrame.TransitionType.EASE_OUT, 0.3)
         );
         tl.addKeyFrame(
             KeyFrame.makePos(
@@ -52,12 +44,7 @@ function spiderBusted(scene, g) {
             KeyFrame.makePos(g.spider.x, g.spider.y, KeyFrame.TransitionType.EASE_OUT, 0)
         );
         tl.addKeyFrame(
-            KeyFrame.makePos(
-                g.spider.x,
-                g.spider.y - 50,
-                KeyFrame.TransitionType.EASE_OUT,
-                0.3
-            )
+            KeyFrame.makePos(g.spider.x, g.spider.y - 50, KeyFrame.TransitionType.EASE_OUT, 0.3)
         );
         tl.addKeyFrame(
             KeyFrame.makePos(
@@ -89,7 +76,7 @@ function spiderBusted(scene, g) {
  * @param {GameScene} scene
  * @param {Grab} sg
  */
-function spiderWon(scene, sg) {
+function spiderWon(scene: GameScene, sg: Grab) {
     SoundMgr.playSound(ResourceId.SND_SPIDER_WIN);
 
     for (let i = 0, count = scene.bungees.length; i < count; i++) {
@@ -127,20 +114,10 @@ function spiderWon(scene, sg) {
     const tl = new Timeline();
     if (scene.gravityButton && !scene.gravityNormal) {
         tl.addKeyFrame(
-            KeyFrame.makePos(
-                sg.spider.x,
-                sg.spider.y - 10,
-                KeyFrame.TransitionType.EASE_OUT,
-                0
-            )
+            KeyFrame.makePos(sg.spider.x, sg.spider.y - 10, KeyFrame.TransitionType.EASE_OUT, 0)
         );
         tl.addKeyFrame(
-            KeyFrame.makePos(
-                sg.spider.x,
-                sg.spider.y + 70,
-                KeyFrame.TransitionType.EASE_OUT,
-                0.3
-            )
+            KeyFrame.makePos(sg.spider.x, sg.spider.y + 70, KeyFrame.TransitionType.EASE_OUT, 0.3)
         );
         tl.addKeyFrame(
             KeyFrame.makePos(
@@ -152,20 +129,10 @@ function spiderWon(scene, sg) {
         );
     } else {
         tl.addKeyFrame(
-            KeyFrame.makePos(
-                sg.spider.x,
-                sg.spider.y - 10,
-                KeyFrame.TransitionType.EASE_OUT,
-                0
-            )
+            KeyFrame.makePos(sg.spider.x, sg.spider.y - 10, KeyFrame.TransitionType.EASE_OUT, 0)
         );
         tl.addKeyFrame(
-            KeyFrame.makePos(
-                sg.spider.x,
-                sg.spider.y - 70,
-                KeyFrame.TransitionType.EASE_OUT,
-                0.3
-            )
+            KeyFrame.makePos(sg.spider.x, sg.spider.y - 70, KeyFrame.TransitionType.EASE_OUT, 0.3)
         );
         tl.addKeyFrame(
             KeyFrame.makePos(
@@ -197,7 +164,7 @@ class GameSceneSpiderHandlersDelegate {
     /**
      * @param {GameScene} scene
      */
-    constructor(scene) {
+    constructor(scene: GameScene) {
         /** @type {GameScene} */
         this.scene = scene;
     }
@@ -205,14 +172,14 @@ class GameSceneSpiderHandlersDelegate {
     /**
      * @param {Grab} grab
      */
-    spiderBusted(grab) {
+    spiderBusted(grab: Grab) {
         return spiderBusted(this.scene, grab);
     }
 
     /**
      * @param {Grab} grab
      */
-    spiderWon(grab) {
+    spiderWon(grab: Grab) {
         return spiderWon(this.scene, grab);
     }
 }

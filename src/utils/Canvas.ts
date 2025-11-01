@@ -7,24 +7,24 @@ class Canvas {
     /**
      * @type {HTMLCanvasElement | null}
      */
-    element = null;
+    element: HTMLCanvasElement | null = null;
 
     /**
      * @type {CanvasRenderingContext2D | null}
      */
-    context = null;
+    context: CanvasRenderingContext2D | null = null;
 
     /**
      * @type {HTMLElement | null}
      * @deprecated Use element instead
      */
-    id = null;
+    id: HTMLElement | null = null;
 
     /**
      * Initialize canvas from element ID
      * @param {string} elementId - The DOM element ID
      */
-    domReady(elementId) {
+    domReady(elementId: string) {
         const element = document.getElementById(elementId);
         if (element instanceof HTMLCanvasElement) {
             this.setTarget(element);
@@ -35,7 +35,7 @@ class Canvas {
      * Set the target canvas element
      * @param {HTMLCanvasElement} element - The canvas element
      */
-    setTarget(element) {
+    setTarget(element: HTMLCanvasElement) {
         this.id = element;
         this.element = element;
         const context = this.element.getContext("2d");
@@ -50,7 +50,7 @@ class Canvas {
      * Sets the fill and stroke styles using an RGBAColor
      * @param {RGBAColor} color - The color to set
      */
-    setStyleColor(color) {
+    setStyleColor(color: RGBAColor) {
         const rgba = color.rgbaStyle();
 
         if (!this.context) {
@@ -66,7 +66,7 @@ class Canvas {
      * Sets the fill and stroke styles using a raw style string
      * @param {string} style - The style string (e.g., 'rgba(255, 0, 0, 1)')
      */
-    setStyles(style) {
+    setStyles(style: string) {
         if (!this.context) {
             return;
         }
@@ -83,7 +83,7 @@ class Canvas {
      * @param {Array<{x: number, y: number}>} points - Array of points
      * @param {string} style - Fill style
      */
-    fillTriangleStrip(points, style) {
+    fillTriangleStrip(points: Array<{ x: number; y: number }>, style: string) {
         const ctx = this.context;
         let point = points[0];
         if (ctx) {

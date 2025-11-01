@@ -6,7 +6,7 @@ import MenuStringId from "@/resources/MenuStringId";
 import resolution from "@/resolution";
 import Alignment from "@/core/Alignment";
 // cache upgrade UI elements
-let $upgradePrompt, $upgradeButton;
+let $upgradePrompt: HTMLElement | null, $upgradeButton: HTMLElement | null;
 
 function initialize() {
     $upgradePrompt = document.getElementById("boxUpgradePrompt");
@@ -32,14 +32,14 @@ if (document.readyState === "loading") {
 }
 
 // Helper function for fade animations
-function fadeIn(element, duration = 400) {
+function fadeIn(element: { style: { opacity: string; display: string } }, duration = 400) {
     if (!element) return;
 
     element.style.opacity = "0";
     element.style.display = "";
 
-    let start = null;
-    function animate(timestamp) {
+    let start: number | null = null;
+    function animate(timestamp: number) {
         if (!start) start = timestamp;
         const progress = timestamp - start;
         const opacity = Math.min(progress / duration, 1);
@@ -53,13 +53,13 @@ function fadeIn(element, duration = 400) {
     requestAnimationFrame(animate);
 }
 
-function fadeOut(element, duration = 400) {
+function fadeOut(element: Element, duration = 400) {
     if (!element) return;
 
-    let start = null;
+    let start: number | null = null;
     const initialOpacity = parseFloat(window.getComputedStyle(element).opacity) || 1;
 
-    function animate(timestamp) {
+    function animate(timestamp: number) {
         if (!start) start = timestamp;
         const progress = timestamp - start;
         const opacity = Math.max(initialOpacity - progress / duration, 0);
@@ -93,7 +93,13 @@ PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
 });
 
 class PurchaseBox extends Box {
-    constructor(boxIndex, bgimg, reqstars, islocked, type) {
+    constructor(
+        boxIndex: number,
+        bgimg: string | null,
+        reqstars: number,
+        islocked: boolean,
+        type: string
+    ) {
         super(boxIndex, bgimg, reqstars, islocked, type);
         this.purchased = false;
         this.includeBoxNumberInTitle = false;

@@ -1,24 +1,23 @@
 import Vector from "@/core/Vector";
 import Rectangle from "@/core/Rectangle";
 
-/**
- * @typedef {Object} ResourceInfo
- * @property {number} [charOffset] - Character offset for font rendering
- * @property {number} [lineOffset] - Line offset for font rendering
- * @property {number} [spaceWidth] - Width of space character
- * @property {number} [preCutWidth] - Width before cutting
- * @property {number} [preCutHeight] - Height before cutting
- * @property {(number[] | Rectangle[])} [rects] - Flat array of rectangle coordinates or Rectangle array
- * @property {Rectangle[]} [originalRects] - Parsed rectangle objects
- * @property {number} [id] - Resource identifier
- * @property {number} [adjustmentMaxX] - Maximum X adjustment
- * @property {number} [adjustmentMaxY] - Maximum Y adjustment
- * @property {(number[] | Vector[])} [offsets] - Flat array of offset coordinates or Vector array
- * @property {Vector[]} [originalOffsets] - Parsed offset vectors
- * @property {Vector[]} [offsetAdjustments] - Offset adjustment vectors
- * @property {boolean} [skipOffsetAdjustment] - Whether to skip offset adjustment
- * @property {number} [resScale] - Resource-specific scale factor
- */
+interface ResourceInfo {
+    charOffset?: number;
+    lineOffset?: number;
+    spaceWidth?: number;
+    preCutWidth?: number;
+    preCutHeight?: number;
+    rects?: number[] | Rectangle[];
+    originalRects?: Rectangle[];
+    id?: number;
+    adjustmentMaxX?: number;
+    adjustmentMaxY?: number;
+    offsets?: number[] | Vector[];
+    originalOffsets?: Vector[];
+    offsetAdjustments?: Vector[];
+    skipOffsetAdjustment?: boolean;
+    resScale?: number;
+}
 
 /**
  * Scales a number and rounds to 4 decimal places of precision
@@ -26,7 +25,7 @@ import Rectangle from "@/core/Rectangle";
  * @param {number} scale - The scale factor
  * @returns {number} The scaled and rounded value
  */
-const scaleNumber = (value, scale) => {
+const scaleNumber = (value: number, scale: number): number => {
     return Math.round(value * scale * 10000) / 10000;
 };
 
@@ -39,7 +38,7 @@ class ResScaler {
      * @param {ResourceInfo[]} infos - Array of resource info objects
      * @param {number} canvasScale - The canvas scale factor
      */
-    scaleResourceInfos(infos, canvasScale) {
+    scaleResourceInfos(infos: ResourceInfo[], canvasScale: number) {
         // the canvas scale is ratio of the canvas target size compared
         // to the resolution the original assets were designed for. The
         // resource scale handles resources that were designed for a
@@ -59,7 +58,7 @@ class ResScaler {
      * @param {ResourceInfo} info - Resource info object to scale
      * @param {number} scale - Scale factor to apply
      */
-    scaleResourceInfo(info, scale) {
+    scaleResourceInfo(info: ResourceInfo, scale: number) {
         if (info.charOffset) {
             info.charOffset = scaleNumber(info.charOffset, scale);
         }
@@ -76,7 +75,7 @@ class ResScaler {
             info.preCutHeight = Math.ceil(scaleNumber(info.preCutHeight, scale));
         }
         if (info.rects && Array.isArray(info.rects) && typeof info.rects[0] === "number") {
-            info.originalRects = this.parseOriginalRects(/** @type {number[]} */ (info.rects));
+            info.originalRects = this.parseOriginalRects(/** @type {number[]} */ info.rects);
             const extra = false;
 
             info.rects = this.scaleRects(info.originalRects, scale, info.id);
@@ -84,9 +83,7 @@ class ResScaler {
         info.adjustmentMaxX = 0;
         info.adjustmentMaxX = 0;
         if (info.offsets && Array.isArray(info.offsets) && typeof info.offsets[0] === "number") {
-            info.originalOffsets = this.parseOriginalOffsets(
-                /** @type {number[]} */ (info.offsets)
-            );
+            info.originalOffsets = this.parseOriginalOffsets(/** @type {number[]} */ info.offsets);
             this.scaleOffsets(info, scale);
         }
     }
@@ -96,7 +93,7 @@ class ResScaler {
      * @param {number[]} rects - Flat array of rectangle coordinates
      * @returns {Rectangle[]} Array of Rectangle objects
      */
-    parseOriginalRects(rects) {
+    parseOriginalRects(rects: number[]): Rectangle[] {
         let i = 0;
         const len = rects.length,
             originalRects = [];
@@ -114,7 +111,7 @@ class ResScaler {
      * @param {number} [id] - Resource ID
      * @returns {Rectangle[]} Scaled and repositioned rectangles
      */
-    scaleRects(originalRects, scale, id) {
+    scaleRects(originalRects: Rectangle[], scale: number, id: number): Rectangle[] {
         const PADDING = 2; // Changed from 4 to 2 to match minified version
         const newRects = [];
         const numRects = originalRects.length;
@@ -168,7 +165,7 @@ class ResScaler {
      * @param {number[]} offsets - Flat array of offset coordinates
      * @returns {Vector[]} Array of Vector objects
      */
-    parseOriginalOffsets(offsets) {
+    parseOriginalOffsets(offsets: number[]): Vector[] {
         let i = 0;
         const len = offsets.length,
             originalOffsets = [];
@@ -184,7 +181,7 @@ class ResScaler {
      * @param {ResourceInfo} info - Resource info object with offsets
      * @param {number} scale - Scale factor to apply
      */
-    scaleOffsets(info, scale) {
+    scaleOffsets(info: ResourceInfo, scale: number) {
         // Previously we chopped the decimal portion of offsets and then
         // offset the image by that amount when scaling the sprite sheet.
         // That allows us to always have round offsets to avoid twitchy

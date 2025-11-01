@@ -3,7 +3,7 @@
  * @const
  * @type {number}
  */
-export const LEVEL1_ARROW_SPECIAL_ID = 2;
+export const LEVEL1_ARROW_SPECIAL_ID: number = 2;
 
 /**
  * @enum {number}
@@ -42,25 +42,25 @@ export const PartsType = {
  * @const
  * @type {number}
  */
-export const SCOMBO_TIMEOUT = 0.2;
+export const SCOMBO_TIMEOUT: number = 0.2;
 
 /**
  * @const
  * @type {number}
  */
-export const SCUT_SCORE = 10;
+export const SCUT_SCORE: number = 10;
 
 /**
  * @const
  * @type {number}
  */
-export const MAX_LOST_CANDIES = 3;
+export const MAX_LOST_CANDIES: number = 3;
 
 /**
  * @const
  * @type {number}
  */
-export const ROPE_CUT_AT_ONCE_TIMEOUT = 0.1;
+export const ROPE_CUT_AT_ONCE_TIMEOUT: number = 0.1;
 
 // Candy Juggler: keep candy without ropes or bubbles for 30 secs
 export const CANDY_JUGGLER_TIME = 30;
@@ -69,31 +69,31 @@ export const CANDY_JUGGLER_TIME = 30;
  * @const
  * @type {number}
  */
-export const BLINK_SKIP = 3;
+export const BLINK_SKIP: number = 3;
 
 /**
  * @const
  * @type {number}
  */
-export const MOUTH_OPEN_TIME = 1;
+export const MOUTH_OPEN_TIME: number = 1;
 
 /**
  * @const
  * @type {number}
  */
-export const PUMP_TIMEOUT = 0.05;
+export const PUMP_TIMEOUT: number = 0.05;
 
 /**
  * @const
  * @type {number}
  */
-export const SOCK_SPEED_K = 0.9;
+export const SOCK_SPEED_K: number = 0.9;
 
 /**
  * @const
  * @type {number}
  */
-export const SOCK_COLLISION_Y_OFFSET = 25;
+export const SOCK_COLLISION_Y_OFFSET: number = 25;
 
 /**
  * @enum {number}
@@ -145,24 +145,24 @@ export const CharAnimation = {
  * @const
  * @type {number}
  */
-export const HUD_STARS_COUNT = 3;
+export const HUD_STARS_COUNT: number = 3;
 
 /**
  * @const
  * @type {number}
  */
-export const HUD_CANDIES_COUNT = 3;
+export const HUD_CANDIES_COUNT: number = 3;
 
 /**
  * @const
  * @type {number}
  */
-export const IMG_BGR_01_bgr = 0;
+export const IMG_BGR_01_bgr: number = 0;
 /**
  * @const
  * @type {number}
  */
-export const IMG_BGR_01_P2_vert_transition = 0;
+export const IMG_BGR_01_P2_vert_transition: number = 0;
 export const IMG_BGR_02_vert_transition = 1;
 
 export const IMG_OBJ_CANDY_01_candy_bottom = 0;

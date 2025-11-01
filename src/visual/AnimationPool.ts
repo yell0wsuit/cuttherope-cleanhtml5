@@ -19,7 +19,7 @@ class AnimationPool extends BaseElement {
     /**
      * @param {number} delta
      */
-    update(delta) {
+    override update(delta: number) {
         // remove the children
         for (let i = 0, len = this.removeList.length; i < len; i++) {
             this.removeChild(this.removeList[i]);
@@ -33,7 +33,7 @@ class AnimationPool extends BaseElement {
     /**
      * @param {Timeline} timeline
      */
-    timelineFinished(timeline) {
+    timelineFinished(timeline: Timeline) {
         this.removeList.push(timeline.element);
     }
 
@@ -43,7 +43,7 @@ class AnimationPool extends BaseElement {
     timelineFinishedDelegate() {
         // save a reference to ourselves since we may be called in a
         // different context (typically by another class)
-        return (/** @type {Timeline} */ timeline) => {
+        return (/** @type {Timeline} */ timeline: Timeline) => {
             this.timelineFinished(timeline);
         };
     }
@@ -51,7 +51,7 @@ class AnimationPool extends BaseElement {
     /**
      * @param {Particles} particles
      */
-    particlesFinished(particles) {
+    particlesFinished(particles: Particles) {
         this.removeList.push(particles);
     }
 
@@ -61,7 +61,7 @@ class AnimationPool extends BaseElement {
     particlesFinishedDelegate() {
         // save a reference to ourselves since we may be called in a
         // different context (typically by another class)
-        return (/** @type {Particles} */ particles) => {
+        return (/** @type {Particles} */ particles: Particles) => {
             this.particlesFinished(particles);
         };
     }

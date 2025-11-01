@@ -20,24 +20,24 @@ import Alignment from "@/core/Alignment";
  */
 class Dialogs {
     /** @type {number} */
-    static FADE_DURATION_MS = 200;
+    static FADE_DURATION_MS: number = 200;
 
     /** @type {{popupOuter: string, popupInner: string, popupWindow: string}} */
-    static SELECTORS = {
+    static SELECTORS: { popupOuter: string; popupInner: string; popupWindow: string } = {
         popupOuter: ".popupOuterFrame",
         popupInner: ".popupInnerFrame",
         popupWindow: "#popupWindow",
     };
 
     /** @type {WeakMap<HTMLElement, AbortController>} */
-    static activeControllers = new WeakMap();
+    static activeControllers: WeakMap<HTMLElement, AbortController> = new WeakMap();
 
     /**
      * Cancels any ongoing fade animation on an element.
      * @param {HTMLElement} el
      * @param {number} [finalOpacity]
      */
-    static cancelAnimation(el, finalOpacity) {
+    static cancelAnimation(el: HTMLElement, finalOpacity: number) {
         const controller = Dialogs.activeControllers.get(el);
         if (controller) {
             controller.abort();
@@ -54,7 +54,15 @@ class Dialogs {
      * @param {{from?: number, to: number, duration: number, display?: string}} options
      * @returns {Promise<void>}
      */
-    static async fadeElement(el, { from, to, duration, display }) {
+    static async fadeElement(
+        el: HTMLElement,
+        {
+            from,
+            to,
+            duration,
+            display,
+        }: { from?: number; to: number; duration: number; display?: string }
+    ): Promise<void> {
         Dialogs.cancelAnimation(el);
         if (display !== undefined) el.style.display = display;
 
@@ -95,7 +103,7 @@ class Dialogs {
      * @param {string} contentId
      * @returns {Promise<void>}
      */
-    async showPopup(contentId) {
+    async showPopup(contentId: string): Promise<void> {
         RootController.pauseLevel();
 
         const popupWindow = document.querySelector(Dialogs.SELECTORS.popupWindow);
@@ -135,7 +143,7 @@ class Dialogs {
      * Closes the currently open popup with fade-out animation.
      * @returns {Promise<void>}
      */
-    async closePopup() {
+    async closePopup(): Promise<void> {
         SoundMgr.playSound(ResourceId.SND_TAP);
 
         const popupWindow = document.querySelector(Dialogs.SELECTORS.popupWindow);
@@ -201,7 +209,7 @@ class Dialogs {
      */
     initEventListeners() {
         /** @type {[string, () => void][]} */
-        const ids = [
+        const ids: [string, () => void][] = [
             // ["payImg", this.onPayClick.bind(this)],
             // ["payBtn", this.onPayClick.bind(this)],
             // ["payClose", this.closePopup.bind(this)],

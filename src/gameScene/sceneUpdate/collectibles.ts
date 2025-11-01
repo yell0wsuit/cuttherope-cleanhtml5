@@ -14,7 +14,7 @@ import ResourceId from "@/resources/ResourceId";
 /**
  * @param {number} delta
  */
-export function updateCollectibles(delta) {
+export function updateCollectibles(delta: number) {
     let moveResult;
     if (!this.noCandy) {
         this.candy.update(delta);

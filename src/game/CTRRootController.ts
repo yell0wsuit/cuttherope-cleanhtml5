@@ -18,7 +18,7 @@ class CTRRootController extends RootControllerBase {
     /**
      * @param {undefined} [parent]
      */
-    constructor(parent) {
+    constructor(parent: undefined) {
         super(parent);
     }
 
@@ -26,7 +26,7 @@ class CTRRootController extends RootControllerBase {
      * @param {number} pack
      * @param {number} level
      */
-    startLevel(pack, level) {
+    startLevel(pack: number, level: number) {
         LevelState.loadLevel(pack, level);
 
         // activate the root controller if necessary
@@ -91,7 +91,7 @@ class CTRRootController extends RootControllerBase {
     /**
      * @param {number} childType
      */
-    onChildDeactivated(childType) {
+    onChildDeactivated(childType: number) {
         super.onChildDeactivated(childType);
 
         if (childType == ChildController.GAME) {

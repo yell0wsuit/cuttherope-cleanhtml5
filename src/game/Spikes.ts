@@ -41,6 +41,11 @@ const SpikeAnimation = {
 };
 
 class Spikes extends CTRGameObject {
+    electro: boolean;
+    initialDelay: any;
+    onTime: any;
+    offTime: any;
+    electroTimer: number;
     /**
      * @param {number} px
      * @param {number} py

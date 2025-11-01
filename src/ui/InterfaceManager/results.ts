@@ -9,22 +9,19 @@ import VideoManager from "@/ui/VideoManager";
 import { removeClass, addClass, hide, empty, fadeOut, fadeIn, show } from "@/utils/domHelpers";
 import { IS_MSIE_BROWSER } from "@/ui/InterfaceManager/constants";
 import ConfettiManager from "@/ui/ConfettiManager";
+import type InterfaceManager from "../InterfaceManagerClass";
 
 // result elements
-const valdiv = /** @type {HTMLCanvasElement | null} */ (
-    document.getElementById("resultTickerValue")
-);
-const lbldiv = /** @type {HTMLCanvasElement | null} */ (
-    document.getElementById("resultTickerLabel")
-);
+const valdiv = /** @type {HTMLCanvasElement | null} */ document.getElementById("resultTickerValue");
+const lbldiv = /** @type {HTMLCanvasElement | null} */ document.getElementById("resultTickerLabel");
 /** @type {HTMLElement | null} */
-const resdiv = document.getElementById("resultScore");
+const resdiv: HTMLElement | null = document.getElementById("resultScore");
 /** @type {HTMLElement | null} */
-const stamp = document.getElementById("resultImproved");
+const stamp: HTMLElement | null = document.getElementById("resultImproved");
 /** @type {HTMLElement | null} */
-const msgdiv = document.getElementById("resultTickerMessage");
+const msgdiv: HTMLElement | null = document.getElementById("resultTickerMessage");
 /** @type {HTMLElement | null} */
-const levelPanel = document.getElementById("levelPanel");
+const levelPanel: HTMLElement | null = document.getElementById("levelPanel");
 
 /**
  * Base class for handling level results
@@ -33,7 +30,7 @@ export default class ResultsHandler {
     /**
      * @param {import("@/ui/InterfaceManagerClass").default} manager
      */
-    constructor(manager) {
+    constructor(manager: InterfaceManager) {
         this.manager = manager;
     }
 
@@ -41,7 +38,7 @@ export default class ResultsHandler {
      * Handles level won event
      * @param {{ stars: number; score: number; time: number; fps: number; }} info - Level completion info
      */
-    onLevelWon(info) {
+    onLevelWon(info: { stars: number; score: number; time: number; fps: number }) {
         const stars = info.stars;
         const score = info.score;
         const levelTime = info.time;
@@ -108,15 +105,15 @@ export default class ResultsHandler {
 
         // Helper functions
 
-        const secondsToMin = (/** @type {number} */ sec) => {
+        const secondsToMin = (/** @type {number} */ sec: number) => {
             const minutes = (sec / 60) | 0;
             const seconds = Math.round(sec % 60);
             return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
         };
 
         const doStarCountdown = (
-            /** @type {number} */ from,
-            /** @type {(() => void) | null | undefined} */ callback
+            /** @type {number} */ from: number,
+            /** @type {(() => void) | null | undefined} */ callback: (() => void) | null | undefined
         ) => {
             let countDownPoints = from;
             const duration = 1000;
@@ -162,9 +159,9 @@ export default class ResultsHandler {
         };
 
         const doTimeCountdown = (
-            /** @type {number} */ fromsec,
-            /** @type {number} */ frompoints,
-            /** @type {(() => void) | null | undefined} */ callback
+            /** @type {number} */ fromsec: number,
+            /** @type {number} */ frompoints: number,
+            /** @type {(() => void) | null | undefined} */ callback: (() => void) | null | undefined
         ) => {
             const finalPoints = currentPoints + frompoints;
             let countDownSecs = fromsec;
@@ -229,12 +226,12 @@ export default class ResultsHandler {
         if (resdiv) {
             resdiv
                 .querySelectorAll("img")
-                .forEach((/** @type {{ remove: () => void; }} */ node) => {
+                .forEach((/** @type {{ remove: () => void; }} */ node: { remove: () => void }) => {
                     node.remove();
                 });
             resdiv
                 .querySelectorAll("canvas")
-                .forEach((/** @type {{ remove: () => void; }} */ node) => {
+                .forEach((/** @type {{ remove: () => void; }} */ node: { remove: () => void }) => {
                     node.remove();
                 });
         }

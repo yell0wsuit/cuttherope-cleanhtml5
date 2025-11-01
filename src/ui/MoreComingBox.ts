@@ -8,21 +8,27 @@ class MoreComingBox extends Box {
      * @param {boolean} islocked
      * @param {string} type
      */
-    constructor(boxIndex, bgimg, reqstars, islocked, type) {
+    constructor(
+        boxIndex: number,
+        bgimg: string | null,
+        reqstars: number,
+        islocked: boolean,
+        type: string
+    ) {
         super(boxIndex, bgimg, reqstars, islocked, type);
         this.includeBoxNumberInTitle = false;
     }
 
-    isRequired() {
+    override isRequired() {
         // not a box required for game completion
         return false;
     }
 
-    isGameBox() {
+    override isGameBox() {
         return false;
     }
 
-    isClickable() {
+    override isClickable() {
         return false;
     }
 }

@@ -13,6 +13,12 @@ import { IS_XMAS } from "@/resources/ResData";
 const hatOrSock = IS_XMAS ? ResourceId.IMG_OBJ_SOCKS_XMAS : ResourceId.IMG_OBJ_SOCKS;
 
 class Sock extends CTRGameObject {
+    scaleX: number;
+    scaleY: number;
+    group: any;
+    static Quads: any;
+    state: any;
+    static StateType: any;
     constructor() {
         super();
 

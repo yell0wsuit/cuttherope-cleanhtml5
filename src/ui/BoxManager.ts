@@ -13,19 +13,19 @@ import { IS_XMAS } from "@/resources/ResData";
  */
 class BoxManager {
     /** @type {Box[]} */
-    static boxes = [];
+    static boxes: Box[] = [];
 
     /** @type {boolean} */
-    static isPaid = false;
+    static isPaid: boolean = false;
 
     /** @type {boolean} */
-    static appIsReady = false;
+    static appIsReady: boolean = false;
 
     /** @type {number} */
-    static currentBoxIndex = BoxManager.getDefaultBoxIndex();
+    static currentBoxIndex: number = BoxManager.getDefaultBoxIndex();
 
     /** @type {number} */
-    static currentLevelIndex = 1; // TODO: should be zero-based
+    static currentLevelIndex: number = 1; // TODO: should be zero-based
 
     // ---------------------------------------------------------------------
     // Initialization
@@ -36,7 +36,7 @@ class BoxManager {
      * Defaults to the Holiday Gift box (index 0) during Christmas season.
      * @returns {number}
      */
-    static getDefaultBoxIndex() {
+    static getDefaultBoxIndex(): number {
         return IS_XMAS ? 0 : 1;
     }
 
@@ -108,7 +108,7 @@ class BoxManager {
      */
     static updateVisibleBoxes() {
         /** @type {Box[]} */
-        const visibleBoxes = [];
+        const visibleBoxes: Box[] = [];
 
         for (let i = 0; i < this.boxes.length; i++) {
             const box = this.boxes[i];
@@ -127,7 +127,7 @@ class BoxManager {
      * Checks if the next level is playable (i.e., not locked or paid-only).
      * @returns {boolean}
      */
-    static isNextLevelPlayable() {
+    static isNextLevelPlayable(): boolean {
         const levelCount = ScoreManager.levelCount(this.currentBoxIndex);
 
         // If box is missing or current level is the last one
@@ -151,7 +151,7 @@ class BoxManager {
      * Returns the number of boxes required to win the game.
      * @returns {number}
      */
-    static requiredCount() {
+    static requiredCount(): number {
         return this.boxes.filter((box) => box.isRequired()).length;
     }
 
@@ -159,7 +159,7 @@ class BoxManager {
      * Returns total possible stars across all required boxes.
      * @returns {number}
      */
-    static possibleStars() {
+    static possibleStars(): number {
         return this.boxes.reduce((sum, box, i) => {
             return box.isRequired() ? sum + ScoreManager.possibleStarsForBox(i) : sum;
         }, 0);
@@ -169,7 +169,7 @@ class BoxManager {
      * Returns the count of visible and required game boxes.
      * @returns {number}
      */
-    static visibleGameBoxes() {
+    static visibleGameBoxes(): number {
         return this.boxes.filter((box) => box.isRequired() && box.purchased !== false).length;
     }
 
@@ -219,12 +219,15 @@ class BoxManager {
      * Initializes event subscriptions for box-related updates.
      */
     static initializeEventSubscriptions() {
-        PubSub.subscribe(PubSub.ChannelId.SelectedBoxChanged, (/** @type {number} */ boxIndex) => {
-            this.currentBoxIndex = boxIndex;
-            this.currentLevelIndex = 1;
-        });
+        PubSub.subscribe(
+            PubSub.ChannelId.SelectedBoxChanged,
+            (/** @type {number} */ boxIndex: number) => {
+                this.currentBoxIndex = boxIndex;
+                this.currentLevelIndex = 1;
+            }
+        );
 
-        PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, (/** @type {boolean} */ paid) => {
+        PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, (/** @type {boolean} */ paid: boolean) => {
             this.isPaid = paid;
         });
 

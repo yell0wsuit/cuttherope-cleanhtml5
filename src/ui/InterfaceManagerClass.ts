@@ -27,6 +27,26 @@ import { toggleClass } from "@/utils/domHelpers";
  */
 class InterfaceManager extends AudioOptions {
     gameFlow: any;
+    useHDVersion: any;
+    isInLevelSelectMode: boolean;
+    isInMenuSelectMode: boolean;
+    isInAdvanceBoxMode: boolean;
+    isBoxOpen: boolean;
+    isTransitionActive: boolean;
+    gameEnabled: boolean;
+    _MIN_FPS: number;
+    _signedIn: boolean;
+    _bounceTimeOut: null;
+    _transitionTimeout: null;
+    _resultTopLines: never[];
+    _resultBottomLines: never[];
+    _currentResultLine: number;
+    _resultTimeShiftIndex: number;
+    _isDevLinkVisible: boolean;
+    _setImageBigText: (selector: string, menuStringId: number) => void;
+    results: ResultsHandler;
+    panels: PanelInitializer;
+    panelShow: PanelShowHandler;
     constructor() {
         super();
 

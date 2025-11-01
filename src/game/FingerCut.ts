@@ -1,18 +1,21 @@
+import type RGBAColor from "@/core/RGBAColor";
+import type Vector from "@/core/Vector";
+
 class FingerCut {
     /** @type {Vector} */
-    start;
+    start: Vector;
 
     /** @type {Vector} */
-    end;
+    end: Vector;
 
     /** @type {number} */
-    startSize;
+    startSize: number;
 
     /** @type {number} */
-    endSize;
+    endSize: number;
 
     /** @type {RGBAColor} */
-    color;
+    color: RGBAColor;
 
     /**
      * @param {Vector} start
@@ -21,7 +24,7 @@ class FingerCut {
      * @param {number} endSize
      * @param {RGBAColor} color
      */
-    constructor(start, end, startSize, endSize, color) {
+    constructor(start: Vector, end: Vector, startSize: number, endSize: number, color: RGBAColor) {
         this.start = start;
         this.end = end;
         this.startSize = startSize;

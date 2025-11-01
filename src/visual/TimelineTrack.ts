@@ -1,6 +1,8 @@
 import KeyFrame from "@/visual/KeyFrame";
 import TrackType from "@/visual/TrackType";
 import Constants from "@/utils/Constants";
+import type Timeline from "./Timeline";
+import type Action from "./Action";
 
 /**
  * @enum {number}
@@ -11,11 +13,25 @@ const TrackState = {
 };
 
 class TimelineTrack {
+    type: number;
+    state: number;
+    relative: boolean;
+    startTime: number;
+    endTime: number;
+    keyFrames: KeyFrame[];
+    t: Timeline;
+    nextKeyFrame: number;
+    currentStepPerSecond: KeyFrame;
+    currentStepAcceleration: KeyFrame;
+    elementPrevState: KeyFrame;
+    keyFrameTimeLeft: number;
+    overrun: number;
+    actionSets: Action[][] | undefined;
     /**
      * @param {Timeline} timeline
      * @param {number} trackType
      */
-    constructor(timeline, trackType) {
+    constructor(timeline: Timeline, trackType: number) {
         /**
          * @type {number}
          */
@@ -92,7 +108,7 @@ class TimelineTrack {
     /**
      * @param {KeyFrame} keyFrame
      */
-    addKeyFrame(keyFrame) {
+    addKeyFrame(keyFrame: KeyFrame) {
         this.setKeyFrame(keyFrame, this.keyFrames.length);
     }
 
@@ -100,7 +116,7 @@ class TimelineTrack {
      * @param {KeyFrame} keyFrame
      * @param {number} index
      */
-    setKeyFrame(keyFrame, index) {
+    setKeyFrame(keyFrame: KeyFrame, index: number) {
         this.keyFrames[index] = keyFrame;
 
         if (this.type === TrackType.ACTION && this.actionSets) {
@@ -111,7 +127,7 @@ class TimelineTrack {
     /**
      * @param {number} frameIndex
      */
-    getFrameTime(frameIndex) {
+    getFrameTime(frameIndex: number) {
         let total = 0;
         for (let i = 0; i <= frameIndex; i++) {
             total += this.keyFrames[i].timeOffset;
@@ -127,7 +143,7 @@ class TimelineTrack {
     /**
      * @param {number} delta
      */
-    updateActionTrack(delta) {
+    updateActionTrack(delta: number) {
         if (this.state === TrackState.NOT_ACTIVE) {
             if (!this.t.timelineDirReverse) {
                 if (!(this.t.time - delta > this.endTime || this.t.time < this.startTime)) {
@@ -200,7 +216,7 @@ class TimelineTrack {
     /**
      * @param {number} delta
      */
-    updateNonActionTrack(delta) {
+    updateNonActionTrack(delta: number) {
         const t = this.t;
         let kf;
         if (this.state === TrackState.NOT_ACTIVE) {
@@ -297,8 +313,8 @@ class TimelineTrack {
                     break;
             }
         } else if (kf.transitionType === KeyFrame.TransitionType.LINEAR) {
-            const elem = t.element,
-                spsValue = this.currentStepPerSecond.value;
+            const elem = t.element;
+            const spsValue = this.currentStepPerSecond.value;
             switch (this.type) {
                 case TrackType.POSITION:
                     elem.x += spsValue.pos.x * delta;
@@ -357,7 +373,7 @@ class TimelineTrack {
      * @param {KeyFrame} kf
      * @param {number} time
      */
-    initActionKeyFrame(kf, time) {
+    initActionKeyFrame(kf: KeyFrame, time: number) {
         this.keyFrameTimeLeft = time;
         this.setElementFromKeyFrame(kf);
 
@@ -370,7 +386,7 @@ class TimelineTrack {
     /**
      * @param {KeyFrame} kf
      */
-    setElementFromKeyFrame(kf) {
+    setElementFromKeyFrame(kf: KeyFrame) {
         switch (this.type) {
             case TrackType.POSITION: {
                 const elem = this.t.element,
@@ -434,7 +450,7 @@ class TimelineTrack {
     /**
      * @param {KeyFrame} kf
      */
-    setKeyFrameFromElement(kf) {
+    setKeyFrameFromElement(kf: KeyFrame) {
         const kfValue = kf.value,
             elem = this.t.element;
         switch (this.type) {
@@ -462,7 +478,7 @@ class TimelineTrack {
      * @param {KeyFrame} dst
      * @param {number} time
      */
-    initKeyFrameStepFrom(src, dst, time) {
+    initKeyFrameStepFrom(src: KeyFrame, dst: KeyFrame, time: number) {
         this.keyFrameTimeLeft = time;
 
         this.setKeyFrameFromElement(this.elementPrevState);

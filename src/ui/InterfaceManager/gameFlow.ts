@@ -17,26 +17,23 @@ import SnowfallOverlay from "@/ui/SnowfallOverlay";
 import { IS_XMAS } from "@/resources/ResData";
 import { MENU_MUSIC_ID, startSnow, stopSnow } from "@/ui/InterfaceManager/constants";
 import { fadeIn, fadeOut, delay, show, hide, text, width } from "@/utils/domHelpers";
+import InterfaceManager from "../InterfaceManagerClass";
 
 const levelResults = document.getElementById("levelResults");
 const levelMenu = document.getElementById("levelMenu");
 
-/**
- * @typedef {Object} LevelWonInfo
- * @property {number} stars - Number of stars earned (0-3)
- * @property {number} time - Time taken to complete the level in seconds
- * @property {number} score - Final score for the level
- * @property {number} fps - Average frames per second during gameplay
- */
+interface LevelWonInfo {
+    stars: number;
+    time: number;
+    score: number;
+    fps: number;
+}
 
 /**
  * Base class for game flow management
  */
 export default class GameFlow {
-    /**
-     * @param {import("@/ui/InterfaceManagerClass").default} manager
-     */
-    constructor(manager) {
+    constructor(manager: InterfaceManager) {
         this.manager = manager;
     }
 
@@ -44,7 +41,7 @@ export default class GameFlow {
      * Sets the isTransitionActive flag to true and then back to false after the timeout.
      * @param {number} timeout - Timeout in milliseconds
      */
-    _notifyBeginTransition(timeout) {
+    _notifyBeginTransition(timeout: number) {
         const manager = this.manager;
         manager.isTransitionActive = true;
         if (manager._transitionTimeout != null) {
@@ -73,7 +70,7 @@ export default class GameFlow {
      * Checks if the current level is the last level
      * @returns {boolean} True if this is the last level
      */
-    _isLastLevel() {
+    _isLastLevel(): boolean {
         // see if we are on the last box
         const lastPlayableBoxIndex = BoxManager.requiredCount() - 1;
         if (BoxManager.currentBoxIndex !== lastPlayableBoxIndex) {
@@ -97,7 +94,7 @@ export default class GameFlow {
      * @param {boolean} isRestart - Whether this is a restart
      * @param {boolean} isSkip - Whether this is skipping a level
      */
-    _openLevel(level, isRestart, isSkip) {
+    _openLevel(level: number, isRestart: boolean, isSkip: boolean) {
         GameBorder.fadeIn(650, 100);
         BoxManager.currentLevelIndex = level;
 
@@ -122,7 +119,7 @@ export default class GameFlow {
      * @param {boolean} isRestart
      * @param {boolean} isSkip
      */
-    openLevel(level, isRestart, isSkip) {
+    openLevel(level: number, isRestart: boolean, isSkip: boolean) {
         this._openLevel(level, isRestart, isSkip);
     }
 
@@ -243,7 +240,7 @@ export default class GameFlow {
      * Opens the box
      * @param {boolean} skip - Whether to skip intro
      */
-    openBox(skip = false) {
+    openBox(skip: boolean = false) {
         stopSnow();
         const timeout = panelManager.currentPanelId === PanelId.LEVELS ? 400 : 0;
 
@@ -387,16 +384,19 @@ export default class GameFlow {
      * Called when app is ready
      */
     appReady() {
-        PubSub.subscribe(PubSub.ChannelId.LevelWon, (/** @type {LevelWonInfo} */ info) => {
-            this.manager.results.onLevelWon(info);
-        });
+        PubSub.subscribe(
+            PubSub.ChannelId.LevelWon,
+            (/** @type {LevelWonInfo} */ info: LevelWonInfo) => {
+                this.manager.results.onLevelWon(info);
+            }
+        );
 
         // Load scores now that JSON data is available
         ScoreManager.load();
 
         Doors.appReady();
         EasterEggManager.appReady();
-        panelManager.appReady((/** @type {number} */ panelId) => {
+        panelManager.appReady((/** @type {number} */ panelId: number) => {
             this.manager.panels.onInitializePanel(panelId);
         });
         BoxManager.appReady();
@@ -440,7 +440,7 @@ export default class GameFlow {
      * @param {number} boxIndex - Box index (zero-based)
      * @param {number} levelIndex - Level index (zero-based)
      */
-    noMenuStartLevel(boxIndex, levelIndex) {
+    noMenuStartLevel(boxIndex: number, levelIndex: number) {
         panelManager.showPanel(PanelId.GAME, true);
 
         // unfortunate that box manager is zero index for box and 1 based for level
@@ -455,7 +455,7 @@ export default class GameFlow {
      * Opens the level menu for a specific box
      * @param {number} boxIndex - Box index
      */
-    openLevelMenu(boxIndex) {
+    openLevelMenu(boxIndex: number) {
         this.manager.isBoxOpen = false;
         Doors.renderDoors(true, 0);
         panelManager.showPanel(PanelId.LEVELS);

@@ -1,10 +1,13 @@
 class ActionData {
+    actionName: string;
+    actionParam: number;
+    actionSubParam: number;
     /**
      * @param {string} name
      * @param {number} param
      * @param {number} subParam
      */
-    constructor(name, param, subParam) {
+    constructor(name: string, param: number, subParam: number) {
         this.actionName = name;
         this.actionParam = param;
         this.actionSubParam = subParam;
@@ -12,11 +15,16 @@ class ActionData {
 }
 
 class Action {
+    actionTarget: object;
+    data: ActionData;
+    actionName: string;
+    actionParam: number;
+    actionSubParam: number;
     /**
      * @param {Object} target
      * @param {ActionData} data
      */
-    constructor(target, data) {
+    constructor(target: object, data: ActionData) {
         this.actionTarget = target;
         this.data = data;
 
@@ -41,7 +49,7 @@ class Action {
      * @param {number} param
      * @param {number} subParam
      */
-    static create(target, actionName, param, subParam) {
+    static create(target: object, actionName: string, param: number, subParam: number) {
         const data = new ActionData(actionName, param, subParam);
         return new Action(target, data);
     }

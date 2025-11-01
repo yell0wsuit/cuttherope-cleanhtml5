@@ -2,12 +2,25 @@ import MathHelper from "@/utils/MathHelper";
 import Vector from "@/core/Vector";
 
 class Mover {
+    static MAX_CAPACITY: number;
+    angle: number;
+    pathCapacity: number;
+    rotateSpeed: number;
+    path: never[];
+    moveSpeed: number[];
+    pos: Vector;
+    targetPoint: number;
+    offset: Vector;
+    paused: boolean;
+    reverse: boolean;
+    overrun: number;
+
     /**
      * @param {number} pathCapacity
      * @param {number} moveSpeed
      * @param {number} rotateSpeed
      */
-    constructor(pathCapacity, moveSpeed, rotateSpeed) {
+    constructor(pathCapacity: number, moveSpeed: number, rotateSpeed: number) {
         this.pathCapacity = pathCapacity;
         this.rotateSpeed = rotateSpeed || 0;
         /**
@@ -35,7 +48,7 @@ class Mover {
     /**
      * @param {number} speed
      */
-    setMoveSpeed(speed) {
+    setMoveSpeed(speed: number) {
         for (let i = 0, len = this.pathCapacity; i < len; i++) {
             this.moveSpeed[i] = speed;
         }
@@ -45,7 +58,7 @@ class Mover {
      * @param {string} path
      * @param {Vector} start
      */
-    setPathFromString(path, start) {
+    setPathFromString(path: string, start: Vector) {
         if (path[0] === "R") {
             const clockwise = path[1] === "C",
                 rad = parseInt(path.slice(2), 10),
@@ -86,7 +99,7 @@ class Mover {
     /**
      * @param {Vector} pathPoint
      */
-    addPathPoint(pathPoint) {
+    addPathPoint(pathPoint: Vector) {
         this.path.push(pathPoint);
     }
 
@@ -109,14 +122,14 @@ class Mover {
     /**
      * @param {number} rotateSpeed
      */
-    setRotateSpeed(rotateSpeed) {
+    setRotateSpeed(rotateSpeed: number) {
         this.rotateSpeed = rotateSpeed;
     }
 
     /**
      * @param {number} point
      */
-    jumpToPoint(point) {
+    jumpToPoint(point: number) {
         this.targetPoint = point;
         this.pos.copyFrom(this.path[point]);
         this.calculateOffset();
@@ -133,21 +146,21 @@ class Mover {
      * @param {number} moveSpeed
      * @param {number} index
      */
-    setMoveSpeedAt(moveSpeed, index) {
+    setMoveSpeedAt(moveSpeed: number, index: number) {
         this.moveSpeed[index] = moveSpeed;
     }
 
     /**
      * @param {boolean} reverse
      */
-    setMoveReverse(reverse) {
+    setMoveReverse(reverse: boolean) {
         this.reverse = reverse;
     }
 
     /**
      * @param {number} delta
      */
-    update(delta) {
+    update(delta: number) {
         if (this.paused) return;
 
         if (this.path.length > 0) {
@@ -208,7 +221,7 @@ class Mover {
      * @param {number} speed
      * @param {number} delta
      */
-    static moveToTarget(v, t, speed, delta) {
+    static moveToTarget(v: number, t: number, speed: number, delta: number) {
         if (t !== v) {
             if (t > v) {
                 v += speed * delta;
@@ -233,7 +246,7 @@ class Mover {
      * @param {number} delta
      * @return {Object}
      */
-    static moveToTargetWithStatus(v, t, speed, delta) {
+    static moveToTargetWithStatus(v: number, t: number, speed: number, delta: number): object {
         let reachedZero = false;
         if (t !== v) {
             if (t > v) {

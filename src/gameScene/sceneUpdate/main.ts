@@ -10,7 +10,7 @@ import { updateClickToCut } from "./clickToCut";
 /**
  * @param {number} delta
  */
-export function update(delta) {
+export function update(delta: number) {
     updateBasics.call(this, delta);
     updateCamera.call(this, delta);
 

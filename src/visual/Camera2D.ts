@@ -3,12 +3,18 @@ import Canvas from "@/utils/Canvas";
 import MathHelper from "@/utils/MathHelper";
 
 class Camera2D {
+    static SpeedType: any;
+    speed: number;
+    type: number;
+    pos: Vector;
+    target: Vector;
+    offset: Vector;
     /**
      * Camera2D constructor
      * @param {number} speed
      * @param {number} cameraSpeed
      */
-    constructor(speed, cameraSpeed) {
+    constructor(speed: number, cameraSpeed: number) {
         this.speed = speed;
         this.type = cameraSpeed;
         this.pos = Vector.newZero();
@@ -22,7 +28,7 @@ class Camera2D {
      * @param {number} y
      * @param {boolean} immediate
      */
-    moveTo(x, y, immediate) {
+    moveTo(x: number, y: number, immediate: boolean) {
         this.target.x = x;
         this.target.y = y;
 
@@ -41,7 +47,7 @@ class Camera2D {
     /**
      * @param {number} delta time delta
      */
-    update(delta) {
+    update(delta: number) {
         if (!this.pos.equals(this.target)) {
             // add to the current position and round
             this.pos.add(Vector.multiply(this.offset, delta));

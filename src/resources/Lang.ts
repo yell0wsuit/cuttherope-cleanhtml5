@@ -3,16 +3,13 @@ import settings from "@/game/CTRSettings";
 import LangId from "@/resources/LangId";
 import menuStrings from "@/resources/MenuStrings";
 import Log from "@/utils/Log";
-
-/**
- * @typedef {import('@/config/editions/net-edition').BoxText} BoxText
- */
+import type BoxText from "@/config/editions/net-edition";
 
 /**
  * Helper to return the correct string from a localized entry.
  * Defaults to English if no translation is available.
  */
-const getLocalizedText = (/** @type {BoxText} */ locEntry) => {
+const getLocalizedText = (/** @type {BoxText} */ locEntry: typeof BoxText) => {
     switch (settings.getLangId()) {
         case LangId.FR:
             return locEntry.fr || locEntry.en;
@@ -52,7 +49,7 @@ class Lang {
      * @param {boolean} includeNumber
      * @returns {string}
      */
-    boxText(boxIndex, includeNumber) {
+    boxText(boxIndex: number, includeNumber: boolean): string {
         const locEntry = edition.boxText[boxIndex];
         let text = getLocalizedText(locEntry);
 
@@ -68,7 +65,7 @@ class Lang {
      * @param {number} menuStringId
      * @returns {string}
      */
-    menuText(menuStringId) {
+    menuText(menuStringId: number): string {
         for (const locEntry of menuStrings) {
             if (locEntry.id === menuStringId) {
                 return getLocalizedText(locEntry);
@@ -84,7 +81,7 @@ class Lang {
      * @param {BoxText} locEntry
      * @returns {string}
      */
-    getText(locEntry) {
+    getText(locEntry: BoxText): string {
         return getLocalizedText(locEntry);
     }
 
@@ -92,7 +89,7 @@ class Lang {
      * Get the current language ID.
      * @returns {LangId}
      */
-    getCurrentId() {
+    getCurrentId(): LangId {
         return settings.getLangId();
     }
 }

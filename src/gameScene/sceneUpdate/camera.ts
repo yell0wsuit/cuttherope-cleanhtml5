@@ -7,7 +7,7 @@ import * as GameSceneConstants from "@/gameScene/constants";
 /**
  * @param {number} delta
  */
-export function updateCamera(delta) {
+export function updateCamera(delta: number) {
     const SCREEN_WIDTH = resolution.CANVAS_WIDTH;
     const SCREEN_HEIGHT = resolution.CANVAS_HEIGHT;
     const cameraTarget =

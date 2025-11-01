@@ -1,3 +1,4 @@
+import type Texture2D from "@/core/Texture2D";
 import RES_DATA from "@/resources/ResData";
 import ResourceId from "@/resources/ResourceId";
 import MathHelper from "@/utils/MathHelper";
@@ -10,6 +11,26 @@ const PARTICLE_TYPES = [
 ];
 
 class ConfettiParticle {
+    frameIndex: number;
+    frameRange: { start: number; end: number };
+    texture: Texture2D;
+    startX: number;
+    startY: number;
+    duration: number;
+    endX: any;
+    endY: any;
+    x: number;
+    y: number;
+    startRotation: number;
+    endRotation: number;
+    rotation: any;
+    scale: number;
+    scaleGrowDuration: number;
+    opacity: number;
+    frameAnimationTimer: number;
+    frameAnimationDelay: number;
+    currentFrameOffset: number;
+    age: number;
     /**
      * @param {number} canvasWidth
      * @param {number} canvasHeight
@@ -17,7 +38,13 @@ class ConfettiParticle {
      * @param {{ start: number; end: number; }} frameRange
      * @param {Texture2D} texture
      */
-    constructor(canvasWidth, canvasHeight, frameIndex, frameRange, texture) {
+    constructor(
+        canvasWidth: number,
+        canvasHeight: number,
+        frameIndex: number,
+        frameRange: { start: number; end: number },
+        texture: Texture2D
+    ) {
         this.frameIndex = frameIndex;
         this.frameRange = frameRange; // {start, end} for animation
         this.texture = texture;
@@ -61,7 +88,7 @@ class ConfettiParticle {
     /**
      * @param {number} delta
      */
-    update(delta) {
+    update(delta: number) {
         this.age += delta;
 
         // Progress through animation (0 to 1)
@@ -102,7 +129,7 @@ class ConfettiParticle {
      * Draws the confetti particle to the canvas
      * @param {CanvasRenderingContext2D} ctx
      */
-    draw(ctx) {
+    draw(ctx: CanvasRenderingContext2D) {
         const frame = this.texture.rects[this.frameIndex];
         if (!frame) return;
 
@@ -122,6 +149,19 @@ class ConfettiParticle {
 }
 
 class ConfettiManager {
+    canvas: null;
+    ctx: null;
+    particles: never[];
+    active: boolean;
+    animationFrame: null;
+    lastTime: number;
+    emissionTimer: number;
+    emissionRate: number;
+    duration: number;
+    elapsed: number;
+    totalParticles: number;
+    initialBurst: number;
+    texture: any;
     constructor() {
         this.canvas = null;
         this.ctx = null;
@@ -143,7 +183,7 @@ class ConfettiManager {
     /**
      * @param {HTMLElement} containerElement
      */
-    start(containerElement) {
+    start(containerElement: HTMLElement) {
         // Create canvas overlay
         this.canvas = document.createElement("canvas");
         this.canvas.id = "confettiCanvas";

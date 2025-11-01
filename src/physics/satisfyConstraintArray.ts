@@ -1,8 +1,10 @@
+import type ConstrainedPoint from "./ConstrainedPoint";
+
 /**
  * @param {ConstrainedPoint[]} arr
  * @param {number} n
  */
-function satisfyConstraintArray(arr, n) {
+function satisfyConstraintArray(arr: ConstrainedPoint[], n: number) {
     // NOTE: this method is a perf hotspot so be careful with changes
     n = n || 1;
 

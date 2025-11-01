@@ -1,14 +1,11 @@
-/** @typedef {import("@/types/json").JsonCacheEntry} JsonCacheEntry */
-/** @typedef {import("@/types/json").LevelJson} LevelJson */
-/** @typedef {import("@/types/json").LoadedLevelEntry} LoadedLevelEntry */
-/** @typedef {import("@/types/json").RawBoxMetadataJson} RawBoxMetadataJson */
+import type { JsonCacheEntry, LevelJson, LoadedLevelEntry, RawBoxMetadataJson } from "@/types/json";
 
 /**
  * Helper function to load and parse JSON from a URL
  * @param {string | URL | Request} url
  * @returns {Promise<unknown>}
  */
-const loadJson = async (url) => {
+const loadJson = async (url: string | URL | Request): Promise<unknown> => {
     const response = await fetch(url);
     if (!response.ok) {
         throw new Error(`Request failed with status ${response.status}`);
@@ -25,6 +22,14 @@ const loadJson = async (url) => {
 };
 
 class JsonLoader {
+    menuJsonLoadComplete: boolean;
+    loadedJsonFiles: number;
+    failedJsonFiles: number;
+    totalJsonFiles: number;
+    checkCompleteCallback: (() => void) | null;
+    progressCallback: ((loaded: number, total: number) => void) | null;
+    jsonCache: Map<string, JsonCacheEntry>;
+
     constructor() {
         /** @type {boolean} */
         this.menuJsonLoadComplete = false;
@@ -55,14 +60,14 @@ class JsonLoader {
     /**
      * @param {(loaded: number, total: number) => void} callback
      */
-    onProgress(callback) {
+    onProgress(callback: (loaded: number, total: number) => void) {
         this.progressCallback = callback;
     }
 
     /**
      * @param {() => void} callback
      */
-    onMenuComplete(callback) {
+    onMenuComplete(callback: () => void) {
         this.checkCompleteCallback = callback;
     }
 
@@ -73,7 +78,7 @@ class JsonLoader {
          * Files queued for JSON loading.
          * @type {Array<{ url: string; key: string; type: "boxMetadata" | "level" }>}
          */
-        const jsonFiles = [];
+        const jsonFiles: Array<{ url: string; key: string; type: "boxMetadata" | "level" }> = [];
 
         // Queue box metadata JSON
         jsonFiles.push({
@@ -103,9 +108,9 @@ class JsonLoader {
                 const data = await loadJson(url);
 
                 if (type === "boxMetadata") {
-                    this.jsonCache.set(key, /** @type {RawBoxMetadataJson[]} */ (data));
+                    this.jsonCache.set(key, /** @type {RawBoxMetadataJson[]} */ data);
                 } else {
-                    this.jsonCache.set(key, /** @type {LevelJson} */ (data));
+                    this.jsonCache.set(key, /** @type {LevelJson} */ data);
                 }
                 this.loadedJsonFiles++;
                 if (this.progressCallback) {
@@ -143,16 +148,16 @@ class JsonLoader {
      * @param {string} key
      * @returns {JsonCacheEntry | undefined}
      */
-    getJson(key) {
+    getJson(key: string): JsonCacheEntry | undefined {
         return this.jsonCache.get(key);
     }
 
     /**
      * @returns {Map<string, LoadedLevelEntry[]>}
      */
-    getAllLevels() {
+    getAllLevels(): Map<string, LoadedLevelEntry[]> {
         /** @type {Map<string, LoadedLevelEntry[]>} */
-        const levels = new Map();
+        const levels: Map<string, LoadedLevelEntry[]> = new Map();
         for (const [key, value] of this.jsonCache.entries()) {
             if (key.startsWith("level-")) {
                 const match = key.match(/level-(\d{2})-(\d{2})/);
@@ -163,7 +168,7 @@ class JsonLoader {
                     }
                     levels.get(boxNumber)?.push({
                         levelNumber,
-                        level: /** @type {LevelJson} */ (value),
+                        level: /** @type {LevelJson} */ value,
                     });
                 }
             }
@@ -174,7 +179,7 @@ class JsonLoader {
     /**
      * @returns {RawBoxMetadataJson[] | undefined}
      */
-    getBoxMetadata() {
+    getBoxMetadata(): RawBoxMetadataJson[] | undefined {
         const metadata = this.jsonCache.get("boxMetadata");
         if (Array.isArray(metadata)) {
             return metadata;

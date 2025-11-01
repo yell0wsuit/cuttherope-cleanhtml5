@@ -3,7 +3,7 @@
  * @param {Function} targetClass - The class to add methods to
  * @param {Function[]} sourceClasses - Array of classes to copy methods from
  */
-const applyMixins = (targetClass, sourceClasses) => {
+const applyMixins = (targetClass: Function, sourceClasses: Function[]) => {
     sourceClasses.forEach((sourceClass) => {
         Object.getOwnPropertyNames(sourceClass.prototype).forEach((name) => {
             if (name !== "constructor") {

@@ -34,6 +34,90 @@ import Gravity from "@/physics/Gravity";
 let currentPack = -1;
 
 class GameSceneInit extends BaseElement {
+    dd: typeof DelayedDispatcher;
+    initialCameraToStarDistance: number;
+    restartState: number;
+    aniPool: AnimationPool;
+    staticAniPool: AnimationPool;
+    camera: Camera2D;
+    starsCollected: number;
+    hudStars: never[];
+    starDisappearPool: never[];
+    slastTouch: Vector;
+    fingerCuts: never[];
+    clickToCut: any;
+    PM: number;
+    PMY: number;
+    PMX: number;
+    earthAnims: never[];
+    paddingtonFinalFrame: null;
+    pendingPaddingtonIdleTransition: boolean;
+    lastCandyRotateDelta: number;
+    lastCandyRotateDeltaL: number;
+    lastCandyRotateDeltaR: number;
+    attachCount: number;
+    juggleTimer: number;
+    dragging: any[];
+    startPos: any[];
+    prevStartPos: any[];
+    mapHeight?: number;
+    target: any;
+    bubbleDisappear?: Animation;
+    bgTexture: any;
+    overlayTexture: any;
+    back?: BackgroundTileMap;
+    gravityButton?: null;
+    gravityTouchDown?: number;
+    twoParts?: number;
+    partsDist?: number;
+    targetSock?: null;
+    bungees?: never[];
+    razors?: never[];
+    spikes?: never[];
+    stars: never[];
+    bubbles: never[];
+    pumps: never[];
+    rockets: never[];
+    socks: never[];
+    tutorialImages: never[];
+    tutorials: never[];
+    drawings: never[];
+    bouncers: never[];
+    rotatedCircles: never[];
+    pollenDrawer: null;
+    star: ConstrainedPoint;
+    starL: ConstrainedPoint;
+    starR: ConstrainedPoint;
+    candyResourceId: number;
+    candy: GameObject;
+    candyMain: GameObject;
+    candyTop: GameObject;
+    candyBlink: Animation;
+    candyBubbleAnimation: Animation;
+    candyBubbleAnimationL: Animation;
+    candyL: any;
+    candyBubbleAnimationR: Animation;
+    candyR: any;
+    tummyTeasers: number;
+    candyBubble: null;
+    candyBubbleL: null;
+    candyBubbleR: null;
+    mouthOpen: boolean;
+    noCandy: boolean;
+    noCandyL: boolean;
+    noCandyR: boolean;
+    blink: any;
+    spiderTookCandy: boolean;
+    time: number;
+    score: number;
+    gravityNormal: boolean;
+    dimTime: number;
+    ropesCutAtOnce: number;
+    ropesAtOnceTimer: number;
+    mapWidth: number;
+    ignoreTouches: boolean;
+    fastenCamera: boolean;
+    cameraMoveMode: number;
     constructor() {
         super();
         this.dd = DelayedDispatcher;
@@ -136,7 +220,7 @@ class GameSceneInit extends BaseElement {
      * @param {ConstrainedPoint} p
      * @return {boolean}
      */
-    pointOutOfScreen(p) {
+    pointOutOfScreen(p: ConstrainedPoint): boolean {
         const bottomY = this.mapHeight + resolution.OUT_OF_SCREEN_ADJUSTMENT_BOTTOM;
         const topY = resolution.OUT_OF_SCREEN_ADJUSTMENT_TOP;
         const outOfScreen = p.pos.y > bottomY || p.pos.y < topY;
@@ -179,6 +263,13 @@ class GameSceneInit extends BaseElement {
         }
         this.hidePaddingtonFinalFrame();
     }
+    playRegularIdleAfterPaddington<GameSceneInit extends GameSceneInit>(
+        arg0: this,
+        playRegularIdleAfterPaddington: any,
+        arg2: null
+    ) {
+        throw new Error("Method not implemented.");
+    }
     playPaddingtonIntro() {
         if (!this.target) {
             return;
@@ -189,7 +280,7 @@ class GameSceneInit extends BaseElement {
     /**
      * @param {{ locale: string; }} element
      */
-    shouldSkipTutorialElement(element) {
+    shouldSkipTutorialElement(element: { locale: string }) {
         const langId = settings.getLangId();
         const tl = element.locale;
 
@@ -199,7 +290,7 @@ class GameSceneInit extends BaseElement {
 
         return false;
     }
-    show() {
+    override show() {
         /**
          * @type {Animation[]}
          */

@@ -22,7 +22,7 @@ const PinnedStates = {
 };
 
 // Helper functions for animations
-function fadeIn(element, duration = 400, delay = 0) {
+function fadeIn(element: HTMLElement, duration = 400, delay = 0) {
     if (!element) return Promise.resolve();
 
     return new Promise((resolve) => {
@@ -30,8 +30,8 @@ function fadeIn(element, duration = 400, delay = 0) {
             element.style.opacity = "0";
             element.style.display = "";
 
-            let start = null;
-            function animate(timestamp) {
+            let start: number | null = null;
+            function animate(timestamp: number) {
                 if (!start) start = timestamp;
                 const progress = timestamp - start;
                 const opacity = Math.min(progress / duration, 1);
@@ -49,15 +49,15 @@ function fadeIn(element, duration = 400, delay = 0) {
     });
 }
 
-function fadeOut(element, duration = 400, delay = 0) {
+function fadeOut(element: Element, duration = 400, delay = 0) {
     if (!element) return Promise.resolve();
 
     return new Promise((resolve) => {
         setTimeout(() => {
-            let start = null;
+            let start: number | null = null;
             const initialOpacity = parseFloat(window.getComputedStyle(element).opacity) || 1;
 
-            function animate(timestamp) {
+            function animate(timestamp: number) {
                 if (!start) start = timestamp;
                 const progress = timestamp - start;
                 const opacity = Math.max(initialOpacity - progress / duration, 0);
@@ -76,7 +76,13 @@ function fadeOut(element, duration = 400, delay = 0) {
     });
 }
 
-function animateProperty(element, props, duration, easing = "linear", delay = 0) {
+function animateProperty(
+    element: Element,
+    props: { [x: string]: string; left?: number; top?: number; scale?: string },
+    duration: number,
+    easing = "linear",
+    delay = 0
+) {
     if (!element) return Promise.resolve();
 
     return new Promise((resolve) => {
@@ -98,8 +104,8 @@ function animateProperty(element, props, duration, easing = "linear", delay = 0)
                 }
             }
 
-            let start = null;
-            function animate(timestamp) {
+            let start: number | null = null;
+            function animate(timestamp: number) {
                 if (!start) start = timestamp;
                 const progress = Math.min((timestamp - start) / duration, 1);
                 const easedProgress = applyEasing(progress, easing);
@@ -125,7 +131,7 @@ function animateProperty(element, props, duration, easing = "linear", delay = 0)
     });
 }
 
-function applyEasing(t, easing) {
+function applyEasing(t: number, easing: string) {
     switch (easing) {
         case "easeInOutCirc":
             return t < 0.5
@@ -144,7 +150,13 @@ function applyEasing(t, easing) {
 }
 
 class PinnedBox extends Box {
-    constructor(boxIndex, bgimg, reqstars, islocked, type) {
+    constructor(
+        boxIndex: number,
+        bgimg: string | null,
+        reqstars: number,
+        islocked: boolean,
+        type: string
+    ) {
         super(boxIndex, bgimg, reqstars, islocked, type);
         this.pinnedState = PinnedStates.UNDEFINED;
         this.promptId = null;

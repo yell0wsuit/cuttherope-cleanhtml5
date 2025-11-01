@@ -1,5 +1,6 @@
 import Rectangle from "@/core/Rectangle";
 import Vector from "@/core/Vector";
+import type ConstrainedPoint from "@/physics/ConstrainedPoint";
 
 /**
  * @param {ConstrainedPoint} star
@@ -7,24 +8,28 @@ import Vector from "@/core/Vector";
  * @param {number} yImpulse
  * @param {number} delta
  */
-export function applyStarImpulse(star, rd, yImpulse, delta) {
+export function applyStarImpulse(
+    star: ConstrainedPoint,
+    rd: number,
+    yImpulse: number,
+    delta: number
+) {
     star.applyImpulse(new Vector(-star.v.x / rd, -star.v.y / rd + yImpulse), delta);
 }
 
-/**
- * @typedef {Object} HazardWithBounds
- * @property {Vector} t1 - Top-left corner
- * @property {Vector} t2 - Top-right corner
- * @property {Vector} b1 - Bottom-left corner
- * @property {Vector} b2 - Bottom-right corner
- */
+interface HazardWithBounds {
+    t1: Vector;
+    t2: Vector;
+    b1: Vector;
+    b2: Vector;
+}
 
 /**
  * @param {HazardWithBounds} hazard
  * @param {ConstrainedPoint} star
  * @param {number} radius
  */
-export function isCandyHit(hazard, star, radius) {
+export function isCandyHit(hazard: HazardWithBounds, star: ConstrainedPoint, radius: number) {
     const diameter = radius * 2;
     return (
         Rectangle.lineInRect(

@@ -11,7 +11,7 @@ import resolution from "@/resolution";
 /**
  * @param {number} delta
  */
-export function updateBungees(delta) {
+export function updateBungees(delta: number) {
     const numGrabs = this.bungees.length;
     if (numGrabs > 0) {
         let handledRotation = false;

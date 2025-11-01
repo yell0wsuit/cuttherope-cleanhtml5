@@ -12,7 +12,7 @@ class GrabMoveBackground extends ImageElement {
     /**
      * @param {number} length
      */
-    constructor(length) {
+    constructor(length: number) {
         super();
 
         // render the tiled image once and cache the image

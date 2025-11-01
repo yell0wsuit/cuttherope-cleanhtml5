@@ -10,12 +10,15 @@ import Radians from "@/utils/Radians";
  * @constructor
  */
 class PointSprite {
+    x: number;
+    y: number;
+    size: number;
     /**
      * @param {number} x
      * @param {number} y
      * @param {number} size
      */
-    constructor(x, y, size) {
+    constructor(x: number, y: number, size: number) {
         this.x = x;
         this.y = y;
         this.size = size;
@@ -26,6 +29,20 @@ class PointSprite {
  * @constructor
  */
 class Particle {
+    startPos: Vector;
+    pos: Vector;
+    dir: Vector;
+    radialAccel: number;
+    tangentialAccel: number;
+    color: RGBAColor;
+    deltaColor: RGBAColor;
+    size: number;
+    life: number;
+    deltaAngle: number;
+    angle: number;
+    width: number;
+    height: number;
+
     constructor() {
         this.startPos = new Vector(0, 0);
         this.pos = new Vector(0, 0);
@@ -46,10 +63,47 @@ class Particle {
 }
 
 class Particles extends BaseElement {
+    width: number;
+    height: number;
+    totalParticles: number;
+    particles: never[];
+    active: boolean;
+    duration: number;
+    elapsed: number;
+    gravity: Vector;
+    posVar: Vector;
+    angle: number;
+    angleVar: number;
+    speed: number;
+    speedVar: number;
+    tangentialAccel: number;
+    tangentialAccelVar: number;
+    radialAccel: number;
+    radialAccelVar: number;
+    size: number;
+    sizeVar: number;
+    life: number;
+    lifeVar: number;
+    startColor: RGBAColor;
+    startColorVar: RGBAColor;
+    endColor: RGBAColor;
+    endColorVar: RGBAColor;
+    blendAdditive: boolean;
+    colorModulate: boolean;
+    emissionRate: number;
+    emitCounter: number;
+    texture: null;
+    vertices: never[];
+    colors: never[];
+    particleIdx: number;
+    onFinished: null;
+    x?: number;
+    y?: number;
+    color: any;
     /**
      * @param {number} numParticles
      */
-    constructor(numParticles) {
+    constructor(numParticles: number) {
         super();
         this.width = resolution.CANVAS_WIDTH;
         this.height = resolution.CANVAS_HEIGHT;
@@ -152,7 +206,7 @@ class Particles extends BaseElement {
      * Creates and adds a particle to the system
      * @return {boolean} false if the system is full, otherwise true
      */
-    addParticle() {
+    addParticle(): boolean {
         if (this.particles.length == this.totalParticles) {
             return false;
         }
@@ -166,7 +220,7 @@ class Particles extends BaseElement {
     /**
      * @param {Particle} particle
      */
-    initParticle(particle) {
+    initParticle(particle: Particle) {
         particle.pos.x = this.x + this.posVar.x * MathHelper.randomMinus1to1();
         particle.pos.y = this.y + this.posVar.y * MathHelper.randomMinus1to1();
         particle.startPos.copyFrom(particle.pos);
@@ -218,7 +272,7 @@ class Particles extends BaseElement {
     /**
      * @param {number} delta
      */
-    update(delta) {
+    override update(delta: number) {
         super.update(delta);
         if (this.onFinished) {
             if (this.particles.length === 0 && !this.active) {
@@ -267,7 +321,7 @@ class Particles extends BaseElement {
      * @param {Particle} p
      * @param {number} delta
      */
-    updateParticleLocation(p, delta) {
+    updateParticleLocation(p: Particle, delta: number) {
         let radial;
 
         // radial acceleration
@@ -302,7 +356,7 @@ class Particles extends BaseElement {
      * @param {number} index
      * @param {number} delta
      */
-    updateParticle(particle, index, delta) {
+    updateParticle(particle: Particle, index: number, delta: number) {
         this.vertices[this.particleIdx] = new PointSprite(
             particle.pos.x,
             particle.pos.y,
@@ -315,14 +369,14 @@ class Particles extends BaseElement {
     /**
      * @param {number} index
      */
-    removeParticle(index) {
+    removeParticle(index: number) {
         this.particles.splice(index, 1);
     }
 
     /**
      * @param {number} initialParticles
      */
-    startSystem(initialParticles) {
+    startSystem(initialParticles: number) {
         this.particles.length = 0;
         for (let i = 0; i < initialParticles; i++) {
             this.addParticle();
@@ -341,7 +395,7 @@ class Particles extends BaseElement {
         this.emitCounter = 0;
     }
 
-    draw() {
+    override draw() {
         this.preDraw();
 
         // only draw if the image is non-transparent

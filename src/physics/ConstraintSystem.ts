@@ -1,8 +1,11 @@
 import Vector from "@/core/Vector";
 import Log from "@/utils/Log";
 import satisfyConstraintArray from "@/physics/satisfyConstraintArray";
+import type ConstrainedPoint from "./ConstrainedPoint";
 
 class ConstraintSystem {
+    relaxationTimes: number;
+    parts: never[];
     constructor() {
         this.relaxationTimes = 1;
         /**
@@ -15,7 +18,7 @@ class ConstraintSystem {
      * @param {ConstrainedPoint} cp
      * @param {number} index
      */
-    addPartAtIndex(cp, index) {
+    addPartAtIndex(cp: ConstrainedPoint, index: number) {
         // splice with removeLength=0 means we just insert
         // the additional element (cp) at the index
         this.parts.splice(index, 0, cp);
@@ -24,7 +27,7 @@ class ConstraintSystem {
     /**
      * @param {ConstrainedPoint} cp
      */
-    addPart(cp) {
+    addPart(cp: ConstrainedPoint) {
         this.parts[this.parts.length] = cp;
     }
 
@@ -44,14 +47,14 @@ class ConstraintSystem {
     /**
      * @param {number} index
      */
-    removePartAtIndex(index) {
+    removePartAtIndex(index: number) {
         this.parts.splice(index, 1);
     }
 
     /**
      * @param {number} delta
      */
-    update(delta) {
+    update(delta: number) {
         const parts = this.parts;
         const numParts = parts.length;
         const relaxationTimes = this.relaxationTimes;

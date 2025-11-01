@@ -14,44 +14,44 @@ class PumpDirt extends MultiParticles {
     /**
      * @type {number}
      */
-    angle;
+    override angle: number;
 
     /**
      * @type {number}
      */
-    angleVar;
+    override angleVar: number;
 
     /**
      * @type {number}
      */
-    speed;
+    override speed: number;
 
     /**
      * @type {number}
      */
-    life;
+    override life: number;
 
     /**
      * @type {number}
      */
-    size;
+    override size: number;
 
     /**
      * @type {number}
      */
-    emissionRate;
+    override emissionRate: number;
 
     /**
      * @type {boolean}
      */
-    additive;
+    additive: boolean;
 
     /**
      * @param {number} numParticles
      * @param {Texture2D} texture
      * @param {number} angle
      */
-    constructor(numParticles, texture, angle) {
+    constructor(numParticles: number, texture: Texture2D, angle: number) {
         super(numParticles, texture);
 
         this.angle = angle;
@@ -85,7 +85,7 @@ class PumpDirt extends MultiParticles {
     /**
      * @param {Particles} particle
      */
-    initParticle(particle) {
+    override initParticle(particle: Particles) {
         super.initParticle(particle);
 
         const texture = this.imageGrid;
@@ -104,7 +104,10 @@ class PumpDirt extends MultiParticles {
      * @param {{ dir: Vector; pos: { add: (arg0: Vector) => void; }; }} p
      * @param {number} delta
      */
-    updateParticleLocation(p, delta) {
+    override updateParticleLocation(
+        p: { dir: Vector; pos: { add: (arg0: Vector) => void } },
+        delta: number
+    ) {
         p.dir.multiply(0.9);
         const tmp = Vector.multiply(p.dir, delta);
         tmp.add(this.gravity);

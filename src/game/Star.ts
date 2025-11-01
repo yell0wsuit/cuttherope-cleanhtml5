@@ -17,6 +17,7 @@ const IMG_OBJ_STAR_IDLE_timed_start = 19;
 const IMG_OBJ_STAR_IDLE_timed_end = 55;
 
 class Star extends CTRGameObject {
+    timeout: any;
     constructor() {
         super();
 

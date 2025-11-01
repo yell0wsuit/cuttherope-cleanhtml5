@@ -11,7 +11,7 @@ class MathHelper {
      * @param {number} maxV
      * @return {number}
      */
-    static fitToBoundaries(v, minV, maxV) {
+    static fitToBoundaries(v: number, minV: number, maxV: number): number {
         return Math.max(Math.min(v, maxV), minV);
     }
 
@@ -21,7 +21,7 @@ class MathHelper {
      * @param {number} y
      * @return {boolean}
      */
-    static sameSign(x, y) {
+    static sameSign(x: number, y: number): boolean {
         return x < 0 === y < 0;
     }
 
@@ -30,7 +30,7 @@ class MathHelper {
      * @param {number} from
      * @param {number} to
      */
-    static randomRange(from, to) {
+    static randomRange(from: number, to: number) {
         return ~~(Math.random() * (to - from + 1) + from);
     }
 
@@ -50,7 +50,7 @@ class MathHelper {
      * @param {number} v4
      * @return {number}
      */
-    static maxOf4(v1, v2, v3, v4) {
+    static maxOf4(v1: number, v2: number, v3: number, v4: number): number {
         if (v1 >= v2 && v1 >= v3 && v1 >= v4) return v1;
         if (v2 >= v1 && v2 >= v3 && v2 >= v4) return v2;
         if (v3 >= v2 && v3 >= v1 && v3 >= v4) return v3;
@@ -67,7 +67,7 @@ class MathHelper {
      * @param {number} v4
      * @return {number}
      */
-    static minOf4(v1, v2, v3, v4) {
+    static minOf4(v1: number, v2: number, v3: number, v4: number): number {
         if (v1 <= v2 && v1 <= v3 && v1 <= v4) return v1;
         if (v2 <= v1 && v2 <= v3 && v2 <= v4) return v2;
         if (v3 <= v2 && v3 <= v1 && v3 <= v4) return v3;
@@ -87,7 +87,16 @@ class MathHelper {
      * @param {number} y4
      * @return {boolean}
      */
-    static lineInLine(x1, y1, x2, y2, x3, y3, x4, y4) {
+    static lineInLine(
+        x1: number,
+        y1: number,
+        x2: number,
+        y2: number,
+        x3: number,
+        y3: number,
+        x4: number,
+        y4: number
+    ): boolean {
         //let DPx, DPy, QAx, QAy, QBx, QBy, d, la, lb;
 
         const DPx = x3 - x1 + x4 - x2;
@@ -109,7 +118,7 @@ class MathHelper {
      * @param {number} value
      * @param {number} precision
      */
-    static roundPrecision(value, precision) {
+    static roundPrecision(value: number, precision: number) {
         const scalar = Math.pow(10, precision);
         return Math.round(value * scalar) / scalar;
     }
@@ -118,7 +127,7 @@ class MathHelper {
     /**
      * @param {number} value
      */
-    static roundP2(value) {
+    static roundP2(value: number) {
         return Math.round(value * 100) / 100;
     }
 }

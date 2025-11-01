@@ -8,7 +8,7 @@ import * as GameSceneConstants from "@/gameScene/constants";
 /**
  * @param {number} delta
  */
-export function updateClickToCut(delta) {
+export function updateClickToCut(delta: number) {
     if (this.clickToCut && !this.ignoreTouches) {
         this.resetBungeeHighlight();
 

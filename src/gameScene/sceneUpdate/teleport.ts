@@ -2,20 +2,19 @@ import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 import Radians from "@/utils/Radians";
 
-/**
- * @typedef {import("@/types/game-scene").GameScene} GameScene
- * @typedef {import("@/game/Sock").default} Sock
- */
+type GameScene = import("@/types/game-scene").GameScene;
+
+type Sock = import("@/game/Sock").default;
 
 /**
  * @param {GameScene} scene
  */
-function teleport(scene) {
+function teleport(scene: GameScene) {
     if (!scene.targetSock) {
         return;
     }
 
-    const sock = /** @type {Sock} */ (scene.targetSock);
+    const sock = /** @type {Sock} */ scene.targetSock;
 
     sock.light.playTimeline(0);
     sock.light.visible = true;
@@ -50,7 +49,7 @@ class GameSceneTeleportDelegate {
     /**
      * @param {GameScene} scene
      */
-    constructor(scene) {
+    constructor(scene: GameScene) {
         /** @type {GameScene} */
         this.scene = scene;
     }

@@ -1,17 +1,17 @@
 import edition from "@/config/editions/net-edition";
 import PubSub from "@/utils/PubSub";
 let currentUserId = "";
-PubSub.subscribe(PubSub.ChannelId.UserIdChanged, function (/** @type {string} */ userId) {
+PubSub.subscribe(PubSub.ChannelId.UserIdChanged, function (/** @type {string} */ userId: string) {
     currentUserId = userId;
 });
 
 /**
  * @type {{ get: any; remove: any; set: any; } | null}
  */
-let roamingProvider = null;
+let roamingProvider: { get: any; remove: any; set: any } | null = null;
 PubSub.subscribe(
     PubSub.ChannelId.RoamingSettingProvider,
-    function (/** @type {{ [x: string]: any; }} */ provider) {
+    function (/** @type {{ [x: string]: any; }} */ provider: { [x: string]: any }) {
         // copy methods (which will be minified)
         if (provider) {
             roamingProvider = {
@@ -36,7 +36,7 @@ const SCORES_PREFIX = "scores",
  * @param {string} prefix
  * @param {number} [boxIndex]
  */
-function getFullKey(prefix, boxIndex) {
+function getFullKey(prefix: string, boxIndex: number) {
     let key = prefix;
     if (currentUserId) {
         key += `-${currentUserId}`;
@@ -77,7 +77,7 @@ function getFullKey(prefix, boxIndex) {
 /**
  * @param {string} keyPrefix
  */
-function getHexValues(keyPrefix) {
+function getHexValues(keyPrefix: string) {
     if (!roamingProvider) {
         return null;
     }
@@ -110,7 +110,7 @@ function getHexValues(keyPrefix) {
  * @param {string} keyPrefix
  * @param {string | any[] | null} values
  */
-function saveHexValues(keyPrefix, values) {
+function saveHexValues(keyPrefix: string, values: string | any[] | null) {
     if (!roamingProvider) {
         return null;
     }
@@ -144,7 +144,7 @@ function saveHexValues(keyPrefix, values) {
  * @param {string} keyPrefix
  * @param {number} index
  */
-function getValue(keyPrefix, index) {
+function getValue(keyPrefix: string, index: number) {
     if (!roamingProvider) {
         return null;
     }
@@ -160,7 +160,7 @@ function getValue(keyPrefix, index) {
  * @param {number} index
  * @param {number | null} value
  */
-function saveValue(keyPrefix, index, value) {
+function saveValue(keyPrefix: string, index: number, value: number | null) {
     if (!roamingProvider) {
         return;
     }
@@ -184,7 +184,7 @@ const RoamingSettings = {
      * @param {number} boxIndex
      * @param {number} levelIndex
      */
-    getScore(boxIndex, levelIndex) {
+    getScore(boxIndex: number, levelIndex: number) {
         return getValue(`${SCORES_PREFIX}-${boxIndex}`, levelIndex);
     },
     /**
@@ -192,7 +192,7 @@ const RoamingSettings = {
      * @param {number} levelIndex
      * @param {number} score
      */
-    setScore(boxIndex, levelIndex, score) {
+    setScore(boxIndex: number, levelIndex: number, score: number) {
         saveValue(`${SCORES_PREFIX}-${boxIndex}`, levelIndex, score);
     },
 
@@ -201,7 +201,7 @@ const RoamingSettings = {
      * @param {number} boxIndex
      * @param {number} levelIndex
      */
-    getStars(boxIndex, levelIndex) {
+    getStars(boxIndex: number, levelIndex: number) {
         return getValue(`${STARS_PREFIX}-${boxIndex}`, levelIndex);
     },
     /**
@@ -209,7 +209,7 @@ const RoamingSettings = {
      * @param {number} levelIndex
      * @param {number} stars
      */
-    setStars(boxIndex, levelIndex, stars) {
+    setStars(boxIndex: number, levelIndex: number, stars: number) {
         saveValue(`${STARS_PREFIX}-${boxIndex}`, levelIndex, stars);
     },
 
@@ -217,14 +217,14 @@ const RoamingSettings = {
     /**
      * @param {number} achievementIndex
      */
-    getAchievementCount(achievementIndex) {
+    getAchievementCount(achievementIndex: number) {
         return getValue(ACHIEVEMENTS_PREFIX, achievementIndex);
     },
     /**
      * @param {number} achievementIndex
      * @param {number} count
      */
-    setAchievementCount(achievementIndex, count) {
+    setAchievementCount(achievementIndex: number, count: number) {
         saveValue(ACHIEVEMENTS_PREFIX, achievementIndex, count);
     },
 };

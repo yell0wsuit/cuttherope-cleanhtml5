@@ -7,42 +7,50 @@ class SoundManager {
     /**
      * @type {boolean}
      */
-    audioPaused;
+    audioPaused: boolean;
 
     /**
      * @type {boolean | null}
      */
-    soundEnabled;
+    soundEnabled: boolean | null;
 
     /**
      * @type {boolean | null}
      */
-    musicEnabled;
+    musicEnabled: boolean | null;
 
     /**
      * @type {number | null}
      */
-    musicId;
+    musicId: number | null;
 
     /**
      * @type {number}
      */
-    musicResumeOffset;
+    musicResumeOffset: number;
 
     /**
      * @type {number[]}
      */
-    gameMusicLibrary;
+    gameMusicLibrary: number[];
 
     /**
      * @type {number | null}
      */
-    currentGameMusicId;
+    currentGameMusicId: number | null;
 
     /**
      * @type {Map<string, { active: boolean; soundId: number; timeoutId: ReturnType<typeof setTimeout> | null; loopFn: Function }>}
      */
-    loopingSounds;
+    loopingSounds: Map<
+        string,
+        {
+            active: boolean;
+            soundId: number;
+            timeoutId: ReturnType<typeof setTimeout> | null;
+            loopFn: Function;
+        }
+    >;
 
     constructor() {
         this.audioPaused = false;
@@ -79,7 +87,15 @@ class SoundManager {
      * @param {string} instanceId
      * @param {{ active: boolean; soundId: number; timeoutId: ReturnType<typeof setTimeout> | null; loopFn: Function }} entry
      */
-    _deactivateLoopEntry(instanceId, entry) {
+    _deactivateLoopEntry(
+        instanceId: string,
+        entry: {
+            active: boolean;
+            soundId: number;
+            timeoutId: ReturnType<typeof setTimeout> | null;
+            loopFn: Function;
+        }
+    ) {
         if (!entry) {
             return;
         }
@@ -97,7 +113,7 @@ class SoundManager {
     /**
      * @param {number} soundId
      */
-    playSound(soundId) {
+    playSound(soundId: number) {
         if (this.soundEnabled) {
             Sounds.play(soundId);
         }
@@ -106,7 +122,7 @@ class SoundManager {
     /**
      * @param {number} soundId
      */
-    pauseSound(soundId) {
+    pauseSound(soundId: number) {
         if (this.soundEnabled && Sounds.isPlaying(soundId)) {
             Sounds.pause(soundId);
         }
@@ -115,7 +131,7 @@ class SoundManager {
     /**
      * @param {number} soundId
      */
-    resumeSound(soundId) {
+    resumeSound(soundId: number) {
         if (this.soundEnabled && Sounds.isPaused(soundId)) {
             Sounds.play(soundId);
         }
@@ -129,7 +145,7 @@ class SoundManager {
      * @param {string} instanceKey - Unique identifier for this loop instance (e.g., spark position or ID)
      * @param {number} delayMs - Optional delay before starting the loop (for staggered sounds)
      */
-    playLoopedSound(soundId, instanceKey, delayMs = 0) {
+    playLoopedSound(soundId: number, instanceKey: string, delayMs: number = 0) {
         if (!this.soundEnabled || this.audioPaused) {
             return;
         }
@@ -157,7 +173,12 @@ class SoundManager {
         };
 
         /** @type {{ active: boolean; soundId: number; timeoutId: ReturnType<typeof setTimeout> | null; loopFn: Function }} */
-        const entry = { active: true, loopFn: loop, soundId, timeoutId: null };
+        const entry: {
+            active: boolean;
+            soundId: number;
+            timeoutId: ReturnType<typeof setTimeout> | null;
+            loopFn: Function;
+        } = { active: true, loopFn: loop, soundId, timeoutId: null };
         this.loopingSounds.set(instanceId, entry);
 
         if (delayMs > 0) {
@@ -173,7 +194,7 @@ class SoundManager {
      * @param {number} soundId - The sound resource ID
      * @param {string} instanceKey - The unique identifier for this instance
      */
-    stopLoopedSoundInstance(soundId, instanceKey) {
+    stopLoopedSoundInstance(soundId: number, instanceKey: string) {
         const instanceId = `${soundId}_${instanceKey}`;
         const entry = this.loopingSounds.get(instanceId);
 
@@ -201,7 +222,7 @@ class SoundManager {
      * Stop all looping instances of a sound
      * @param {number} soundId
      */
-    stopLoopedSound(soundId) {
+    stopLoopedSound(soundId: number) {
         const matchingInstanceIds = [];
 
         for (const [instanceId, entry] of this.loopingSounds) {
@@ -223,7 +244,7 @@ class SoundManager {
     /**
      * @param {number} soundId
      */
-    stopSound(soundId) {
+    stopSound(soundId: number) {
         this.stopLoopedSound(soundId);
     }
 
@@ -273,7 +294,7 @@ class SoundManager {
     /**
      * @param {number} soundId
      */
-    playMusic(soundId) {
+    playMusic(soundId: number) {
         const previousMusicId = this.musicId;
 
         if (previousMusicId && previousMusicId !== soundId) {
@@ -349,7 +370,7 @@ class SoundManager {
     /**
      * @param {boolean} musicEnabled
      */
-    setMusicEnabled(musicEnabled) {
+    setMusicEnabled(musicEnabled: boolean) {
         this.musicEnabled = musicEnabled;
         settings.setMusicEnabled(musicEnabled);
         if (this.musicEnabled) {
@@ -362,7 +383,7 @@ class SoundManager {
     /**
      * @param {boolean} soundEnabled
      */
-    setSoundEnabled(soundEnabled) {
+    setSoundEnabled(soundEnabled: boolean) {
         this.soundEnabled = soundEnabled;
         settings.setSoundEnabled(soundEnabled);
 

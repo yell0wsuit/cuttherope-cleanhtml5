@@ -4,6 +4,8 @@ import MathHelper from "@/utils/MathHelper";
 import Rectangle from "@/core/Rectangle";
 import RES_DATA from "@/resources/ResData";
 import ResourceId from "@/resources/ResourceId";
+import type Particle from "@/visual/Particles";
+import type Texture2D from "@/core/Texture2D";
 
 const IMG_OBJ_CANDY_01_piece_01 = 3;
 const IMG_OBJ_CANDY_01_piece_02 = 4;
@@ -26,12 +28,40 @@ const PADDINGTON_BREAK_FRAME_NAMES = [
 ];
 
 class CandyBreak extends RotateableMultiParticles {
+    pieceFrameIndices: number[];
+    duration: number;
+    gravity: any;
+    angle: number;
+    angleVar: number;
+    speed: number;
+    speedVar: number;
+    radialAccel: number;
+    radialAccelVar: number;
+    tangentialAccel: number;
+    tangentialAccelVar: number;
+    posVar: any;
+    life: number;
+    lifeVar: number;
+    size: number;
+    sizeVar: number;
+    emissionRate: number;
+    startColor: any;
+    startColorVar: any;
+    endColor: any;
+    endColorVar: any;
+    rotateSpeed: number;
+    rotateSpeedVar: number;
+    blendAdditive: boolean;
+    imageGrid: any;
+    drawer: any;
+    particles: any;
+
     /**
      * @param {number} numParticles
      * @param {Texture2D} texture
      * @param {{ resourceId: number; }} options
      */
-    constructor(numParticles, texture, options) {
+    constructor(numParticles: number, texture: Texture2D, options: { resourceId: number }) {
         super(numParticles, texture);
 
         /**
@@ -160,12 +190,12 @@ class CandyBreak extends RotateableMultiParticles {
     }
 
     /**
-     * @param {Particles} particle
+     * @param {Particle} particle
      */
-    initParticle(particle) {
+    override initParticle(particle: Particle) {
         super.initParticle(particle);
 
-        const texture = this.imageGrid;
+        const texture: Texture2D = this.imageGrid;
         const frameIndices =
             this.pieceFrameIndices && this.pieceFrameIndices.length
                 ? this.pieceFrameIndices
@@ -184,7 +214,7 @@ class CandyBreak extends RotateableMultiParticles {
     /**
      * @param {number} resourceId
      */
-    _resolvePieceFrameIndices(resourceId) {
+    _resolvePieceFrameIndices(resourceId: number) {
         if (!resourceId) {
             return DEFAULT_PIECE_FRAME_INDICES.slice();
         }
@@ -193,7 +223,10 @@ class CandyBreak extends RotateableMultiParticles {
             /**
              * @type {number[]}
              */
-            const indices = this._lookupFrameIndices(resourceId, PADDINGTON_BREAK_FRAME_NAMES);
+            const indices: number[] = this._lookupFrameIndices(
+                resourceId,
+                PADDINGTON_BREAK_FRAME_NAMES
+            );
             if (indices.length) {
                 return indices;
             }
@@ -206,16 +239,16 @@ class CandyBreak extends RotateableMultiParticles {
      * @param {number} resourceId
      * @param {string[]} frameNames
      */
-    _lookupFrameIndices(resourceId, frameNames) {
+    _lookupFrameIndices(resourceId: number, frameNames: string[]) {
         /**
          * @type {ResEntry}
          */
-        const resource = RES_DATA[resourceId];
+        const resource: ResEntry = RES_DATA[resourceId];
 
         /**
          * @type {object}
          */
-        const frameIndexByName = resource?.info?.frameIndexByName;
+        const frameIndexByName: object = resource?.info?.frameIndexByName;
 
         if (!frameIndexByName) {
             return [];
@@ -223,10 +256,10 @@ class CandyBreak extends RotateableMultiParticles {
 
         return frameNames
             .map(
-                (/** @type {string} */ name) =>
-                    /** @type {Record<string, number>} */ (frameIndexByName)[name]
+                (/** @type {string} */ name: string) =>
+                    /** @type {Record<string, number>} */ frameIndexByName[name]
             )
-            .filter((/** @type {number} */ index) => index !== undefined);
+            .filter((/** @type {number} */ index: number) => index !== undefined);
     }
 }
 

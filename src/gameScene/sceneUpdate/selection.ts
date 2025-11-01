@@ -2,16 +2,13 @@ import Rectangle from "@/core/Rectangle";
 import Vector from "@/core/Vector";
 import Constants from "@/utils/Constants";
 import resolution from "@/resolution";
-
-/**
- * @typedef {import("@/types/game-scene").GameScene} GameScene
- * @typedef {import("@/game/Grab").default} Grab
- */
+import type Grab from "@/game/Grab";
+import type GameScene from "@/GameScene";
 
 /**
  * @param {GameScene} scene
  */
-function resetBungeeHighlight(scene) {
+function resetBungeeHighlight(scene: GameScene) {
     for (let i = 0, len = scene.bungees.length; i < len; i++) {
         const grab = scene.bungees[i];
         const bungee = grab.rope;
@@ -28,7 +25,7 @@ function resetBungeeHighlight(scene) {
  * @param {number} tx
  * @param {number} ty
  */
-function getNearestBungeeGrabByBezierPoints(scene, s, tx, ty) {
+function getNearestBungeeGrabByBezierPoints(scene: GameScene, s: Vector, tx: number, ty: number) {
     const SEARCH_RADIUS = resolution.CLICK_TO_CUT_SEARCH_RADIUS;
     let grab = null;
     let md = SEARCH_RADIUS;
@@ -59,7 +56,7 @@ function getNearestBungeeGrabByBezierPoints(scene, s, tx, ty) {
  * @param {Vector} s
  * @param {Grab} g
  */
-function getNearestBungeeSegmentByConstraints(scene, s, g) {
+function getNearestBungeeSegmentByConstraints(scene: GameScene, s: Vector, g: Grab) {
     const SEARCH_RADIUS = Number.MAX_VALUE;
     let nb = null;
     let md = SEARCH_RADIUS;
@@ -101,7 +98,7 @@ class GameSceneSelectionDelegate {
     /**
      * @param {GameScene} scene
      */
-    constructor(scene) {
+    constructor(scene: GameScene) {
         /** @type {GameScene} */
         this.scene = scene;
     }
@@ -115,7 +112,7 @@ class GameSceneSelectionDelegate {
      * @param {number} tx
      * @param {number} ty
      */
-    getNearestBungeeGrabByBezierPoints(s, tx, ty) {
+    getNearestBungeeGrabByBezierPoints(s: Vector, tx: number, ty: number) {
         return getNearestBungeeGrabByBezierPoints(this.scene, s, tx, ty);
     }
 
@@ -123,7 +120,7 @@ class GameSceneSelectionDelegate {
      * @param {Vector} s
      * @param {Grab} g
      */
-    getNearestBungeeSegmentByConstraints(s, g) {
+    getNearestBungeeSegmentByConstraints(s: Vector, g: Grab) {
         return getNearestBungeeSegmentByConstraints(this.scene, s, g);
     }
 }

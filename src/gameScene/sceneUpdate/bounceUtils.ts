@@ -3,18 +3,18 @@ import SoundMgr from "@/game/CTRSoundMgr";
 import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 
-/**
- * @typedef {import("@/game/Bouncer").default} Bouncer
- * @typedef {import("@/physics/ConstrainedPoint").default} ConstrainedPoint
- * @typedef {import("@/types/game-scene").GameScene} GameScene
- */
+type Bouncer = import("@/game/Bouncer").default;
+
+type ConstrainedPoint = import("@/physics/ConstrainedPoint").default;
+
+type GameScene = import("@/types/game-scene").GameScene;
 
 /**
  * @param {Bouncer} bouncer
  * @param {ConstrainedPoint} star
  * @param {number} delta
  */
-function handleBounce(bouncer, star, delta) {
+function handleBounce(bouncer: Bouncer, star: ConstrainedPoint, delta: number) {
     if (bouncer.skip) {
         return;
     }
@@ -54,7 +54,7 @@ class GameSceneBounceUtilsDelegate {
     /**
      * @param {GameScene} scene
      */
-    constructor(scene) {
+    constructor(scene: GameScene) {
         /** @type {GameScene} */
         this.scene = scene;
     }
@@ -64,7 +64,7 @@ class GameSceneBounceUtilsDelegate {
      * @param {ConstrainedPoint} star
      * @param {number} delta
      */
-    handleBounce(bouncer, star, delta) {
+    handleBounce(bouncer: Bouncer, star: ConstrainedPoint, delta: number) {
         return handleBounce(bouncer, star, delta);
     }
 }

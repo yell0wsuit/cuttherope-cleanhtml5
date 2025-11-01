@@ -69,9 +69,51 @@ const IMG_OBJ_BEE_HD_wings_end = 4;
  * Cache for storing pre-rendered grab circle canvases
  * @type {Object.<string, HTMLCanvasElement>}
  */
-const grabCircleCache = {};
+const grabCircleCache: { [s: string]: HTMLCanvasElement } = {};
 
 class Grab extends CTRGameObject {
+    wheel: any;
+    gun: any;
+    kickable: any;
+    invisible: any;
+    rope: null;
+    gunFired: boolean;
+    kicked: boolean;
+    wheelOperating: number;
+    lastWheelTouch: Vector;
+    moveLength: number;
+    moveVertical: boolean;
+    moveOffset: number;
+    moveBackground: null;
+    grabMoverHighlight: null;
+    grabMover: null;
+    moverDragging: number;
+    minMoveValue: number;
+    maxMoveValue: number;
+    hasSpider: boolean;
+    spiderActive: boolean;
+    spider: null;
+    spiderPos: number;
+    shouldActivate: boolean;
+    wheelDirty: boolean;
+    launcher: boolean;
+    launcherSpeed: number;
+    launcherIncreaseSpeed: boolean;
+    hideRadius: boolean;
+    radiusAlpha: number;
+    radius: number;
+    balloon: boolean;
+    wheelImage2: any;
+    wheelImage3: any;
+    wheelHighlight: any;
+    bee: any;
+    back: any;
+    previousRadius: any;
+    wheelImage: any;
+    gunBack: any;
+    gunArrow: any;
+    front: any;
+    gunCup: any;
     constructor() {
         super();
         this.rope = null;
@@ -120,7 +162,7 @@ class Grab extends CTRGameObject {
      * @param {Vector} v2 end
      * @param {Vector} c center
      */
-    getRotateAngle(v1, v2, c) {
+    getRotateAngle(v1: Vector, v2: Vector, c: Vector) {
         const m1 = Vector.subtract(v1, c);
         const m2 = Vector.subtract(v2, c);
 
@@ -132,7 +174,7 @@ class Grab extends CTRGameObject {
      * @param {number} x
      * @param {number} y
      */
-    handleWheelTouch(x, y) {
+    handleWheelTouch(x: number, y: number) {
         this.lastWheelTouch.x = x;
         this.lastWheelTouch.y = y;
     }
@@ -140,7 +182,7 @@ class Grab extends CTRGameObject {
     /**
      * @param {Vector} v
      */
-    handleWheelRotate(v) {
+    handleWheelRotate(v: Vector) {
         SoundMgr.playSound(ResourceId.SND_WHEEL);
 
         const center = new Vector(this.x, this.y);
@@ -178,7 +220,7 @@ class Grab extends CTRGameObject {
     /**
      * @param {number} delta
      */
-    update(delta) {
+    update(delta: number) {
         super.update(delta);
 
         if (this.launcher && this.rope) {
@@ -239,7 +281,7 @@ class Grab extends CTRGameObject {
     /**
      * @param {number} delta
      */
-    updateSpider(delta) {
+    updateSpider(delta: number) {
         if (this.spider && this.hasSpider && this.shouldActivate) {
             this.shouldActivate = false;
             this.spiderActive = true;
@@ -329,7 +371,7 @@ class Grab extends CTRGameObject {
      * @param {number | undefined} radius
      * @param {RGBAColor} color
      */
-    drawGrabCircle(x, y, radius, color) {
+    drawGrabCircle(x: number, y: number, radius: number | undefined, color: RGBAColor) {
         if (!radius) {
             return;
         }
@@ -463,7 +505,7 @@ class Grab extends CTRGameObject {
     /**
      * @param {Bungee} rope
      */
-    setRope(rope) {
+    setRope(rope: Bungee) {
         this.rope = rope;
         this.previousRadius = this.radius;
         this.radius = Constants.UNDEFINED;
@@ -485,7 +527,7 @@ class Grab extends CTRGameObject {
     /**
      * @param {number} radius
      */
-    setRadius(radius) {
+    setRadius(radius: number) {
         this.previousRadius = this.radius;
         this.radius = radius;
 
@@ -563,7 +605,7 @@ class Grab extends CTRGameObject {
      * @param {boolean} vertical
      * @param {number} offset
      */
-    setMoveLength(length, vertical, offset) {
+    setMoveLength(length: number, vertical: boolean, offset: number) {
         this.moveLength = length;
         this.moveVertical = vertical;
         this.moveOffset = offset;
@@ -648,7 +690,7 @@ class Grab extends CTRGameObject {
     /**
      * @param {boolean} hasSpider
      */
-    setSpider(hasSpider) {
+    setSpider(hasSpider: boolean) {
         this.hasSpider = hasSpider;
         this.shouldActivate = false;
         this.spiderActive = false;

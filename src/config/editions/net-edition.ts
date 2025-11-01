@@ -48,6 +48,7 @@ class NetEdition {
     enableBoxBackgroundEasterEgg: boolean;
     boxDirectory: string;
     settingPrefix: string;
+    levelBackgroundId: string;
 
     constructor() {
         /** @type {BoxMetadata[] | null} */

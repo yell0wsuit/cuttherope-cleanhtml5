@@ -9,7 +9,7 @@ class GameView extends View {
         super();
     }
 
-    draw() {
+    override draw() {
         const children = this.children,
             childCount = children.length;
         for (let i = 0; i < childCount; i++) {
@@ -37,7 +37,7 @@ class GameView extends View {
         }
     }
 
-    show() {
+    override show() {
         super.show();
 
         const gs = this.getChild(GameView.ElementType.GAME_SCENE);

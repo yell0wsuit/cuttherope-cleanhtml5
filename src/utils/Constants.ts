@@ -4,7 +4,7 @@ import Vector from "@/core/Vector";
  * @const
  * @type {number}
  */
-const PIXEL_TO_SI_METERS_K = 80;
+const PIXEL_TO_SI_METERS_K: number = 80;
 
 const Constants = {
     /**

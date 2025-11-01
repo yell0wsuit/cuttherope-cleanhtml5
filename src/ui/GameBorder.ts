@@ -1,7 +1,7 @@
 import platform from "@/config/platforms/platform-web";
 import edition from "@/config/editions/net-edition";
 const GAME_COMPLETE_CLASS = "gameComplete";
-let borderElement = null;
+let borderElement: HTMLElement | null = null;
 
 function ensureBorderElement() {
     if (!borderElement) {
@@ -65,7 +65,7 @@ const GameBorder = {
     domReady() {
         ensureBorderElement();
     },
-    setBoxBorder(boxIndex) {
+    setBoxBorder(boxIndex: number) {
         const element = ensureBorderElement();
         if (!element) return;
 
@@ -92,10 +92,10 @@ const GameBorder = {
         if (!element) return;
         element.style.display = "";
     },
-    fadeIn(duration, delay) {
+    fadeIn(duration: number, delay: number) {
         applyFade({ fadeIn: true, duration, delay });
     },
-    fadeOut(duration, delay) {
+    fadeOut(duration: number, delay: number | undefined) {
         applyFade({ fadeIn: false, duration, delay });
     },
 };

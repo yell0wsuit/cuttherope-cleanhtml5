@@ -6,6 +6,7 @@ import Constants from "@/utils/Constants";
 import Vector from "@/core/Vector";
 import ActionType from "@/visual/ActionType";
 import Log from "@/utils/Log";
+import type Texture2D from "@/core/Texture2D";
 
 // Note: This class is named Image in the iOS sources but we'll use
 // ImageElement to avoid conflicts with the native JS Image class.
@@ -14,6 +15,7 @@ import Log from "@/utils/Log";
  * Texture container with the ability to calculate and draw quads
  */
 class ImageElement extends BaseElement {
+    anchor: number;
     constructor() {
         super();
     }
@@ -22,7 +24,7 @@ class ImageElement extends BaseElement {
      * Set the texture for this image element
      * @param {Texture2D} texture - The texture object to use
      */
-    initTexture(texture) {
+    initTexture(texture: Texture2D) {
         this.texture = texture;
         this.restoreCutTransparency = false;
 
@@ -35,7 +37,7 @@ class ImageElement extends BaseElement {
      * @param {number} resId - The resource ID
      * @return {Texture2D} The texture object
      */
-    getTexture(resId) {
+    getTexture(resId: number): Texture2D {
         // using the resMgr would create a circular dependency,
         // so we'll assume its been loaded and fetch directly
         const texture = RES_DATA[resId].texture;
@@ -49,7 +51,7 @@ class ImageElement extends BaseElement {
      * Initialize texture using resource ID
      * @param {number} resId - The resource ID to load
      */
-    initTextureWithId(resId) {
+    initTextureWithId(resId: number) {
         this.resId = resId;
         this.initTexture(this.getTexture(resId));
     }
@@ -58,7 +60,7 @@ class ImageElement extends BaseElement {
      * Set which quad from the sprite sheet to draw
      * @param {number} n - The index of the quad to use
      */
-    setTextureQuad(n) {
+    setTextureQuad(n: number) {
         this.quadToDraw = n;
 
         // don't set width / height to quad size if we cut transparency from each quad
@@ -89,7 +91,7 @@ class ImageElement extends BaseElement {
         }
     }
 
-    draw() {
+    override draw() {
         this.preDraw();
 
         // only draw if the image is non-transparent
@@ -111,7 +113,7 @@ class ImageElement extends BaseElement {
      * Draws a specific quad from the texture's sprite sheet
      * @param {number} n - The index of the quad to draw
      */
-    drawQuad(n) {
+    drawQuad(n: number) {
         if (!Canvas.context) {
             return;
         }
@@ -179,7 +181,7 @@ class ImageElement extends BaseElement {
      * @param {number} width - The width of the area to fill
      * @param {number} height - The height of the area to fill
      */
-    drawTiled(q, x, y, width, height) {
+    drawTiled(q: number, x: number, y: number, width: number, height: number) {
         const ctx = Canvas.context;
         let qx = 0,
             qy = 0,
@@ -251,7 +253,7 @@ class ImageElement extends BaseElement {
      * @param {number} y - The y coordinate to test
      * @return {boolean} True if point is inside the quad
      */
-    pointInDrawQuad(x, y) {
+    pointInDrawQuad(x: number, y: number): boolean {
         if (this.quadToDraw === Constants.UNDEFINED) {
             return Rectangle.pointInRect(
                 x,
@@ -281,7 +283,7 @@ class ImageElement extends BaseElement {
      * @param {ActionData} actionData
      * @return {boolean}
      */
-    handleAction(actionData) {
+    override handleAction(actionData: ActionData): boolean {
         if (super.handleAction(actionData)) {
             return true;
         }
@@ -300,7 +302,7 @@ class ImageElement extends BaseElement {
      * @param {number} resId - The resource ID
      * @param {number} index - The quad index
      */
-    setElementPositionWithOffset(resId, index) {
+    setElementPositionWithOffset(resId: number, index: number) {
         const texture = this.getTexture(resId),
             offset = texture.offsets[index];
         this.x = offset.x;
@@ -312,7 +314,7 @@ class ImageElement extends BaseElement {
      * @param {number} resId - The resource ID
      * @param {number} index - The quad index
      */
-    setElementPositionWithCenter(resId, index) {
+    setElementPositionWithCenter(resId: number, index: number) {
         const texture = this.getTexture(resId);
         const rect = texture.rects[index];
         const offset = texture.offsets[index];
@@ -326,7 +328,7 @@ class ImageElement extends BaseElement {
      * @param {number | null} drawQuad - Optional quad index to set, or null to use full image
      * @return {ImageElement} The created image element
      */
-    static create(resId, drawQuad) {
+    static create(resId: number, drawQuad: number | null): ImageElement {
         const image = new ImageElement();
         image.initTextureWithId(resId);
 

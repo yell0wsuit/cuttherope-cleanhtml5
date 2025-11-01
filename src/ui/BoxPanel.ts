@@ -18,6 +18,28 @@ import BoxType from "@/ui/BoxType";
 import { IS_XMAS } from "@/resources/ResData";
 
 class BoxPanel extends Panel {
+    boxes: never[];
+    currentBoxIndex: number;
+    currentOffset: number;
+    isBoxCentered: boolean;
+    bounceBox: null;
+    ctx: null;
+    canvas: null;
+    $navBack: null;
+    $navForward: null;
+    pointerCapture: null;
+    im: null;
+    slideInProgress: boolean;
+    from: number;
+    to: number;
+    startTime: number;
+    spacing: number;
+    centerOffset: number;
+    isMouseDown: boolean;
+    downX: null;
+    downY: null;
+    delta: number;
+    downOffset: number;
     constructor() {
         super(PanelId.BOXES, "boxPanel", "menuBackground", true);
 

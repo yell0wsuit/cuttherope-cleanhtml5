@@ -6,7 +6,7 @@ import BaseElement from "@/visual/BaseElement";
 /**
  * @param {number} delta
  */
-export function updateBasics(delta) {
+export function updateBasics(delta: number) {
     let moveResult;
     for (let i = 0, len = this.drawings.length; i < len; i++) {
         this.drawings[i].update(delta);

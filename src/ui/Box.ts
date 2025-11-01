@@ -73,6 +73,26 @@ PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
 const boxImageBase = platform.boxImageBaseUrl || platform.uiImageBaseUrl;
 
 class Box {
+    index: number;
+    islocked: boolean;
+    visible: boolean;
+    pubSubSubscriptions: never[];
+    purchased: boolean;
+    bounceStartTime: number;
+    opacity: number;
+    type: string;
+    yOffset: number;
+    boxImg: HTMLImageElement;
+    textImg: HTMLImageElement;
+    boxWidth: number;
+    boxTextMargin: number;
+    textRendered: boolean;
+    renderText: () => void;
+    reqImg: HTMLImageElement | HTMLCanvasElement;
+    omNomImg: HTMLImageElement;
+    lockImg: HTMLImageElement;
+    starImg: HTMLImageElement;
+    perfectMark: HTMLImageElement;
     /**
      * @param {number} boxIndex
      * @param {string | null} bgimg
@@ -80,7 +100,13 @@ class Box {
      * @param {boolean} islocked
      * @param {string} type
      */
-    constructor(boxIndex, bgimg, reqstars, islocked, type) {
+    constructor(
+        boxIndex: number,
+        bgimg: string | null,
+        reqstars: number,
+        islocked: boolean,
+        type: string
+    ) {
         this.index = boxIndex;
         this.islocked = islocked;
         this.visible = true;
@@ -137,6 +163,9 @@ class Box {
 
         this.includeBoxNumberInTitle = true;
     }
+    includeBoxNumberInTitle(boxIndex: number, includeBoxNumberInTitle: any): string | number {
+        throw new Error("Method not implemented.");
+    }
 
     isRequired() {
         return true;
@@ -154,7 +183,7 @@ class Box {
      * @param {CanvasRenderingContext2D} ctx
      * @param {number | null} omnomoffset
      */
-    draw(ctx, omnomoffset) {
+    draw(ctx: CanvasRenderingContext2D, omnomoffset: number | null) {
         const prevAlpha = ctx.globalAlpha;
         if (this.opacity !== prevAlpha) {
             ctx.globalAlpha = this.opacity;
@@ -173,7 +202,7 @@ class Box {
      * @param {CanvasRenderingContext2D} ctx
      * @param {number | null} omnomoffset
      */
-    render(ctx, omnomoffset) {
+    render(ctx: CanvasRenderingContext2D, omnomoffset: number | null) {
         const isGameBox = this.isGameBox();
         const yOffset = resolution.uiScaledNumber(this.yOffset || 0);
         const shouldHideLockDetails = this.type === BoxType.HOLIDAY && !IS_XMAS;
@@ -297,7 +326,7 @@ class Box {
     /**
      * @param {CanvasRenderingContext2D} ctx
      */
-    bounce(ctx) {
+    bounce(ctx: CanvasRenderingContext2D) {
         if (!ctx) {
             return;
         }

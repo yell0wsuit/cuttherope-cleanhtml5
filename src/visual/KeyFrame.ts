@@ -4,6 +4,12 @@ import Action from "@/visual/Action";
 import TrackType from "@/visual/TrackType";
 
 class KeyFrameValue {
+    pos: Vector;
+    scale: Vector;
+    rotationAngle: number;
+    color: RGBAColor;
+    actionSet: Action[];
+
     constructor() {
         this.pos = Vector.newZero();
         this.scale = Vector.newZero();
@@ -35,13 +41,18 @@ class KeyFrameValue {
  * @param {KeyFrameValue} value
  */
 class KeyFrame {
+    timeOffset: any;
+    trackType: any;
+    transitionType: any;
+    value: any;
+    static TransitionType: any;
     /**
      * @param {number} time
      * @param {number} trackType
      * @param {number} transitionType
      * @param {KeyFrameValue} value
      */
-    constructor(time, trackType, transitionType, value) {
+    constructor(time: number, trackType: number, transitionType: number, value: KeyFrameValue) {
         this.timeOffset = time;
         this.trackType = trackType;
         this.transitionType = transitionType;
@@ -51,7 +62,7 @@ class KeyFrame {
      * Creates an empty keyframe
      * @return {KeyFrame}
      */
-    static newEmpty() {
+    static newEmpty(): KeyFrame {
         return new KeyFrame(
             0, // time
             TrackType.POSITION, // default track type
@@ -65,7 +76,7 @@ class KeyFrame {
      * @param {number} transition
      * @param {number} time
      */
-    static makePos(x, y, transition, time) {
+    static makePos(x: number, y: number, transition: number, time: number) {
         const v = new KeyFrameValue();
         v.pos.x = x;
         v.pos.y = y;
@@ -77,7 +88,7 @@ class KeyFrame {
      * @param {number} transition
      * @param {number} time
      */
-    static makeScale(x, y, transition, time) {
+    static makeScale(x: number, y: number, transition: number, time: number) {
         const v = new KeyFrameValue();
         v.scale.x = x;
         v.scale.y = y;
@@ -88,7 +99,7 @@ class KeyFrame {
      * @param {number} transition
      * @param {number} time
      */
-    static makeRotation(r, transition, time) {
+    static makeRotation(r: number, transition: number, time: number) {
         const v = new KeyFrameValue();
         v.rotationAngle = r;
         return new KeyFrame(time, TrackType.ROTATION, transition, v);
@@ -98,7 +109,7 @@ class KeyFrame {
      * @param {number} transition
      * @param {number} time
      */
-    static makeColor(color, transition, time) {
+    static makeColor(color: RGBAColor, transition: number, time: number) {
         const v = new KeyFrameValue();
         v.color = color;
         return new KeyFrame(time, TrackType.COLOR, transition, v);
@@ -107,7 +118,7 @@ class KeyFrame {
      * @param {Action[]} actions
      * @param {number} time
      */
-    static makeAction(actions, time) {
+    static makeAction(actions: Action[], time: number) {
         const v = new KeyFrameValue();
         v.actionSet = actions;
         return new KeyFrame(time, TrackType.ACTION, KeyFrame.TransitionType.LINEAR, v);
@@ -119,7 +130,13 @@ class KeyFrame {
      * @param {number} actionSubParam
      * @param {number} time
      */
-    static makeSingleAction(target, actionName, actionParam, actionSubParam, time) {
+    static makeSingleAction(
+        target: object,
+        actionName: string,
+        actionParam: number,
+        actionSubParam: number,
+        time: number
+    ) {
         const v = new KeyFrameValue();
         const action = Action.create(target, actionName, actionParam, actionSubParam);
         v.actionSet = [action];

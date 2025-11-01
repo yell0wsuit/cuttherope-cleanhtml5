@@ -6,23 +6,23 @@ class Drawing extends GameObject {
     /**
      * @type {boolean}
      */
-    ingame;
+    ingame: boolean;
 
     /**
      * @type {number}
      */
-    drawingIndex;
+    drawingIndex: number;
 
     /**
      * @type {boolean}
      */
-    passTransformationsToChilds;
+    override passTransformationsToChilds: boolean;
 
     /**
      * @param {number} hiddenId
      * @param {number} drawingIndex
      */
-    constructor(hiddenId, drawingIndex) {
+    constructor(hiddenId: number, drawingIndex: number) {
         super();
         this.initTextureWithId(ResourceId.IMG_DRAWING_HIDDEN);
         this.setTextureQuad(hiddenId);

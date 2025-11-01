@@ -3,7 +3,6 @@ import QueryStrings from "@/ui/QueryStrings";
 import LangId from "@/resources/LangId";
 import platformLoc from "@/platformLoc";
 import PubSub from "@/utils/PubSub";
-import verifyType from "@/utils/TypeVerify";
 
 class CTRSettings {
     static SettingKeys = {
@@ -25,14 +24,14 @@ class CTRSettings {
     /**
      * @returns {boolean}
      */
-    static getMusicEnabled() {
-        return /** @type {boolean} */ (SettingStorage.getBoolOrDefault(this.SettingKeys.MUSIC, true));
+    static getMusicEnabled(): boolean {
+        return /** @type {boolean} */ SettingStorage.getBoolOrDefault(this.SettingKeys.MUSIC, true);
     }
 
     /**
      * @param {boolean} musicEnabled
      */
-    static setMusicEnabled(musicEnabled) {
+    static setMusicEnabled(musicEnabled: boolean) {
         SettingStorage.set(this.SettingKeys.MUSIC, musicEnabled.toString());
     }
 
@@ -40,14 +39,14 @@ class CTRSettings {
     /**
      * @returns {boolean}
      */
-    static getSoundEnabled() {
-        return /** @type {boolean} */ (SettingStorage.getBoolOrDefault(this.SettingKeys.SOUND, true));
+    static getSoundEnabled(): boolean {
+        return /** @type {boolean} */ SettingStorage.getBoolOrDefault(this.SettingKeys.SOUND, true);
     }
 
     /**
      * @param {boolean} soundEnabled
      */
-    static setSoundEnabled(soundEnabled) {
+    static setSoundEnabled(soundEnabled: boolean) {
         SettingStorage.set(this.SettingKeys.SOUND, soundEnabled.toString());
     }
 
@@ -55,14 +54,17 @@ class CTRSettings {
     /**
      * @returns {boolean}
      */
-    static getClickToCut() {
-        return /** @type {boolean} */ (SettingStorage.getBoolOrDefault(this.SettingKeys.CLICK_TO_CUT, false));
+    static getClickToCut(): boolean {
+        return /** @type {boolean} */ SettingStorage.getBoolOrDefault(
+            this.SettingKeys.CLICK_TO_CUT,
+            false
+        );
     }
 
     /**
      * @param {boolean} clickToCutEnabled
      */
-    static setClickToCut(clickToCutEnabled) {
+    static setClickToCut(clickToCutEnabled: boolean) {
         SettingStorage.set(this.SettingKeys.CLICK_TO_CUT, clickToCutEnabled.toString());
     }
 
@@ -70,7 +72,7 @@ class CTRSettings {
     /**
      * @returns {number}
      */
-    static getLangId() {
+    static getLangId(): number {
         // first see if a querystring override was specified
         if (QueryStrings.lang) {
             const queryLangId = LangId.fromString(QueryStrings.lang);
@@ -91,13 +93,13 @@ class CTRSettings {
             }
         }
 
-        return /** @type {number} */ (langId);
+        return /** @type {number} */ langId;
     }
 
     /**
      * @param {string | number} langId
      */
-    static setLangId(langId) {
+    static setLangId(langId: string | number) {
         SettingStorage.set(this.SettingKeys.LANGUAGE, langId);
     }
 
@@ -109,7 +111,7 @@ class CTRSettings {
     /**
      * @param {boolean} isHD
      */
-    static setIsHD(isHD) {
+    static setIsHD(isHD: boolean) {
         SettingStorage.set(this.SettingKeys.IS_HD, isHD.toString());
     }
 

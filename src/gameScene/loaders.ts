@@ -39,7 +39,48 @@ import BoxType from "@/ui/BoxType";
 import GameSceneInit from "./init";
 
 class GameSceneLoaders extends GameSceneInit {
-    loadMap(map) {
+    mapWidth: any;
+    mapHeight: any;
+    PMX?: number;
+    PM: any;
+    earthAnims: any;
+    special?: number;
+    ropePhysicsSpeed: any;
+    nightLevel: any;
+    twoParts?: number;
+    PMY?: number;
+    pollenDrawer: any;
+    star: any;
+    starL: any;
+    starR: any;
+    bungees: any;
+    candyL?: GameObject;
+    candyR?: GameObject;
+    gravityButton?: GravityButton;
+    onButtonPressed: any;
+    stars: any;
+    starDisappearPool: any;
+    tutorials: any;
+    tutorialImages: any;
+    drawings: any;
+    bubbles: any;
+    pumps: any;
+    socks: any;
+    rotateAllSpikesWithId: any;
+    spikes: any;
+    rotatedCircles: any;
+    bouncers: any;
+    target?: GameObject;
+    pendingPaddingtonIdleTransition?: boolean;
+    onPaddingtonIdleKeyFrame: any;
+    paddingtonFinalFrame?: ImageElement;
+    dd: any;
+    onIdleOmNomKeyFrame: any;
+    blink?: Animation;
+    blinkTimer?: number;
+    support?: ImageElement;
+    idlesTimer?: number;
+    loadMap(map: { [x: string]: any }) {
         const layers = [];
 
         // get all the layers for this map
@@ -163,7 +204,7 @@ class GameSceneLoaders extends GameSceneInit {
      * Loads the map settings for the map node (inside settings layer)
      * @param item
      */
-    loadMapSettings(item) {
+    loadMapSettings(item: { width: any; height: any }) {
         this.mapWidth = item.width;
         this.mapHeight = item.height;
         this.PMX = (resolution.CANVAS_WIDTH - this.mapWidth * this.PM) / 2;
@@ -180,7 +221,12 @@ class GameSceneLoaders extends GameSceneInit {
             this.earthAnims.push(new EarthImage(0, 0));
         }
     }
-    loadGameDesign(item) {
+    loadGameDesign(item: {
+        special: number;
+        ropePhysicsSpeed: any;
+        nightLevel: any;
+        twoParts: any;
+    }) {
         this.special = item.special || 0;
         this.ropePhysicsSpeed = item.ropePhysicsSpeed;
         this.nightLevel = item.nightLevel;
@@ -189,7 +235,26 @@ class GameSceneLoaders extends GameSceneInit {
             : GameSceneConstants.PartsType.NONE;
         this.ropePhysicsSpeed *= resolution.PHYSICS_SPEED_MULTIPLIER;
     }
-    loadGrab(item) {
+    loadGrab(item: {
+        x?: any;
+        y?: any;
+        length?: any;
+        wheel?: any;
+        kickable?: any;
+        invisible?: any;
+        moveLength?: any;
+        moveVertical?: any;
+        moveOffset?: any;
+        spider?: any;
+        part?: any;
+        hidePath?: any;
+        gun?: any;
+        radius?: any;
+        path: any;
+        angle?: number;
+        moveSpeed?: number;
+        rotateSpeed?: number;
+    }) {
         const gx = item.x * this.PM + this.PMX;
         const gy = item.y * this.PM + this.PMY;
         const l = item.length * this.PM;
@@ -258,7 +323,10 @@ class GameSceneLoaders extends GameSceneInit {
 
         this.bungees.push(g);
     }
-    loadCandyL(item) {
+    attachCandy() {
+        throw new Error("Method not implemented.");
+    }
+    loadCandyL(item: { x: number; y: number }) {
         this.starL.pos.x = item.x * this.PM + this.PMX;
         this.starL.pos.y = item.y * this.PM + this.PMY;
 
@@ -273,7 +341,7 @@ class GameSceneLoaders extends GameSceneInit {
         this.candyL.y = this.starL.pos.y;
         this.candyL.bb = Rectangle.copy(resolution.CANDY_LR_BB);
     }
-    loadCandyR(item) {
+    loadCandyR(item: { x: number; y: number }) {
         this.starR.pos.x = item.x * this.PM + this.PMX;
         this.starR.pos.y = item.y * this.PM + this.PMY;
 
@@ -288,11 +356,11 @@ class GameSceneLoaders extends GameSceneInit {
         this.candyR.y = this.starR.pos.y;
         this.candyR.bb = Rectangle.copy(resolution.CANDY_LR_BB);
     }
-    loadCandy(item) {
+    loadCandy(item: { x: number; y: number }) {
         this.star.pos.x = item.x * this.PM + this.PMX;
         this.star.pos.y = item.y * this.PM + this.PMY;
     }
-    loadGravitySwitch(item) {
+    loadGravitySwitch(item: { x: number; y: number }) {
         this.gravityButton = new GravityButton();
         this.gravityButton.onButtonPressed = this.onButtonPressed.bind(this);
         this.gravityButton.visible = false;
@@ -302,7 +370,15 @@ class GameSceneLoaders extends GameSceneInit {
         this.gravityButton.y = item.y * this.PM + this.PMY;
         this.gravityButton.anchor = Alignment.CENTER;
     }
-    loadStar(item) {
+    loadStar(item: {
+        x?: any;
+        y?: any;
+        timeout?: any;
+        angle?: number;
+        path?: string;
+        moveSpeed?: number;
+        rotateSpeed?: number;
+    }) {
         const s = new Star();
         s.initTextureWithId(ResourceId.IMG_OBJ_STAR_IDLE);
         s.x = item.x * this.PM + this.PMX;
@@ -331,7 +407,13 @@ class GameSceneLoaders extends GameSceneInit {
             GameSceneConstants.IMG_OBJ_STAR_DISAPPEAR_Frame_13
         );
     }
-    loadTutorialText(item) {
+    loadTutorialText(item: {
+        text: string | null;
+        x: number;
+        y: number;
+        special: number;
+        width: number;
+    }) {
         if (this.shouldSkipTutorialElement(item)) {
             return;
         }
@@ -380,7 +462,16 @@ class GameSceneLoaders extends GameSceneInit {
 
         this.tutorials.push(t);
     }
-    loadTutorialImage(item) {
+    loadTutorialImage(item: {
+        name?: any;
+        x?: any;
+        y?: any;
+        angle: any;
+        special?: any;
+        path?: string;
+        moveSpeed?: number;
+        rotateSpeed?: number;
+    }) {
         if (this.shouldSkipTutorialElement(item)) {
             return;
         }
@@ -485,7 +576,7 @@ class GameSceneLoaders extends GameSceneInit {
 
         this.tutorialImages.push(s);
     }
-    loadHidden(item) {
+    loadHidden(item: { name: number; drawing: number; x: number; y: number; angle: number }) {
         // get the hidden image index
         const v = item.name - MapItem.HIDDEN_01,
             drawingId = item.drawing - 1;
@@ -499,7 +590,7 @@ class GameSceneLoaders extends GameSceneInit {
             this.drawings.push(s);
         }
     }
-    loadBubble(item) {
+    loadBubble(item: { x: number; y: number }) {
         const at = MathHelper.randomRange(
                 GameSceneConstants.IMG_OBJ_BUBBLE_ATTACHED_stain_01,
                 GameSceneConstants.IMG_OBJ_BUBBLE_ATTACHED_stain_03
@@ -523,7 +614,7 @@ class GameSceneLoaders extends GameSceneInit {
         s.addChild(bubble);
         this.bubbles.push(s);
     }
-    loadPump(item) {
+    loadPump(item: { x: number; y: number; angle: number }) {
         const s = new Pump();
         s.initTextureWithId(ResourceId.IMG_OBJ_PUMP);
         s.doRestoreCutTransparency();
@@ -537,7 +628,15 @@ class GameSceneLoaders extends GameSceneInit {
         s.anchor = Alignment.CENTER;
         this.pumps.push(s);
     }
-    loadSock(item) {
+    loadSock(item: {
+        x?: any;
+        y?: any;
+        group?: any;
+        angle?: number;
+        path?: string;
+        moveSpeed?: number;
+        rotateSpeed?: number;
+    }) {
         const hatOrSock = IS_XMAS ? ResourceId.IMG_OBJ_SOCKS_XMAS : ResourceId.IMG_OBJ_SOCKS;
         const s = new Sock();
         s.initTextureWithId(hatOrSock);
@@ -566,7 +665,20 @@ class GameSceneLoaders extends GameSceneInit {
         s.updateRotation();
         this.socks.push(s);
     }
-    loadSpike(item) {
+    loadSpike(item: {
+        x?: any;
+        y?: any;
+        size?: any;
+        angle: any;
+        toggled?: any;
+        name?: any;
+        initialDelay?: any;
+        onTime?: any;
+        offTime?: any;
+        path?: string;
+        moveSpeed?: number;
+        rotateSpeed?: number;
+    }) {
         const px = item.x * this.PM + this.PMX,
             py = item.y * this.PM + this.PMY,
             w = item.size,
@@ -594,7 +706,13 @@ class GameSceneLoaders extends GameSceneInit {
         }
         this.spikes.push(s);
     }
-    loadRotatedCircle(item) {
+    loadRotatedCircle(item: {
+        x: number;
+        y: number;
+        size: any;
+        handleAngle: string;
+        oneHandle: any;
+    }) {
         const px = item.x * this.PM + this.PMX,
             py = item.y * this.PM + this.PMY,
             size = item.size,
@@ -618,7 +736,15 @@ class GameSceneLoaders extends GameSceneInit {
 
         this.rotatedCircles.push(l);
     }
-    loadBouncer(item) {
+    loadBouncer(item: {
+        x?: any;
+        y?: any;
+        size?: any;
+        angle: any;
+        path?: string;
+        moveSpeed?: number;
+        rotateSpeed?: number;
+    }) {
         const px = item.x * this.PM + this.PMX,
             py = item.y * this.PM + this.PMY,
             w = item.size,
@@ -627,7 +753,7 @@ class GameSceneLoaders extends GameSceneInit {
         bouncer.parseMover(item);
         this.bouncers.push(bouncer);
     }
-    loadTarget(item) {
+    loadTarget(item: { x: any; y: any }) {
         const target = new GameObject();
         this.target = target;
 
