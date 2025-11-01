@@ -10,7 +10,7 @@ export const IS_JANUARY = currentMonth === 0;
  * Resource data array indexed by ResourceId
  * @type {ResEntry[]}
  */
-const RES_DATA = [];
+const RES_DATA: ResEntry[] = [];
 
 RES_DATA[ResourceId.IMG_DEFAULT] = new ResEntry("zeptolab.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.IMG_LOADERBAR_FULL] = new ResEntry("loaderbar_full.png", ResourceType.IMAGE);
