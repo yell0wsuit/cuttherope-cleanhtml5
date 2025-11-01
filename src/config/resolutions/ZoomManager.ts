@@ -1,6 +1,14 @@
 import resolution from "@/resolution";
 
 class ZoomManager {
+    $el: HTMLElement | null;
+    zoom: number;
+    transformOrigin: string;
+    nativeWidth: number;
+    nativeHeight: number;
+    originalHeight: number;
+    bgZoom?: number;
+
     constructor() {
         this.$el = null;
         this.zoom = 1;
@@ -21,7 +29,7 @@ class ZoomManager {
      * Assign element by ID
      * @param {string} elementId
      */
-    setElementId(elementId) {
+    setElementId(elementId: string) {
         this.$el = document.getElementById(elementId);
     }
 
@@ -29,7 +37,7 @@ class ZoomManager {
      * Assign element directly
      * @param {HTMLImageElement} element
      */
-    setElement(element) {
+    setElement(element: HTMLImageElement) {
         this.$el = element;
     }
 
@@ -103,7 +111,7 @@ class ZoomManager {
      * @param {string} selector
      * @param {string} transformValue
      */
-    #applyBackgroundScale(selector, transformValue) {
+    #applyBackgroundScale(selector: string, transformValue: string) {
         document.querySelectorAll(selector).forEach((el) => {
             if (el instanceof HTMLElement) {
                 el.style.transform = transformValue;
