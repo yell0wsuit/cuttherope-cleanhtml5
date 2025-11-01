@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build && node scripts/compressJson.js",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "typecheck": "tsc --noEmit"
     },
     "devDependencies": {
         "@eslint/js": "^9.38.0",
