@@ -6,9 +6,7 @@ import res1024 from "@/config/resolutions/1024x576";
 import res1920 from "@/config/resolutions/1920x1080";
 
 // decide which resolution to target
-const resolution = res1920;
-
-scaleResolution(resolution);
+const resolution = scaleResolution(res1920);
 settings.setIsHD(true);
 
 export default resolution;
