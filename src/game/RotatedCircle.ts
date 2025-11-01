@@ -39,56 +39,56 @@ class RotatedCircle extends BaseElement {
     /**
      * @type {string[]}
      */
-    containedObjects;
+    containedObjects: string[];
 
     /**
      * @type {RotatedCircle[]}
      */
-    circles;
+    circles: RotatedCircle[];
 
     /**
      * @type {number}
      */
-    soundPlaying;
+    soundPlaying: number;
 
     /**
      * @type {Vector}
      */
-    lastTouch;
+    lastTouch: Vector;
 
     /**
      * @type {StickerImage}
      */
-    vinilStickerL;
+    vinilStickerL: StickerImage;
 
     /**
      * @type {StickerImage}
      */
-    vinilStickerR;
+    vinilStickerR: StickerImage;
 
     /**
      * @type {ImageElement}
      */
-    vinilActiveControllerL;
+    vinilActiveControllerL: ImageElement;
 
     /**
      * @type {ImageElement}
      */
-    vinilActiveControllerR;
+    vinilActiveControllerR: ImageElement;
 
     /**
      * @type {ImageElement}
      */
-    vinil;
+    vinil: ImageElement;
 
     /**
      * @type {boolean}
      */
-    passColorToChilds;
-    anchor: number;
-    x: any;
-    y: any;
-    rotation: number;
+    override passColorToChilds: boolean;
+    override anchor: number;
+    override x: any;
+    override y: any;
+    override rotation: number;
     handle1: Vector;
     handle2: Vector;
 
@@ -178,7 +178,7 @@ class RotatedCircle extends BaseElement {
     /**
      * @param {number} value
      */
-    setSize(value) {
+    setSize(value: number) {
         this.size = value;
 
         const newScale = this.size / HUNDRED_PERCENT_SCALE_SIZE;
@@ -225,7 +225,7 @@ class RotatedCircle extends BaseElement {
     /**
      * @param {boolean} value
      */
-    setHasOneHandle(value) {
+    setHasOneHandle(value: boolean) {
         this.vinilControllerL.visible = !value;
     }
 
@@ -236,7 +236,7 @@ class RotatedCircle extends BaseElement {
     /**
      * @param {boolean} value
      */
-    setIsLeftControllerActive(value) {
+    setIsLeftControllerActive(value: boolean) {
         this.vinilActiveControllerL.visible = value;
     }
 
@@ -247,7 +247,7 @@ class RotatedCircle extends BaseElement {
     /**
      * @param {boolean} value
      */
-    setIsRightControllerActive(value) {
+    setIsRightControllerActive(value: boolean) {
         this.vinilActiveControllerR.visible = value;
     }
 
@@ -263,7 +263,7 @@ class RotatedCircle extends BaseElement {
         return false;
     }
 
-    draw() {
+    override draw() {
         const ctx = Canvas.context;
         if (this.isRightControllerActive() || this.isLeftControllerActive()) {
             const lineWidth = (ACTIVE_CIRCLE_WIDTH + resolution.PM) * this.vinilControllerL.scaleX;
@@ -343,7 +343,15 @@ class RotatedCircle extends BaseElement {
      * @param {number} radius2
      * @param {number} width
      */
-    drawCircleIntersection(cx1, cy1, radius1, cx2, cy2, radius2, width) {
+    drawCircleIntersection(
+        cx1: number,
+        cy1: number,
+        radius1: number,
+        cx2: number,
+        cy2: number,
+        radius2: number,
+        width: number
+    ) {
         const circleDistance = Vector.distance(cx1, cy1, cx2, cy2);
         if (circleDistance >= radius1 + radius2 || radius1 >= circleDistance + radius2) {
             return;
@@ -410,7 +418,7 @@ class RotatedCircle extends BaseElement {
     /**
      * @param {RotatedCircle} anotherCircle
      */
-    containsSameObjectWithCircle(anotherCircle) {
+    containsSameObjectWithCircle(anotherCircle: RotatedCircle) {
         // check for copy of self
         if (
             this.x === anotherCircle.x &&
@@ -433,7 +441,7 @@ class RotatedCircle extends BaseElement {
     /**
      * @param {RotatedCircle} zone
      */
-    copy(zone) {
+    copy(zone: RotatedCircle) {
         const copiedCircle = new RotatedCircle();
         copiedCircle.zone = zone;
         copiedCircle.x = this.x;

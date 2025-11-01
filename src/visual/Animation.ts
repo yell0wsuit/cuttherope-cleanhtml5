@@ -11,6 +11,7 @@ import Constants from "@/utils/Constants";
  * Animation element based on timeline
  */
 class Animation extends ImageElement {
+    drawPosIncrement: number;
     constructor() {
         super();
     }

@@ -13,8 +13,8 @@ import { IS_XMAS } from "@/resources/ResData";
 const hatOrSock = IS_XMAS ? ResourceId.IMG_OBJ_SOCKS_XMAS : ResourceId.IMG_OBJ_SOCKS;
 
 class Sock extends CTRGameObject {
-    scaleX: number;
-    scaleY: number;
+    override scaleX: number;
+    override scaleY: number;
     group: any;
     static Quads: any;
     state: any;
@@ -79,7 +79,7 @@ class Sock extends CTRGameObject {
         this.b2.rotateAround(this.angle, this.x, this.y);
     }
 
-    draw() {
+    override draw() {
         super.draw();
 
         // Hide light after animation completes
@@ -92,7 +92,7 @@ class Sock extends CTRGameObject {
         }
     }
 
-    drawBB() {
+    override drawBB() {
         // DEBUG: draw bounding lines for transport area
         /*if (false) {
             const ctx = Canvas.context;
@@ -117,7 +117,7 @@ class Sock extends CTRGameObject {
     /**
      * @param {number} delta
      */
-    update(delta) {
+    override update(delta: number) {
         super.update(delta);
         if (this.mover) {
             this.updateRotation();

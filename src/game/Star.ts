@@ -18,6 +18,8 @@ const IMG_OBJ_STAR_IDLE_timed_end = 55;
 
 class Star extends CTRGameObject {
     timeout: any;
+    time: number;
+    timedAnim: null;
     constructor() {
         super();
 
@@ -121,7 +123,7 @@ class Star extends CTRGameObject {
     /**
      * @param {number} delta
      */
-    update(delta) {
+    override update(delta: number) {
         if (this.timeout > 0) {
             if (this.time > 0) {
                 this.time = Mover.moveToTarget(this.time, 0, 1, delta);
@@ -130,7 +132,7 @@ class Star extends CTRGameObject {
         super.update(delta);
     }
 
-    draw() {
+    override draw() {
         if (this.timedAnim) {
             this.timedAnim.draw();
         }

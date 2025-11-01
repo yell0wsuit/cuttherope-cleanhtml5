@@ -17,7 +17,7 @@ import resolution from "@/resolution";
  * @const
  * @type {number}
  */
-const SPIKES_HEIGHT = 10;
+const SPIKES_HEIGHT: number = 10;
 
 const IMG_OBJ_ELECTRODES_base = 0;
 const IMG_OBJ_ELECTRODES_electric_start = 1;
@@ -53,7 +53,7 @@ class Spikes extends CTRGameObject {
      * @param {number} angle
      * @param {number} t
      */
-    constructor(px, py, width, angle, t) {
+    constructor(px: number, py: number, width: number, angle: number, t: number) {
         super();
 
         // select and load the spikes image
@@ -212,7 +212,7 @@ class Spikes extends CTRGameObject {
     /**
      * @param {number} delta
      */
-    update(delta) {
+    override update(delta: number) {
         super.update(delta);
 
         if (this.mover || this.shouldUpdateRotation) {
@@ -237,7 +237,7 @@ class Spikes extends CTRGameObject {
     /**
      * @param {number} t
      */
-    setToggled(t) {
+    setToggled(t: number) {
         this.toggled = t;
     }
 
@@ -273,7 +273,7 @@ class Spikes extends CTRGameObject {
     /**
      * @param {Timeline} t
      */
-    timelineFinished(t) {
+    timelineFinished(t: Timeline) {
         // update rotation one last time now that timeline is complete
         this.updateRotation();
         this.shouldUpdateRotation = false;
@@ -282,7 +282,7 @@ class Spikes extends CTRGameObject {
     /**
      * @param {number} n
      */
-    onButtonPressed(n) {
+    onButtonPressed(n: number) {
         if (n === SPIKES_ROTATION_BUTTON) {
             if (this.onButtonPressed) {
                 if (this.toggled) {
@@ -298,7 +298,7 @@ class Spikes extends CTRGameObject {
         }
     }
 
-    drawBB() {
+    override drawBB() {
         const ctx = Canvas.context;
         if (ctx) {
             ctx.beginPath();

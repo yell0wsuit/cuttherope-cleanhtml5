@@ -3,6 +3,8 @@ import resolution from "@/resolution";
 import Vector from "@/core/Vector";
 import Rectangle from "@/core/Rectangle";
 import MathHelper from "@/utils/MathHelper";
+import type Texture2D from "@/core/Texture2D";
+import type Particles from "@/visual/Particles";
 
 const IMG_OBJ_PUMP_pump_start = 0;
 const IMG_OBJ_PUMP_pump_end = 5;

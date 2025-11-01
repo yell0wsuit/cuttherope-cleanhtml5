@@ -12,7 +12,7 @@ import RGBAColor from "@/core/RGBAColor";
  * @const
  * @type {number}
  */
-const TRANSITION_DEFAULT_DELAY = 0.3;
+const TRANSITION_DEFAULT_DELAY: number = 0.3;
 
 /**
  * @enum {number}
@@ -29,11 +29,23 @@ const ViewTransition = {
 };
 
 class RootController extends ViewController {
+    suspended: boolean;
+    currentController: null;
+    viewTransition: number;
+    transitionTime: number;
+    previousView: null;
+    transitionDelay: number;
+    deactivateCurrentController: boolean;
+    dragMode: boolean;
+    controllerSubscriptions: Array<{ name: number; callback: Function }>;
+    idealDelta: number | undefined;
+    pointerCapture: any;
+    stopAnimation: any;
     /**
      * @param {undefined} parent
      */
 
-    constructor(parent) {
+    constructor(parent: undefined) {
         super(parent);
         this.suspended = false;
         this.currentController = null;
@@ -109,7 +121,7 @@ class RootController extends ViewController {
     /**
      * @param {number} time
      */
-    operateCurrentMVC(time) {
+    operateCurrentMVC(time: number) {
         if (this.suspended || this.currentController === null) {
             return;
         }
@@ -210,7 +222,7 @@ class RootController extends ViewController {
     /**
      * @param {RootController} controller
      */
-    setCurrentController(controller) {
+    setCurrentController(controller: RootController) {
         this.currentController = controller;
         this.currentController.idealDelta = 1 / 60;
     }
@@ -222,42 +234,42 @@ class RootController extends ViewController {
     /**
      * @param {RootController} controller
      */
-    onControllerActivated(controller) {
+    onControllerActivated(controller: RootController) {
         this.setCurrentController(controller);
     }
 
     /**
      * @param {RootController} controller
      */
-    onControllerDeactivated(controller) {
+    onControllerDeactivated(controller: RootController) {
         this.currentController = null;
     }
 
     /**
      * @param {RootController} controller
      */
-    onControllerPaused(controller) {
+    onControllerPaused(controller: RootController) {
         this.currentController = null;
     }
 
     /**
      * @param {RootController} controller
      */
-    onControllerUnpaused(controller) {
+    onControllerUnpaused(controller: RootController) {
         this.setCurrentController(controller);
     }
 
     /**
      * @param {RootController} controller
      */
-    onControllerDeactivationRequest(controller) {
+    onControllerDeactivationRequest(controller: RootController) {
         this.deactivateCurrentController = true;
     }
 
     /**
      * @param {GameView} view
      */
-    onControllerViewShow(view) {
+    onControllerViewShow(view: GameView) {
         if (this.viewTransition !== Constants.UNDEFINED && this.previousView != null) {
             const currentControllerConst = this.currentController;
             if (currentControllerConst) {
@@ -274,7 +286,7 @@ class RootController extends ViewController {
     /**
      * @param {GameView} view
      */
-    onControllerViewHide(view) {
+    onControllerViewHide(view: GameView) {
         this.previousView = view;
         if (this.viewTransition !== Constants.UNDEFINED && this.previousView != null) {
             this.previousView.draw();
@@ -301,7 +313,7 @@ class RootController extends ViewController {
      * @param {number} y
      * @returns {boolean}
      */
-    mouseDown(x, y) {
+    mouseDown(x: number, y: number): boolean {
         if (this.currentController && this.currentController != this) {
             //Log.debug('mouse down at:' + x + ',' + y + ' drag mode was:' + this.dragMode);
             this.dragMode = true;
@@ -314,7 +326,7 @@ class RootController extends ViewController {
      * @param {number} x
      * @param {number} y
      */
-    mouseMove(x, y) {
+    mouseMove(x: number, y: number) {
         if (this.currentController && this.currentController != this) {
             if (this.dragMode) {
                 this.currentController.mouseDragged(x, y);
@@ -331,7 +343,7 @@ class RootController extends ViewController {
      * @param {number} y
      * @returns {boolean}
      */
-    mouseUp(x, y) {
+    mouseUp(x: number, y: number): boolean {
         if (this.currentController && this.currentController != this) {
             //Log.debug('mouse up at:' + x + ',' + y + ' drag mode was:' + this.dragMode);
             const handled = this.currentController.mouseUp(x, y);
@@ -345,7 +357,7 @@ class RootController extends ViewController {
      * @param {number} x
      * @param {number} y
      */
-    mouseOut(x, y) {
+    mouseOut(x: number, y: number) {
         if (this.currentController && this.currentController != this) {
             // if the mouse leaves the canvas while down, trigger the mouseup
             // event because we won't get it if the user lets go outside
@@ -364,7 +376,7 @@ class RootController extends ViewController {
      * @param {number} y
      * @returns {boolean}
      */
-    doubleClick(x, y) {
+    doubleClick(x: number, y: number): boolean {
         if (this.currentController && this.currentController != this) {
             //Log.debug('double click at:' + x + ',' + y + ' drag mode was:' + this.dragMode);
             this.currentController.mouseUp(x, y);

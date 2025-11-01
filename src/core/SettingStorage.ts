@@ -6,7 +6,7 @@ class SettingStorage {
 
     constructor() {
         /** @type {edition} */
-        const editionConfig = /** @type {edition} */ (edition);
+        const editionConfig: edition = /** @type {edition} */ edition;
         this.editionPrefix = editionConfig.settingPrefix || "";
         this.prefix = this.editionPrefix;
 
@@ -14,7 +14,7 @@ class SettingStorage {
         this.settingCache = {};
 
         // Subscribe to user ID changes
-        PubSub.subscribe(PubSub.ChannelId.UserIdChanged, (/** @type {string} */ userId) => {
+        PubSub.subscribe(PubSub.ChannelId.UserIdChanged, (/** @type {string} */ userId: string) => {
             this.prefix = userId ? `${userId}-${this.editionPrefix}` : this.editionPrefix;
         });
 
@@ -32,7 +32,7 @@ class SettingStorage {
         if (existingData) return; // Already migrated
 
         /** @type {Object<string, string | null>} */
-        const dataToMigrate = {};
+        const dataToMigrate: { [s: string]: string | null } = {};
         const keysToRemove = [];
 
         for (let i = 0; i < localStorage.length; i++) {
@@ -56,7 +56,7 @@ class SettingStorage {
      * Get all data from consolidated storage
      * @returns {Object<string, string>}
      */
-    getAllData() {
+    getAllData(): { [s: string]: string } {
         if (!window.localStorage) return {};
         try {
             const data = localStorage.getItem(SettingStorage.STORAGE_KEY);
@@ -71,7 +71,7 @@ class SettingStorage {
      * Save data to consolidated storage
      * @param {Object<string, string>} data
      */
-    saveAllData(data) {
+    saveAllData(data: { [s: string]: string }) {
         if (!window.localStorage) return;
         try {
             localStorage.setItem(SettingStorage.STORAGE_KEY, JSON.stringify(data));
@@ -85,7 +85,7 @@ class SettingStorage {
      * @param {string} key
      * @returns {string | null}
      */
-    get(key) {
+    get(key: string): string | null {
         if (!window.localStorage) return null;
         if (key in this.settingCache) return this.settingCache[key];
         const data = this.getAllData();
@@ -97,7 +97,7 @@ class SettingStorage {
      * @param {string} key
      * @param {string | number | null} value
      */
-    set(key, value) {
+    set(key: string, value: string | number | null) {
         if (!window.localStorage) return;
         const data = this.getAllData();
         const fullKey = this.prefix + key;
@@ -118,7 +118,7 @@ class SettingStorage {
      * Remove setting by key
      * @param {string} key
      */
-    remove(key) {
+    remove(key: string) {
         if (!window.localStorage) return;
         delete this.settingCache[key];
         const data = this.getAllData();
@@ -132,7 +132,7 @@ class SettingStorage {
      * @param {boolean | null} defaultValue
      * @returns {boolean | null}
      */
-    getBoolOrDefault(key, defaultValue) {
+    getBoolOrDefault(key: string, defaultValue: boolean | null): boolean | null {
         const val = this.get(key);
         return val == null ? defaultValue : val === "true";
     }
@@ -143,7 +143,7 @@ class SettingStorage {
      * @param {number | null} defaultValue
      * @returns {number | null}
      */
-    getIntOrDefault(key, defaultValue) {
+    getIntOrDefault(key: string, defaultValue: number | null): number | null {
         const val = this.get(key);
         return val == null ? defaultValue : parseInt(val, 10);
     }
