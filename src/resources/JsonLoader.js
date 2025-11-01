@@ -1,9 +1,12 @@
-import platform from "@/config/platforms/platform-web";
+/** @typedef {import("@/types/json").JsonCacheEntry} JsonCacheEntry */
+/** @typedef {import("@/types/json").LevelJson} LevelJson */
+/** @typedef {import("@/types/json").LoadedLevelEntry} LoadedLevelEntry */
+/** @typedef {import("@/types/json").RawBoxMetadataJson} RawBoxMetadataJson */
 
 /**
  * Helper function to load and parse JSON from a URL
  * @param {string | URL | Request} url
- * @returns {Promise<any>}
+ * @returns {Promise<unknown>}
  */
 const loadJson = async (url) => {
     const response = await fetch(url);
@@ -41,7 +44,7 @@ class JsonLoader {
         /** @type {((loaded: number, total: number) => void) | null} */
         this.progressCallback = null;
 
-        /** @type {Map<string, any>} */
+        /** @type {Map<string, JsonCacheEntry>} */
         this.jsonCache = new Map();
     }
 
@@ -66,12 +69,17 @@ class JsonLoader {
     start() {
         // Use the configured base from vite config
         const baseUrl = import.meta.env.BASE_URL || "/";
+        /**
+         * Files queued for JSON loading.
+         * @type {Array<{ url: string; key: string; type: "boxMetadata" | "level" }>}
+         */
         const jsonFiles = [];
 
         // Queue box metadata JSON
         jsonFiles.push({
             url: `${baseUrl}data/config/editions/net-box-text.json`,
             key: "boxMetadata",
+            type: "boxMetadata",
         });
 
         // Queue all level JSON files (00-01 through 11-25)
@@ -82,6 +90,7 @@ class JsonLoader {
                 jsonFiles.push({
                     url: `${baseUrl}data/boxes/levels/${boxStr}-${levelStr}.json`,
                     key: `level-${boxStr}-${levelStr}`,
+                    type: "level",
                 });
             }
         }
@@ -89,10 +98,15 @@ class JsonLoader {
         this.totalJsonFiles = jsonFiles.length;
 
         // Load all JSON files
-        const promises = jsonFiles.map(async ({ url, key }) => {
+        const promises = jsonFiles.map(async ({ url, key, type }) => {
             try {
                 const data = await loadJson(url);
-                this.jsonCache.set(key, data);
+
+                if (type === "boxMetadata") {
+                    this.jsonCache.set(key, /** @type {RawBoxMetadataJson[]} */ (data));
+                } else {
+                    this.jsonCache.set(key, /** @type {LevelJson} */ (data));
+                }
                 this.loadedJsonFiles++;
                 if (this.progressCallback) {
                     this.progressCallback(this.loadedJsonFiles, this.totalJsonFiles);
@@ -127,16 +141,17 @@ class JsonLoader {
 
     /**
      * @param {string} key
-     * @returns {any}
+     * @returns {JsonCacheEntry | undefined}
      */
     getJson(key) {
         return this.jsonCache.get(key);
     }
 
     /**
-     * @returns {Map<string, Array<{levelNumber: string, level: any}>>}
+     * @returns {Map<string, LoadedLevelEntry[]>}
      */
     getAllLevels() {
+        /** @type {Map<string, LoadedLevelEntry[]>} */
         const levels = new Map();
         for (const [key, value] of this.jsonCache.entries()) {
             if (key.startsWith("level-")) {
@@ -146,7 +161,10 @@ class JsonLoader {
                     if (!levels.has(boxNumber)) {
                         levels.set(boxNumber, []);
                     }
-                    levels.get(boxNumber).push({ levelNumber, level: value });
+                    levels.get(boxNumber)?.push({
+                        levelNumber,
+                        level: /** @type {LevelJson} */ (value),
+                    });
                 }
             }
         }
@@ -154,10 +172,14 @@ class JsonLoader {
     }
 
     /**
-     * @returns {any}
+     * @returns {RawBoxMetadataJson[] | undefined}
      */
     getBoxMetadata() {
-        return this.jsonCache.get("boxMetadata");
+        const metadata = this.jsonCache.get("boxMetadata");
+        if (Array.isArray(metadata)) {
+            return metadata;
+        }
+        return undefined;
     }
 }
 
