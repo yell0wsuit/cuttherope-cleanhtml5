@@ -7,10 +7,10 @@ import resolution from "@/resolution";
  */
 class View extends BaseElement {
     /** @type {number} */
-    width;
+    width: number;
 
     /** @type {number} */
-    height;
+    height: number;
 
     constructor() {
         super();
