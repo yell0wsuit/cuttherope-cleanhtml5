@@ -11,6 +11,8 @@ import BoxType from "@/ui/BoxType";
 import LangId from "@/resources/LangId";
 import { IS_JANUARY } from "@/resources/ResData";
 
+/** @typedef {import("@/types/json").RawBoxMetadataJson} RawBoxMetadataJson */
+
 /** @constant {string} The ID for the holiday gift box */
 const HOLIDAY_GIFT_BOX_ID = "holidaygiftbox";
 
@@ -18,17 +20,17 @@ const HOLIDAY_GIFT_BOX_ID = "holidaygiftbox";
  * Localized text for a box, supporting multiple languages.
  * @typedef {Object} BoxText
  * @property {string} en - English text
- * @property {string} ko - Korean text
- * @property {string} zh - Chinese (Simplified) text
- * @property {string} ja - Japanese text
- * @property {string} nl - Dutch text
- * @property {string} it - Italian text
- * @property {string} ca - Catalan text
- * @property {string} br - Brazilian Portuguese text
- * @property {string} es - Spanish text
- * @property {string} fr - French text
- * @property {string} de - German text
- * @property {string} ru - Russian text
+ * @property {string} [ko] - Korean text
+ * @property {string} [zh] - Chinese (Simplified) text
+ * @property {string} [ja] - Japanese text
+ * @property {string} [nl] - Dutch text
+ * @property {string} [it] - Italian text
+ * @property {string} [ca] - Catalan text
+ * @property {string} [br] - Brazilian Portuguese text
+ * @property {string} [es] - Spanish text
+ * @property {string} [fr] - French text
+ * @property {string} [de] - German text
+ * @property {string} [ru] - Russian text
  */
 
 /**
@@ -129,12 +131,18 @@ class NetEdition {
         }
 
         /** @type {BoxMetadata[]} */
-        const boxMetadata = JsonLoader.getBoxMetadata() || [];
-        this._cachedNormalizedMetadata = boxMetadata.map((box) => {
+        /** @type {RawBoxMetadataJson[]} */
+        const rawBoxMetadata = JsonLoader.getBoxMetadata() ?? [];
+        this._cachedNormalizedMetadata = rawBoxMetadata.map((box) => {
             const isHolidayBox = box.id === HOLIDAY_GIFT_BOX_ID;
             /** @type {BoxMetadata} */
             let modifiedBox = {
                 ...box,
+                boxImage: box.boxImage ?? null,
+                boxDoor: box.boxDoor ?? null,
+                unlockStars: box.unlockStars ?? null,
+                support: box.support ?? null,
+                showEarth: box.showEarth ?? false,
                 boxType: /** @type {BoxMetadata["boxType"]} */ (
                     BoxType[/** @type {keyof typeof BoxType} */ (box.boxType)] ?? box.boxType
                 ),
