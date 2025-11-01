@@ -9,38 +9,37 @@ import Easing from "@/ui/Easing";
  * @param {HTMLImageElement} img - The image element to check
  * @returns {boolean} Whether the image is loaded and ready
  */
-const isImageReady = (img) => img && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0;
+const isImageReady = (img: HTMLImageElement): boolean =>
+    img && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0;
 
 /**
  * Manages the box door animations and rendering
  */
 class BoxDoors {
     /** @type {HTMLImageElement[]} */
-    static #doorImages = [];
+    static #doorImages: HTMLImageElement[] = [];
     /** @type {HTMLImageElement} */
-    static #tapeImgL = new Image();
+    static #tapeImgL: HTMLImageElement = new Image();
     /** @type {HTMLImageElement} */
-    static #tapeImgR = new Image();
+    static #tapeImgR: HTMLImageElement = new Image();
 
     /** @type {HTMLCanvasElement | null} */
-    static canvasLeft = null;
+    static canvasLeft: HTMLCanvasElement | null = null;
     /** @type {HTMLCanvasElement | null} */
-    static canvasRight = null;
+    static canvasRight: HTMLCanvasElement | null = null;
     /** @type {number | null} */
-    static currentIndex = null;
+    static currentIndex: number | null = null;
     /** @type {boolean} */
-    static showTape = true;
+    static showTape: boolean = true;
 
     /**
      * Initialize the door canvases
      */
     static initializeDoors() {
-        BoxDoors.canvasLeft = /** @type {HTMLCanvasElement} */ (
-            document.getElementById("levelCanvasLeft")
-        );
-        BoxDoors.canvasRight = /** @type {HTMLCanvasElement} */ (
-            document.getElementById("levelCanvasRight")
-        );
+        BoxDoors.canvasLeft =
+            /** @type {HTMLCanvasElement} */ document.getElementById("levelCanvasLeft");
+        BoxDoors.canvasRight =
+            /** @type {HTMLCanvasElement} */ document.getElementById("levelCanvasRight");
 
         BoxDoors.canvasLeft.width = (resolution.uiScaledNumber(1024) / 2) | 0;
         BoxDoors.canvasRight.width = (resolution.uiScaledNumber(1024) / 2) | 0;
@@ -133,7 +132,7 @@ class BoxDoors {
      * @param {boolean} [showTape] - Whether to show tape on the doors
      * @param {number} [percentOpen] - How far open the doors are (0-1)
      */
-    static renderDoors(showTape, percentOpen) {
+    static renderDoors(showTape: boolean, percentOpen: number) {
         //do another prerender
         if (
             BoxDoors.currentIndex !== BoxManager.currentBoxIndex ||
@@ -164,7 +163,11 @@ class BoxDoors {
      * @param {(() => void) | null | undefined} callback - Function to call when animation completes
      * @param {boolean} [runInReverse] - Whether to run the animation in reverse
      */
-    static openDoors(showTape, callback, runInReverse) {
+    static openDoors(
+        showTape: boolean,
+        callback: (() => void) | null | undefined,
+        runInReverse: boolean
+    ) {
         const r = runInReverse != null ? runInReverse : false;
 
         const begin = Date.now();
@@ -203,7 +206,7 @@ class BoxDoors {
      * @param {boolean} showTape - Whether to show tape on the doors
      * @param {(() => void) | null | undefined} callback - Function to call when animation completes
      */
-    static closeDoors(showTape, callback) {
+    static closeDoors(showTape: boolean, callback: (() => void) | null | undefined) {
         BoxDoors.openDoors(showTape, callback, true);
     }
 
@@ -211,7 +214,7 @@ class BoxDoors {
      * Animates closing the box with tape animation
      * @param {(() => void) | null | undefined} callback - Function to call when animation completes
      */
-    static closeBoxAnimation(callback) {
+    static closeBoxAnimation(callback: (() => void) | null | undefined) {
         // animating to level select
         // box already closed, just needs to be taped and then redirected
         const tapeRoll = document.getElementById("tapeRoll");
@@ -253,7 +256,7 @@ class BoxDoors {
                         } else {
                             // hide the tape slice and re-render the doors with tape
                             tapeSlice.style.display = "none";
-                            BoxDoors.renderDoors(true);
+                            BoxDoors.renderDoors(true, 0);
 
                             //fade out tape and switch panels
                             fadeOut(tapeRoll, 400, () => {
@@ -278,7 +281,7 @@ class BoxDoors {
      * Animates opening the box with box cutter animation
      * @param {(() => void) | null | undefined} callback - Function to call when animation completes
      */
-    static openBoxAnimation(callback) {
+    static openBoxAnimation(callback: (() => void) | null | undefined) {
         // make sure the doors are rendered closed initially
         BoxDoors.renderDoors(true, 0);
 
@@ -346,7 +349,11 @@ if (document.readyState === "loading") {
  * @param {number} duration - Duration in milliseconds
  * @param {(() => void) | null | undefined} [callback] - Optional callback when complete
  */
-const fadeOut = (element, duration, callback) => {
+const fadeOut = (
+    element: HTMLElement,
+    duration: number,
+    callback: (() => void) | null | undefined
+) => {
     element.style.transition = `opacity ${duration}ms`;
     element.style.opacity = "0";
 
@@ -363,7 +370,11 @@ const fadeOut = (element, duration, callback) => {
  * @param {number} duration - Duration in milliseconds
  * @param {(() => void) | null | undefined} [callback] - Optional callback when complete
  */
-const fadeIn = (element, duration, callback) => {
+const fadeIn = (
+    element: HTMLElement,
+    duration: number,
+    callback: (() => void) | null | undefined
+) => {
     element.style.opacity = "0";
     element.style.display = "block";
     element.style.transition = `opacity ${duration}ms`;

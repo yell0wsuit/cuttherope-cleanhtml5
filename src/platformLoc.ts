@@ -5,7 +5,7 @@ class DefaultLoc {
      * Returns the default language ID.
      * @returns {LangId}
      */
-    getDefaultLangId() {
+    getDefaultLangId(): LangId {
         return LangId.EN;
     }
 }

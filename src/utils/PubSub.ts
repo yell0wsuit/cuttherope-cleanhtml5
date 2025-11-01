@@ -3,6 +3,7 @@
  * Provides subscribe, unsubscribe, and publish methods.
  */
 class PubSub {
+    ChannelId: any;
     constructor() {
         /**
          * Store subscriptions grouped by channel so we do not need to iterate the

@@ -26,6 +26,7 @@ import { toggleClass } from "@/utils/domHelpers";
  * @property {PanelShowHandler} panelShow - Panel visibility management
  */
 class InterfaceManager extends AudioOptions {
+    gameFlow: any;
     constructor() {
         super();
 

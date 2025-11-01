@@ -1,26 +1,26 @@
 import JsonLoader from "@/resources/JsonLoader";
 
-/** @typedef {import("@/types/json").LevelJson} LevelJson */
-/** @typedef {import("@/types/json").LoadedLevelEntry} LoadedLevelEntry */
+import type { LevelJson } from "@/types/json";
+import type { LoadedLevelEntry } from "@/types/json";
 
 // Cached boxes data
 /**
  * @type {Array<{ levels: LevelJson[] }> | null}
  */
-let cachedBoxes = null;
+let cachedBoxes: Array<{ levels: LevelJson[] }> | null = null;
 
 // Get levels from JsonLoader which loads them at runtime from public folder
 /**
  * Resolve and memoize level JSON grouped by box.
  * @returns {Array<{ levels: LevelJson[] }>}
  */
-const getLevels = () => {
+const getLevels = (): Array<{ levels: LevelJson[] }> => {
     if (cachedBoxes) {
         return cachedBoxes;
     }
 
     /** @type {[string, LoadedLevelEntry[]][]} */
-    const groupedLevels = Array.from(JsonLoader.getAllLevels());
+    const groupedLevels: [string, LoadedLevelEntry[]][] = Array.from(JsonLoader.getAllLevels());
 
     if (groupedLevels.length === 0) {
         // Return empty array if data not loaded yet

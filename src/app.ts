@@ -9,6 +9,10 @@ import PubSub from "@/utils/PubSub";
 import editionUI from "@/editionUI";
 
 class App {
+    progressBar: HTMLElement | null;
+    betterLoader: HTMLElement | null;
+    gameFooterSocial: HTMLElement | null;
+
     constructor() {
         /**
          * @type {HTMLElement | null}
@@ -90,7 +94,7 @@ class App {
         // Subscribe to preloader progress updates
         const progressSubscription = PubSub.subscribe(
             PubSub.ChannelId.PreloaderProgress,
-            (/** @type {{ progress: number; }} */ data) => {
+            (/** @type {{ progress: number; }} */ data: { progress: number }) => {
                 if (this.progressBar && data && typeof data.progress === "number") {
                     const progress = Math.min(100, Math.max(0, data.progress));
                     this.progressBar.style.transition = "width 0.3s ease-out";
