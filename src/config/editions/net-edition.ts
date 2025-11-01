@@ -11,43 +11,44 @@ import BoxType from "@/ui/BoxType";
 import LangId from "@/resources/LangId";
 import { IS_JANUARY } from "@/resources/ResData";
 
-/** @typedef {import("@/types/json").RawBoxMetadataJson} RawBoxMetadataJson */
+import type { RawBoxMetadataJson, BoxTextJson, LevelJson } from "@/types/json";
 
 /** @constant {string} The ID for the holiday gift box */
 const HOLIDAY_GIFT_BOX_ID = "holidaygiftbox";
 
-/**
- * Localized text for a box, supporting multiple languages.
- * @typedef {Object} BoxText
- * @property {string} en - English text
- * @property {string} [ko] - Korean text
- * @property {string} [zh] - Chinese (Simplified) text
- * @property {string} [ja] - Japanese text
- * @property {string} [nl] - Dutch text
- * @property {string} [it] - Italian text
- * @property {string} [ca] - Catalan text
- * @property {string} [br] - Brazilian Portuguese text
- * @property {string} [es] - Spanish text
- * @property {string} [fr] - French text
- * @property {string} [de] - German text
- * @property {string} [ru] - Russian text
- */
-
-/**
- * @typedef {Object} BoxMetadata
- * @property {string} id - Unique identifier for the box
- * @property {BoxText} boxText - Localized text for the box
- * @property {string | null} boxImage - Background image filename for the box
- * @property {string | null} boxDoor - Door transition image filename
- * @property {"HOLIDAY" | "NORMAL" | "MORECOMING"} boxType - Type of box
- * @property {number | null} unlockStars - Number of stars required to unlock
- * @property {number | null} support - Index of the support quad for Om Nom
- * @property {boolean} showEarth - Whether to show the earth animation
- * @property {number | null} levelBackgroundId - Resource key or resolved ID
- * @property {number | null} levelOverlayId - Resource key or resolved ID
- */
+interface BoxMetadata {
+    id: string;
+    boxText: BoxTextJson;
+    boxImage: string | null;
+    boxDoor: string | null;
+    boxType: "HOLIDAY" | "NORMAL" | "MORECOMING";
+    unlockStars: number | null;
+    support: number | null;
+    showEarth: boolean;
+    levelBackgroundId: number | null;
+    levelOverlayId: number | null;
+}
 
 class NetEdition {
+    _cachedNormalizedMetadata: BoxMetadata[] | null;
+    siteUrl: string;
+    disableHiddenDrawings: boolean;
+    languages: number[];
+    boxBorders: string[];
+    menuSoundIds: number[];
+    gameSoundIds: number[];
+    menuImageFilenames: string[];
+    loaderPageImages: string[];
+    gameImageIds: number[];
+    boxes: Array<{ levels: LevelJson[] }>;
+    drawingImageNames: string[];
+    editionImages: string;
+    editionImageDirectory: string;
+    disableBoxMenu: boolean;
+    enableBoxBackgroundEasterEgg: boolean;
+    boxDirectory: string;
+    settingPrefix: string;
+
     constructor() {
         /** @type {BoxMetadata[] | null} */
         this._cachedNormalizedMetadata = null;
@@ -125,43 +126,33 @@ class NetEdition {
      * Gets normalized box metadata with lazy initialization and caching.
      * @returns {BoxMetadata[]} The normalized metadata array
      */
-    getNormalizedBoxMetadata() {
+    getNormalizedBoxMetadata(): BoxMetadata[] {
         if (this._cachedNormalizedMetadata) {
             return this._cachedNormalizedMetadata;
         }
 
         /** @type {BoxMetadata[]} */
         /** @type {RawBoxMetadataJson[]} */
-        const rawBoxMetadata = JsonLoader.getBoxMetadata() ?? [];
+        const rawBoxMetadata: RawBoxMetadataJson[] = JsonLoader.getBoxMetadata() ?? [];
         this._cachedNormalizedMetadata = rawBoxMetadata.map((box) => {
             const isHolidayBox = box.id === HOLIDAY_GIFT_BOX_ID;
             /** @type {BoxMetadata} */
-            let modifiedBox = {
+            let modifiedBox: BoxMetadata = {
                 ...box,
                 boxImage: box.boxImage ?? null,
                 boxDoor: box.boxDoor ?? null,
                 unlockStars: box.unlockStars ?? null,
                 support: box.support ?? null,
                 showEarth: box.showEarth ?? false,
-                boxType: /** @type {BoxMetadata["boxType"]} */ (
-                    BoxType[/** @type {keyof typeof BoxType} */ (box.boxType)] ?? box.boxType
-                ),
+                boxType: box.boxType,
                 levelBackgroundId:
                     box.levelBackgroundId == null
                         ? null
-                        : ResourceId[
-                              /** @type {keyof typeof ResourceId} */ (
-                                  /** @type {unknown} */ (box.levelBackgroundId)
-                              )
-                          ],
+                        : ((ResourceId as Record<string, number>)[box.levelBackgroundId] ?? null),
                 levelOverlayId:
                     box.levelOverlayId == null
                         ? null
-                        : ResourceId[
-                              /** @type {keyof typeof ResourceId} */ (
-                                  /** @type {unknown} */ (box.levelOverlayId)
-                              )
-                          ],
+                        : ((ResourceId as Record<string, number>)[box.levelOverlayId] ?? null),
             };
 
             if (IS_JANUARY && isHolidayBox) {
@@ -176,14 +167,14 @@ class NetEdition {
             return modifiedBox;
         });
 
-        return /** @type {BoxMetadata[]} */ (this._cachedNormalizedMetadata);
+        return /** @type {BoxMetadata[]} */ this._cachedNormalizedMetadata;
     }
 
     /**
      * Gets the localized text to display on each box.
-     * @returns {BoxText[]} Array of localized text objects for each box
+     * @returns {BoxTextJson[]} Array of localized text objects for each box
      */
-    get boxText() {
+    get boxText(): BoxTextJson[] {
         return this.getNormalizedBoxMetadata().map(({ boxText }) => boxText);
     }
 
@@ -191,7 +182,7 @@ class NetEdition {
      * Gets the background images to use for each box.
      * @returns {(string | null)[]} Array of image filenames or null
      */
-    get boxImages() {
+    get boxImages(): (string | null)[] {
         return this.getNormalizedBoxMetadata().map(({ boxImage }) => boxImage);
     }
 
@@ -199,7 +190,7 @@ class NetEdition {
      * Gets images used for sliding door transitions.
      * @returns {string[]} Array of door image filenames
      */
-    get boxDoors() {
+    get boxDoors(): string[] {
         return this.getNormalizedBoxMetadata()
             .map(({ boxDoor }) => boxDoor)
             .filter((boxDoor) => boxDoor != null);
@@ -209,7 +200,7 @@ class NetEdition {
      * Gets the type of each box.
      * @returns {BoxMetadata["boxType"][]} Array of box type strings
      */
-    get boxTypes() {
+    get boxTypes(): BoxMetadata["boxType"][] {
         return this.getNormalizedBoxMetadata().map(({ boxType }) => boxType);
     }
 
@@ -217,7 +208,7 @@ class NetEdition {
      * Gets the number of stars required to unlock each box.
      * @returns {(number | null)[]} Array of unlock star requirements or null
      */
-    get unlockStars() {
+    get unlockStars(): (number | null)[] {
         return this.getNormalizedBoxMetadata().map(({ unlockStars }) => unlockStars);
     }
 
@@ -225,7 +216,7 @@ class NetEdition {
      * Gets the index of the quad support for each box.
      * @returns {(number | null)[]} Array of support indices or null
      */
-    get supports() {
+    get supports(): (number | null)[] {
         return this.getNormalizedBoxMetadata().map(({ support }) => support);
     }
 
@@ -233,7 +224,7 @@ class NetEdition {
      * Gets flags determining whether earth animation is shown.
      * @returns {boolean[]} Array of showEarth flags
      */
-    get showEarth() {
+    get showEarth(): boolean[] {
         return this.getNormalizedBoxMetadata().map(({ showEarth }) => showEarth);
     }
 
@@ -241,7 +232,7 @@ class NetEdition {
      * Gets resource IDs for level backgrounds.
      * @returns {number[]} Array of level background resource IDs
      */
-    get levelBackgroundIds() {
+    get levelBackgroundIds(): number[] {
         return this.getNormalizedBoxMetadata()
             .map(({ levelBackgroundId }) => levelBackgroundId)
             .filter((id) => id != null);
@@ -251,7 +242,7 @@ class NetEdition {
      * Gets resource IDs for level overlays.
      * @returns {number[]} Array of level overlay resource IDs
      */
-    get levelOverlayIds() {
+    get levelOverlayIds(): number[] {
         return this.getNormalizedBoxMetadata()
             .map(({ levelOverlayId }) => levelOverlayId)
             .filter((id) => id != null);
