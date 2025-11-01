@@ -13,7 +13,7 @@ class Alignment {
      * @param {string} s
      * @returns {number}
      */
-    static parse(s) {
+    static parse(s: string): number {
         let a = Alignment.UNDEFINED;
 
         if (s.includes("LEFT")) a = Alignment.LEFT;
