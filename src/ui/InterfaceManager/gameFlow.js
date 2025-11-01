@@ -151,7 +151,6 @@ export default class GameFlow {
             this.manager.isInAdvanceBoxMode = true;
             const targetPanelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
             panelManager.showPanel(targetPanelId, false);
-            console.log(targetPanelId);
         }
     }
 
