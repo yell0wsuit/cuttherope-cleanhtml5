@@ -10,7 +10,6 @@ import MenuStringId from "@/resources/MenuStringId";
 import RoamSettings from "@/game/RoamSettings";
 import BoxType from "@/ui/BoxType";
 import { IS_XMAS } from "@/resources/ResData";
-import verifyType from "@/utils/TypeVerify";
 
 // Helper to add prefix for Holiday Gift box
 const getBoxPrefix = function (/** @type {number} */ box) {
@@ -218,6 +217,10 @@ class ScoreManager {
         Text.drawBig({ text: text, imgSel: "#boxScore img", scaleToUI: true });
     }
 
+    /**
+     * Retrieve the obfuscation value used for score persistence.
+     * @returns {number}
+     */
     getXorValue() {
         return XOR_VALUE;
     }
