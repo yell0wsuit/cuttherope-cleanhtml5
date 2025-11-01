@@ -4,12 +4,12 @@ class Bubble extends GameObject {
     /**
      * @type {boolean}
      */
-    popped;
+    popped: boolean;
 
     /**
      * @type {boolean}
      */
-    withoutShadow;
+    withoutShadow: boolean;
 
     constructor() {
         super();
@@ -17,7 +17,7 @@ class Bubble extends GameObject {
         this.withoutShadow = false;
     }
 
-    draw() {
+    override draw() {
         if (this.withoutShadow) {
             // only do transformations and draw children
             this.preDraw();
