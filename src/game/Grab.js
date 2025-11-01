@@ -65,7 +65,11 @@ const IMG_OBJ_BEE_HD_obj_bee = 1;
 const IMG_OBJ_BEE_HD_wings_start = 2;
 const IMG_OBJ_BEE_HD_wings_end = 4;
 
-const grabCircleCache = [];
+/**
+ * Cache for storing pre-rendered grab circle canvases
+ * @type {Object.<string, HTMLCanvasElement>}
+ */
+const grabCircleCache = {};
 
 class Grab extends CTRGameObject {
     constructor() {
@@ -112,9 +116,9 @@ class Grab extends CTRGameObject {
 
     /**
      *
-     * @param v1 {Vector} start
-     * @param v2 {Vector} end
-     * @param c {Vector} center
+     * @param {Vector} v1 start
+     * @param {Vector} v2 end
+     * @param {Vector} c center
      */
     getRotateAngle(v1, v2, c) {
         const m1 = Vector.subtract(v1, c);
@@ -125,14 +129,17 @@ class Grab extends CTRGameObject {
     }
 
     /**
-     *
-     * @param v {Vector}
+     * @param {number} x
+     * @param {number} y
      */
     handleWheelTouch(x, y) {
         this.lastWheelTouch.x = x;
         this.lastWheelTouch.y = y;
     }
 
+    /**
+     * @param {Vector} v
+     */
     handleWheelRotate(v) {
         SoundMgr.playSound(ResourceId.SND_WHEEL);
 
@@ -168,6 +175,9 @@ class Grab extends CTRGameObject {
         this.lastWheelTouch.copyFrom(v);
     }
 
+    /**
+     * @param {number} delta
+     */
     update(delta) {
         super.update(delta);
 
@@ -226,31 +236,35 @@ class Grab extends CTRGameObject {
         }
     }
 
+    /**
+     * @param {number} delta
+     */
     updateSpider(delta) {
-        if (this.hasSpider && this.shouldActivate) {
+        if (this.spider && this.hasSpider && this.shouldActivate) {
             this.shouldActivate = false;
             this.spiderActive = true;
             SoundMgr.playSound(ResourceId.SND_SPIDER_ACTIVATE);
             this.spider.playTimeline(SpiderState.START);
         }
 
-        if (this.hasSpider && this.spiderActive) {
+        if (this.spider && this.hasSpider && this.spiderActive) {
             if (this.spider.currentTimelineIndex !== SpiderState.START) {
                 this.spiderPos += delta * resolution.SPIDER_SPEED;
             }
 
-            let checkingPos = 0,
-                reachedCandy = false;
+            let checkingPos = 0;
+            let reachedCandy = false;
 
             if (this.rope) {
-                const drawPts = this.rope.drawPts,
-                    BUNGEE_REST_LEN = resolution.BUNGEE_REST_LEN,
-                    a = (2 * BUNGEE_REST_LEN) / 3;
+                const drawPts = this.rope.drawPts;
+                const BUNGEE_REST_LEN = resolution.BUNGEE_REST_LEN;
+                const a = (2 * BUNGEE_REST_LEN) / 3;
+
                 for (let i = 0, numPts = drawPts.length; i < numPts; i++) {
-                    const c1 = drawPts[i],
-                        c2 = drawPts[i + 1],
-                        b = c1.distance(c2),
-                        len = a > b ? a : b;
+                    const c1 = drawPts[i];
+                    const c2 = drawPts[i + 1];
+                    const b = c1.distance(c2);
+                    const len = a > b ? a : b;
 
                     if (
                         this.spiderPos >= checkingPos &&
@@ -309,16 +323,26 @@ class Grab extends CTRGameObject {
         }
     }
 
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number | undefined} radius
+     * @param {RGBAColor} color
+     */
     drawGrabCircle(x, y, radius, color) {
+        if (!radius) {
+            return;
+        }
+
         if (radius < 0) {
             return;
         }
 
-        //generate a key for the cache
+        // generate a key for the cache
         const key = `${radius.toString()}|${color.rgbaStyle()}`;
         let circleCnv;
 
-        //check the cache first
+        // check the cache first
         if (grabCircleCache[key]) {
             circleCnv = grabCircleCache[key];
             //console.log("EXISTS IN CACHE")
@@ -340,25 +364,29 @@ class Grab extends CTRGameObject {
                 segments++;
             }
 
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = color.rgbaStyle();
+            if (ctx) {
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = color.rgbaStyle();
+            }
 
             const segmentRadians = totalRadians / segments;
             for (let i = 0; i < segments; i++) {
                 // only draw every other segment for dashed circle
                 if (i % 2 === 0) {
                     const startRadians = (i / segments) * totalRadians;
-                    ctx.beginPath();
-                    ctx.arc(
-                        radius + 2,
-                        radius + 2,
-                        radius,
-                        startRadians,
-                        startRadians + segmentRadians,
-                        false
-                    );
-                    ctx.stroke();
-                    ctx.closePath();
+                    if (ctx) {
+                        ctx.beginPath();
+                        ctx.arc(
+                            radius + 2,
+                            radius + 2,
+                            radius,
+                            startRadians,
+                            startRadians + segmentRadians,
+                            false
+                        );
+                        ctx.stroke();
+                        ctx.closePath();
+                    }
                 }
             }
 
@@ -367,6 +395,9 @@ class Grab extends CTRGameObject {
         }
 
         const mainCtx = Canvas.context;
+        if (!mainCtx) {
+            return;
+        }
         mainCtx.drawImage(circleCnv, x - radius - 2, y - radius - 2);
     }
 
@@ -420,13 +451,18 @@ class Grab extends CTRGameObject {
     }
 
     drawSpider() {
-        this.spider.draw();
+        if (this.spider) {
+            this.spider.draw();
+        }
     }
 
     drawGunCup() {
         this.gunCup.draw();
     }
 
+    /**
+     * @param {Bungee} rope
+     */
     setRope(rope) {
         this.rope = rope;
         this.previousRadius = this.radius;
@@ -446,6 +482,9 @@ class Grab extends CTRGameObject {
         m.start();
     }
 
+    /**
+     * @param {number} radius
+     */
     setRadius(radius) {
         this.previousRadius = this.radius;
         this.radius = radius;
@@ -519,6 +558,11 @@ class Grab extends CTRGameObject {
         }
     }
 
+    /**
+     * @param {number} length
+     * @param {boolean} vertical
+     * @param {number} offset
+     */
     setMoveLength(length, vertical, offset) {
         this.moveLength = length;
         this.moveVertical = vertical;
@@ -601,6 +645,9 @@ class Grab extends CTRGameObject {
         this.addChild(this.bee);
     }
 
+    /**
+     * @param {boolean} hasSpider
+     */
     setSpider(hasSpider) {
         this.hasSpider = hasSpider;
         this.shouldActivate = false;

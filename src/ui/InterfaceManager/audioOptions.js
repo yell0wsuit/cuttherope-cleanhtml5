@@ -3,10 +3,27 @@ import Lang from "@/resources/Lang";
 import MenuStringId from "@/resources/MenuStringId";
 import Alignment from "@/core/Alignment";
 import Text from "@/visual/Text";
-import dom from "@/utils/dom";
-const { addClass, removeClass, setStyle, stopAnimations, fadeIn, fadeOut, delay } = dom;
-export default function createAudioOptions() {
-    const showMiniOptionMessage = (msgId, messageText, delayDuration) => {
+import {
+    addClass,
+    removeClass,
+    setStyle,
+    stopAnimations,
+    fadeIn,
+    fadeOut,
+    delay,
+} from "@/utils/domHelpers";
+
+/**
+ * Base class for audio-related UI functionality
+ */
+export default class AudioOptions {
+    /**
+     * Shows a mini option message in the UI
+     * @param {string} msgId - The ID of the message element
+     * @param {string} messageText - The text to display
+     * @param {number} delayDuration - How long to show the message
+     */
+    _showMiniOptionMessage(msgId, messageText, delayDuration) {
         if (msgId === undefined) {
             return;
         }
@@ -34,11 +51,18 @@ export default function createAudioOptions() {
         fadeIn(msg, 500)
             .then(() => delay(msg, showDelay))
             .then(() => fadeOut(msg, 750));
-    };
+    }
 
-    const updateMiniSoundButton = (doToggle, buttonId, msgId) => {
+    /**
+     * Updates the mini sound button display and toggles sound settings
+     * @param {boolean} doToggle - Whether to toggle the sound state
+     * @param {string} buttonId - The ID of the button
+     * @param {string} msgId - The ID of the message element
+     */
+    _updateMiniSoundButton(doToggle, buttonId, msgId) {
         let isSoundOn = SoundMgr.soundEnabled;
         let isMusicOn = SoundMgr.musicEnabled;
+
         if (doToggle) {
             if (isSoundOn && isMusicOn) {
                 isSoundOn = true;
@@ -80,11 +104,6 @@ export default function createAudioOptions() {
                 .replace("{0}", Lang.menuText(musicId).toLowerCase())
                 .replace("{1}", Lang.menuText(soundId).toLowerCase());
         }
-        showMiniOptionMessage(msgId, text);
-    };
-
-    return {
-        _showMiniOptionMessage: showMiniOptionMessage,
-        _updateMiniSoundButton: updateMiniSoundButton,
-    };
+        this._showMiniOptionMessage(msgId, text, 500);
+    }
 }

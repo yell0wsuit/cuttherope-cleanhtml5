@@ -3,13 +3,54 @@ import resolution from "@/resolution";
 import Vector from "@/core/Vector";
 import Rectangle from "@/core/Rectangle";
 import MathHelper from "@/utils/MathHelper";
-const IMG_OBJ_PUMP_pump_start = 0,
-    IMG_OBJ_PUMP_pump_end = 5,
-    IMG_OBJ_PUMP_particle_1 = 6,
-    IMG_OBJ_PUMP_particle_2 = 7,
-    IMG_OBJ_PUMP_particle_3 = 8;
+
+const IMG_OBJ_PUMP_pump_start = 0;
+const IMG_OBJ_PUMP_pump_end = 5;
+const IMG_OBJ_PUMP_particle_1 = 6;
+const IMG_OBJ_PUMP_particle_2 = 7;
+const IMG_OBJ_PUMP_particle_3 = 8;
 
 class PumpDirt extends MultiParticles {
+    /**
+     * @type {number}
+     */
+    angle;
+
+    /**
+     * @type {number}
+     */
+    angleVar;
+
+    /**
+     * @type {number}
+     */
+    speed;
+
+    /**
+     * @type {number}
+     */
+    life;
+
+    /**
+     * @type {number}
+     */
+    size;
+
+    /**
+     * @type {number}
+     */
+    emissionRate;
+
+    /**
+     * @type {boolean}
+     */
+    additive;
+
+    /**
+     * @param {number} numParticles
+     * @param {Texture2D} texture
+     * @param {number} angle
+     */
     constructor(numParticles, texture, angle) {
         super(numParticles, texture);
 
@@ -41,13 +82,16 @@ class PumpDirt extends MultiParticles {
         this.additive = true;
     }
 
+    /**
+     * @param {Particles} particle
+     */
     initParticle(particle) {
         super.initParticle(particle);
 
-        const texture = this.imageGrid,
-            n = MathHelper.randomRange(IMG_OBJ_PUMP_particle_1, IMG_OBJ_PUMP_particle_3),
-            tquad = texture.rects[n],
-            vquad = new Rectangle(0, 0, 0, 0); // don't draw initially
+        const texture = this.imageGrid;
+        const n = MathHelper.randomRange(IMG_OBJ_PUMP_particle_1, IMG_OBJ_PUMP_particle_3);
+        const tquad = texture.rects[n];
+        const vquad = new Rectangle(0, 0, 0, 0); // don't draw initially
 
         this.drawer.setTextureQuad(this.particles.length, tquad, vquad, 1);
 
@@ -56,6 +100,10 @@ class PumpDirt extends MultiParticles {
         particle.height = particleSize;
     }
 
+    /**
+     * @param {{ dir: Vector; pos: { add: (arg0: Vector) => void; }; }} p
+     * @param {number} delta
+     */
     updateParticleLocation(p, delta) {
         p.dir.multiply(0.9);
         const tmp = Vector.multiply(p.dir, delta);

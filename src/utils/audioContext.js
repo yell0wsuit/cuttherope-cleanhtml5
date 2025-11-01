@@ -14,7 +14,7 @@ export function getAudioContext() {
         return cachedAudioContext;
     }
 
-    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    const AudioContextClass = window.AudioContext;
 
     if (!AudioContextClass) {
         return null;

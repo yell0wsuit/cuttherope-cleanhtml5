@@ -50,8 +50,10 @@ class Sock extends CTRGameObject {
      * Play the glow animation when candy goes in
      */
     playGlowAnimation() {
-        this.light.visible = true;
-        this.light.play(0);
+        if (this.light) {
+            this.light.visible = true;
+            //this.light.play(0);
+        }
     }
 
     updateRotation() {
@@ -75,6 +77,9 @@ class Sock extends CTRGameObject {
         super.draw();
 
         // Hide light after animation completes
+        if (!this.light) {
+            return;
+        }
         const tl = this.light.currentTimeline;
         if (tl && tl.state === Timeline.StateType.STOPPED && this.light.visible) {
             this.light.visible = false;
@@ -85,22 +90,27 @@ class Sock extends CTRGameObject {
         // DEBUG: draw bounding lines for transport area
         /*if (false) {
             const ctx = Canvas.context;
-            ctx.lineWidth = 3;
+            if (ctx) {
+                ctx.lineWidth = 3;
 
-            ctx.beginPath();
-            ctx.strokeStyle = "red";
-            ctx.moveTo(this.t1.x, this.t1.y);
-            ctx.lineTo(this.t2.x, this.t2.y);
-            ctx.stroke();
+                ctx.beginPath();
+                ctx.strokeStyle = "red";
+                ctx.moveTo(this.t1.x, this.t1.y);
+                ctx.lineTo(this.t2.x, this.t2.y);
+                ctx.stroke();
 
-            ctx.beginPath();
-            ctx.strokeStyle = "blue";
-            ctx.moveTo(this.b1.x, this.b1.y);
-            ctx.lineTo(this.b2.x, this.b2.y);
-            ctx.stroke();
+                ctx.beginPath();
+                ctx.strokeStyle = "blue";
+                ctx.moveTo(this.b1.x, this.b1.y);
+                ctx.lineTo(this.b2.x, this.b2.y);
+                ctx.stroke();
+            }
         }*/
     }
 
+    /**
+     * @param {number} delta
+     */
     update(delta) {
         super.update(delta);
         if (this.mover) {

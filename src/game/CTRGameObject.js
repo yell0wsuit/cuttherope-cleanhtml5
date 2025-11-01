@@ -8,11 +8,14 @@ class CTRGameObject extends GameObject {
         super();
     }
 
+    /**
+     * @param {{ angle: number; path: string; moveSpeed: number; rotateSpeed: number; }} item
+     */
     parseMover(item) {
         this.rotation = item.angle || 0;
 
-        const path = item.path,
-            MOVER_SCALE = resolution.MOVER_SCALE;
+        const path = item.path;
+        const MOVER_SCALE = resolution.MOVER_SCALE;
         if (path) {
             let moverCapacity = Mover.MAX_CAPACITY;
             if (path[0] === "R") {
@@ -22,9 +25,9 @@ class CTRGameObject extends GameObject {
                 const rad = parseInt(path.slice(2), 10);
                 moverCapacity = Math.round((rad * 3) / 2 + 1);
             }
-            const v = item.moveSpeed,
-                rotateSpeed = item.rotateSpeed,
-                mover = new CTRMover(moverCapacity, v * MOVER_SCALE, rotateSpeed);
+            const v = item.moveSpeed;
+            const rotateSpeed = item.rotateSpeed;
+            const mover = new CTRMover(moverCapacity, v * MOVER_SCALE, rotateSpeed);
 
             mover.angle = this.rotation;
             mover.setPathAndStart(path, this.x, this.y);

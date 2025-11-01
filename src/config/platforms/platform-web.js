@@ -3,7 +3,7 @@ import resolution from "@/resolution";
 import Lang from "@/resources/Lang";
 import MenuStringId from "@/resources/MenuStringId";
 import Alignment from "@/core/Alignment";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 
 // loc entries that are specific to the web platform
 const locEntries = {
@@ -15,73 +15,113 @@ const locEntries = {
     },
 };
 
-const baseUrl = `${window.location.protocol}//${window.location.host}`;
-const langBtn = document.getElementById("langBtn");
-const flag = document.getElementById("flag");
-const cutBtn = document.getElementById("cutBtn");
-
-const WebPlatform = {
+class WebPlatform {
     /**
      * @const
      * @type {boolean}
      */
-    ENABLE_ANALYTICS: true,
+    static ENABLE_ANALYTICS = false;
 
     /**
      * @const
      * @type {boolean}
      */
-    ENABLE_ZOOM: false,
+    static ENABLE_ZOOM = false;
 
-    ZOOM_BOX_CANVAS: false,
+    /**
+     * @const
+     * @type {boolean}
+     */
+    static ZOOM_BOX_CANVAS = false;
 
-    imageBaseUrl: "images/",
-    resolutionBaseUrl: `images/${resolution.UI_WIDTH}/`,
-    uiImageBaseUrl: `images/${resolution.UI_WIDTH}/ui/`,
-    boxImageBaseUrl: `images/${resolution.UI_WIDTH}/${edition.boxDirectory || "ui/"}`,
+    static imageBaseUrl = "images/";
+    static resolutionBaseUrl = `images/${resolution.UI_WIDTH}/`;
+    static uiImageBaseUrl = `images/${resolution.UI_WIDTH}/ui/`;
+    static boxImageBaseUrl = `images/${resolution.UI_WIDTH}/${edition.boxDirectory || "ui/"}`;
 
-    audioBaseUrl: "audio/",
-    getAudioExtension: () => {
+    static audioBaseUrl = "audio/";
+
+    static videoBaseUrl = "video/";
+
+    static getAudioExtension() {
         return ".ogg";
-    },
+    }
 
-    videoBaseUrl: "video/",
-    getVideoExtension: () => {
+    static getVideoExtension() {
         return ".mp4";
-    },
+    }
 
-    getDrawingBaseUrl: () => {
+    static disableSlowWarning = false;
+
+    static getDrawingBaseUrl() {
+        const baseUrl = `${window.location.protocol}//${window.location.host}`;
         return `${baseUrl}/images/${resolution.UI_WIDTH}/ui/`;
-    },
-    getScoreImageBaseUrl: () => {
+    }
+
+    static getScoreImageBaseUrl() {
+        const baseUrl = `${window.location.protocol}//${window.location.host}`;
         return `${baseUrl}/images/scores/`;
-    },
-    setSoundButtonChange: (button, callback) => {
-        button.addEventListener("click", callback);
-    },
-    setMusicButtonChange: (button, callback) => {
-        button.addEventListener("click", callback);
-    },
-    updateSoundOption: (el, isSoundOn) => {
-        el.classList.toggle("disabled", !isSoundOn);
-    },
-    updateMusicOption: (el, isMusicOn) => {
-        el.classList.toggle("disabled", !isMusicOn);
-    },
-    toggleLangUI: (show) => {
+    }
+
+    /**
+     * @param {HTMLElement | null} button
+     * @param {() => void} callback
+     */
+    static setSoundButtonChange(button, callback) {
+        button?.addEventListener("click", callback);
+    }
+
+    /**
+     * @param {HTMLElement | null} button
+     * @param {() => void} callback
+     */
+    static setMusicButtonChange(button, callback) {
+        button?.addEventListener("click", callback);
+    }
+
+    /**
+     * @param {Element | null} el
+     * @param {boolean} isSoundOn
+     */
+    static updateSoundOption(el, isSoundOn) {
+        el?.classList.toggle("disabled", !isSoundOn);
+    }
+
+    /**
+     * @param {Element | null} el
+     * @param {boolean} isMusicOn
+     */
+    static updateMusicOption(el, isMusicOn) {
+        el?.classList.toggle("disabled", !isMusicOn);
+    }
+
+    /**
+     * @param {boolean} show
+     */
+    static toggleLangUI(show) {
+        const langBtn = document.getElementById("langBtn");
         if (langBtn) {
             langBtn.style.display = show ? "" : "none";
         }
-    },
-    setLangOptionClick: (callback) => {
+    }
+
+    /**
+     * @param {(langId: null) => void} callback
+     */
+    static setLangOptionClick(callback) {
+        const langBtn = document.getElementById("langBtn");
         if (langBtn) {
             langBtn.addEventListener("click", () => {
                 const langId = null; // just advance to next supported language
                 callback(langId);
             });
         }
-    },
-    updateLangSetting: () => {
+    }
+
+    static updateLangSetting() {
+        const langBtn = document.getElementById("langBtn");
+        const flag = document.getElementById("flag");
+
         if (langBtn) {
             WebPlatform.setOptionText(langBtn, `${Lang.menuText(MenuStringId.LANGUAGE)}:`);
         }
@@ -93,13 +133,24 @@ const WebPlatform = {
         if (flag) {
             flag.offsetTop; // Force layout recalculation
         }
-    },
-    setCutOptionClick: (callback) => {
+    }
+
+    /**
+     * @param {() => void} callback
+     */
+    static setCutOptionClick(callback) {
+        const cutBtn = document.getElementById("cutBtn");
         if (cutBtn) {
             cutBtn.addEventListener("click", callback);
         }
-    },
-    updateCutSetting: (isClickToCut) => {
+    }
+
+    /**
+     * @param {boolean} isClickToCut
+     */
+    static updateCutSetting(isClickToCut) {
+        const cutBtn = document.getElementById("cutBtn");
+
         // fonts use game sized assets based on canvas size
         const textWidth = 400 * resolution.CANVAS_SCALE,
             // scale need to take UI size into account
@@ -127,12 +178,22 @@ const WebPlatform = {
         if (cutBtn) {
             cutBtn.classList.toggle("disabled", !isClickToCut);
         }
-    },
-    setResetText: (el, text) => {
+    }
+
+    /**
+     * @param {HTMLElement | null} el
+     * @param {string} text
+     */
+    static setResetText(el, text) {
         WebPlatform.setOptionText(el, text);
-    },
-    setOptionText: (button, text) => {
-        const img = button.querySelector("img");
+    }
+
+    /**
+     * @param {HTMLElement | null} button
+     * @param {string} text
+     */
+    static setOptionText(button, text) {
+        const img = button?.querySelector("img");
         if (img) {
             Text.drawBig({
                 text: text,
@@ -140,14 +201,20 @@ const WebPlatform = {
                 scaleToUI: true,
             });
         }
-    },
-    getGameCompleteShareText: (totalStars, possibleStars) => {
+    }
+
+    /**
+     * @param {number} totalStars
+     * @param {number} possibleStars
+     */
+    static getGameCompleteShareText(totalStars, possibleStars) {
         const text = Lang.getText(locEntries.GAME_COMPLETE)
             .replace("%d", totalStars)
             .replace("%d", possibleStars);
         return text;
-    },
-    meetsRequirements: () => {
+    }
+
+    static meetsRequirements() {
         // does the browser have the HTML5 features we need?
         /*const meetsReqs =
             Modernizr.canvas &&
@@ -186,7 +253,7 @@ const WebPlatform = {
         }*/
 
         return true;
-    },
-};
+    }
+}
 
 export default WebPlatform;

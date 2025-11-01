@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Configuration for the web edition of Cut the Rope.
+ * Defines game resources, box metadata, and web-specific settings.
+ */
+
 import boxes from "@/boxes";
 import JsonLoader from "@/resources/JsonLoader";
 import ResourcePacks from "@/resources/ResourcePacks";
@@ -6,137 +11,251 @@ import BoxType from "@/ui/BoxType";
 import LangId from "@/resources/LangId";
 import { IS_JANUARY } from "@/resources/ResData";
 
+/** @typedef {import("@/types/json").RawBoxMetadataJson} RawBoxMetadataJson */
+
+/** @constant {string} The ID for the holiday gift box */
 const HOLIDAY_GIFT_BOX_ID = "holidaygiftbox";
 
-// Lazy getter for normalized box metadata
-let cachedNormalizedMetadata = null;
-const getNormalizedBoxMetadata = () => {
-    if (cachedNormalizedMetadata) {
-        return cachedNormalizedMetadata;
+/**
+ * Localized text for a box, supporting multiple languages.
+ * @typedef {Object} BoxText
+ * @property {string} en - English text
+ * @property {string} [ko] - Korean text
+ * @property {string} [zh] - Chinese (Simplified) text
+ * @property {string} [ja] - Japanese text
+ * @property {string} [nl] - Dutch text
+ * @property {string} [it] - Italian text
+ * @property {string} [ca] - Catalan text
+ * @property {string} [br] - Brazilian Portuguese text
+ * @property {string} [es] - Spanish text
+ * @property {string} [fr] - French text
+ * @property {string} [de] - German text
+ * @property {string} [ru] - Russian text
+ */
+
+/**
+ * @typedef {Object} BoxMetadata
+ * @property {string} id - Unique identifier for the box
+ * @property {BoxText} boxText - Localized text for the box
+ * @property {string | null} boxImage - Background image filename for the box
+ * @property {string | null} boxDoor - Door transition image filename
+ * @property {"HOLIDAY" | "NORMAL" | "MORECOMING"} boxType - Type of box
+ * @property {number | null} unlockStars - Number of stars required to unlock
+ * @property {number | null} support - Index of the support quad for Om Nom
+ * @property {boolean} showEarth - Whether to show the earth animation
+ * @property {number | null} levelBackgroundId - Resource key or resolved ID
+ * @property {number | null} levelOverlayId - Resource key or resolved ID
+ */
+
+class NetEdition {
+    constructor() {
+        /** @type {BoxMetadata[] | null} */
+        this._cachedNormalizedMetadata = null;
+
+        /** @type {string} */
+        this.siteUrl = "http://www.cuttherope.net";
+
+        /** @type {boolean} */
+        this.disableHiddenDrawings = true;
+
+        /** @type {number[]} */
+        this.languages = [
+            LangId.EN,
+            LangId.FR,
+            LangId.IT,
+            LangId.DE,
+            LangId.NL,
+            LangId.RU,
+            LangId.ES,
+            LangId.BR,
+            LangId.CA,
+            LangId.KO,
+            LangId.ZH,
+            LangId.JA,
+        ];
+
+        /** @type {string[]} */
+        this.boxBorders = [];
+
+        /** @type {number[]} */
+        this.menuSoundIds = ResourcePacks.StandardMenuSounds;
+
+        /** @type {number[]} */
+        this.gameSoundIds = ResourcePacks.StandardGameSounds.concat(
+            ResourcePacks.FullGameAdditionalSounds
+        );
+
+        /** @type {string[]} */
+        this.menuImageFilenames = ResourcePacks.StandardMenuImageFilenames;
+
+        /** @type {string[]} */
+        this.loaderPageImages = ["loader-bg.jpg", "loader-logo.png"];
+
+        /** @type {number[]} */
+        this.gameImageIds = ResourcePacks.StandardGameImages.concat(
+            ResourcePacks.FullGameAdditionalGameImages
+        );
+
+        /** @type {Object} */
+        this.boxes = boxes;
+
+        /** @type {string[]} */
+        this.drawingImageNames = [];
+
+        /** @type {string} */
+        this.editionImages = "";
+
+        /** @type {string} */
+        this.editionImageDirectory = "";
+
+        /** @type {boolean} */
+        this.disableBoxMenu = false;
+
+        /** @type {boolean} */
+        this.enableBoxBackgroundEasterEgg = false;
+
+        /** @type {string} */
+        this.boxDirectory = "ui/";
+
+        /** @type {string} */
+        this.settingPrefix = "";
     }
 
-    const boxMetadata = JsonLoader.getBoxMetadata() || [];
-    cachedNormalizedMetadata = boxMetadata.map((box) => {
-        const isHolidayBox = box.id === HOLIDAY_GIFT_BOX_ID;
-        let modifiedBox = {
-            ...box,
-            boxType: BoxType[box.boxType] ?? box.boxType,
-            levelBackgroundId:
-                box.levelBackgroundId == null ? null : ResourceId[box.levelBackgroundId],
-            levelOverlayId: box.levelOverlayId == null ? null : ResourceId[box.levelOverlayId],
-        };
-
-        if (IS_JANUARY && isHolidayBox) {
-            modifiedBox = {
-                ...modifiedBox,
-                boxDoor: "levelbgpad.webp",
-                levelBackgroundId: ResourceId.IMG_BGR_PADDINGTON,
-                levelOverlayId: ResourceId.IMG_BGR_PADDINGTON,
-            };
+    /**
+     * Gets normalized box metadata with lazy initialization and caching.
+     * @returns {BoxMetadata[]} The normalized metadata array
+     */
+    getNormalizedBoxMetadata() {
+        if (this._cachedNormalizedMetadata) {
+            return this._cachedNormalizedMetadata;
         }
 
-        return modifiedBox;
-    });
+        /** @type {BoxMetadata[]} */
+        /** @type {RawBoxMetadataJson[]} */
+        const rawBoxMetadata = JsonLoader.getBoxMetadata() ?? [];
+        this._cachedNormalizedMetadata = rawBoxMetadata.map((box) => {
+            const isHolidayBox = box.id === HOLIDAY_GIFT_BOX_ID;
+            /** @type {BoxMetadata} */
+            let modifiedBox = {
+                ...box,
+                boxImage: box.boxImage ?? null,
+                boxDoor: box.boxDoor ?? null,
+                unlockStars: box.unlockStars ?? null,
+                support: box.support ?? null,
+                showEarth: box.showEarth ?? false,
+                boxType: /** @type {BoxMetadata["boxType"]} */ (
+                    BoxType[/** @type {keyof typeof BoxType} */ (box.boxType)] ?? box.boxType
+                ),
+                levelBackgroundId:
+                    box.levelBackgroundId == null
+                        ? null
+                        : ResourceId[
+                              /** @type {keyof typeof ResourceId} */ (
+                                  /** @type {unknown} */ (box.levelBackgroundId)
+                              )
+                          ],
+                levelOverlayId:
+                    box.levelOverlayId == null
+                        ? null
+                        : ResourceId[
+                              /** @type {keyof typeof ResourceId} */ (
+                                  /** @type {unknown} */ (box.levelOverlayId)
+                              )
+                          ],
+            };
 
-    return cachedNormalizedMetadata;
-};
+            if (IS_JANUARY && isHolidayBox) {
+                modifiedBox = {
+                    ...modifiedBox,
+                    boxDoor: "levelbgpad.webp",
+                    levelBackgroundId: ResourceId.IMG_BGR_PADDINGTON,
+                    levelOverlayId: ResourceId.IMG_BGR_PADDINGTON,
+                };
+            }
 
-const netEdition = {
-    siteUrl: "http://www.cuttherope.net",
+            return modifiedBox;
+        });
 
-    // no hidden drawings yet
-    disableHiddenDrawings: true,
+        return /** @type {BoxMetadata[]} */ (this._cachedNormalizedMetadata);
+    }
 
-    // the text to display on the box in the box selector
+    /**
+     * Gets the localized text to display on each box.
+     * @returns {BoxText[]} Array of localized text objects for each box
+     */
     get boxText() {
-        return getNormalizedBoxMetadata().map(({ boxText }) => boxText);
-    },
+        return this.getNormalizedBoxMetadata().map(({ boxText }) => boxText);
+    }
 
-    // !LANG
-    languages: [
-        LangId.EN,
-        LangId.FR,
-        LangId.IT,
-        LangId.DE,
-        LangId.NL,
-        LangId.RU,
-        LangId.ES,
-        LangId.BR,
-        LangId.CA,
-        LangId.KO,
-        LangId.ZH,
-        LangId.JA,
-    ],
-
-    // the background image to use for the box in the box selector
+    /**
+     * Gets the background images to use for each box.
+     * @returns {(string | null)[]} Array of image filenames or null
+     */
     get boxImages() {
-        return getNormalizedBoxMetadata().map(({ boxImage }) => boxImage);
-    },
+        return this.getNormalizedBoxMetadata().map(({ boxImage }) => boxImage);
+    }
 
-    // no box borders in Chrome theme
-    boxBorders: [],
-
-    // images used for the sliding door transitions
+    /**
+     * Gets images used for sliding door transitions.
+     * @returns {string[]} Array of door image filenames
+     */
     get boxDoors() {
-        return (
-            getNormalizedBoxMetadata()
-                .map(({ boxDoor }) => boxDoor)
-                // omit placeholders so resource preloaders only receive valid assets
-                .filter((boxDoor) => boxDoor != null)
-        );
-    },
+        return this.getNormalizedBoxMetadata()
+            .map(({ boxDoor }) => boxDoor)
+            .filter((boxDoor) => boxDoor != null);
+    }
 
-    // the type of box to create
+    /**
+     * Gets the type of each box.
+     * @returns {BoxMetadata["boxType"][]} Array of box type strings
+     */
     get boxTypes() {
-        return getNormalizedBoxMetadata().map(({ boxType }) => boxType);
-    },
+        return this.getNormalizedBoxMetadata().map(({ boxType }) => boxType);
+    }
 
-    // how many stars are required to unlock each box
+    /**
+     * Gets the number of stars required to unlock each box.
+     * @returns {(number | null)[]} Array of unlock star requirements or null
+     */
     get unlockStars() {
-        return getNormalizedBoxMetadata().map(({ unlockStars }) => unlockStars);
-    },
+        return this.getNormalizedBoxMetadata().map(({ unlockStars }) => unlockStars);
+    }
 
-    // the index of the quad for the support OmNom sits on
+    /**
+     * Gets the index of the quad support for each box.
+     * @returns {(number | null)[]} Array of support indices or null
+     */
     get supports() {
-        return getNormalizedBoxMetadata().map(({ support }) => support);
-    },
+        return this.getNormalizedBoxMetadata().map(({ support }) => support);
+    }
 
-    // determines whether the earth animation is shown
+    /**
+     * Gets flags determining whether earth animation is shown.
+     * @returns {boolean[]} Array of showEarth flags
+     */
     get showEarth() {
-        return getNormalizedBoxMetadata().map(({ showEarth }) => showEarth);
-    },
+        return this.getNormalizedBoxMetadata().map(({ showEarth }) => showEarth);
+    }
 
-    menuSoundIds: ResourcePacks.StandardMenuSounds,
-
-    gameSoundIds: ResourcePacks.StandardGameSounds.concat(ResourcePacks.FullGameAdditionalSounds),
-
-    menuImageFilenames: ResourcePacks.StandardMenuImageFilenames,
-
-    loaderPageImages: ["loader-bg.jpg", "loader-logo.png"],
-
-    gameImageIds: ResourcePacks.StandardGameImages.concat(
-        ResourcePacks.FullGameAdditionalGameImages
-    ),
-
-    boxes: boxes,
-
+    /**
+     * Gets resource IDs for level backgrounds.
+     * @returns {number[]} Array of level background resource IDs
+     */
     get levelBackgroundIds() {
-        return (
-            getNormalizedBoxMetadata()
-                .map(({ levelBackgroundId }) => levelBackgroundId)
-                // ensure we don't emit null entries for the "coming soon" card
-                .filter((levelBackgroundId) => levelBackgroundId != null)
-        );
-    },
+        return this.getNormalizedBoxMetadata()
+            .map(({ levelBackgroundId }) => levelBackgroundId)
+            .filter((id) => id != null);
+    }
 
+    /**
+     * Gets resource IDs for level overlays.
+     * @returns {number[]} Array of level overlay resource IDs
+     */
     get levelOverlayIds() {
-        return getNormalizedBoxMetadata()
+        return this.getNormalizedBoxMetadata()
             .map(({ levelOverlayId }) => levelOverlayId)
-            .filter((levelOverlayId) => levelOverlayId != null);
-    },
+            .filter((id) => id != null);
+    }
+}
 
-    // hidden drawings are disabled
-    drawingImageNames: [],
-};
-
-export default netEdition;
+export default new NetEdition();

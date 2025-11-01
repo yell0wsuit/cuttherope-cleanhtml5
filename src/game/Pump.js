@@ -13,6 +13,10 @@ class Pump extends GameObject {
     }
 
     updateRotation() {
+        if (!this.bb) {
+            return;
+        }
+
         const bbHalfWidth = this.bb.w / 2;
 
         this.t1.x = this.x - bbHalfWidth;

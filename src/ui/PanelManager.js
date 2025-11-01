@@ -2,290 +2,262 @@ import PanelId from "@/ui/PanelId";
 import Panel from "@/ui/Panel";
 import BoxPanel from "@/ui/BoxPanel";
 import LevelPanel from "@/ui/LevelPanel";
-import PasswordPanel from "@/ui/TimePasswordPanel";
 import resolution from "@/resolution";
-import platform from "@/platform";
+import platform from "@/config/platforms/platform-web";
 import Easing from "@/ui/Easing";
 import PubSub from "@/utils/PubSub";
-import edition from "@/edition";
-import dom from "@/utils/dom";
+import edition from "@/config/editions/net-edition";
 
-// Panel state
-const panels = [];
+class PanelManager {
+    constructor() {
+        // panel list
+        this.panels = [
+            new Panel(PanelId.MENU, "menuPanel", "startBackground", true),
+            BoxPanel,
+            LevelPanel,
+            new Panel(PanelId.GAME, null, "levelBackground", false),
+            new Panel(PanelId.GAMEMENU, null, null, false),
+            new Panel(PanelId.LEVELCOMPLETE, null, null, false),
+            new Panel(PanelId.GAMECOMPLETE, "gameCompletePanel", "menuBackground", true),
+            new Panel(PanelId.OPTIONS, "optionsPanel", "menuBackground", true),
+            new Panel(PanelId.CREDITS, null, null, false),
+            new Panel(PanelId.LEADERBOARDS, "leaderboardPanel", "menuBackground", true),
+            new Panel(PanelId.ACHIEVEMENTS, "achievementsPanel", "menuBackground", true),
+        ];
 
-// Fade parameters
-const fadeInDur = 100;
-const fadePause = 50;
-const fadeOutDur = 100;
-const fadeTo = 1.0;
-let fadeToBlack = null;
-let isFading = false;
+        // Fade
+        this.fadeInDur = 100;
+        this.fadePause = 50;
+        this.fadeOutDur = 100;
+        this.fadeTo = 1.0;
+        this.fadeToBlack = null;
+        this.isFading = false;
 
-// Shadow state
-let shadowIsRotating = false;
-let shadowAngle = 15.0;
-let shadowCanvas = null;
-let shadowImage = null;
-let shadowOpacity = 1.0;
-let shadowIsVisible = false;
-const shadowSpeedup = edition.shadowSpeedup || 1;
-let shadowPanelElement = null;
+        // Shadow
+        this.shadowIsRotating = false;
+        this.shadowAngle = 15.0;
+        this.shadowCanvas = null;
+        this.shadowImage = null;
+        this.shadowOpacity = 1.0;
+        this.shadowIsVisible = false;
+        this.shadowSpeedup = edition.shadowSpeedup || 1;
+        this.shadowPanelElement = null;
 
-// get a panel by id
-const getPanelById = (panelId) => {
-    for (let i = 0; i < panels.length; i++) {
-        if (panels[i].id == panelId) return panels[i];
+        // Panel state
+        this.currentPanelId = PanelId.MENU;
+        this.onShowPanel = null;
+
+        // bind methods (for event handlers / PubSub)
+        this.showPanel = this.showPanel.bind(this);
+        this.runBlackFadeIn = this.runBlackFadeIn.bind(this);
+        this.runBlackFadeOut = this.runBlackFadeOut.bind(this);
+
+        PubSub.subscribe(PubSub.ChannelId.BoxesUnlocked, (isFirstUnlock) => {
+            const nextPanelId = isFirstUnlock ? PanelId.MENU : PanelId.BOXES;
+            setTimeout(() => this.showPanel(nextPanelId), 1000);
+        });
     }
-    return null;
-};
 
-// Shadow functions
-const showShadow = () => {
-    if (!shadowIsVisible) {
-        if (shadowCanvas != null) {
-            const ctx = shadowCanvas.getContext("2d");
+    /** Find a panel by its ID */
+    getPanelById(panelId) {
+        return this.panels.find((p) => p.id === panelId) ?? null;
+    }
+
+    /** Prepare DOM references */
+    domReady() {
+        this.fadeToBlack = document.getElementById("fadeToBlack");
+        this.shadowCanvas = document.getElementById("shadowCanvas");
+        this.shadowPanelElement = document.getElementById("shadowPanel");
+
+        if (this.shadowCanvas) {
+            this.shadowCanvas.width = resolution.uiScaledNumber(1024);
+            this.shadowCanvas.height = resolution.uiScaledNumber(576);
+        }
+    }
+
+    /** Initialize when app is ready */
+    appReady(onInitializePanel) {
+        this.shadowImage = new Image();
+        this.shadowImage.src = `${platform.uiImageBaseUrl}shadow.png`;
+
+        if (onInitializePanel) {
+            for (const panel of this.panels) {
+                onInitializePanel(panel.id);
+            }
+        }
+    }
+
+    // =====================
+    // Shadow handling
+    // =====================
+
+    showShadow() {
+        if (this.shadowIsVisible) return;
+
+        const ctx = this.shadowCanvas?.getContext("2d");
+        if (ctx) {
             ctx.save();
             ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.clearRect(0, 0, shadowCanvas.width, shadowCanvas.height);
+            ctx.clearRect(0, 0, this.shadowCanvas.width, this.shadowCanvas.height);
             ctx.restore();
         }
 
-        shadowOpacity = 0.0;
-        shadowIsVisible = true;
+        this.shadowOpacity = 0.0;
+        this.shadowIsVisible = true;
 
-        if (shadowPanelElement) {
-            dom.show(shadowPanelElement, "block");
+        if (this.shadowPanelElement) {
+            this.shadowPanelElement.style.display = "block";
         }
-        if (!shadowIsRotating) {
-            beginRotateShadow();
+
+        if (!this.shadowIsRotating) this.beginRotateShadow();
+    }
+
+    hideShadow() {
+        this.shadowIsVisible = false;
+        this.shadowIsRotating = false;
+        if (this.shadowPanelElement) {
+            this.shadowPanelElement.style.display = "none";
         }
     }
-};
 
-const hideShadow = () => {
-    shadowIsVisible = false;
-    shadowIsRotating = false;
-    if (shadowPanelElement) {
-        dom.hide(shadowPanelElement);
+    beginRotateShadow() {
+        if (!this.shadowCanvas) return;
+
+        const ctx = this.shadowCanvas.getContext("2d");
+        const raf = window.requestAnimationFrame;
+        let lastRotateTime = Date.now();
+
+        const renderShadow = () => {
+            if (!this.shadowIsRotating) return;
+
+            const now = Date.now();
+            const delta = now - lastRotateTime;
+            this.shadowAngle += ((delta * 0.1) / 25) * this.shadowSpeedup;
+            lastRotateTime = now;
+
+            // clear
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.clearRect(0, 0, this.shadowCanvas.width, this.shadowCanvas.height);
+
+            // update opacity
+            if (this.shadowOpacity < 1.0) {
+                this.shadowOpacity = Math.min(this.shadowOpacity + 0.025, 1.0);
+                ctx.globalAlpha = this.shadowOpacity;
+            }
+
+            // rotate and draw
+            ctx.save();
+            ctx.translate(this.shadowImage.width * 0.5, this.shadowImage.height * 0.5);
+            ctx.translate(resolution.uiScaledNumber(-300), resolution.uiScaledNumber(-510));
+            ctx.rotate((this.shadowAngle * Math.PI) / 180);
+            ctx.translate(-this.shadowImage.width * 0.5, -this.shadowImage.height * 0.5);
+            ctx.drawImage(this.shadowImage, 0, 0);
+            ctx.restore();
+
+            raf(renderShadow);
+        };
+
+        this.shadowIsRotating = true;
+        renderShadow();
     }
-};
 
-// starts the shadow animation
-const beginRotateShadow = () => {
-    if (!shadowCanvas) return;
-    const ctx = shadowCanvas.getContext("2d");
-    const requestAnimationFrame = window["requestAnimationFrame"];
-    let lastRotateTime = Date.now();
+    // =====================
+    // Fade transitions
+    // =====================
 
-    const renderShadow = () => {
-        if (!shadowIsRotating) {
+    runBlackFadeIn(callback) {
+        const startTime = Date.now();
+        if (!this.fadeToBlack) {
+            callback?.();
             return;
         }
 
-        // move .1 radians every 25 msec
-        const now = Date.now();
-        const delta = now - lastRotateTime;
-        shadowAngle += ((delta * 0.1) / 25) * shadowSpeedup;
-        lastRotateTime = now;
+        this.isFading = true;
+        this.fadeToBlack.style.opacity = "0";
+        this.fadeToBlack.style.display = "block";
 
-        // clear the canvas
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.clearRect(0, 0, shadowCanvas.width, shadowCanvas.height);
+        const loop = () => {
+            const diff = Date.now() - startTime;
+            const v = Easing.noEase(diff, 0, this.fadeTo, this.fadeInDur);
+            this.fadeToBlack.style.opacity = String(v);
 
-        // update opacity
-        if (shadowOpacity < 1.0) {
-            shadowOpacity += 0.025;
-            shadowOpacity = Math.min(shadowOpacity, 1.0);
-            ctx.globalAlpha = shadowOpacity;
-        }
+            if (diff < this.fadeInDur) {
+                window.requestAnimationFrame(loop);
+            } else {
+                this.fadeToBlack.style.opacity = String(this.fadeTo);
+                callback?.();
+            }
+        };
 
-        // rotate the context
-        ctx.save();
-        ctx.translate(shadowImage.width * 0.5, shadowImage.height * 0.5);
-        ctx.translate(resolution.uiScaledNumber(-300), resolution.uiScaledNumber(-510));
-        ctx.rotate((shadowAngle * Math.PI) / 180);
-        ctx.translate(-shadowImage.width * 0.5, -shadowImage.height * 0.5);
-
-        // draw the image and update the loop
-        ctx.drawImage(shadowImage, 0, 0);
-        ctx.restore();
-
-        requestAnimationFrame(renderShadow);
-    };
-
-    shadowIsRotating = true;
-    renderShadow();
-};
-
-// Fade functions
-const runBlackFadeIn = (callback) => {
-    const startTime = Date.now();
-
-    if (!fadeToBlack) {
-        if (callback) callback();
-        return;
+        window.requestAnimationFrame(loop);
     }
 
-    isFading = true;
+    runBlackFadeOut() {
+        if (!this.isFading || !this.fadeToBlack) return;
 
-    dom.setStyle(fadeToBlack, "opacity", "0");
-    dom.show(fadeToBlack, "block");
+        const startTime = Date.now();
+        const loop = () => {
+            const diff = Date.now() - startTime;
+            const v = this.fadeTo - Easing.noEase(diff, 0, this.fadeTo, this.fadeInDur);
+            this.fadeToBlack.style.opacity = String(v);
 
-    // our loop
-    const loop = () => {
-        const now = Date.now();
-        const diff = now - startTime;
-        const v = Easing.noEase(diff, 0, fadeTo, fadeInDur);
-
-        dom.setStyle(fadeToBlack, "opacity", String(v));
-
-        if (diff < fadeInDur) {
-            window.requestAnimationFrame(loop);
-        } else {
-            dom.setStyle(fadeToBlack, "opacity", String(fadeTo));
-            if (callback != null) callback();
-        }
-    };
-
-    window.requestAnimationFrame(loop);
-};
-
-const runBlackFadeOut = () => {
-    if (!isFading || !fadeToBlack) return;
-    const startTime = Date.now();
-
-    const loop = () => {
-        const now = Date.now();
-        const diff = now - startTime;
-        const v = fadeTo - Easing.noEase(diff, 0, fadeTo, fadeInDur);
-
-        dom.setStyle(fadeToBlack, "opacity", String(v));
-
-        if (diff < fadeInDur) {
-            window.requestAnimationFrame(loop);
-        } else {
-            dom.setStyle(fadeToBlack, "opacity", "0");
-            dom.hide(fadeToBlack);
-            isFading = false;
-        }
-    };
-
-    window.requestAnimationFrame(loop);
-};
-
-// create our panels
-panels.push(new Panel(PanelId.MENU, "menuPanel", "startBackground", true));
-panels.push(BoxPanel);
-panels.push(LevelPanel);
-
-// the game panel re-uses the panel doors in the levelBackground (actually in foreground)
-panels.push(new Panel(PanelId.GAME, null, "levelBackground", false));
-panels.push(new Panel(PanelId.GAMEMENU, null, null, false));
-panels.push(new Panel(PanelId.LEVELCOMPLETE, null, null, false));
-panels.push(new Panel(PanelId.GAMECOMPLETE, "gameCompletePanel", "menuBackground", true));
-panels.push(new Panel(PanelId.OPTIONS, "optionsPanel", "menuBackground", true));
-panels.push(new Panel(PanelId.CREDITS, null, null, false));
-panels.push(new Panel(PanelId.LEADERBOARDS, "leaderboardPanel", "menuBackground", true));
-panels.push(new Panel(PanelId.ACHIEVEMENTS, "achievementsPanel", "menuBackground", true));
-panels.push(PasswordPanel);
-
-const PanelManager = {
-    onShowPanel: null,
-    currentPanelId: PanelId.MENU,
-
-    domReady: () => {
-        fadeToBlack = document.getElementById("fadeToBlack");
-        shadowCanvas = document.getElementById("shadowCanvas");
-        shadowPanelElement = document.getElementById("shadowPanel");
-
-        shadowCanvas = document.getElementById("shadowCanvas");
-        shadowCanvas.width = resolution.uiScaledNumber(1024);
-        shadowCanvas.height = resolution.uiScaledNumber(576);
-    },
-
-    appReady: (onInitializePanel) => {
-        // we have to wait until the game is ready to run before initializing
-        // panels because we need the fonts to be loaded
-
-        shadowImage = new Image();
-        shadowImage.src = `${platform.uiImageBaseUrl}shadow.png`;
-
-        // initialize each of the panels
-        if (onInitializePanel) {
-            for (let i = 0, len = panels.length; i < len; i++) {
-                onInitializePanel(panels[i].id);
+            if (diff < this.fadeInDur) {
+                window.requestAnimationFrame(loop);
+            } else {
+                this.fadeToBlack.style.opacity = "0";
+                this.fadeToBlack.style.display = "none";
+                this.isFading = false;
             }
-        }
-    },
+        };
 
-    getPanelById,
+        window.requestAnimationFrame(loop);
+    }
 
-    // show a panel by id
-    showPanel(panelId, skipFade) {
+    // =====================
+    // Panel switching
+    // =====================
+
+    showPanel(panelId, skipFade = false) {
         this.currentPanelId = panelId;
+        const panel = this.getPanelById(panelId);
+        if (!panel) return;
 
-        const panel = getPanelById(panelId);
-        const skip = skipFade == null ? false : skipFade;
+        // shadow toggle
+        panel.showShadow ? this.showShadow() : this.hideShadow();
 
-        // enable / disable the shadow animation
-        if (panel.showShadow) {
-            showShadow();
-        } else {
-            hideShadow();
-        }
-
-        // we always use a timeout, even if we skip the animation, to keep the code clean
-        const timeout = skip ? 0 : fadeInDur + fadePause;
+        const timeout = skipFade ? 0 : this.fadeInDur + this.fadePause;
         setTimeout(() => {
-            // show the panel
+            // show panel elements
             if (panel.bgDivId) {
-                dom.show(`#${panel.bgDivId}`, "block");
+                const bg = document.getElementById(panel.bgDivId);
+                if (bg) bg.style.display = "block";
             }
             if (panel.panelDivId) {
-                dom.show(`#${panel.panelDivId}`, "block");
+                const el = document.getElementById(panel.panelDivId);
+                if (el) el.style.display = "block";
             }
 
-            // hide other panels
-            for (let i = 0; i < panels.length; i++) {
-                const otherPanel = panels[i];
-
-                if (otherPanel.panelDivId != null && otherPanel.panelDivId != panel.panelDivId) {
-                    dom.hide(`#${otherPanel.panelDivId}`);
+            // hide others
+            for (const other of this.panels) {
+                if (other.panelDivId && other.panelDivId !== panel.panelDivId) {
+                    const el = document.getElementById(other.panelDivId);
+                    if (el) el.style.display = "none";
                 }
-
-                if (otherPanel.bgDivId != null && otherPanel.bgDivId != panel.bgDivId) {
-                    dom.hide(`#${otherPanel.bgDivId}`);
+                if (other.bgDivId && other.bgDivId !== panel.bgDivId) {
+                    const bg = document.getElementById(other.bgDivId);
+                    if (bg) bg.style.display = "none";
                 }
             }
 
-            // run the "show" handler
-            if (this.onShowPanel != null) {
-                this.onShowPanel(panelId);
-            }
+            // event hook
+            this.onShowPanel?.(panelId);
 
-            // fade back in
-            if (!skip) {
-                runBlackFadeOut();
-            }
+            if (!skipFade) this.runBlackFadeOut();
         }, timeout);
 
-        // start the animation
-        if (!skip) {
-            runBlackFadeIn();
-        }
-    },
+        if (!skipFade) this.runBlackFadeIn();
+    }
+}
 
-    runBlackFadeIn,
-    runBlackFadeOut,
-};
-
-PubSub.subscribe(PubSub.ChannelId.BoxesUnlocked, (isFirstUnlock) => {
-    const nextPanelId = isFirstUnlock ? PanelId.MENU : PanelId.BOXES;
-
-    // switch back to the boxes panel after a short delay
-    setTimeout(() => {
-        PanelManager.showPanel(nextPanelId);
-    }, 1000);
-});
-
-export default PanelManager;
+// create singleton instance
+export default new PanelManager();

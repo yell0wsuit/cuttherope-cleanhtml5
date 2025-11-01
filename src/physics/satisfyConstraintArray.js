@@ -1,3 +1,7 @@
+/**
+ * @param {ConstrainedPoint[]} arr
+ * @param {number} n
+ */
 function satisfyConstraintArray(arr, n) {
     // NOTE: this method is a perf hotspot so be careful with changes
     n = n || 1;
@@ -12,12 +16,12 @@ function satisfyConstraintArray(arr, n) {
         for (let cIndex = 0; cIndex < len; ++cIndex) {
             cons = arr[cIndex];
 
-            const constraints = cons.constraints,
-                num = constraints.length;
+            const constraints = cons.constraints;
+            const num = constraints.length;
 
-            const pin = cons.pin,
-                pos = cons.pos,
-                invWeight = cons.invWeight;
+            const pin = cons.pin;
+            const pos = cons.pos;
+            const invWeight = cons.invWeight;
             let tmp1X, tmp1Y, tmp2X, tmp2Y;
 
             if (pin.x !== -1 /* Constants.UNDEFINED */) {
@@ -27,9 +31,9 @@ function satisfyConstraintArray(arr, n) {
             }
 
             for (let i = 0; i < num; i++) {
-                const c = constraints[i],
-                    cp = c.cp,
-                    cpPos = cp.pos;
+                const c = constraints[i];
+                const cp = c.cp;
+                const cpPos = cp.pos;
 
                 tmp1X = cpPos.x - pos.x;
                 tmp1Y = cpPos.y - pos.y;
@@ -39,10 +43,10 @@ function satisfyConstraintArray(arr, n) {
                     tmp1Y = 1;
                 }
 
-                const sqrDeltaLength = tmp1X * tmp1X + tmp1Y * tmp1Y, // get dot product inline
-                    restLength = c.restLength,
-                    sqrRestLength = restLength * restLength,
-                    cType = c.type;
+                const sqrDeltaLength = tmp1X * tmp1X + tmp1Y * tmp1Y; // get dot product inline
+                const restLength = c.restLength;
+                const sqrRestLength = restLength * restLength;
+                const cType = c.type;
 
                 if (cType === 1 /* ConstraintType.NOT_MORE_THAN */) {
                     if (sqrDeltaLength <= sqrRestLength) continue;
@@ -50,11 +54,12 @@ function satisfyConstraintArray(arr, n) {
                     if (sqrDeltaLength >= sqrRestLength) continue;
                 }
 
-                const pinUndefined = cp.pin.x === -1 /* Constants.UNDEFINED */,
-                    invWeight2 = cp.invWeight,
-                    deltaLength = Math.sqrt(sqrDeltaLength),
-                    minDeltaLength = deltaLength > 1 ? deltaLength : 1,
-                    diff = (deltaLength - restLength) / (minDeltaLength * (invWeight + invWeight2));
+                const pinUndefined = cp.pin.x === -1; /* Constants.UNDEFINED */
+                const invWeight2 = cp.invWeight;
+                const deltaLength = Math.sqrt(sqrDeltaLength);
+                const minDeltaLength = deltaLength > 1 ? deltaLength : 1;
+                const diff =
+                    (deltaLength - restLength) / (minDeltaLength * (invWeight + invWeight2));
 
                 // copy the first position before modification
                 if (pinUndefined) {
@@ -71,8 +76,11 @@ function satisfyConstraintArray(arr, n) {
 
                 if (pinUndefined) {
                     const tmp2Multiplier = invWeight2 * diff;
-                    cpPos.x -= tmp2X * tmp2Multiplier;
-                    cpPos.y -= tmp2Y * tmp2Multiplier;
+
+                    if (tmp2X && tmp2Y) {
+                        cpPos.x -= tmp2X * tmp2Multiplier;
+                        cpPos.y -= tmp2Y * tmp2Multiplier;
+                    }
                 }
             }
         }

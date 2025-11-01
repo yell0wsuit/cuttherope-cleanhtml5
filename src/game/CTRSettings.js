@@ -3,57 +3,84 @@ import QueryStrings from "@/ui/QueryStrings";
 import LangId from "@/resources/LangId";
 import platformLoc from "@/platformLoc";
 import PubSub from "@/utils/PubSub";
-const SettingKeys = {
-    MUSIC: "music",
-    SOUND: "sound",
-    CLICK_TO_CUT: "clickToCut",
-    IS_HD: "isHD",
-    LANGUAGE: "language",
-};
+import verifyType from "@/utils/TypeVerify";
 
-const CTRSettings = {
-    showMenu: true,
+class CTRSettings {
+    static SettingKeys = {
+        MUSIC: "music",
+        SOUND: "sound",
+        CLICK_TO_CUT: "clickToCut",
+        IS_HD: "isHD",
+        LANGUAGE: "language",
+    };
 
-    disableTextSelection: true,
-
-    fpsEnabled: QueryStrings.showFrameRate,
+    static showMenu = true;
+    static disableTextSelection = true;
+    static fpsEnabled = QueryStrings.showFrameRate;
 
     // OmNom will say hello on first level of every session
-    showGreeting: true,
+    static showGreeting = true;
 
     // game music
-    getMusicEnabled() {
-        return SettingStorage.getBoolOrDefault(SettingKeys.MUSIC, true);
-    },
-    setMusicEnabled(musicEnabled) {
-        SettingStorage.set(SettingKeys.MUSIC, musicEnabled);
-    },
+    /**
+     * @returns {boolean}
+     */
+    static getMusicEnabled() {
+        return /** @type {boolean} */ (SettingStorage.getBoolOrDefault(this.SettingKeys.MUSIC, true));
+    }
+
+    /**
+     * @param {boolean} musicEnabled
+     */
+    static setMusicEnabled(musicEnabled) {
+        SettingStorage.set(this.SettingKeys.MUSIC, musicEnabled.toString());
+    }
 
     // sound effects
-    getSoundEnabled() {
-        return SettingStorage.getBoolOrDefault(SettingKeys.SOUND, true);
-    },
-    setSoundEnabled(soundEnabled) {
-        SettingStorage.set(SettingKeys.SOUND, soundEnabled);
-    },
+    /**
+     * @returns {boolean}
+     */
+    static getSoundEnabled() {
+        return /** @type {boolean} */ (SettingStorage.getBoolOrDefault(this.SettingKeys.SOUND, true));
+    }
+
+    /**
+     * @param {boolean} soundEnabled
+     */
+    static setSoundEnabled(soundEnabled) {
+        SettingStorage.set(this.SettingKeys.SOUND, soundEnabled.toString());
+    }
 
     // click-to-cut
-    getClickToCut() {
-        return SettingStorage.getBoolOrDefault(SettingKeys.CLICK_TO_CUT, false);
-    },
-    setClickToCut(clickToCutEnabled) {
-        SettingStorage.set(SettingKeys.CLICK_TO_CUT, clickToCutEnabled);
-    },
+    /**
+     * @returns {boolean}
+     */
+    static getClickToCut() {
+        return /** @type {boolean} */ (SettingStorage.getBoolOrDefault(this.SettingKeys.CLICK_TO_CUT, false));
+    }
+
+    /**
+     * @param {boolean} clickToCutEnabled
+     */
+    static setClickToCut(clickToCutEnabled) {
+        SettingStorage.set(this.SettingKeys.CLICK_TO_CUT, clickToCutEnabled.toString());
+    }
 
     // locale
-    getLangId() {
+    /**
+     * @returns {number}
+     */
+    static getLangId() {
         // first see if a querystring override was specified
         if (QueryStrings.lang) {
-            return LangId.fromString(QueryStrings.lang);
+            const queryLangId = LangId.fromString(QueryStrings.lang);
+            if (queryLangId != null) {
+                return queryLangId;
+            }
         }
 
         // next, check the local storage setting
-        let langId = SettingStorage.getIntOrDefault(SettingKeys.LANGUAGE, null);
+        let langId = SettingStorage.getIntOrDefault(this.SettingKeys.LANGUAGE, null);
         if (langId == null) {
             // see if the platform can provide a default language
             langId = platformLoc.getDefaultLangId();
@@ -64,23 +91,31 @@ const CTRSettings = {
             }
         }
 
-        return langId;
-    },
-    setLangId(langId) {
-        SettingStorage.set(SettingKeys.LANGUAGE, langId);
-    },
+        return /** @type {number} */ (langId);
+    }
 
-    getIsHD() {
-        return SettingStorage.getBoolOrDefault(SettingKeys.IS_HD, null);
-    },
+    /**
+     * @param {string | number} langId
+     */
+    static setLangId(langId) {
+        SettingStorage.set(this.SettingKeys.LANGUAGE, langId);
+    }
+
+    static getIsHD() {
+        return SettingStorage.getBoolOrDefault(this.SettingKeys.IS_HD, null);
+    }
+
     // sd or hd resolution
-    setIsHD(isHD) {
-        SettingStorage.set(SettingKeys.IS_HD, isHD);
-    },
+    /**
+     * @param {boolean} isHD
+     */
+    static setIsHD(isHD) {
+        SettingStorage.set(this.SettingKeys.IS_HD, isHD.toString());
+    }
 
-    clear() {
-        SettingStorage.remove(SettingKeys.IS_HD);
-    },
-};
+    static clear() {
+        SettingStorage.remove(this.SettingKeys.IS_HD);
+    }
+}
 
 export default CTRSettings;

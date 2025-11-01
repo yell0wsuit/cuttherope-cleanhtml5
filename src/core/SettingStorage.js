@@ -1,146 +1,153 @@
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import PubSub from "@/utils/PubSub";
 
-const STORAGE_KEY = "ctr-js-data";
-const editionPrefix = edition.settingPrefix || "";
-let prefix = editionPrefix;
+class SettingStorage {
+    static STORAGE_KEY = "ctr-js-data";
 
-PubSub.subscribe(PubSub.ChannelId.UserIdChanged, function (userId) {
-    if (userId) {
-        prefix = `${userId}-${editionPrefix}`;
-    } else {
-        prefix = editionPrefix;
-    }
-});
+    constructor() {
+        /** @type {edition} */
+        const editionConfig = /** @type {edition} */ (edition);
+        this.editionPrefix = editionConfig.settingPrefix || "";
+        this.prefix = this.editionPrefix;
 
-// Migration: consolidate existing localStorage keys into the single storage object
-function migrateOldData() {
-    if (!window.localStorage) {
-        return;
-    }
+        /** @type {Object<string, string>} */
+        this.settingCache = {};
 
-    // Check if we've already migrated
-    const existingData = localStorage.getItem(STORAGE_KEY);
-    if (existingData) {
-        return; // Already migrated
-    }
-
-    const dataToMigrate = {};
-    const keysToRemove = [];
-
-    // Iterate through all localStorage keys and find game-related ones
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key !== STORAGE_KEY) {
-            // Check if this is likely a game key (starts with common prefixes)
-            // or contains patterns like 'bp', 'bs', 'music', 'sound', etc.
-            const value = localStorage.getItem(key);
-            dataToMigrate[key] = value;
-            keysToRemove.push(key);
-        }
-    }
-
-    // Save all data to the new consolidated key
-    if (Object.keys(dataToMigrate).length > 0) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToMigrate));
-
-        // Remove old keys
-        keysToRemove.forEach((key) => {
-            localStorage.removeItem(key);
+        // Subscribe to user ID changes
+        PubSub.subscribe(PubSub.ChannelId.UserIdChanged, (/** @type {string} */ userId) => {
+            this.prefix = userId ? `${userId}-${this.editionPrefix}` : this.editionPrefix;
         });
-    } else {
-        // No data to migrate, but create the storage key
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({}));
-    }
-}
 
-// Get all data from the consolidated storage
-function getAllData() {
-    if (!window.localStorage) {
-        return {};
+        // Run migration once
+        this.migrateOldData();
     }
 
-    try {
-        const data = localStorage.getItem(STORAGE_KEY);
-        return data ? JSON.parse(data) : {};
-    } catch (e) {
-        console.error("Error parsing localStorage data:", e);
-        return {};
-    }
-}
+    /**
+     * Migration: consolidate existing localStorage keys into the single storage object
+     */
+    migrateOldData() {
+        if (!window.localStorage) return;
 
-// Save all data to the consolidated storage
-function saveAllData(data) {
-    if (!window.localStorage) {
-        return;
-    }
+        const existingData = localStorage.getItem(SettingStorage.STORAGE_KEY);
+        if (existingData) return; // Already migrated
 
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch (e) {
-        console.error("Error saving localStorage data:", e);
-    }
-}
+        /** @type {Object<string, string | null>} */
+        const dataToMigrate = {};
+        const keysToRemove = [];
 
-// Run migration on initialization
-migrateOldData();
-
-const settingCache = {};
-
-const SettingStorage = {
-    get(key) {
-        if (!window.localStorage) {
-            return null;
-        }
-        //console.log("GET",key);
-        if (key in settingCache) {
-            return settingCache[key];
-        }
-
-        const data = getAllData();
-        return data[prefix + key] || null;
-    },
-    set(key, value) {
-        if (window.localStorage) {
-            //console.log("SET",key,value);
-            const data = getAllData();
-            const fullKey = prefix + key;
-
-            if (value == null) {
-                delete settingCache[key];
-                delete data[fullKey];
-            } else {
-                settingCache[key] = value.toString();
-                data[fullKey] = value.toString();
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key !== SettingStorage.STORAGE_KEY) {
+                const value = localStorage.getItem(key);
+                dataToMigrate[key] = value;
+                keysToRemove.push(key);
             }
-
-            saveAllData(data);
         }
-    },
+
+        if (Object.keys(dataToMigrate).length > 0) {
+            localStorage.setItem(SettingStorage.STORAGE_KEY, JSON.stringify(dataToMigrate));
+            keysToRemove.forEach((key) => localStorage.removeItem(key));
+        } else {
+            localStorage.setItem(SettingStorage.STORAGE_KEY, JSON.stringify({}));
+        }
+    }
+
+    /**
+     * Get all data from consolidated storage
+     * @returns {Object<string, string>}
+     */
+    getAllData() {
+        if (!window.localStorage) return {};
+        try {
+            const data = localStorage.getItem(SettingStorage.STORAGE_KEY);
+            return data ? JSON.parse(data) : {};
+        } catch (e) {
+            console.error("Error parsing localStorage data:", e);
+            return {};
+        }
+    }
+
+    /**
+     * Save data to consolidated storage
+     * @param {Object<string, string>} data
+     */
+    saveAllData(data) {
+        if (!window.localStorage) return;
+        try {
+            localStorage.setItem(SettingStorage.STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {
+            console.error("Error saving localStorage data:", e);
+        }
+    }
+
+    /**
+     * Get setting by key
+     * @param {string} key
+     * @returns {string | null}
+     */
+    get(key) {
+        if (!window.localStorage) return null;
+        if (key in this.settingCache) return this.settingCache[key];
+        const data = this.getAllData();
+        return data[this.prefix + key] || null;
+    }
+
+    /**
+     * Set setting value
+     * @param {string} key
+     * @param {string | number | null} value
+     */
+    set(key, value) {
+        if (!window.localStorage) return;
+        const data = this.getAllData();
+        const fullKey = this.prefix + key;
+
+        if (value == null) {
+            delete this.settingCache[key];
+            delete data[fullKey];
+        } else {
+            const strVal = value.toString();
+            this.settingCache[key] = strVal;
+            data[fullKey] = strVal;
+        }
+
+        this.saveAllData(data);
+    }
+
+    /**
+     * Remove setting by key
+     * @param {string} key
+     */
     remove(key) {
-        if (window.localStorage) {
-            //console.log("REMOVE",key)
-            delete settingCache[key];
+        if (!window.localStorage) return;
+        delete this.settingCache[key];
+        const data = this.getAllData();
+        delete data[this.prefix + key];
+        this.saveAllData(data);
+    }
 
-            const data = getAllData();
-            delete data[prefix + key];
-            saveAllData(data);
-        }
-    },
+    /**
+     * Get boolean value with default
+     * @param {string} key
+     * @param {boolean | null} defaultValue
+     * @returns {boolean | null}
+     */
     getBoolOrDefault(key, defaultValue) {
         const val = this.get(key);
-        if (val == null) {
-            return defaultValue;
-        }
-        return val === "true";
-    },
+        return val == null ? defaultValue : val === "true";
+    }
+
+    /**
+     * Get integer value with default
+     * @param {string} key
+     * @param {number | null} defaultValue
+     * @returns {number | null}
+     */
     getIntOrDefault(key, defaultValue) {
         const val = this.get(key);
-        if (val == null) {
-            return defaultValue;
-        }
-        return parseInt(val, 10);
-    },
-};
+        return val == null ? defaultValue : parseInt(val, 10);
+    }
+}
 
-export default SettingStorage;
+// Export singleton instance
+export default new SettingStorage();

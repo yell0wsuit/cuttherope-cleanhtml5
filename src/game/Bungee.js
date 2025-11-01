@@ -7,11 +7,11 @@ import Vector from "@/core/Vector";
 import Canvas from "@/utils/Canvas";
 import RGBAColor from "@/core/RGBAColor";
 import Mover from "@/utils/Mover";
-import Log from "@/utils/Log";
 import satisfyConstraintArray from "@/physics/satisfyConstraintArray";
 import { IS_XMAS } from "@/resources/ResData";
 import ResourceId from "@/resources/ResourceId";
 import ResourceMgr from "@/resources/ResourceMgr";
+
 /**
  * @const
  * @type {number}
@@ -61,35 +61,74 @@ const BungeeMode = {
 };
 
 // create temp color objects used during draw (to reduce allocations)
-const drawBlack = new RGBAColor(0, 0, 0, 1),
-    drawC1 = new RGBAColor(0, 0, 0, 1),
-    drawD1 = new RGBAColor(0, 0, 0, 1),
-    drawC2 = new RGBAColor(0, 0, 0, 1),
-    drawD2 = new RGBAColor(0, 0, 0, 1);
+const drawBlack = new RGBAColor(0, 0, 0, 1);
+const drawC1 = new RGBAColor(0, 0, 0, 1);
+const drawD1 = new RGBAColor(0, 0, 0, 1);
+const drawC2 = new RGBAColor(0, 0, 0, 1);
+const drawD2 = new RGBAColor(0, 0, 0, 1);
 
 class Bungee extends ConstraintSystem {
     /**
      * Create a new Rope
-     * @param headCp {ConstrainedPoint} head constrained point
-     * @param hx {number} head location: x
-     * @param hy {number} head location: y
-     * @param tailCp {ConstrainedPoint} tail constrained point
-     * @param tx {number} tail location: x
-     * @param ty {number} tail location: y
-     * @param len {number} length of the rope
+     * @param {ConstrainedPoint | null} headCp head constrained point
+     * @param {number} hx head location: x
+     * @param {number} hy head location: y
+     * @param {ConstrainedPoint | null} tailCp tail constrained point
+     * @param {number} tx tail location: x
+     * @param {number} ty tail location: y
+     * @param {number} len length of the rope
      */
     constructor(headCp, hx, hy, tailCp, tx, ty, len) {
         super();
+
+        /**
+         * @type {number}
+         */
         this.relaxed = 0;
+
+        /**
+         * @type {number}
+         */
         this.relaxationTimes = BUNGEE_RELAXION_TIMES;
+
+        /**
+         * @type {number}
+         */
         this.lineWidth = resolution.DEFAULT_BUNGEE_LINE_WIDTH;
+
+        /**
+         * @type {number}
+         */
         this.width = resolution.DEFAULT_BUNGEE_WIDTH;
+
+        /**
+         * @type {number}
+         */
         this.cut = Constants.UNDEFINED;
+
+        /**
+         * @type {number}
+         */
         this.cutTime = 0;
+
+        /**
+         * @type {number}
+         */
         this.bungeeMode = BungeeMode.NORMAL;
+
+        /**
+         * @type {boolean}
+         */
         this.highlighted = false;
+
+        /**
+         * @type {number}
+         */
         this.BUNGEE_REST_LEN = resolution.BUNGEE_REST_LEN;
 
+        /**
+         * @type {ConstrainedPoint}
+         */
         this.bungeeAnchor = headCp != null ? headCp : new ConstrainedPoint();
 
         if (tailCp != null) this.tail = tailCp;
@@ -104,6 +143,7 @@ class Bungee extends ConstraintSystem {
 
         this.tail.pos.x = tx;
         this.tail.pos.y = ty;
+
         this.addPart(this.bungeeAnchor);
         this.addPart(this.tail);
 
@@ -114,14 +154,40 @@ class Bungee extends ConstraintSystem {
         offset.divide(pointsNum);
 
         this.roll(len, offset);
+
+        /**
+         * @type {boolean}
+         */
         this.forceWhite = false;
+
+        /**
+         * @type {number}
+         */
         this.initialCandleAngle = Constants.UNDEFINED;
+
+        /**
+         * @type {boolean}
+         */
         this.chosenOne = false;
+
+        /**
+         * @type {boolean}
+         */
         this.hideTailParts = false;
+
+        /**
+         * @type {boolean}
+         */
         this.dontDrawRedStretch = false;
 
+        /**
+         * @type {Vector[]}
+         */
         this.drawPts = [];
 
+        /**
+         * @type {number}
+         */
         this.BUNGEE_BEZIER_POINTS = resolution.BUNGEE_BEZIER_POINTS;
     }
 
@@ -130,9 +196,12 @@ class Bungee extends ConstraintSystem {
      */
     getLength() {
         let len = 0;
-        const parts = this.parts,
-            numParts = parts.length;
+        const parts = this.parts;
+        const numParts = parts.length;
         if (numParts > 0) {
+            /**
+             * @type {Vector}
+             */
             let v = parts[0].pos;
             for (let i = 1; i < numParts; i++) {
                 const part = parts[i];
@@ -143,16 +212,20 @@ class Bungee extends ConstraintSystem {
         return len;
     }
 
+    /**
+     * @param {number} rollLen
+     * @param {Vector | null} offset
+     */
     roll(rollLen, offset) {
         if (offset == null) {
             offset = Vector.newZero();
         }
 
-        const parts = this.parts,
-            tail = this.tail;
-        let prev = parts[parts.length - 2],
-            heroRestLen = tail.restLength(prev),
-            cp = null;
+        const parts = this.parts;
+        const tail = this.tail;
+        let prev = parts[parts.length - 2];
+        let heroRestLen = tail.restLength(prev);
+        let cp = null;
 
         while (rollLen > 0) {
             if (rollLen >= this.BUNGEE_REST_LEN) {
@@ -179,6 +252,9 @@ class Bungee extends ConstraintSystem {
         }
     }
 
+    /**
+     * @param {number} amount
+     */
     rollBack(amount) {
         const parts = this.parts;
         let partsCount = parts.length;
@@ -191,8 +267,8 @@ class Bungee extends ConstraintSystem {
 
         while (rollBackLen > 0) {
             if (rollBackLen >= this.BUNGEE_REST_LEN) {
-                const oldAnchorIndex = partsCount - 2,
-                    newAnchor = parts[partsCount - 3];
+                const oldAnchorIndex = partsCount - 2;
+                const newAnchor = parts[partsCount - 3];
 
                 oldAnchor = parts[oldAnchorIndex];
                 tail.changeConstraintAndLength(oldAnchor, newAnchor, heroRestLen);
@@ -212,9 +288,9 @@ class Bungee extends ConstraintSystem {
             }
         }
 
-        const newTailRestLen = (partsCount - 1) * (this.BUNGEE_REST_LEN + 3),
-            constraints = tail.constraints,
-            numConstraints = constraints.length;
+        const newTailRestLen = (partsCount - 1) * (this.BUNGEE_REST_LEN + 3);
+        const constraints = tail.constraints;
+        const numConstraints = constraints.length;
         for (let i = 0; i < numConstraints; i++) {
             const c = constraints[i];
             if (c.type === ConstraintType.NOT_MORE_THAN) c.restLength = newTailRestLen;
@@ -223,8 +299,8 @@ class Bungee extends ConstraintSystem {
     }
 
     strengthen() {
-        const parts = this.parts,
-            numParts = parts.length;
+        const parts = this.parts;
+        const numParts = parts.length;
         for (let i = 0; i < numParts; i++) {
             const cp = parts[i];
             if (this.bungeeAnchor.pin.x != Constants.UNDEFINED) {
@@ -242,7 +318,7 @@ class Bungee extends ConstraintSystem {
 
     /**
      * Updates the rope based on the time delta
-     * @param delta {number}
+     * @param {number} delta
      */
     update(delta) {
         if (this.cutTime > 0) {
@@ -252,10 +328,10 @@ class Bungee extends ConstraintSystem {
             }
         }
 
-        const parts = this.parts,
-            numParts = parts.length,
-            relaxationTimes = this.relaxationTimes,
-            tail = this.tail;
+        const parts = this.parts;
+        const numParts = parts.length;
+        const relaxationTimes = this.relaxationTimes;
+        const tail = this.tail;
         let i, cp, k;
 
         for (i = 0; i < numParts; i++) {
@@ -279,6 +355,9 @@ class Bungee extends ConstraintSystem {
         // }
     }
 
+    /**
+     * @param {number} partIndex
+     */
     removePart(partIndex) {
         this.forceWhite = false;
 
@@ -289,8 +368,8 @@ class Bungee extends ConstraintSystem {
         if (!p2) {
             p1.removeConstraints();
         } else {
-            const p2Constraints = p2.constraints,
-                p2NumConstraints = p2Constraints.length;
+            const p2Constraints = p2.constraints;
+            const p2NumConstraints = p2Constraints.length;
             for (let k = 0; k < p2NumConstraints; k++) {
                 const c = p2Constraints[k];
                 if (c.cp === p1) {
@@ -313,6 +392,9 @@ class Bungee extends ConstraintSystem {
         }
     }
 
+    /**
+     * @param {number} partIndex
+     */
     setCut(partIndex) {
         this.cut = partIndex;
         this.cutTime = CUT_DISSAPPEAR_TIMEOUT;
@@ -321,13 +403,15 @@ class Bungee extends ConstraintSystem {
     }
 
     draw() {
-        const parts = this.parts,
-            count = parts.length,
-            ctx = Canvas.context;
+        const parts = this.parts;
+        const count = parts.length;
+        const ctx = Canvas.context;
         let i, part, prevPart;
 
-        ctx.lineJoin = "round";
-        ctx.lineWidth = this.lineWidth;
+        if (ctx) {
+            ctx.lineJoin = "round";
+            ctx.lineWidth = this.lineWidth;
+        }
 
         if (this.cut === Constants.UNDEFINED) {
             const pts = new Array(count);
@@ -335,10 +419,10 @@ class Bungee extends ConstraintSystem {
                 pts[i] = parts[i].pos;
                 //Log.debug('Point ' + i + ': ' + pts[i].toString());
             }
-            this.drawBungee(pts);
+            this.drawBungee(pts, 1);
         } else {
-            const pts1 = [],
-                pts2 = [];
+            const pts1 = [];
+            const pts2 = [];
             let part2 = false;
             let cutIndex = 0;
             for (i = 0; i < count; i++) {
@@ -371,13 +455,20 @@ class Bungee extends ConstraintSystem {
                 this.drawBungee(pts2, cutIndex);
             }
         }
-        ctx.lineWidth = 1;
+
+        if (ctx) {
+            ctx.lineWidth = 1;
+        }
     }
 
+    /**
+     * @param {Vector[]} pts
+     * @param {number} segmentStartIndex
+     */
     drawBungee(pts, segmentStartIndex) {
-        const count = pts.length,
-            points = this.BUNGEE_BEZIER_POINTS,
-            drawPts = this.drawPts;
+        const count = pts.length;
+        const points = this.BUNGEE_BEZIER_POINTS;
+        const drawPts = this.drawPts;
 
         // we can't calc the distance for a single point
         if (count < 2) return;
@@ -397,11 +488,11 @@ class Bungee extends ConstraintSystem {
             return;
         }
 
-        const firstPoint = pts[0],
-            secondPoint = pts[1],
-            tx = firstPoint.x - secondPoint.x,
-            ty = firstPoint.y - secondPoint.y,
-            ptsDistance = Math.sqrt(tx * tx + ty * ty);
+        const firstPoint = pts[0];
+        const secondPoint = pts[1];
+        const tx = firstPoint.x - secondPoint.x;
+        const ty = firstPoint.y - secondPoint.y;
+        const ptsDistance = Math.sqrt(tx * tx + ty * ty);
 
         //Log.debug('DrawBungee - point1: ' + firstPoint + ' point2: ' + secondPoint);
 
@@ -412,11 +503,11 @@ class Bungee extends ConstraintSystem {
 
         if (count < 3) return;
 
-        const black = drawBlack,
-            c1 = drawC1,
-            d1 = drawD1,
-            c2 = drawC2,
-            d2 = drawD2;
+        const black = drawBlack;
+        const c1 = drawC1;
+        const d1 = drawD1;
+        const c2 = drawC2;
+        const d2 = drawD2;
 
         // reset the colors (we're reusing temp color objects)
         black.r = 0;
@@ -464,22 +555,22 @@ class Bungee extends ConstraintSystem {
         let useC1 = true; // ropes have alternating color segments
         const numVertices = (count - 1) * points;
 
-        // // colors
-        // //noinspection UnnecessaryLocalVariableJS
-        const b1 = new RGBAColor(d1.r, d1.g, d1.b, d1.a),
-            b2 = new RGBAColor(d2.r, d2.g, d2.b, d2.a),
-            colorDivisor = numVertices - 1,
-            b1rf = (c1.r - d1.r) / colorDivisor,
-            b1gf = (c1.g - d1.g) / colorDivisor,
-            b1bf = (c1.b - d1.b) / colorDivisor,
-            b2rf = (c2.r - d2.r) / colorDivisor,
-            b2gf = (c2.g - d2.g) / colorDivisor,
-            b2bf = (c2.b - d2.b) / colorDivisor;
+        // colors
+        const b1 = new RGBAColor(d1.r, d1.g, d1.b, d1.a);
+        const b2 = new RGBAColor(d2.r, d2.g, d2.b, d2.a);
+        const colorDivisor = numVertices - 1;
+        const b1rf = (c1.r - d1.r) / colorDivisor;
+        const b1gf = (c1.g - d1.g) / colorDivisor;
+        const b1bf = (c1.b - d1.b) / colorDivisor;
+        const b2rf = (c2.r - d2.r) / colorDivisor;
+        const b2gf = (c2.g - d2.g) / colorDivisor;
+        const b2bf = (c2.b - d2.b) / colorDivisor;
 
-        const numSegments = this.BUNGEE_BEZIER_POINTS - 1,
-            lastSegmentIndex = numSegments - 1,
-            ctx = Canvas.context,
-            previousAlpha = ctx.globalAlpha;
+        const numSegments = this.BUNGEE_BEZIER_POINTS - 1;
+        const lastSegmentIndex = numSegments - 1;
+        const ctx = Canvas.context;
+        if (!ctx) return;
+        const previousAlpha = ctx.globalAlpha;
 
         // set the line style
         if (previousAlpha !== alpha) {
@@ -565,6 +656,12 @@ class Bungee extends ConstraintSystem {
         this.drawChristmasLights(drawPts, numVertices + 1, alpha, segmentStartIndex);
     }
 
+    /**
+     * @param {Vector[]} drawPts
+     * @param {number} count
+     * @param {number} alpha
+     * @param {number} segmentStartIndex
+     */
     drawChristmasLights(drawPts, count, alpha, segmentStartIndex) {
         if (!IS_XMAS) return;
         if (!drawPts || count < 2) return;
@@ -596,6 +693,7 @@ class Bungee extends ConstraintSystem {
         }
 
         // Set alpha for fading effect
+        if (!ctx) return;
         const previousAlpha = ctx.globalAlpha;
         if (alpha < 1) {
             ctx.globalAlpha = alpha;

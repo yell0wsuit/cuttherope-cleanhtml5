@@ -1,11 +1,139 @@
 import Rectangle from "@/core/Rectangle";
 import res2560x1440 from "@/config/resolutions/2560x1440";
+
 /**
- * Initializes the target device profile using a base profile. A set of properties
- * will be scaled (based on the difference between the base and target resolutions)
- * and then added to the target.
- * @param base
- * @param target
+ * @typedef {object} BaseProfile
+ * @property {number} [CANVAS_WIDTH]
+ * @property {number} [CANVAS_HEIGHT]
+ * @property {number} [CANVAS_SCALE]
+ * @property {number} [PM]
+ * @property {number} [PMY]
+ * @property {number} BUNGEE_REST_LEN
+ * @property {number} [DEFAULT_BUNGEE_LINE_WIDTH]
+ * @property {number} [DEFAULT_BUNGEE_WIDTH]
+ * @property {number} CLICK_TO_CUT_SEARCH_RADIUS
+ * @property {number} MOVER_SCALE
+ * @property {number} STAR_RADIUS
+ * @property {number} MOUTH_OPEN_RADIUS
+ * @property {number} OUT_OF_SCREEN_ADJUSTMENT_BOTTOM
+ * @property {number} OUT_OF_SCREEN_ADJUSTMENT_TOP
+ * @property {Rectangle} STAR_DEFAULT_BB
+ * @property {Rectangle} STAR_BB
+ * @property {Rectangle} TARGET_BB
+ * @property {Rectangle} TARGET2_BB
+ * @property {number} TUTORIAL_HAND_TARGET_X_1
+ * @property {number} TUTORIAL_HAND_TARGET_X_2
+ * @property {number} BUBBLE_SIZE
+ * @property {number} BUBBLE_RADIUS
+ * @property {number} BUBBLE_TOUCH_OFFSET
+ * @property {number} BUBBLE_TOUCH_SIZE
+ * @property {Rectangle} BUBBLE_BB
+ * @property {number} [BUBBLE_IMPULSE_Y]
+ * @property {number} [BUBBLE_IMPULSE_RD]
+ * @property {number} STAR_SPIKE_RADIUS
+ * @property {number} BOUNCER_RADIUS
+ * @property {number} PUMP_POWER_RADIUS
+ * @property {Rectangle} PUMP_BB
+ * @property {number} PUMP_DIRT_SPEED
+ * @property {number} PUMP_DIRT_PARTICLE_SIZE
+ * @property {number} PUMP_DIRT_OFFSET
+ * @property {number} CANDY_BUBBLE_TUTORIAL_LIMIT_Y
+ * @property {number} CANDY_BUBBLE_TUTORIAL_LIMIT_X
+ * @property {Rectangle} CANDY_BB
+ * @property {Rectangle} CANDY_LR_BB
+ * @property {number} [GRAB_RADIUS_ALPHA]
+ * @property {number} GRAB_WHEEL_RADIUS
+ * @property {number} GRAB_WHEEL_MAX_ROTATION
+ * @property {number} GRAB_WHEEL_SCALE_DIVISOR
+ * @property {number} GRAB_ROPE_ROLL_MAX_LENGTH
+ * @property {number} GRAB_MOVE_BG_WIDTH
+ * @property {number} GRAB_MOVE_BG_X_OFFSET
+ * @property {number} GRAB_MOVE_RADIUS
+ * @property {number} SPIDER_SPEED
+ * @property {number} SOCK_LIGHT_Y
+ * @property {number} SOCK_WIDTH
+ * @property {number} SOCK_ROTATION_Y_OFFSET
+ * @property {number} STAR_SOCK_RADIUS
+ * @property {number} SOCK_TELEPORT_Y
+ * @property {number} POLLEN_MIN_DISTANCE
+ * @property {number} POLLEN_MAX_OFFSET
+ * @property {number} RC_CONTROLLER_RADIUS
+ * @property {number} IGNORE_TOUCHES_DISTANCE
+ * @property {number} PREVIEW_CAMERA_SPEED
+ * @property {number} PREVIEW_CAMERA_SPEED2
+ * @property {number} MAX_PREVIEW_CAMERA_SPEED
+ * @property {number} MIN_PREVIEW_CAMERA_SPEED
+ * @property {number} CAMERA_SPEED_THRESHOLD
+ * @property {number} CAMERA_SPEED
+ * @property {number} CUT_MAX_SIZE
+ * @property {number} [PHYSICS_SPEED_MULTIPLIER]
+ */
+
+/**
+ * @typedef {object} TargetProfile
+ * @property {number} CANVAS_SCALE
+ * @property {number} UI_IMAGES_SCALE
+ * @property {(n:number)=>number} uiScaledNumber
+ * @property {number} BUNGEE_REST_LEN
+ * @property {number} MOVER_SCALE
+ * @property {number} STAR_RADIUS
+ * @property {number} MOUTH_OPEN_RADIUS
+ * @property {number} OUT_OF_SCREEN_ADJUSTMENT_TOP
+ * @property {number} OUT_OF_SCREEN_ADJUSTMENT_BOTTOM
+ * @property {number} CLICK_TO_CUT_SEARCH_RADIUS
+ * @property {Rectangle} TARGET_BB
+ * @property {Rectangle} TARGET2_BB
+ * @property {number} TUTORIAL_HAND_TARGET_X_1
+ * @property {number} TUTORIAL_HAND_TARGET_X_2
+ * @property {number} BUBBLE_SIZE
+ * @property {number} BUBBLE_TOUCH_OFFSET
+ * @property {number} BUBBLE_TOUCH_SIZE
+ * @property {Rectangle} BUBBLE_BB
+ * @property {number} BUBBLE_RADIUS
+ * @property {number} STAR_SPIKE_RADIUS
+ * @property {Rectangle} STAR_BB
+ * @property {Rectangle} STAR_DEFAULT_BB
+ * @property {number} BOUNCER_RADIUS
+ * @property {number} PUMP_POWER_RADIUS
+ * @property {Rectangle} PUMP_BB
+ * @property {number} PUMP_DIRT_SPEED
+ * @property {number} PUMP_DIRT_PARTICLE_SIZE
+ * @property {number} PUMP_DIRT_OFFSET
+ * @property {Rectangle} CANDY_BB
+ * @property {Rectangle} CANDY_LR_BB
+ * @property {number} CANDY_BUBBLE_TUTORIAL_LIMIT_Y
+ * @property {number} CANDY_BUBBLE_TUTORIAL_LIMIT_X
+ * @property {number} IGNORE_TOUCHES_DISTANCE
+ * @property {number} PREVIEW_CAMERA_SPEED
+ * @property {number} PREVIEW_CAMERA_SPEED2
+ * @property {number} MAX_PREVIEW_CAMERA_SPEED
+ * @property {number} MIN_PREVIEW_CAMERA_SPEED
+ * @property {number} CAMERA_SPEED_THRESHOLD
+ * @property {number} CAMERA_SPEED
+ * @property {number} GRAB_WHEEL_MAX_ROTATION
+ * @property {number} GRAB_WHEEL_SCALE_DIVISOR
+ * @property {number} GRAB_WHEEL_RADIUS
+ * @property {number} GRAB_ROPE_ROLL_MAX_LENGTH
+ * @property {number} GRAB_MOVE_BG_WIDTH
+ * @property {number} GRAB_MOVE_BG_X_OFFSET
+ * @property {number} GRAB_MOVE_RADIUS
+ * @property {number} SPIDER_SPEED
+ * @property {number} POLLEN_MIN_DISTANCE
+ * @property {number} POLLEN_MAX_OFFSET
+ * @property {number} RC_CONTROLLER_RADIUS
+ * @property {number} SOCK_LIGHT_Y
+ * @property {number} SOCK_WIDTH
+ * @property {number} SOCK_ROTATION_Y_OFFSET
+ * @property {number} STAR_SOCK_RADIUS
+ * @property {number} SOCK_TELEPORT_Y
+ * @property {number} CUT_MAX_SIZE
+ */
+
+/**
+ * Initializes the target device profile using a base profile.
+ * A set of properties will be scaled and added to the target.
+ * @param {BaseProfile} base
+ * @param {TargetProfile} target
  */
 const initProfile = (base, target) => {
     const scale = target.CANVAS_SCALE;
@@ -83,10 +211,15 @@ const initProfile = (base, target) => {
 };
 
 /**
- * Initializes a target profile scaled from the mac version profile
+ * Initializes a target profile scaled from the macOS version profile.
+ *
+ * @template {Record<string, unknown>} T
+ * @param {T} target
+ * @returns {T & typeof res2560x1440 & { uiScaledNumber(n: number): number }}
  */
 const initProfileFromMac = (target) => {
-    initProfile(res2560x1440, target);
+    initProfile(res2560x1440, /** @type {TargetProfile} */ (target));
+    return /** @type {T & typeof res2560x1440 & { uiScaledNumber(n: number): number }} */ (target);
 };
 
 export default initProfileFromMac;

@@ -1,4 +1,4 @@
-import platform from "@/platform";
+import platform from "@/config/platforms/platform-web";
 import BoxManager from "@/ui/BoxManager";
 import ScoreManager from "@/ui/ScoreManager";
 import Lang from "@/resources/Lang";
@@ -6,23 +6,42 @@ import MenuStringId from "@/resources/MenuStringId";
 import Text from "@/visual/Text";
 import Dialogs from "@/ui/Dialogs";
 import VideoManager from "@/ui/VideoManager";
-import analytics from "@/analytics";
-import dom from "@/utils/dom";
+import { removeClass, addClass, hide, empty, fadeOut, fadeIn, show } from "@/utils/domHelpers";
 import { IS_MSIE_BROWSER } from "@/ui/InterfaceManager/constants";
 import ConfettiManager from "@/ui/ConfettiManager";
 
-const { removeClass, addClass, hide, empty, fadeOut, fadeIn, getElement, show } = dom;
-
 // result elements
-const valdiv = getElement("#resultTickerValue");
-const lbldiv = getElement("#resultTickerLabel");
-const resdiv = getElement("#resultScore");
-const stamp = getElement("#resultImproved");
-const msgdiv = getElement("#resultTickerMessage");
+const valdiv = /** @type {HTMLCanvasElement | null} */ (
+    document.getElementById("resultTickerValue")
+);
+const lbldiv = /** @type {HTMLCanvasElement | null} */ (
+    document.getElementById("resultTickerLabel")
+);
+/** @type {HTMLElement | null} */
+const resdiv = document.getElementById("resultScore");
+/** @type {HTMLElement | null} */
+const stamp = document.getElementById("resultImproved");
+/** @type {HTMLElement | null} */
+const msgdiv = document.getElementById("resultTickerMessage");
+/** @type {HTMLElement | null} */
 const levelPanel = document.getElementById("levelPanel");
 
-export default function createResultsHandler(manager) {
-    const onLevelWon = (info) => {
+/**
+ * Base class for handling level results
+ */
+export default class ResultsHandler {
+    /**
+     * @param {import("@/ui/InterfaceManagerClass").default} manager
+     */
+    constructor(manager) {
+        this.manager = manager;
+    }
+
+    /**
+     * Handles level won event
+     * @param {{ stars: number; score: number; time: number; fps: number; }} info - Level completion info
+     */
+    onLevelWon(info) {
         const stars = info.stars;
         const score = info.score;
         const levelTime = info.time;
@@ -89,17 +108,20 @@ export default function createResultsHandler(manager) {
 
         // Helper functions
 
-        const secondsToMin = (sec) => {
+        const secondsToMin = (/** @type {number} */ sec) => {
             const minutes = (sec / 60) | 0;
             const seconds = Math.round(sec % 60);
             return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
         };
 
-        const doStarCountdown = (from, callback) => {
+        const doStarCountdown = (
+            /** @type {number} */ from,
+            /** @type {(() => void) | null | undefined} */ callback
+        ) => {
             let countDownPoints = from;
             const duration = 1000;
             let lastRender = Date.now();
-            const raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame;
+            const raf = window.requestAnimationFrame;
 
             const renderCount = () => {
                 const now = Date.now();
@@ -121,12 +143,14 @@ export default function createResultsHandler(manager) {
                     raf(renderCount);
                 }
 
-                Text.drawSmall({
-                    text: countDownPoints,
-                    img: valdiv,
-                    scaleToUI: true,
-                    canvas: true,
-                });
+                if (valdiv) {
+                    Text.drawSmall({
+                        text: countDownPoints,
+                        img: valdiv,
+                        scaleToUI: true,
+                        canvas: true,
+                    });
+                }
                 Text.drawBigNumbers({
                     text: currentPoints,
                     imgParentId: "resultScore",
@@ -137,13 +161,17 @@ export default function createResultsHandler(manager) {
             renderCount();
         };
 
-        const doTimeCountdown = (fromsec, frompoints, callback) => {
+        const doTimeCountdown = (
+            /** @type {number} */ fromsec,
+            /** @type {number} */ frompoints,
+            /** @type {(() => void) | null | undefined} */ callback
+        ) => {
             const finalPoints = currentPoints + frompoints;
             let countDownSecs = fromsec;
             // between 1 and 2 secs depending on time
             const duration = Math.max(1000, 2000 - fromsec * 50);
             let lastRender = Date.now();
-            const raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame;
+            const raf = window.requestAnimationFrame;
 
             const renderScore = () => {
                 const now = Date.now();
@@ -161,12 +189,14 @@ export default function createResultsHandler(manager) {
                     raf(renderScore);
                 }
 
-                Text.drawSmall({
-                    text: secondsToMin(countDownSecs),
-                    img: valdiv,
-                    scaleToUI: true,
-                    canvas: true,
-                });
+                if (valdiv) {
+                    Text.drawSmall({
+                        text: secondsToMin(countDownSecs),
+                        img: valdiv,
+                        scaleToUI: true,
+                        canvas: true,
+                    });
+                }
                 Text.drawBigNumbers({
                     text: currentPoints,
                     imgParentId: "resultScore",
@@ -180,25 +210,33 @@ export default function createResultsHandler(manager) {
         // ANIMATION
 
         // set up the star bonus countdown
-        Text.drawSmall({
-            text: Lang.menuText(MenuStringId.STAR_BONUS),
-            img: lbldiv,
-            scaleToUI: true,
-            canvas: true,
-        });
-        Text.drawSmall({
-            text: totalStarPoints,
-            img: valdiv,
-            scaleToUI: true,
-            canvas: true,
-        });
+        if (lbldiv) {
+            Text.drawSmall({
+                text: Lang.menuText(MenuStringId.STAR_BONUS),
+                img: lbldiv,
+                scaleToUI: true,
+                canvas: true,
+            });
+        }
+        if (valdiv) {
+            Text.drawSmall({
+                text: totalStarPoints,
+                img: valdiv,
+                scaleToUI: true,
+                canvas: true,
+            });
+        }
         if (resdiv) {
-            resdiv.querySelectorAll("img").forEach((node) => {
-                node.remove();
-            });
-            resdiv.querySelectorAll("canvas").forEach((node) => {
-                node.remove();
-            });
+            resdiv
+                .querySelectorAll("img")
+                .forEach((/** @type {{ remove: () => void; }} */ node) => {
+                    node.remove();
+                });
+            resdiv
+                .querySelectorAll("canvas")
+                .forEach((/** @type {{ remove: () => void; }} */ node) => {
+                    node.remove();
+                });
         }
 
         // Trigger confetti for 3-star completion
@@ -219,19 +257,23 @@ export default function createResultsHandler(manager) {
                     }
                 }
                 doStarCountdown(totalStarPoints, () => {
-                    Text.drawSmall({
-                        text: Lang.menuText(MenuStringId.TIME),
-                        img: lbldiv,
-                        scaleToUI: true,
-                        canvas: true,
-                    });
+                    if (lbldiv) {
+                        Text.drawSmall({
+                            text: Lang.menuText(MenuStringId.TIME),
+                            img: lbldiv,
+                            scaleToUI: true,
+                            canvas: true,
+                        });
+                    }
                     fadeIn(lbldiv, 300);
-                    Text.drawSmall({
-                        text: secondsToMin(Math.ceil(levelTime)),
-                        img: valdiv,
-                        scaleToUI: true,
-                        canvas: true,
-                    });
+                    if (valdiv) {
+                        Text.drawSmall({
+                            text: secondsToMin(Math.ceil(levelTime)),
+                            img: valdiv,
+                            scaleToUI: true,
+                            canvas: true,
+                        });
+                    }
                     fadeIn(valdiv, 300).then(() => {
                         doTimeCountdown(Math.ceil(levelTime), score - currentPoints, () => {
                             fadeIn(msgdiv, 300);
@@ -273,27 +315,27 @@ export default function createResultsHandler(manager) {
         ScoreManager.setStars(boxIndex, levelIndex - 1, stars);
 
         // unlock next level
-        if (ScoreManager.levelCount(boxIndex) > levelIndex && BoxManager.isNextLevelPlayable()) {
+        const levelCount = ScoreManager.levelCount(boxIndex);
+        if (levelCount != null && levelCount > levelIndex && BoxManager.isNextLevelPlayable()) {
             ScoreManager.setStars(boxIndex, levelIndex, 0);
         }
 
-        manager.isInLevelSelectMode = false;
-        manager.closeBox();
+        this.manager.isInLevelSelectMode = false;
+        this.manager.gameFlow.closeBox();
 
         // events that occur after completing the first level
         if (boxIndex === 0 && levelIndex === 1) {
-            if (analytics.onFirstLevelComplete) {
+            /*if (analytics.onFirstLevelComplete) {
                 analytics.onFirstLevelComplete(info.fps);
-            }
+            }*/
 
             // tell the user if the fps was low on the first level
-            if (info.fps < manager._MIN_FPS && !platform.disableSlowWarning) {
+            if (info.fps < this.manager._MIN_FPS && !platform.disableSlowWarning) {
                 setTimeout(() => {
                     Dialogs.showSlowComputerPopup();
                 }, 3000);
             }
             VideoManager.removeIntroVideo();
         }
-    };
-    return { onLevelWon };
+    }
 }

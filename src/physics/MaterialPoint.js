@@ -1,6 +1,6 @@
 import Constants from "@/utils/Constants";
 import Vector from "@/core/Vector";
-import Gravity from "@/physics/Gravity";
+import Gravity, { GCONST } from "@/physics/Gravity";
 
 class MaterialPoint {
     constructor() {
@@ -16,10 +16,13 @@ class MaterialPoint {
         this.totalForce = newZero();
     }
 
+    /**
+     * @param {number} w
+     */
     setWeight(w) {
         this.weight = w;
         this.invWeight = 1 / w;
-        this.gravity = new Vector(0, Constants.EARTH_Y * w);
+        this.gravity = new Vector(0, GCONST * w);
     }
 
     resetAll() {
@@ -31,6 +34,10 @@ class MaterialPoint {
         this.totalForce = newZero();
     }
 
+    /**
+     * @param {number} delta
+     * @param {number} precision
+     */
     updateWithPrecision(delta, precision) {
         // Calculate number Of iterations to be made at this update depending
         // on maxPossible_dt And dt (chop off fractional part and add 1)
@@ -47,19 +54,26 @@ class MaterialPoint {
         }
     }
 
+    /**
+     * @param {number} delta
+     */
     update(delta) {
         this.totalForce = Vector.newZero();
 
         // incorporate gravity
         if (!this.disableGravity) {
-            if (!Gravity.isZero()) {
+            if (!Gravity.isZero() && this.weight) {
                 this.totalForce.add(Vector.multiply(Gravity.current, this.weight));
-            } else {
+            } else if (this.gravity) {
                 this.totalForce.add(this.gravity);
             }
         }
 
         const adjustedDelta = delta / Constants.TIME_SCALE;
+        if (!this.invWeight) {
+            return;
+        }
+
         this.totalForce.multiply(this.invWeight);
         this.a = Vector.multiply(this.totalForce, adjustedDelta);
         this.v.add(this.a);
@@ -68,6 +82,10 @@ class MaterialPoint {
         this.pos.add(this.posDelta);
     }
 
+    /**
+     * @param {Vector} impulse
+     * @param {number} delta
+     */
     applyImpulse(impulse, delta) {
         if (!impulse.isZero()) {
             const im = Vector.multiply(impulse, delta / Constants.TIME_SCALE);

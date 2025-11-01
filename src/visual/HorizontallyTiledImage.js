@@ -9,24 +9,39 @@ class HorizontallyTiledImage extends ImageElement {
 
     /**
      * Set the texture for this image element
-     * @param texture {Texture2D}
+     * @param {Texture2D} texture
      */
     initTexture(texture) {
         super.initTexture(texture);
 
-        this.tiles = [];
-        this.offsets = [];
+        /**
+         * @type {number[]}
+         */
+        this.tiles = [0, 0, 0];
+        /**
+         * @type {number[]}
+         */
+        this.offsets = [0, 0, 0];
         this.align = Alignment.CENTER;
     }
 
+    /**
+     * @param {number} left
+     * @param {number} center
+     * @param {number} right
+     */
     setTileHorizontally(left, center, right) {
+        if (!this.tiles || this.tiles.length === 0) {
+            return;
+        }
+
         this.tiles[0] = left;
         this.tiles[1] = center;
         this.tiles[2] = right;
 
-        const h1 = this.texture.rects[left].h,
-            h2 = this.texture.rects[center].h,
-            h3 = this.texture.rects[right].h;
+        const h1 = this.texture.rects[left].h;
+        const h2 = this.texture.rects[center].h;
+        const h3 = this.texture.rects[right].h;
 
         if (h1 >= h2 && h1 >= h3) {
             this.height = h1;
@@ -34,6 +49,10 @@ class HorizontallyTiledImage extends ImageElement {
             this.height = h2;
         } else {
             this.height = h3;
+        }
+
+        if (!this.offsets || this.offsets.length === 0) {
+            return;
         }
 
         this.offsets[0] = ~~((this.height - h1) / 2.0);
@@ -44,17 +63,29 @@ class HorizontallyTiledImage extends ImageElement {
     draw() {
         this.preDraw();
 
-        const left = this.texture.rects[this.tiles[0]],
-            center = this.texture.rects[this.tiles[1]],
-            right = this.texture.rects[this.tiles[2]],
-            tileWidth = this.width - (~~left.w + ~~right.w),
-            ctx = Canvas.context,
-            dx = Math.round(this.drawX),
-            dy = Math.round(this.drawY),
-            leftCeilW = Math.ceil(left.w),
-            leftCeilH = Math.ceil(left.h),
-            rightCeilW = Math.ceil(right.w),
-            rightCeilH = Math.ceil(right.h);
+        if (!this.tiles || this.tiles.length === 0) {
+            return;
+        }
+
+        const left = this.texture.rects[this.tiles[0]];
+        const center = this.texture.rects[this.tiles[1]];
+        const right = this.texture.rects[this.tiles[2]];
+        const tileWidth = this.width - (~~left.w + ~~right.w);
+        const ctx = Canvas.context;
+        const dx = Math.round(this.drawX);
+        const dy = Math.round(this.drawY);
+        const leftCeilW = Math.ceil(left.w);
+        const leftCeilH = Math.ceil(left.h);
+        const rightCeilW = Math.ceil(right.w);
+        const rightCeilH = Math.ceil(right.h);
+
+        if (!ctx) {
+            return;
+        }
+
+        if (!this.offsets || this.offsets.length === 0) {
+            return;
+        }
 
         if (tileWidth >= 0) {
             ctx.drawImage(
@@ -122,6 +153,7 @@ class HorizontallyTiledImage extends ImageElement {
 
     /**
      * Draw the tile image to an offscreen canvas and return an Image
+     * @return {HTMLImageElement | undefined}
      */
     getImage() {
         // save the existing canvas id and switch to the hidden canvas
@@ -131,15 +163,20 @@ class HorizontallyTiledImage extends ImageElement {
         Canvas.setTarget(document.createElement("canvas"));
 
         // set the canvas width and height
-        const canvas = Canvas.element,
-            imgWidth = Math.ceil(this.width),
-            imgHeight = Math.ceil(this.height);
+        const canvas = Canvas.element;
+        const imgWidth = Math.ceil(this.width);
+        const imgHeight = Math.ceil(this.height);
+
+        if (!canvas) {
+            return;
+        }
+
         canvas.width = imgWidth;
         canvas.height = imgHeight;
 
         this.draw();
-        const imageData = canvas.toDataURL("image/png"),
-            img = new Image();
+        const imageData = canvas.toDataURL("image/png");
+        const img = new Image();
 
         img.src = imageData;
 

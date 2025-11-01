@@ -1,4 +1,4 @@
-import preloader from "@/resources/PreLoader";
+import PreLoader from "@/resources/PreLoader";
 import { IS_XMAS } from "@/resources/ResData";
 import resolution from "@/resolution";
 import im from "@/ui/InterfaceManager";
@@ -8,26 +8,36 @@ import ZoomManager from "@/ZoomManager";
 import PubSub from "@/utils/PubSub";
 import editionUI from "@/editionUI";
 
-let progressBar, betterLoader, gameFooterSocial;
+class App {
+    constructor() {
+        /**
+         * @type {HTMLElement | null}
+         */
+        this.progressBar = null;
+        /**
+         * @type {HTMLElement | null}
+         */
+        this.betterLoader = null;
+        /**
+         * @type {HTMLElement | null}
+         */
+        this.gameFooterSocial = null;
 
-const App = {
-    // Gives the app a chance to begin working before the DOM is ready
-    init() {
-        preloader.init();
-        im.init();
+        // Gives the app a chance to begin working before the DOM is ready
+        PreLoader.start();
         PubSub.publish(PubSub.ChannelId.AppInit);
-    },
+    }
 
     // Called by the loader when the DOM is loaded
     domReady() {
-        progressBar = document.getElementById("progress");
-        betterLoader = document.getElementById("betterLoader");
-        gameFooterSocial = document.getElementById("gameFooterSocial");
+        this.progressBar = document.getElementById("progress");
+        this.betterLoader = document.getElementById("betterLoader");
+        this.gameFooterSocial = document.getElementById("gameFooterSocial");
 
         // disable text selection mode in IE9
         if (settings.disableTextSelection) {
             if (typeof document.body["onselectstart"] != "undefined") {
-                document.body["onselectstart"] = function () {
+                document.body["onselectstart"] = () => {
                     return false;
                 };
             }
@@ -36,12 +46,14 @@ const App = {
         // toggle the active css class when the user clicks
         const ctrCursors = document.querySelectorAll(".ctrCursor");
         ctrCursors.forEach((cursor) => {
-            cursor.addEventListener("mousedown", () => {
-                cursor.classList.toggle("ctrCursorActive");
-            });
-            cursor.addEventListener("mouseup", () => {
-                cursor.classList.toggle("ctrCursorActive");
-            });
+            if (cursor instanceof HTMLElement) {
+                cursor.addEventListener("mousedown", () => {
+                    cursor.classList.toggle("ctrCursorActive");
+                });
+                cursor.addEventListener("mouseup", () => {
+                    cursor.classList.toggle("ctrCursorActive");
+                });
+            }
         });
 
         document.body.classList.add(`ui-${resolution.UI_WIDTH}`);
@@ -50,6 +62,10 @@ const App = {
         }
 
         Canvas.domReady("c");
+
+        if (!Canvas.element) {
+            throw new Error("Canvas element not found");
+        }
 
         // set the canvas drawing dimensions
         Canvas.element.width = resolution.CANVAS_WIDTH;
@@ -63,10 +79,10 @@ const App = {
             ZoomManager.domReady();
         }
 
-        preloader.domReady();
-        im.domReady();
+        PreLoader.domReady();
+        im.gameFlow.domReady();
         PubSub.publish(PubSub.ChannelId.AppDomReady);
-    },
+    }
 
     run() {
         // Called by the loader when the app is ready to run
@@ -74,69 +90,73 @@ const App = {
         // Subscribe to preloader progress updates
         const progressSubscription = PubSub.subscribe(
             PubSub.ChannelId.PreloaderProgress,
-            function (data) {
-                if (progressBar && data && typeof data.progress === "number") {
+            (/** @type {{ progress: number; }} */ data) => {
+                if (this.progressBar && data && typeof data.progress === "number") {
                     const progress = Math.min(100, Math.max(0, data.progress));
-                    progressBar.style.transition = "width 0.3s ease-out";
-                    progressBar.style.width = `${progress}%`;
+                    this.progressBar.style.transition = "width 0.3s ease-out";
+                    this.progressBar.style.width = `${progress}%`;
                 }
             }
         );
 
-        preloader.run(function () {
+        PreLoader.run(() => {
             // Unsubscribe from progress updates
             PubSub.unsubscribe(progressSubscription);
 
             // Ensure progress bar is at 100%
-            if (progressBar) {
-                progressBar.style.width = "100%";
+            if (this.progressBar) {
+                this.progressBar.style.width = "100%";
             }
 
             // Hide the loader after a brief delay
-            setTimeout(function () {
-                if (betterLoader) {
-                    betterLoader.style.transition = "opacity 0.5s";
-                    betterLoader.style.opacity = "0";
-                    setTimeout(function () {
-                        betterLoader.style.display = "none";
+            setTimeout(() => {
+                if (this.betterLoader) {
+                    this.betterLoader.style.transition = "opacity 0.5s";
+                    this.betterLoader.style.opacity = "0";
+                    setTimeout(() => {
+                        this.betterLoader && (this.betterLoader.style.display = "none");
                     }, 500);
                 }
             }, 200);
 
-            im.appReady();
+            im.gameFlow.appReady();
             PubSub.publish(PubSub.ChannelId.AppRun);
 
             // fade in the game
             const hideAfterLoad = document.querySelectorAll(".hideAfterLoad");
             hideAfterLoad.forEach((el) => {
-                el.style.transition = "opacity 0.5s";
-                el.style.opacity = "0";
-                setTimeout(function () {
-                    el.style.display = "none";
-                }, 500);
+                if (el instanceof HTMLElement) {
+                    el.style.transition = "opacity 0.5s";
+                    el.style.opacity = "0";
+                    setTimeout(() => {
+                        el.style.display = "none";
+                    }, 500);
+                }
             });
 
             const hideBeforeLoad = document.querySelectorAll(".hideBeforeLoad");
             hideBeforeLoad.forEach((el) => {
-                // Make sure element is visible first
-                el.style.display = el.style.display || "block";
-                el.style.opacity = "0";
-                el.style.transition = "opacity 0.5s";
-                // Trigger reflow before starting fade
-                el.offsetHeight;
-                el.style.opacity = "1";
+                if (el instanceof HTMLElement) {
+                    // Make sure element is visible first
+                    el.style.display = el.style.display || "block";
+                    el.style.opacity = "0";
+                    el.style.transition = "opacity 0.5s";
+                    // Trigger reflow before starting fade
+                    el.offsetHeight;
+                    el.style.opacity = "1";
+                }
             });
 
             // show hide behind the scenes when we first load
-            im.updateDevLink();
+            im.gameFlow.updateDevLink();
 
             // put the social links back into the footer (need to be offscreen instead of hidden during load)
 
-            if (gameFooterSocial) {
-                gameFooterSocial.style.top = "0";
+            if (this.gameFooterSocial) {
+                this.gameFooterSocial.style.top = "0";
             }
         });
-    },
-};
+    }
+}
 
-export default App;
+export default new App();

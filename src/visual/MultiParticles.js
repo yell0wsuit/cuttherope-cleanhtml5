@@ -5,6 +5,10 @@ import ImageMultiDrawer from "@/visual/ImageMultiDrawer";
 import resolution from "@/resolution";
 
 class MultiParticles extends Particles {
+    /**
+     * @param {number} numParticles
+     * @param {Texture2D} texture
+     */
     constructor(numParticles, texture) {
         super(numParticles);
 
@@ -14,11 +18,14 @@ class MultiParticles extends Particles {
         this.height = resolution.CANVAS_HEIGHT;
     }
 
+    /**
+     * @param {Particle} particle
+     */
     initParticle(particle) {
-        const texture = this.imageGrid,
-            n = MathHelper.randomRange(0, texture.rects.length - 1),
-            tquad = texture.rects[n],
-            vquad = new Rectangle(0, 0, 0, 0); // don't draw initially
+        const texture = this.imageGrid;
+        const n = MathHelper.randomRange(0, texture.rects.length - 1);
+        const tquad = texture.rects[n];
+        const vquad = new Rectangle(0, 0, 0, 0); // don't draw initially
 
         this.drawer.setTextureQuad(this.particles.length, tquad, vquad, 1);
 
@@ -28,7 +35,12 @@ class MultiParticles extends Particles {
         particle.height = tquad.h * particle.size;
     }
 
-    updateParticle(particle, index) {
+    /**
+     * @param {Particle} particle
+     * @param {number} index
+     * @param {number} delta
+     */
+    updateParticle(particle, index, delta) {
         // update the current position
         this.drawer.vertices[index] = new Rectangle(
             particle.pos.x - particle.width / 2,
@@ -44,6 +56,9 @@ class MultiParticles extends Particles {
         this.colors[index] = particle.color;
     }
 
+    /**
+     * @param {number} index
+     */
     removeParticle(index) {
         this.drawer.removeQuads(index);
         super.removeParticle(index);
@@ -54,6 +69,7 @@ class MultiParticles extends Particles {
 
         /* for debugging rotation: draw a line from origin at 0 degrees
              let ctx = Canvas.context;
+             if (!ctx) return;
              ctx.save();
              ctx.lineWidth = 5;
              ctx.strokeStyle = "blue";
@@ -63,7 +79,7 @@ class MultiParticles extends Particles {
              ctx.closePath();
              ctx.stroke();
              ctx.restore();
-             */
+         */
 
         this.drawer.draw();
         this.postDraw();

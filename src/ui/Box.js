@@ -1,19 +1,22 @@
 import Easing from "@/ui/Easing";
 import Text from "@/visual/Text";
 import resolution from "@/resolution";
-import platform from "@/platform";
+import platform from "@/config/platforms/platform-web";
 import BoxType from "@/ui/BoxType";
 import PubSub from "@/utils/PubSub";
 import Lang from "@/resources/Lang";
 import Alignment from "@/core/Alignment";
 import ScoreManager from "@/ui/ScoreManager";
 import MenuStringId from "@/resources/MenuStringId";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import settings from "@/game/CTRSettings";
 import { IS_XMAS } from "@/resources/ResData";
 
 // cache upgrade UI elements
-let upgradeButton;
+/**
+ * @type {HTMLElement | null}
+ */
+/*let upgradeButton;
 
 function initializeUpgradeButton() {
     upgradeButton = document.getElementById("boxUpgradePlate");
@@ -27,21 +30,21 @@ if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initializeUpgradeButton);
 } else {
     initializeUpgradeButton();
-}
+}*/
 
-function hidePurchaseButton() {
+/*function hidePurchaseButton() {
     if (upgradeButton) {
         // Vanilla fade out
         upgradeButton.style.transition = "opacity 200ms";
         upgradeButton.style.opacity = "0";
         setTimeout(() => {
-            upgradeButton.style.display = "none";
-            upgradeButton.style.opacity = "1"; // Reset for next time
+            upgradeButton && (upgradeButton.style.display = "none");
+            upgradeButton && (upgradeButton.style.opacity = "1"); // Reset for next time
         }, 200);
     }
-}
+}*/
 
-function showPurchaseButton() {
+/*function showPurchaseButton() {
     if (upgradeButton) {
         upgradeButton.style.display = "";
         upgradeButton.style.transition = "opacity 200ms";
@@ -50,13 +53,13 @@ function showPurchaseButton() {
         upgradeButton.offsetHeight;
         upgradeButton.style.opacity = "1";
     }
-}
+}*/
 
-PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, function (paid) {
-    if (paid) {
-        hidePurchaseButton();
-    }
-});
+//PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, function (/** @type {boolean} */ paid) {
+//  if (paid) {
+//     hidePurchaseButton();
+// }
+//});
 
 // localize UI element text
 PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
@@ -70,6 +73,13 @@ PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
 const boxImageBase = platform.boxImageBaseUrl || platform.uiImageBaseUrl;
 
 class Box {
+    /**
+     * @param {number} boxIndex
+     * @param {string | null} bgimg
+     * @param {number} reqstars
+     * @param {boolean} islocked
+     * @param {string} type
+     */
     constructor(boxIndex, bgimg, reqstars, islocked, type) {
         this.index = boxIndex;
         this.islocked = islocked;
@@ -140,6 +150,10 @@ class Box {
         return true;
     }
 
+    /**
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number | null} omnomoffset
+     */
     draw(ctx, omnomoffset) {
         const prevAlpha = ctx.globalAlpha;
         if (this.opacity !== prevAlpha) {
@@ -155,6 +169,10 @@ class Box {
         }
     }
 
+    /**
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number | null} omnomoffset
+     */
     render(ctx, omnomoffset) {
         const isGameBox = this.isGameBox();
         const yOffset = resolution.uiScaledNumber(this.yOffset || 0);
@@ -276,6 +294,9 @@ class Box {
         ctx.drawImage(this.textImg, x, y);
     }
 
+    /**
+     * @param {CanvasRenderingContext2D} ctx
+     */
     bounce(ctx) {
         if (!ctx) {
             return;
@@ -284,11 +305,11 @@ class Box {
         this.bounceStartTime = Date.now();
 
         // stage boundaries in msec
-        const s1 = 100,
-            s2 = 300,
-            s3 = 600,
-            w = resolution.uiScaledNumber(1024),
-            h = resolution.uiScaledNumber(576);
+        const s1 = 100;
+        const s2 = 300;
+        const s3 = 600;
+        const w = resolution.uiScaledNumber(1024);
+        const h = resolution.uiScaledNumber(576);
 
         const renderBounce = () => {
             // get the elapsed time
@@ -311,10 +332,10 @@ class Box {
                 y = 0.94 + d;
             }
 
-            const tx = (w - w * x) / 2.0,
-                ty = (h - h * y) / 2.0,
-                sx = (w - 2.0 * tx) / w,
-                sy = (h - 2.0 * ty) / h;
+            const tx = (w - w * x) / 2.0;
+            const ty = (h - h * y) / 2.0;
+            const sx = (w - 2.0 * tx) / w;
+            const sy = (h - 2.0 * ty) / h;
 
             if (!isNaN(sx) && !isNaN(sy)) {
                 ctx.save();
@@ -350,18 +371,18 @@ class Box {
         this.bounceStartTime = 0;
     }
 
-    onSelected() {
+    /*onSelected() {
         if (!this.purchased) {
             if (upgradeButton) {
                 upgradeButton.classList.toggle("purchaseBox", this.isPurchaseBox || false);
-                showPurchaseButton();
+                //showPurchaseButton();
             }
         }
-    }
+    }*/
 
-    onUnselected() {
-        hidePurchaseButton();
-    }
+    //onUnselected() {
+    //hidePurchaseButton();
+    //}
 
     destroy() {
         if (!this.pubSubSubscriptions) {

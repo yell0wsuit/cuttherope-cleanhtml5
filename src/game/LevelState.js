@@ -1,18 +1,30 @@
-import edition from "@/edition";
-// manages state of the current level
-const LevelState = {
-    loadedMap: null,
-    pack: 0,
-    level: 0,
-    survival: false,
+import edition from "@/config/editions/net-edition";
 
-    loadLevel(pack, level) {
-        this.pack = pack - 1;
-        this.level = level - 1;
+class LevelState {
+    /** @type {any | null} */
+    static loadedMap = null;
 
-        const box = edition.boxes[this.pack];
-        this.loadedMap = box.levels[this.level];
-    },
-};
+    /** @type {number} */
+    static pack = 0;
+
+    /** @type {number} */
+    static level = 0;
+
+    /** @type {boolean} */
+    static survival = false;
+
+    /**
+     * Loads a specific level from the edition data
+     * @param {number} pack
+     * @param {number} level
+     */
+    static loadLevel(pack, level) {
+        LevelState.pack = pack - 1;
+        LevelState.level = level - 1;
+
+        const box = edition.boxes[LevelState.pack];
+        LevelState.loadedMap = box.levels[LevelState.level];
+    }
+}
 
 export default LevelState;

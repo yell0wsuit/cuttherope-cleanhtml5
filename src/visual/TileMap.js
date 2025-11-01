@@ -9,10 +9,14 @@ import Vector from "@/core/Vector";
 /**
  * An entry in the tile map
  * @constructor
- * @param drawerIndex {number}
- * @param quadIndex {number}
+ * @param {number} drawerIndex
+ * @param {number} quadIndex
  */
 class TileEntry {
+    /**
+     * @param {number} drawerIndex
+     * @param {number} quadIndex
+     */
     constructor(drawerIndex, quadIndex) {
         this.drawerIndex = drawerIndex;
         this.quad = quadIndex;
@@ -20,6 +24,10 @@ class TileEntry {
 }
 
 class TileMap extends BaseElement {
+    /**
+     * @param {number} rows
+     * @param {number} columns
+     */
     constructor(rows, columns) {
         super();
 
@@ -31,11 +39,24 @@ class TileMap extends BaseElement {
 
         this.parallaxRatio = 1;
 
+        /**
+         * @type {ImageMultiDrawer[]}
+         */
         this.drawers = [];
+        /**
+         * @type {TileEntry[]}
+         */
         this.tiles = [];
 
+        /**
+         * @type {number[][]}
+         */
         this.matrix = [];
+
         for (let i = 0; i < columns; i++) {
+            /**
+             * @type {number[]}
+             */
             const column = (this.matrix[i] = []);
             for (let k = 0; k < rows; k++) {
                 column[k] = Constants.UNDEFINED;
@@ -48,8 +69,19 @@ class TileMap extends BaseElement {
         this.verticalRandom = false;
         this.restoreTileTransparency = true;
         this.randomSeed = MathHelper.randomRange(1000, 2000);
+
+        this.tileWidth = 0;
+        this.tileHeight = 0;
+        this.tileMapWidth = 0;
+        this.tileMapHeight = 0;
+        this.maxColsOnScreen = 0;
+        this.maxRowsOnScreen = 0;
     }
 
+    /**
+     * @param {Texture2D} texture
+     * @param {number} quadIndex
+     */
     addTile(texture, quadIndex) {
         if (quadIndex === Constants.UNDEFINED) {
             this.tileWidth = texture.imageWidth;
@@ -98,11 +130,11 @@ class TileMap extends BaseElement {
 
     /**
      * Fills the tilemap matrix with the specified tile entry index
-     * @param startRow {number}
-     * @param startCol {number}
-     * @param numRows {number}
-     * @param numCols {number}
-     * @param tileIndex {number}
+     * @param {number} startRow
+     * @param {number} startCol
+     * @param {number} numRows
+     * @param {number} numCols
+     * @param {number} tileIndex
      */
     fill(startRow, startCol, numRows, numCols, tileIndex) {
         for (let i = startCol, colEnd = startCol + numCols; i < colEnd; i++) {
@@ -112,6 +144,9 @@ class TileMap extends BaseElement {
         }
     }
 
+    /**
+     * @param {number} ratio
+     */
     setParallaxRation(ratio) {
         this.parallaxRatio = ratio;
     }
@@ -124,6 +159,9 @@ class TileMap extends BaseElement {
         this.updateVars();
     }
 
+    /**
+     * @param {number} repeatType
+     */
     setRepeatVertically(repeatType) {
         this.repeatedVertically = repeatType;
         this.updateVars();
@@ -131,18 +169,14 @@ class TileMap extends BaseElement {
 
     /**
      * Updates the tile map based on the current camera position
-     * @param pos {Vector}
+     * @param {Vector} pos
      */
     updateWithCameraPos(pos) {
-        const mx = Math.round(pos.x / this.parallaxRatio),
-            my = Math.round(pos.y / this.parallaxRatio);
-        let tileMapStartX = this.x,
-            tileMapStartY = this.y,
-            a,
-            i,
-            len,
-            v,
-            y;
+        const mx = Math.round(pos.x / this.parallaxRatio);
+        const my = Math.round(pos.y / this.parallaxRatio);
+        let tileMapStartX = this.x;
+        let tileMapStartY = this.y;
+        let a, i, len, v;
 
         if (this.repeatedVertically !== TileMap.RepeatType.NONE) {
             const ys = tileMapStartY - my;
@@ -196,14 +230,16 @@ class TileMap extends BaseElement {
             Math.max(0, cameraInTilemap.y)
         );
 
-        //noinspection JSSuspiciousNameCombination
         const startPos = new Vector(
             ~~(~~checkPoint.x / this.tileWidth),
             ~~(~~checkPoint.y / this.tileHeight)
         );
 
-        const highestQuadY = tileMapStartY + startPos.y * this.tileHeight,
-            currentQuadPos = new Vector(tileMapStartX + startPos.x * this.tileWidth, highestQuadY);
+        const highestQuadY = tileMapStartY + startPos.y * this.tileHeight;
+        const currentQuadPos = new Vector(
+            tileMapStartX + startPos.x * this.tileWidth,
+            highestQuadY
+        );
 
         // reset the number of quads to draw
         for (i = 0, len = this.drawers.length; i < len; i++) {
@@ -247,11 +283,11 @@ class TileMap extends BaseElement {
                     resScreen.h
                 );
 
-                let ri = Math.round(i),
-                    rj = Math.round(j);
+                let ri = Math.round(i);
+                let rj = Math.round(j);
 
                 if (this.repeatedVertically === TileMap.RepeatType.EDGES) {
-                    if (currentQuadPos.y < y) {
+                    if (currentQuadPos.y < this.y) {
                         rj = 0;
                     } else if (currentQuadPos.y >= this.y + this.tileMapHeight) {
                         rj = this.rows - 1;
@@ -284,6 +320,9 @@ class TileMap extends BaseElement {
                     rj = rj % this.rows;
                 }
 
+                /**
+                 * @type {number}
+                 */
                 const tile = this.matrix[ri][rj];
                 if (tile >= 0) {
                     const entry = this.tiles[tile],

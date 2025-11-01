@@ -7,6 +7,7 @@ import resolution from "@/resolution";
 import PubSub from "@/utils/PubSub";
 import Canvas from "@/utils/Canvas";
 import RGBAColor from "@/core/RGBAColor";
+
 /**
  * @const
  * @type {number}
@@ -28,6 +29,10 @@ const ViewTransition = {
 };
 
 class RootController extends ViewController {
+    /**
+     * @param {undefined} parent
+     */
+
     constructor(parent) {
         super(parent);
         this.suspended = false;
@@ -38,9 +43,16 @@ class RootController extends ViewController {
         this.transitionDelay = TRANSITION_DEFAULT_DELAY;
         this.deactivateCurrentController = false;
         this.dragMode = false;
+        /**
+         * @type {Array<{name: number, callback: Function}>} controllerSubscriptions
+         */
         this.controllerSubscriptions = [];
 
         this.subscribeToControllerEvents();
+        /**
+         * @type {number | undefined}
+         */
+        this.idealDelta = undefined;
     }
 
     subscribeToControllerEvents() {
@@ -87,10 +99,16 @@ class RootController extends ViewController {
         }
 
         while (this.controllerSubscriptions.length) {
-            PubSub.unsubscribe(this.controllerSubscriptions.pop());
+            const subscription = this.controllerSubscriptions.pop();
+            if (subscription) {
+                PubSub.unsubscribe(subscription);
+            }
         }
     }
 
+    /**
+     * @param {number} time
+     */
     operateCurrentMVC(time) {
         if (this.suspended || this.currentController === null) {
             return;
@@ -121,12 +139,14 @@ class RootController extends ViewController {
             if (settings.fpsEnabled) {
                 // make sure we have one cycle of measurements
                 const frameRate = this.currentController.frameRate.toFixed(0);
-                if (frameRate > 0) {
+                if (Number(frameRate) > 0) {
                     // draw the fps frame rate
                     const ctx = Canvas.context;
-                    ctx.font = "20px Arial";
-                    ctx.fillStyle = RGBAColor.styles.SOLID_OPAQUE;
-                    ctx.fillText(`${frameRate} fps`, 10, resolution.CANVAS_HEIGHT - 10);
+                    if (ctx) {
+                        ctx.font = "30px system-ui, sans-serif";
+                        ctx.fillStyle = RGBAColor.styles.SOLID_OPAQUE;
+                        ctx.fillText(`${frameRate} fps`, 10, resolution.CANVAS_HEIGHT - 10);
+                    }
                 }
             }
         }
@@ -187,6 +207,9 @@ class RootController extends ViewController {
         this.unsubscribeFromControllerEvents();
     }
 
+    /**
+     * @param {RootController} controller
+     */
     setCurrentController(controller) {
         this.currentController = controller;
         this.currentController.idealDelta = 1 / 60;
@@ -196,37 +219,61 @@ class RootController extends ViewController {
         return this.currentController;
     }
 
+    /**
+     * @param {RootController} controller
+     */
     onControllerActivated(controller) {
         this.setCurrentController(controller);
     }
 
+    /**
+     * @param {RootController} controller
+     */
     onControllerDeactivated(controller) {
         this.currentController = null;
     }
 
+    /**
+     * @param {RootController} controller
+     */
     onControllerPaused(controller) {
         this.currentController = null;
     }
 
+    /**
+     * @param {RootController} controller
+     */
     onControllerUnpaused(controller) {
         this.setCurrentController(controller);
     }
 
+    /**
+     * @param {RootController} controller
+     */
     onControllerDeactivationRequest(controller) {
         this.deactivateCurrentController = true;
     }
 
+    /**
+     * @param {GameView} view
+     */
     onControllerViewShow(view) {
         if (this.viewTransition !== Constants.UNDEFINED && this.previousView != null) {
-            this.currentController.calculateTimeDelta();
-            this.transitionTime = this.currentController.lastTime + this.transitionDelay;
-            const activeView = this.currentController.activeView();
-            if (activeView) {
-                activeView.draw();
+            const currentControllerConst = this.currentController;
+            if (currentControllerConst) {
+                currentControllerConst.calculateTimeDelta();
+                this.transitionTime = currentControllerConst.lastTime + this.transitionDelay;
+                const activeView = currentControllerConst.activeView();
+                if (activeView) {
+                    activeView.draw();
+                }
             }
         }
     }
 
+    /**
+     * @param {GameView} view
+     */
     onControllerViewHide(view) {
         this.previousView = view;
         if (this.viewTransition !== Constants.UNDEFINED && this.previousView != null) {
@@ -249,6 +296,11 @@ class RootController extends ViewController {
         this.suspended = false;
     }
 
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @returns {boolean}
+     */
     mouseDown(x, y) {
         if (this.currentController && this.currentController != this) {
             //Log.debug('mouse down at:' + x + ',' + y + ' drag mode was:' + this.dragMode);
@@ -258,6 +310,10 @@ class RootController extends ViewController {
         return false;
     }
 
+    /**
+     * @param {number} x
+     * @param {number} y
+     */
     mouseMove(x, y) {
         if (this.currentController && this.currentController != this) {
             if (this.dragMode) {
@@ -270,6 +326,11 @@ class RootController extends ViewController {
         return false;
     }
 
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @returns {boolean}
+     */
     mouseUp(x, y) {
         if (this.currentController && this.currentController != this) {
             //Log.debug('mouse up at:' + x + ',' + y + ' drag mode was:' + this.dragMode);
@@ -280,6 +341,10 @@ class RootController extends ViewController {
         return false;
     }
 
+    /**
+     * @param {number} x
+     * @param {number} y
+     */
     mouseOut(x, y) {
         if (this.currentController && this.currentController != this) {
             // if the mouse leaves the canvas while down, trigger the mouseup
@@ -294,6 +359,11 @@ class RootController extends ViewController {
         return false;
     }
 
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @returns {boolean}
+     */
     doubleClick(x, y) {
         if (this.currentController && this.currentController != this) {
             //Log.debug('double click at:' + x + ',' + y + ' drag mode was:' + this.dragMode);

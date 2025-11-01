@@ -1,5 +1,10 @@
 {
     "compilerOptions": {
+        "baseUrl": "./src",
+        "paths": {
+            "@/*": ["*"]
+        },
+
         "module": "ESNext",
         "moduleResolution": "Bundler",
         "target": "ES2024",
@@ -7,7 +12,18 @@
         "allowImportingTsExtensions": true,
         "strictNullChecks": true,
         "strictFunctionTypes": true,
-        "strict": true
+        "strict": true,
+
+        "checkJs": true,
+        "allowJs": true,
+        "noEmit": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "maxNodeModuleJsDepth": 1,
+        "exactOptionalPropertyTypes": true
     },
     "exclude": ["node_modules", "**/node_modules/*"]
 }

@@ -1,7 +1,7 @@
 import RootController from "@/game/CTRRootController";
 import PanelId from "@/ui/PanelId";
 import resolution from "@/resolution";
-import platform from "@/platform";
+import platform from "@/config/platforms/platform-web";
 import ScoreManager from "@/ui/ScoreManager";
 import BoxManager from "@/ui/BoxManager";
 import PubSub from "@/utils/PubSub";
@@ -10,106 +10,161 @@ import ResourceId from "@/resources/ResourceId";
 import Lang from "@/resources/Lang";
 import Text from "@/visual/Text";
 import MenuStringId from "@/resources/MenuStringId";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import Alignment from "@/core/Alignment";
 
-const ACTIVE_ANIMATIONS = new WeakMap();
-const FADE_DURATION_MS = 200;
-const SELECTORS = {
-    popupOuter: ".popupOuterFrame",
-    popupInner: ".popupInnerFrame",
-    popupWindow: "#popupWindow",
-};
+/**
+ * @class Dialogs
+ * @classdesc Handles all popup dialog logic, including fade animations,
+ * localization updates, and user interaction bindings.
+ */
+class Dialogs {
+    /** @type {number} */
+    static FADE_DURATION_MS = 200;
 
-// ---------- Animation Helpers ----------
-function cancelAnimation(el, finalOpacity) {
-    const anim = ACTIVE_ANIMATIONS.get(el);
-    if (anim) {
-        cancelAnimationFrame(anim.frameId);
-        ACTIVE_ANIMATIONS.delete(el);
+    /** @type {{popupOuter: string, popupInner: string, popupWindow: string}} */
+    static SELECTORS = {
+        popupOuter: ".popupOuterFrame",
+        popupInner: ".popupInnerFrame",
+        popupWindow: "#popupWindow",
+    };
+
+    /** @type {WeakMap<HTMLElement, AbortController>} */
+    static activeControllers = new WeakMap();
+
+    /**
+     * Cancels any ongoing fade animation on an element.
+     * @param {HTMLElement} el
+     * @param {number} [finalOpacity]
+     */
+    static cancelAnimation(el, finalOpacity) {
+        const controller = Dialogs.activeControllers.get(el);
+        if (controller) {
+            controller.abort();
+            Dialogs.activeControllers.delete(el);
+        }
+        if (typeof finalOpacity === "number") {
+            el.style.opacity = finalOpacity.toString();
+        }
     }
-    if (typeof finalOpacity === "number") el.style.opacity = finalOpacity.toString();
-}
 
-async function fadeElement(el, { from, to, duration, display }) {
-    cancelAnimation(el);
-    if (display !== undefined) el.style.display = display;
+    /**
+     * Smoothly fades an element between two opacity values.
+     * @param {HTMLElement} el
+     * @param {{from?: number, to: number, duration: number, display?: string}} options
+     * @returns {Promise<void>}
+     */
+    static async fadeElement(el, { from, to, duration, display }) {
+        Dialogs.cancelAnimation(el);
+        if (display !== undefined) el.style.display = display;
 
-    const start =
-        typeof from === "number" ? from : parseFloat(getComputedStyle(el).opacity || "0") || 0;
-    const target = to;
-    el.style.opacity = start;
+        const start =
+            typeof from === "number" ? from : parseFloat(getComputedStyle(el).opacity || "0") || 0;
+        const target = to;
+        el.style.opacity = String(start);
 
-    let startTime;
-    return new Promise((resolve) => {
-        const step = (timestamp) => {
-            if (!startTime) startTime = timestamp;
-            const progress = Math.min((timestamp - startTime) / duration, 1);
-            const current = start + (target - start) * progress;
-            el.style.opacity = current;
-            if (progress < 1) {
-                const frameId = requestAnimationFrame(step);
-                ACTIVE_ANIMATIONS.set(el, { frameId });
-            } else {
-                ACTIVE_ANIMATIONS.delete(el);
-                resolve();
-            }
-        };
-        const frameId = requestAnimationFrame(step);
-        ACTIVE_ANIMATIONS.set(el, { frameId });
-    });
-}
+        const controller = new AbortController();
+        Dialogs.activeControllers.set(el, controller);
 
-// ---------- Dialog Logic ----------
-const Dialogs = {
+        const signal = controller.signal;
+        let startTime;
+
+        return new Promise((resolve) => {
+            const step = (timestamp) => {
+                if (signal.aborted) return resolve();
+
+                if (!startTime) startTime = timestamp;
+                const progress = Math.min((timestamp - startTime) / duration, 1);
+                const current = start + (target - start) * progress;
+                el.style.opacity = String(current);
+
+                if (progress < 1 && !signal.aborted) {
+                    requestAnimationFrame(step);
+                } else {
+                    Dialogs.activeControllers.delete(el);
+                    resolve();
+                }
+            };
+
+            requestAnimationFrame(step);
+        });
+    }
+
+    /**
+     * Displays a popup dialog by ID with fade animation.
+     * @param {string} contentId
+     * @returns {Promise<void>}
+     */
     async showPopup(contentId) {
         RootController.pauseLevel();
 
-        const popupWindow = document.querySelector(SELECTORS.popupWindow);
+        const popupWindow = document.querySelector(Dialogs.SELECTORS.popupWindow);
         if (!popupWindow) return;
 
-        document.querySelectorAll(SELECTORS.popupOuter).forEach((el) => cancelAnimation(el, 0));
         document
-            .querySelectorAll(SELECTORS.popupInner)
+            .querySelectorAll(Dialogs.SELECTORS.popupOuter)
+            .forEach((el) => Dialogs.cancelAnimation(el, 0));
+
+        document
+            .querySelectorAll(Dialogs.SELECTORS.popupInner)
             .forEach((el) => (el.style.display = "none"));
 
         popupWindow.style.display = "block";
-        await fadeElement(popupWindow, { from: 0, to: 1, duration: FADE_DURATION_MS });
+        await Dialogs.fadeElement(popupWindow, {
+            from: 0,
+            to: 1,
+            duration: Dialogs.FADE_DURATION_MS,
+        });
 
         const content = document.getElementById(contentId);
         if (content) {
             content.style.display = "block";
-            document.querySelectorAll(SELECTORS.popupOuter).forEach((el) => {
-                cancelAnimation(el);
+            document.querySelectorAll(Dialogs.SELECTORS.popupOuter).forEach((el) => {
+                Dialogs.cancelAnimation(el);
                 el.style.display = "block";
-                fadeElement(el, { from: 0, to: 1, duration: FADE_DURATION_MS });
+                Dialogs.fadeElement(el, {
+                    from: 0,
+                    to: 1,
+                    duration: Dialogs.FADE_DURATION_MS,
+                });
             });
         }
-    },
+    }
 
+    /**
+     * Closes the currently open popup with fade-out animation.
+     * @returns {Promise<void>}
+     */
     async closePopup() {
         SoundMgr.playSound(ResourceId.SND_TAP);
-        const popupWindow = document.querySelector(SELECTORS.popupWindow);
+
+        const popupWindow = document.querySelector(Dialogs.SELECTORS.popupWindow);
         if (!popupWindow) return;
 
-        cancelAnimation(popupWindow);
+        Dialogs.cancelAnimation(popupWindow);
         const currentOpacity = parseFloat(getComputedStyle(popupWindow).opacity || "1") || 1;
 
-        await fadeElement(popupWindow, {
+        await Dialogs.fadeElement(popupWindow, {
             from: currentOpacity,
             to: 0,
-            duration: FADE_DURATION_MS,
+            duration: Dialogs.FADE_DURATION_MS,
         });
 
         popupWindow.style.display = "none";
         RootController.resumeLevel();
-    },
+    }
 
+    /**
+     * Opens the payment dialog popup.
+     */
     showPayDialog() {
         SoundMgr.playSound(ResourceId.SND_TAP);
-        Dialogs.showPopup("payDialog");
-    },
+        this.showPopup("payDialog");
+    }
 
+    /**
+     * Shows a "Slow Computer" popup with localized content.
+     */
     showSlowComputerPopup() {
         const slowComputer = document.getElementById("slowComputer");
         if (!slowComputer) return;
@@ -122,6 +177,7 @@ const Dialogs = {
             width: 1200 * resolution.CANVAS_SCALE,
             scale: 1.25 * resolution.UI_TEXT_SCALE,
         });
+
         const textImg = Text.drawBig({
             text: Lang.menuText(MenuStringId.SLOW_TEXT),
             width: 1200 * resolution.CANVAS_SCALE,
@@ -137,55 +193,75 @@ const Dialogs = {
             scale: 0.8 * resolution.UI_TEXT_SCALE,
         });
 
-        Dialogs.showPopup("slowComputer");
-    },
-};
+        this.showPopup("slowComputer");
+    }
 
-// ---------- Event Logic ----------
-function onPayClick() {
-    PubSub.publish(PubSub.ChannelId.PurchaseBoxesPrompt);
-    Dialogs.closePopup();
+    /**
+     * Initializes DOM event listeners for dialog buttons.
+     */
+    initEventListeners() {
+        /** @type {[string, () => void][]} */
+        const ids = [
+            // ["payImg", this.onPayClick.bind(this)],
+            // ["payBtn", this.onPayClick.bind(this)],
+            // ["payClose", this.closePopup.bind(this)],
+            ["slowComputerBtn", this.closePopup.bind(this)],
+            ["missingOkBtn", this.closePopup.bind(this)],
+            ["resetNoBtn", this.closePopup.bind(this)],
+            ["holidayOkBtn", this.closePopup.bind(this)],
+        ];
+
+        ids.forEach(([id, handler]) => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener("click", handler);
+        });
+    }
+
+    /**
+     * Handles payment confirmation click.
+     * @private
+     */
+    onPayClick() {
+        PubSub.publish(PubSub.ChannelId.PurchaseBoxesPrompt);
+        this.closePopup();
+    }
+
+    /**
+     * Localizes dialog text content on language changes.
+     */
+    initLocalization() {
+        PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
+            Text.drawBig({
+                text: Lang.menuText(MenuStringId.UPGRADE_TO_FULL),
+                imgParentId: "payMessage",
+                width: resolution.uiScaledNumber(650),
+                alignment: Alignment.CENTER,
+                scale: 0.8 * resolution.UI_TEXT_SCALE,
+            });
+
+            Text.drawBig({
+                text: Lang.menuText(MenuStringId.BUY_FULL_GAME),
+                imgParentId: "payBtn",
+                scale: 0.6 * resolution.UI_TEXT_SCALE,
+            });
+        });
+    }
+
+    /**
+     * Initializes the Dialogs system (event listeners + localization).
+     */
+    init() {
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", () => this.initEventListeners());
+        } else {
+            this.initEventListeners();
+        }
+
+        this.initLocalization();
+    }
 }
 
-function initEventListeners() {
-    const ids = [
-        ["payImg", onPayClick],
-        ["payBtn", onPayClick],
-        ["payClose", Dialogs.closePopup],
-        ["slowComputerBtn", Dialogs.closePopup],
-        ["missingOkBtn", Dialogs.closePopup],
-        ["resetNoBtn", Dialogs.closePopup],
-        ["holidayOkBtn", Dialogs.closePopup],
-    ];
+const dialogs = new Dialogs();
+dialogs.init();
 
-    ids.forEach(([id, handler]) => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener("click", handler);
-    });
-}
-
-// localize dialog text
-PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
-    Text.drawBig({
-        text: Lang.menuText(MenuStringId.UPGRADE_TO_FULL),
-        imgParentId: "payMessage",
-        width: resolution.uiScaledNumber(650),
-        alignment: Alignment.CENTER,
-        scale: 0.8 * resolution.UI_TEXT_SCALE,
-    });
-
-    Text.drawBig({
-        text: Lang.menuText(MenuStringId.BUY_FULL_GAME),
-        imgParentId: "payBtn",
-        scale: 0.6 * resolution.UI_TEXT_SCALE,
-    });
-});
-
-// DOM ready
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initEventListeners);
-} else {
-    initEventListeners();
-}
-
-export default Dialogs;
+export default dialogs;

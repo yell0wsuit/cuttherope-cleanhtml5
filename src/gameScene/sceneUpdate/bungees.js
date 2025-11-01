@@ -8,6 +8,9 @@ import Vector from "@/core/Vector";
 import Constants from "@/utils/Constants";
 import resolution from "@/resolution";
 
+/**
+ * @param {number} delta
+ */
 export function updateBungees(delta) {
     const numGrabs = this.bungees.length;
     if (numGrabs > 0) {

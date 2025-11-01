@@ -1,7 +1,7 @@
 import Box from "@/ui/Box";
 import Text from "@/visual/Text";
 import resolution from "@/resolution";
-import platform from "@/platform";
+import platform from "@/config/platforms/platform-web";
 import BoxType from "@/ui/BoxType";
 import PubSub from "@/utils/PubSub";
 import Lang from "@/resources/Lang";
@@ -9,10 +9,9 @@ import Alignment from "@/core/Alignment";
 import ScoreManager from "@/ui/ScoreManager";
 import MenuStringId from "@/resources/MenuStringId";
 import QueryStrings from "@/ui/QueryStrings";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import MathHelper from "@/utils/MathHelper";
 import SettingStorage from "@/core/SettingStorage";
-import dom from "@/utils/dom";
 
 // promotion runs from March 4 - April 14 (2013)
 // using ticks makes finding hacking more difficult because
@@ -42,38 +41,57 @@ const BoxOpenDates = [
 // to create the keys used to store the status of each box unlock
 const BoxKeySeeds = [9240, 7453, 3646, 7305, 5093, 3829];
 
-const LOCK_KEY_PREFIX = String.fromCharCode(98, 107), // prefix is 'bk'
-    XOR_VALUE = ScoreManager.getXorValue(),
-    getLockKey = function (boxIndex) {
-        return LOCK_KEY_PREFIX + (BoxKeySeeds[boxIndex] ^ XOR_VALUE);
-    },
-    isLocked = function (boxIndex) {
-        const key = getLockKey(boxIndex),
-            value = SettingStorage.getIntOrDefault(key, 0),
-            correctValue = (BoxKeySeeds[boxIndex] - 1000) ^ XOR_VALUE;
+const LOCK_KEY_PREFIX = String.fromCharCode(98, 107); // prefix is 'bk'
+const XOR_VALUE = ScoreManager.getXorValue();
 
-        return value !== correctValue && !QueryStrings.unlockAllBoxes;
-    },
-    unlockBox = function (boxIndex) {
-        const key = getLockKey(boxIndex),
-            value = (BoxKeySeeds[boxIndex] - 1000) ^ XOR_VALUE;
+/**
+ * @param {number} boxIndex
+ * @returns {string}
+ */
+const getLockKey = function (boxIndex) {
+    return LOCK_KEY_PREFIX + (BoxKeySeeds[boxIndex] ^ XOR_VALUE);
+};
 
-        SettingStorage.set(key, value);
-    };
+/**
+ * @param {number} boxIndex
+ * @returns {boolean}
+ */
+const isLocked = function (boxIndex) {
+    const key = getLockKey(boxIndex);
+    const value = SettingStorage.getIntOrDefault(key, 0);
+    const correctValue = (BoxKeySeeds[boxIndex] - 1000) ^ XOR_VALUE;
 
+    return value !== correctValue && !QueryStrings.unlockAllBoxes;
+};
+
+/**
+ * @param {number} boxIndex
+ */
+const unlockBox = function (boxIndex) {
+    const key = getLockKey(boxIndex);
+    const value = (BoxKeySeeds[boxIndex] - 1000) ^ XOR_VALUE;
+
+    SettingStorage.set(key, value);
+};
+
+/** @type {HTMLElement | null} */
 let enterCodeButton = null;
 document.addEventListener("DOMContentLoaded", function () {
     enterCodeButton = document.getElementById("boxEnterCodeButton");
     if (enterCodeButton) {
-        dom.hide(enterCodeButton);
+        enterCodeButton.style.display = "none";
     }
 });
 
 // cache text images shared between boxes
-let availableTextImg = null,
-    collectTextImg = null,
-    toUnlockTextImg = null,
-    bkCodeTextImg = null;
+/** @type {HTMLImageElement | null} */
+let availableTextImg = null;
+/** @type {HTMLImageElement | null} */
+let collectTextImg = null;
+/** @type {HTMLImageElement | null} */
+let toUnlockTextImg = null;
+/** @type {HTMLImageElement | null} */
+let bkCodeTextImg = null;
 
 const MonthNames = [
     "January",
@@ -91,6 +109,13 @@ const MonthNames = [
 ];
 
 class TimeBox extends Box {
+    /**
+     * @param {number} boxIndex
+     * @param {string | null} bgimg
+     * @param {number} reqstars
+     * @param {boolean} islocked
+     * @param {string} type
+     */
     constructor(boxIndex, bgimg, reqstars, islocked, type) {
         super(boxIndex, bgimg, reqstars, islocked, type);
         this.lockedBoxImg = new Image();
@@ -107,16 +132,29 @@ class TimeBox extends Box {
 
     onSelected() {
         if (!this.isTimeLocked && this.isBkCodeLocked && enterCodeButton) {
-            dom.fadeIn(enterCodeButton);
+            enterCodeButton.style.removeProperty("display");
+            const computedDisplay = window.getComputedStyle(enterCodeButton).display;
+            if (computedDisplay === "none") {
+                enterCodeButton.style.display = "block";
+            }
+            enterCodeButton.style.transition = "opacity 400ms ease";
+            enterCodeButton.style.opacity = "0";
+            enterCodeButton.getBoundingClientRect(); // force reflow
+            enterCodeButton.style.opacity = "1";
         }
     }
 
     onUnselected() {
         if (enterCodeButton) {
-            dom.hide(enterCodeButton);
+            enterCodeButton.style.display = "none";
+            enterCodeButton.style.transition = "";
         }
     }
 
+    /**
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} omnomoffset
+     */
     render(ctx, omnomoffset) {
         const locked = this.islocked || this.isTimeLocked || this.isBkCodeLocked;
 

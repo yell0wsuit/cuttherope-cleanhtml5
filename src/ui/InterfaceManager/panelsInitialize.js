@@ -1,10 +1,10 @@
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import resolution from "@/resolution";
-import platform from "@/platform";
+import platform from "@/config/platforms/platform-web";
 import ScoreManager from "@/ui/ScoreManager";
 import BoxManager from "@/ui/BoxManager";
 import PanelId from "@/ui/PanelId";
-import PanelManager from "@/ui/PanelManager";
+import panelManager from "@/ui/PanelManager";
 import Text from "@/visual/Text";
 import PointerCapture from "@/utils/PointerCapture";
 import settings from "@/game/CTRSettings";
@@ -17,38 +17,50 @@ import Lang from "@/resources/Lang";
 import LangId from "@/resources/LangId";
 import MenuStringId from "@/resources/MenuStringId";
 import Alignment from "@/core/Alignment";
-import SocialHelper from "@/ui/SocialHelper";
 import GameBorder from "@/ui/GameBorder";
 import Doors from "@/Doors";
 import Dialogs from "@/ui/Dialogs";
-import dom from "@/utils/dom";
-import analytics from "@/analytics";
 import { getDefaultBoxIndex } from "@/ui/InterfaceManager/constants";
-
-const {
+import {
     addClass,
     append,
     empty,
     fadeIn,
     fadeOut,
-    getElement,
     hide,
     hover,
     on,
     removeClass,
     stopAnimations,
-} = dom;
-export default function createPanelInitializer(manager) {
-    return (panelId) => {
-        const panel = PanelManager.getPanelById(panelId);
+} from "@/utils/domHelpers";
+
+/**
+ * Base class for panel initialization
+ */
+export default class PanelInitializer {
+    /**
+     * @param {import("@/ui/InterfaceManagerClass").default} manager
+     */
+    constructor(manager) {
+        this.manager = manager;
+    }
+
+    /**
+     * Initializes a panel
+     * @param {number} panelId - The ID of the panel to initialize
+     */
+    onInitializePanel(panelId) {
+        const manager = this.manager;
+        const { gameFlow } = manager;
+        const panel = panelManager.getPanelById(panelId);
         const soundBtn = document.getElementById("soundBtn");
         const musicBtn = document.getElementById("musicBtn");
         const resetBtn = document.getElementById("resetBtn");
         const backBtn = document.getElementById("optionsBack");
-        const optionMsg = getElement("#optionMsg");
-        const resetTextContainer = getElement("#resetText");
-        const resetHoldYesContainer = getElement("#resetHoldYes");
-        const langElement = getElement("#lang");
+        const optionMsg = document.getElementById("optionMsg");
+        const resetTextContainer = document.getElementById("resetText");
+        const resetHoldYesContainer = document.getElementById("resetHoldYes");
+        const langElement = document.getElementById("lang");
 
         switch (panelId) {
             case PanelId.MENU: {
@@ -56,20 +68,20 @@ export default function createPanelInitializer(manager) {
                 on("#playBtn", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
 
-                    if (analytics.onPlayClicked) {
+                    /*if (analytics.onPlayClicked) {
                         analytics.onPlayClicked();
-                    }
+                    }*/
 
                     VideoManager.playIntroVideo(() => {
                         const firstLevelStars = ScoreManager.getStars(getDefaultBoxIndex(), 0) || 0;
                         if (firstLevelStars === 0) {
                             // start the first level immediately for the default box
-                            manager.noMenuStartLevel(getDefaultBoxIndex(), 0);
+                            gameFlow.noMenuStartLevel(getDefaultBoxIndex(), 0);
                         } else {
                             const nextPanelId = edition.disableBoxMenu
                                 ? PanelId.LEVELS
                                 : PanelId.BOXES;
-                            PanelManager.showPanel(nextPanelId, true);
+                            panelManager.showPanel(nextPanelId, true);
                         }
                     });
                 });
@@ -80,7 +92,7 @@ export default function createPanelInitializer(manager) {
                     if (platform.customOptions) {
                         PubSub.publish(PubSub.ChannelId.ShowOptions);
                     } else {
-                        PanelManager.showPanel(PanelId.OPTIONS);
+                        panelManager.showPanel(PanelId.OPTIONS);
                     }
                 });
 
@@ -89,7 +101,7 @@ export default function createPanelInitializer(manager) {
                         return;
                     }
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.ACHIEVEMENTS);
+                    panelManager.showPanel(PanelId.ACHIEVEMENTS);
                 });
                 manager._updateSignInControls();
 
@@ -98,11 +110,14 @@ export default function createPanelInitializer(manager) {
                         return;
                     }
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.LEADERBOARDS);
+                    panelManager.showPanel(PanelId.LEADERBOARDS);
                 });
                 manager._updateSignInControls();
 
                 // reset popup buttons
+                /**
+                 * @type {ReturnType<typeof setTimeout> | null}
+                 */
                 let resetTimer = null;
                 on("#resetYesBtn", PointerCapture.startEventName, () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
@@ -128,7 +143,7 @@ export default function createPanelInitializer(manager) {
                 });
 
                 // mini options panel
-                manager._updateMiniSoundButton(false, "optionSound");
+                manager._updateMiniSoundButton(false, "optionSound", "");
                 on("#optionSound", "click", () => {
                     manager._updateMiniSoundButton(true, "optionSound", "optionMsg");
                 });
@@ -211,7 +226,7 @@ export default function createPanelInitializer(manager) {
                 // handles clicking on the circular back button
                 on("#boxBack", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.MENU);
+                    panelManager.showPanel(PanelId.MENU);
                 });
 
                 panel.init(manager);
@@ -222,12 +237,12 @@ export default function createPanelInitializer(manager) {
             case PanelId.PASSWORD: {
                 on("#boxEnterCodeButton", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.PASSWORD);
+                    panelManager.showPanel(PanelId.PASSWORD);
                 });
 
                 on("#codeBack", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.BOXES);
+                    panelManager.showPanel(PanelId.BOXES);
                 });
 
                 panel.init(manager);
@@ -240,7 +255,7 @@ export default function createPanelInitializer(manager) {
                 on("#levelBack", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     const targetPanelId = edition.disableBoxMenu ? PanelId.MENU : PanelId.BOXES;
-                    PanelManager.showPanel(targetPanelId);
+                    panelManager.showPanel(targetPanelId);
                 });
 
                 // render the canvas all the way closed
@@ -254,13 +269,13 @@ export default function createPanelInitializer(manager) {
                 on("#gameRestartBtn", "click", () => {
                     if (manager.isTransitionActive) return;
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    manager._openLevel(BoxManager.currentLevelIndex, true);
+                    gameFlow._openLevel(BoxManager.currentLevelIndex, true);
                 });
 
                 on("#gameMenuBtn", "click", () => {
                     if (manager.isTransitionActive) return;
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    manager._openLevelMenu();
+                    gameFlow._openLevelMenu();
                 });
 
                 break;
@@ -269,13 +284,13 @@ export default function createPanelInitializer(manager) {
             case PanelId.GAMEMENU: {
                 on("#continueBtn", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    manager._closeLevelMenu();
+                    gameFlow._closeLevelMenu();
                     RootController.resumeLevel();
                 });
 
                 on("#skipBtn", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    manager._closeLevelMenu();
+                    gameFlow._closeLevelMenu();
 
                     // unlock next level
                     if (BoxManager.isNextLevelPlayable()) {
@@ -284,33 +299,33 @@ export default function createPanelInitializer(manager) {
                             BoxManager.currentLevelIndex,
                             0
                         );
-                        manager._openLevel(BoxManager.currentLevelIndex + 1, false, true);
+                        gameFlow._openLevel(BoxManager.currentLevelIndex + 1, false, true);
                     } else {
                         hide("#gameBtnTray");
-                        manager._completeBox();
+                        gameFlow._completeBox();
                     }
                 });
 
                 on("#selectBtn", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    manager._closeLevelMenu();
-                    manager._closeLevel();
+                    gameFlow._closeLevelMenu();
+                    gameFlow._closeLevel();
                     manager.isInLevelSelectMode = true;
                     manager.isInMenuSelectMode = false;
-                    manager.closeBox();
+                    gameFlow.closeBox();
                 });
 
                 on("#menuBtn", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    manager._closeLevelMenu();
-                    manager._closeLevel();
+                    gameFlow._closeLevelMenu();
+                    gameFlow._closeLevel();
                     manager.isInLevelSelectMode = true;
                     manager.isInMenuSelectMode = true;
-                    manager.closeBox();
+                    gameFlow.closeBox();
                 });
 
                 // mini options panel
-                manager._updateMiniSoundButton(false, "gameSound");
+                manager._updateMiniSoundButton(false, "gameSound", "");
 
                 on("#gameSound", "click", () => {
                     manager._updateMiniSoundButton(true, "gameSound", "gameMsg");
@@ -330,29 +345,29 @@ export default function createPanelInitializer(manager) {
             case PanelId.LEVELCOMPLETE: {
                 on("#nextBtn", "click", () => {
                     if (manager.isTransitionActive) return;
-                    manager._notifyBeginTransition(1000, "next level");
+                    gameFlow._notifyBeginTransition(1000, "next level");
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     if (BoxManager.isNextLevelPlayable()) {
-                        manager._openLevel(BoxManager.currentLevelIndex + 1);
+                        gameFlow._openLevel(BoxManager.currentLevelIndex + 1);
                     } else {
-                        manager._completeBox();
+                        gameFlow._completeBox();
                     }
                 });
 
                 on("#replayBtn", "click", () => {
                     if (manager.isTransitionActive) return;
-                    manager._notifyBeginTransition(1000, "replay");
+                    gameFlow._notifyBeginTransition(1000, "replay");
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    manager._openLevel(BoxManager.currentLevelIndex);
+                    gameFlow._openLevel(BoxManager.currentLevelIndex);
                 });
 
                 on("#lrMenuBtn", "click", () => {
                     if (manager.isTransitionActive) return;
-                    manager._notifyBeginTransition(1000, "level menu");
+                    gameFlow._notifyBeginTransition(1000, "level menu");
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     manager.isInLevelSelectMode = true;
                     manager.isInMenuSelectMode = false;
-                    manager.tapeBox();
+                    gameFlow.tapeBox();
                 });
 
                 PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
@@ -373,11 +388,11 @@ export default function createPanelInitializer(manager) {
             case PanelId.GAMECOMPLETE: {
                 on("#gameCompleteBack", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.MENU);
+                    panelManager.showPanel(PanelId.MENU);
                     GameBorder.hide();
                 });
 
-                on("#finalShareBtn", "click", () => {
+                /*on("#finalShareBtn", "click", () => {
                     const possibleStars = BoxManager.possibleStars();
                     const totalStars = ScoreManager.totalStars();
                     SocialHelper.postToFeed(
@@ -386,7 +401,7 @@ export default function createPanelInitializer(manager) {
                         `${platform.getScoreImageBaseUrl()}score${totalStars}.png`,
                         () => true
                     );
-                });
+                });*/
 
                 break;
             }
@@ -400,8 +415,8 @@ export default function createPanelInitializer(manager) {
                     SoundMgr.setSoundEnabled(isSoundOn);
                     SoundMgr.playSound(ResourceId.SND_TAP);
                     updateSoundOption(soundBtn, isSoundOn);
-                    manager._updateMiniSoundButton(false, "gameSound");
-                    manager._updateMiniSoundButton(false, "optionSound");
+                    manager._updateMiniSoundButton(false, "gameSound", "");
+                    manager._updateMiniSoundButton(false, "optionSound", "");
                 };
                 platform.setSoundButtonChange(soundBtn, onSoundButtonChange);
 
@@ -413,22 +428,25 @@ export default function createPanelInitializer(manager) {
                     const isMusicOn = !settings.getMusicEnabled();
                     SoundMgr.setMusicEnabled(isMusicOn);
                     updateMusicOption(musicBtn, isMusicOn);
-                    manager._updateMiniSoundButton(false, "gameSound");
-                    manager._updateMiniSoundButton(false, "optionSound");
+                    manager._updateMiniSoundButton(false, "gameSound", "");
+                    manager._updateMiniSoundButton(false, "optionSound", "");
                 };
                 platform.setMusicButtonChange(musicBtn, onMusicButtonChange);
 
                 // change language
                 const updateLangOption = platform.updateLangSetting;
-                platform.setLangOptionClick((newLangId) => {
+                platform.setLangOptionClick((/** @type {number | null} */ langParam) => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
 
                     // if not specified we'll assume that we should advance to
                     // the next language (so we cycle through as user clicks)
-                    if (newLangId == null) {
+                    let newLangId;
+                    if (langParam == null) {
                         const currentIndex = edition.languages.indexOf(settings.getLangId());
                         newLangId =
                             edition.languages[(currentIndex + 1) % edition.languages.length];
+                    } else {
+                        newLangId = langParam;
                     }
                     settings.setLangId(newLangId);
 
@@ -445,7 +463,7 @@ export default function createPanelInitializer(manager) {
                     updateCutOption(isClickToCut);
                 });
 
-                resetBtn.addEventListener("click", () => {
+                resetBtn?.addEventListener("click", () => {
                     // create localized text images
                     const resetTextImg = Text.drawBig({
                         text: Lang.menuText(MenuStringId.RESET_TEXT),
@@ -477,9 +495,9 @@ export default function createPanelInitializer(manager) {
                     Dialogs.showPopup("resetGame");
                 });
 
-                backBtn.addEventListener("click", () => {
+                backBtn?.addEventListener("click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.MENU);
+                    panelManager.showPanel(PanelId.MENU);
                 });
 
                 // hide the language if not supported by the edition
@@ -518,7 +536,7 @@ export default function createPanelInitializer(manager) {
             case PanelId.LEADERBOARDS: {
                 on("#leaderboardBack", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.MENU);
+                    panelManager.showPanel(PanelId.MENU);
                 });
 
                 break;
@@ -527,11 +545,11 @@ export default function createPanelInitializer(manager) {
             case PanelId.ACHIEVEMENTS: {
                 on("#achievementsBack", "click", () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    PanelManager.showPanel(PanelId.MENU);
+                    panelManager.showPanel(PanelId.MENU);
                 });
 
                 break;
             }
         }
-    };
+    }
 }

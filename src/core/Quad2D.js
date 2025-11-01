@@ -1,12 +1,19 @@
 /**
  * Quad2D constructor
  * @constructor
- * @param x {number}
- * @param y {number}
- * @param w {number} width
- * @param h {number} height
+ * @param {number} x
+ * @param {number} y
+ * @param {number} w width
+ * @param {number} h height
  */
 class Quad2D {
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} w
+     * @param {number} h
+     */
+
     constructor(x, y, w, h) {
         const rightX = x + w,
             bottomY = y + h;

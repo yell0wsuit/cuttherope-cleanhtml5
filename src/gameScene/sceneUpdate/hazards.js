@@ -12,6 +12,10 @@ import * as GameSceneConstants from "@/gameScene/constants";
 import { IS_XMAS } from "@/resources/ResData";
 import { applyStarImpulse, isCandyHit } from "./collisionHelpers";
 
+/**
+ * @param {number} delta
+ * @param {number} numGrabs
+ */
 export function updateHazards(delta, numGrabs) {
     let removeCircleIndex = -1;
     for (let i = 0, len = this.rotatedCircles.length; i < len; i++) {
@@ -308,4 +312,4 @@ export function updateHazards(delta, numGrabs) {
     }
 
     return true;
-    }
+}

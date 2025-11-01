@@ -2,23 +2,39 @@ import MathHelper from "@/utils/MathHelper";
 import Vector from "@/core/Vector";
 
 class Mover {
+    /**
+     * @param {number} pathCapacity
+     * @param {number} moveSpeed
+     * @param {number} rotateSpeed
+     */
     constructor(pathCapacity, moveSpeed, rotateSpeed) {
         this.pathCapacity = pathCapacity;
         this.rotateSpeed = rotateSpeed || 0;
+        /**
+         * @type {Vector[]}
+         */
         this.path = [];
+        /**
+         * @type {number[]}
+         */
+        this.moveSpeed = new Array(pathCapacity > 0 ? pathCapacity : 0);
         if (pathCapacity > 0) {
-            this.moveSpeed = new Array(pathCapacity);
             for (let i = 0; i < pathCapacity; i++) {
                 this.moveSpeed[i] = moveSpeed || 0;
             }
         }
         this.pos = new Vector(0, 0);
         this.angle = 0;
+        this.targetPoint = 0;
+        this.offset = new Vector(0, 0);
         this.paused = false;
         this.reverse = false;
         this.overrun = 0;
     }
 
+    /**
+     * @param {number} speed
+     */
     setMoveSpeed(speed) {
         for (let i = 0, len = this.pathCapacity; i < len; i++) {
             this.moveSpeed[i] = speed;
@@ -26,8 +42,8 @@ class Mover {
     }
 
     /**
-     * @param path {string}
-     * @param start {Vector}
+     * @param {string} path
+     * @param {Vector} start
      */
     setPathFromString(path, start) {
         if (path[0] === "R") {
@@ -68,7 +84,7 @@ class Mover {
     }
 
     /**
-     * @param pathPoint {Vector}
+     * @param {Vector} pathPoint
      */
     addPathPoint(pathPoint) {
         this.path.push(pathPoint);
@@ -90,10 +106,16 @@ class Mover {
         this.paused = false;
     }
 
+    /**
+     * @param {number} rotateSpeed
+     */
     setRotateSpeed(rotateSpeed) {
         this.rotateSpeed = rotateSpeed;
     }
 
+    /**
+     * @param {number} point
+     */
     jumpToPoint(point) {
         this.targetPoint = point;
         this.pos.copyFrom(this.path[point]);
@@ -107,14 +129,24 @@ class Mover {
         this.offset.multiply(this.moveSpeed[this.targetPoint]);
     }
 
+    /**
+     * @param {number} moveSpeed
+     * @param {number} index
+     */
     setMoveSpeedAt(moveSpeed, index) {
         this.moveSpeed[index] = moveSpeed;
     }
 
+    /**
+     * @param {boolean} reverse
+     */
     setMoveReverse(reverse) {
         this.reverse = reverse;
     }
 
+    /**
+     * @param {number} delta
+     */
     update(delta) {
         if (this.paused) return;
 
@@ -170,6 +202,12 @@ class Mover {
     }
 
     // Static methods
+    /**
+     * @param {number} v
+     * @param {number} t
+     * @param {number} speed
+     * @param {number} delta
+     */
     static moveToTarget(v, t, speed, delta) {
         if (t !== v) {
             if (t > v) {
@@ -189,10 +227,10 @@ class Mover {
 
     /**
      *
-     * @param v {number} value
-     * @param t {number} target
-     * @param speed {number}
-     * @param delta {number}
+     * @param {number} v value
+     * @param {number} t target
+     * @param {number} speed
+     * @param {number} delta
      * @return {Object}
      */
     static moveToTargetWithStatus(v, t, speed, delta) {

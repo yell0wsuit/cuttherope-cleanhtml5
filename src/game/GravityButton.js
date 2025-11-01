@@ -8,12 +8,21 @@ const IMG_OBJ_STAR_IDLE_gravity_up = 57;
 class GravityButton extends ToggleButton {
     constructor() {
         const itn = ImageElement.create(
-                ResourceId.IMG_OBJ_STAR_IDLE,
-                IMG_OBJ_STAR_IDLE_gravity_down
-            ),
-            itp = ImageElement.create(ResourceId.IMG_OBJ_STAR_IDLE, IMG_OBJ_STAR_IDLE_gravity_down),
-            itn2 = ImageElement.create(ResourceId.IMG_OBJ_STAR_IDLE, IMG_OBJ_STAR_IDLE_gravity_up),
-            itp2 = ImageElement.create(ResourceId.IMG_OBJ_STAR_IDLE, IMG_OBJ_STAR_IDLE_gravity_up);
+            ResourceId.IMG_OBJ_STAR_IDLE,
+            IMG_OBJ_STAR_IDLE_gravity_down
+        );
+        const itp = ImageElement.create(
+            ResourceId.IMG_OBJ_STAR_IDLE,
+            IMG_OBJ_STAR_IDLE_gravity_down
+        );
+        const itn2 = ImageElement.create(
+            ResourceId.IMG_OBJ_STAR_IDLE,
+            IMG_OBJ_STAR_IDLE_gravity_up
+        );
+        const itp2 = ImageElement.create(
+            ResourceId.IMG_OBJ_STAR_IDLE,
+            IMG_OBJ_STAR_IDLE_gravity_up
+        );
 
         super(itn, itp, itn2, itp2, GravityButton.DefaultId);
 

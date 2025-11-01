@@ -1,5 +1,8 @@
 import resolution from "@/resolution";
 
+/**
+ * @param {number} delta
+ */
 export function updateSpecial(delta) {
     if (this.special !== 0) {
         if (this.special === 1) {

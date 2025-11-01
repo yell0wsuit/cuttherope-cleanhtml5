@@ -1,52 +1,31 @@
-const Alignment = {
-    /** @const
-     *  @type {number}
-     */
-    UNDEFINED: 0,
-    /** @const
-     *  @type {number}
-     */
-    LEFT: 1,
-    /** @const
-     *  @type {number}
-     */
-    HCENTER: 2,
-    /** @const
-     *  @type {number}
-     */
-    RIGHT: 4,
-    /** @const
-     *  @type {number}
-     */
-    TOP: 8,
-    /** @const
-     *  @type {number}
-     */
-    VCENTER: 16,
-    /** @const
-     *  @type {number}
-     */
-    BOTTOM: 32,
-    /** @const
-     *  @type {number}
-     */
-    CENTER: 2 | 16,
-    /**
-     * @param s {string} input string
-     * @return {number}
-     */
-    parse(s) {
-        let a = this.UNDEFINED;
-        if (s.indexOf("LEFT") > 0) a = this.LEFT;
-        else if (s.indexOf("HCENTER") > 0 || s === "CENTER") a = this.HCENTER;
-        else if (s.indexOf("RIGHT") > 0) a = this.RIGHT;
+class Alignment {
+    static UNDEFINED = 0;
+    static LEFT = 1;
+    static HCENTER = 2;
+    static RIGHT = 4;
+    static TOP = 8;
+    static VCENTER = 16;
+    static BOTTOM = 32;
+    static CENTER = 18; // 2 | 16
 
-        if (s.indexOf("TOP") > 0) a |= this.TOP;
-        else if (s.indexOf("VCENTER") > 0 || s === "CENTER") a |= this.VCENTER;
-        else if (s.indexOf("BOTTOM") > 0) a |= this.BOTTOM;
+    /**
+     * Parse alignment string (e.g. "LEFT|TOP" → bitmask)
+     * @param {string} s
+     * @returns {number}
+     */
+    static parse(s) {
+        let a = Alignment.UNDEFINED;
+
+        if (s.includes("LEFT")) a = Alignment.LEFT;
+        else if (s.includes("HCENTER") || s === "CENTER") a = Alignment.HCENTER;
+        else if (s.includes("RIGHT")) a = Alignment.RIGHT;
+
+        if (s.includes("TOP")) a |= Alignment.TOP;
+        else if (s.includes("VCENTER") || s === "CENTER") a |= Alignment.VCENTER;
+        else if (s.includes("BOTTOM")) a |= Alignment.BOTTOM;
 
         return a;
-    },
-};
+    }
+}
 
 export default Alignment;

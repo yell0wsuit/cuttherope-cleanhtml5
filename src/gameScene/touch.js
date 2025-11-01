@@ -16,8 +16,25 @@ import EarthImage from "@/game/EarthImage";
 import Timeline from "@/visual/Timeline";
 import KeyFrame from "@/visual/KeyFrame";
 import Radians from "@/utils/Radians";
+import GameSceneUpdate from "./update";
 
-export const GameSceneTouch = {
+class GameSceneTouch extends GameSceneUpdate {
+    /**
+     * Number of ropes cut in quick succession (initialized in parent class)
+     * @type {number}
+     */
+    ropesCutAtOnce = 0;
+
+    /**
+     * Timer for tracking concurrent rope cuts (initialized in parent class)
+     * @type {number}
+     */
+    ropesAtOnceTimer = 0;
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} touchIndex
+     */
     touchDown(x, y, touchIndex) {
         if (this.ignoreTouches) {
             if (this.camera.type === Camera2D.SpeedType.PIXELS) {
@@ -176,10 +193,10 @@ export const GameSceneTouch = {
             activeCircle = null;
         }
 
-        const GRAB_WHEEL_RADIUS = resolution.GRAB_WHEEL_RADIUS,
-            GRAB_WHEEL_DIAMETER = GRAB_WHEEL_RADIUS * 2,
-            GRAB_MOVE_RADIUS = resolution.GRAB_MOVE_RADIUS,
-            GRAB_MOVE_DIAMETER = GRAB_MOVE_RADIUS * 2;
+        const GRAB_WHEEL_RADIUS = resolution.GRAB_WHEEL_RADIUS;
+        const GRAB_WHEEL_DIAMETER = GRAB_WHEEL_RADIUS * 2;
+        const GRAB_MOVE_RADIUS = resolution.GRAB_MOVE_RADIUS;
+        const GRAB_MOVE_DIAMETER = GRAB_MOVE_RADIUS * 2;
         for (i = 0, len = this.bungees.length; i < len; i++) {
             const grab = this.bungees[i];
             if (grab.wheel) {
@@ -236,14 +253,24 @@ export const GameSceneTouch = {
         }
 
         return true;
-    },
+    }
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} touchIndex
+     */
     doubleClick(x, y, touchIndex) {
         if (this.ignoreTouches) {
             return true;
         }
 
         return true;
-    },
+    }
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} touchIndex
+     */
     touchUp(x, y, touchIndex) {
         if (this.ignoreTouches) {
             return true;
@@ -319,7 +346,12 @@ export const GameSceneTouch = {
         }
 
         return true;
-    },
+    }
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} touchIndex
+     */
     touchMove(x, y, touchIndex) {
         if (this.ignoreTouches) {
             return true;
@@ -521,7 +553,12 @@ export const GameSceneTouch = {
         }
 
         return true;
-    },
+    }
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} touchIndex
+     */
     touchDragged(x, y, touchIndex) {
         if (touchIndex > Constants.MAX_TOUCHES) {
             return false;
@@ -530,7 +567,10 @@ export const GameSceneTouch = {
         this.slastTouch.x = x;
         this.slastTouch.y = y;
         return true;
-    },
+    }
+    /**
+     * @param {number} n
+     */
     onButtonPressed(n) {
         Gravity.toggle();
         this.gravityNormal = Gravity.isNormal();
@@ -546,12 +586,17 @@ export const GameSceneTouch = {
                 earthImage.playTimeline(EarthImage.TimelineId.UPSIDE_DOWN);
             }
         }
-    },
+    }
+    /**
+     * @param {number} sid - The toggle ID to match against spikes
+     */
     rotateAllSpikesWithId(sid) {
         for (let i = 0, len = this.spikes.length; i < len; i++) {
             if (this.spikes[i].getToggled() === sid) {
                 this.spikes[i].rotateSpikes();
             }
         }
-    },
-};
+    }
+}
+
+export default GameSceneTouch;

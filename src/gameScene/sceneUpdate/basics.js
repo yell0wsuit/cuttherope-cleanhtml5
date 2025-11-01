@@ -3,6 +3,9 @@ import Constants from "@/utils/Constants";
 import Mover from "@/utils/Mover";
 import BaseElement from "@/visual/BaseElement";
 
+/**
+ * @param {number} delta
+ */
 export function updateBasics(delta) {
     let moveResult;
     for (let i = 0, len = this.drawings.length; i < len; i++) {
@@ -47,7 +50,6 @@ export function updateBasics(delta) {
         // has it been 30 secs since the candy was attached?
         if (this.juggleTimer > GameSceneConstants.CANDY_JUGGLER_TIME) {
             //Achievements.increment(AchievementId.CANDY_JUGGLER);
-
             // reset the timer
             this.juggleTimer = 0;
         }

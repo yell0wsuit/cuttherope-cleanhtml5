@@ -9,9 +9,15 @@ class Timeline {
         this.loopsLimit = Constants.UNDEFINED;
         this.state = Timeline.StateType.STOPPED;
         this.loopType = Timeline.LoopType.NO_LOOP;
+        /**
+         * @type {(TimelineTrack | undefined)[]}
+         */
         this.tracks = [];
 
         // callback fired when the timeline finishes playing
+        /**
+         * @type {((t: Timeline) => void) | null}
+         */
         this.onFinished = null;
 
         // callback fired when the timeline reaches a key frame
@@ -22,12 +28,19 @@ class Timeline {
         this.element = null;
     }
 
+    /**
+     * @param {KeyFrame} keyFrame
+     */
     addKeyFrame(keyFrame) {
-        const track = this.tracks[keyFrame.trackType],
-            index = track == null ? 0 : track.keyFrames.length;
+        const track = this.tracks[keyFrame.trackType];
+        const index = track == null ? 0 : track.keyFrames.length;
         this.setKeyFrame(keyFrame, index);
     }
 
+    /**
+     * @param {KeyFrame} keyFrame
+     * @param {number} index
+     */
     setKeyFrame(keyFrame, index) {
         let track = this.tracks[keyFrame.trackType];
         if (!track) {
@@ -36,6 +49,9 @@ class Timeline {
         track.setKeyFrame(keyFrame, index);
     }
 
+    /**
+     * @param {number} index
+     */
     getTrack(index) {
         return this.tracks[index];
     }
@@ -64,11 +80,17 @@ class Timeline {
         this.state = Timeline.StateType.PAUSED;
     }
 
+    /**
+     * @param {number} trackIndex
+     * @param {number} keyFrame
+     */
     jumpToTrack(trackIndex, keyFrame) {
         if (this.state === Timeline.StateType.STOPPED) {
             this.state = Timeline.StateType.PAUSED;
         }
-        const delta = this.tracks[trackIndex].getFrameTime(keyFrame) - this.time;
+        const track = this.tracks[trackIndex];
+        if (!track) return;
+        const delta = track.getFrameTime(keyFrame) - this.time;
         this.update(delta);
     }
 
@@ -86,6 +108,9 @@ class Timeline {
         }
     }
 
+    /**
+     * @param {number} delta
+     */
     update(delta) {
         if (this.state !== Timeline.StateType.PLAYING) return;
 

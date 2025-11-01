@@ -6,6 +6,9 @@ import resolution from "@/resolution";
 import * as GameSceneConstants from "@/gameScene/constants";
 import ResourceId from "@/resources/ResourceId";
 
+/**
+ * @param {number} delta
+ */
 export function updateTargetState(delta) {
     let targetVector;
     if (!this.noCandy) {
@@ -88,4 +91,4 @@ export function updateTargetState(delta) {
     }
 
     return true;
-    }
+}

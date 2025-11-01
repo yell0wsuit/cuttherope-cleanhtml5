@@ -1,35 +1,76 @@
 import Constants from "@/utils/Constants";
 
-export const GameSceneRopeManagement = {
-    releaseAllRopes(left) {
-        for (let l = 0, len = this.bungees.length; l < len; l++) {
-            const g = this.bungees[l];
-            const b = g.rope;
+/**
+ * @typedef {import("@/types/game-scene").GameScene} GameScene
+ */
 
-            if (
-                b &&
-                (b.tail === this.star ||
-                    (b.tail === this.starL && left) ||
-                    (b.tail === this.starR && !left))
-            ) {
-                if (b.cut === Constants.UNDEFINED) {
-                    b.setCut(b.parts.length - 2);
-                    this.detachCandy();
-                } else {
-                    b.hideTailParts = true;
-                }
+/**
+ * @param {GameScene} scene
+ * @param {boolean} left
+ */
+function releaseAllRopes(scene, left) {
+    for (let l = 0, len = scene.bungees.length; l < len; l++) {
+        const g = scene.bungees[l];
+        const b = g.rope;
 
-                if (g.hasSpider && g.spiderActive) {
-                    this.spiderBusted(g);
-                }
+        if (
+            b &&
+            (b.tail === scene.star ||
+                (b.tail === scene.starL && left) ||
+                (b.tail === scene.starR && !left))
+        ) {
+            if (b.cut === Constants.UNDEFINED) {
+                b.setCut(b.parts.length - 2);
+                scene.detachCandy();
+            } else {
+                b.hideTailParts = true;
+            }
+
+            if (g.hasSpider && g.spiderActive) {
+                scene.spiderBusted(g);
             }
         }
-    },
+    }
+}
+
+/**
+ * @param {GameScene} scene
+ */
+function attachCandy(scene) {
+    scene.attachCount += 1;
+}
+
+/**
+ * @param {GameScene} scene
+ */
+function detachCandy(scene) {
+    scene.attachCount -= 1;
+    scene.juggleTimer = 0;
+}
+
+class GameSceneRopeManagementDelegate {
+    /**
+     * @param {GameScene} scene
+     */
+    constructor(scene) {
+        /** @type {GameScene} */
+        this.scene = scene;
+    }
+
+    /**
+     * @param {boolean} left
+     */
+    releaseAllRopes(left) {
+        return releaseAllRopes(this.scene, left);
+    }
+
     attachCandy() {
-        this.attachCount += 1;
-    },
+        return attachCandy(this.scene);
+    }
+
     detachCandy() {
-        this.attachCount -= 1;
-        this.juggleTimer = 0;
-    },
-};
+        return detachCandy(this.scene);
+    }
+}
+
+export default GameSceneRopeManagementDelegate;

@@ -2,11 +2,18 @@ import TileMap from "@/visual/TileMap";
 import Vector from "@/core/Vector";
 
 class BackgroundTileMap extends TileMap {
+    /**
+     * @param {number} rows
+     * @param {number} columns
+     */
     constructor(rows, columns) {
         super(rows, columns);
         this.lastCameraPos = Vector.newUndefined();
     }
 
+    /**
+     * @param {Vector} pos
+     */
     updateWithCameraPos(pos) {
         if (!this.lastCameraPos.equals(pos)) {
             super.updateWithCameraPos(pos);

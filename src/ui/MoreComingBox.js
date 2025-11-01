@@ -1,6 +1,13 @@
 import Box from "@/ui/Box";
 
 class MoreComingBox extends Box {
+    /**
+     * @param {number} boxIndex
+     * @param {string | null} bgimg
+     * @param {number} reqstars
+     * @param {boolean} islocked
+     * @param {string} type
+     */
     constructor(boxIndex, bgimg, reqstars, islocked, type) {
         super(boxIndex, bgimg, reqstars, islocked, type);
         this.includeBoxNumberInTitle = false;

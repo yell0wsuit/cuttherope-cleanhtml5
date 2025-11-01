@@ -1,6 +1,6 @@
 import resolution from "@/resolution";
 import PanelId from "@/ui/PanelId";
-import PanelManager from "@/ui/PanelManager";
+import panelManager from "@/ui/PanelManager";
 import GameBorder from "@/ui/GameBorder";
 import SoundMgr from "@/game/CTRSoundMgr";
 import BoxManager from "@/ui/BoxManager";
@@ -11,16 +11,28 @@ import Lang from "@/resources/Lang";
 import MenuStringId from "@/resources/MenuStringId";
 import Text from "@/visual/Text";
 import PubSub from "@/utils/PubSub";
-import dom from "@/utils/dom";
 import { MENU_MUSIC_ID } from "@/ui/InterfaceManager/constants";
+import { hide, append, empty } from "@/utils/domHelpers";
 
-const { hide, append, empty, getElement } = dom;
+const congratsElement = document.getElementById("congrats");
 
-const congratsElement = getElement("#congrats");
+/**
+ * Base class for handling panel show events
+ */
+export default class PanelShowHandler {
+    /**
+     * @param {import("@/ui/InterfaceManagerClass").default} manager
+     */
+    constructor(manager) {
+        this.manager = manager;
+    }
 
-export default function createPanelShowHandler(manager) {
-    return (panelId) => {
-        const panel = PanelManager.getPanelById(panelId);
+    /**
+     * Handles showing a panel
+     * @param {number} panelId - The ID of the panel to show
+     */
+    onShowPanel(panelId) {
+        const panel = panelManager.getPanelById(panelId);
 
         switch (panelId) {
             case PanelId.MENU:
@@ -35,7 +47,7 @@ export default function createPanelShowHandler(manager) {
 
         // make sure the pause level panel is closed
         if (panelId !== PanelId.GAMEMENU) {
-            manager._closeLevelMenu();
+            this.manager.gameFlow._closeLevelMenu();
         }
 
         // make sure the menu music is started on main menu and level selection
@@ -44,14 +56,14 @@ export default function createPanelShowHandler(manager) {
             SoundMgr.playMusic(MENU_MUSIC_ID);
         }
 
-        const boxPanel = PanelManager.getPanelById(PanelId.BOXES);
+        const boxPanel = panelManager.getPanelById(PanelId.BOXES);
         if (panelId === PanelId.BOXES) {
             BoxManager.updateBoxLocks();
             ScoreManager.updateTotalScoreText();
             boxPanel.onShow();
 
-            if (manager.isInAdvanceBoxMode) {
-                manager.isInAdvanceBoxMode = false;
+            if (this.manager.isInAdvanceBoxMode) {
+                this.manager.isInAdvanceBoxMode = false;
                 setTimeout(() => {
                     hide("#levelResults");
                     boxPanel.slideToNextBox();
@@ -62,8 +74,8 @@ export default function createPanelShowHandler(manager) {
                     }
                 }, 800);
             } else {
-                clearTimeout(manager._bounceTimeOut);
-                manager._bounceTimeOut = setTimeout(() => {
+                clearTimeout(this.manager._bounceTimeOut);
+                this.manager._bounceTimeOut = setTimeout(() => {
                     boxPanel.bounceCurrentBox();
                 }, 300);
             }
@@ -71,7 +83,7 @@ export default function createPanelShowHandler(manager) {
             boxPanel.onHide();
         }
 
-        const codePanel = PanelManager.getPanelById(PanelId.PASSWORD);
+        const codePanel = panelManager.getPanelById(PanelId.PASSWORD);
         if (codePanel) {
             if (panelId === PanelId.PASSWORD) {
                 codePanel.onShow();
@@ -80,55 +92,65 @@ export default function createPanelShowHandler(manager) {
             }
         }
 
-        if (panelId === PanelId.LEVELS) {
-            Doors.renderDoors(true, 0);
-            panel.onShow();
-        } else if (panelId === PanelId.GAME) {
-            manager._updateMiniSoundButton(false, "optionSound");
-        } else if (panelId === PanelId.GAMECOMPLETE) {
-            hide("#levelResults");
+        switch (panelId) {
+            case PanelId.LEVELS:
+                Doors.renderDoors(true, 0);
+                panel.onShow();
+                break;
 
-            GameBorder.setGameCompleteBorder();
+            case PanelId.GAME:
+                this.manager._updateMiniSoundButton(false, "optionSound", "");
+                break;
 
-            const gameWonText = Lang.menuText(MenuStringId.GAME_FINISHED_TEXT).replace(
-                "%d",
-                ScoreManager.totalStars()
-            );
-            Text.drawBig({
-                text: gameWonText,
-                imgSel: "#finalScore img",
-                scale: 0.8 * resolution.UI_TEXT_SCALE,
-                alignment: 1,
-            });
+            case PanelId.GAMECOMPLETE: {
+                hide("#levelResults");
 
-            if (congratsElement) {
-                empty(congratsElement);
-                append(
-                    congratsElement,
-                    Text.drawBig({
-                        text: Lang.menuText(MenuStringId.CONGRATULATIONS),
-                        scale: 1.2 * resolution.UI_TEXT_SCALE,
-                    })
+                GameBorder.setGameCompleteBorder();
+
+                const gameWonText = Lang.menuText(MenuStringId.GAME_FINISHED_TEXT).replace(
+                    "%d",
+                    ScoreManager.totalStars()
                 );
+                Text.drawBig({
+                    text: gameWonText,
+                    imgSel: "#finalScore img",
+                    scale: 0.8 * resolution.UI_TEXT_SCALE,
+                    alignment: 1,
+                });
+
+                if (congratsElement) {
+                    empty(congratsElement);
+                    append(
+                        congratsElement,
+                        Text.drawBig({
+                            text: Lang.menuText(MenuStringId.CONGRATULATIONS),
+                            scale: 1.2 * resolution.UI_TEXT_SCALE,
+                        })
+                    );
+                }
+                Text.drawBig({
+                    text: Lang.menuText(MenuStringId.SHARE_ELLIPSIS),
+                    imgSel: "#finalShareBtn img",
+                    scale: 0.8 * resolution.UI_TEXT_SCALE,
+                    maxScaleWidth: resolution.uiScaledNumber(130),
+                });
+                Text.drawBig({
+                    text: Lang.menuText(MenuStringId.MORE_CTR_FUN),
+                    imgSel: "#finalFunBtn img",
+                    scale: 0.8 * resolution.UI_TEXT_SCALE,
+                    maxScaleWidth: resolution.uiScaledNumber(310),
+                });
+                break;
             }
-            Text.drawBig({
-                text: Lang.menuText(MenuStringId.SHARE_ELLIPSIS),
-                imgSel: "#finalShareBtn img",
-                scale: 0.8 * resolution.UI_TEXT_SCALE,
-                maxScaleWidth: resolution.uiScaledNumber(130),
-            });
-            Text.drawBig({
-                text: Lang.menuText(MenuStringId.MORE_CTR_FUN),
-                imgSel: "#finalFunBtn img",
-                scale: 0.8 * resolution.UI_TEXT_SCALE,
-                maxScaleWidth: resolution.uiScaledNumber(310),
-            });
-        } else if (panelId === PanelId.OPTIONS) {
-            PubSub.publish(PubSub.ChannelId.ShowOptionsPage);
-        } else if (panelId === PanelId.ACHIEVEMENTS) {
-            PubSub.publish(PubSub.ChannelId.UpdateCandyScroller);
-        } else if (panelId === PanelId.LEADERBOARDS) {
-            PubSub.publish(PubSub.ChannelId.UpdateCandyScroller);
+
+            case PanelId.OPTIONS:
+                PubSub.publish(PubSub.ChannelId.ShowOptionsPage);
+                break;
+
+            case PanelId.ACHIEVEMENTS:
+            case PanelId.LEADERBOARDS:
+                PubSub.publish(PubSub.ChannelId.UpdateCandyScroller);
+                break;
         }
-    };
+    }
 }

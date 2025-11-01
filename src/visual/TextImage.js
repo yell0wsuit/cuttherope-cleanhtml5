@@ -7,14 +7,29 @@ class TextImage extends ImageElement {
         super();
     }
 
+    /**
+     * @param {number} fontId
+     * @param {string} text
+     * @param {number} [width]
+     * @param {number} [alignment]
+     */
     setText(fontId, text, width, alignment) {
-        const img = Text.drawImg({
+        /** @type {import("@/visual/Text").DrawImgOptions} */
+        const options = {
             fontId: fontId,
             text: text,
-            width: width,
-            alignment: alignment,
-        });
-        this.initTexture(new Texture2D(img));
+        };
+
+        if (width !== undefined) {
+            options.width = width;
+        }
+
+        if (alignment !== undefined) {
+            options.alignment = alignment;
+        }
+
+        const img = Text.drawImg(options);
+        this.initTexture(new Texture2D(/** @type {any} */ (img)));
     }
 }
 

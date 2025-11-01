@@ -5,6 +5,9 @@ import Constants from "@/utils/Constants";
 import Mover from "@/utils/Mover";
 import * as GameSceneConstants from "@/gameScene/constants";
 
+/**
+ * @param {number} delta
+ */
 export function updateClickToCut(delta) {
     if (this.clickToCut && !this.ignoreTouches) {
         this.resetBungeeHighlight();
@@ -170,4 +173,4 @@ export function updateClickToCut(delta) {
             this.restartState = Constants.UNDEFINED;
         }
     }
-    }
+}

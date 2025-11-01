@@ -1,19 +1,36 @@
-import resolution from "@/resolution";
+import settings from "@/game/CTRSettings";
 import PubSub from "@/utils/PubSub";
 import QueryStrings from "@/ui/QueryStrings";
-import dom from "@/utils/dom";
-import createAudioOptions from "@/ui/InterfaceManager/audioOptions";
+import panelManager from "@/ui/PanelManager";
+import AudioOptions from "@/ui/InterfaceManager/audioOptions";
 import { setImageBigText } from "@/ui/InterfaceManager/text";
-import createPanelInitializer from "@/ui/InterfaceManager/panelsInitialize";
-import createPanelShowHandler from "@/ui/InterfaceManager/panelsShow";
-import createGameFlow from "@/ui/InterfaceManager/gameFlow";
-import createResultsHandler from "@/ui/InterfaceManager/results";
+import PanelInitializer from "@/ui/InterfaceManager/panelsInitialize";
+import PanelShowHandler from "@/ui/InterfaceManager/panelsShow";
+import GameFlow from "@/ui/InterfaceManager/gameFlow";
+import ResultsHandler from "@/ui/InterfaceManager/results";
+import { toggleClass } from "@/utils/domHelpers";
 
-const { toggleClass } = dom;
-
-class InterfaceManager {
+/**
+ * InterfaceManager - Main UI management class using composition pattern
+ *
+ * This class uses composition to organize functionality into clear, separate modules.
+ * Each module is responsible for a specific aspect of the UI.
+ *
+ * @class
+ * @extends AudioOptions - Handles audio UI controls (sound/music buttons)
+ *
+ * Composed modules (accessed via properties):
+ * @property {GameFlow} gameFlow - Game state, levels, boxes, and UI transitions
+ * @property {ResultsHandler} results - Level completion and scoring display
+ * @property {PanelInitializer} panels - Panel event handler initialization
+ * @property {PanelShowHandler} panelShow - Panel visibility management
+ */
+class InterfaceManager extends AudioOptions {
     constructor() {
-        this.useHDVersion = resolution.isHD;
+        super();
+
+        // Core state properties
+        this.useHDVersion = settings.getIsHD();
         this.isInLevelSelectMode = false;
         this.isInMenuSelectMode = false;
         this.isInAdvanceBoxMode = false;
@@ -29,12 +46,19 @@ class InterfaceManager {
         this._currentResultLine = 0;
         this._resultTimeShiftIndex = 0;
         this._isDevLinkVisible = true;
-        Object.assign(this, createAudioOptions());
         this._setImageBigText = setImageBigText;
-        this._onInitializePanel = createPanelInitializer(this);
-        this._onShowPanel = createPanelShowHandler(this);
-        Object.assign(this, createGameFlow(this));
-        Object.assign(this, createResultsHandler(this));
+
+        // Create composed module instances with explicit manager delegation
+        this.gameFlow = new GameFlow(this);
+        this.results = new ResultsHandler(this);
+        this.panels = new PanelInitializer(this);
+        this.panelShow = new PanelShowHandler(this);
+
+        // Initialize PanelManager callback
+        panelManager.onShowPanel = (/** @type {number} */ panelId) =>
+            this.panelShow.onShowPanel(panelId);
+
+        // Subscribe to authentication events
         PubSub.subscribe(PubSub.ChannelId.SignIn, () => {
             this._signedIn = true;
             this._updateSignInControls();

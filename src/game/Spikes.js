@@ -41,6 +41,13 @@ const SpikeAnimation = {
 };
 
 class Spikes extends CTRGameObject {
+    /**
+     * @param {number} px
+     * @param {number} py
+     * @param {number} width
+     * @param {number} angle
+     * @param {number} t
+     */
     constructor(px, py, width, angle, t) {
         super();
 
@@ -89,11 +96,11 @@ class Spikes extends CTRGameObject {
             this.addChild(this.rotateButton);
 
             // restore bounding box without alpha
-            const buttonTexture = bup.texture,
-                vo = buttonTexture.offsets[normalQuad],
-                vr = buttonTexture.rects[normalQuad],
-                vs = new Vector(vr.w, vr.h),
-                vo2 = new Vector(buttonTexture.preCutSize.x, buttonTexture.preCutSize.y);
+            const buttonTexture = bup.texture;
+            const vo = buttonTexture.offsets[normalQuad];
+            const vr = buttonTexture.rects[normalQuad];
+            const vs = new Vector(vr.w, vr.h);
+            const vo2 = new Vector(buttonTexture.preCutSize.x, buttonTexture.preCutSize.y);
 
             vo2.subtract(vs);
             vo2.subtract(vo);
@@ -197,6 +204,9 @@ class Spikes extends CTRGameObject {
         SoundMgr.stopLoopedSoundInstance(ResourceId.SND_ELECTRIC, this.electroInstanceKey);
     }
 
+    /**
+     * @param {number} delta
+     */
     update(delta) {
         super.update(delta);
 
@@ -219,6 +229,9 @@ class Spikes extends CTRGameObject {
         }
     }
 
+    /**
+     * @param {number} t
+     */
     setToggled(t) {
         this.toggled = t;
     }
@@ -247,19 +260,29 @@ class Spikes extends CTRGameObject {
         this.addTimelineWithID(tl, SpikeAnimation.ROTATION_ADJUSTED);
         this.playTimeline(SpikeAnimation.ROTATION_ADJUSTED);
         this.shouldUpdateRotation = true;
-        this.rotateButton.scaleX = -this.rotateButton.scaleX;
+        if (this.rotateButton) {
+            this.rotateButton.scaleX = -this.rotateButton.scaleX;
+        }
     }
 
+    /**
+     * @param {Timeline} t
+     */
     timelineFinished(t) {
         // update rotation one last time now that timeline is complete
         this.updateRotation();
         this.shouldUpdateRotation = false;
     }
 
+    /**
+     * @param {number} n
+     */
     onButtonPressed(n) {
         if (n === SPIKES_ROTATION_BUTTON) {
-            if (this.onRotateButtonPressed) {
-                this.onRotateButtonPressed(this.toggled);
+            if (this.onButtonPressed) {
+                if (this.toggled) {
+                    this.onButtonPressed(this.toggled);
+                }
             }
 
             if (this.spikesNormal) {
@@ -272,15 +295,17 @@ class Spikes extends CTRGameObject {
 
     drawBB() {
         const ctx = Canvas.context;
-        ctx.beginPath();
-        ctx.strokeStyle = "red";
-        ctx.moveTo(this.t1.x, this.t1.y);
-        ctx.lineTo(this.t2.x, this.t2.y);
-        ctx.lineTo(this.b2.x, this.b2.y);
-        ctx.lineTo(this.b1.x, this.b1.y);
-        ctx.lineTo(this.t1.x, this.t1.y);
-        ctx.closePath();
-        ctx.stroke();
+        if (ctx) {
+            ctx.beginPath();
+            ctx.strokeStyle = "red";
+            ctx.moveTo(this.t1.x, this.t1.y);
+            ctx.lineTo(this.t2.x, this.t2.y);
+            ctx.lineTo(this.b2.x, this.b2.y);
+            ctx.lineTo(this.b1.x, this.b1.y);
+            ctx.lineTo(this.t1.x, this.t1.y);
+            ctx.closePath();
+            ctx.stroke();
+        }
     }
 }
 

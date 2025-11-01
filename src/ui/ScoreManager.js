@@ -2,7 +2,7 @@ import QueryStrings from "@/ui/QueryStrings";
 import PubSub from "@/utils/PubSub";
 import MathHelper from "@/utils/MathHelper";
 import SettingStorage from "@/core/SettingStorage";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import Text from "@/visual/Text";
 import Lang from "@/resources/Lang";
 import LangId from "@/resources/LangId";
@@ -12,7 +12,7 @@ import BoxType from "@/ui/BoxType";
 import { IS_XMAS } from "@/resources/ResData";
 
 // Helper to add prefix for Holiday Gift box
-const getBoxPrefix = function (box) {
+const getBoxPrefix = function (/** @type {number} */ box) {
     const boxType = edition.boxTypes?.[box];
     if (boxType === BoxType.HOLIDAY) {
         return "holidaygiftbox_";
@@ -24,11 +24,11 @@ const getBoxPrefix = function (box) {
 // prevent hacks - server side code would be necessary for that.
 
 // make the prefixes hard to find in source code
-const SCORE_PREFIX = String.fromCharCode(98, 112), // 'bp' (short for box-points)
-    STARS_PREFIX = String.fromCharCode(98, 115), // 'bs' (short for box-stars)
-    // our XOR value is a random number that is stored in an entry that is
-    // intended to look similar to the score record for a box
-    XOR_KEY = SCORE_PREFIX + String.fromCharCode(50, 51, 57, 48);
+const SCORE_PREFIX = String.fromCharCode(98, 112); // 'bp' (short for box-points)
+const STARS_PREFIX = String.fromCharCode(98, 115); // 'bs' (short for box-stars)
+// our XOR value is a random number that is stored in an entry that is
+// intended to look similar to the score record for a box
+const XOR_KEY = SCORE_PREFIX + String.fromCharCode(50, 51, 57, 48);
 let XOR_VALUE = SettingStorage.getIntOrDefault(XOR_KEY, null);
 
 // create the random value if it doesn't exist
@@ -38,69 +38,86 @@ if (XOR_VALUE == null) {
 }
 
 // helper functions to get/set score
-const getScoreKey = function (box, level) {
-        const val = (box * 1000 + level) ^ XOR_VALUE;
-        const key = getBoxPrefix(box) + SCORE_PREFIX + val;
+const getScoreKey = function (/** @type {number} */ box, /** @type {number} */ level) {
+    const val = (box * 1000 + level) ^ XOR_VALUE;
+    const key = getBoxPrefix(box) + SCORE_PREFIX + val;
 
-        // make sure we don't overwrite our XOR key
-        if (key === XOR_KEY) {
-            return `${key}_`;
-        }
+    // make sure we don't overwrite our XOR key
+    if (key === XOR_KEY) {
+        return `${key}_`;
+    }
 
-        return key;
-    },
-    setScore = function (box, level, points) {
-        SettingStorage.set(
-            getScoreKey(box, level),
-            // NOTE: we intentionally swap multiplier to level (key uses box)
-            (points + level * 1000 + box) ^ XOR_VALUE
-        );
+    return key;
+};
 
-        RoamSettings.setScore(box, level, points);
-    },
-    getScore = function (box, level) {
-        // fetch both roaming and local scores
-        const roamScore = RoamSettings.getScore(box, level) || 0,
-            localKey = getScoreKey(box, level),
-            localVal = SettingStorage.getIntOrDefault(localKey, null),
-            localScore = localVal == null ? 0 : (localVal ^ XOR_VALUE) - box - level * 1000;
+const setScore = function (
+    /** @type {number} */ box,
+    /** @type {number} */ level,
+    /** @type {number} */ points
+) {
+    SettingStorage.set(
+        getScoreKey(box, level),
+        // NOTE: we intentionally swap multiplier to level (key uses box)
+        (points + level * 1000 + box) ^ XOR_VALUE
+    );
 
-        return Math.max(roamScore, localScore);
-    };
+    RoamSettings.setScore(box, level, points);
+};
+
+const getScore = function (/** @type {number} */ box, /** @type {number} */ level) {
+    // fetch both roaming and local scores
+    const roamScore = RoamSettings.getScore(box, level) || 0;
+    const localKey = getScoreKey(box, level);
+    const localVal = SettingStorage.getIntOrDefault(localKey, null);
+    const localScore = localVal == null ? 0 : (localVal ^ XOR_VALUE) - box - level * 1000;
+
+    return Math.max(roamScore, localScore);
+};
 
 // helper functions to get/set stars
-const STARS_UNKNOWN = -1, // needs to be a number but can't be null
-    getStarsKey = function (box, level) {
-        // NOTE: we intentionally swap multiplier from whats used for points
-        const key = (level * 1000 + box) ^ XOR_VALUE;
-        return getBoxPrefix(box) + STARS_PREFIX + key;
-    },
-    setStars = function (box, level, stars) {
-        const localStars = stars == null ? STARS_UNKNOWN : stars;
-        SettingStorage.set(
-            getStarsKey(box, level),
-            // NOTE: we intentionally swap multiplier to box (key uses level)
-            (localStars + box * 1000 + level) ^ XOR_VALUE
-        );
+const STARS_UNKNOWN = -1; // needs to be a number but can't be null
+const getStarsKey = function (/** @type {number} */ box, /** @type {number} */ level) {
+    // NOTE: we intentionally swap multiplier from whats used for points
+    const key = (level * 1000 + box) ^ XOR_VALUE;
+    return getBoxPrefix(box) + STARS_PREFIX + key;
+};
+const setStars = function (
+    /** @type {number} */ box,
+    /** @type {number} */ level,
+    /** @type {number | null} */ stars
+) {
+    const localStars = stars == null ? STARS_UNKNOWN : stars;
+    SettingStorage.set(
+        getStarsKey(box, level),
+        // NOTE: we intentionally swap multiplier to box (key uses level)
+        (localStars + box * 1000 + level) ^ XOR_VALUE
+    );
 
+    if (stars) {
         RoamSettings.setStars(box, level, stars);
-    },
-    getStars = function (box, level) {
-        const roamStars = RoamSettings.getStars(box, level),
-            localKey = getStarsKey(box, level),
-            localVal = SettingStorage.getIntOrDefault(localKey, null),
-            localStars = localVal == null ? null : (localVal ^ XOR_VALUE) - level - box * 1000;
+    }
+};
+/**
+ * @param {number} box
+ * @param {number} level
+ * @returns {number | null}
+ */
+const getStars = function (box, level) {
+    const roamStars = RoamSettings.getStars(box, level);
+    const localKey = getStarsKey(box, level);
+    const localVal = SettingStorage.getIntOrDefault(localKey, null);
+    const localStars = localVal == null ? null : (localVal ^ XOR_VALUE) - level - box * 1000;
 
-        if (localStars === STARS_UNKNOWN || localStars === null) {
-            return roamStars;
-        } else if (roamStars == null) {
-            return localStars;
-        }
+    if (localStars === STARS_UNKNOWN || localStars === null) {
+        return roamStars ?? null;
+    } else if (roamStars == null) {
+        return localStars;
+    }
 
-        return Math.max(roamStars, localStars);
-    };
+    return Math.max(roamStars, localStars);
+};
 
-const resetLevel = function (boxIndex, levelIndex) {
+const resetLevel = function (/** @type {number} */ boxIndex, /** @type {number} */ levelIndex) {
     // first level gets 0 stars, otherwise null
     const stars = levelIndex === 0 ? 0 : null;
 
@@ -109,6 +126,12 @@ const resetLevel = function (boxIndex, levelIndex) {
 };
 
 class ScoreBox {
+    /**
+     * @param {number} levelCount
+     * @param {number} requiredStars
+     * @param {number[]} scores
+     * @param {(number | null)[]} stars
+     */
     constructor(levelCount, requiredStars, scores, stars) {
         this.levelCount = levelCount;
         this.requiredStars = requiredStars;
@@ -117,84 +140,122 @@ class ScoreBox {
     }
 }
 
-// State
-const boxes = [];
-let appReady = false;
+class ScoreManager {
+    constructor() {
+        /**
+         * @type {ScoreBox[]}
+         */
+        this.boxes = [];
+        this.appReady = false;
 
-// load previous scores from local storage
-const loadBox = (boxIndex) => {
-    // see if the box exists by checking for a level 1 star record
-    const boxExists = getStars(boxIndex, 0) !== null;
-    const levelCount = edition.boxes[boxIndex].levels.length;
-    const requiredStars = edition.unlockStars[boxIndex];
-    const scores = [];
-    const stars = [];
+        // Subscribe to events
+        PubSub.subscribe(PubSub.ChannelId.SignIn, () => this.load());
+        PubSub.subscribe(PubSub.ChannelId.SignOut, () => this.load());
+        PubSub.subscribe(PubSub.ChannelId.RoamingDataChanged, () => this.load());
+        PubSub.subscribe(PubSub.ChannelId.AppRun, () => {
+            this.appReady = true;
+        });
+        PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => this.updateTotalScoreText());
+    }
 
-    // get (or create) scores and stars from each level
-    for (let levelIndex = 0; levelIndex < levelCount; levelIndex++) {
-        // if the box doesn't exist
-        if (!boxExists) {
-            resetLevel(boxIndex, levelIndex);
+    /**
+     * Load previous scores from local storage for a specific box
+     * @param {number} boxIndex
+     * @returns {ScoreBox}
+     */
+    loadBox(boxIndex) {
+        // see if the box exists by checking for a level 1 star record
+        const boxExists = getStars(boxIndex, 0) !== null;
+        const levelCount = edition.boxes[boxIndex].levels.length;
+        const requiredStars = edition.unlockStars[boxIndex];
+        const scores = [];
+        const stars = [];
+
+        // get (or create) scores and stars from each level
+        for (let levelIndex = 0; levelIndex < levelCount; levelIndex++) {
+            // if the box doesn't exist
+            if (!boxExists) {
+                resetLevel(boxIndex, levelIndex);
+            }
+
+            scores.push(getScore(boxIndex, levelIndex));
+            stars.push(getStars(boxIndex, levelIndex));
         }
 
-        scores.push(getScore(boxIndex, levelIndex));
-        stars.push(getStars(boxIndex, levelIndex));
+        // generate fake (and good) star counts
+        if (QueryStrings.createScoresForBox == boxIndex + 1) {
+            for (let i = 0; i < levelCount; i++) {
+                this.setStars(boxIndex, i, 3, true);
+            }
+        }
+
+        return new ScoreBox(
+            levelCount,
+            requiredStars,
+            scores,
+            stars.map((s) => (s === undefined ? null : s))
+        );
     }
 
-    // generate fake (and good) star counts
-    if (QueryStrings.createScoresForBox == boxIndex + 1) {
-        for (let i = 0; i < levelCount; i++) {
-            ScoreManager.setStars(boxIndex, i, 3, true);
+    load() {
+        // clear existing boxes
+        this.boxes.length = 0;
+
+        // load box scores
+        for (let i = 0, len = edition.boxes.length; i < len; i++) {
+            this.boxes[i] = this.loadBox(i);
+        }
+
+        // update score text
+        if (this.appReady) {
+            this.updateTotalScoreText();
         }
     }
 
-    return new ScoreBox(levelCount, requiredStars, scores, stars);
-};
-
-const load = () => {
-    // clear existing boxes
-    boxes.length = 0;
-
-    // load box scores
-    for (let i = 0, len = edition.boxes.length; i < len; i++) {
-        boxes[i] = loadBox(i);
+    updateTotalScoreText() {
+        const text = Lang.menuText(MenuStringId.TOTAL_STARS).replace("%d", this.totalStars());
+        Text.drawBig({ text: text, imgSel: "#boxScore img", scaleToUI: true });
     }
 
-    // update score text
-    if (appReady) {
-        ScoreManager.updateTotalScoreText();
+    /**
+     * Retrieve the obfuscation value used for score persistence.
+     * @returns {number}
+     */
+    getXorValue() {
+        return XOR_VALUE;
     }
-};
 
-const updateTotalScoreText = () => {
-    const text = Lang.menuText(MenuStringId.TOTAL_STARS).replace("%d", ScoreManager.totalStars());
-    Text.drawBig({ text: text, imgSel: "#boxScore img", scaleToUI: true });
-};
-
-const ScoreManager = {
-    load,
-
-    getXorValue: () => XOR_VALUE,
-
-    boxCount: () => {
-        if (boxes != null) return boxes.length;
+    boxCount() {
+        if (this.boxes != null) return this.boxes.length;
         return null;
-    },
+    }
 
-    levelCount: (boxIndex) => {
-        const box = boxes[boxIndex];
+    /**
+     * @param {number} boxIndex
+     * @returns {number | null}
+     */
+    levelCount(boxIndex) {
+        const box = this.boxes[boxIndex];
         if (box != null) return box.levelCount;
         return null;
-    },
+    }
 
-    requiredStars: (boxIndex) => {
-        const box = boxes[boxIndex];
+    /**
+     * @param {number} boxIndex
+     * @returns {number}
+     */
+    requiredStars(boxIndex) {
+        const box = this.boxes[boxIndex];
         if (box != null) return box.requiredStars;
         return 0;
-    },
+    }
 
-    achievedStars: (boxIndex) => {
-        const box = boxes[boxIndex];
+    /**
+     * @param {number} boxIndex
+     * @returns {number}
+     */
+    achievedStars(boxIndex) {
+        const box = this.boxes[boxIndex];
         if (box != null) {
             let count = 0;
             for (let j = 0; j < box.levelCount; j++) {
@@ -204,25 +265,36 @@ const ScoreManager = {
             return count;
         }
         return 0;
-    },
+    }
 
-    totalStars: () => {
+    /**
+     * @returns {number}
+     */
+    totalStars() {
         let total = 0;
-        for (let i = 0; i < boxes.length; i++) {
-            total += ScoreManager.achievedStars(i);
+        for (let i = 0; i < this.boxes.length; i++) {
+            total += this.achievedStars(i);
         }
         return total;
-    },
+    }
 
-    possibleStarsForBox: (boxIndex) => {
-        const box = boxes[boxIndex];
+    /**
+     * @param {number} boxIndex
+     * @returns {number}
+     */
+    possibleStarsForBox(boxIndex) {
+        const box = this.boxes[boxIndex];
         if (box != null) {
             return box.levelCount * 3;
         }
         return 0;
-    },
+    }
 
-    isBoxLocked: (boxIndex) => {
+    /**
+     * @param {number} boxIndex
+     * @returns {boolean}
+     */
+    isBoxLocked(boxIndex) {
         if (QueryStrings.unlockAllBoxes) return false;
 
         const isHolidayBox = edition.boxTypes?.[boxIndex] === BoxType.HOLIDAY;
@@ -231,24 +303,35 @@ const ScoreManager = {
         }
         if (boxIndex === 0 && !isHolidayBox) return false;
 
-        const box = boxes[boxIndex];
-        if (box != null && ScoreManager.totalStars() >= ScoreManager.requiredStars(boxIndex)) {
+        const box = this.boxes[boxIndex];
+        if (box != null && this.totalStars() >= this.requiredStars(boxIndex)) {
             return false;
         }
         return true;
-    },
+    }
 
-    isLevelUnlocked: (boxIndex, levelindex) => {
-        const box = boxes[boxIndex];
+    /**
+     * @param {number} boxIndex
+     * @param {number} levelindex
+     * @returns {boolean}
+     */
+    isLevelUnlocked(boxIndex, levelindex) {
+        const box = this.boxes[boxIndex];
         if (QueryStrings.unlockAllBoxes) return true;
         if (box != null) {
             return box.stars[levelindex] != null;
         }
         return false;
-    },
+    }
 
-    setScore: (boxIndex, levelIndex, levelScore, overridePrevious) => {
-        const box = boxes[boxIndex];
+    /**
+     * @param {number} boxIndex
+     * @param {number} levelIndex
+     * @param {number} levelScore
+     * @param {boolean} [overridePrevious]
+     */
+    setScore(boxIndex, levelIndex, levelScore, overridePrevious) {
+        const box = this.boxes[boxIndex];
         if (box != null) {
             if (overridePrevious) {
                 box.scores[levelIndex] = levelScore;
@@ -270,17 +353,28 @@ const ScoreManager = {
             // previous high score was achieved.
             PubSub.publish(PubSub.ChannelId.UpdateBoxScore, boxIndex, boxScore);
         }
-    },
+    }
 
-    getScore: (boxIndex, levelIndex) => {
-        const box = boxes[boxIndex];
+    /**
+     * @param {number} boxIndex
+     * @param {number} levelIndex
+     * @returns {number | null}
+     */
+    getScore(boxIndex, levelIndex) {
+        const box = this.boxes[boxIndex];
         if (box != null) return box.scores[levelIndex];
         return null;
-    },
+    }
 
+    /**
+     * @param {number} boxIndex
+     * @param {number} levelIndex
+     * @param {number} score
+     * @param {boolean} [overridePrevious]
+     */
     setStars(boxIndex, levelIndex, score, overridePrevious) {
         const previousStars = this.totalStars();
-        const box = boxes[boxIndex];
+        const box = this.boxes[boxIndex];
         if (box != null) {
             //don't override past high score
             const prevStars = getStars(boxIndex, levelIndex);
@@ -296,19 +390,24 @@ const ScoreManager = {
         if (newStarCount !== previousStars) {
             PubSub.publish(PubSub.ChannelId.StarCountChanged, newStarCount);
         }
-    },
+    }
 
-    getStars: (boxIndex, levelIndex) => {
-        const box = boxes[boxIndex];
+    /**
+     * @param {number} boxIndex
+     * @param {number} levelIndex
+     * @returns {number | null}
+     */
+    getStars(boxIndex, levelIndex) {
+        const box = this.boxes[boxIndex];
         if (box != null) return box.stars[levelIndex];
         return null;
-    },
+    }
 
     resetGame() {
-        const boxCount = boxes.length;
+        const boxCount = this.boxes.length;
 
         for (let boxIndex = 0; boxIndex < boxCount; boxIndex++) {
-            const box = boxes[boxIndex];
+            const box = this.boxes[boxIndex];
             const levelCount = box.levelCount;
             for (let levelIndex = 0; levelIndex < levelCount; levelIndex++) {
                 resetLevel(boxIndex, levelIndex);
@@ -319,18 +418,8 @@ const ScoreManager = {
 
         // update score
         this.updateTotalScoreText();
-    },
+    }
+}
 
-    updateTotalScoreText,
-};
-
-// Subscribe to events
-PubSub.subscribe(PubSub.ChannelId.SignIn, load);
-PubSub.subscribe(PubSub.ChannelId.SignOut, load);
-PubSub.subscribe(PubSub.ChannelId.RoamingDataChanged, load);
-PubSub.subscribe(PubSub.ChannelId.AppRun, () => {
-    appReady = true;
-});
-PubSub.subscribe(PubSub.ChannelId.LanguageChanged, updateTotalScoreText);
-
-export default ScoreManager;
+// Export singleton instance
+export default new ScoreManager();

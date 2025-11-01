@@ -1,9 +1,14 @@
 import Vector from "@/core/Vector";
 import Quad2D from "@/core/Quad2D";
-const isHtmlImageElement = (value) =>
+
+/**
+ * @typedef {import("@/core/Rectangle").default} Rectangle
+ */
+
+const isHtmlImageElement = (/** @type {unknown} */ value) =>
     typeof HTMLImageElement !== "undefined" && value instanceof HTMLImageElement;
 
-const getComputedDimension = (image) => {
+const getComputedDimension = (/** @type {HTMLImageElement} */ image) => {
     if (!image || typeof window === "undefined" || !window.getComputedStyle) {
         return { width: 0, height: 0 };
     }
@@ -20,7 +25,9 @@ const getComputedDimension = (image) => {
     }
 };
 
-const normalizeImageInput = (input) => {
+const normalizeImageInput = (
+    /** @type {{ drawable: ImageBitmap; width: number; height: number; sourceUrl: string; }} */ input
+) => {
     if (!input) {
         return {
             drawable: null,
@@ -58,10 +65,51 @@ const normalizeImageInput = (input) => {
 };
 
 class Texture2D {
+    /**
+     * @type {ImageBitmap | null}
+     */
+    image;
+
+    /**
+     * @type {Rectangle[]}
+     */
+    rects;
+
+    /**
+     * @type {Vector[]}
+     */
+    offsets;
+
+    /**
+     * @type {Vector}
+     */
+    preCutSize;
+
+    /**
+     * @type {string}
+     */
+    imageSrc;
+
+    /**
+     * @private
+     * @type {number}
+     */
+    _invWidth;
+
+    /**
+     * @private
+     * @type {number}
+     */
+    _invHeight;
+
+    /**
+     * @param {{ drawable: ImageBitmap; width: number; height: number; sourceUrl: string; }} imageInput
+     */
     constructor(imageInput) {
         const { drawable, width, height, sourceUrl } = normalizeImageInput(imageInput);
 
         this.image = drawable;
+
         this.rects = [];
         this.offsets = [];
         this.preCutSize = Vector.newUndefined();
@@ -86,15 +134,29 @@ class Texture2D {
         this.adjustmentMaxX = 0;
         this.adjustmentMaxY = 0;
     }
+
+    /**
+     * @param {Rectangle} rect
+     */
     addRect(rect) {
         this.rects.push(rect);
         this.offsets.push(new Vector(0, 0));
     }
+
+    /**
+     * @param {number} index
+     * @param {number} x
+     * @param {number} y
+     */
     setOffset(index, x, y) {
         const offset = this.offsets[index];
         offset.x = x;
         offset.y = y;
     }
+
+    /**
+     * @param {Rectangle} rect
+     */
     getCoordinates(rect) {
         return new Quad2D(
             this._invWidth * rect.x,

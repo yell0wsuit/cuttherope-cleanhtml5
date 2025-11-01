@@ -9,6 +9,9 @@ const IMG_OBJ_HOOK_MOVABLE_bottom_tile_right = 1;
 const IMG_OBJ_HOOK_MOVABLE_bottom_tile_middle = 2;
 
 class GrabMoveBackground extends ImageElement {
+    /**
+     * @param {number} length
+     */
     constructor(length) {
         super();
 

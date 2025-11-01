@@ -1,5 +1,5 @@
-import platform from "@/platform";
-import edition from "@/edition";
+import platform from "@/config/platforms/platform-web";
+import edition from "@/config/editions/net-edition";
 const GAME_COMPLETE_CLASS = "gameComplete";
 let borderElement = null;
 

@@ -1,8 +1,9 @@
 import ViewController from "@/core/ViewController";
 import RootControllerBase from "@/core/RootControllerBase";
 import GameController from "@/game/GameController";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import LevelState from "@/game/LevelState";
+
 /**
  * @enum {number}
  */
@@ -14,10 +15,17 @@ const ChildController = {
 };
 
 class CTRRootController extends RootControllerBase {
+    /**
+     * @param {undefined} [parent]
+     */
     constructor(parent) {
         super(parent);
     }
 
+    /**
+     * @param {number} pack
+     * @param {number} level
+     */
     startLevel(pack, level) {
         LevelState.loadLevel(pack, level);
 
@@ -80,6 +88,9 @@ class CTRRootController extends RootControllerBase {
         return true;
     }
 
+    /**
+     * @param {number} childType
+     */
     onChildDeactivated(childType) {
         super.onChildDeactivated(childType);
 

@@ -5,8 +5,8 @@ import MathHelper from "@/utils/MathHelper";
 class Camera2D {
     /**
      * Camera2D constructor
-     * @param speed {number}
-     * @param cameraSpeed {CameraSpeed}
+     * @param {number} speed
+     * @param {number} cameraSpeed
      */
     constructor(speed, cameraSpeed) {
         this.speed = speed;
@@ -18,9 +18,9 @@ class Camera2D {
 
     /**
      * Changes the camera position (but doesn't actually transform the canvas)
-     * @param x {number}
-     * @param y {number}
-     * @param immediate {boolean}
+     * @param {number} x
+     * @param {number} y
+     * @param {boolean} immediate
      */
     moveTo(x, y, immediate) {
         this.target.x = x;
@@ -39,7 +39,7 @@ class Camera2D {
     }
 
     /**
-     * @param delta {number} time delta
+     * @param {number} delta time delta
      */
     update(delta) {
         if (!this.pos.equals(this.target)) {
@@ -61,13 +61,13 @@ class Camera2D {
 
     applyCameraTransformation() {
         if (this.pos.x !== 0 || this.pos.y !== 0) {
-            Canvas.context.translate(-this.pos.x, -this.pos.y);
+            Canvas.context && Canvas.context.translate(-this.pos.x, -this.pos.y);
         }
     }
 
     cancelCameraTransformation() {
         if (this.pos.x !== 0 || this.pos.y !== 0) {
-            Canvas.context.translate(this.pos.x, this.pos.y);
+            Canvas.context && Canvas.context.translate(this.pos.x, this.pos.y);
         }
     }
 }

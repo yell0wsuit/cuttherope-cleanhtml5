@@ -2,7 +2,6 @@ import resolution from "@/resolution";
 import ResourceMgr from "@/resources/ResourceMgr";
 import ResourceId from "@/resources/ResourceId";
 import MathHelper from "@/utils/MathHelper";
-import requestAnimationFrame from "@/utils/requestAnimationFrame";
 
 const BASE_CANVAS_AREA = 1920 * 1080;
 const MAX_SNOWFLAKES = 80;

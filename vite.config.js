@@ -1,5 +1,5 @@
-import { fileURLToPath } from "url";
-import path from "path";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
@@ -134,25 +134,24 @@ export default defineConfig({
     build: {
         rollupOptions: {
             output: {
-                manualChunks(id) {
-                    // Split each node_modules package into its own chunk
-                    if (id.includes("node_modules")) {
-                        const packageName = id.split("node_modules/")[1].split("/")[0];
-                        return `vendor/${packageName}`;
-                    }
-
-                    // Split source files into separate chunks
-                    if (id.includes("/src/")) {
-                        // Normalize path separators and extract relative path
-                        const srcPath = id.split("/src/")[1];
-
-                        // Remove file extension and create a clean chunk name
-                        const chunkName = srcPath
-                            .replace(/\.(js|ts|tsx|jsx)$/, "")
-                            .replace(/\\/g, "/"); // Normalize Windows paths
-
-                        return chunkName;
-                    }
+                advancedChunks: {
+                    groups: [
+                        {
+                            name(moduleId) {
+                                const idx = moduleId.indexOf("/src/");
+                                if (idx >= 0) {
+                                    let srcPath = moduleId.slice(idx + 5); // after '/src/'
+                                    srcPath = srcPath.replace(/\.(js|ts|jsx|tsx)$/, "");
+                                    srcPath = srcPath.replace(/\\/g, "/");
+                                    return srcPath;
+                                }
+                                return null;
+                            },
+                            test: /[\\/]src[\\/]/,
+                            priority: 50,
+                        },
+                    ],
+                    maxSize: 100 * 1024,
                 },
             },
         },

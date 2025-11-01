@@ -8,102 +8,164 @@ import SoundMgr from "@/game/CTRSoundMgr";
 import Timeline from "@/visual/Timeline";
 import settings from "@/game/CTRSettings";
 
-export const GameSceneLifecycle = {
+/**
+ * @typedef {import("@/types/game-scene").GameScene} GameScene
+ */
+
+/**
+ * @param {GameScene} scene
+ */
+function animateLevelRestart(scene) {
+    scene.restartState = GameSceneConstants.RestartState.FADE_IN;
+    scene.dimTime = Constants.DIM_TIMEOUT;
+}
+
+/**
+ * @param {GameScene} scene
+ */
+function isFadingIn(scene) {
+    return scene.restartState === GameSceneConstants.RestartState.FADE_IN;
+}
+
+/**
+ * @param {GameScene} scene
+ */
+function calculateScore(scene) {
+    scene.timeBonus = Math.max(0, 30 - scene.time) * 100;
+    scene.timeBonus /= 10;
+    scene.timeBonus *= 10;
+    scene.starBonus = 1000 * scene.starsCollected;
+    scene.score = Math.ceil(scene.timeBonus + scene.starBonus);
+}
+
+/**
+ * @param {GameScene} scene
+ */
+function gameWon(scene) {
+    scene.dd.cancelAllDispatches();
+
+    scene.target.playTimeline(GameSceneConstants.CharAnimation.WIN);
+    SoundMgr.playSound(ResourceId.SND_MONSTER_CHEWING);
+
+    if (scene.candyBubble) {
+        scene.popCandyBubble(false);
+    }
+
+    scene.noCandy = true;
+
+    scene.candy.passTransformationsToChilds = true;
+    scene.candyMain.scaleX = scene.candyMain.scaleY = 1;
+    scene.candyTop.scaleX = scene.candyTop.scaleY = 1;
+
+    const tl = new Timeline();
+    tl.addKeyFrame(
+        KeyFrame.makePos(scene.candy.x, scene.candy.y, KeyFrame.TransitionType.LINEAR, 0)
+    );
+    tl.addKeyFrame(
+        KeyFrame.makePos(
+            scene.target.x,
+            scene.target.y + 10,
+            KeyFrame.TransitionType.LINEAR,
+            0.1
+        )
+    );
+    tl.addKeyFrame(KeyFrame.makeScale(0.71, 0.71, KeyFrame.TransitionType.LINEAR, 0));
+    tl.addKeyFrame(KeyFrame.makeScale(0, 0, KeyFrame.TransitionType.LINEAR, 0.1));
+    tl.addKeyFrame(
+        KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0)
+    );
+    tl.addKeyFrame(
+        KeyFrame.makeColor(
+            RGBAColor.transparent.copy(),
+            KeyFrame.TransitionType.LINEAR,
+            0.1
+        )
+    );
+    scene.candy.addTimelineWithID(tl, 0);
+    scene.candy.playTimeline(0);
+    tl.onFinished = scene.aniPool.timelineFinishedDelegate();
+    scene.aniPool.addChild(scene.candy);
+
+    scene.calculateScore();
+    scene.releaseAllRopes(false);
+
+    const onLevelWonAppCallback = () => {
+        PubSub.publish(PubSub.ChannelId.LevelWon, {
+            stars: scene.starsCollected,
+            time: scene.time,
+            score: scene.score,
+            fps: 1 / scene.gameController.avgDelta,
+        });
+    };
+
+    // the closing doors animation takes 850ms so we want it to
+    // finish before the game level deactivates (and freezes)
+    if (settings.showMenu) {
+        scene.dd.callObject(scene, onLevelWonAppCallback, null, 1);
+    }
+
+    // stop the electro after 1.5 seconds
+    scene.dd.callObject(
+        scene,
+        function () {
+            // stop the electro spikes sound from looping
+            SoundMgr.stopSound(ResourceId.SND_ELECTRIC);
+        },
+        null,
+        1.5
+    );
+
+    // fire level won callback after 2 secs
+    const onLevelWon = function () {
+        scene.gameController.onLevelWon.call(scene.gameController);
+    };
+    scene.dd.callObject(scene, onLevelWon, null, 1.8);
+}
+
+/**
+ * @param {GameScene} scene
+ */
+function gameLost(scene) {
+    scene.dd.cancelAllDispatches();
+    scene.target.playTimeline(GameSceneConstants.CharAnimation.FAIL);
+    SoundMgr.playSound(ResourceId.SND_MONSTER_SAD);
+
+    // fire level lost callback after 1 sec
+    const onLevelLost = function () {
+        scene.gameController.onLevelLost.call(scene.gameController);
+        PubSub.publish(PubSub.ChannelId.LevelLost, { time: scene.time });
+    };
+    scene.dd.callObject(scene, onLevelLost, null, 1);
+}
+
+class GameSceneLifecycleDelegate {
+    /**
+     * @param {GameScene} scene
+     */
+    constructor(scene) {
+        /** @type {GameScene} */
+        this.scene = scene;
+    }
+
     animateLevelRestart() {
-        this.restartState = GameSceneConstants.RestartState.FADE_IN;
-        this.dimTime = Constants.DIM_TIMEOUT;
-    },
+        return animateLevelRestart(this.scene);
+    }
+
     isFadingIn() {
-        return this.restartState === GameSceneConstants.RestartState.FADE_IN;
-    },
+        return isFadingIn(this.scene);
+    }
+
     calculateScore() {
-        this.timeBonus = Math.max(0, 30 - this.time) * 100;
-        this.timeBonus /= 10;
-        this.timeBonus *= 10;
-        this.starBonus = 1000 * this.starsCollected;
-        this.score = Math.ceil(this.timeBonus + this.starBonus);
-    },
+        return calculateScore(this.scene);
+    }
+
     gameWon() {
-        this.dd.cancelAllDispatches();
+        return gameWon(this.scene);
+    }
 
-        this.target.playTimeline(GameSceneConstants.CharAnimation.WIN);
-        SoundMgr.playSound(ResourceId.SND_MONSTER_CHEWING);
-
-        if (this.candyBubble) {
-            this.popCandyBubble(false);
-        }
-
-        this.noCandy = true;
-
-        this.candy.passTransformationsToChilds = true;
-        this.candyMain.scaleX = this.candyMain.scaleY = 1;
-        this.candyTop.scaleX = this.candyTop.scaleY = 1;
-
-        const tl = new Timeline();
-        tl.addKeyFrame(
-            KeyFrame.makePos(this.candy.x, this.candy.y, KeyFrame.TransitionType.LINEAR, 0)
-        );
-        tl.addKeyFrame(
-            KeyFrame.makePos(this.target.x, this.target.y + 10, KeyFrame.TransitionType.LINEAR, 0.1)
-        );
-        tl.addKeyFrame(KeyFrame.makeScale(0.71, 0.71, KeyFrame.TransitionType.LINEAR, 0));
-        tl.addKeyFrame(KeyFrame.makeScale(0, 0, KeyFrame.TransitionType.LINEAR, 0.1));
-        tl.addKeyFrame(
-            KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0)
-        );
-        tl.addKeyFrame(
-            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.1)
-        );
-        this.candy.addTimelineWithID(tl, 0);
-        this.candy.playTimeline(0);
-        tl.onFinished = this.aniPool.timelineFinishedDelegate();
-        this.aniPool.addChild(this.candy);
-
-        this.calculateScore();
-        this.releaseAllRopes(false);
-
-        const onLevelWonAppCallback = () => {
-            PubSub.publish(PubSub.ChannelId.LevelWon, {
-                stars: this.starsCollected,
-                time: this.time,
-                score: this.score,
-                fps: 1 / this.gameController.avgDelta,
-            });
-        };
-
-        // the closing doors animation takes 850ms so we want it to
-        // finish before the game level deactivates (and freezes)
-        if (settings.showMenu) {
-            this.dd.callObject(this, onLevelWonAppCallback, null, 1);
-        }
-
-        // stop the electro after 1.5 seconds
-        this.dd.callObject(
-            this,
-            function () {
-                // stop the electro spikes sound from looping
-                SoundMgr.stopSound(ResourceId.SND_ELECTRIC);
-            },
-            null,
-            1.5
-        );
-
-        // fire level won callback after 2 secs
-        const onLevelWon = function () {
-            this.gameController.onLevelWon.call(this.gameController);
-        };
-        this.dd.callObject(this, onLevelWon, null, 1.8);
-    },
     gameLost() {
-        this.dd.cancelAllDispatches();
-        this.target.playTimeline(GameSceneConstants.CharAnimation.FAIL);
-        SoundMgr.playSound(ResourceId.SND_MONSTER_SAD);
+        return gameLost(this.scene);
+    }
+}
 
-        // fire level lost callback after 1 sec
-        const onLevelLost = function () {
-            this.gameController.onLevelLost.call(this.gameController);
-            PubSub.publish(PubSub.ChannelId.LevelLost, { time: this.time });
-        };
-        this.dd.callObject(this, onLevelLost, null, 1);
-    },
-};
+export default GameSceneLifecycleDelegate;

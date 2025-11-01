@@ -4,6 +4,7 @@ import GameView from "@/game/GameView";
 import SoundMgr from "@/game/CTRSoundMgr";
 import ResourceId from "@/resources/ResourceId";
 import Constants from "@/utils/Constants";
+
 /**
  * @enum {number}
  */
@@ -30,6 +31,9 @@ const ExitCodeFrom = {
 };
 
 class GameController extends ViewController {
+    /**
+     * @param {CTRRootController} parent
+     */
     constructor(parent) {
         super(parent);
         this.animateRestart = false;
@@ -76,6 +80,9 @@ class GameController extends ViewController {
         this.restartLevel();
     }
 
+    /**
+     * @param {boolean} paused
+     */
     setPaused(paused) {
         this.isGamePaused = paused;
 
@@ -117,8 +124,8 @@ class GameController extends ViewController {
     }
 
     /**
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @return {boolean} true if event was handled
      */
     mouseDown(x, y) {
@@ -142,8 +149,8 @@ class GameController extends ViewController {
     }
 
     /**
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @return {boolean} true if event was handled
      */
     mouseDragged(x, y) {
@@ -167,8 +174,8 @@ class GameController extends ViewController {
     }
 
     /**
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @return {boolean} true if event was handled
      */
     mouseMoved(x, y) {
@@ -192,8 +199,8 @@ class GameController extends ViewController {
     }
 
     /**
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @return {boolean} true if event was handled
      */
     mouseUp(x, y) {
@@ -217,8 +224,8 @@ class GameController extends ViewController {
     }
 
     /**
-     * @param x {number}
-     * @param y {number}
+     * @param {number} x
+     * @param {number} y
      * @return {boolean} true if event was handled
      */
     doubleClick(x, y) {

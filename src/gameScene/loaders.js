@@ -28,7 +28,7 @@ import * as GameSceneConstants from "@/gameScene/constants";
 import Constants from "@/utils/Constants";
 import resolution from "@/resolution";
 import LevelState from "@/game/LevelState";
-import edition from "@/edition";
+import edition from "@/config/editions/net-edition";
 import { IS_XMAS, IS_JANUARY } from "@/resources/ResData";
 import Bungee from "@/game/Bungee";
 import PollenDrawer from "@/game/PollenDrawer";
@@ -36,8 +36,9 @@ import settings from "@/game/CTRSettings";
 import KeyFrame from "@/visual/KeyFrame";
 import ActionType from "@/visual/ActionType";
 import BoxType from "@/ui/BoxType";
+import GameSceneInit from "./init";
 
-export const GameSceneLoaders = {
+class GameSceneLoaders extends GameSceneInit {
     loadMap(map) {
         const layers = [];
 
@@ -157,7 +158,7 @@ export const GameSceneLoaders = {
                 }
             }
         }
-    },
+    }
     /**
      * Loads the map settings for the map node (inside settings layer)
      * @param item
@@ -178,7 +179,7 @@ export const GameSceneLoaders = {
             }
             this.earthAnims.push(new EarthImage(0, 0));
         }
-    },
+    }
     loadGameDesign(item) {
         this.special = item.special || 0;
         this.ropePhysicsSpeed = item.ropePhysicsSpeed;
@@ -187,22 +188,22 @@ export const GameSceneLoaders = {
             ? GameSceneConstants.PartsType.SEPARATE
             : GameSceneConstants.PartsType.NONE;
         this.ropePhysicsSpeed *= resolution.PHYSICS_SPEED_MULTIPLIER;
-    },
+    }
     loadGrab(item) {
-        const gx = item.x * this.PM + this.PMX,
-            gy = item.y * this.PM + this.PMY,
-            l = item.length * this.PM,
-            wheel = item.wheel,
-            kickable = item.kickable,
-            invisible = item.invisible,
-            ml = item.moveLength * this.PM || -1,
-            v = item.moveVertical,
-            o = item.moveOffset * this.PM || 0,
-            spider = item.spider,
-            left = item.part === "L",
-            hidePath = item.hidePath,
-            gun = item.gun,
-            g = new Grab();
+        const gx = item.x * this.PM + this.PMX;
+        const gy = item.y * this.PM + this.PMY;
+        const l = item.length * this.PM;
+        const wheel = item.wheel;
+        const kickable = item.kickable;
+        const invisible = item.invisible;
+        const ml = item.moveLength * this.PM || -1;
+        const v = item.moveVertical;
+        const o = item.moveOffset * this.PM || 0;
+        const spider = item.spider;
+        const left = item.part === "L";
+        const hidePath = item.hidePath;
+        const gun = item.gun;
+        const g = new Grab();
         let r = item.radius;
 
         g.x = gx;
@@ -256,7 +257,7 @@ export const GameSceneLoaders = {
         g.setMoveLength(ml, v, o);
 
         this.bungees.push(g);
-    },
+    }
     loadCandyL(item) {
         this.starL.pos.x = item.x * this.PM + this.PMX;
         this.starL.pos.y = item.y * this.PM + this.PMY;
@@ -271,7 +272,7 @@ export const GameSceneLoaders = {
         this.candyL.x = this.starL.pos.x;
         this.candyL.y = this.starL.pos.y;
         this.candyL.bb = Rectangle.copy(resolution.CANDY_LR_BB);
-    },
+    }
     loadCandyR(item) {
         this.starR.pos.x = item.x * this.PM + this.PMX;
         this.starR.pos.y = item.y * this.PM + this.PMY;
@@ -286,11 +287,11 @@ export const GameSceneLoaders = {
         this.candyR.x = this.starR.pos.x;
         this.candyR.y = this.starR.pos.y;
         this.candyR.bb = Rectangle.copy(resolution.CANDY_LR_BB);
-    },
+    }
     loadCandy(item) {
         this.star.pos.x = item.x * this.PM + this.PMX;
         this.star.pos.y = item.y * this.PM + this.PMY;
-    },
+    }
     loadGravitySwitch(item) {
         this.gravityButton = new GravityButton();
         this.gravityButton.onButtonPressed = this.onButtonPressed.bind(this);
@@ -300,7 +301,7 @@ export const GameSceneLoaders = {
         this.gravityButton.x = item.x * this.PM + this.PMX;
         this.gravityButton.y = item.y * this.PM + this.PMY;
         this.gravityButton.anchor = Alignment.CENTER;
-    },
+    }
     loadStar(item) {
         const s = new Star();
         s.initTextureWithId(ResourceId.IMG_OBJ_STAR_IDLE);
@@ -329,7 +330,7 @@ export const GameSceneLoaders = {
             GameSceneConstants.IMG_OBJ_STAR_DISAPPEAR_Frame_1,
             GameSceneConstants.IMG_OBJ_STAR_DISAPPEAR_Frame_13
         );
-    },
+    }
     loadTutorialText(item) {
         if (this.shouldSkipTutorialElement(item)) {
             return;
@@ -378,7 +379,7 @@ export const GameSceneLoaders = {
         }
 
         this.tutorials.push(t);
-    },
+    }
     loadTutorialImage(item) {
         if (this.shouldSkipTutorialElement(item)) {
             return;
@@ -483,7 +484,7 @@ export const GameSceneLoaders = {
         }
 
         this.tutorialImages.push(s);
-    },
+    }
     loadHidden(item) {
         // get the hidden image index
         const v = item.name - MapItem.HIDDEN_01,
@@ -497,7 +498,7 @@ export const GameSceneLoaders = {
             s.rotation = item.angle || 0;
             this.drawings.push(s);
         }
-    },
+    }
     loadBubble(item) {
         const at = MathHelper.randomRange(
                 GameSceneConstants.IMG_OBJ_BUBBLE_ATTACHED_stain_01,
@@ -521,7 +522,7 @@ export const GameSceneLoaders = {
         bubble.parentAnchor = bubble.anchor = Alignment.CENTER;
         s.addChild(bubble);
         this.bubbles.push(s);
-    },
+    }
     loadPump(item) {
         const s = new Pump();
         s.initTextureWithId(ResourceId.IMG_OBJ_PUMP);
@@ -535,7 +536,7 @@ export const GameSceneLoaders = {
         s.updateRotation();
         s.anchor = Alignment.CENTER;
         this.pumps.push(s);
-    },
+    }
     loadSock(item) {
         const hatOrSock = IS_XMAS ? ResourceId.IMG_OBJ_SOCKS_XMAS : ResourceId.IMG_OBJ_SOCKS;
         const s = new Sock();
@@ -564,7 +565,7 @@ export const GameSceneLoaders = {
 
         s.updateRotation();
         this.socks.push(s);
-    },
+    }
     loadSpike(item) {
         const px = item.x * this.PM + this.PMX,
             py = item.y * this.PM + this.PMY,
@@ -575,7 +576,7 @@ export const GameSceneLoaders = {
         s.parseMover(item);
 
         if (tg) {
-            s.onRotateButtonPressed = this.rotateAllSpikesWithId.bind(this);
+            s.onButtonPressed = this.rotateAllSpikesWithId.bind(this);
         }
 
         if (item.name === MapItem.ELECTRO) {
@@ -592,7 +593,7 @@ export const GameSceneLoaders = {
             s.electro = false;
         }
         this.spikes.push(s);
-    },
+    }
     loadRotatedCircle(item) {
         const px = item.x * this.PM + this.PMX,
             py = item.y * this.PM + this.PMY,
@@ -616,7 +617,7 @@ export const GameSceneLoaders = {
         l.setHasOneHandle(oneHandle);
 
         this.rotatedCircles.push(l);
-    },
+    }
     loadBouncer(item) {
         const px = item.x * this.PM + this.PMX,
             py = item.y * this.PM + this.PMY,
@@ -625,7 +626,7 @@ export const GameSceneLoaders = {
             bouncer = new Bouncer(px, py, w, a);
         bouncer.parseMover(item);
         this.bouncers.push(bouncer);
-    },
+    }
     loadTarget(item) {
         const target = new GameObject();
         this.target = target;
@@ -958,5 +959,7 @@ export const GameSceneLoaders = {
         this.support.y = posY + paddingtonSupportYOffset;
 
         this.idlesTimer = MathHelper.randomRange(5, 20);
-    },
-};
+    }
+}
+
+export default GameSceneLoaders;
