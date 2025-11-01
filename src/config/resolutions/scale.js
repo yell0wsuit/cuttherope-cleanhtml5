@@ -212,10 +212,14 @@ const initProfile = (base, target) => {
 
 /**
  * Initializes a target profile scaled from the macOS version profile.
- * @param {TargetProfile} target
+ *
+ * @template {Record<string, unknown>} T
+ * @param {T} target
+ * @returns {T & typeof res2560x1440 & { uiScaledNumber(n: number): number }}
  */
 const initProfileFromMac = (target) => {
-    initProfile(res2560x1440, target);
+    initProfile(res2560x1440, /** @type {TargetProfile} */ (target));
+    return /** @type {T & typeof res2560x1440 & { uiScaledNumber(n: number): number }} */ (target);
 };
 
 export default initProfileFromMac;
