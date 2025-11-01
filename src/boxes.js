@@ -1,14 +1,25 @@
 import JsonLoader from "@/resources/JsonLoader";
 
+/** @typedef {import("@/types/json").LevelJson} LevelJson */
+/** @typedef {import("@/types/json").LoadedLevelEntry} LoadedLevelEntry */
+
 // Cached boxes data
+/**
+ * @type {Array<{ levels: LevelJson[] }> | null}
+ */
 let cachedBoxes = null;
 
 // Get levels from JsonLoader which loads them at runtime from public folder
+/**
+ * Resolve and memoize level JSON grouped by box.
+ * @returns {Array<{ levels: LevelJson[] }>}
+ */
 const getLevels = () => {
     if (cachedBoxes) {
         return cachedBoxes;
     }
 
+    /** @type {[string, LoadedLevelEntry[]][]} */
     const groupedLevels = Array.from(JsonLoader.getAllLevels());
 
     if (groupedLevels.length === 0) {
@@ -32,7 +43,7 @@ const getLevels = () => {
 export default new Proxy([], {
     get(target, prop) {
         const boxes = getLevels();
-        return boxes[prop];
+        return Reflect.get(boxes, prop);
     },
     has(target, prop) {
         const boxes = getLevels();
