@@ -7,13 +7,17 @@
  * @param {number} a alpha
  */
 class RGBAColor {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
     /**
      * @param {number} r
      * @param {number} g
      * @param {number} b
      * @param {number} a
      */
-    constructor(r, g, b, a) {
+    constructor(r: number, g: number, b: number, a: number) {
         /** @type {number} */
         this.r = r;
         /** @type {number} */
@@ -32,7 +36,7 @@ class RGBAColor {
      * @param {RGBAColor} other
      * @return {boolean}
      */
-    equals(other) {
+    equals(other: RGBAColor): boolean {
         return this.r === other.r && this.g === other.g && this.b === other.b && this.a === other.a;
     }
 
@@ -43,7 +47,7 @@ class RGBAColor {
     /**
      * @param {{ r: number; g: number; b: number; a: number; }} source
      */
-    copyFrom(source) {
+    copyFrom(source: { r: number; g: number; b: number; a: number }) {
         this.r = source.r;
         this.g = source.g;
         this.b = source.b;
@@ -53,7 +57,7 @@ class RGBAColor {
     /**
      * @param {{ r: number; g: number; b: number; a: number; }} other
      */
-    add(other) {
+    add(other: { r: number; g: number; b: number; a: number }) {
         this.r += other.r;
         this.g += other.g;
         this.b += other.b;
@@ -63,7 +67,7 @@ class RGBAColor {
     /**
      * @param {number} s
      */
-    multiply(s) {
+    multiply(s: number) {
         this.r *= s;
         this.g *= s;
         this.b *= s;
@@ -74,43 +78,43 @@ class RGBAColor {
      * @type {RGBAColor}
      * @const
      */
-    static transparent = new RGBAColor(0, 0, 0, 0);
+    static transparent: RGBAColor = new RGBAColor(0, 0, 0, 0);
 
     /**
      * @type {RGBAColor}
      * @const
      */
-    static solidOpaque = new RGBAColor(1, 1, 1, 1);
+    static solidOpaque: RGBAColor = new RGBAColor(1, 1, 1, 1);
 
     /**
      * @type {RGBAColor}
      * @const
      */
-    static red = new RGBAColor(1, 0, 0, 1);
+    static red: RGBAColor = new RGBAColor(1, 0, 0, 1);
 
     /**
      * @type {RGBAColor}
      * @const
      */
-    static blue = new RGBAColor(0, 0, 1, 1);
+    static blue: RGBAColor = new RGBAColor(0, 0, 1, 1);
 
     /**
      * @type {RGBAColor}
      * @const
      */
-    static green = new RGBAColor(0, 1, 0, 1);
+    static green: RGBAColor = new RGBAColor(0, 1, 0, 1);
 
     /**
      * @type {RGBAColor}
      * @const
      */
-    static black = new RGBAColor(0, 0, 0, 1);
+    static black: RGBAColor = new RGBAColor(0, 0, 0, 1);
 
     /**
      * @type {RGBAColor}
      * @const
      */
-    static white = RGBAColor.solidOpaque;
+    static white: RGBAColor = RGBAColor.solidOpaque;
 
     /**
      * @enum {string}
