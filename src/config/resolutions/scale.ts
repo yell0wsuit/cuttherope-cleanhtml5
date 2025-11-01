@@ -1,133 +1,131 @@
 import Rectangle from "@/core/Rectangle";
 import res2560x1440 from "@/config/resolutions/2560x1440";
 
-/**
- * @typedef {object} BaseProfile
- * @property {number} [CANVAS_WIDTH]
- * @property {number} [CANVAS_HEIGHT]
- * @property {number} [CANVAS_SCALE]
- * @property {number} [PM]
- * @property {number} [PMY]
- * @property {number} BUNGEE_REST_LEN
- * @property {number} [DEFAULT_BUNGEE_LINE_WIDTH]
- * @property {number} [DEFAULT_BUNGEE_WIDTH]
- * @property {number} CLICK_TO_CUT_SEARCH_RADIUS
- * @property {number} MOVER_SCALE
- * @property {number} STAR_RADIUS
- * @property {number} MOUTH_OPEN_RADIUS
- * @property {number} OUT_OF_SCREEN_ADJUSTMENT_BOTTOM
- * @property {number} OUT_OF_SCREEN_ADJUSTMENT_TOP
- * @property {Rectangle} STAR_DEFAULT_BB
- * @property {Rectangle} STAR_BB
- * @property {Rectangle} TARGET_BB
- * @property {Rectangle} TARGET2_BB
- * @property {number} TUTORIAL_HAND_TARGET_X_1
- * @property {number} TUTORIAL_HAND_TARGET_X_2
- * @property {number} BUBBLE_SIZE
- * @property {number} BUBBLE_RADIUS
- * @property {number} BUBBLE_TOUCH_OFFSET
- * @property {number} BUBBLE_TOUCH_SIZE
- * @property {Rectangle} BUBBLE_BB
- * @property {number} [BUBBLE_IMPULSE_Y]
- * @property {number} [BUBBLE_IMPULSE_RD]
- * @property {number} STAR_SPIKE_RADIUS
- * @property {number} BOUNCER_RADIUS
- * @property {number} PUMP_POWER_RADIUS
- * @property {Rectangle} PUMP_BB
- * @property {number} PUMP_DIRT_SPEED
- * @property {number} PUMP_DIRT_PARTICLE_SIZE
- * @property {number} PUMP_DIRT_OFFSET
- * @property {number} CANDY_BUBBLE_TUTORIAL_LIMIT_Y
- * @property {number} CANDY_BUBBLE_TUTORIAL_LIMIT_X
- * @property {Rectangle} CANDY_BB
- * @property {Rectangle} CANDY_LR_BB
- * @property {number} [GRAB_RADIUS_ALPHA]
- * @property {number} GRAB_WHEEL_RADIUS
- * @property {number} GRAB_WHEEL_MAX_ROTATION
- * @property {number} GRAB_WHEEL_SCALE_DIVISOR
- * @property {number} GRAB_ROPE_ROLL_MAX_LENGTH
- * @property {number} GRAB_MOVE_BG_WIDTH
- * @property {number} GRAB_MOVE_BG_X_OFFSET
- * @property {number} GRAB_MOVE_RADIUS
- * @property {number} SPIDER_SPEED
- * @property {number} SOCK_LIGHT_Y
- * @property {number} SOCK_WIDTH
- * @property {number} SOCK_ROTATION_Y_OFFSET
- * @property {number} STAR_SOCK_RADIUS
- * @property {number} SOCK_TELEPORT_Y
- * @property {number} POLLEN_MIN_DISTANCE
- * @property {number} POLLEN_MAX_OFFSET
- * @property {number} RC_CONTROLLER_RADIUS
- * @property {number} IGNORE_TOUCHES_DISTANCE
- * @property {number} PREVIEW_CAMERA_SPEED
- * @property {number} PREVIEW_CAMERA_SPEED2
- * @property {number} MAX_PREVIEW_CAMERA_SPEED
- * @property {number} MIN_PREVIEW_CAMERA_SPEED
- * @property {number} CAMERA_SPEED_THRESHOLD
- * @property {number} CAMERA_SPEED
- * @property {number} CUT_MAX_SIZE
- * @property {number} [PHYSICS_SPEED_MULTIPLIER]
- */
+interface BaseProfile {
+    CANVAS_WIDTH?: number;
+    CANVAS_HEIGHT?: number;
+    CANVAS_SCALE?: number;
+    PM?: number;
+    PMY?: number;
+    BUNGEE_REST_LEN: number;
+    DEFAULT_BUNGEE_LINE_WIDTH?: number;
+    DEFAULT_BUNGEE_WIDTH?: number;
+    CLICK_TO_CUT_SEARCH_RADIUS: number;
+    MOVER_SCALE: number;
+    STAR_RADIUS: number;
+    MOUTH_OPEN_RADIUS: number;
+    OUT_OF_SCREEN_ADJUSTMENT_BOTTOM: number;
+    OUT_OF_SCREEN_ADJUSTMENT_TOP: number;
+    STAR_DEFAULT_BB: Rectangle;
+    STAR_BB: Rectangle;
+    TARGET_BB: Rectangle;
+    TARGET2_BB: Rectangle;
+    TUTORIAL_HAND_TARGET_X_1: number;
+    TUTORIAL_HAND_TARGET_X_2: number;
+    BUBBLE_SIZE: number;
+    BUBBLE_RADIUS: number;
+    BUBBLE_TOUCH_OFFSET: number;
+    BUBBLE_TOUCH_SIZE: number;
+    BUBBLE_BB: Rectangle;
+    BUBBLE_IMPULSE_Y?: number;
+    BUBBLE_IMPULSE_RD?: number;
+    STAR_SPIKE_RADIUS: number;
+    BOUNCER_RADIUS: number;
+    PUMP_POWER_RADIUS: number;
+    PUMP_BB: Rectangle;
+    PUMP_DIRT_SPEED: number;
+    PUMP_DIRT_PARTICLE_SIZE: number;
+    PUMP_DIRT_OFFSET: number;
+    CANDY_BUBBLE_TUTORIAL_LIMIT_Y: number;
+    CANDY_BUBBLE_TUTORIAL_LIMIT_X: number;
+    CANDY_BB: Rectangle;
+    CANDY_LR_BB: Rectangle;
+    GRAB_RADIUS_ALPHA?: number;
+    GRAB_WHEEL_RADIUS: number;
+    GRAB_WHEEL_MAX_ROTATION: number;
+    GRAB_WHEEL_SCALE_DIVISOR: number;
+    GRAB_ROPE_ROLL_MAX_LENGTH: number;
+    GRAB_MOVE_BG_WIDTH: number;
+    GRAB_MOVE_BG_X_OFFSET: number;
+    GRAB_MOVE_RADIUS: number;
+    SPIDER_SPEED: number;
+    SOCK_LIGHT_Y: number;
+    SOCK_WIDTH: number;
+    SOCK_ROTATION_Y_OFFSET: number;
+    STAR_SOCK_RADIUS: number;
+    SOCK_TELEPORT_Y: number;
+    POLLEN_MIN_DISTANCE: number;
+    POLLEN_MAX_OFFSET: number;
+    RC_CONTROLLER_RADIUS: number;
+    IGNORE_TOUCHES_DISTANCE: number;
+    PREVIEW_CAMERA_SPEED: number;
+    PREVIEW_CAMERA_SPEED2: number;
+    MAX_PREVIEW_CAMERA_SPEED: number;
+    MIN_PREVIEW_CAMERA_SPEED: number;
+    CAMERA_SPEED_THRESHOLD: number;
+    CAMERA_SPEED: number;
+    CUT_MAX_SIZE: number;
+    PHYSICS_SPEED_MULTIPLIER?: number;
+}
 
-/**
- * @typedef {object} TargetProfile
- * @property {number} CANVAS_SCALE
- * @property {number} UI_IMAGES_SCALE
- * @property {(n:number)=>number} uiScaledNumber
- * @property {number} BUNGEE_REST_LEN
- * @property {number} MOVER_SCALE
- * @property {number} STAR_RADIUS
- * @property {number} MOUTH_OPEN_RADIUS
- * @property {number} OUT_OF_SCREEN_ADJUSTMENT_TOP
- * @property {number} OUT_OF_SCREEN_ADJUSTMENT_BOTTOM
- * @property {number} CLICK_TO_CUT_SEARCH_RADIUS
- * @property {Rectangle} TARGET_BB
- * @property {Rectangle} TARGET2_BB
- * @property {number} TUTORIAL_HAND_TARGET_X_1
- * @property {number} TUTORIAL_HAND_TARGET_X_2
- * @property {number} BUBBLE_SIZE
- * @property {number} BUBBLE_TOUCH_OFFSET
- * @property {number} BUBBLE_TOUCH_SIZE
- * @property {Rectangle} BUBBLE_BB
- * @property {number} BUBBLE_RADIUS
- * @property {number} STAR_SPIKE_RADIUS
- * @property {Rectangle} STAR_BB
- * @property {Rectangle} STAR_DEFAULT_BB
- * @property {number} BOUNCER_RADIUS
- * @property {number} PUMP_POWER_RADIUS
- * @property {Rectangle} PUMP_BB
- * @property {number} PUMP_DIRT_SPEED
- * @property {number} PUMP_DIRT_PARTICLE_SIZE
- * @property {number} PUMP_DIRT_OFFSET
- * @property {Rectangle} CANDY_BB
- * @property {Rectangle} CANDY_LR_BB
- * @property {number} CANDY_BUBBLE_TUTORIAL_LIMIT_Y
- * @property {number} CANDY_BUBBLE_TUTORIAL_LIMIT_X
- * @property {number} IGNORE_TOUCHES_DISTANCE
- * @property {number} PREVIEW_CAMERA_SPEED
- * @property {number} PREVIEW_CAMERA_SPEED2
- * @property {number} MAX_PREVIEW_CAMERA_SPEED
- * @property {number} MIN_PREVIEW_CAMERA_SPEED
- * @property {number} CAMERA_SPEED_THRESHOLD
- * @property {number} CAMERA_SPEED
- * @property {number} GRAB_WHEEL_MAX_ROTATION
- * @property {number} GRAB_WHEEL_SCALE_DIVISOR
- * @property {number} GRAB_WHEEL_RADIUS
- * @property {number} GRAB_ROPE_ROLL_MAX_LENGTH
- * @property {number} GRAB_MOVE_BG_WIDTH
- * @property {number} GRAB_MOVE_BG_X_OFFSET
- * @property {number} GRAB_MOVE_RADIUS
- * @property {number} SPIDER_SPEED
- * @property {number} POLLEN_MIN_DISTANCE
- * @property {number} POLLEN_MAX_OFFSET
- * @property {number} RC_CONTROLLER_RADIUS
- * @property {number} SOCK_LIGHT_Y
- * @property {number} SOCK_WIDTH
- * @property {number} SOCK_ROTATION_Y_OFFSET
- * @property {number} STAR_SOCK_RADIUS
- * @property {number} SOCK_TELEPORT_Y
- * @property {number} CUT_MAX_SIZE
- */
+interface TargetProfile {
+    CANVAS_SCALE: number;
+    UI_IMAGES_SCALE: number;
+    uiScaledNumber: (n: number) => number;
+    BUNGEE_REST_LEN: number;
+    MOVER_SCALE: number;
+    STAR_RADIUS: number;
+    MOUTH_OPEN_RADIUS: number;
+    OUT_OF_SCREEN_ADJUSTMENT_TOP: number;
+    OUT_OF_SCREEN_ADJUSTMENT_BOTTOM: number;
+    CLICK_TO_CUT_SEARCH_RADIUS: number;
+    TARGET_BB: Rectangle;
+    TARGET2_BB: Rectangle;
+    TUTORIAL_HAND_TARGET_X_1: number;
+    TUTORIAL_HAND_TARGET_X_2: number;
+    BUBBLE_SIZE: number;
+    BUBBLE_TOUCH_OFFSET: number;
+    BUBBLE_TOUCH_SIZE: number;
+    BUBBLE_BB: Rectangle;
+    BUBBLE_RADIUS: number;
+    STAR_SPIKE_RADIUS: number;
+    STAR_BB: Rectangle;
+    STAR_DEFAULT_BB: Rectangle;
+    BOUNCER_RADIUS: number;
+    PUMP_POWER_RADIUS: number;
+    PUMP_BB: Rectangle;
+    PUMP_DIRT_SPEED: number;
+    PUMP_DIRT_PARTICLE_SIZE: number;
+    PUMP_DIRT_OFFSET: number;
+    CANDY_BB: Rectangle;
+    CANDY_LR_BB: Rectangle;
+    CANDY_BUBBLE_TUTORIAL_LIMIT_Y: number;
+    CANDY_BUBBLE_TUTORIAL_LIMIT_X: number;
+    IGNORE_TOUCHES_DISTANCE: number;
+    PREVIEW_CAMERA_SPEED: number;
+    PREVIEW_CAMERA_SPEED2: number;
+    MAX_PREVIEW_CAMERA_SPEED: number;
+    MIN_PREVIEW_CAMERA_SPEED: number;
+    CAMERA_SPEED_THRESHOLD: number;
+    CAMERA_SPEED: number;
+    GRAB_WHEEL_MAX_ROTATION: number;
+    GRAB_WHEEL_SCALE_DIVISOR: number;
+    GRAB_WHEEL_RADIUS: number;
+    GRAB_ROPE_ROLL_MAX_LENGTH: number;
+    GRAB_MOVE_BG_WIDTH: number;
+    GRAB_MOVE_BG_X_OFFSET: number;
+    GRAB_MOVE_RADIUS: number;
+    SPIDER_SPEED: number;
+    POLLEN_MIN_DISTANCE: number;
+    POLLEN_MAX_OFFSET: number;
+    RC_CONTROLLER_RADIUS: number;
+    SOCK_LIGHT_Y: number;
+    SOCK_WIDTH: number;
+    SOCK_ROTATION_Y_OFFSET: number;
+    STAR_SOCK_RADIUS: number;
+    SOCK_TELEPORT_Y: number;
+    CUT_MAX_SIZE: number;
+}
 
 /**
  * Initializes the target device profile using a base profile.
@@ -135,7 +133,7 @@ import res2560x1440 from "@/config/resolutions/2560x1440";
  * @param {BaseProfile} base
  * @param {TargetProfile} target
  */
-const initProfile = (base, target) => {
+const initProfile = (base: BaseProfile, target: TargetProfile) => {
     const scale = target.CANVAS_SCALE;
 
     target.BUNGEE_REST_LEN = base.BUNGEE_REST_LEN * scale;
@@ -217,9 +215,11 @@ const initProfile = (base, target) => {
  * @param {T} target
  * @returns {T & typeof res2560x1440 & { uiScaledNumber(n: number): number }}
  */
-const initProfileFromMac = (target) => {
-    initProfile(res2560x1440, /** @type {TargetProfile} */ (target));
-    return /** @type {T & typeof res2560x1440 & { uiScaledNumber(n: number): number }} */ (target);
+const initProfileFromMac = <T extends any>(
+    target: T
+): T & typeof res2560x1440 & { uiScaledNumber(n: number): number } => {
+    initProfile(res2560x1440, target as TargetProfile);
+    return target as T & typeof res2560x1440 & { uiScaledNumber(n: number): number };
 };
 
 export default initProfileFromMac;
