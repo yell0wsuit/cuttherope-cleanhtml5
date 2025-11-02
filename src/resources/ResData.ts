@@ -346,8 +346,9 @@ RES_DATA[ResourceId.SND_MENU_MUSIC_XMAS] = new ResEntry("menu_music_xmas", Resou
 RES_DATA[ResourceId.SND_GAME_MUSIC_XMAS] = new ResEntry("game_music_xmas", ResourceType.SOUND);
 
 RES_DATA[ResourceId.SND_TELEPORT_XMAS] = new ResEntry("teleport_xmas", ResourceType.SOUND);
+
 RES_DATA[ResourceId.SND_ROCKET_START] = new ResEntry("rocket_start", ResourceType.SOUND);
-RES_DATA[ResourceId.SND_ROCKET_FLY] = new ResEntry("rocket_fly", ResourceType.SOUND);
+RES_DATA[ResourceId.SND_ROCKET_FLY] = new ResEntry("rocket_fly_looped", ResourceType.SOUND);
 
 RES_DATA[ResourceId.IMG_CHAR_SUPPORTS_XMAS] = new ResEntry(
     "char_supports_xmas.png",
