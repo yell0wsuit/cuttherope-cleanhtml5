@@ -117,7 +117,7 @@ const levelButtons = [];
 let isLevelNavigationActive = true;
 let lastTotalPages = 0;
 
-LevelPanel.init = function (interfaceManager) {
+LevelPanel.init = function (/** @type {import("@/ui/InterfaceManager")} */ interfaceManager) {
     im = interfaceManager;
 
     const levelOptions = getElement("#levelOptions");
