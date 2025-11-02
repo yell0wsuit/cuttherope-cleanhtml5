@@ -83,7 +83,12 @@ export function updateHazards(delta, numGrabs) {
         rocket.updateRotation();
 
         const star = rocket.attachedStar || this.star;
-        const distance = Vector.distance(star.pos.x, star.pos.y, rocket.point.pos.x, rocket.point.pos.y);
+        const distance = Vector.distance(
+            star.pos.x,
+            star.pos.y,
+            rocket.point.pos.x,
+            rocket.point.pos.y
+        );
 
         if (rocket.state === Rocket.State.FLY || rocket.state === Rocket.State.DISTANCE) {
             for (let j = 0; j < 30; j++) {
@@ -140,7 +145,9 @@ export function updateHazards(delta, numGrabs) {
                 }
             }
 
-            rocket.rotation = MathHelper.normalizeAngle360(rocket.rotation + rocket.additionalAngle);
+            rocket.rotation = MathHelper.normalizeAngle360(
+                rocket.rotation + rocket.additionalAngle
+            );
             rocket.updateRotation();
 
             const direction = Vector.forAngle(rocket.angle + Math.PI);
@@ -155,6 +162,16 @@ export function updateHazards(delta, numGrabs) {
             rocket.point.pos.x = star.pos.x;
             rocket.point.pos.y = star.pos.y;
             rocket.point.prevPos.copyFrom(rocket.point.pos);
+
+            // Check if rocket (with candy) goes out of bounds
+            if (this.pointOutOfScreen(star) && !this.noCandy) {
+                this.noCandy = true;
+                this.stopActiveRocket(rocket);
+                if (this.restartState !== GameSceneConstants.RestartState.FADE_IN) {
+                    this.dd.callObject(this, this.gameLost, null, 0.3);
+                }
+                return false;
+            }
 
             if (rocket.time !== -1) {
                 rocket.time = Mover.moveToTarget(rocket.time, 0, 1, delta);
@@ -215,16 +232,12 @@ export function updateHazards(delta, numGrabs) {
 
             const texture = ResourceMgr.getTexture(ResourceId.IMG_OBJ_ROCKET);
             if (texture) {
-                const sparks = new RocketSparks(
-                    40,
-                    texture,
-                    [
-                        ROCKET_FRAMES.SPARKLE_1,
-                        ROCKET_FRAMES.SPARKLE_2,
-                        ROCKET_FRAMES.SPARKLE_3,
-                        ROCKET_FRAMES.SPARKLE_4,
-                    ]
-                );
+                const sparks = new RocketSparks(40, texture, [
+                    ROCKET_FRAMES.SPARKLE_1,
+                    ROCKET_FRAMES.SPARKLE_2,
+                    ROCKET_FRAMES.SPARKLE_3,
+                    ROCKET_FRAMES.SPARKLE_4,
+                ]);
                 sparks.x = rocket.x;
                 sparks.y = rocket.y;
                 sparks.angle = rocket.rotation;

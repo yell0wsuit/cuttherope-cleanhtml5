@@ -44,7 +44,12 @@ function calculateScore(scene) {
  */
 function gameWon(scene) {
     scene.dd.cancelAllDispatches();
-    scene.stopActiveRocket();
+
+    // Stop the rocket before marking candy as gone
+    if (scene.activeRocket) {
+        scene.activeRocket.time = -1; // Disable the timer
+        scene.stopActiveRocket();
+    }
 
     scene.target.playTimeline(GameSceneConstants.CharAnimation.WIN);
     SoundMgr.playSound(ResourceId.SND_MONSTER_CHEWING);
@@ -64,12 +69,7 @@ function gameWon(scene) {
         KeyFrame.makePos(scene.candy.x, scene.candy.y, KeyFrame.TransitionType.LINEAR, 0)
     );
     tl.addKeyFrame(
-        KeyFrame.makePos(
-            scene.target.x,
-            scene.target.y + 10,
-            KeyFrame.TransitionType.LINEAR,
-            0.1
-        )
+        KeyFrame.makePos(scene.target.x, scene.target.y + 10, KeyFrame.TransitionType.LINEAR, 0.1)
     );
     tl.addKeyFrame(KeyFrame.makeScale(0.71, 0.71, KeyFrame.TransitionType.LINEAR, 0));
     tl.addKeyFrame(KeyFrame.makeScale(0, 0, KeyFrame.TransitionType.LINEAR, 0.1));
@@ -77,11 +77,7 @@ function gameWon(scene) {
         KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0)
     );
     tl.addKeyFrame(
-        KeyFrame.makeColor(
-            RGBAColor.transparent.copy(),
-            KeyFrame.TransitionType.LINEAR,
-            0.1
-        )
+        KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.1)
     );
     scene.candy.addTimelineWithID(tl, 0);
     scene.candy.playTimeline(0);

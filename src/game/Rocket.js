@@ -89,6 +89,9 @@ class Rocket extends CTRGameObject {
             ROCKET_FRAMES.IGNITION,
             ROCKET_FRAMES.FLAME_LARGE
         );
+
+        this.sparks.blendingMode = 2; // Additive blending for glow effect
+
         this.container.addChild(this.sparks);
 
         this.addRotationTimelines();
@@ -162,7 +165,7 @@ class Rocket extends CTRGameObject {
 
         const emissionOrigin = new Vector(this.x, this.y);
         const forward = Vector.forAngle(this.angle);
-        const offset = Vector.multiply(forward, 35);
+        const offset = Vector.multiply(forward, 95);
         emissionOrigin.add(offset);
 
         const initialAngle = this.angle - Math.PI;
@@ -215,7 +218,11 @@ class Rocket extends CTRGameObject {
     }
 
     handleRotate(position) {
-        const angleDelta = this.getRotateAngleForStartEndCenter(this.lastTouch, position, new Vector(this.x, this.y));
+        const angleDelta = this.getRotateAngleForStartEndCenter(
+            this.lastTouch,
+            position,
+            new Vector(this.x, this.y)
+        );
         const normalized = MathHelper.normalizeAngle360(angleDelta);
         this.rotation = MathHelper.normalizeAngle360(this.rotation + normalized);
         this.lastTouch.copyFrom(position);
@@ -279,8 +286,14 @@ class Rocket extends CTRGameObject {
 
     timelineFinished(timeline) {
         this.rotateWithBB(this.rotation);
-        if (timeline === this.getTimeline(TimelineId.EXHAUST) && typeof this.onExhausted === "function") {
-            this.onExhausted(this);
+        if (timeline === this.getTimeline(TimelineId.EXHAUST)) {
+            this.scaleX = 0;
+            this.scaleY = 0;
+            // Hide the rocket after exhaust animation completes
+            this.visible = false;
+            if (typeof this.onExhausted === "function") {
+                this.onExhausted(this);
+            }
         }
     }
 
