@@ -38,6 +38,23 @@ function teleport(scene) {
     scene.star.posDelta.divide(60);
     scene.star.prevPos.copyFrom(scene.star.pos);
     scene.star.prevPos.subtract(scene.star.posDelta);
+
+    // If there's an active rocket attached to the candy, teleport it too
+    if (scene.activeRocket && scene.activeRocket.attachedStar === scene.star) {
+        const rocket = scene.activeRocket;
+        rocket.point.pos.x = scene.star.pos.x;
+        rocket.point.pos.y = scene.star.pos.y;
+        rocket.point.prevPos.copyFrom(rocket.point.pos);
+
+        // Set rocket rotation to match exit hat direction
+        // Rocket needs +90° offset because thrust is perpendicular to visual orientation
+        rocket.rotation = sock.rotation + 90;
+        rocket.startRotation = sock.rotation + 90;
+        rocket.startCandyRotation = scene.candyMain.rotation;
+        rocket.additionalAngle = 0;
+        rocket.updateRotation();
+    }
+
     /**
      * @type {Sock | null}
      */
