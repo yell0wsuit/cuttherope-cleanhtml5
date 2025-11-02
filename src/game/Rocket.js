@@ -76,6 +76,9 @@ class Rocket extends CTRGameObject {
         this.container.anchor = Alignment.CENTER;
         this.container.parentAnchor = Alignment.CENTER;
 
+        this.initialScaleX = ROCKET_DEFAULT_SCALE;
+        this.initialScaleY = ROCKET_DEFAULT_SCALE;
+
         this.sparks = new Animation();
         this.sparks.initTextureWithId(ResourceId.IMG_OBJ_ROCKET);
         this.sparks.anchor = Alignment.CENTER;
@@ -133,6 +136,9 @@ class Rocket extends CTRGameObject {
         this.container.rotationCenterX = this.rotationCenterX;
         this.container.rotationCenterY = this.rotationCenterY;
         this.syncSparkScale();
+
+        this.initialScaleX = this.scaleX || ROCKET_DEFAULT_SCALE;
+        this.initialScaleY = this.scaleY || ROCKET_DEFAULT_SCALE;
     }
 
     syncSparkScale() {
@@ -188,6 +194,10 @@ class Rocket extends CTRGameObject {
     }
 
     draw() {
+        if (!this.visible) {
+            return;
+        }
+
         this.container.draw();
         super.draw();
     }
@@ -248,6 +258,11 @@ class Rocket extends CTRGameObject {
         if (instanceKey) {
             this.loopInstanceKey = instanceKey;
         }
+
+        this.visible = true;
+        this.container.visible = true;
+        this.scaleX = this.initialScaleX;
+        this.scaleY = this.initialScaleY;
         this.sparks.setEnabled(true);
         this.sparks.playTimeline(0);
         SoundMgr.playSound(ResourceId.SND_ROCKET_START);
@@ -291,6 +306,7 @@ class Rocket extends CTRGameObject {
             this.scaleY = 0;
             // Hide the rocket after exhaust animation completes
             this.visible = false;
+            this.container.visible = false;
             if (typeof this.onExhausted === "function") {
                 this.onExhausted(this);
             }
