@@ -140,7 +140,18 @@ class GameSceneInit extends BaseElement {
     pointOutOfScreen(p) {
         const bottomY = this.mapHeight + resolution.OUT_OF_SCREEN_ADJUSTMENT_BOTTOM;
         const topY = resolution.OUT_OF_SCREEN_ADJUSTMENT_TOP;
-        const outOfScreen = p.pos.y > bottomY || p.pos.y < topY;
+        const horizontalMargin = Math.max(
+            resolution.OUT_OF_SCREEN_ADJUSTMENT_BOTTOM,
+            Math.abs(resolution.OUT_OF_SCREEN_ADJUSTMENT_TOP)
+        );
+        const mapLeft = this.PMX;
+        const mapRight = this.PMX + this.mapWidth;
+        const screenWidth = resolution.CANVAS_WIDTH;
+        const leftX = Math.min(0, mapLeft) - horizontalMargin;
+        const rightX = Math.max(screenWidth, mapRight) + horizontalMargin;
+
+        const outOfScreen =
+            p.pos.y > bottomY || p.pos.y < topY || p.pos.x < leftX || p.pos.x > rightX;
         return outOfScreen;
     }
     restart() {
