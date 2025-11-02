@@ -9,8 +9,10 @@
         {
             "name": 1,
             "ropePhysicsSpeed": 1,
-            "special": 2,
-            "twoParts": false
+            "special": 1,
+            "twoParts": false,
+            "water": 0,
+            "waterSpeed": 0
         }
     ],
     "objects": [
@@ -20,22 +22,21 @@
             "y": 83
         },
         {
-            "name": 52,
-            "x": 157,
-            "y": 272
-        },
-        {
             "name": 100,
             "x": 236,
             "y": 348,
             "length": 80,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
             "spider": false,
+            "helicopter": false,
             "part": "L"
         },
         {
@@ -43,56 +44,23 @@
             "x": 83,
             "y": 348,
             "length": 80,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
             "spider": false,
+            "helicopter": false,
             "part": "L"
         },
         {
-            "name": 100,
-            "x": 159,
-            "y": 145,
-            "length": 35,
-            "wheel": false,
-            "gun": false,
-            "radius": -1,
-            "moveLength": -1,
-            "moveVertical": false,
-            "moveOffset": 0,
-            "spider": false,
-            "part": "L"
-        },
-        {
-            "name": 100,
-            "x": 274,
-            "y": 145,
-            "length": 140,
-            "wheel": false,
-            "gun": false,
-            "radius": -1,
-            "moveLength": -1,
-            "moveVertical": false,
-            "moveOffset": 0,
-            "spider": false,
-            "part": "L"
-        },
-        {
-            "name": 100,
-            "x": 50,
-            "y": 144,
-            "length": 140,
-            "wheel": false,
-            "gun": false,
-            "radius": -1,
-            "moveLength": -1,
-            "moveVertical": false,
-            "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "name": 52,
+            "x": 157,
+            "y": 272
         },
         {
             "name": 3,
@@ -101,21 +69,22 @@
             "timeout": -1
         },
         {
-            "name": 3,
-            "x": 141,
-            "y": 442,
-            "timeout": -1
-        },
-        {
-            "name": 3,
-            "x": 183,
-            "y": 442,
-            "timeout": -1
-        },
-        {
-            "name": 54,
-            "x": 157,
-            "y": 347
+            "name": 100,
+            "x": 159,
+            "y": 145,
+            "length": 45,
+            "radius": -1,
+            "moveLength": -1,
+            "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
+            "spider": false,
+            "helicopter": false,
+            "part": "L"
         },
         {
             "name": 4,
@@ -129,44 +98,79 @@
             "name": 13,
             "x": 255,
             "y": 237,
-            "locale": "en",
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "en"
+        },
+        {
+            "name": 54,
+            "x": 157,
+            "y": 347
+        },
+        {
+            "name": 100,
+            "x": 274,
+            "y": 145,
+            "length": 140,
+            "radius": -1,
+            "moveLength": -1,
+            "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
+            "spider": false,
+            "helicopter": false,
+            "part": "L"
+        },
+        {
+            "name": 100,
+            "x": 50,
+            "y": 144,
+            "length": 140,
+            "radius": -1,
+            "moveLength": -1,
+            "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
+            "spider": false,
+            "helicopter": false,
+            "part": "L"
+        },
+        {
+            "name": 3,
+            "x": 141,
+            "y": 442,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 183,
+            "y": 442,
+            "timeout": -1
         }
     ],
-    "ru": [
+    "br": [
         {
             "name": 13,
-            "x": 261,
+            "x": 268,
             "y": 221,
-            "locale": "ru",
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "br"
         },
         {
             "name": 4,
-            "x": 214,
+            "x": 221,
             "y": 234,
-            "locale": "ru",
-            "text": "Натянутые веревки становятся красными",
-            "width": 100
-        }
-    ],
-    "fr": [
-        {
-            "name": 13,
-            "x": 258,
-            "y": 223,
-            "locale": "fr",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 211,
-            "y": 236,
-            "locale": "fr",
-            "text": "Les cordes étirées deviennent rouges",
+            "locale": "br",
+            "text": "Cordas esticadas ficam vermelhas",
             "width": 100
         }
     ],
@@ -183,9 +187,153 @@
             "name": 13,
             "x": 252,
             "y": 233,
-            "locale": "de",
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "de"
+        }
+    ],
+    "es": [
+        {
+            "name": 13,
+            "x": 257,
+            "y": 201,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "es"
+        },
+        {
+            "name": 4,
+            "x": 195,
+            "y": 214,
+            "locale": "es",
+            "text": "Las cuerdas se ponen rojas cuando están muy tensas.",
+            "width": 120
+        }
+    ],
+    "fr": [
+        {
+            "name": 13,
+            "x": 258,
+            "y": 223,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "fr"
+        },
+        {
+            "name": 4,
+            "x": 211,
+            "y": 236,
+            "locale": "fr",
+            "text": "Les cordes étirées deviennent rouges",
+            "width": 100
+        }
+    ],
+    "it": [
+        {
+            "name": 13,
+            "x": 268,
+            "y": 221,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "it"
+        },
+        {
+            "name": 4,
+            "x": 221,
+            "y": 234,
+            "locale": "it",
+            "text": "Le corde tese diventano rosse",
+            "width": 100
+        }
+    ],
+    "ja": [
+        {
+            "name": 13,
+            "x": 268,
+            "y": 221,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ja"
+        },
+        {
+            "name": 4,
+            "x": 221,
+            "y": 234,
+            "locale": "ja",
+            "text": "伸びすぎた*ロープは*赤く*なって*しまいます",
+            "width": 100
+        }
+    ],
+    "ko": [
+        {
+            "name": 13,
+            "x": 268,
+            "y": 221,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ko"
+        },
+        {
+            "name": 4,
+            "x": 221,
+            "y": 234,
+            "locale": "ko",
+            "text": "늘어난 줄은 *빨간색으로 변해요.",
+            "width": 100
+        }
+    ],
+    "nl": [
+        {
+            "name": 13,
+            "x": 258,
+            "y": 225,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "nl"
+        },
+        {
+            "name": 4,
+            "x": 211,
+            "y": 234,
+            "locale": "nl",
+            "text": "Uitgerekte touwen worden rood",
+            "width": 100
+        }
+    ],
+    "ru": [
+        {
+            "name": 13,
+            "x": 261,
+            "y": 221,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ru"
+        },
+        {
+            "name": 4,
+            "x": 214,
+            "y": 234,
+            "locale": "ru",
+            "text": "Натянутые веревки становятся красными",
+            "width": 100
+        }
+    ],
+    "zh": [
+        {
+            "name": 13,
+            "x": 268,
+            "y": 221,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "zh"
+        },
+        {
+            "name": 4,
+            "x": 214,
+            "y": 234,
+            "locale": "zh",
+            "text": "拉紧的绳索 会变成红色",
+            "width": 100
         }
     ]
 }

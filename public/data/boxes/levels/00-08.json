@@ -9,8 +9,10 @@
         {
             "name": 1,
             "ropePhysicsSpeed": 1,
-            "special": 2,
-            "twoParts": false
+            "special": 1,
+            "twoParts": false,
+            "water": 0,
+            "waterSpeed": 0
         }
     ],
     "objects": [
@@ -20,22 +22,21 @@
             "y": 296
         },
         {
-            "name": 52,
-            "x": 162,
-            "y": 292
-        },
-        {
             "name": 100,
             "x": 29,
             "y": 397,
             "length": 100,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
             "spider": false,
+            "helicopter": false,
             "part": "L"
         },
         {
@@ -43,13 +44,17 @@
             "x": 294,
             "y": 192,
             "length": 100,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
             "spider": false,
+            "helicopter": false,
             "part": "L"
         },
         {
@@ -57,28 +62,23 @@
             "x": 29,
             "y": 192,
             "length": 100,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
             "spider": false,
+            "helicopter": false,
             "part": "L"
         },
         {
-            "name": 100,
-            "x": 294,
-            "y": 399,
-            "length": 100,
-            "wheel": false,
-            "gun": false,
-            "radius": -1,
-            "moveLength": -1,
-            "moveVertical": false,
-            "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "name": 52,
+            "x": 162,
+            "y": 292
         },
         {
             "name": 3,
@@ -99,6 +99,24 @@
             "timeout": -1
         },
         {
+            "name": 100,
+            "x": 294,
+            "y": 399,
+            "length": 100,
+            "radius": -1,
+            "moveLength": -1,
+            "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
+            "spider": false,
+            "helicopter": false,
+            "part": "L"
+        },
+        {
             "name": 56,
             "x": 165,
             "y": 401,
@@ -116,9 +134,9 @@
             "name": 13,
             "x": 73,
             "y": 97,
-            "locale": "en",
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "en"
         },
         {
             "name": 4,
@@ -129,21 +147,57 @@
             "width": 200
         }
     ],
-    "ru": [
+    "br": [
         {
             "name": 13,
-            "x": 40,
-            "y": 96,
-            "locale": "ru",
+            "x": 46,
+            "y": 83,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "br"
         },
         {
             "name": 4,
             "x": 60,
             "y": 50,
-            "locale": "ru",
-            "text": "Вы можете перерезать несколько веревок одновременно",
+            "locale": "br",
+            "text": "Você pode cortar várias cordas de uma só vez",
+            "width": 220
+        }
+    ],
+    "de": [
+        {
+            "name": 13,
+            "x": 46,
+            "y": 83,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "de"
+        },
+        {
+            "name": 4,
+            "x": 57,
+            "y": 46,
+            "locale": "de",
+            "text": "Du kannst mehrere Seile auf einmal durchschneiden",
+            "width": 250
+        }
+    ],
+    "es": [
+        {
+            "name": 13,
+            "x": 46,
+            "y": 83,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "es"
+        },
+        {
+            "name": 4,
+            "x": 43,
+            "y": 46,
+            "locale": "es",
+            "text": "Puedes cortar varias cuerdas a la vez.",
             "width": 240
         }
     ],
@@ -152,9 +206,9 @@
             "name": 13,
             "x": 39,
             "y": 78,
-            "locale": "fr",
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "fr"
         },
         {
             "name": 4,
@@ -165,22 +219,112 @@
             "width": 250
         }
     ],
-    "de": [
+    "it": [
         {
             "name": 13,
             "x": 46,
             "y": 83,
-            "locale": "de",
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "it"
         },
         {
             "name": 4,
-            "x": 57,
-            "y": 46,
-            "locale": "de",
-            "text": "Du kannst mehrere Seile auf einmal durchschneiden",
-            "width": 250
+            "x": 65,
+            "y": 48,
+            "locale": "it",
+            "text": "Puoi tagliare diverse corde alla volta",
+            "width": 200
+        }
+    ],
+    "ja": [
+        {
+            "name": 13,
+            "x": 40,
+            "y": 83,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ja"
+        },
+        {
+            "name": 4,
+            "x": 56,
+            "y": 50,
+            "locale": "ja",
+            "text": "複数の*ロープを*一気に*切断する*ことも*できます",
+            "width": 240
+        }
+    ],
+    "ko": [
+        {
+            "name": 13,
+            "x": 36,
+            "y": 83,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ko"
+        },
+        {
+            "name": 4,
+            "x": 16,
+            "y": 58,
+            "locale": "ko",
+            "text": "한번에 여러 줄을 *자를 수 있어요.",
+            "width": 300
+        }
+    ],
+    "nl": [
+        {
+            "name": 13,
+            "x": 36,
+            "y": 83,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "nl"
+        },
+        {
+            "name": 4,
+            "x": 60,
+            "y": 50,
+            "locale": "nl",
+            "text": "Je kunt verschillende touwen in één keer doorsnijden",
+            "width": 240
+        }
+    ],
+    "ru": [
+        {
+            "name": 13,
+            "x": 50,
+            "y": 96,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ru"
+        },
+        {
+            "name": 4,
+            "x": 46,
+            "y": 50,
+            "locale": "ru",
+            "text": "Вы можете перерезать несколько веревок одновременно",
+            "width": 240
+        }
+    ],
+    "zh": [
+        {
+            "name": 13,
+            "x": 46,
+            "y": 83,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "zh"
+        },
+        {
+            "name": 4,
+            "x": 10,
+            "y": 58,
+            "locale": "zh",
+            "text": "你可以一次剪断几条绳索",
+            "width": 300
         }
     ]
 }

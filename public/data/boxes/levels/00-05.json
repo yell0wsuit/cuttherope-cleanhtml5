@@ -9,71 +9,23 @@
         {
             "name": 1,
             "ropePhysicsSpeed": 1,
-            "special": 2,
-            "twoParts": false
+            "special": 1,
+            "twoParts": false,
+            "water": 0,
+            "waterSpeed": 0,
+            "nightLevel": false
         }
     ],
     "objects": [
         {
             "name": 2,
             "x": 217,
-            "y": 413
-        },
-        {
-            "name": 100,
-            "x": 50,
-            "y": 56,
-            "length": 55,
-            "wheel": false,
-            "gun": false,
-            "radius": -1,
-            "moveLength": -1,
-            "moveVertical": false,
-            "moveOffset": 0,
-            "spider": false,
-            "part": "L"
-        },
-        {
-            "name": 100,
-            "x": 157,
-            "y": 58,
-            "length": 130,
-            "wheel": false,
-            "gun": false,
-            "radius": -1,
-            "moveLength": -1,
-            "moveVertical": false,
-            "moveOffset": 0,
-            "spider": false,
-            "part": "L"
-        },
-        {
-            "name": 52,
-            "x": 47,
-            "y": 150
-        },
-        {
-            "name": 3,
-            "x": 151,
-            "y": 384,
-            "timeout": -1
-        },
-        {
-            "name": 3,
-            "x": 121,
-            "y": 217,
-            "timeout": -1
-        },
-        {
-            "name": 3,
-            "x": 51,
-            "y": 217,
-            "timeout": -1
+            "y": 402
         },
         {
             "name": 56,
             "x": 127,
-            "y": 388,
+            "y": 377,
             "group": 0,
             "angle": 0
         },
@@ -83,6 +35,53 @@
             "y": 218,
             "group": 0,
             "angle": -180
+        },
+        {
+            "name": 52,
+            "x": 47,
+            "y": 150
+        },
+        {
+            "name": 100,
+            "x": 50,
+            "y": 56,
+            "length": 55,
+            "radius": -1,
+            "moveLength": -1,
+            "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
+            "spider": false,
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
+        },
+        {
+            "name": 100,
+            "x": 157,
+            "y": 58,
+            "length": 130,
+            "radius": -1,
+            "moveLength": -1,
+            "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
+            "spider": false,
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
         },
         {
             "name": 4,
@@ -96,28 +95,46 @@
             "name": 8,
             "x": 160,
             "y": 236,
-            "locale": "en",
-            "angle": 180,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "en",
+            "angle": 180
+        },
+        {
+            "name": 3,
+            "x": 151,
+            "y": 373,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 121,
+            "y": 217,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 51,
+            "y": 217,
+            "timeout": -1
         }
     ],
-    "fr": [
+    "br": [
         {
             "name": 8,
             "x": 160,
-            "y": 237,
-            "locale": "fr",
-            "angle": 180,
+            "y": 236,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "br",
+            "angle": 180
         },
         {
             "name": 4,
-            "x": 52,
+            "x": 60,
             "y": 246,
-            "locale": "fr",
-            "text": "Dépose le bonbon dans la chaussette et il sortira de l'autre chaussette",
+            "locale": "br",
+            "text": "Jogue os doces na meia e eles cairão da outra meia",
             "width": 160
         }
     ],
@@ -126,10 +143,10 @@
             "name": 8,
             "x": 161,
             "y": 237,
-            "locale": "de",
-            "angle": 180,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "de",
+            "angle": 180
         },
         {
             "name": 4,
@@ -140,15 +157,129 @@
             "width": 200
         }
     ],
+    "es": [
+        {
+            "name": 8,
+            "x": 160,
+            "y": 236,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "es",
+            "angle": 180
+        },
+        {
+            "name": 4,
+            "x": 60,
+            "y": 240,
+            "locale": "es",
+            "text": "Al caer en un calcetín, el caramelo saldrá por el otro.",
+            "width": 160
+        }
+    ],
+    "fr": [
+        {
+            "name": 8,
+            "x": 160,
+            "y": 237,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "fr",
+            "angle": 180
+        },
+        {
+            "name": 4,
+            "x": 52,
+            "y": 246,
+            "locale": "fr",
+            "text": "Dépose le bonbon dans la chaussette et il sortira de l'autre chaussette",
+            "width": 160
+        }
+    ],
+    "it": [
+        {
+            "name": 8,
+            "x": 160,
+            "y": 236,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "it",
+            "angle": 180
+        },
+        {
+            "name": 4,
+            "x": 64,
+            "y": 245,
+            "locale": "it",
+            "text": "Butta il bonbon nel calzino e cadrà dall'altro calzino",
+            "width": 160
+        }
+    ],
+    "ja": [
+        {
+            "name": 8,
+            "x": 160,
+            "y": 236,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ja",
+            "angle": 180
+        },
+        {
+            "name": 4,
+            "x": 55,
+            "y": 235,
+            "locale": "ja",
+            "text": "くつしたに*キャンディを*入れると、*他の*くつしたから*出て*きます",
+            "width": 160
+        }
+    ],
+    "ko": [
+        {
+            "name": 8,
+            "x": 160,
+            "y": 236,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ko",
+            "angle": 180
+        },
+        {
+            "name": 4,
+            "x": 66,
+            "y": 245,
+            "locale": "ko",
+            "text": "양말에 사탕을 *넣으면 다른 양말에서 *튀어나와요.",
+            "width": 160
+        }
+    ],
+    "nl": [
+        {
+            "name": 8,
+            "x": 160,
+            "y": 236,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "nl",
+            "angle": 180
+        },
+        {
+            "name": 4,
+            "x": 65,
+            "y": 236,
+            "locale": "nl",
+            "text": "Laat het snoep in de sok vallen en kijk hoe het weer uit de andere sok tevoorschijn komt",
+            "width": 155
+        }
+    ],
     "ru": [
         {
             "name": 8,
             "x": 160,
             "y": 236,
-            "locale": "ru",
-            "angle": 180,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "ru",
+            "angle": 180
         },
         {
             "name": 4,
@@ -156,6 +287,25 @@
             "y": 242,
             "locale": "ru",
             "text": "Киньте леденец в один из носков, и он вылетит из другого",
+            "width": 160
+        }
+    ],
+    "zh": [
+        {
+            "name": 8,
+            "x": 160,
+            "y": 236,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "zh",
+            "angle": 180
+        },
+        {
+            "name": 4,
+            "x": 63,
+            "y": 241,
+            "locale": "zh",
+            "text": "将糖果丢入袜子。*它会从另一个袜子中掉出",
             "width": 160
         }
     ]

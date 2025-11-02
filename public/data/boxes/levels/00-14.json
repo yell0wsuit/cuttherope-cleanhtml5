@@ -9,8 +9,8 @@
         {
             "name": 1,
             "ropePhysicsSpeed": 1,
-            "special": 2,
-            "twoParts": false
+            "special": 1,
+            "nightLevel": false
         }
     ],
     "objects": [
@@ -50,14 +50,12 @@
             "x": 159,
             "y": 38,
             "length": 70,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "wheel": false,
+            "moveVertical": false,
+            "spider": false
         },
         {
             "name": 56,
