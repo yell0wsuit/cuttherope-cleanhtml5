@@ -29,7 +29,12 @@ function calculateScore(scene: GameScene): void {
 
 function gameWon(scene: GameScene): void {
     scene.dd.cancelAllDispatches();
-    scene.stopActiveRocket();
+
+    // Stop the rocket before marking candy as gone
+    if (scene.activeRocket) {
+        scene.activeRocket.time = -1; // Disable the timer
+        scene.stopActiveRocket();
+    }
 
     scene.target.playTimeline(GameSceneConstants.CharAnimation.WIN);
     SoundMgr.playSound(ResourceId.SND_MONSTER_CHEWING);
