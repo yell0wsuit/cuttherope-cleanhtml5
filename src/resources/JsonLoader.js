@@ -66,77 +66,78 @@ class JsonLoader {
         this.checkCompleteCallback = callback;
     }
 
-    start() {
+    async start() {
         // Use the configured base from vite config
         const baseUrl = import.meta.env.BASE_URL || "/";
-        /**
-         * Files queued for JSON loading.
-         * @type {Array<{ url: string; key: string; type: "boxMetadata" | "level" }>}
-         */
-        const jsonFiles = [];
 
-        // Queue box metadata JSON
-        jsonFiles.push({
-            url: `${baseUrl}data/config/editions/net-box-text.json`,
-            key: "boxMetadata",
-            type: "boxMetadata",
-        });
+        try {
+            // First, load the box metadata to get level counts
+            const boxMetadataUrl = `${baseUrl}data/config/editions/net-box-text.json`;
+            const boxMetadata = /** @type {RawBoxMetadataJson[]} */ (await loadJson(boxMetadataUrl));
+            this.jsonCache.set("boxMetadata", boxMetadata);
 
-        // Queue all level JSON files (00-01 through 11-25)
-        for (let box = 0; box <= 11; box++) {
-            for (let level = 1; level <= 25; level++) {
-                const boxStr = String(box).padStart(2, "0");
-                const levelStr = String(level).padStart(2, "0");
-                jsonFiles.push({
-                    url: `${baseUrl}data/boxes/levels/${boxStr}-${levelStr}.json`,
-                    key: `level-${boxStr}-${levelStr}`,
-                    type: "level",
-                });
+            /**
+             * Files queued for JSON loading.
+             * @type {Array<{ url: string; key: string; type: "level" }>}
+             */
+            const levelFiles = [];
+
+            // Queue level files based on levelCount from metadata
+            boxMetadata.forEach((box, index) => {
+                if (box.levelCount && typeof box.levelCount === "number") {
+                    const boxStr = String(index).padStart(2, "0");
+                    for (let level = 1; level <= box.levelCount; level++) {
+                        const levelStr = String(level).padStart(2, "0");
+                        levelFiles.push({
+                            url: `${baseUrl}data/boxes/levels/${boxStr}-${levelStr}.json`,
+                            key: `level-${boxStr}-${levelStr}`,
+                            type: "level",
+                        });
+                    }
+                }
+            });
+
+            // Set total to metadata (1) + level files
+            this.totalJsonFiles = 1 + levelFiles.length;
+            this.loadedJsonFiles = 1; // Box metadata already loaded
+
+            if (this.progressCallback) {
+                this.progressCallback(this.loadedJsonFiles, this.totalJsonFiles);
             }
-        }
 
-        this.totalJsonFiles = jsonFiles.length;
-
-        // Load all JSON files
-        const promises = jsonFiles.map(async ({ url, key, type }) => {
-            try {
-                const data = await loadJson(url);
-
-                if (type === "boxMetadata") {
-                    this.jsonCache.set(key, /** @type {RawBoxMetadataJson[]} */ (data));
-                } else {
+            // Load all level JSON files
+            const promises = levelFiles.map(async ({ url, key, type }) => {
+                try {
+                    const data = await loadJson(url);
                     this.jsonCache.set(key, /** @type {LevelJson} */ (data));
-                }
-                this.loadedJsonFiles++;
-                if (this.progressCallback) {
-                    this.progressCallback(this.loadedJsonFiles, this.totalJsonFiles);
-                }
-                return { success: true, key };
-            } catch (error) {
-                // Silent fail for level files that might not exist
-                if (key.startsWith("level-")) {
+                    this.loadedJsonFiles++;
+                    if (this.progressCallback) {
+                        this.progressCallback(this.loadedJsonFiles, this.totalJsonFiles);
+                    }
+                    return { success: true, key };
+                } catch (error) {
+                    // Silent fail for level files that might not exist
                     this.loadedJsonFiles++;
                     if (this.progressCallback) {
                         this.progressCallback(this.loadedJsonFiles, this.totalJsonFiles);
                     }
                     return { success: false, key, silent: true };
                 }
+            });
 
-                this.failedJsonFiles++;
-                window.console?.error?.(`Failed to load JSON: ${key}`, error);
-                if (this.progressCallback) {
-                    this.progressCallback(this.loadedJsonFiles, this.totalJsonFiles);
-                }
-                return { success: false, key };
-            }
-        });
-
-        Promise.all(promises).then(() => {
+            await Promise.all(promises);
             this.menuJsonLoadComplete = true;
             if (this.checkCompleteCallback) {
                 this.checkCompleteCallback();
             }
-        });
+        } catch (error) {
+            this.failedJsonFiles++;
+            window.console?.error?.("Failed to load box metadata", error);
+            this.menuJsonLoadComplete = true;
+            if (this.checkCompleteCallback) {
+                this.checkCompleteCallback();
+            }
+        }
     }
 
     /**

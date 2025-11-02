@@ -768,6 +768,43 @@ body {
     opacity: 0.25;
 }
 
+.ui-1024 #levelNavBack,
+.ui-1024 #levelNavForward {
+    position: absolute;
+    top: 256px;
+    left: 220px;
+    cursor: url(../cursors/handcursor.cur), url(../cursors/handcursor.png), auto;
+    display: none;
+}
+
+.ui-1024 #levelNavForward {
+    left: 788px;
+}
+
+.ui-1024 #levelNavBack div,
+.ui-1024 #levelNavForward div {
+    width: 59px;
+    height: 71px;
+    background-image: url(../images/1024/ui/box_nav_menu.png);
+    background-repeat: no-repeat;
+}
+
+.ui-1024 #levelNavBack .boxNavDisabled {
+    cursor: url(../cursors/cursor.cur), url(../cursors/cursor.png), auto;
+    background-position: left -71px;
+    opacity: 0.25;
+}
+
+.ui-1024 #levelNavForward div {
+    background-position: -59px top;
+}
+
+.ui-1024 #levelNavForward .boxNavDisabled {
+    cursor: url(../cursors/cursor.cur), url(../cursors/cursor.png), auto;
+    background-position: -59px -71px;
+    opacity: 0.25;
+}
+
 .ui-1024 .hideFromMouse {
     pointer-events: none;
 }
@@ -2093,6 +2130,43 @@ body {
     opacity: 0.25;
 }
 
+.ui-768 #levelNavBack,
+.ui-768 #levelNavForward {
+    position: absolute;
+    top: 192px;
+    left: 165px;
+    cursor: url(../cursors/handcursor.cur), url(../cursors/handcursor.png), auto;
+    display: none;
+}
+
+.ui-768 #levelNavForward {
+    left: 590px;
+}
+
+.ui-768 #levelNavBack div,
+.ui-768 #levelNavForward div {
+    width: 44px;
+    height: 53px;
+    background-image: url(../images/768/ui/box_nav_menu.png);
+    background-repeat: no-repeat;
+}
+
+.ui-768 #levelNavBack .boxNavDisabled {
+    cursor: url(../cursors/cursor.cur), url(../cursors/cursor.png), auto;
+    background-position: left -53px;
+    opacity: 0.25;
+}
+
+.ui-768 #levelNavForward div {
+    background-position: -44px top;
+}
+
+.ui-768 #levelNavForward .boxNavDisabled {
+    cursor: url(../cursors/cursor.cur), url(../cursors/cursor.png), auto;
+    background-position: -44px -53px;
+    opacity: 0.25;
+}
+
 .ui-768 .hideFromMouse {
     pointer-events: none;
 }
@@ -3362,6 +3436,43 @@ body {
 }
 
 .ui-1920 #boxNavForward .boxNavDisabled {
+    cursor: url(../cursors/cursor.cur), url(../cursors/cursor.png), auto;
+    background-position: -111px -133px;
+    opacity: 0.25;
+}
+
+.ui-1920 #levelNavBack,
+.ui-1920 #levelNavForward {
+    position: absolute;
+    top: 480px;
+    left: 184px;
+    cursor: url(../cursors/handcursor.cur), url(../cursors/handcursor.png), auto;
+    display: none;
+}
+
+.ui-1920 #levelNavForward {
+    left: 1630px;
+}
+
+.ui-1920 #levelNavBack div,
+.ui-1920 #levelNavForward div {
+    width: 111px;
+    height: 133px;
+    background-image: url(../images/1920/ui/box_nav_menu.png);
+    background-repeat: no-repeat;
+}
+
+.ui-1920 #levelNavBack .boxNavDisabled {
+    cursor: url(../cursors/cursor.cur), url(../cursors/cursor.png), auto;
+    background-position: left -133px;
+    opacity: 0.25;
+}
+
+.ui-1920 #levelNavForward div {
+    background-position: -111px top;
+}
+
+.ui-1920 #levelNavForward .boxNavDisabled {
     cursor: url(../cursors/cursor.cur), url(../cursors/cursor.png), auto;
     background-position: -111px -133px;
     opacity: 0.25;

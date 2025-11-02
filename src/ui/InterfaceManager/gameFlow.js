@@ -17,6 +17,7 @@ import SnowfallOverlay from "@/ui/SnowfallOverlay";
 import { IS_XMAS } from "@/resources/ResData";
 import { MENU_MUSIC_ID, startSnow, stopSnow } from "@/ui/InterfaceManager/constants";
 import { fadeIn, fadeOut, delay, show, hide, text, width } from "@/utils/domHelpers";
+import LevelPanel from "@/ui/LevelPanel";
 
 const levelResults = document.getElementById("levelResults");
 const levelMenu = document.getElementById("levelMenu");
@@ -250,6 +251,9 @@ export default class GameFlow {
         //fade out options elements
         fadeOut("#levelScore");
         fadeOut("#levelBack");
+        LevelPanel.setNavigationActive(false);
+        fadeOut("#levelNavBack");
+        fadeOut("#levelNavForward");
 
         fadeOut("#levelOptions", timeout).then(() => {
             if (this.manager.isBoxOpen) {
