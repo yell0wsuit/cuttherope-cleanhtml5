@@ -9,8 +9,7 @@
         {
             "name": 1,
             "ropePhysicsSpeed": 1,
-            "special": 2,
-            "twoParts": false
+            "nightLevel": false
         }
     ],
     "objects": [
@@ -46,32 +45,32 @@
             "angle": 270
         },
         {
-            "name": 58,
+            "name": 60,
             "x": 217,
             "y": 160,
-            "angle": 90,
-            "size": 4
+            "size": 4,
+            "angle": 90
         },
         {
-            "name": 58,
+            "name": 60,
             "x": 217,
             "y": 335,
-            "angle": 90,
-            "size": 4
+            "size": 4,
+            "angle": 90
         },
         {
-            "name": 58,
+            "name": 60,
             "x": 95,
             "y": 161,
-            "angle": 90,
-            "size": 4
+            "size": 4,
+            "angle": 90
         },
         {
-            "name": 58,
+            "name": 60,
             "x": 95,
             "y": 336,
-            "angle": 90,
-            "size": 4
+            "size": 4,
+            "angle": 90
         },
         {
             "name": 54,
@@ -115,14 +114,12 @@
             "x": 240,
             "y": 144,
             "length": 30,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "wheel": false,
+            "moveVertical": false,
+            "spider": false
         },
         {
             "name": 52,
@@ -139,14 +136,12 @@
             "x": 301,
             "y": 143,
             "length": 30,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "wheel": false,
+            "moveVertical": false,
+            "spider": false
         }
     ]
 }

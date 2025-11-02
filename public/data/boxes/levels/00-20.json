@@ -9,8 +9,8 @@
         {
             "name": 1,
             "ropePhysicsSpeed": 1,
-            "special": 2,
-            "twoParts": false
+            "special": 1,
+            "nightLevel": false
         }
     ],
     "objects": [
@@ -19,28 +19,24 @@
             "x": 45,
             "y": 64,
             "length": 60,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "wheel": false,
+            "moveVertical": false,
+            "spider": false
         },
         {
             "name": 100,
             "x": 182,
             "y": 57,
             "length": 60,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "wheel": false,
+            "moveVertical": false,
+            "spider": false
         },
         {
             "name": 52,
@@ -103,28 +99,24 @@
             "x": 48,
             "y": 151,
             "length": 73,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "wheel": false,
+            "moveVertical": false,
+            "spider": false
         },
         {
             "name": 100,
             "x": 185,
             "y": 152,
             "length": 73,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "wheel": false,
+            "moveVertical": false,
+            "spider": false
         },
         {
             "name": 55,
@@ -133,18 +125,18 @@
             "angle": 270
         },
         {
-            "name": 58,
+            "name": 59,
             "x": 99,
             "y": 330,
-            "angle": -20,
-            "size": 3
+            "size": 3,
+            "angle": -20
         },
         {
-            "name": 58,
+            "name": 59,
             "x": 230,
             "y": 330,
-            "angle": 20,
-            "size": 3
+            "size": 3,
+            "angle": 20
         }
     ]
 }

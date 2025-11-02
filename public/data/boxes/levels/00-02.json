@@ -9,127 +9,161 @@
         {
             "name": 1,
             "ropePhysicsSpeed": 1,
-            "special": 2,
-            "twoParts": false
+            "special": 1,
+            "twoParts": false,
+            "water": 0,
+            "waterSpeed": 0,
+            "nightLevel": false
         }
     ],
     "objects": [
         {
-            "name": 2,
-            "x": 238,
-            "y": 417
+            "name": 100,
+            "x": 79,
+            "y": 207,
+            "length": 75,
+            "radius": -1,
+            "moveLength": -1,
+            "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
+            "spider": false,
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
         },
         {
             "name": 52,
             "x": 159,
-            "y": 153
+            "y": 140
+        },
+        {
+            "name": 100,
+            "x": 246,
+            "y": 86,
+            "length": 75,
+            "radius": -1,
+            "moveLength": -1,
+            "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
+            "spider": false,
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
+        },
+        {
+            "name": 100,
+            "x": 74,
+            "y": 88,
+            "length": 75,
+            "radius": -1,
+            "moveLength": -1,
+            "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
+            "spider": false,
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
+        },
+        {
+            "name": 100,
+            "x": 243,
+            "y": 212,
+            "length": 75,
+            "radius": -1,
+            "moveLength": -1,
+            "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
+            "spider": false,
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
         },
         {
             "name": 3,
             "x": 158,
-            "y": 357,
+            "y": 344,
             "timeout": -1
         },
         {
             "name": 3,
             "x": 82,
-            "y": 358,
-            "timeout": -1
-        },
-        {
-            "name": 3,
-            "x": 238,
-            "y": 360,
+            "y": 345,
             "timeout": -1
         },
         {
             "name": 100,
-            "x": 79,
-            "y": 220,
+            "x": 160,
+            "y": 35,
             "length": 75,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
-            "spider": false,
-            "part": "L"
-        },
-        {
-            "name": 100,
-            "x": 246,
-            "y": 99,
-            "length": 75,
             "wheel": false,
             "gun": false,
-            "radius": -1,
-            "moveLength": -1,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
             "moveVertical": false,
-            "moveOffset": 0,
             "spider": false,
-            "part": "L"
-        },
-        {
-            "name": 100,
-            "x": 74,
-            "y": 101,
-            "length": 75,
-            "wheel": false,
-            "gun": false,
-            "radius": -1,
-            "moveLength": -1,
-            "moveVertical": false,
-            "moveOffset": 0,
-            "spider": false,
-            "part": "L"
-        },
-        {
-            "name": 100,
-            "x": 243,
-            "y": 225,
-            "length": 75,
-            "wheel": false,
-            "gun": false,
-            "radius": -1,
-            "moveLength": -1,
-            "moveVertical": false,
-            "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
         },
         {
             "name": 100,
             "x": 160,
-            "y": 48,
+            "y": 257,
             "length": 75,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
-            "spider": false,
-            "part": "L"
-        },
-        {
-            "name": 100,
-            "x": 160,
-            "y": 270,
-            "length": 75,
             "wheel": false,
             "gun": false,
-            "radius": -1,
-            "moveLength": -1,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
             "moveVertical": false,
-            "moveOffset": 0,
             "spider": false,
-            "part": "L"
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
         },
         {
             "name": 4,
             "x": 85,
-            "y": 274,
+            "y": 261,
             "locale": "en",
             "text": "Collect as many stars as you can",
             "width": 200
@@ -137,27 +171,74 @@
         {
             "name": 13,
             "x": 65,
-            "y": 307,
-            "locale": "en",
+            "y": 294,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "en"
+        },
+        {
+            "name": 2,
+            "x": 238,
+            "y": 404
+        },
+        {
+            "name": 3,
+            "x": 238,
+            "y": 347,
+            "timeout": -1
         }
     ],
-    "ru": [
+    "br": [
         {
             "name": 13,
-            "x": 60,
-            "y": 315,
-            "locale": "ru",
+            "x": 64,
+            "y": 301,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "br"
+        },
+        {
+            "name": 4,
+            "x": 63,
+            "y": 264,
+            "locale": "br",
+            "text": "Colete o máximo de estrelas possível",
+            "width": 210
+        }
+    ],
+    "de": [
+        {
+            "name": 4,
+            "x": 86,
+            "y": 262,
+            "locale": "de",
+            "text": "Sammle so viele Sterne wie möglich",
+            "width": 170
+        },
+        {
+            "name": 13,
+            "x": 66,
+            "y": 298,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "de"
+        }
+    ],
+    "es": [
+        {
+            "name": 13,
+            "x": 55,
+            "y": 301,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "es"
         },
         {
             "name": 4,
             "x": 73,
-            "y": 278,
-            "locale": "ru",
-            "text": "Старайтесь собирать звезды леденцом",
+            "y": 264,
+            "locale": "es",
+            "text": "Consigue tantas estrellas como puedas.",
             "width": 210
         }
     ],
@@ -165,7 +246,7 @@
         {
             "name": 4,
             "x": 97,
-            "y": 280,
+            "y": 264,
             "locale": "fr",
             "text": "Recueillez le plus d'étoiles possible",
             "width": 150
@@ -173,28 +254,118 @@
         {
             "name": 13,
             "x": 83,
-            "y": 316,
-            "locale": "fr",
+            "y": 300,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "fr"
         }
     ],
-    "de": [
+    "it": [
         {
             "name": 13,
-            "x": 66,
-            "y": 311,
-            "locale": "de",
+            "x": 64,
+            "y": 301,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "it"
         },
         {
             "name": 4,
-            "x": 86,
-            "y": 275,
-            "locale": "de",
-            "text": "Sammle möglichst viele Sternchen",
-            "width": 170
+            "x": 63,
+            "y": 264,
+            "locale": "it",
+            "text": "Recupera più stelle possibili",
+            "width": 210
+        }
+    ],
+    "ja": [
+        {
+            "name": 13,
+            "x": 54,
+            "y": 301,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ja"
+        },
+        {
+            "name": 4,
+            "x": 73,
+            "y": 264,
+            "locale": "ja",
+            "text": "できるだけ*多くの*スターを*獲得*しましょう",
+            "width": 210
+        }
+    ],
+    "ko": [
+        {
+            "name": 13,
+            "x": 64,
+            "y": 296,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ko"
+        },
+        {
+            "name": 4,
+            "x": 70,
+            "y": 270,
+            "locale": "ko",
+            "text": "별을 최대한 *많이 모으세요.",
+            "width": 210
+        }
+    ],
+    "nl": [
+        {
+            "name": 13,
+            "x": 74,
+            "y": 299,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "nl"
+        },
+        {
+            "name": 4,
+            "x": 82,
+            "y": 262,
+            "locale": "nl",
+            "text": "Verzamel zoveel mogelijk sterren",
+            "width": 180
+        }
+    ],
+    "ru": [
+        {
+            "name": 13,
+            "x": 60,
+            "y": 300,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ru"
+        },
+        {
+            "name": 4,
+            "x": 73,
+            "y": 263,
+            "locale": "ru",
+            "text": "Старайтесь собрать как можно больше звезд",
+            "width": 210
+        }
+    ],
+    "zh": [
+        {
+            "name": 13,
+            "x": 74,
+            "y": 298,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "zh"
+        },
+        {
+            "name": 4,
+            "x": 69,
+            "y": 271,
+            "locale": "zh",
+            "text": "尽可能多地收集星星",
+            "width": 210
         }
     ]
 }
