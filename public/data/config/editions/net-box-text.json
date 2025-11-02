@@ -22,7 +22,8 @@
         "support": 0,
         "showEarth": false,
         "levelBackgroundId": "IMG_BGR_XMAS",
-        "levelOverlayId": "IMG_BGR_XMAS"
+        "levelOverlayId": "IMG_BGR_XMAS",
+        "levelCount": 26
     },
     {
         "id": "cardboardbox",
@@ -47,7 +48,8 @@
         "support": 0,
         "showEarth": false,
         "levelBackgroundId": "IMG_BGR_01_P1",
-        "levelOverlayId": "IMG_BGR_01_P2"
+        "levelOverlayId": "IMG_BGR_01_P2",
+        "levelCount": 25
     },
     {
         "id": "fabricbox",
@@ -72,7 +74,8 @@
         "support": 1,
         "showEarth": false,
         "levelBackgroundId": "IMG_BGR_02_P1",
-        "levelOverlayId": "IMG_BGR_02_P2"
+        "levelOverlayId": "IMG_BGR_02_P2",
+        "levelCount": 25
     },
     {
         "id": "foilbox",
@@ -97,7 +100,8 @@
         "support": 2,
         "showEarth": false,
         "levelBackgroundId": "IMG_BGR_03_P1",
-        "levelOverlayId": "IMG_BGR_03_P2"
+        "levelOverlayId": "IMG_BGR_03_P2",
+        "levelCount": 25
     },
     {
         "id": "magicbox",
@@ -122,7 +126,8 @@
         "support": 3,
         "showEarth": false,
         "levelBackgroundId": "IMG_BGR_04_P1",
-        "levelOverlayId": "IMG_BGR_04_P2"
+        "levelOverlayId": "IMG_BGR_04_P2",
+        "levelCount": 25
     },
     {
         "id": "valentinebox",
@@ -147,7 +152,8 @@
         "support": 4,
         "showEarth": false,
         "levelBackgroundId": "IMG_BGR_05_P1",
-        "levelOverlayId": "IMG_BGR_05_P2"
+        "levelOverlayId": "IMG_BGR_05_P2",
+        "levelCount": 25
     },
     {
         "id": "toybox",
@@ -172,7 +178,8 @@
         "support": 5,
         "showEarth": false,
         "levelBackgroundId": "IMG_BGR_06_P1",
-        "levelOverlayId": "IMG_BGR_06_P2"
+        "levelOverlayId": "IMG_BGR_06_P2",
+        "levelCount": 25
     },
     {
         "id": "giftbox",
@@ -197,7 +204,8 @@
         "support": 6,
         "showEarth": false,
         "levelBackgroundId": "IMG_BGR_07_P1",
-        "levelOverlayId": "IMG_BGR_07_P2"
+        "levelOverlayId": "IMG_BGR_07_P2",
+        "levelCount": 25
     },
     {
         "id": "cosmicbox",
@@ -222,7 +230,8 @@
         "support": 7,
         "showEarth": true,
         "levelBackgroundId": "IMG_BGR_08_P1",
-        "levelOverlayId": "IMG_BGR_08_P2"
+        "levelOverlayId": "IMG_BGR_08_P2",
+        "levelCount": 25
     },
     {
         "id": "toolbox",
@@ -247,7 +256,8 @@
         "support": 8,
         "showEarth": false,
         "levelBackgroundId": "IMG_BGR_09_P1",
-        "levelOverlayId": "IMG_BGR_09_P2"
+        "levelOverlayId": "IMG_BGR_09_P2",
+        "levelCount": 25
     },
     {
         "id": "buzzbox",
@@ -272,7 +282,8 @@
         "support": 9,
         "showEarth": false,
         "levelBackgroundId": "IMG_BGR_10_P1",
-        "levelOverlayId": "IMG_BGR_10_P2"
+        "levelOverlayId": "IMG_BGR_10_P2",
+        "levelCount": 25
     },
     {
         "id": "djbox",
@@ -297,7 +308,8 @@
         "support": 10,
         "showEarth": false,
         "levelBackgroundId": "IMG_BGR_11_P1",
-        "levelOverlayId": "IMG_BGR_11_P2"
+        "levelOverlayId": "IMG_BGR_11_P2",
+        "levelCount": 25
     },
     {
         "id": "morecoming",

@@ -25,6 +25,7 @@ export interface RawBoxMetadataJson {
     showEarth?: boolean;
     levelBackgroundId?: string | null;
     levelOverlayId?: string | null;
+    levelCount?: number;
 }
 
 export type LevelScalar = number | string | boolean | null | undefined;

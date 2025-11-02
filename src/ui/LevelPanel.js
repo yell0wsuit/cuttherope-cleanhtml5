@@ -29,82 +29,77 @@ import {
 const backgroundId = edition.levelBackgroundId || "levelBackground";
 const LevelPanel = new Panel(PanelId.LEVELS, "levelPanel", backgroundId, true);
 
+const MAX_LEVELS_PER_PAGE = 25;
+
 // cache interface manager reference
 let im = null;
+let currentPage = 0;
+let lastBoxIndex = null;
+let levelNavBack = null;
+let levelNavForward = null;
+const levelButtons = [];
+let isLevelNavigationActive = true;
+let lastTotalPages = 0;
 
 LevelPanel.init = function (interfaceManager) {
     im = interfaceManager;
 
-    // generate level elements
-    const levelCount = ScoreManager.levelCount(BoxManager.currentBoxIndex);
     const levelOptions = getElement("#levelOptions");
+    levelNavBack = getElement("#levelNavBack");
+    levelNavForward = getElement("#levelNavForward");
 
-    // initialize for a 3x3 grid
-    let leftOffset = 0,
-        topOffset = 0,
-        lineLength = resolution.uiScaledNumber(420),
-        inc = resolution.uiScaledNumber(153),
-        modClass = "",
-        columns = 3,
-        lastRowCount = levelCount % 3;
-
-    if (levelCount > 9 && levelCount <= 12) {
-        // expand to 4x3 grid
-        leftOffset = -80;
-        topOffset = 10;
-        columns = 4;
-        lineLength = resolution.uiScaledNumber(500);
-        inc = resolution.uiScaledNumber(153);
-    } else if (levelCount > 12) {
-        // expand to a 5x5 grid
-        leftOffset = -30;
-        topOffset = -40;
-        inc = resolution.uiScaledNumber(101);
-        modClass = "option-small";
-        ((columns = 5), (lastRowCount = levelCount % 5));
+    if (!isLevelNavigationActive) {
+        if (levelNavBack) hide(levelNavBack);
+        if (levelNavForward) hide(levelNavForward);
     }
 
-    let curTop = topOffset,
-        curLeft = leftOffset,
-        el;
+    levelNavBack?.addEventListener("click", () => {
+        if (currentPage === 0) return;
+        currentPage -= 1;
+        SoundMgr.playSound(ResourceId.SND_TAP);
+        updateLevelOptions();
+    });
 
-    const adLevel = function $addLevel(i, inc, extraPad) {
-        if (!levelOptions) {
-            return;
+    levelNavForward?.addEventListener("click", () => {
+        const boxIndex = BoxManager.currentBoxIndex;
+        const levelCount = ScoreManager.levelCount(boxIndex) || 0;
+        const totalPages = Math.max(1, Math.ceil(levelCount / MAX_LEVELS_PER_PAGE));
+        if (currentPage >= totalPages - 1) return;
+        currentPage += 1;
+        SoundMgr.playSound(ResourceId.SND_TAP);
+        updateLevelOptions();
+    });
+
+    if (levelOptions) {
+        for (let i = 0; i < MAX_LEVELS_PER_PAGE; i++) {
+            const levelButton = document.createElement("div");
+            levelButton.dataset.level = i;
+            levelButton.className = "option locked ctrPointer";
+            levelButton.addEventListener("click", onLevelClick);
+            levelOptions.appendChild(levelButton);
+            levelButtons.push(levelButton);
         }
-
-        const levelButton = document.createElement("div");
-        levelButton.id = `option${i + 1}`;
-        levelButton.dataset.level = i;
-        levelButton.className = `option locked ctrPointer ${modClass}`;
-        levelButton.style.left = `${curLeft + (extraPad || 0)}px`;
-        levelButton.style.top = `${curTop}px`;
-        levelButton.addEventListener("click", onLevelClick);
-        levelOptions.appendChild(levelButton);
-
-        curLeft += inc;
-        if (curLeft > lineLength) {
-            curLeft = leftOffset;
-            curTop += inc;
-        }
-    };
-
-    let i, filledRowCount;
-    for (i = 0, filledRowCount = levelCount - lastRowCount; i < filledRowCount; i++) {
-        adLevel(i, inc);
-    }
-
-    if (lastRowCount > 0) {
-        (function (j) {
-            const extraPad = ((columns - lastRowCount) * inc) / 2;
-            for (; j < levelCount; j++) {
-                adLevel(j, inc, extraPad);
-            }
-        })(i);
     }
 };
 
+LevelPanel.setNavigationActive = function (isActive) {
+    isLevelNavigationActive = isActive;
+
+    if (!levelNavBack || !levelNavForward) {
+        return;
+    }
+
+    if (!isActive) {
+        hide(levelNavBack);
+        hide(levelNavForward);
+        return;
+    }
+
+    updateLevelNavigation(lastTotalPages);
+};
+
 LevelPanel.onShow = function () {
+    LevelPanel.setNavigationActive(false);
     updateLevelOptions();
     const levelScore = getElement("#levelScore");
     const levelBack = getElement("#levelBack");
@@ -122,9 +117,24 @@ LevelPanel.onShow = function () {
         });
     }
     if (levelOptions) {
-        delay(levelOptions, 200).then(function () {
-            return fadeIn(levelOptions, 700);
-        });
+        delay(levelOptions, 200)
+            .then(function () {
+                return fadeIn(levelOptions, 700);
+            })
+            .then(function () {
+                LevelPanel.setNavigationActive(true);
+            });
+
+        // Show navigation buttons immediately with level options
+        LevelPanel.setNavigationActive(true);
+        if (lastTotalPages > 1 && levelNavBack && levelNavForward) {
+            show(levelNavBack);
+            show(levelNavForward);
+            levelNavBack.style.opacity = "1";
+            levelNavForward.style.opacity = "1";
+        }
+    } else {
+        LevelPanel.setNavigationActive(true);
     }
     if (levelResults) {
         delay(levelResults, 200).then(function () {
@@ -174,46 +184,58 @@ function onLevelClick(event) {
 
 // draw the level options based on current scores and stars
 function updateLevelOptions() {
-    const boxIndex = BoxManager.currentBoxIndex,
-        levelCount = ScoreManager.levelCount(boxIndex);
-    let stars, levelInfo, i, levelRequiresPurchase;
+    const boxIndex = BoxManager.currentBoxIndex;
+    const levelCount = ScoreManager.levelCount(boxIndex) || 0;
 
-    for (i = 0; i < levelCount; i++) {
-        // get a reference to the level button
-        const levelElement = document.getElementById(`option${i + 1}`);
-        if (levelElement) {
-            // show and prepare the element, otherwise hide it
-            if (i < levelCount) {
-                show(levelElement);
+    if (lastBoxIndex !== boxIndex) {
+        currentPage = 0;
+        lastBoxIndex = boxIndex;
+    }
 
-                //levelRequiresPurchase = requiresPurchase(i);
+    const totalPages = Math.max(1, Math.ceil(levelCount / MAX_LEVELS_PER_PAGE));
+    if (currentPage >= totalPages) {
+        currentPage = totalPages - 1;
+    }
 
-                // if the level has a score show it, otherwise make it locked
-                stars = ScoreManager.getStars(boxIndex, i);
-                if (stars != null) {
-                    levelInfo = document.createElement("div");
-                    levelInfo.className = "txt";
-                    append(levelInfo, Text.drawBig({ text: i + 1, scaleToUI: true }));
-                    const starsElement = document.createElement("div");
-                    addClass(starsElement, `stars${stars}`);
-                    levelInfo.appendChild(starsElement);
+    const startIndex = currentPage * MAX_LEVELS_PER_PAGE;
+    const visibleCount = Math.min(MAX_LEVELS_PER_PAGE, Math.max(0, levelCount - startIndex));
 
-                    removeClass(levelElement, "locked");
-                    removeClass(levelElement, "purchase");
-                    addClass(levelElement, "open");
-                    addClass(levelElement, "ctrPointer");
-                    empty(levelElement);
-                    levelElement.appendChild(levelInfo);
-                } else {
-                    removeClass(levelElement, "open");
-                    addClass(levelElement, "locked");
-                    //toggleClass(levelElement, "purchase", levelRequiresPurchase);
-                    //toggleClass(levelElement, "ctrPointer", levelRequiresPurchase);
-                    empty(levelElement);
-                }
+    updateLevelNavigation(totalPages);
+
+    const layout = getLayoutConfig(visibleCount);
+
+    for (let i = 0; i < levelButtons.length; i++) {
+        const levelElement = levelButtons[i];
+        if (!levelElement) continue;
+
+        const levelIndex = startIndex + i;
+        if (i < visibleCount && levelIndex < levelCount) {
+            positionLevelButton(levelElement, i, visibleCount, layout);
+            levelElement.dataset.level = levelIndex.toString();
+            show(levelElement);
+
+            const stars = ScoreManager.getStars(boxIndex, levelIndex);
+            if (stars != null) {
+                const levelInfo = document.createElement("div");
+                levelInfo.className = "txt";
+                append(levelInfo, Text.drawBig({ text: levelIndex + 1, scaleToUI: true }));
+                const starsElement = document.createElement("div");
+                addClass(starsElement, `stars${stars}`);
+                levelInfo.appendChild(starsElement);
+
+                removeClass(levelElement, "locked");
+                removeClass(levelElement, "purchase");
+                addClass(levelElement, "open");
+                addClass(levelElement, "ctrPointer");
+                empty(levelElement);
+                levelElement.appendChild(levelInfo);
             } else {
-                hide(levelElement);
+                removeClass(levelElement, "open");
+                addClass(levelElement, "locked");
+                empty(levelElement);
             }
+        } else {
+            hide(levelElement);
         }
     }
 
@@ -223,6 +245,82 @@ function updateLevelOptions() {
     Text.drawBig({ text: text, imgSel: "#levelScore img", scaleToUI: true });
     BoxManager.updateBoxLocks();
     ScoreManager.updateTotalScoreText();
+}
+
+function getLayoutConfig(count) {
+    if (count > 12) {
+        return {
+            columns: 5,
+            leftOffset: -30,
+            topOffset: -40,
+            inc: resolution.uiScaledNumber(101),
+        };
+    }
+
+    if (count > 9) {
+        return {
+            columns: 4,
+            leftOffset: -80,
+            topOffset: 10,
+            inc: resolution.uiScaledNumber(153),
+        };
+    }
+
+    return {
+        columns: 3,
+        leftOffset: 0,
+        topOffset: 0,
+        inc: resolution.uiScaledNumber(153),
+    };
+}
+
+function positionLevelButton(levelElement, index, visibleCount, layout) {
+    const { columns, leftOffset, topOffset, inc } = layout;
+    const row = Math.floor(index / columns);
+    const column = index % columns;
+    const lastRowCount = visibleCount % columns || columns;
+    const isLastRow = row === Math.floor((visibleCount - 1) / columns);
+    const rowOffset = isLastRow ? ((columns - lastRowCount) * inc) / 2 : 0;
+
+    levelElement.style.left = `${leftOffset + column * inc + rowOffset}px`;
+    levelElement.style.top = `${topOffset + row * inc}px`;
+    levelElement.classList.toggle("option-small", columns === 5);
+}
+
+function updateLevelNavigation(totalPages) {
+    if (!levelNavBack || !levelNavForward) {
+        return;
+    }
+
+    lastTotalPages = totalPages;
+
+    if (!isLevelNavigationActive || totalPages <= 1) {
+        hide(levelNavBack);
+        hide(levelNavForward);
+        return;
+    }
+
+    show(levelNavBack);
+    show(levelNavForward);
+
+    const backDiv = levelNavBack.firstElementChild;
+    const forwardDiv = levelNavForward.firstElementChild;
+
+    if (backDiv) {
+        if (currentPage === 0) {
+            addClass(backDiv, "boxNavDisabled");
+        } else {
+            removeClass(backDiv, "boxNavDisabled");
+        }
+    }
+
+    if (forwardDiv) {
+        if (currentPage >= totalPages - 1) {
+            addClass(forwardDiv, "boxNavDisabled");
+        } else {
+            removeClass(forwardDiv, "boxNavDisabled");
+        }
+    }
 }
 
 export default LevelPanel;
