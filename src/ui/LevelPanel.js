@@ -31,6 +31,82 @@ const LevelPanel = new Panel(PanelId.LEVELS, "levelPanel", backgroundId, true);
 
 const MAX_LEVELS_PER_PAGE = 25;
 
+/**
+ * Calculate total pages needed with smart pagination
+ * @param {number} totalLevels - Total number of levels in the box
+ * @returns {number} Total number of pages
+ */
+function calculateTotalPages(totalLevels) {
+    if (totalLevels <= MAX_LEVELS_PER_PAGE) {
+        return 1;
+    }
+
+    // If going over 25, check if we should split differently
+    // Avoid having < 10 levels on the last page (looks odd)
+    const standardPages = Math.ceil(totalLevels / MAX_LEVELS_PER_PAGE);
+    const remainder = totalLevels % MAX_LEVELS_PER_PAGE;
+
+    // If remainder is small (< 10), redistribute for better aesthetics
+    if (remainder > 0 && remainder < 10) {
+        // Split more evenly: first page gets 16, rest distributed
+        return 2;
+    }
+
+    return standardPages;
+}
+
+/**
+ * Calculate the optimal levels per page for better visual layout
+ * Grid layouts: <=9: 3 cols, >9 and <=12: 4 cols, >12: 5 cols
+ * @param {number} totalLevels - Total number of levels in the box
+ * @param {number} pageIndex - Current page index (0-based)
+ * @returns {number} Number of levels to show on this page
+ */
+function getLevelsPerPage(totalLevels, pageIndex = 0) {
+    if (totalLevels <= MAX_LEVELS_PER_PAGE) {
+        return totalLevels;
+    }
+
+    const remainder = totalLevels % MAX_LEVELS_PER_PAGE;
+
+    // If we have a small remainder (< 10), redistribute for better balance
+    if (remainder > 0 && remainder < 10) {
+        // For page 0, try to find a good split that works with grid layouts
+        if (pageIndex === 0) {
+            const remaining = totalLevels - MAX_LEVELS_PER_PAGE + remainder;
+
+            // Try to balance so both pages use 5x5 layout (>12 levels each)
+            // Ideal splits for common cases:
+            // 26 levels: 13 (page 1, 5x3) + 13 (page 2, 5x3)
+            // 27 levels: 14 (page 1, 5x3) + 13 (page 2, 5x3)
+            // 28 levels: 14 (page 1, 5x3) + 14 (page 2, 5x3)
+            const halfSplit = Math.ceil(totalLevels / 2);
+
+            // If both halves would be >12 (use 5-col layout), split evenly
+            if (halfSplit > 12 && totalLevels - halfSplit > 12) {
+                return halfSplit;
+            }
+
+            // Otherwise, put more on page 1 and remainder on page 2
+            // Aim for page 1 to have a multiple of 5 (for 5x5 grid)
+            const page1Count = Math.floor((totalLevels - remainder) / 5) * 5;
+            if (page1Count >= 15 && page1Count <= MAX_LEVELS_PER_PAGE) {
+                return page1Count;
+            }
+
+            // Fallback: use slightly less than max
+            return MAX_LEVELS_PER_PAGE - remainder;
+        } else {
+            // Page 1 already calculated, return the remainder
+            const page0Count = getLevelsPerPage(totalLevels, 0);
+            return totalLevels - page0Count;
+        }
+    }
+
+    // Standard pagination: 25 per page
+    return MAX_LEVELS_PER_PAGE;
+}
+
 // cache interface manager reference
 let im = null;
 let currentPage = 0;
@@ -63,7 +139,7 @@ LevelPanel.init = function (interfaceManager) {
     levelNavForward?.addEventListener("click", () => {
         const boxIndex = BoxManager.currentBoxIndex;
         const levelCount = ScoreManager.levelCount(boxIndex) || 0;
-        const totalPages = Math.max(1, Math.ceil(levelCount / MAX_LEVELS_PER_PAGE));
+        const totalPages = calculateTotalPages(levelCount);
         if (currentPage >= totalPages - 1) return;
         currentPage += 1;
         SoundMgr.playSound(ResourceId.SND_TAP);
@@ -192,13 +268,19 @@ function updateLevelOptions() {
         lastBoxIndex = boxIndex;
     }
 
-    const totalPages = Math.max(1, Math.ceil(levelCount / MAX_LEVELS_PER_PAGE));
+    const totalPages = calculateTotalPages(levelCount);
     if (currentPage >= totalPages) {
         currentPage = totalPages - 1;
     }
 
-    const startIndex = currentPage * MAX_LEVELS_PER_PAGE;
-    const visibleCount = Math.min(MAX_LEVELS_PER_PAGE, Math.max(0, levelCount - startIndex));
+    // Calculate start index based on actual levels per page
+    let startIndex = 0;
+    for (let page = 0; page < currentPage; page++) {
+        startIndex += getLevelsPerPage(levelCount, page);
+    }
+
+    const levelsThisPage = getLevelsPerPage(levelCount, currentPage);
+    const visibleCount = Math.min(levelsThisPage, Math.max(0, levelCount - startIndex));
 
     updateLevelNavigation(totalPages);
 
@@ -282,8 +364,20 @@ function positionLevelButton(levelElement, index, visibleCount, layout) {
     const isLastRow = row === Math.floor((visibleCount - 1) / columns);
     const rowOffset = isLastRow ? ((columns - lastRowCount) * inc) / 2 : 0;
 
+    const totalRows = Math.ceil(visibleCount / columns);
+
+    // height of one full cell (using your increment)
+    const totalHeight = totalRows * inc;
+
+    // reference height of a "full" grid (5 rows × inc)
+    const fullHeight = 5 * inc;
+
+    // center vertically: shift down if fewer rows
+    const verticalOffset = (fullHeight - totalHeight) / 2;
+
     levelElement.style.left = `${leftOffset + column * inc + rowOffset}px`;
-    levelElement.style.top = `${topOffset + row * inc}px`;
+    levelElement.style.top = `${topOffset + row * inc + verticalOffset}px`;
+
     levelElement.classList.toggle("option-small", columns === 5);
 }
 
