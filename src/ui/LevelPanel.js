@@ -36,7 +36,7 @@ const MAX_LEVELS_PER_PAGE = 25;
  * @param {number} totalLevels - Total number of levels in the box
  * @returns {number} Total number of pages
  */
-function calculateTotalPages(totalLevels) {
+const calculateTotalPages = (totalLevels) => {
     if (totalLevels <= MAX_LEVELS_PER_PAGE) {
         return 1;
     }
@@ -53,7 +53,7 @@ function calculateTotalPages(totalLevels) {
     }
 
     return standardPages;
-}
+};
 
 /**
  * Calculate the optimal levels per page for better visual layout
@@ -62,7 +62,7 @@ function calculateTotalPages(totalLevels) {
  * @param {number} pageIndex - Current page index (0-based)
  * @returns {number} Number of levels to show on this page
  */
-function getLevelsPerPage(totalLevels, pageIndex = 0) {
+const getLevelsPerPage = (totalLevels, pageIndex = 0) => {
     if (totalLevels <= MAX_LEVELS_PER_PAGE) {
         return totalLevels;
     }
@@ -105,7 +105,7 @@ function getLevelsPerPage(totalLevels, pageIndex = 0) {
 
     // Standard pagination: 25 per page
     return MAX_LEVELS_PER_PAGE;
-}
+};
 
 // cache interface manager reference
 let im = null;
@@ -329,7 +329,7 @@ function updateLevelOptions() {
     ScoreManager.updateTotalScoreText();
 }
 
-function getLayoutConfig(count) {
+const getLayoutConfig = (/** @type {number} */ count) => {
     if (count > 12) {
         return {
             columns: 5,
@@ -354,9 +354,16 @@ function getLayoutConfig(count) {
         topOffset: 0,
         inc: resolution.uiScaledNumber(153),
     };
-}
+};
 
-function positionLevelButton(levelElement, index, visibleCount, layout) {
+/**
+ * Positions a level button within the level grid, including horizontal and vertical centering.
+ * @param {HTMLDivElement} levelElement - The DOM element representing the level button.
+ * @param {number} index - The index of this button within the visible levels.
+ * @param {number} visibleCount - The total number of visible levels on this page.
+ * @param {{ columns: number, leftOffset: number, topOffset: number, inc: number }} layout - Grid layout configuration.
+ */
+const positionLevelButton = (levelElement, index, visibleCount, layout) => {
     const { columns, leftOffset, topOffset, inc } = layout;
     const row = Math.floor(index / columns);
     const column = index % columns;
@@ -379,9 +386,9 @@ function positionLevelButton(levelElement, index, visibleCount, layout) {
     levelElement.style.top = `${topOffset + row * inc + verticalOffset}px`;
 
     levelElement.classList.toggle("option-small", columns === 5);
-}
+};
 
-function updateLevelNavigation(totalPages) {
+const updateLevelNavigation = (/** @type {number} */ totalPages) => {
     if (!levelNavBack || !levelNavForward) {
         return;
     }
@@ -415,6 +422,6 @@ function updateLevelNavigation(totalPages) {
             removeClass(forwardDiv, "boxNavDisabled");
         }
     }
-}
+};
 
 export default LevelPanel;
