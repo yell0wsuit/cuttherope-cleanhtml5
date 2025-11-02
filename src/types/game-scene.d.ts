@@ -26,19 +26,24 @@ import type ConstrainedPoint from "@/physics/ConstrainedPoint";
 import type Drawing from "@/game/Drawing";
 import type * as GameSceneConstants from "@/gameScene/constants";
 import type ResourceIdValues from "@/resources/ResourceId";
+import type Rocket from "@/game/Rocket";
 
 type PartsTypeValue =
     (typeof GameSceneConstants.PartsType)[keyof typeof GameSceneConstants.PartsType];
 type RestartStateValue =
     (typeof GameSceneConstants.RestartState)[keyof typeof GameSceneConstants.RestartState];
 type SockStateValue = (typeof Sock.StateType)[keyof typeof Sock.StateType];
-interface Rocket { update(delta: number): void }
 type ResourceIdValue = (typeof ResourceIdValues)[keyof typeof ResourceIdValues];
 
 interface GameSceneController {
     avgDelta: number;
     onLevelWon(): void;
     onLevelLost(): void;
+}
+
+export interface FingerCutSegment {
+    start: Vector;
+    end: Vector;
 }
 
 export type FingerCutTrail = FingerCut[];
@@ -90,6 +95,7 @@ export interface GameScene extends BaseElement {
     pumps: Pump[];
     spikes: Spikes[];
     bouncers: Bouncer[];
+    rockets: Rocket[];
     socks: (Sock & { state: SockStateValue })[];
     bungees: Grab[];
     stars: (Star | null)[];
@@ -141,6 +147,9 @@ export interface GameScene extends BaseElement {
     PM: number;
     PMX: number;
     PMY: number;
-    rockets: Rocket[];
     candyResourceId: ResourceIdValue;
+    activeRocket: Rocket | null;
+    rocketLoopCounter: number;
+    stopActiveRocket(rocket?: Rocket | null): void;
+    handleRocketExhausted(rocket: Rocket): void;
 }

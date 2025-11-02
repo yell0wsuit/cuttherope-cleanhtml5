@@ -10,6 +10,13 @@ import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 import * as GameSceneConstants from "@/gameScene/constants";
 import { IS_XMAS } from "@/resources/ResData";
+import Rocket, { ROCKET_FRAMES } from "@/game/Rocket";
+import RocketSparks from "@/game/RocketSparks";
+import RocketClouds from "@/game/RocketClouds";
+import ConstraintType from "@/physics/ConstraintType";
+import GameObject from "@/visual/GameObject";
+import MathHelper from "@/utils/MathHelper";
+import Constants from "@/utils/Constants";
 import { applyStarImpulse, isCandyHit } from "./collisionHelpers";
 import type BaseElement from "@/visual/BaseElement";
 import type Bubble from "@/game/Bubble";
@@ -92,10 +99,180 @@ export function updateHazards(this: HazardScene, delta: number, numGrabs: number
 
     // rockets
     for (let i = 0, len = this.rockets.length; i < len; i++) {
-        const r = this.rockets[i]!;
-        r.update(delta);
+        const rocket = this.rockets[i];
+        if (!rocket) {
+            continue;
+        }
 
-        // TODO: finish
+        rocket.update(delta);
+        rocket.updateRotation();
+
+        const star = rocket.attachedStar || this.star;
+        const distance = Vector.distance(star.pos.x, star.pos.y, rocket.point.pos.x, rocket.point.pos.y);
+
+        if (rocket.state === Rocket.State.FLY || rocket.state === Rocket.State.DISTANCE) {
+            for (let j = 0; j < 30; j++) {
+                star.satisfyConstraints();
+                rocket.point.satisfyConstraints();
+            }
+            rocket.rotation = MathHelper.normalizeAngle360(
+                rocket.startRotation + this.candyMain.rotation - rocket.startCandyRotation
+            );
+        }
+
+        if (rocket.state === Rocket.State.FLY) {
+            this.lastCandyRotateDelta = 0;
+
+            let hasTension = false;
+            for (let j = 0, blen = this.bungees.length; j < blen; j++) {
+                const grab = this.bungees[j];
+                if (!grab) {
+                    continue;
+                }
+
+                const rope = grab.rope;
+                if (
+                    rope &&
+                    rope.tail === star &&
+                    rope.cut === Constants.UNDEFINED &&
+                    rope.relaxed > 0
+                ) {
+                    hasTension = true;
+                    const anchor = rope.bungeeAnchor;
+                    const tail = rope.parts[rope.parts.length - 1];
+                    const diff = Vector.subtract(anchor.pos, tail.pos);
+                    const perp = Vector.perpendicular(diff);
+                    const rperp = Vector.rPerpendicular(diff);
+                    const rocketRad = Radians.fromDegrees(rocket.rotation);
+
+                    let angle1 = Radians.toDegrees(perp.normalizedAngle() - rocketRad);
+                    let angle2 = Radians.toDegrees(rperp.normalizedAngle() - rocketRad);
+
+                    rocket.additionalAngle = MathHelper.normalizeAngle360(rocket.additionalAngle);
+                    angle1 = MathHelper.nearestAngleTo(rocket.additionalAngle, angle1);
+                    angle2 = MathHelper.nearestAngleTo(rocket.additionalAngle, angle2);
+
+                    const diff1 = MathHelper.minAngleBetween(rocket.additionalAngle, angle1);
+                    const diff2 = MathHelper.minAngleBetween(rocket.additionalAngle, angle2);
+                    const target = diff1 < diff2 ? angle1 : angle2;
+
+                    rocket.additionalAngle = Mover.moveToTarget(
+                        rocket.additionalAngle,
+                        target,
+                        90,
+                        delta
+                    );
+                }
+            }
+
+            rocket.rotation = MathHelper.normalizeAngle360(rocket.rotation + rocket.additionalAngle);
+            rocket.updateRotation();
+
+            const direction = Vector.forAngle(rocket.angle + Math.PI);
+            let impulseMagnitude = rocket.impulse;
+            if (hasTension) {
+                impulseMagnitude *= rocket.impulseFactor;
+            }
+            const impulse = Vector.multiply(direction, impulseMagnitude);
+            star.applyImpulse(impulse, delta);
+            star.disableGravity = true;
+
+            rocket.point.pos.x = star.pos.x;
+            rocket.point.pos.y = star.pos.y;
+            rocket.point.prevPos.copyFrom(rocket.point.pos);
+
+            if (rocket.time !== -1) {
+                rocket.time = Mover.moveToTarget(rocket.time, 0, 1, delta);
+                if (rocket.time === 0) {
+                    this.stopActiveRocket(rocket);
+                }
+            }
+        }
+
+        if (rocket.state === Rocket.State.DISTANCE) {
+            const newRest = Mover.moveToTarget(distance, 0, 200, delta);
+            if (newRest === 0) {
+                rocket.state = Rocket.State.FLY;
+            } else {
+                rocket.point.changeRestLength(star, newRest);
+            }
+        }
+
+        if (
+            rocket.state === Rocket.State.IDLE &&
+            !this.noCandy &&
+            GameObject.objectsIntersectRotatedWithUnrotated(rocket, this.candy)
+        ) {
+            if (rocket.mover) {
+                rocket.mover.pause();
+            }
+
+            rocket.point.removeConstraints();
+            rocket.startRotation = rocket.rotation;
+            rocket.point.addConstraint(this.star, distance, ConstraintType.NOT_MORE_THAN);
+            rocket.state = Rocket.State.DISTANCE;
+            rocket.attachedStar = this.star;
+
+            this.lastCandyRotateDelta = 0;
+
+            const deltaPos = Vector.subtract(this.star.pos, this.star.prevPos);
+            if (!this.star.disableGravity) {
+                const adjust = Vector.divide(deltaPos, 1.25);
+                this.star.prevPos.add(adjust);
+            } else {
+                const adjust = Vector.divide(deltaPos, 2);
+                this.star.prevPos.add(adjust);
+            }
+
+            this.star.disableGravity = true;
+
+            if (this.activeRocket && this.activeRocket !== rocket) {
+                this.stopActiveRocket(this.activeRocket);
+            }
+
+            rocket.startCandyRotation = this.candyMain.rotation;
+            rocket.isOperating = -1;
+            rocket.rotateHandled = false;
+            rocket.additionalAngle = 0;
+
+            rocket.onExhausted = (exhaustedRocket) => this.handleRocketExhausted(exhaustedRocket);
+            this.activeRocket = rocket;
+
+            const texture = ResourceMgr.getTexture(ResourceId.IMG_OBJ_ROCKET);
+            if (texture) {
+                const sparks = new RocketSparks(
+                    40,
+                    texture,
+                    [
+                        ROCKET_FRAMES.SPARKLE_1,
+                        ROCKET_FRAMES.SPARKLE_2,
+                        ROCKET_FRAMES.SPARKLE_3,
+                        ROCKET_FRAMES.SPARKLE_4,
+                    ]
+                );
+                sparks.x = rocket.x;
+                sparks.y = rocket.y;
+                sparks.angle = rocket.rotation;
+                sparks.initialAngle = rocket.angle - Math.PI;
+                sparks.onFinished = this.aniPool.particlesFinishedDelegate();
+                sparks.startSystem(0);
+                this.aniPool.addChild(sparks);
+                rocket.particles = sparks;
+
+                const clouds = new RocketClouds(20, texture, [ROCKET_FRAMES.CLOUD]);
+                clouds.x = rocket.x;
+                clouds.y = rocket.y;
+                clouds.angle = rocket.rotation;
+                clouds.initialAngle = rocket.angle - Math.PI;
+                clouds.onFinished = this.aniPool.particlesFinishedDelegate();
+                clouds.startSystem(0);
+                this.aniPool.addChild(clouds);
+                rocket.cloudParticles = clouds;
+            }
+
+            const loopKey = `rocket-loop-${this.rocketLoopCounter++}`;
+            rocket.startAnimation(loopKey);
+        }
     }
 
     // socks / magic hats
@@ -260,6 +437,8 @@ export function updateHazards(this: HazardScene, delta: number, numGrabs: number
                 }
                 SoundMgr.playSound(ResourceId.SND_CANDY_BREAK);
                 this.releaseAllRopes(left);
+
+                this.stopActiveRocket();
 
                 if (this.restartState !== GameSceneConstants.RestartState.FADE_IN) {
                     this.dd.callObject(this, this.gameLost, null, 0.3);

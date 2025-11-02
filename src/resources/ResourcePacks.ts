@@ -49,6 +49,7 @@ class ResourcePacks {
         ResourceId.IMG_OBJ_CANDY_PADDINGTON,
         ResourceId.IMG_SNOWFLAKES,
         ResourceId.IMG_CONFETTI_PARTICLES,
+        ResourceId.IMG_OBJ_ROCKET,
     ];
 
     // -- Game resources for Round 5 promo --

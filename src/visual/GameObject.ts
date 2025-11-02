@@ -8,6 +8,7 @@ import Radians from "@/utils/Radians";
 import Canvas from "@/utils/Canvas";
 import RGBAcolor from "@/core/RGBAColor";
 import type Texture2D from "@/core/Texture2D";
+import MathHelper from "@/utils/MathHelper";
 
 class GameObject extends Animation {
     bb?: Rectangle;
@@ -208,6 +209,35 @@ class GameObject extends Animation {
             o2x + o2.bb.w,
             o2y + o2.bb.h
         );
+    }
+
+    /**
+     * Checks intersection between a rotated object and an unrotated one.
+     * @param {GameObject} rotated
+     * @param {GameObject} axisAligned
+     * @return {boolean}
+     */
+    static objectsIntersectRotatedWithUnrotated(rotated, axisAligned) {
+        if (!rotated || !axisAligned || !rotated.rbb || !axisAligned.bb) {
+            return false;
+        }
+
+        const tl1 = new Vector(rotated.drawX + rotated.rbb.tlX, rotated.drawY + rotated.rbb.tlY);
+        const tr1 = new Vector(rotated.drawX + rotated.rbb.trX, rotated.drawY + rotated.rbb.trY);
+        const br1 = new Vector(rotated.drawX + rotated.rbb.brX, rotated.drawY + rotated.rbb.brY);
+        const bl1 = new Vector(rotated.drawX + rotated.rbb.blX, rotated.drawY + rotated.rbb.blY);
+
+        const ax = axisAligned.drawX + axisAligned.bb.x;
+        const ay = axisAligned.drawY + axisAligned.bb.y;
+        const bx = ax + axisAligned.bb.w;
+        const by = ay + axisAligned.bb.h;
+
+        const tl2 = new Vector(ax, ay);
+        const tr2 = new Vector(bx, ay);
+        const br2 = new Vector(bx, by);
+        const bl2 = new Vector(ax, by);
+
+        return MathHelper.obbInOBB(tl1, tr1, br1, bl1, tl2, tr2, br2, bl2);
     }
 }
 

@@ -49,6 +49,8 @@ import SoundMgr from "@/game/CTRSoundMgr";
 import MathHelper from "@/utils/MathHelper";
 import KeyFrame from "@/visual/KeyFrame";
 import Timeline from "@/visual/Timeline";
+import Gravity from "@/physics/Gravity";
+import Rocket from "@/game/Rocket";
 
 type PartsTypeValue =
     (typeof GameSceneConstants.PartsType)[keyof typeof GameSceneConstants.PartsType];
@@ -244,6 +246,10 @@ abstract class GameSceneInit extends BaseElement {
         this.twoParts = GameSceneConstants.PartsType.NONE;
         this.partsDist = 0;
         this.targetSock = null;
+
+        SoundMgr.stopSound(ResourceId.SND_ELECTRIC);
+        SoundMgr.stopLoopedSound(ResourceId.SND_ROCKET_FLY);
+
         this.bungees = [];
         this.razors = [];
         this.spikes = [];
@@ -251,6 +257,8 @@ abstract class GameSceneInit extends BaseElement {
         this.bubbles = [];
         this.pumps = [];
         this.rockets = [];
+        this.activeRocket = null;
+        this.rocketLoopCounter = 0;
         this.socks = [];
         this.tutorialImages = [];
         this.tutorials = [];
@@ -526,6 +534,50 @@ abstract class GameSceneInit extends BaseElement {
     }
     doCandyBlink(): void {
         this.candyBlink.playTimeline(GameSceneConstants.CandyBlink.INITIAL);
+    }
+
+    /**
+     * Stops the provided rocket (or the currently active one) and cleans up constraints.
+     * @param {import('@/game/Rocket').default | null} [rocket]
+     */
+    stopActiveRocket(rocket = this.activeRocket) {
+        if (!rocket) {
+            return;
+        }
+
+        rocket.stopAnimation();
+        this.handleRocketExhausted(rocket);
+    }
+
+    /**
+     * Callback triggered when a rocket exhaust animation finishes.
+     * @param {import('@/game/Rocket').default} rocket
+     */
+    handleRocketExhausted(rocket) {
+        if (!rocket) {
+            return;
+        }
+
+        const star = rocket.attachedStar;
+        if (star) {
+            rocket.releaseConstraint(star);
+            star.disableGravity = false;
+            rocket.attachedStar = null;
+        }
+
+        if (this.activeRocket === rocket) {
+            this.activeRocket = null;
+        }
+
+        if (rocket.mover && rocket.mover.paused) {
+            rocket.mover.unpause();
+        }
+
+        rocket.point.pos.x = rocket.x;
+        rocket.point.pos.y = rocket.y;
+        rocket.point.prevPos.copyFrom(rocket.point.pos);
+
+        rocket.state = Rocket.State.EXHAUST;
     }
 }
 
