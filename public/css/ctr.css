@@ -3445,13 +3445,13 @@ body {
 .ui-1920 #levelNavForward {
     position: absolute;
     top: 480px;
-    left: 284px;
+    left: 184px;
     cursor: url(../cursors/handcursor.cur), url(../cursors/handcursor.png), auto;
     display: none;
 }
 
 .ui-1920 #levelNavForward {
-    left: 1547px;
+    left: 1630px;
 }
 
 .ui-1920 #levelNavBack div,
