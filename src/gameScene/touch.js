@@ -17,6 +17,8 @@ import Timeline from "@/visual/Timeline";
 import KeyFrame from "@/visual/KeyFrame";
 import Radians from "@/utils/Radians";
 import GameSceneUpdate from "./update";
+import Rocket from "@/game/Rocket";
+import TrackType from "@/visual/TrackType";
 
 class GameSceneTouch extends GameSceneUpdate {
     /**
@@ -109,6 +111,25 @@ class GameSceneTouch extends GameSceneUpdate {
                 pump.touchTimer = GameSceneConstants.PUMP_TIMEOUT;
                 pump.touch = touchIndex;
                 return true;
+            }
+        }
+
+        const adjustedTouch = new Vector(cameraAdjustedX, cameraAdjustedY);
+        const rocketTouchRadius = 60 * this.PM;
+        for (i = 0, len = this.rockets.length; i < len; i++) {
+            const rocket = this.rockets[i];
+            if (
+                rocket &&
+                rocket.isRotatable &&
+                rocket.state === Rocket.State.IDLE &&
+                rocket.isOperating === -1
+            ) {
+                const distance = Vector.distance(adjustedTouch.x, adjustedTouch.y, rocket.x, rocket.y);
+                if (distance < rocketTouchRadius) {
+                    rocket.handleTouch(adjustedTouch);
+                    rocket.isOperating = touchIndex;
+                    return true;
+                }
             }
         }
 
@@ -314,6 +335,27 @@ class GameSceneTouch extends GameSceneUpdate {
             this.gravityTouchDown = Constants.UNDEFINED;
         }
 
+        for (i = 0, len = this.rockets.length; i < len; i++) {
+            const rocket = this.rockets[i];
+            if (rocket && rocket.isOperating === touchIndex) {
+                const currentTimeline = rocket.currentTimeline;
+                if (!rocket.rotateHandled) {
+                    if (currentTimeline && currentTimeline.state === Timeline.StateType.PLAYING) {
+                        currentTimeline.jumpToTrack(TrackType.ROTATION, 1);
+                        currentTimeline.stop();
+                    }
+                    rocket.playTimeline(0);
+                    rocket.startRotation += 45;
+                } else {
+                    const adjustedTouch = new Vector(cameraAdjustedX, cameraAdjustedY);
+                    rocket.handleRotateFinal(adjustedTouch);
+                }
+                rocket.rotateHandled = false;
+                rocket.isOperating = -1;
+                return true;
+            }
+        }
+
         for (i = 0, len = this.spikes.length; i < len; i++) {
             const spike = this.spikes[i];
             if (spike.rotateButton && spike.touchIndex === touchIndex) {
@@ -468,6 +510,14 @@ class GameSceneTouch extends GameSceneUpdate {
 
                 r.lastTouch.copyFrom(cameraAdjustedTouch);
 
+                return true;
+            }
+        }
+
+        for (i = 0, len = this.rockets.length; i < len; i++) {
+            const rocket = this.rockets[i];
+            if (rocket && rocket.isOperating === touchIndex) {
+                rocket.handleRotate(cameraAdjustedTouch);
                 return true;
             }
         }

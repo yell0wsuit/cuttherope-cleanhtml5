@@ -17,6 +17,7 @@ import Rectangle from "@/core/Rectangle";
 import ResourceId from "@/resources/ResourceId";
 import Radians from "@/utils/Radians";
 import RotatedCircle from "@/game/RotatedCircle";
+import Rocket, { ROCKET_DEFAULT_SCALE, ROCKET_FRAMES } from "@/game/Rocket";
 import Sock from "@/game/Sock";
 import Spikes from "@/game/Spikes";
 import Star from "@/game/Star";
@@ -481,6 +482,55 @@ class GameSceneLoaders extends GameSceneInit {
         s.updateRotation();
         s.anchor = Alignment.CENTER;
         this.pumps.push(s);
+    }
+    loadRocket(item) {
+        const rocket = new Rocket();
+        rocket.initTextureWithId(ResourceId.IMG_OBJ_ROCKET);
+        rocket.setTextureQuad(ROCKET_FRAMES.ROCKET);
+        rocket.doRestoreCutTransparency();
+        rocket.scaleX = rocket.scaleY = ROCKET_DEFAULT_SCALE;
+
+        rocket.x = item.x * this.PM + this.PMX;
+        rocket.y = item.y * this.PM + this.PMY;
+        rocket.rotation = (item.angle || 0) - 180;
+        rocket.anchor = Alignment.CENTER;
+        rocket.parentAnchor = Alignment.CENTER;
+
+        rocket.impulse = item.impulse || 0;
+        rocket.impulseFactor = item.impulseFactor || 0;
+        if (rocket.impulseFactor === 0) {
+            rocket.impulseFactor = 0.6;
+        }
+        rocket.time = typeof item.time === "number" ? item.time : -1;
+        rocket.isRotatable =
+            item.isRotatable === true || item.isRotatable === "true" || item.isRotatable === 1;
+
+        rocket.startRotation = rocket.rotation;
+        rocket.setBoundingBoxFromFrame();
+        rocket.finalizeSetup();
+        rocket.rotateWithBB(rocket.rotation);
+        rocket.updateRotation();
+
+        rocket.point.pos.x = rocket.x;
+        rocket.point.pos.y = rocket.y;
+        rocket.point.prevPos.copyFrom(rocket.point.pos);
+
+        rocket.parseMover(item);
+
+        if (rocket.isRotatable) {
+            const launcher = new ImageElement();
+            launcher.initTextureWithId(ResourceId.IMG_OBJ_ROCKET);
+            launcher.setTextureQuad(ROCKET_FRAMES.LAUNCHER);
+            launcher.doRestoreCutTransparency();
+            launcher.anchor = launcher.parentAnchor = Alignment.CENTER;
+            launcher.scaleX = launcher.scaleY = rocket.scaleX;
+            launcher.x = rocket.x;
+            launcher.y = rocket.y;
+            launcher.rotation = rocket.rotation;
+            this.drawings.push(launcher);
+        }
+
+        this.rockets.push(rocket);
     }
     loadSock(item) {
         const hatOrSock = IS_XMAS ? ResourceId.IMG_OBJ_SOCKS_XMAS : ResourceId.IMG_OBJ_SOCKS;

@@ -21,6 +21,14 @@ import Star from "@/game/Star";
 import DelayedDispatcher from "@/utils/DelayedDispatcher";
 import GameController from "@/game/GameController";
 import ConstrainedPoint from "@/physics/ConstrainedPoint";
+import CTRGameObject from "@/game/CTRGameObject";
+import Rectangle from "@/core/Rectangle";
+import Rocket from "@/game/Rocket";
+
+export interface FingerCutSegment {
+    start: Vector;
+    end: Vector;
+}
 
 export type FingerCutTrail = FingerCut[];
 
@@ -82,6 +90,7 @@ export interface GameScene extends Record<string, unknown> {
     pumps: Pump[];
     spikes: Spikes[];
     bouncers: Bouncer[];
+    rockets: Rocket[];
     socks: Sock[];
     bungees: Array<
         Grab & { rope: Rope | null; spider?: Drawable; hasSpider?: boolean; spiderActive?: boolean }
@@ -128,4 +137,8 @@ export interface GameScene extends Record<string, unknown> {
     attachCount: number;
     juggleTimer: number;
     spiderTookCandy: boolean;
+    activeRocket: Rocket | null;
+    rocketLoopCounter: number;
+    stopActiveRocket(rocket?: Rocket | null): void;
+    handleRocketExhausted(rocket: Rocket): void;
 }

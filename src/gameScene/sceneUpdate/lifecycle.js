@@ -18,6 +18,7 @@ import settings from "@/game/CTRSettings";
 function animateLevelRestart(scene) {
     scene.restartState = GameSceneConstants.RestartState.FADE_IN;
     scene.dimTime = Constants.DIM_TIMEOUT;
+    scene.stopActiveRocket();
 }
 
 /**
@@ -43,6 +44,7 @@ function calculateScore(scene) {
  */
 function gameWon(scene) {
     scene.dd.cancelAllDispatches();
+    scene.stopActiveRocket();
 
     scene.target.playTimeline(GameSceneConstants.CharAnimation.WIN);
     SoundMgr.playSound(ResourceId.SND_MONSTER_CHEWING);
@@ -127,6 +129,7 @@ function gameWon(scene) {
  */
 function gameLost(scene) {
     scene.dd.cancelAllDispatches();
+    scene.stopActiveRocket();
     scene.target.playTimeline(GameSceneConstants.CharAnimation.FAIL);
     SoundMgr.playSound(ResourceId.SND_MONSTER_SAD);
 

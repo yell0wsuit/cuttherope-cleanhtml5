@@ -106,6 +106,11 @@ const drawImpl = function drawImpl(scene) {
         scene.bouncers[i].draw();
     }
 
+    for (let i = 0, len = scene.rockets.length; i < len; i++) {
+        const rocket = scene.rockets[i];
+        rocket && rocket.draw();
+    }
+
     for (let i = 0, len = scene.socks.length; i < len; i++) {
         const sock = scene.socks[i];
         sock.y -= GameSceneConstants.SOCK_COLLISION_Y_OFFSET;
