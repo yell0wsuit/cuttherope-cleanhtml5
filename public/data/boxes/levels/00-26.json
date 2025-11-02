@@ -1,0 +1,370 @@
+{
+    "settings": [
+        {
+            "name": 0,
+            "width": 320,
+            "height": 960,
+            "gridSize": 32
+        },
+        {
+            "name": 1,
+            "ropePhysicsSpeed": 1,
+            "special": 1,
+            "twoParts": false
+        }
+    ],
+    "objects": [
+        {
+            "name": 2,
+            "x": 160,
+            "y": 822
+        },
+        {
+            "name": 52,
+            "x": 159,
+            "y": 480
+        },
+        {
+            "name": 56,
+            "x": 86,
+            "y": 280,
+            "group": 0,
+            "angle": -90
+        },
+        {
+            "name": 56,
+            "x": 236,
+            "y": 443,
+            "group": 0,
+            "angle": 90
+        },
+        {
+            "name": 56,
+            "x": 240,
+            "y": 280,
+            "group": 1,
+            "angle": -90
+        },
+        {
+            "name": 56,
+            "x": 78,
+            "y": 442,
+            "group": 1,
+            "angle": 90
+        },
+        {
+            "name": 3,
+            "x": 237,
+            "y": 546,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 162,
+            "y": 259,
+            "timeout": -1
+        },
+        {
+            "name": 3,
+            "x": 161,
+            "y": 54,
+            "timeout": -1
+        },
+        {
+            "name": 100,
+            "x": 82,
+            "y": 464,
+            "length": 50,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "radius": -1,
+            "invisible": false,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L",
+            "hidePath": false
+        },
+        {
+            "name": 100,
+            "x": 162,
+            "y": 153,
+            "length": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "radius": 75,
+            "invisible": false,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L",
+            "hidePath": false
+        },
+        {
+            "name": 100,
+            "x": 238,
+            "y": 463,
+            "length": 50,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "radius": -1,
+            "invisible": false,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L",
+            "hidePath": false
+        },
+        {
+            "name": 100,
+            "x": 163,
+            "y": 621,
+            "length": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "radius": 75,
+            "invisible": false,
+            "moveLength": -1,
+            "moveVertical": false,
+            "moveOffset": 0,
+            "spider": false,
+            "part": "L",
+            "hidePath": false
+        },
+        {
+            "name": 150,
+            "x": 83,
+            "y": 541,
+            "angle": -90,
+            "impulse": 80,
+            "impulseFactor": 0.6,
+            "time": -1,
+            "isRotatable": false
+        },
+        {
+            "name": 4,
+            "x": 76,
+            "y": 638,
+            "locale": "en",
+            "text": "Om Nom wishes you a happy holiday season!",
+            "width": 210
+        },
+        {
+            "name": 13,
+            "x": 52,
+            "y": 680,
+            "locale": "en",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ru": [
+        {
+            "name": 4,
+            "x": 76,
+            "y": 641,
+            "locale": "ru",
+            "text": "Om Nom желает вам счастливого праздничного сезона!",
+            "width": 210
+        },
+        {
+            "name": 13,
+            "x": 56,
+            "y": 679,
+            "locale": "ru",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "fr": [
+        {
+            "name": 4,
+            "x": 76,
+            "y": 638,
+            "locale": "fr",
+            "text": "Om Nom vous souhaite une joyeuse saison des fêtes!",
+            "width": 210
+        },
+        {
+            "name": 13,
+            "x": 52,
+            "y": 680,
+            "locale": "fr",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "de": [
+        {
+            "name": 4,
+            "x": 76,
+            "y": 638,
+            "locale": "de",
+            "text": "Om Nom wünscht Ihnen eine frohe Weihnachtszeit!",
+            "width": 210
+        },
+        {
+            "name": 13,
+            "x": 52,
+            "y": 680,
+            "locale": "de",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "it": [
+        {
+            "name": 4,
+            "x": 76,
+            "y": 638,
+            "locale": "it",
+            "text": "Om Nom ti augura una felice stagione di festa!",
+            "width": 210
+        },
+        {
+            "name": 13,
+            "x": 52,
+            "y": 680,
+            "locale": "it",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ja": [
+        {
+            "name": 4,
+            "x": 76,
+            "y": 638,
+            "locale": "ja",
+            "text": "オムノムは楽しいホリデーシーズンをお祈りします！",
+            "width": 210
+        },
+        {
+            "name": 13,
+            "x": 52,
+            "y": 680,
+            "locale": "ja",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ko": [
+        {
+            "name": 4,
+            "x": 76,
+            "y": 638,
+            "locale": "ko",
+            "text": "옴놈이 행복한 휴가 시즌을 기원합니다!",
+            "width": 210
+        },
+        {
+            "name": 13,
+            "x": 52,
+            "y": 680,
+            "locale": "ko",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "zh": [
+        {
+            "name": 4,
+            "x": 76,
+            "y": 638,
+            "locale": "zh",
+            "text": "Om Nom祝你节日快乐！",
+            "width": 210
+        },
+        {
+            "name": 13,
+            "x": 52,
+            "y": 680,
+            "locale": "zh",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "nl": [
+        {
+            "name": 4,
+            "x": 76,
+            "y": 638,
+            "locale": "nl",
+            "text": "Om Nom wenst je een fijne feestdagen!",
+            "width": 210
+        },
+        {
+            "name": 13,
+            "x": 52,
+            "y": 680,
+            "locale": "nl",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "br": [
+        {
+            "name": 4,
+            "x": 76,
+            "y": 638,
+            "locale": "br",
+            "text": "Om Nom deseja a você uma feliz temporada de festas!",
+            "width": 210
+        },
+        {
+            "name": 13,
+            "x": 52,
+            "y": 680,
+            "locale": "br",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "es": [
+        {
+            "name": 4,
+            "x": 76,
+            "y": 638,
+            "locale": "es",
+            "text": "¡Om Nom te desea una feliz temporada navideña!",
+            "width": 210
+        },
+        {
+            "name": 13,
+            "x": 52,
+            "y": 680,
+            "locale": "es",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ],
+    "ca": [
+        {
+            "name": 4,
+            "x": 76,
+            "y": 638,
+            "locale": "ca",
+            "text": "Om Nom et desitja una feliç temporada de festes!",
+            "width": 210
+        },
+        {
+            "name": 13,
+            "x": 52,
+            "y": 680,
+            "locale": "ca",
+            "moveSpeed": 100,
+            "rotateSpeed": 100
+        }
+    ]
+}
