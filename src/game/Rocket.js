@@ -243,7 +243,7 @@ class Rocket extends CTRGameObject {
     handleRotateFinal(position) {
         this.rotation = MathHelper.normalizeAngle360(this.rotation);
         const snapIndex = Math.round(this.rotation / 45);
-        const snapTarget = 45 * snapIndex;
+        const snapTarget = (snapIndex * 45) % 360;
 
         this.removeTimeline(TimelineId.ROTATE_NEGATIVE);
         const tl = new Timeline();
@@ -300,7 +300,13 @@ class Rocket extends CTRGameObject {
     }
 
     timelineFinished(timeline) {
+        // Snap rotation to nearest 45 degrees to eliminate floating-point errors
+        const snapIndex = Math.round(this.rotation / 45);
+        this.rotation = (snapIndex * 45) % 360;
+
         this.rotateWithBB(this.rotation);
+        this.updateRotation();
+
         if (timeline === this.getTimeline(TimelineId.EXHAUST)) {
             this.scaleX = 0;
             this.scaleY = 0;

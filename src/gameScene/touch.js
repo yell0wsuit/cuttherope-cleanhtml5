@@ -316,7 +316,7 @@ class GameSceneTouch extends GameSceneUpdate {
         // drawings
         for (i = 0, len = this.drawings.length; i < len; i++) {
             const drawing = this.drawings[i];
-            if (drawing.pointInObject(cameraAdjustedX, cameraAdjustedY)) {
+            if (drawing.pointInObject && drawing.pointInObject(cameraAdjustedX, cameraAdjustedY)) {
                 drawing.showDrawing();
 
                 // remove the drawing
@@ -517,7 +517,14 @@ class GameSceneTouch extends GameSceneUpdate {
         for (i = 0, len = this.rockets.length; i < len; i++) {
             const rocket = this.rockets[i];
             if (rocket && rocket.isOperating === touchIndex) {
-                rocket.handleRotate(cameraAdjustedTouch);
+                // Only allow rotation if the touch is still being dragged
+                if (this.dragging[touchIndex]) {
+                    rocket.handleRotate(cameraAdjustedTouch);
+                } else {
+                    // Touch was released, stop operating
+                    rocket.rotateHandled = false;
+                    rocket.isOperating = -1;
+                }
                 return true;
             }
         }
