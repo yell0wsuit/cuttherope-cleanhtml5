@@ -103,6 +103,25 @@ export function updateHazards(delta, numGrabs) {
         if (rocket.state === Rocket.State.FLY) {
             this.lastCandyRotateDelta = 0;
 
+            // Check for bubble collisions with the rocket
+            for (let j = 0, blen = this.bubbles.length; j < blen; j++) {
+                const bubble = this.bubbles[j];
+                if (!bubble || bubble.popped) {
+                    continue;
+                }
+
+                // Check if rocket intersects with bubble using distance check
+                const bubbleRadius = resolution.BUBBLE_SIZE;
+                const distance = Vector.distance(rocket.x, rocket.y, bubble.x, bubble.y);
+
+                if (distance <= bubbleRadius) {
+                    // Pop the bubble
+                    this.popBubble(bubble.x, bubble.y);
+                    bubble.popped = true;
+                    bubble.removeChildWithID(0);
+                }
+            }
+
             let hasTension = false;
             for (let j = 0, blen = this.bungees.length; j < blen; j++) {
                 const grab = this.bungees[j];
