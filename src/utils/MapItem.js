@@ -1,4 +1,4 @@
-class MapItemDefinitionClass {
+class MapItemDefinition {
     /**
      * @param {{ id: number; key: string; loader?: string | null; priority?: number }} config
      */
@@ -16,12 +16,10 @@ class MapItemDefinitionClass {
 
 /**
  * Helper to create an immutable map item definition.
- * @param {ConstructorParameters<typeof MapItemDefinitionClass>[0]} config
+ * @param {ConstructorParameters<typeof MapItemDefinition>[0]} config
  * @returns {MapItemDefinition}
  */
-const createMapItem = (config) => Object.freeze(new MapItemDefinitionClass(config));
-
-/** @typedef {MapItemDefinitionClass} MapItemDefinition */
+const createMapItem = (config) => Object.freeze(new MapItemDefinition(config));
 
 /**
  * Registry of available map items and the loaders that handle them.
@@ -117,11 +115,6 @@ const MapItem = Object.freeze({
     getDefinitionByKey: getMapItemDefinitionByKey,
 });
 
-export {
-    MapItemDefinitionClass,
-    getMapItemDefinitionById,
-    getMapItemDefinitionByKey,
-    mapItemsById,
-};
+export { MapItemDefinition, getMapItemDefinitionById, getMapItemDefinitionByKey, mapItemsById };
 
 export default MapItem;
