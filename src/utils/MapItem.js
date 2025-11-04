@@ -1,149 +1,127 @@
-/**
- * @enum {number}
- */
-const MapItem = {
-    MAP: 0,
-    GAME_DESIGN: 1,
-    TARGET: 2,
-    STAR: 3,
-    TUTORIAL_TEXT: 4,
-    TUTORIAL_01: 5,
-    TUTORIAL_02: 6,
-    TUTORIAL_03: 7,
-    TUTORIAL_04: 8,
-    TUTORIAL_05: 9,
-    TUTORIAL_06: 10,
-    TUTORIAL_07: 11,
-    TUTORIAL_08: 12,
-    TUTORIAL_09: 13,
-    TUTORIAL_10: 14,
-    TUTORIAL_11: 15,
-    TUTORIAL_12: 16,
-    TUTORIAL_13: 17,
-    TUTORIAL_14: 18,
-    // leave space for future tutorial elements
-    // (which the game assumes are sequentially numbered)
-
-    CANDY_L: 50,
-    CANDY_R: 51,
-    CANDY: 52,
-    GRAVITY_SWITCH: 53,
-    BUBBLE: 54,
-    PUMP: 55,
-    SOCK: 56,
-    SPIKE_1: 57,
-    SPIKE_2: 58,
-    SPIKE_3: 59,
-    SPIKE_4: 60,
-    SPIKES_SWITCH: 61,
-    // leave space for future spike elements
-
-    ELECTRO: 80,
-    BOUNCER1: 81,
-    BOUNCER2: 82,
-    // leave space for future bouncers
-
-    GRAB: 100,
-    HIDDEN_01: 101,
-    HIDDEN_02: 102,
-    HIDDEN_03: 103,
-    // leave space for additional hidden
-
-    ROTATED_CIRCLE: 120,
-    TARGET_2: 121,
-    CANDY_2: 122,
-};
-
-function getMapItem(name) {
-    switch (name) {
-        case "map":
-            return MapItem.MAP;
-        case "gameDesign":
-            return MapItem.GAME_DESIGN;
-        case "target":
-            return MapItem.TARGET;
-        case "target2":
-            return MapItem.TARGET_2;
-        case "star":
-            return MapItem.STAR;
-        case "tutorialText":
-            return MapItem.TUTORIAL_TEXT;
-        case "tutorial01":
-            return MapItem.TUTORIAL_01;
-        case "tutorial02":
-            return MapItem.TUTORIAL_02;
-        case "tutorial03":
-            return MapItem.TUTORIAL_03;
-        case "tutorial04":
-            return MapItem.TUTORIAL_04;
-        case "tutorial05":
-            return MapItem.TUTORIAL_05;
-        case "tutorial06":
-            return MapItem.TUTORIAL_06;
-        case "tutorial07":
-            return MapItem.TUTORIAL_07;
-        case "tutorial08":
-            return MapItem.TUTORIAL_08;
-        case "tutorial09":
-            return MapItem.TUTORIAL_09;
-        case "tutorial10":
-            return MapItem.TUTORIAL_10;
-        case "tutorial11":
-            return MapItem.TUTORIAL_11;
-        case "tutorial12":
-            return MapItem.TUTORIAL_12;
-        case "tutorial13":
-            return MapItem.TUTORIAL_13;
-        case "tutorial14":
-            return MapItem.TUTORIAL_14;
-        case "candyL":
-            return MapItem.CANDY_L;
-        case "candyR":
-            return MapItem.CANDY_R;
-        case "candy":
-            return MapItem.CANDY;
-        case "candy2":
-            return MapItem.CANDY_2;
-        case "gravitySwitch":
-            return MapItem.GRAVITY_SWITCH;
-        case "bubble":
-            return MapItem.BUBBLE;
-        case "pump":
-            return MapItem.PUMP;
-        case "sock":
-            return MapItem.SOCK;
-        case "spike1":
-            return MapItem.SPIKE_1;
-        case "spike2":
-            return MapItem.SPIKE_2;
-        case "spike3":
-            return MapItem.SPIKE_3;
-        case "spike4":
-            return MapItem.SPIKE_4;
-        case "spikesSwitch":
-            return MapItem.SPIKES_SWITCH;
-        case "electro":
-            return MapItem.ELECTRO;
-        case "bouncer1":
-            return MapItem.BOUNCER1;
-        case "bouncer2":
-            return MapItem.BOUNCER2;
-        case "grab":
-            return MapItem.GRAB;
-        case "hidden01":
-            return MapItem.HIDDEN_01;
-        case "hidden02":
-            return MapItem.HIDDEN_02;
-        case "hidden03":
-            return MapItem.HIDDEN_03;
-        case "rotatedCircle":
-            return MapItem.ROTATED_CIRCLE;
-        default:
-            alert(`Unknown map item: ${name}`);
-            return null;
+class MapItemDefinitionClass {
+    /**
+     * @param {{ id: number; key: string; loader?: string | null; priority?: number }} config
+     */
+    constructor({ id, key, loader = null, priority = 1 }) {
+        /** @type {number} */
+        this.id = id;
+        /** @type {string} */
+        this.key = key;
+        /** @type {string | null} */
+        this.loader = loader;
+        /** @type {number} */
+        this.priority = priority;
     }
 }
 
-MapItem.fromName = getMapItem;
+/**
+ * Helper to create an immutable map item definition.
+ * @param {ConstructorParameters<typeof MapItemDefinitionClass>[0]} config
+ * @returns {MapItemDefinition}
+ */
+const createMapItem = (config) => Object.freeze(new MapItemDefinitionClass(config));
+
+/** @typedef {MapItemDefinitionClass} MapItemDefinition */
+
+/**
+ * Registry of available map items and the loaders that handle them.
+ * Items with a lower priority are processed before higher ones when loading a map.
+ */
+const mapItemDefinitions = {
+    MAP: createMapItem({ id: 0, key: "map", loader: "loadMapSettings", priority: 0 }),
+    GAME_DESIGN: createMapItem({ id: 1, key: "gameDesign", loader: "loadGameDesign", priority: 0 }),
+    TARGET: createMapItem({ id: 2, key: "target", loader: "loadTarget" }),
+    STAR: createMapItem({ id: 3, key: "star", loader: "loadStar" }),
+    TUTORIAL_TEXT: createMapItem({ id: 4, key: "tutorialText", loader: "loadTutorialText" }),
+    TUTORIAL_01: createMapItem({ id: 5, key: "tutorial01", loader: "loadTutorialImage" }),
+    TUTORIAL_02: createMapItem({ id: 6, key: "tutorial02", loader: "loadTutorialImage" }),
+    TUTORIAL_03: createMapItem({ id: 7, key: "tutorial03", loader: "loadTutorialImage" }),
+    TUTORIAL_04: createMapItem({ id: 8, key: "tutorial04", loader: "loadTutorialImage" }),
+    TUTORIAL_05: createMapItem({ id: 9, key: "tutorial05", loader: "loadTutorialImage" }),
+    TUTORIAL_06: createMapItem({ id: 10, key: "tutorial06", loader: "loadTutorialImage" }),
+    TUTORIAL_07: createMapItem({ id: 11, key: "tutorial07", loader: "loadTutorialImage" }),
+    TUTORIAL_08: createMapItem({ id: 12, key: "tutorial08", loader: "loadTutorialImage" }),
+    TUTORIAL_09: createMapItem({ id: 13, key: "tutorial09", loader: "loadTutorialImage" }),
+    TUTORIAL_10: createMapItem({ id: 14, key: "tutorial10", loader: "loadTutorialImage" }),
+    TUTORIAL_11: createMapItem({ id: 15, key: "tutorial11", loader: "loadTutorialImage" }),
+    TUTORIAL_12: createMapItem({ id: 16, key: "tutorial12", loader: "loadTutorialImage" }),
+    TUTORIAL_13: createMapItem({ id: 17, key: "tutorial13", loader: "loadTutorialImage" }),
+    TUTORIAL_14: createMapItem({ id: 18, key: "tutorial14", loader: "loadTutorialImage" }),
+    // leave space for future tutorial elements
+    // (which the game assumes are sequentially numbered)
+
+    CANDY_L: createMapItem({ id: 50, key: "candyL", loader: "loadCandyL", priority: 0 }),
+    CANDY_R: createMapItem({ id: 51, key: "candyR", loader: "loadCandyR", priority: 0 }),
+    CANDY: createMapItem({ id: 52, key: "candy", loader: "loadCandy", priority: 0 }),
+    GRAVITY_SWITCH: createMapItem({ id: 53, key: "gravitySwitch", loader: "loadGravitySwitch" }),
+    BUBBLE: createMapItem({ id: 54, key: "bubble", loader: "loadBubble" }),
+    PUMP: createMapItem({ id: 55, key: "pump", loader: "loadPump" }),
+    SOCK: createMapItem({ id: 56, key: "sock", loader: "loadSock" }),
+    SPIKE_1: createMapItem({ id: 57, key: "spike1", loader: "loadSpike" }),
+    SPIKE_2: createMapItem({ id: 58, key: "spike2", loader: "loadSpike" }),
+    SPIKE_3: createMapItem({ id: 59, key: "spike3", loader: "loadSpike" }),
+    SPIKE_4: createMapItem({ id: 60, key: "spike4", loader: "loadSpike" }),
+    SPIKES_SWITCH: createMapItem({ id: 61, key: "spikesSwitch", loader: null }),
+    // leave space for future spike elements
+
+    ELECTRO: createMapItem({ id: 80, key: "electro", loader: "loadSpike" }),
+    BOUNCER1: createMapItem({ id: 81, key: "bouncer1", loader: "loadBouncer" }),
+    BOUNCER2: createMapItem({ id: 82, key: "bouncer2", loader: "loadBouncer" }),
+    // leave space for future bouncers
+
+    GRAB: createMapItem({ id: 100, key: "grab", loader: "loadGrab" }),
+    HIDDEN_01: createMapItem({ id: 101, key: "hidden01", loader: "loadHidden" }),
+    HIDDEN_02: createMapItem({ id: 102, key: "hidden02", loader: "loadHidden" }),
+    HIDDEN_03: createMapItem({ id: 103, key: "hidden03", loader: "loadHidden" }),
+    // leave space for additional hidden
+
+    ROTATED_CIRCLE: createMapItem({ id: 120, key: "rotatedCircle", loader: "loadRotatedCircle" }),
+    TARGET_2: createMapItem({ id: 121, key: "target2", loader: "loadTarget" }),
+    CANDY_2: createMapItem({ id: 122, key: "candy2", loader: "loadCandy" }),
+};
+
+const mapItems = Object.values(mapItemDefinitions);
+const mapItemsById = new Map(mapItems.map((definition) => [definition.id, definition]));
+const mapItemsByKey = new Map(mapItems.map((definition) => [definition.key, definition]));
+
+/**
+ * Resolves a map item definition by its numeric identifier.
+ * @param {number} id
+ * @returns {MapItemDefinition | null}
+ */
+const getMapItemDefinitionById = (id) => mapItemsById.get(id) ?? null;
+
+/**
+ * Resolves a map item definition by its string key.
+ * @param {string} key
+ * @returns {MapItemDefinition | null}
+ */
+const getMapItemDefinitionByKey = (key) => mapItemsByKey.get(key) ?? null;
+
+/**
+ * @param {string} name
+ */
+function getMapItem(name) {
+    const definition = getMapItemDefinitionByKey(name);
+    if (!definition) {
+        alert(`Unknown map item: ${name}`);
+        return null;
+    }
+    return definition.id;
+}
+
+const MapItem = Object.freeze({
+    ...mapItemDefinitions,
+    fromName: getMapItem,
+    getDefinitionById: getMapItemDefinitionById,
+    getDefinitionByKey: getMapItemDefinitionByKey,
+});
+
+export {
+    MapItemDefinitionClass,
+    getMapItemDefinitionById,
+    getMapItemDefinitionByKey,
+    mapItemsById,
+};
 
 export default MapItem;
