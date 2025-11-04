@@ -10,7 +10,7 @@ import Grab from "@/game/Grab";
 import GravityButton from "@/game/GravityButton";
 import ImageElement from "@/visual/ImageElement";
 import Log from "@/utils/Log";
-import MapItem from "@/utils/MapItem";
+import MapItem, { getMapItemDefinitionById } from "@/utils/MapItem";
 import MathHelper from "@/utils/MathHelper";
 import Pump from "@/game/Pump";
 import Rectangle from "@/core/Rectangle";
@@ -42,122 +42,67 @@ class GameSceneLoaders extends GameSceneInit {
     loadMap(map) {
         const layers = [];
 
-        // get all the layers for this map
         for (const layerName in map) {
             if (Object.prototype.hasOwnProperty.call(map, layerName)) {
                 layers.push(map[layerName]);
             }
         }
 
-        // let enumLayerChildren = function (layers, childCallback) {
-        //     for (let i = 0, numLayers = layers.length; i < numLayers; i++) {
-        //         // parse the children
-        //         let children = layers[i],
-        //             numChildren = children.length;
-        //         for (let j = 0; j < numChildren; j++) {
-        //             //console.log("CALLBAC", i, j)
-        //             childCallback.call(self, children[j]);
-        //         }
-        //     }
-        // };
+        /** @type {{ item: any; definition: import("@/utils/MapItem").MapItemDefinition; order: number }[]} */
+        const queue = [];
+        let order = 0;
 
-        // first pass handles basic settings and candy
         for (let i = 0, numLayers = layers.length; i < numLayers; i++) {
-            // parse the children
-            const children = layers[i],
-                numChildren = children.length;
-            for (let j = 0; j < numChildren; j++) {
+            const children = layers[i];
+            for (let j = 0, numChildren = children.length; j < numChildren; j++) {
                 const child = children[j];
-                switch (child.name) {
-                    case MapItem.MAP:
-                        this.loadMapSettings(child);
-                        break;
-                    case MapItem.GAME_DESIGN:
-                        this.loadGameDesign(child);
-                        break;
-                    case MapItem.CANDY_L:
-                        this.loadCandyL(child);
-                        break;
-                    case MapItem.CANDY_R:
-                        this.loadCandyR(child);
-                        break;
-                    case MapItem.CANDY:
-                        this.loadCandy(child);
-                        break;
+                const resolvedId = typeof child.name === "number" ? child.name : Number(child.name);
+                const definition = getMapItemDefinitionById(resolvedId);
+
+                if (!definition) {
+                    Log.alert(`Unknown map item id: ${child.name}`);
+                    continue;
                 }
+
+                queue.push({
+                    item: child,
+                    definition,
+                    order: order++,
+                });
             }
         }
 
-        // second pass handles the rest of the game elements
-        for (let i = 0, numLayers = layers.length; i < numLayers; i++) {
-            // parse the children
-            const children = layers[i],
-                numChildren = children.length;
-            for (let j = 0; j < numChildren; j++) {
-                const child = children[j];
-                switch (child.name) {
-                    case MapItem.GRAVITY_SWITCH:
-                        this.loadGravitySwitch(child);
-                        break;
-                    case MapItem.STAR:
-                        this.loadStar(child);
-                        break;
-                    case MapItem.TUTORIAL_TEXT:
-                        this.loadTutorialText(child);
-                        break;
-                    case MapItem.TUTORIAL_01:
-                    case MapItem.TUTORIAL_02:
-                    case MapItem.TUTORIAL_03:
-                    case MapItem.TUTORIAL_04:
-                    case MapItem.TUTORIAL_05:
-                    case MapItem.TUTORIAL_06:
-                    case MapItem.TUTORIAL_07:
-                    case MapItem.TUTORIAL_08:
-                    case MapItem.TUTORIAL_09:
-                    case MapItem.TUTORIAL_10:
-                    case MapItem.TUTORIAL_11:
-                    case MapItem.TUTORIAL_12:
-                    case MapItem.TUTORIAL_13:
-                    case MapItem.TUTORIAL_14:
-                        this.loadTutorialImage(child);
-                        break;
-                    case MapItem.BUBBLE:
-                        this.loadBubble(child);
-                        break;
-                    case MapItem.PUMP:
-                        this.loadPump(child);
-                        break;
-                    case MapItem.SOCK:
-                        this.loadSock(child);
-                        break;
-                    case MapItem.SPIKE_1:
-                    case MapItem.SPIKE_2:
-                    case MapItem.SPIKE_3:
-                    case MapItem.SPIKE_4:
-                    case MapItem.ELECTRO:
-                        this.loadSpike(child);
-                        break;
-                    case MapItem.ROTATED_CIRCLE:
-                        this.loadRotatedCircle(child);
-                        break;
-                    case MapItem.BOUNCER1:
-                    case MapItem.BOUNCER2:
-                        this.loadBouncer(child);
-                        break;
-                    case MapItem.GRAB:
-                        this.loadGrab(child);
-                        break;
-                    case MapItem.TARGET:
-                        this.loadTarget(child);
-                        break;
-                    case MapItem.HIDDEN_01:
-                    case MapItem.HIDDEN_02:
-                    case MapItem.HIDDEN_03:
-                        this.loadHidden(child);
-                        break;
+        queue
+            .sort((a, b) => {
+                const priorityA = a.definition.priority ?? 1;
+                const priorityB = b.definition.priority ?? 1;
+
+                if (priorityA === priorityB) {
+                    return a.order - b.order;
                 }
-            }
-        }
+
+                return priorityA - priorityB;
+            })
+            .forEach(({ item, definition }) => {
+                const loaderRef = definition.loader;
+
+                if (!loaderRef) {
+                    return;
+                }
+
+                const loadFn = typeof loaderRef === "string" ? this[loaderRef] : loaderRef;
+
+                if (typeof loadFn !== "function") {
+                    Log.alert(`Loader not implemented for map item: ${definition.key}`);
+                    return;
+                }
+
+                if (typeof loaderRef === "string") {
+                    loadFn.call(this, item, definition);
+                } else {
+                    loadFn(this, item, definition);
+                }
+            });
     }
     /**
      * Loads the map settings for the map node (inside settings layer)
@@ -385,7 +330,7 @@ class GameSceneLoaders extends GameSceneInit {
             return;
         }
 
-        const v = item.name - MapItem.TUTORIAL_01, // gets the tutorial number
+        const v = item.name - MapItem.TUTORIAL_01.id, // gets the tutorial number
             s = new CTRGameObject();
 
         s.initTextureWithId(ResourceId.IMG_TUTORIAL_SIGNS);
@@ -487,7 +432,7 @@ class GameSceneLoaders extends GameSceneInit {
     }
     loadHidden(item) {
         // get the hidden image index
-        const v = item.name - MapItem.HIDDEN_01,
+        const v = item.name - MapItem.HIDDEN_01.id,
             drawingId = item.drawing - 1;
 
         const alreadyUnlocked = false;
@@ -579,7 +524,7 @@ class GameSceneLoaders extends GameSceneInit {
             s.onButtonPressed = this.rotateAllSpikesWithId.bind(this);
         }
 
-        if (item.name === MapItem.ELECTRO) {
+        if (item.name === MapItem.ELECTRO.id) {
             s.electro = true;
             s.initialDelay = item.initialDelay;
             s.onTime = item.onTime;
