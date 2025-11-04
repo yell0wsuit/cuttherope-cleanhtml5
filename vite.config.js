@@ -151,7 +151,6 @@ export default defineConfig({
                             priority: 50,
                         },
                     ],
-                    maxSize: 100 * 1024,
                 },
             },
         },
