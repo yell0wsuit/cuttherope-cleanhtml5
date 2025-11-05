@@ -10,9 +10,9 @@
 
 /**
  * Shared mutable state object passed between systems during a frame update.
- * Individual systems can attach and read arbitrary values.
  *
- * @typedef {Record<string, any>} GameSystemSharedState
+ * @typedef {object} GameSystemSharedState
+ * @property {number} [numGrabs] - Number of active bungee grabs, set by BungeeSystem, read by HazardSystem
  */
 
 /**
