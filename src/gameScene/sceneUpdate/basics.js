@@ -3,7 +3,10 @@ import Constants from "@/utils/Constants";
 import Mover from "@/utils/Mover";
 import BaseElement from "@/visual/BaseElement";
 
+/** @typedef {import("@/types/game-scene").GameScene} GameScene */
+
 /**
+ * @param {GameScene} this
  * @param {number} delta
  */
 export function updateBasics(delta) {

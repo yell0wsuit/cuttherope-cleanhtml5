@@ -1,6 +1,9 @@
 import resolution from "@/resolution";
 
+/** @typedef {import("@/types/game-scene").GameScene} GameScene */
+
 /**
+ * @param {GameScene} this
  * @param {number} delta
  */
 export function updateSpecial(delta) {

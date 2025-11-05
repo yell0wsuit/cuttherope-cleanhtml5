@@ -12,9 +12,13 @@ import * as GameSceneConstants from "@/gameScene/constants";
 import { IS_XMAS } from "@/resources/ResData";
 import { applyStarImpulse, isCandyHit } from "./collisionHelpers";
 
+/** @typedef {import("@/types/game-scene").GameScene} GameScene */
+
 /**
+ * @param {GameScene} this
  * @param {number} delta
  * @param {number} numGrabs
+ * @returns {boolean}
  */
 export function updateHazards(delta, numGrabs) {
     let removeCircleIndex = -1;
