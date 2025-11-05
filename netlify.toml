@@ -5,4 +5,4 @@
 [context.deploy-preview]
   # For PR previews on Netlify
   [context.deploy-preview.environment]
-    VITE_BASE = "/"
+    VITE_BASE_NETLIFY = "/"
