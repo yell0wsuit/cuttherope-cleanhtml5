@@ -72,8 +72,10 @@ class JsonLoader {
 
         try {
             // First, load the box metadata to get level counts
-            const boxMetadataUrl = `${baseUrl}data/config/editions/net-box-text.json`;
-            const boxMetadata = /** @type {RawBoxMetadataJson[]} */ (await loadJson(boxMetadataUrl));
+            const boxMetadataUrl = `${baseUrl}/data/config/editions/net-box-text.json`;
+            const boxMetadata = /** @type {RawBoxMetadataJson[]} */ (
+                await loadJson(boxMetadataUrl)
+            );
             this.jsonCache.set("boxMetadata", boxMetadata);
 
             /**
@@ -89,7 +91,7 @@ class JsonLoader {
                     for (let level = 1; level <= box.levelCount; level++) {
                         const levelStr = String(level).padStart(2, "0");
                         levelFiles.push({
-                            url: `${baseUrl}data/boxes/levels/${boxStr}-${levelStr}.json`,
+                            url: `${baseUrl}/data/boxes/levels/${boxStr}-${levelStr}.json`,
                             key: `level-${boxStr}-${levelStr}`,
                             type: "level",
                         });
