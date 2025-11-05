@@ -156,7 +156,7 @@ const TRACK_STRATEGIES = {
         },
         applyLinearStep(track, delta) {
             const spsRotation = track.currentStepPerSecond.value.rotationAngle;
-            track.t.element.rotationAngle += spsRotation * delta;
+            track.t.element.rotation += spsRotation * delta;
         },
         setElementFromKeyFrame(track, keyFrame) {
             if (!track.relative) {
@@ -281,7 +281,7 @@ const TrackState = {
 
 class TimelineTrack {
     /**
-     * @param {Timeline} timeline
+     * @param {import('./Timeline').default} timeline
      * @param {number} trackType
      */
     constructor(timeline, trackType) {
@@ -313,7 +313,7 @@ class TimelineTrack {
         this.keyFrames = [];
 
         /**
-         * @type {Timeline}
+         * @type {import('./Timeline').default}
          */
         this.t = timeline;
 
