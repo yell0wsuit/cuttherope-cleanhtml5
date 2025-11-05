@@ -2,10 +2,12 @@
  * @typedef {Object} PointerCaptureSettings
  * @property {HTMLElement} element - The DOM element to capture pointer events on
  * @property {() => number} [getZoom] - Optional function that returns the current zoom level
- * @property {(x: number, y: number) => void} [onStart] - Callback for pointer start events
- * @property {(x: number, y: number) => void} [onMove] - Callback for pointer move events
- * @property {(x: number, y: number) => void} [onEnd] - Callback for pointer end events
- * @property {(x: number, y: number) => void} [onOut] - Callback for pointer out events
+ * @property {(x: number, y: number, pointerId?: number) => void} [onStart] - Callback for pointer start events
+ * @property {(x: number, y: number, pointerId?: number) => void} [onMove] - Callback for pointer move events
+ * @property {(x: number, y: number, pointerId?: number) => void} [onEnd] - Callback for pointer end events
+ * @property {(x: number, y: number, pointerId?: number) => void} [onOut] - Callback for pointer out events
+ * @property {boolean} [multiTouch=false] - Enable multi-touch support
+ * @property {number} [maxPointers=10] - Maximum number of simultaneous pointers to track
  */
 
 /**
@@ -20,6 +22,14 @@ class PointerCapture {
         this.el = settings.element;
         /** @type {(() => number)|undefined} */
         this.getZoom = settings.getZoom;
+        /** @type {boolean} */
+        this.multiTouch = settings.multiTouch || true;
+        /** @type {number} */
+        this.maxPointers = settings.maxPointers || 10;
+        /** @type {Set<number>} */
+        this.activePointerIds = new Set();
+
+        // Legacy single-touch mode compatibility
         /** @type {number|null} */
         this.activePointerId = null;
 
@@ -29,13 +39,25 @@ class PointerCapture {
             const pointerEvent = /** @type {PointerEvent} */ (event);
             event.preventDefault();
 
-            // Only handle the first pointer
-            if (this.activePointerId === null) {
-                this.activePointerId = pointerEvent.pointerId;
-                this.el.setPointerCapture(pointerEvent.pointerId);
+            if (this.multiTouch) {
+                // Multi-touch mode: track multiple pointers
+                if (this.activePointerIds.size < this.maxPointers) {
+                    this.activePointerIds.add(pointerEvent.pointerId);
+                    this.el.setPointerCapture(pointerEvent.pointerId);
 
-                if (settings.onStart) {
-                    this.translatePosition(pointerEvent, settings.onStart);
+                    if (settings.onStart) {
+                        this.translatePosition(pointerEvent, settings.onStart);
+                    }
+                }
+            } else {
+                // Single-touch mode: only handle the first pointer
+                if (this.activePointerId === null) {
+                    this.activePointerId = pointerEvent.pointerId;
+                    this.el.setPointerCapture(pointerEvent.pointerId);
+
+                    if (settings.onStart) {
+                        this.translatePosition(pointerEvent, settings.onStart);
+                    }
                 }
             }
         };
@@ -44,15 +66,32 @@ class PointerCapture {
         this.moveHandler = (event) => {
             const pointerEvent = /** @type {PointerEvent} */ (event);
 
-            // Always allow move events (for hover effects), but only prevent default
-            // when actively dragging to allow normal scrolling when not interacting
-            if (this.activePointerId !== null && pointerEvent.pointerId === this.activePointerId) {
-                event.preventDefault();
-            }
+            if (this.multiTouch) {
+                // Multi-touch mode: handle all active pointers
+                if (this.activePointerIds.has(pointerEvent.pointerId)) {
+                    event.preventDefault();
 
-            // Fire onMove for any pointer movement (hover or drag)
-            if (settings.onMove) {
-                this.translatePosition(pointerEvent, settings.onMove);
+                    if (settings.onMove) {
+                        this.translatePosition(pointerEvent, settings.onMove);
+                    }
+                } else {
+                    // Allow hover events for non-active pointers
+                    if (settings.onMove) {
+                        this.translatePosition(pointerEvent, settings.onMove);
+                    }
+                }
+            } else {
+                // Single-touch mode: handle hover or active pointer
+                if (
+                    this.activePointerId !== null &&
+                    pointerEvent.pointerId === this.activePointerId
+                ) {
+                    event.preventDefault();
+                }
+
+                if (settings.onMove) {
+                    this.translatePosition(pointerEvent, settings.onMove);
+                }
             }
         };
 
@@ -61,11 +100,23 @@ class PointerCapture {
             const pointerEvent = /** @type {PointerEvent} */ (event);
             event.preventDefault();
 
-            if (pointerEvent.pointerId === this.activePointerId) {
-                this.activePointerId = null;
+            if (this.multiTouch) {
+                // Multi-touch mode: remove this pointer from active set
+                if (this.activePointerIds.has(pointerEvent.pointerId)) {
+                    this.activePointerIds.delete(pointerEvent.pointerId);
 
-                if (settings.onEnd) {
-                    this.translatePosition(pointerEvent, settings.onEnd);
+                    if (settings.onEnd) {
+                        this.translatePosition(pointerEvent, settings.onEnd);
+                    }
+                }
+            } else {
+                // Single-touch mode
+                if (pointerEvent.pointerId === this.activePointerId) {
+                    this.activePointerId = null;
+
+                    if (settings.onEnd) {
+                        this.translatePosition(pointerEvent, settings.onEnd);
+                    }
                 }
             }
         };
@@ -74,11 +125,23 @@ class PointerCapture {
         this.cancelHandler = (event) => {
             const pointerEvent = /** @type {PointerEvent} */ (event);
 
-            if (pointerEvent.pointerId === this.activePointerId) {
-                this.activePointerId = null;
+            if (this.multiTouch) {
+                // Multi-touch mode: remove this pointer from active set
+                if (this.activePointerIds.has(pointerEvent.pointerId)) {
+                    this.activePointerIds.delete(pointerEvent.pointerId);
 
-                if (settings.onOut) {
-                    this.translatePosition(pointerEvent, settings.onOut);
+                    if (settings.onOut) {
+                        this.translatePosition(pointerEvent, settings.onOut);
+                    }
+                }
+            } else {
+                // Single-touch mode
+                if (pointerEvent.pointerId === this.activePointerId) {
+                    this.activePointerId = null;
+
+                    if (settings.onOut) {
+                        this.translatePosition(pointerEvent, settings.onOut);
+                    }
                 }
             }
         };
@@ -87,7 +150,7 @@ class PointerCapture {
     /**
      * Translates from page-relative to element-relative position
      * @param {PointerEvent} event - The pointer event
-     * @param {(x: number, y: number) => void} callback - Callback function with translated coordinates
+     * @param {(x: number, y: number, pointerId?: number) => void} callback - Callback function with translated coordinates
      */
     translatePosition(event, callback) {
         const rect = this.el.getBoundingClientRect();
@@ -97,7 +160,41 @@ class PointerCapture {
         const mouseX = Math.round((event.clientX - rect.left) / zoom);
         const mouseY = Math.round((event.clientY - rect.top) / zoom);
 
-        callback(mouseX, mouseY);
+        callback(mouseX, mouseY, event.pointerId);
+    }
+
+    /**
+     * Gets all currently active pointer IDs
+     * @returns {number[]} Array of active pointer IDs
+     */
+    getActivePointers() {
+        if (this.multiTouch) {
+            return Array.from(this.activePointerIds);
+        }
+        return this.activePointerId !== null ? [this.activePointerId] : [];
+    }
+
+    /**
+     * Checks if a specific pointer is active
+     * @param {number} pointerId - The pointer ID to check
+     * @returns {boolean} True if the pointer is active
+     */
+    isPointerActive(pointerId) {
+        if (this.multiTouch) {
+            return this.activePointerIds.has(pointerId);
+        }
+        return this.activePointerId === pointerId;
+    }
+
+    /**
+     * Gets the number of active pointers
+     * @returns {number} Count of active pointers
+     */
+    getActivePointerCount() {
+        if (this.multiTouch) {
+            return this.activePointerIds.size;
+        }
+        return this.activePointerId !== null ? 1 : 0;
     }
 
     /**
