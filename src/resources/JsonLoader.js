@@ -68,7 +68,7 @@ class JsonLoader {
 
     async start() {
         // Use the configured base from vite config
-        const baseUrl = import.meta.env.BASE_URL || "/";
+        const baseUrl = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
 
         try {
             // First, load the box metadata to get level counts
