@@ -11,8 +11,12 @@ import Timeline from "@/visual/Timeline";
 import Vector from "@/core/Vector";
 import ResourceId from "@/resources/ResourceId";
 
+/** @typedef {import("@/types/game-scene").GameScene} GameScene */
+
 /**
+ * @param {GameScene} this
  * @param {number} delta
+ * @returns {boolean}
  */
 export function updateCollectibles(delta) {
     let moveResult;

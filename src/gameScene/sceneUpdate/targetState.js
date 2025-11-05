@@ -6,8 +6,12 @@ import resolution from "@/resolution";
 import * as GameSceneConstants from "@/gameScene/constants";
 import ResourceId from "@/resources/ResourceId";
 
+/** @typedef {import("@/types/game-scene").GameScene} GameScene */
+
 /**
+ * @param {GameScene} this
  * @param {number} delta
+ * @returns {boolean}
  */
 export function updateTargetState(delta) {
     let targetVector;

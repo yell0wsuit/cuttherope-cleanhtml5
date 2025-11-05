@@ -8,8 +8,12 @@ import Vector from "@/core/Vector";
 import Constants from "@/utils/Constants";
 import resolution from "@/resolution";
 
+/** @typedef {import("@/types/game-scene").GameScene} GameScene */
+
 /**
+ * @param {GameScene} this
  * @param {number} delta
+ * @returns {number}
  */
 export function updateBungees(delta) {
     const numGrabs = this.bungees.length;

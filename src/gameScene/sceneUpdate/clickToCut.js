@@ -5,7 +5,10 @@ import Constants from "@/utils/Constants";
 import Mover from "@/utils/Mover";
 import * as GameSceneConstants from "@/gameScene/constants";
 
+/** @typedef {import("@/types/game-scene").GameScene} GameScene */
+
 /**
+ * @param {GameScene} this
  * @param {number} delta
  */
 export function updateClickToCut(delta) {
