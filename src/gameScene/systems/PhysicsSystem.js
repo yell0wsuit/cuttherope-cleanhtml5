@@ -1,16 +1,15 @@
-import { updateBasics as runUpdateBasics } from "../sceneUpdate/basics";
-
 /** @typedef {import("./types").GameSystemContext} GameSystemContext */
 /** @typedef {import("./types").GameSystemSharedState} GameSystemSharedState */
 /** @typedef {import("./types").PhysicsSystemDependencies} PhysicsSystemDependencies */
+/** @typedef {import("../services/types").PhysicsService} PhysicsService */
 
 const defaultDependencies = Object.freeze({
     /**
-     * @param {import("../update").default} scene
+     * @param {PhysicsService} service
      * @param {number} delta
      */
-    updateBasics(scene, delta) {
-        runUpdateBasics.call(scene, delta);
+    updateBasics(service, delta) {
+        service.updateBasics(delta);
     },
 });
 
@@ -31,7 +30,7 @@ class PhysicsSystem {
      * @returns {import("./types").SystemResult}
      */
     update(delta, _sharedState) {
-        this.dependencies.updateBasics(this.context.scene, delta);
+        this.dependencies.updateBasics(this.context.physics, delta);
         return { continue: true };
     }
 }

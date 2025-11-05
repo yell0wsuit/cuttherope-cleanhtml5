@@ -1,10 +1,13 @@
-/**
- * @typedef {import("../update").default} GameSceneUpdate
- */
+/** @typedef {import("../services/types").PhysicsService} PhysicsService */
+/** @typedef {import("../services/types").CandyService} CandyService */
+/** @typedef {import("../services/types").AnimationService} AnimationService */
+/** @typedef {import("../services/types").TargetUpdateResult} TargetUpdateResult */
 
 /**
  * @typedef {object} GameSystemContext
- * @property {GameSceneUpdate} scene
+ * @property {PhysicsService} physics
+ * @property {CandyService} candy
+ * @property {AnimationService} animation
  * @property {import("../plugins/GameObjectPluginManager").default} pluginManager
  */
 
@@ -41,57 +44,41 @@
  */
 
 /**
- * @typedef {(scene: GameSceneUpdate, delta: number) => void} SceneVoidUpdate
- */
-
-/**
- * @typedef {(scene: GameSceneUpdate, delta: number) => number} SceneNumberUpdate
- */
-
-/**
- * @typedef {(scene: GameSceneUpdate, delta: number) => boolean} SceneBooleanUpdate
- */
-
-/**
- * @typedef {(scene: GameSceneUpdate, delta: number, numGrabs: number) => boolean} SceneHazardUpdate
- */
-
-/**
  * @typedef {object} PhysicsSystemDependencies
- * @property {SceneVoidUpdate} updateBasics
+ * @property {(service: PhysicsService, delta: number) => void} updateBasics
  */
 
 /**
  * @typedef {object} CameraSystemDependencies
- * @property {SceneVoidUpdate} updateCamera
+ * @property {(service: AnimationService, delta: number) => void} updateCamera
  */
 
 /**
  * @typedef {object} BungeeSystemDependencies
- * @property {SceneNumberUpdate} updateBungees
+ * @property {(service: CandyService, delta: number) => number} updateBungees
  */
 
 /**
  * @typedef {object} CollectibleSystemDependencies
- * @property {SceneBooleanUpdate} updateCollectibles
+ * @property {(service: CandyService, delta: number) => void} updateCollectibles
  */
 
 /**
  * @typedef {object} HazardSystemDependencies
- * @property {SceneHazardUpdate} updateHazards
+ * @property {(service: CandyService, delta: number, numGrabs: number) => boolean} updateHazards
  */
 
 /**
  * @typedef {object} TargetSystemDependencies
- * @property {SceneBooleanUpdate} updateTargetState
+ * @property {(service: CandyService, delta: number) => TargetUpdateResult} updateTargetState
  */
 
 /**
  * @typedef {object} SpecialSystemDependencies
- * @property {SceneBooleanUpdate} updateSpecial
+ * @property {(service: CandyService, delta: number) => void} updateSpecial
  */
 
 /**
  * @typedef {object} InteractionSystemDependencies
- * @property {SceneVoidUpdate} updateClickToCut
+ * @property {(service: AnimationService, delta: number) => void} updateClickToCut
  */

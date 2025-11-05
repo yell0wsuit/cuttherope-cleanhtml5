@@ -1,16 +1,15 @@
-import { updateSpecial as runUpdateSpecial } from "../sceneUpdate/special";
-
 /** @typedef {import("./types").GameSystemContext} GameSystemContext */
 /** @typedef {import("./types").GameSystemSharedState} GameSystemSharedState */
 /** @typedef {import("./types").SpecialSystemDependencies} SpecialSystemDependencies */
+/** @typedef {import("../services/types").CandyService} CandyService */
 
 const defaultDependencies = Object.freeze({
     /**
-     * @param {import("../update").default} scene
+     * @param {CandyService} service
      * @param {number} delta
      */
-    updateSpecial(scene, delta) {
-        return runUpdateSpecial.call(scene, delta);
+    updateSpecial(service, delta) {
+        service.updateSpecial(delta);
     },
 });
 
@@ -32,7 +31,7 @@ class SpecialSystem {
      */
     update(delta, _sharedState) {
         // SpecialSystem always continues (always returns true)
-        this.dependencies.updateSpecial(this.context.scene, delta);
+        this.dependencies.updateSpecial(this.context.candy, delta);
         return { continue: true };
     }
 }

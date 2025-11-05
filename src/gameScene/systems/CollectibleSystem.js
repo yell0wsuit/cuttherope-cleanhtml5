@@ -1,16 +1,15 @@
-import { updateCollectibles as runUpdateCollectibles } from "../sceneUpdate/collectibles";
-
 /** @typedef {import("./types").GameSystemContext} GameSystemContext */
 /** @typedef {import("./types").GameSystemSharedState} GameSystemSharedState */
 /** @typedef {import("./types").CollectibleSystemDependencies} CollectibleSystemDependencies */
+/** @typedef {import("../services/types").CandyService} CandyService */
 
 const defaultDependencies = Object.freeze({
     /**
-     * @param {import("../update").default} scene
+     * @param {CandyService} service
      * @param {number} delta
      */
-    updateCollectibles(scene, delta) {
-        return runUpdateCollectibles.call(scene, delta);
+    updateCollectibles(service, delta) {
+        service.updateCollectibles(delta);
     },
 });
 
@@ -35,7 +34,7 @@ class CollectibleSystem {
      */
     update(delta, _sharedState) {
         // CollectibleSystem always continues (returns true)
-        this.dependencies.updateCollectibles(this.context.scene, delta);
+        this.dependencies.updateCollectibles(this.context.candy, delta);
         return { continue: true };
     }
 }

@@ -1,16 +1,15 @@
-import { updateBungees as runUpdateBungees } from "../sceneUpdate/bungees";
-
 /** @typedef {import("./types").GameSystemContext} GameSystemContext */
 /** @typedef {import("./types").GameSystemSharedState} GameSystemSharedState */
 /** @typedef {import("./types").BungeeSystemDependencies} BungeeSystemDependencies */
+/** @typedef {import("../services/types").CandyService} CandyService */
 
 const defaultDependencies = Object.freeze({
     /**
-     * @param {import("../update").default} scene
+     * @param {CandyService} service
      * @param {number} delta
      */
-    updateBungees(scene, delta) {
-        return runUpdateBungees.call(scene, delta);
+    updateBungees(service, delta) {
+        return service.updateBungees(delta);
     },
 });
 
@@ -34,7 +33,7 @@ class BungeeSystem {
      * @returns {import("./types").SystemResult}
      */
     update(delta, sharedState) {
-        const numGrabs = this.dependencies.updateBungees(this.context.scene, delta);
+        const numGrabs = this.dependencies.updateBungees(this.context.candy, delta);
         sharedState.numGrabs = numGrabs;
         return { continue: true };
     }
