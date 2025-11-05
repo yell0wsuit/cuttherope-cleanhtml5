@@ -20,12 +20,12 @@ export default defineConfig(({ mode }) => {
             enablePWA &&
                 VitePWA({
                     registerType: "autoUpdate",
-                    includeAssets: ["favicon.ico", "css/ctr.css"],
+                    includeAssets: ["index.html", "favicon.ico", "css/ctr.css"],
                     devOptions: {
                         enabled: false,
                     },
                     manifest: {
-                        id: base,
+                        id: "page.yell0wsuit.ctrh5dx",
                         name: "Cut the Rope: H5DX",
                         short_name: "Cut the Rope: H5DX",
                         description:
@@ -53,7 +53,7 @@ export default defineConfig(({ mode }) => {
                             "**/*.{js,css,html,ico,png,svg,jpg,jpeg,gif,webp,json,woff,woff2,ttf,cur,mp3,ogg}",
                         ],
                         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB
-                        navigateFallback: `/${base}/index.html`,
+                        //navigateFallback: `/${base}/index.html`,
                         cleanupOutdatedCaches: true,
                         runtimeCaching: [
                             {

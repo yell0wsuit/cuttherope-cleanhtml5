@@ -19,19 +19,3 @@ if (document.readyState === "loading") {
 } else {
     boot();
 }
-
-if ("serviceWorker" in navigator) {
-    // Only load PWA registration when the plugin is enabled (not on Netlify)
-    import("virtual:pwa-register")
-        .then(({ registerSW }) => {
-            registerSW({
-                immediate: true,
-                onOfflineReady() {
-                    window.console?.info?.("Cut the Rope is ready for offline play.");
-                },
-            });
-        })
-        .catch(() => {
-            // PWA plugin not available (e.g., on Netlify), silently ignore
-        });
-}
