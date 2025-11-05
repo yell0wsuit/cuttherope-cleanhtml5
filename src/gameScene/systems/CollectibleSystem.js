@@ -31,9 +31,12 @@ class CollectibleSystem {
     /**
      * @param {number} delta
      * @param {GameSystemSharedState} _sharedState
+     * @returns {import("./types").SystemResult}
      */
     update(delta, _sharedState) {
-        return this.dependencies.updateCollectibles(this.context.scene, delta);
+        // CollectibleSystem always continues (returns true)
+        this.dependencies.updateCollectibles(this.context.scene, delta);
+        return { continue: true };
     }
 }
 

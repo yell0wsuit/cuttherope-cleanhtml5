@@ -146,10 +146,14 @@ class GameSceneUpdate extends GameSceneCharacter {
         this.pluginManager.beforeUpdate(delta, sharedState);
 
         for (const system of this.systems) {
-            const shouldContinue = system.update(delta, sharedState);
-            this.pluginManager.afterSystem(system, shouldContinue, delta, sharedState);
+            const result = system.update(delta, sharedState);
+            this.pluginManager.afterSystem(system, result.continue, delta, sharedState);
 
-            if (!shouldContinue) {
+            if (!result.continue) {
+                // System halted execution due to game state change (won/lost)
+                if (import.meta.env.DEV) {
+                    console.log(`[GameScene] System "${system.id}" halted: ${result.reason}`);
+                }
                 break;
             }
         }

@@ -31,10 +31,11 @@ class InteractionSystem {
     /**
      * @param {number} delta
      * @param {GameSystemSharedState} _sharedState
+     * @returns {import("./types").SystemResult}
      */
     update(delta, _sharedState) {
         this.dependencies.updateClickToCut(this.context.scene, delta);
-        return true;
+        return { continue: true };
     }
 }
 

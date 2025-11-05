@@ -32,10 +32,14 @@ class HazardSystem {
     /**
      * @param {number} delta
      * @param {GameSystemSharedState} sharedState
+     * @returns {import("./types").SystemResult}
      */
     update(delta, sharedState) {
         const numGrabs = sharedState.numGrabs ?? 0;
-        return this.dependencies.updateHazards(this.context.scene, delta, numGrabs);
+        const shouldContinue = this.dependencies.updateHazards(this.context.scene, delta, numGrabs);
+
+        // updateHazards returns false when candy hits spike (game lost)
+        return shouldContinue ? { continue: true } : { continue: false, reason: "game_lost" };
     }
 }
 

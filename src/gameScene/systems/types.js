@@ -16,9 +16,28 @@
  */
 
 /**
+ * Result indicating the system update loop should continue processing.
+ * @typedef {object} SystemResultContinue
+ * @property {true} continue
+ */
+
+/**
+ * Result indicating the system update loop should halt.
+ * @typedef {object} SystemResultStop
+ * @property {false} continue
+ * @property {'game_won' | 'game_lost'} reason - Why processing was halted
+ */
+
+/**
+ * Discriminated union of possible system update results.
+ * Use `result.continue` to check if processing should continue.
+ * @typedef {SystemResultContinue | SystemResultStop} SystemResult
+ */
+
+/**
  * @typedef {object} GameSystem
  * @property {string} id
- * @property {(delta: number, sharedState: GameSystemSharedState) => boolean} update
+ * @property {(delta: number, sharedState: GameSystemSharedState) => SystemResult} update
  */
 
 /**

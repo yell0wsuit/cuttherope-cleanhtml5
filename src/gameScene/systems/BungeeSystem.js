@@ -31,11 +31,12 @@ class BungeeSystem {
     /**
      * @param {number} delta
      * @param {GameSystemSharedState} sharedState
+     * @returns {import("./types").SystemResult}
      */
     update(delta, sharedState) {
         const numGrabs = this.dependencies.updateBungees(this.context.scene, delta);
         sharedState.numGrabs = numGrabs;
-        return true;
+        return { continue: true };
     }
 }
 

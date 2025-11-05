@@ -28,9 +28,12 @@ class SpecialSystem {
     /**
      * @param {number} delta
      * @param {GameSystemSharedState} _sharedState
+     * @returns {import("./types").SystemResult}
      */
     update(delta, _sharedState) {
-        return this.dependencies.updateSpecial(this.context.scene, delta);
+        // SpecialSystem always continues (always returns true)
+        this.dependencies.updateSpecial(this.context.scene, delta);
+        return { continue: true };
     }
 }
 
