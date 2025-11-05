@@ -19,7 +19,10 @@ class BungeeSystem {
      * @param {GameSystemContext} context
      * @param {BungeeSystemDependencies} [dependencies]
      */
-    constructor(context, dependencies = /** @type {BungeeSystemDependencies} */ (defaultDependencies)) {
+    constructor(
+        context,
+        dependencies = /** @type {BungeeSystemDependencies} */ (defaultDependencies)
+    ) {
         this.id = "bungees";
         this.context = context;
         this.dependencies = dependencies;

@@ -20,7 +20,10 @@ class HazardSystem {
      * @param {GameSystemContext} context
      * @param {HazardSystemDependencies} [dependencies]
      */
-    constructor(context, dependencies = /** @type {HazardSystemDependencies} */ (defaultDependencies)) {
+    constructor(
+        context,
+        dependencies = /** @type {HazardSystemDependencies} */ (defaultDependencies)
+    ) {
         this.id = "hazards";
         this.context = context;
         this.dependencies = dependencies;
@@ -31,7 +34,7 @@ class HazardSystem {
      * @param {GameSystemSharedState} sharedState
      */
     update(delta, sharedState) {
-        const numGrabs = typeof sharedState.numGrabs === "number" ? sharedState.numGrabs : 0;
+        const numGrabs = sharedState.numGrabs ?? 0;
         return this.dependencies.updateHazards(this.context.scene, delta, numGrabs);
     }
 }
