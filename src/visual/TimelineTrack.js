@@ -3,6 +3,275 @@ import TrackType from "@/visual/TrackType";
 import Constants from "@/utils/Constants";
 
 /**
+ * @typedef {object} TrackStrategy
+ * @property {(track: TimelineTrack, keyFrame: KeyFrame, delta: number) => void} applyEaseStep
+ * @property {(track: TimelineTrack, delta: number) => void} applyLinearStep
+ * @property {(track: TimelineTrack, keyFrame: KeyFrame) => void} setElementFromKeyFrame
+ * @property {(track: TimelineTrack, keyFrame: KeyFrame) => void} setKeyFrameFromElement
+ * @property {(track: TimelineTrack, src: KeyFrame, dst: KeyFrame) => void} initKeyFrameStepFrom
+ * @property {(track: TimelineTrack, src: KeyFrame, dst: KeyFrame, isEaseIn: boolean, isEaseOut: boolean) => void} configureEase
+ */
+
+/**
+ * @type {Record<number, TrackStrategy>}
+ */
+const TRACK_STRATEGIES = {
+    [TrackType.POSITION]: {
+        applyEaseStep(track, _keyFrame, delta) {
+            const saPos = track.currentStepAcceleration.value.pos;
+            const xPosDelta = saPos.x * delta;
+            const yPosDelta = saPos.y * delta;
+            const spsPos = track.currentStepPerSecond.value.pos;
+            const oldPosX = spsPos.x;
+            const oldPosY = spsPos.y;
+
+            spsPos.x += xPosDelta;
+            spsPos.y += yPosDelta;
+
+            track.t.element.x += (oldPosX + xPosDelta / 2) * delta;
+            track.t.element.y += (oldPosY + yPosDelta / 2) * delta;
+        },
+        applyLinearStep(track, delta) {
+            const spsValue = track.currentStepPerSecond.value.pos;
+            const element = track.t.element;
+            element.x += spsValue.x * delta;
+            element.y += spsValue.y * delta;
+        },
+        setElementFromKeyFrame(track, keyFrame) {
+            const element = track.t.element;
+            const kfPos = keyFrame.value.pos;
+
+            if (!track.relative) {
+                element.x = kfPos.x;
+                element.y = kfPos.y;
+                return;
+            }
+
+            const prevPos = track.elementPrevState.value.pos;
+            element.x = prevPos.x + kfPos.x;
+            element.y = prevPos.y + kfPos.y;
+        },
+        setKeyFrameFromElement(track, keyFrame) {
+            const kfValue = keyFrame.value.pos;
+            const element = track.t.element;
+            kfValue.x = element.x;
+            kfValue.y = element.y;
+        },
+        initKeyFrameStepFrom(track, src, dst) {
+            const spsPos = track.currentStepPerSecond.value.pos;
+            const dstPos = dst.value.pos;
+            const srcPos = src.value.pos;
+            spsPos.x = (dstPos.x - srcPos.x) / track.keyFrameTimeLeft;
+            spsPos.y = (dstPos.y - srcPos.y) / track.keyFrameTimeLeft;
+        },
+        configureEase(track, _src, _dst, isEaseIn, isEaseOut) {
+            if (!isEaseIn && !isEaseOut) {
+                return;
+            }
+
+            const spsPos = track.currentStepPerSecond.value.pos;
+            const saPos = track.currentStepAcceleration.value.pos;
+            spsPos.multiply(2);
+            saPos.x = spsPos.x / track.keyFrameTimeLeft;
+            saPos.y = spsPos.y / track.keyFrameTimeLeft;
+            if (isEaseIn) {
+                spsPos.x = 0;
+                spsPos.y = 0;
+            } else {
+                saPos.multiply(-1);
+            }
+        },
+    },
+    [TrackType.SCALE]: {
+        applyEaseStep(track, _keyFrame, delta) {
+            const saScale = track.currentStepAcceleration.value.scale;
+            const xScaleDelta = saScale.x * delta;
+            const yScaleDelta = saScale.y * delta;
+            const spsScale = track.currentStepPerSecond.value.scale;
+            const oldScaleX = spsScale.x;
+            const oldScaleY = spsScale.y;
+
+            spsScale.x += xScaleDelta;
+            spsScale.y += yScaleDelta;
+
+            track.t.element.scaleX += (oldScaleX + xScaleDelta / 2) * delta;
+            track.t.element.scaleY += (oldScaleY + yScaleDelta / 2) * delta;
+        },
+        applyLinearStep(track, delta) {
+            const spsScale = track.currentStepPerSecond.value.scale;
+            const element = track.t.element;
+            element.scaleX += spsScale.x * delta;
+            element.scaleY += spsScale.y * delta;
+        },
+        setElementFromKeyFrame(track, keyFrame) {
+            const element = track.t.element;
+            const kfScale = keyFrame.value.scale;
+            if (!track.relative) {
+                element.scaleX = kfScale.x;
+                element.scaleY = kfScale.y;
+                return;
+            }
+
+            const prevScale = track.elementPrevState.value.scale;
+            element.scaleX = prevScale.x + kfScale.x;
+            element.scaleY = prevScale.y + kfScale.y;
+        },
+        setKeyFrameFromElement(track, keyFrame) {
+            const kfScale = keyFrame.value.scale;
+            const element = track.t.element;
+            kfScale.x = element.scaleX;
+            kfScale.y = element.scaleY;
+        },
+        initKeyFrameStepFrom(track, src, dst) {
+            const spsScale = track.currentStepPerSecond.value.scale;
+            const dstScale = dst.value.scale;
+            const srcScale = src.value.scale;
+            spsScale.x = (dstScale.x - srcScale.x) / track.keyFrameTimeLeft;
+            spsScale.y = (dstScale.y - srcScale.y) / track.keyFrameTimeLeft;
+        },
+        configureEase(track, _src, _dst, isEaseIn, isEaseOut) {
+            if (!isEaseIn && !isEaseOut) {
+                return;
+            }
+
+            const spsScale = track.currentStepPerSecond.value.scale;
+            const saScale = track.currentStepAcceleration.value.scale;
+            spsScale.multiply(2);
+            saScale.x = spsScale.x / track.keyFrameTimeLeft;
+            saScale.y = spsScale.y / track.keyFrameTimeLeft;
+            if (isEaseIn) {
+                spsScale.x = 0;
+                spsScale.y = 0;
+            } else {
+                saScale.multiply(-1);
+            }
+        },
+    },
+    [TrackType.ROTATION]: {
+        applyEaseStep(track, _keyFrame, delta) {
+            const acceleration = track.currentStepAcceleration.value.rotationAngle * delta;
+            const current = track.currentStepPerSecond.value.rotationAngle;
+            track.currentStepPerSecond.value.rotationAngle += acceleration;
+            track.t.element.rotation += (current + acceleration / 2) * delta;
+        },
+        applyLinearStep(track, delta) {
+            const spsRotation = track.currentStepPerSecond.value.rotationAngle;
+            track.t.element.rotationAngle += spsRotation * delta;
+        },
+        setElementFromKeyFrame(track, keyFrame) {
+            if (!track.relative) {
+                track.t.element.rotation = keyFrame.value.rotationAngle;
+                return;
+            }
+
+            track.t.element.rotation =
+                track.elementPrevState.value.rotationAngle + keyFrame.value.rotationAngle;
+        },
+        setKeyFrameFromElement(track, keyFrame) {
+            keyFrame.value.rotationAngle = track.t.element.rotation;
+        },
+        initKeyFrameStepFrom(track, src, dst) {
+            track.currentStepPerSecond.value.rotationAngle =
+                (dst.value.rotationAngle - src.value.rotationAngle) / track.keyFrameTimeLeft;
+        },
+        configureEase(track, _src, _dst, isEaseIn, isEaseOut) {
+            if (!isEaseIn && !isEaseOut) {
+                return;
+            }
+
+            const sps = track.currentStepPerSecond.value;
+            const sa = track.currentStepAcceleration.value;
+            sps.rotationAngle *= 2;
+            sa.rotationAngle = sps.rotationAngle / track.keyFrameTimeLeft;
+            if (isEaseIn) {
+                sps.rotationAngle = 0;
+            } else {
+                sa.rotationAngle *= -1;
+            }
+        },
+    },
+    [TrackType.COLOR]: {
+        applyEaseStep(track, _keyFrame, delta) {
+            const spsColor = track.currentStepPerSecond.value.color;
+            const oldColorR = spsColor.r;
+            const oldColorG = spsColor.g;
+            const oldColorB = spsColor.b;
+            const oldColorA = spsColor.a;
+            const saColor = track.currentStepAcceleration.value.color;
+            const deltaR = saColor.r * delta;
+            const deltaG = saColor.g * delta;
+            const deltaB = saColor.b * delta;
+            const deltaA = saColor.a * delta;
+
+            // NOTE: it looks like there may be a bug in iOS? For now, we'll follow
+            // it by adding the delta twice
+            spsColor.r += deltaR * 2;
+            spsColor.g += deltaG * 2;
+            spsColor.b += deltaB * 2;
+            spsColor.a += deltaA * 2;
+
+            const elementColor = track.t.element.color;
+            elementColor.r += (oldColorR + deltaR / 2) * delta;
+            elementColor.g += (oldColorG + deltaG / 2) * delta;
+            elementColor.b += (oldColorB + deltaB / 2) * delta;
+            elementColor.a += (oldColorA + deltaA / 2) * delta;
+        },
+        applyLinearStep(track, delta) {
+            const spsColor = track.currentStepPerSecond.value.color;
+            const elementColor = track.t.element.color;
+            elementColor.r += spsColor.r * delta;
+            elementColor.g += spsColor.g * delta;
+            elementColor.b += spsColor.b * delta;
+            elementColor.a += spsColor.a * delta;
+        },
+        setElementFromKeyFrame(track, keyFrame) {
+            const elementColor = track.t.element.color;
+            const kfColor = keyFrame.value.color;
+            if (!track.relative) {
+                elementColor.copyFrom(kfColor);
+                return;
+            }
+
+            const prevColor = track.elementPrevState.value.color;
+            elementColor.r = prevColor.r + kfColor.r;
+            elementColor.g = prevColor.g + kfColor.g;
+            elementColor.b = prevColor.b + kfColor.b;
+            elementColor.a = prevColor.a + kfColor.a;
+        },
+        setKeyFrameFromElement(track, keyFrame) {
+            keyFrame.value.color.copyFrom(track.t.element.color);
+        },
+        initKeyFrameStepFrom(track, src, dst) {
+            const spsColor = track.currentStepPerSecond.value.color;
+            const dstColor = dst.value.color;
+            const srcColor = src.value.color;
+            spsColor.r = (dstColor.r - srcColor.r) / track.keyFrameTimeLeft;
+            spsColor.g = (dstColor.g - srcColor.g) / track.keyFrameTimeLeft;
+            spsColor.b = (dstColor.b - srcColor.b) / track.keyFrameTimeLeft;
+            spsColor.a = (dstColor.a - srcColor.a) / track.keyFrameTimeLeft;
+        },
+        configureEase(track, _src, _dst, isEaseIn, isEaseOut) {
+            if (!isEaseIn && !isEaseOut) {
+                return;
+            }
+
+            const spsColor = track.currentStepPerSecond.value.color;
+            const saColor = track.currentStepAcceleration.value.color;
+            spsColor.multiply(2);
+            saColor.r = spsColor.r / track.keyFrameTimeLeft;
+            saColor.g = spsColor.g / track.keyFrameTimeLeft;
+            saColor.b = spsColor.b / track.keyFrameTimeLeft;
+            saColor.a = spsColor.a / track.keyFrameTimeLeft;
+            if (isEaseIn) {
+                spsColor.multiply(0);
+            } else {
+                saColor.multiply(-1);
+            }
+        },
+    },
+};
+
+/**
  * @enum {number}
  */
 const TrackState = {
@@ -47,6 +316,11 @@ class TimelineTrack {
          * @type {Timeline}
          */
         this.t = timeline;
+
+        /**
+         * @type {TrackStrategy | null}
+         */
+        this.strategy = TRACK_STRATEGIES[trackType] ?? null;
 
         /**
          * @type {number}
@@ -229,97 +503,18 @@ class TimelineTrack {
 
         this.keyFrameTimeLeft -= delta;
         kf = this.keyFrames[this.nextKeyFrame];
+        const strategy = this.strategy;
+        if (!strategy) {
+            return;
+        }
+
         if (
             kf.transitionType === KeyFrame.TransitionType.EASE_IN ||
             kf.transitionType === KeyFrame.TransitionType.EASE_OUT
         ) {
-            switch (this.type) {
-                case TrackType.POSITION: {
-                    const saPos = this.currentStepAcceleration.value.pos,
-                        xPosDelta = saPos.x * delta,
-                        yPosDelta = saPos.y * delta,
-                        spsPos = this.currentStepPerSecond.value.pos,
-                        oldPosX = spsPos.x,
-                        oldPosY = spsPos.y;
-                    spsPos.x += xPosDelta;
-                    spsPos.y += yPosDelta;
-                    t.element.x += (oldPosX + xPosDelta / 2) * delta;
-                    t.element.y += (oldPosY + yPosDelta / 2) * delta;
-                    break;
-                }
-                case TrackType.SCALE: {
-                    const saScale = this.currentStepAcceleration.value.scale,
-                        xScaleDelta = saScale.x * delta,
-                        yScaleDelta = saScale.y * delta,
-                        spsScale = this.currentStepPerSecond.value.scale,
-                        oldScaleX = spsScale.x,
-                        oldScaleY = spsScale.y;
-                    spsScale.x += xScaleDelta;
-                    spsScale.y += yScaleDelta;
-                    t.element.scaleX += (oldScaleX + xScaleDelta / 2) * delta;
-                    t.element.scaleY += (oldScaleY + yScaleDelta / 2) * delta;
-                    break;
-                }
-                case TrackType.ROTATION: {
-                    const rDelta = this.currentStepAcceleration.value.rotationAngle * delta,
-                        oldRotationAngle = this.currentStepPerSecond.value.rotationAngle;
-                    this.currentStepPerSecond.value.rotationAngle += rDelta;
-                    t.element.rotation += (oldRotationAngle + rDelta / 2) * delta;
-                    break;
-                }
-                case TrackType.COLOR: {
-                    const spsColor = this.currentStepPerSecond.value.color,
-                        oldColorR = spsColor.r,
-                        oldColorG = spsColor.g,
-                        oldColorB = spsColor.b,
-                        oldColorA = spsColor.a,
-                        saColor = this.currentStepAcceleration.value.color,
-                        deltaR = saColor.r * delta,
-                        deltaG = saColor.g * delta,
-                        deltaB = saColor.b * delta,
-                        deltaA = saColor.a * delta;
-
-                    // NOTE: it looks like there may be a bug in iOS? For now, we'll follow
-                    // it by adding the delta twice
-                    spsColor.r += deltaR * 2;
-                    spsColor.g += deltaG * 2;
-                    spsColor.b += deltaB * 2;
-                    spsColor.a += deltaA * 2;
-
-                    const elemColor = t.element.color;
-                    elemColor.r += (oldColorR + deltaR / 2) * delta;
-                    elemColor.g += (oldColorG + deltaG / 2) * delta;
-                    elemColor.b += (oldColorB + deltaB / 2) * delta;
-                    elemColor.a += (oldColorA + deltaA / 2) * delta;
-                    break;
-                }
-                case TrackType.ACTION:
-                    break;
-            }
+            strategy.applyEaseStep(this, kf, delta);
         } else if (kf.transitionType === KeyFrame.TransitionType.LINEAR) {
-            const elem = t.element,
-                spsValue = this.currentStepPerSecond.value;
-            switch (this.type) {
-                case TrackType.POSITION:
-                    elem.x += spsValue.pos.x * delta;
-                    elem.y += spsValue.pos.y * delta;
-                    break;
-                case TrackType.SCALE:
-                    elem.scaleX += spsValue.scale.x * delta;
-                    elem.scaleY += spsValue.scale.y * delta;
-                    break;
-                case TrackType.ROTATION:
-                    elem.rotationAngle += spsValue.rotationAngle * delta;
-                    break;
-                case TrackType.COLOR:
-                    elem.color.r += spsValue.color.r * delta;
-                    elem.color.g += spsValue.color.g * delta;
-                    elem.color.b += spsValue.color.b * delta;
-                    elem.color.a += spsValue.color.a * delta;
-                    break;
-                case TrackType.ACTION:
-                    break;
-            }
+            strategy.applyLinearStep(this, delta);
         }
 
         if (this.keyFrameTimeLeft <= Constants.FLOAT_PRECISION) {
@@ -371,90 +566,27 @@ class TimelineTrack {
      * @param {KeyFrame} kf
      */
     setElementFromKeyFrame(kf) {
-        switch (this.type) {
-            case TrackType.POSITION: {
-                const elem = this.t.element,
-                    kfPos = kf.value.pos;
-                if (!this.relative) {
-                    elem.x = kfPos.x;
-                    elem.y = kfPos.y;
-                } else {
-                    const prevPos = this.elementPrevState.value.pos;
-                    elem.x = prevPos.x + kfPos.x;
-                    elem.y = prevPos.y + kfPos.y;
-                }
-                break;
+        if (this.type === TrackType.ACTION) {
+            const actionSet = kf.value.actionSet;
+            for (let i = 0, len = actionSet.length; i < len; i++) {
+                const action = actionSet[i];
+                action.actionTarget.handleAction(action.data);
             }
-            case TrackType.SCALE: {
-                const kfScale = kf.value.scale;
-                const elem = this.t.element;
-                if (!this.relative) {
-                    elem.scaleX = kfScale.x;
-                    elem.scaleY = kfScale.y;
-                } else {
-                    const prevScale = this.elementPrevState.value.scale;
-                    elem.scaleX = prevScale.x + kfScale.x;
-                    elem.scaleY = prevScale.y + kfScale.y;
-                }
-                break;
-            }
-            case TrackType.ROTATION:
-                if (!this.relative) {
-                    this.t.element.rotation = kf.value.rotationAngle;
-                } else {
-                    this.t.element.rotation =
-                        this.elementPrevState.value.rotationAngle + kf.value.rotationAngle;
-                }
-                break;
-            case TrackType.COLOR: {
-                const elemColor = this.t.element.color,
-                    kfColor = kf.value.color;
-                if (!this.relative) {
-                    elemColor.copyFrom(kfColor);
-                } else {
-                    const prevColor = this.elementPrevState.value.color;
-                    elemColor.r = prevColor.r + kfColor.r;
-                    elemColor.g = prevColor.g + kfColor.g;
-                    elemColor.b = prevColor.b + kfColor.b;
-                    elemColor.a = prevColor.a + kfColor.a;
-                }
-                break;
-            }
-            case TrackType.ACTION: {
-                const actionSet = kf.value.actionSet;
-                for (let i = 0, len = actionSet.length; i < len; i++) {
-                    const action = actionSet[i];
-                    action.actionTarget.handleAction(action.data);
-                }
-                break;
-            }
+            return;
         }
+
+        this.strategy?.setElementFromKeyFrame(this, kf);
     }
 
     /**
      * @param {KeyFrame} kf
      */
     setKeyFrameFromElement(kf) {
-        const kfValue = kf.value,
-            elem = this.t.element;
-        switch (this.type) {
-            case TrackType.POSITION:
-                kfValue.pos.x = elem.x;
-                kfValue.pos.y = elem.y;
-                break;
-            case TrackType.SCALE:
-                kfValue.scale.x = elem.scaleX;
-                kfValue.scale.y = elem.scaleY;
-                break;
-            case TrackType.ROTATION:
-                kfValue.rotationAngle = elem.rotation;
-                break;
-            case TrackType.COLOR:
-                kfValue.color.copyFrom(elem.color);
-                break;
-            case TrackType.ACTION:
-                break;
+        if (this.type === TrackType.ACTION) {
+            return;
         }
+
+        this.strategy?.setKeyFrameFromElement(this, kf);
     }
 
     /**
@@ -468,103 +600,12 @@ class TimelineTrack {
         this.setKeyFrameFromElement(this.elementPrevState);
         this.setElementFromKeyFrame(src);
 
-        const spsValue = this.currentStepPerSecond.value,
-            saValue = this.currentStepAcceleration.value;
-        switch (this.type) {
-            case TrackType.POSITION: {
-                const spsPos = spsValue.pos,
-                    dstPos = dst.value.pos,
-                    srcPos = src.value.pos;
-                spsPos.x = (dstPos.x - srcPos.x) / this.keyFrameTimeLeft;
-                spsPos.y = (dstPos.y - srcPos.y) / this.keyFrameTimeLeft;
-                break;
-            }
-            case TrackType.SCALE: {
-                const spsScale = spsValue.scale,
-                    dstScale = dst.value.scale,
-                    srcScale = src.value.scale;
-                spsScale.x = (dstScale.x - srcScale.x) / this.keyFrameTimeLeft;
-                spsScale.y = (dstScale.y - srcScale.y) / this.keyFrameTimeLeft;
-                break;
-            }
-            case TrackType.ROTATION:
-                spsValue.rotationAngle =
-                    (dst.value.rotationAngle - src.value.rotationAngle) / this.keyFrameTimeLeft;
-                break;
-            case TrackType.COLOR: {
-                const spsColor = spsValue.color,
-                    dstColor = dst.value.color,
-                    srcColor = src.value.color;
-                spsColor.r = (dstColor.r - srcColor.r) / this.keyFrameTimeLeft;
-                spsColor.g = (dstColor.g - srcColor.g) / this.keyFrameTimeLeft;
-                spsColor.b = (dstColor.b - srcColor.b) / this.keyFrameTimeLeft;
-                spsColor.a = (dstColor.a - srcColor.a) / this.keyFrameTimeLeft;
-                break;
-            }
-            case TrackType.ACTION:
-                break;
-        }
-
-        const isEaseIn = dst.transitionType === KeyFrame.TransitionType.EASE_IN,
-            isEaseOut = dst.transitionType == KeyFrame.TransitionType.EASE_OUT;
-        if (isEaseIn || isEaseOut) {
-            switch (this.type) {
-                case TrackType.POSITION: {
-                    const spsPos = spsValue.pos;
-                    const saPos = saValue.pos;
-                    spsPos.multiply(2);
-                    saPos.x = spsPos.x / this.keyFrameTimeLeft;
-                    saPos.y = spsPos.y / this.keyFrameTimeLeft;
-                    if (isEaseIn) {
-                        spsPos.x = 0;
-                        spsPos.y = 0;
-                    } else {
-                        saPos.multiply(-1);
-                    }
-                    break;
-                }
-                case TrackType.SCALE: {
-                    const spsScale = spsValue.scale;
-                    const saScale = saValue.scale;
-                    spsScale.multiply(2);
-                    saScale.x = spsScale.x / this.keyFrameTimeLeft;
-                    saScale.y = spsScale.y / this.keyFrameTimeLeft;
-                    if (isEaseIn) {
-                        spsScale.x = 0;
-                        spsScale.y = 0;
-                    } else {
-                        saScale.multiply(-1);
-                    }
-                    break;
-                }
-                case TrackType.ROTATION:
-                    spsValue.rotationAngle *= 2;
-                    saValue.rotationAngle = spsValue.rotationAngle / this.keyFrameTimeLeft;
-                    if (isEaseIn) {
-                        spsValue.rotationAngle = 0;
-                    } else {
-                        saValue.rotationAngle *= -1;
-                    }
-                    break;
-                case TrackType.COLOR: {
-                    const spsColor = spsValue.color;
-                    const saColor = saValue.color;
-                    spsColor.multiply(2);
-                    saColor.r = spsColor.r / this.keyFrameTimeLeft;
-                    saColor.g = spsColor.g / this.keyFrameTimeLeft;
-                    saColor.b = spsColor.b / this.keyFrameTimeLeft;
-                    saColor.a = spsColor.a / this.keyFrameTimeLeft;
-                    if (isEaseIn) {
-                        spsColor.multiply(0);
-                    } else {
-                        saColor.multiply(-1);
-                    }
-
-                    break;
-                }
-                case TrackType.ACTION:
-                    break;
-            }
+        const strategy = this.strategy;
+        if (strategy) {
+            strategy.initKeyFrameStepFrom(this, src, dst);
+            const isEaseIn = dst.transitionType === KeyFrame.TransitionType.EASE_IN;
+            const isEaseOut = dst.transitionType === KeyFrame.TransitionType.EASE_OUT;
+            strategy.configureEase(this, src, dst, isEaseIn, isEaseOut);
         }
 
         if (this.overrun > 0) {
