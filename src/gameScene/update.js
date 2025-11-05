@@ -1,4 +1,3 @@
-import { update } from "./sceneUpdate/main";
 import GameSceneDrawDelegate from "./sceneUpdate/draw";
 import GameSceneBubblesDelegate from "./sceneUpdate/bubbles";
 import GameSceneTeleportDelegate from "./sceneUpdate/teleport";
@@ -9,6 +8,8 @@ import GameSceneBounceUtilsDelegate from "./sceneUpdate/bounceUtils";
 import GameSceneCutDelegate from "./sceneUpdate/cut";
 import GameSceneSpiderHandlersDelegate from "./sceneUpdate/spiderHandlers";
 import GameSceneSelectionDelegate from "./sceneUpdate/selection";
+import GameObjectPluginManager from "./plugins/GameObjectPluginManager";
+import { createCoreSystems } from "./systems";
 import GameSceneCharacter from "./character";
 
 /**
@@ -23,8 +24,22 @@ const bindDelegate = (scene, delegate, methods) => {
     }
 };
 
+/** @typedef {import("./plugins/types").GameObjectPlugin} GameObjectPlugin */
+/** @typedef {import("./systems/types").GameSystem} GameSystem */
+/** @typedef {import("./systems/types").GameSystemContext} GameSystemContext */
+/** @typedef {import("./systems/types").GameSystemSharedState} GameSystemSharedState */
+
+/**
+ * @typedef {object} GameSceneUpdateOptions
+ * @property {GameObjectPlugin[]} [plugins]
+ * @property {GameSystem[]} [systems]
+ */
+
 class GameSceneUpdate extends GameSceneCharacter {
-    constructor() {
+    /**
+     * @param {GameSceneUpdateOptions} [options]
+     */
+    constructor(options = {}) {
         super();
 
         this.drawDelegate = new GameSceneDrawDelegate(this);
@@ -75,13 +90,71 @@ class GameSceneUpdate extends GameSceneCharacter {
             "getNearestBungeeGrabByBezierPoints",
             "getNearestBungeeSegmentByConstraints",
         ]);
+
+        const { plugins = [], systems } = options;
+
+        /** @type {GameSystemContext} */
+        const systemContext = {
+            scene: this,
+            // Placeholder, assigned after plugin manager instantiation
+            pluginManager: /** @type {any} */ (null),
+        };
+
+        /**
+         * Coordinates lifecycle hooks for scene plugins.
+         * @type {GameObjectPluginManager}
+         */
+        this.pluginManager = new GameObjectPluginManager(systemContext);
+        systemContext.pluginManager = this.pluginManager;
+
+        /**
+         * Shared context for core and plugin systems.
+         * @type {GameSystemContext}
+         */
+        this.systemContext = systemContext;
+
+        /**
+         * Ordered list of systems executed every frame.
+         * @type {GameSystem[]}
+         */
+        this.systems = systems ? [...systems] : createCoreSystems(this.systemContext);
+
+        for (const plugin of plugins) {
+            this.registerPlugin(plugin);
+        }
+    }
+
+    /**
+     * Registers a plugin and appends any systems it exposes.
+     *
+     * @param {GameObjectPlugin} plugin
+     */
+    registerPlugin(plugin) {
+        const newSystems = this.pluginManager.register(plugin);
+        if (newSystems.length > 0) {
+            this.systems.push(...newSystems);
+        }
     }
 
     /**
      * @param {number} delta
      */
     update(delta) {
-        update.call(this, delta);
+        /** @type {GameSystemSharedState} */
+        const sharedState = {};
+
+        this.pluginManager.beforeUpdate(delta, sharedState);
+
+        for (const system of this.systems) {
+            const shouldContinue = system.update(delta, sharedState);
+            this.pluginManager.afterSystem(system, shouldContinue, delta, sharedState);
+
+            if (!shouldContinue) {
+                break;
+            }
+        }
+
+        this.pluginManager.afterUpdate(delta, sharedState);
     }
 }
 
