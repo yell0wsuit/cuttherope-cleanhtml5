@@ -75,6 +75,6 @@ To test the game locally during the development process, follow these steps:
     ```
 
 5. Open your web browser and navigate the address in the terminal to play the game locally.  
-  The default address is usually `http://localhost:5173/cuttherope-h5dx/`.
+   The default address is usually `http://localhost:5173/`.
 
 During the development process, all boxes and levels are unlocked by default, so you don't need to play through the game to test specific levels.
