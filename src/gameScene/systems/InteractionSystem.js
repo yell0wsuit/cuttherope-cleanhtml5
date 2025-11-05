@@ -1,16 +1,15 @@
-import { updateClickToCut as runUpdateClickToCut } from "../sceneUpdate/clickToCut";
-
 /** @typedef {import("./types").GameSystemContext} GameSystemContext */
 /** @typedef {import("./types").GameSystemSharedState} GameSystemSharedState */
 /** @typedef {import("./types").InteractionSystemDependencies} InteractionSystemDependencies */
+/** @typedef {import("../services/types").AnimationService} AnimationService */
 
 const defaultDependencies = Object.freeze({
     /**
-     * @param {import("../update").default} scene
+     * @param {AnimationService} service
      * @param {number} delta
      */
-    updateClickToCut(scene, delta) {
-        runUpdateClickToCut.call(scene, delta);
+    updateClickToCut(service, delta) {
+        service.updateClickToCut(delta);
     },
 });
 
@@ -34,7 +33,7 @@ class InteractionSystem {
      * @returns {import("./types").SystemResult}
      */
     update(delta, _sharedState) {
-        this.dependencies.updateClickToCut(this.context.scene, delta);
+        this.dependencies.updateClickToCut(this.context.animation, delta);
         return { continue: true };
     }
 }

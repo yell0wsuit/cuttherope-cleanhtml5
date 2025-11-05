@@ -1,17 +1,16 @@
-import { updateHazards as runUpdateHazards } from "../sceneUpdate/hazards";
-
 /** @typedef {import("./types").GameSystemContext} GameSystemContext */
 /** @typedef {import("./types").GameSystemSharedState} GameSystemSharedState */
 /** @typedef {import("./types").HazardSystemDependencies} HazardSystemDependencies */
+/** @typedef {import("../services/types").CandyService} CandyService */
 
 const defaultDependencies = Object.freeze({
     /**
-     * @param {import("../update").default} scene
+     * @param {CandyService} service
      * @param {number} delta
      * @param {number} numGrabs
      */
-    updateHazards(scene, delta, numGrabs) {
-        return runUpdateHazards.call(scene, delta, numGrabs);
+    updateHazards(service, delta, numGrabs) {
+        return service.updateHazards(delta, numGrabs);
     },
 });
 
@@ -36,7 +35,11 @@ class HazardSystem {
      */
     update(delta, sharedState) {
         const numGrabs = sharedState.numGrabs ?? 0;
-        const shouldContinue = this.dependencies.updateHazards(this.context.scene, delta, numGrabs);
+        const shouldContinue = this.dependencies.updateHazards(
+            this.context.candy,
+            delta,
+            numGrabs
+        );
 
         // updateHazards returns false when candy hits spike (game lost)
         return shouldContinue ? { continue: true } : { continue: false, reason: "game_lost" };

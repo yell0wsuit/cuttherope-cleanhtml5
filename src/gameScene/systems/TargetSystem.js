@@ -1,17 +1,17 @@
-import { updateTargetState as runUpdateTargetState } from "../sceneUpdate/targetState";
-import * as GameSceneConstants from "../constants";
-
 /** @typedef {import("./types").GameSystemContext} GameSystemContext */
 /** @typedef {import("./types").GameSystemSharedState} GameSystemSharedState */
 /** @typedef {import("./types").TargetSystemDependencies} TargetSystemDependencies */
+/** @typedef {import("../services/types").TargetUpdateResult} TargetUpdateResult */
+/** @typedef {import("../services/types").CandyService} CandyService */
 
 const defaultDependencies = Object.freeze({
     /**
-     * @param {import("../update").default} scene
+     * @param {CandyService} service
      * @param {number} delta
+     * @returns {TargetUpdateResult}
      */
-    updateTargetState(scene, delta) {
-        return runUpdateTargetState.call(scene, delta);
+    updateTargetState(service, delta) {
+        return service.updateTargetState(delta);
     },
 });
 
@@ -35,16 +35,10 @@ class TargetSystem {
      * @returns {import("./types").SystemResult}
      */
     update(delta, _sharedState) {
-        const shouldContinue = this.dependencies.updateTargetState(this.context.scene, delta);
+        const result = this.dependencies.updateTargetState(this.context.candy, delta);
 
-        if (!shouldContinue) {
-            // updateTargetState returns false when:
-            // 1. Candy reaches target (line 46: gameWon called, returns false)
-            // 2. Candy goes off screen (lines 88-89: gameLost called, returns false)
-            // gameWon() sets target animation to WIN, gameLost() doesn't
-            const scene = this.context.scene;
-            const won = scene.target.currentTimelineIndex === GameSceneConstants.CharAnimation.WIN;
-            return { continue: false, reason: won ? "game_won" : "game_lost" };
+        if (!result.continue) {
+            return { continue: false, reason: result.reason };
         }
 
         return { continue: true };

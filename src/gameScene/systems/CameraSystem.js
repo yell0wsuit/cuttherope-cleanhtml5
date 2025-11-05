@@ -1,16 +1,15 @@
-import { updateCamera as runUpdateCamera } from "../sceneUpdate/camera";
-
 /** @typedef {import("./types").GameSystemContext} GameSystemContext */
 /** @typedef {import("./types").GameSystemSharedState} GameSystemSharedState */
 /** @typedef {import("./types").CameraSystemDependencies} CameraSystemDependencies */
+/** @typedef {import("../services/types").AnimationService} AnimationService */
 
 const defaultDependencies = Object.freeze({
     /**
-     * @param {import("../update").default} scene
+     * @param {AnimationService} service
      * @param {number} delta
      */
-    updateCamera(scene, delta) {
-        runUpdateCamera.call(scene, delta);
+    updateCamera(service, delta) {
+        service.updateCamera(delta);
     },
 });
 
@@ -31,7 +30,7 @@ class CameraSystem {
      * @returns {import("./types").SystemResult}
      */
     update(delta, _sharedState) {
-        this.dependencies.updateCamera(this.context.scene, delta);
+        this.dependencies.updateCamera(this.context.animation, delta);
         return { continue: true };
     }
 }

@@ -11,6 +11,9 @@ import GameSceneSelectionDelegate from "./sceneUpdate/selection";
 import GameObjectPluginManager from "./plugins/GameObjectPluginManager";
 import { createCoreSystems } from "./systems";
 import GameSceneCharacter from "./character";
+import GameScenePhysicsService from "./services/GameScenePhysicsService";
+import GameSceneCandyService from "./services/GameSceneCandyService";
+import GameSceneAnimationService from "./services/GameSceneAnimationService";
 
 /**
  * @template {Record<string, (...args: any[]) => any>} T
@@ -93,9 +96,15 @@ class GameSceneUpdate extends GameSceneCharacter {
 
         const { plugins = [], systems } = options;
 
+        this.physicsService = new GameScenePhysicsService(this);
+        this.candyService = new GameSceneCandyService(this);
+        this.animationService = new GameSceneAnimationService(this);
+
         /** @type {GameSystemContext} */
         const systemContext = {
-            scene: this,
+            physics: this.physicsService,
+            candy: this.candyService,
+            animation: this.animationService,
             // Placeholder, assigned after plugin manager instantiation
             pluginManager: /** @type {any} */ (null),
         };
