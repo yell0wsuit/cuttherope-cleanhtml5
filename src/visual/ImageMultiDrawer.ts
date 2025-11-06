@@ -2,83 +2,70 @@ import BaseElement from "@/visual/BaseElement";
 import Canvas from "@/utils/Canvas";
 import Constants from "@/utils/Constants";
 import Rectangle from "@/core/Rectangle";
+import type Texture2D from "@/core/Texture2D";
 
 /**
  * Holds the information necessary to draw multiple quads from a
  * shared source image texture
  */
 class ImageMultiDrawer extends BaseElement {
-    /**
-     * @param {Texture2D} texture
-     */
-    constructor(texture) {
+    texture: Texture2D;
+    numberOfQuadsToDraw: number;
+    texCoordinates: Rectangle[];
+    vertices: Rectangle[];
+    alphas: Array<number | null | undefined>;
+
+    constructor(texture: Texture2D) {
         super();
 
         this.texture = texture;
         this.numberOfQuadsToDraw = Constants.UNDEFINED;
 
         // holds the position in the texture that should be drawn
-        /**
-         * @type {Rectangle[]}
-         */
         this.texCoordinates = [];
 
         // holds the position on the canvas to render the texture quad
-        /**
-         * @type {Rectangle[]}
-         */
         this.vertices = [];
 
         // hold the alpha for each quad (if null then we assume alpha=1)
-        /**
-         * @type {(number | null | undefined)[]}
-         */
         this.alphas = [];
 
         // NOTE: in OpenGL its possible to draw multiple quads at once. In
         // canvas we'll just draw them sequentially (no need for indices buffer)
     }
 
-    /**
-     * @param {number} index
-     * @param {Rectangle} textureQuad
-     * @param {Rectangle} vertexQuad
-     * @param {number | null | undefined} [alpha]
-     */
-    setTextureQuad(index, textureQuad, vertexQuad, alpha) {
+    setTextureQuad(
+        index: number,
+        textureQuad: Rectangle,
+        vertexQuad: Rectangle,
+        alpha: number | null | undefined
+    ) {
         this.texCoordinates[index] = textureQuad;
         this.vertices[index] = vertexQuad;
         this.alphas[index] = alpha != null ? alpha : 1;
     }
 
-    /**
-     * @param {number} index
-     */
-    removeQuads(index) {
+    removeQuads(index: number) {
         this.texCoordinates.splice(index, 1);
         this.vertices.splice(index, 1);
         this.alphas.splice(index, 1);
     }
 
-    /**
-     * @param {number} quadIndex
-     * @param {number} dx
-     * @param {number} dy
-     * @param {number} index
-     */
-    mapTextureQuad(quadIndex, dx, dy, index) {
-        this.texCoordinates[index] = Rectangle.copy(this.texture.rects[quadIndex]);
+    mapTextureQuad(quadIndex: number, dx: number, dy: number, index: number) {
+        const textureRect = this.texture.rects[quadIndex];
+        if (!textureRect) return;
+
+        this.texCoordinates[index] = Rectangle.copy(textureRect);
 
         const offset = this.texture.offsets[quadIndex];
         const rect = this.texture.rects[quadIndex];
+        if (!offset || !rect) return;
+
         this.vertices[index] = new Rectangle(dx + offset.x, dy + offset.y, rect.w, rect.h);
         this.alphas[index] = 1;
     }
 
-    /**
-     * @param {number} n
-     */
-    drawNumberOfQuads(n) {
+    drawNumberOfQuads(n: number) {
         if (n > this.texCoordinates.length) {
             n = this.texCoordinates.length;
         }
@@ -93,6 +80,7 @@ class ImageMultiDrawer extends BaseElement {
         for (let i = 0; i < n; i++) {
             const source = this.texCoordinates[i];
             const dest = this.vertices[i];
+            if (!source || !dest) continue;
 
             const previousAlpha = ctx.globalAlpha;
             const sourceW = Math.ceil(source.w);
@@ -115,27 +103,8 @@ class ImageMultiDrawer extends BaseElement {
                 ctx.globalAlpha = alpha;
             }
 
-            // rotate the image if requested
-
-            let rotationAngle = 0;
-            let rotationPosition = { x: 0, y: 0 };
-            let rotateIsTranslated = false;
-            const checkRotation = this.rotationAngles && this.rotationAngles.length > i;
-            if (checkRotation) {
-                rotationAngle = this.rotationAngles[i];
-                rotationPosition = this.rotationPositions[i];
-                rotateIsTranslated = rotationPosition.x !== 0 || rotationPosition.y !== 0;
-
-                if (rotationAngle !== 0) {
-                    if (rotateIsTranslated) {
-                        ctx.translate(rotationPosition.x, rotationPosition.y);
-                    }
-                    ctx.rotate(rotationAngle);
-                    if (rotateIsTranslated) {
-                        ctx.translate(-rotationPosition.x, -rotationPosition.y);
-                    }
-                }
-            }
+            // Canvas already handles sub-pixel anti-aliasing internally.
+            // The commented out code was a legacy relic from the iOS (OpenGL ES) version.
 
             // see if we need sub-pixel alignment
             //let qx, qy, qw, qh;
@@ -147,15 +116,18 @@ class ImageMultiDrawer extends BaseElement {
             // }
             // else {
             // otherwise by default we snap to pixel boundaries for perf
-            const qx = ~~dest.x;
-            const qy = ~~dest.y;
+            const qx = Math.floor(dest.x);
+            const qy = Math.floor(dest.y);
             // use ceil so that we match the source when scale is equal
-            const qw = 1 + ~~dest.w;
-            const qh = 1 + ~~dest.h;
+            const qw = 1 + Math.floor(dest.w);
+            const qh = 1 + Math.floor(dest.h);
             //}
 
+            const image = this.texture.image;
+            if (!image) continue;
+
             ctx.drawImage(
-                this.texture.image,
+                image,
                 source.x,
                 source.y,
                 sourceW,
@@ -165,17 +137,6 @@ class ImageMultiDrawer extends BaseElement {
                 qw,
                 qh
             ); // destination coordinates
-
-            // undo the rotation
-            if (checkRotation && rotationAngle !== 0) {
-                if (rotateIsTranslated) {
-                    ctx.translate(rotationPosition.x, rotationPosition.y);
-                }
-                ctx.rotate(-rotationAngle);
-                if (rotateIsTranslated) {
-                    ctx.translate(-rotationPosition.x, -rotationPosition.y);
-                }
-            }
 
             // undo alpha changes
             if (alpha !== 1) {
