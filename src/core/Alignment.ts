@@ -1,19 +1,16 @@
-class Alignment {
-    static UNDEFINED = 0;
-    static LEFT = 1;
-    static HCENTER = 2;
-    static RIGHT = 4;
-    static TOP = 8;
-    static VCENTER = 16;
-    static BOTTOM = 32;
-    static CENTER = 18; // 2 | 16
+enum Alignment {
+    UNDEFINED = 0,
+    LEFT = 1,
+    HCENTER = 2,
+    RIGHT = 4,
+    TOP = 8,
+    VCENTER = 16,
+    BOTTOM = 32,
+    CENTER = 18, // 2 | 16
+}
 
-    /**
-     * Parse alignment string (e.g. "LEFT|TOP" → bitmask)
-     * @param {string} s
-     * @returns {number}
-     */
-    static parse(s) {
+namespace Alignment {
+    export function parse(s: string): Alignment {
         let a = Alignment.UNDEFINED;
 
         if (s.includes("LEFT")) a = Alignment.LEFT;
