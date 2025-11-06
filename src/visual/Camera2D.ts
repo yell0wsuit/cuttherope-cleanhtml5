@@ -10,7 +10,7 @@ const SpeedType = {
 type CameraSpeedType = (typeof SpeedType)[keyof typeof SpeedType];
 
 class Camera2D {
-    static readonly SpeedType: typeof SpeedType;
+    static readonly SpeedType = SpeedType;
 
     speed: number;
     type: CameraSpeedType;
