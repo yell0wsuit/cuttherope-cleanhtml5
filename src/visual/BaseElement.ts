@@ -5,107 +5,93 @@ import Canvas from "@/utils/Canvas";
 import ActionType from "@/visual/ActionType";
 import Timeline from "@/visual/Timeline";
 import Radians from "@/utils/Radians";
+import type Action from "@/visual/Action";
 
 class BaseElement {
+    parent: BaseElement | null;
+    visible: boolean;
+    touchable: boolean;
+    updateable: boolean;
+    name: string | null;
+    x: number;
+    y: number;
+    drawX: number;
+    drawY: number;
+    width: number;
+    height: number;
+    rotation: number;
+    rotationCenterX: number;
+    rotationCenterY: number;
+    scaleX: number;
+    scaleY: number;
+    color: RGBAColor;
+    translateX: number;
+    translateY: number;
+    anchor: Alignment;
+    parentAnchor: Alignment;
+    passTransformationsToChilds: boolean;
+    passColorToChilds: boolean;
+    passTouchEventsToAllChilds: boolean;
+    protected children: BaseElement[];
+    protected timelines: Timeline[];
+    currentTimelineIndex: number;
+    currentTimeline: Timeline | null;
+    previousAlpha: number;
+    drawZeroDegreesLine?: boolean;
+    isDrawBB?: boolean;
+    restoreCutTransparency?: boolean;
+    resId?: number;
+    initTextureWithId?(resourceId: number): void;
+    doRestoreCutTransparency?(): void;
+
     constructor() {
-        /** @type {BaseElement | null} */
         this.parent = null;
-
-        /** @type {boolean} */
         this.visible = true;
-        /** @type {boolean} */
         this.touchable = true;
-        /** @type {boolean} */
         this.updateable = true;
-
-        /** @type {string | null} */
         this.name = null;
-
-        /** @type {number} */
         this.x = 0;
-        /** @type {number} */
         this.y = 0;
 
         // absolute coords of top left corner
-        /** @type {number} */
         this.drawX = 0;
-        /** @type {number} */
         this.drawY = 0;
 
-        /** @type {number} */
         this.width = 0;
-        /** @type {number} */
         this.height = 0;
-
-        /** @type {number} */
         this.rotation = 0;
 
         // rotation center offset from the element center
-        /** @type {number} */
         this.rotationCenterX = 0;
-        /** @type {number} */
         this.rotationCenterY = 0;
 
         // use scaleX = -1 for horizontal flip, scaleY = -1 for vertical
-        /** @type {number} */
         this.scaleX = 1;
-        /** @type {number} */
         this.scaleY = 1;
 
-        /** @type {RGBAColor} */
         this.color = RGBAColor.solidOpaque.copy();
-
-        /** @type {number} */
         this.translateX = 0;
-        /** @type {number} */
         this.translateY = 0;
 
-        /**
-         * Sets the anchor on the element
-         *  @type {number}
-         */
+        // Sets the anchor on the element
         this.anchor = Alignment.TOP | Alignment.LEFT;
-        /** @type {number} */
         this.parentAnchor = Alignment.UNDEFINED;
 
-        /** @type {boolean} children will inherit transformations of the parent */
+        // children will inherit transformations of the parent
         this.passTransformationsToChilds = true;
-
-        /** @type {boolean} children will inherit color of the parent */
+        // children will inherit color of the parent
         this.passColorToChilds = true;
-
-        /** @type {boolean} touch events can be handled by multiple children */
+        // touch events can be handled by multiple children
         this.passTouchEventsToAllChilds = false;
 
-        /**
-         * @protected
-         * @type {BaseElement[]}
-         */
         this.children = [];
-
-        /**
-         * @protected
-         * @type {Timeline[]}
-         */
         this.timelines = [];
-
-        /**
-         * @type {number}
-         */
         this.currentTimelineIndex = Constants.UNDEFINED;
-
-        /**
-         * @type {Timeline | null}
-         */
         this.currentTimeline = null;
-
-        /**
-         * @type {number}
-         */
         this.previousAlpha = 1;
     }
 
-    calculateTopLeft() {
+    calculateTopLeft(): void {
         const parentAnchor = this.parentAnchor;
         const parent = this.parent;
         const anchor = this.anchor;
@@ -142,7 +128,7 @@ class BaseElement {
         }
     }
 
-    preDraw() {
+    preDraw(): void {
         this.calculateTopLeft();
 
         const changeScale =
@@ -193,12 +179,12 @@ class BaseElement {
         }
     }
 
-    draw() {
+    draw(): void {
         this.preDraw();
         this.postDraw();
     }
 
-    drawBB() {
+    drawBB(): void {
         const ctx = Canvas.context;
         if (ctx) {
             ctx.strokeStyle = "red";
@@ -206,7 +192,7 @@ class BaseElement {
         }
     }
 
-    postDraw() {
+    postDraw(): void {
         const ctx = Canvas.context;
         const alphaChanged = this.color.a !== 1 && this.color.a !== this.previousAlpha;
 
@@ -254,7 +240,7 @@ class BaseElement {
         const numChildren = children.length;
         for (let i = 0; i < numChildren; i++) {
             const child = children[i];
-            if (child.visible) child.draw();
+            if (child && child.visible) child.draw();
         }
 
         if (this.passTransformationsToChilds) {
@@ -272,16 +258,13 @@ class BaseElement {
         }
     }
 
-    /**
-     * Updates timelines with the elapsed time
-     * @param {number} delta
-     */
-    update(delta) {
+    /** Updates timelines with the elapsed time */
+    update(delta: number): void {
         const children = this.children,
             numChildren = children.length;
         for (let i = 0; i < numChildren; i++) {
             const child = children[i];
-            if (child.updateable) child.update(delta);
+            if (child && child.updateable) child.update(delta);
         }
 
         if (this.currentTimeline) {
@@ -289,15 +272,12 @@ class BaseElement {
         }
     }
 
-    /**
-     * @param {string} name
-     * @return {BaseElement | null}
-     */
-    getChildWithName(name) {
+    getChildWithName(name: string): BaseElement | null {
         const children = this.children;
         const numChildren = children.length;
         for (let i = 0; i < numChildren; i++) {
             const child = children[i];
+            if (!child) continue;
             if (child.name === name) return child;
 
             const descendant = child.getChildWithName(name);
@@ -307,7 +287,7 @@ class BaseElement {
         return null;
     }
 
-    setSizeToChildsBounds() {
+    setSizeToChildsBounds(): void {
         this.calculateTopLeft();
 
         let minX = this.drawX;
@@ -319,6 +299,7 @@ class BaseElement {
 
         for (let i = 0; i < numChildren; i++) {
             const child = children[i];
+            if (!child) continue;
             child.calculateTopLeft();
 
             if (child.drawX < minX) minX = child.drawX;
@@ -334,11 +315,8 @@ class BaseElement {
         this.height = maxY - minY;
     }
 
-    /**
-     * @param {Action} a action data
-     * @return {boolean} true if an action was handled
-     */
-    handleAction(a) {
+    /** @returns true if an action was handled */
+    handleAction(a: Action): boolean {
         switch (a.actionName) {
             case ActionType.SET_VISIBLE:
                 this.visible = a.actionSubParam !== 0;
@@ -372,43 +350,31 @@ class BaseElement {
         return true;
     }
 
-    /**
-     * @param {BaseElement} child child to add
-     * @return {number} index of added child
-     */
-    addChild(child) {
+    /** @returns index of added child */
+    addChild(child: BaseElement): number {
         this.children.push(child);
         child.parent = this;
         return this.children.length - 1;
     }
 
-    /**
-     * @param {BaseElement} child
-     * @param {number} index
-     */
-    addChildWithID(child, index) {
+    addChildWithID(child: BaseElement, index: number): void {
         this.children[index] = child;
         child.parent = this;
     }
 
-    /**
-     * @param {number} i index of the child to remove
-     */
-    removeChildWithID(i) {
+    removeChildWithID(i: number): void {
         const removed = this.children.splice(i, 1);
-        if (removed.length > 0) {
-            removed[0].parent = null;
+        const child = removed[0];
+        if (child) {
+            child.parent = null;
         }
     }
 
-    removeAllChildren() {
+    removeAllChildren(): void {
         this.children.length = 0;
     }
 
-    /**
-     * @param {BaseElement} c child to remove
-     */
-    removeChild(c) {
+    removeChild(c: BaseElement): void {
         const children = this.children,
             numChildren = children.length;
         for (let i = 0; i < numChildren; i++) {
@@ -420,50 +386,30 @@ class BaseElement {
         }
     }
 
-    /**
-     * @param {number} i index of child
-     * @return {BaseElement}
-     */
-    getChild(i) {
+    getChild(i: number): BaseElement | undefined {
         return this.children[i];
     }
 
-    /**
-     * @return {number} number of children
-     */
-    childCount() {
+    childCount(): number {
         return this.children.length;
     }
 
-    /**
-     * @return {Array.<BaseElement>} children
-     */
-    getChildren() {
+    getChildren(): BaseElement[] {
         return this.children;
     }
 
-    /**
-     * @param {Timeline} timeline
-     */
-    addTimeline(timeline) {
+    addTimeline(timeline: Timeline): number {
         const index = this.timelines.length;
         this.addTimelineWithID(timeline, index);
         return index;
     }
 
-    /**
-     * @param {Timeline} timeline
-     * @param {number} index
-     */
-    addTimelineWithID(timeline, index) {
+    addTimelineWithID(timeline: Timeline, index: number): void {
         timeline.element = this;
         this.timelines[index] = timeline;
     }
 
-    /**
-     * @param {number} index
-     */
-    removeTimeline(index) {
+    removeTimeline(index: number): void {
         if (this.currentTimelineIndex === index) this.stopCurrentTimeline();
 
         if (index < this.timelines.length) {
@@ -471,24 +417,22 @@ class BaseElement {
         }
     }
 
-    /**
-     * @param {number} index
-     */
-    playTimeline(index) {
+    playTimeline(index: number): void {
         if (this.currentTimeline) {
             if (this.currentTimeline.state !== Timeline.StateType.STOPPED) {
                 this.currentTimeline.stop();
             }
         }
         this.currentTimelineIndex = index;
-        this.currentTimeline = this.timelines[index];
+        const timeline = this.timelines[index];
+        this.currentTimeline = timeline ?? null;
         if (this.currentTimeline) {
             const timelineResource = this.currentTimeline.resourceId;
             if (timelineResource !== undefined && timelineResource !== this.resId) {
                 const shouldRestoreCut = this.restoreCutTransparency;
-                this.initTextureWithId(timelineResource);
+                this.initTextureWithId?.(timelineResource);
                 if (shouldRestoreCut) {
-                    this.doRestoreCutTransparency();
+                    this.doRestoreCutTransparency?.();
                 }
             }
 
@@ -496,13 +440,13 @@ class BaseElement {
         }
     }
 
-    pauseCurrentTimeline() {
+    pauseCurrentTimeline(): void {
         if (this.currentTimeline) {
             this.currentTimeline.pause();
         }
     }
 
-    stopCurrentTimeline() {
+    stopCurrentTimeline(): void {
         if (this.currentTimeline) {
             this.currentTimeline.stop();
             this.currentTimeline = null;
@@ -510,20 +454,12 @@ class BaseElement {
         this.currentTimelineIndex = Constants.UNDEFINED;
     }
 
-    /**
-     * @param {number} index
-     * @return {Timeline}
-     */
-    getTimeline(index) {
+    getTimeline(index: number): Timeline | undefined {
         return this.timelines[index];
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean} true if event was handled
-     */
-    onTouchDown(x, y) {
+    /** @returns true if event was handled */
+    onTouchDown(x: number, y: number): boolean {
         let ret = false;
         const count = this.children.length;
         for (let i = count - 1; i >= 0; i--) {
@@ -540,12 +476,8 @@ class BaseElement {
         return ret;
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean} true if event was handled
-     */
-    onTouchUp(x, y) {
+    /** @returns true if event was handled */
+    onTouchUp(x: number, y: number): boolean {
         let ret = false;
         const count = this.children.length;
         for (let i = count - 1; i >= 0; i--) {
@@ -562,12 +494,8 @@ class BaseElement {
         return ret;
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean} true if event was handled
-     */
-    onTouchMove(x, y) {
+    /** @returns true if event was handled */
+    onTouchMove(x: number, y: number): boolean {
         let ret = false;
         const count = this.children.length;
         for (let i = count - 1; i >= 0; i--) {
@@ -584,12 +512,8 @@ class BaseElement {
         return ret;
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean} true if event was handled
-     */
-    onDoubleClick(x, y) {
+    /** @returns true if event was handled */
+    onDoubleClick(x: number, y: number): boolean {
         let ret = false;
         const count = this.children.length;
         for (let i = count - 1; i >= 0; i--) {
@@ -606,37 +530,31 @@ class BaseElement {
         return ret;
     }
 
-    /**
-     * @param {boolean} enabled
-     */
-    setEnabled(enabled) {
+    setEnabled(enabled: boolean): void {
         this.visible = enabled;
         this.touchable = enabled;
         this.updateable = enabled;
     }
 
-    /**
-     * @return {boolean}
-     */
-    isEnabled() {
+    isEnabled(): boolean {
         return this.visible && this.touchable && this.updateable;
     }
 
-    show() {
+    show(): void {
         const children = this.children,
             numChildren = children.length;
         for (let i = 0; i < numChildren; i++) {
             const child = children[i];
-            if (child.visible) child.show();
+            if (child && child.visible) child.show();
         }
     }
 
-    hide() {
+    hide(): void {
         const children = this.children,
             numChildren = children.length;
         for (let i = 0; i < numChildren; i++) {
             const child = children[i];
-            if (child.visible) child.hide();
+            if (child && child.visible) child.hide();
         }
     }
 }
