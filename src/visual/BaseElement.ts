@@ -5,7 +5,7 @@ import Canvas from "@/utils/Canvas";
 import ActionType from "@/visual/ActionType";
 import Timeline from "@/visual/Timeline";
 import Radians from "@/utils/Radians";
-import type Action from "@/visual/Action";
+import type { ActionData } from "@/visual/Action";
 
 class BaseElement {
     parent: BaseElement | null;
@@ -316,7 +316,7 @@ class BaseElement {
     }
 
     /** @returns true if an action was handled */
-    handleAction(a: Action): boolean {
+    handleAction(a: ActionData): boolean {
         switch (a.actionName) {
             case ActionType.SET_VISIBLE:
                 this.visible = a.actionSubParam !== 0;
