@@ -1,6 +1,3 @@
-/**
- * @enum {string}
- */
 const ActionType = {
     SET_VISIBLE: "ACTION_SET_VISIBLE",
     SET_TOUCHABLE: "ACTION_SET_TOUCHABLE",
@@ -11,6 +8,6 @@ const ActionType = {
     PAUSE_TIMELINE: "ACTION_PAUSE_TIMELINE",
     STOP_TIMELINE: "ACTION_STOP_TIMELINE",
     JUMP_TO_TIMELINE_FRAME: "ACTION_JUMP_TO_TIMELINE_FRAME",
-};
+} as const;
 
 export default ActionType;
