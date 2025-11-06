@@ -2,13 +2,23 @@ import Vector from "@/core/Vector";
 import Canvas from "@/utils/Canvas";
 import MathHelper from "@/utils/MathHelper";
 
+const SpeedType = {
+    PIXELS: 0, // camera will move with speed pixels per second
+    DELAY: 1, // camera will reach the target position in 1/speed seconds
+} as const;
+
+type CameraSpeedType = (typeof SpeedType)[keyof typeof SpeedType];
+
 class Camera2D {
-    /**
-     * Camera2D constructor
-     * @param {number} speed
-     * @param {number} cameraSpeed
-     */
-    constructor(speed, cameraSpeed) {
+    static readonly SpeedType: typeof SpeedType;
+
+    speed: number;
+    type: CameraSpeedType;
+    pos: Vector;
+    target: Vector;
+    offset: Vector;
+
+    constructor(speed: number, cameraSpeed: CameraSpeedType) {
         this.speed = speed;
         this.type = cameraSpeed;
         this.pos = Vector.newZero();
@@ -16,13 +26,8 @@ class Camera2D {
         this.offset = Vector.newZero();
     }
 
-    /**
-     * Changes the camera position (but doesn't actually transform the canvas)
-     * @param {number} x
-     * @param {number} y
-     * @param {boolean} immediate
-     */
-    moveTo(x, y, immediate) {
+    // Changes the camera position (but doesn't actually transform the canvas)
+    moveTo(x: number, y: number, immediate: boolean) {
         this.target.x = x;
         this.target.y = y;
 
@@ -38,10 +43,7 @@ class Camera2D {
         }
     }
 
-    /**
-     * @param {number} delta time delta
-     */
-    update(delta) {
+    update(delta: number) {
         if (!this.pos.equals(this.target)) {
             // add to the current position and round
             this.pos.add(Vector.multiply(this.offset, delta));
@@ -71,13 +73,5 @@ class Camera2D {
         }
     }
 }
-
-/**
- * @enum {number}
- */
-Camera2D.SpeedType = {
-    PIXELS: 0, // camera will move with speed pixels per second
-    DELAY: 1, // camera will reach the target position in 1/speed seconds
-};
 
 export default Camera2D;
