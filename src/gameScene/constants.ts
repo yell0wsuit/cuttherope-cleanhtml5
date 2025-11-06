@@ -1,127 +1,67 @@
 /**
  * Tutorial elements can have a special id specified in the level xml
- * @const
- * @type {number}
  */
 export const LEVEL1_ARROW_SPECIAL_ID = 2;
 
-/**
- * @enum {number}
- */
 export const RestartState = {
     FADE_IN: 0,
     FADE_OUT: 1,
-};
+} as const;
 
-/**
- * @enum {number}
- */
 export const CameraMove = {
     TO_CANDY_PART: 0,
     TO_CANDY: 1,
-};
+} as const;
 
-/**
- * @enum {number}
- */
 export const ButtonMode = {
     GRAVITY: 0,
     SPIKES: 1,
-};
+} as const;
 
-/**
- * @enum {number}
- */
 export const PartsType = {
     SEPARATE: 0,
     DISTANCE: 1,
     NONE: 2,
-};
+} as const;
 
-/**
- * @const
- * @type {number}
- */
 export const SCOMBO_TIMEOUT = 0.2;
 
-/**
- * @const
- * @type {number}
- */
 export const SCUT_SCORE = 10;
 
-/**
- * @const
- * @type {number}
- */
 export const MAX_LOST_CANDIES = 3;
 
-/**
- * @const
- * @type {number}
- */
 export const ROPE_CUT_AT_ONCE_TIMEOUT = 0.1;
 
 // Candy Juggler: keep candy without ropes or bubbles for 30 secs
 export const CANDY_JUGGLER_TIME = 30;
 
-/**
- * @const
- * @type {number}
- */
 export const BLINK_SKIP = 3;
 
-/**
- * @const
- * @type {number}
- */
 export const MOUTH_OPEN_TIME = 1;
 
-/**
- * @const
- * @type {number}
- */
 export const PUMP_TIMEOUT = 0.05;
 
-/**
- * @const
- * @type {number}
- */
 export const SOCK_SPEED_K = 0.9;
 
-/**
- * @const
- * @type {number}
- */
 export const SOCK_COLLISION_Y_OFFSET = 25;
 
-/**
- * @enum {number}
- */
 export const CandyBlink = {
     INITIAL: 0,
     STAR: 1,
-};
+} as const;
 
-/**
- * @enum {number}
- */
 export const TutorialAnimation = {
     SHOW: 0,
     HIDE: 1,
-};
+} as const;
 
-/**
- * @enum {number}
- */
 export const EarthAnimation = {
     NORMAL: 0,
     UPSIDE_DOWN: 1,
-};
+} as const;
 
 /**
  * Animations for Om-nom character
- * @enum {number}
  */
 export const CharAnimation = {
     IDLE: 0,
@@ -139,29 +79,13 @@ export const CharAnimation = {
     IDLEXMAS: 12,
     IDLE2XMAS: 13,
     IDLEPADDINGTON: 14,
-};
+} as const;
 
-/**
- * @const
- * @type {number}
- */
 export const HUD_STARS_COUNT = 3;
 
-/**
- * @const
- * @type {number}
- */
 export const HUD_CANDIES_COUNT = 3;
 
-/**
- * @const
- * @type {number}
- */
 export const IMG_BGR_01_bgr = 0;
-/**
- * @const
- * @type {number}
- */
 export const IMG_BGR_01_P2_vert_transition = 0;
 export const IMG_BGR_02_vert_transition = 1;
 

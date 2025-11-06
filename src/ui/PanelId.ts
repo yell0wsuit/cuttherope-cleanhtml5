@@ -11,6 +11,6 @@ const PanelId = {
     LEADERBOARDS: 9,
     ACHIEVEMENTS: 10,
     PASSWORD: 11,
-};
+} as const;
 
 export default PanelId;

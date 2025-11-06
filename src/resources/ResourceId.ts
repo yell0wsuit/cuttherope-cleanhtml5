@@ -198,6 +198,6 @@ const ResourceId = {
 
     // Total number of resources
     RESOURCES_COUNT: 198,
-};
+} as const;
 
 export default ResourceId;

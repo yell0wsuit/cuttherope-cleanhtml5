@@ -8,6 +8,6 @@ const BoxType = {
     PURCHASE: "PURCHASE",
     TIME: "TIME",
     HOLIDAY: "HOLIDAY",
-};
+} as const;
 
 export default BoxType;
