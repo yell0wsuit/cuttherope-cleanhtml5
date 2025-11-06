@@ -7,17 +7,24 @@ import Vector from "@/core/Vector";
 import Radians from "@/utils/Radians";
 import Canvas from "@/utils/Canvas";
 import RGBAcolor from "@/core/RGBAColor";
+import type Texture2D from "@/core/Texture2D";
 
 class GameObject extends Animation {
+    bb?: Rectangle;
+    rbb?: Quad2D;
+    mover?: Mover;
+    rotatedBB: boolean;
+    topLeftCalculated: boolean;
+    drawPosIncrement?: number;
+
     constructor() {
         super();
         this.isDrawBB = false;
+        this.rotatedBB = false;
+        this.topLeftCalculated = false;
     }
 
-    /**
-     * @param {Texture2D} texture
-     */
-    initTexture(texture) {
+    initTexture(texture: Texture2D) {
         super.initTexture(texture);
         this.bb = new Rectangle(0, 0, this.width, this.height);
         this.rbb = new Quad2D(this.bb.x, this.bb.y, this.bb.w, this.bb.h);
@@ -31,19 +38,20 @@ class GameObject extends Animation {
         const firstOffset = this.texture.offsets[0];
         const firstRect = this.texture.rects[0];
 
+        if (!firstOffset || !firstRect) {
+            return;
+        }
+
         this.bb = new Rectangle(
             Math.round(firstOffset.x),
             Math.round(firstOffset.y),
-            firstRect.width,
-            firstRect.height
+            firstRect.w,
+            firstRect.h
         );
         this.rbb = new Quad2D(this.bb.x, this.bb.y, this.bb.w, this.bb.h);
     }
 
-    /**
-     * @param {{ angle: number; path: string; moveSpeed: number; rotateSpeed: number; }} item
-     */
-    parseMover(item) {
+    parseMover(item: { angle: number; path: string; moveSpeed: number; rotateSpeed: number }) {
         this.rotation = item.angle || 0;
 
         const path = item.path;
@@ -62,20 +70,14 @@ class GameObject extends Animation {
         }
     }
 
-    /**
-     * @param {Mover} mover
-     */
-    setMover(mover) {
+    setMover(mover: Mover) {
         this.mover = mover;
 
         // turn high precision coordinates on for moving objects
         this.drawPosIncrement = 0.0001;
     }
 
-    /**
-     * @param {number} delta
-     */
-    update(delta) {
+    update(delta: number) {
         super.update(delta);
 
         if (!this.topLeftCalculated) {
@@ -94,10 +96,7 @@ class GameObject extends Animation {
         }
     }
 
-    /**
-     * @param {number} angle
-     */
-    rotateWithBB(angle) {
+    rotateWithBB(angle: number) {
         if (!this.rotatedBB) {
             this.rotatedBB = true;
         }
@@ -165,13 +164,7 @@ class GameObject extends Animation {
         }
     }
 
-    /**
-     * Returns true if the point is inside the object's bounding box
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean}
-     */
-    pointInObject(x, y) {
+    pointInObject(x: number, y: number): boolean {
         const bb = this.bb;
 
         if (!bb) {
@@ -184,15 +177,7 @@ class GameObject extends Animation {
         return Rectangle.pointInRect(x, y, ox, oy, bb.w, bb.h);
     }
 
-    /**
-     * Check if a rectangle intersects with this object
-     * @param {number} r1x
-     * @param {number} r1y
-     * @param {number} r2x
-     * @param {number} r2y
-     * @returns {boolean | undefined}
-     */
-    rectInObject(r1x, r1y, r2x, r2y) {
+    rectInObject(r1x: number, r1y: number, r2x: number, r2y: number): boolean | undefined {
         if (!this.bb) {
             return;
         }
@@ -203,13 +188,7 @@ class GameObject extends Animation {
         return Rectangle.rectInRect(r1x, r1y, r2x, r2y, ox, oy, ox + this.bb.w, oy + this.bb.h);
     }
 
-    /**
-     * Check if two game objects intersect
-     * @param {GameObject} o1
-     * @param {GameObject} o2
-     * @returns {boolean | undefined}
-     */
-    static intersect(o1, o2) {
+    static intersect(o1: GameObject, o2: GameObject): boolean | undefined {
         if (!o1.bb || !o2.bb) {
             return;
         }
