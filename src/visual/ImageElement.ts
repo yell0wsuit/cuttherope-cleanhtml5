@@ -6,7 +6,6 @@ import Canvas from "@/utils/Canvas";
 import Constants from "@/utils/Constants";
 import Vector from "@/core/Vector";
 import ActionType from "@/visual/ActionType";
-// @ts-ignore - Log is a JS module
 import Log from "@/utils/Log";
 import type Texture2D from "@/core/Texture2D";
 import type { ActionData } from "@/visual/Action";
