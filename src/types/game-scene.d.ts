@@ -1,26 +1,28 @@
 import Vector from "@/core/Vector";
+import Rectangle from "@/core/Rectangle";
 import AnimationPool from "@/visual/AnimationPool";
 import Animation from "@/visual/Animation";
 import ImageElement from "@/visual/ImageElement";
+import GameObject from "@/visual/GameObject";
 import BaseElement from "@/visual/BaseElement";
 import Rope from "@/game/Bungee";
 import Sock from "@/game/Sock";
 import RotatedCircle from "@/game/RotatedCircle";
 import Bubble from "@/game/Bubble";
 import Grab from "@/game/Grab";
+import Bouncer from "@/game/Bouncer";
+import EarthImage from "@/game/EarthImage";
+import FingerCut from "@/game/FingerCut";
+import GravityButton from "@/game/GravityButton";
+import PollenDrawer from "@/game/PollenDrawer";
+import Pump from "@/game/Pump";
+import Spikes from "@/game/Spikes";
+import Star from "@/game/Star";
 import DelayedDispatcher from "@/utils/DelayedDispatcher";
 import GameController from "@/game/GameController";
-import Timeline from "@/visual/Timeline";
 import ConstrainedPoint from "@/physics/ConstrainedPoint";
-import CTRGameObject from "@/game/CTRGameObject";
-import Rectangle from "@/core/Rectangle";
 
-export interface FingerCutSegment {
-    start: Vector;
-    end: Vector;
-}
-
-export type FingerCutTrail = FingerCutSegment[];
+export type FingerCutTrail = FingerCut[];
 
 export interface GameSceneCamera {
     pos: Vector;
@@ -43,25 +45,6 @@ export interface PositionedDrawable extends Drawable {
     y: number;
 }
 
-export interface StarLike extends PositionedDrawable {
-    pos: Vector;
-    prevPos: Vector;
-    v: Vector;
-    posDelta: Vector;
-    addTimelineWithID(timeline: Timeline, id: number): void;
-    playTimeline(id: number): void;
-    addChild(child: Drawable): void;
-    removeChild(child: Drawable): void;
-    anchor: unknown;
-    parentAnchor: unknown;
-    passTransformationsToChilds?: boolean;
-    visible: boolean;
-}
-
-export interface SceneStar extends ConstrainedPoint, StarLike {}
-
-export interface SceneCandy extends CTRGameObject, StarLike {}
-
 export interface GameScene extends Record<string, unknown> {
     preDraw(): void;
     postDraw(): void;
@@ -76,7 +59,7 @@ export interface GameScene extends Record<string, unknown> {
     handlePumpFlow(
         pump: BaseElement,
         star: ConstrainedPoint,
-        candy: CTRGameObject,
+        candy: GameObject,
         delta: number
     ): void;
     camera: GameSceneCamera;
@@ -85,38 +68,38 @@ export interface GameScene extends Record<string, unknown> {
     mapHeight: number;
     mapWidth: number;
     drawings: Drawable[];
-    earthAnims: Drawable[];
-    pollenDrawer: Drawable | null;
-    gravityButton: (Drawable & { isOn?: boolean; isInTouchZone?: () => boolean }) | null;
+    earthAnims: EarthImage[];
+    pollenDrawer: PollenDrawer | null;
+    gravityButton: GravityButton | null;
     gravityNormal: boolean;
-    support: Drawable;
-    target: BaseElement & Drawable;
+    support: ImageElement;
+    target: GameObject;
     tutorials: Drawable[];
     tutorialImages: Array<Drawable & { special?: number }>;
     razors: Drawable[];
     rotatedCircles: Array<RotatedCircle & Drawable>;
-    bubbles: Drawable[];
-    pumps: Drawable[];
-    spikes: Drawable[];
-    bouncers: Drawable[];
-    socks: Array<PositionedDrawable>;
+    bubbles: Bubble[];
+    pumps: Pump[];
+    spikes: Spikes[];
+    bouncers: Bouncer[];
+    socks: Sock[];
     bungees: Array<
         Grab & { rope: Rope | null; spider?: Drawable; hasSpider?: boolean; spiderActive?: boolean }
     >;
-    stars: Array<SceneStar | null>;
-    candy: SceneCandy;
-    candyL: SceneCandy;
-    candyR: SceneCandy;
-    star: SceneStar;
-    starL: SceneStar;
-    starR: SceneStar;
+    stars: Array<Star | null>;
+    candy: GameObject;
+    candyL: GameObject;
+    candyR: GameObject;
+    star: ConstrainedPoint;
+    starL: ConstrainedPoint;
+    starR: ConstrainedPoint;
     twoParts: number;
     noCandy: boolean;
     noCandyL: boolean;
     noCandyR: boolean;
     targetSock: Sock | null;
     savedSockSpeed: number;
-    fingerCuts: FingerCutTrail[];
+    fingerCuts: FingerCut[][];
     aniPool: AnimationPool & {
         addChild(child: Drawable): void;
         timelineFinishedDelegate(): () => void;
