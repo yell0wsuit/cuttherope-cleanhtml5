@@ -12,7 +12,7 @@ import ResourceId from "@/resources/ResourceId";
 import Lang from "@/resources/Lang";
 import Text from "@/visual/Text";
 import MenuStringId from "@/resources/MenuStringId";
-import Dialogs from "@/ui/Dialogs";
+import { UIRegistry } from "@/ui/types";
 import Alignment from "@/core/Alignment";
 import BoxType from "@/ui/BoxType";
 import { IS_XMAS } from "@/resources/ResData";
@@ -20,6 +20,9 @@ import { IS_XMAS } from "@/resources/ResData";
 class BoxPanel extends Panel {
     constructor() {
         super(PanelId.BOXES, "boxPanel", "menuBackground", true);
+
+        // Register this panel in the UI registry
+        UIRegistry.registerBoxPanel(this);
 
         // State
         this.boxes = [];
@@ -174,7 +177,7 @@ class BoxPanel extends Panel {
             scaleToUI: true,
         });
         SoundMgr.playSound(ResourceId.SND_TAP);
-        Dialogs.showPopup("missingStars");
+        UIRegistry.getDialogs()?.showPopup("missingStars");
     }
 
     showHolidayUnavailableDialog() {
@@ -228,7 +231,7 @@ class BoxPanel extends Panel {
         }
 
         SoundMgr.playSound(ResourceId.SND_TAP);
-        Dialogs.showPopup("holidayUnavailable");
+        UIRegistry.getDialogs()?.showPopup("holidayUnavailable");
     }
 
     doBounceCurrentBox() {

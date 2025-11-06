@@ -5,7 +5,7 @@ import PubSub from "@/utils/PubSub";
 import edition from "@/config/editions/net-edition";
 import MoreComingBox from "@/ui/MoreComingBox";
 import TimeBox from "@/ui/TimeBox";
-import BoxPanel from "@/ui/BoxPanel";
+import { UIRegistry } from "@/ui/types";
 import { IS_XMAS } from "@/resources/ResData";
 
 /**
@@ -188,7 +188,7 @@ class BoxManager {
             }
         }
 
-        BoxPanel.redraw();
+        UIRegistry.getBoxPanel()?.redraw();
     }
 
     /**
@@ -207,7 +207,7 @@ class BoxManager {
         }
 
         if (shouldRedraw) {
-            BoxPanel.redraw();
+            UIRegistry.getBoxPanel()?.redraw();
         }
     }
 

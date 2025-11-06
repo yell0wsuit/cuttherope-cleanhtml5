@@ -3,7 +3,7 @@ import PanelId from "@/ui/PanelId";
 import resolution from "@/resolution";
 import platform from "@/config/platforms/platform-web";
 import ScoreManager from "@/ui/ScoreManager";
-import BoxManager from "@/ui/BoxManager";
+import { UIRegistry } from "@/ui/types";
 import PubSub from "@/utils/PubSub";
 import SoundMgr from "@/game/CTRSoundMgr";
 import ResourceId from "@/resources/ResourceId";
@@ -251,6 +251,8 @@ class Dialogs {
      * Initializes the Dialogs system (event listeners + localization).
      */
     init() {
+        UIRegistry.registerDialogs(this);
+
         if (document.readyState === "loading") {
             document.addEventListener("DOMContentLoaded", () => this.initEventListeners());
         } else {
