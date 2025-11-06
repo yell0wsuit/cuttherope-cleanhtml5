@@ -1,7 +1,6 @@
 import ImageElement from "@/visual/ImageElement";
 import Canvas from "@/utils/Canvas";
 import Constants from "@/utils/Constants";
-//@ts-ignore migrate Log to TS later
 import Log from "@/utils/Log";
 import type Texture2D from "@/core/Texture2D";
 
