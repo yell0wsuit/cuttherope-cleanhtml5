@@ -5,10 +5,10 @@
 
 /**
  * Gets a single DOM element from a selector or element.
- * @param {string|Element|Window|Document|null|undefined} selector - Selector string or DOM element
- * @returns {Element|Window|Document|null} The resolved element or null if not found
  */
-export const getElement = (selector) => {
+export const getElement = (
+    selector: string | Element | Window | Document | null | undefined
+): Element | Window | Document | null => {
     if (!selector) return null;
     if (typeof selector === "string") {
         return selector[0] === "#" && selector.indexOf(" ") === -1
@@ -23,10 +23,8 @@ export const getElement = (selector) => {
 
 /**
  * Adds one or more CSS classes to an element.
- * @param {string|Element|null|undefined} selector - Selector string or DOM element
- * @param {string} className - Space-separated class names to add
  */
-export const addClass = (selector, className) => {
+export const addClass = (selector: string | Element | null | undefined, className: string) => {
     const el = getElement(selector);
     if (!el || !(el instanceof Element)) return;
     className
@@ -37,10 +35,8 @@ export const addClass = (selector, className) => {
 
 /**
  * Removes one or more CSS classes from an element.
- * @param {string|Element|null|undefined} selector - Selector string or DOM element
- * @param {string} className - Space-separated class names to remove
  */
-export const removeClass = (selector, className) => {
+export const removeClass = (selector: string | Element | null | undefined, className: string) => {
     const el = getElement(selector);
     if (!el || !className || !(el instanceof Element)) return;
     className
@@ -51,11 +47,12 @@ export const removeClass = (selector, className) => {
 
 /**
  * Toggles a CSS class on an element.
- * @param {string|Element|null|undefined} selector - Selector string or DOM element
- * @param {string} className - Class name to toggle
- * @param {boolean} [force] - Optional force parameter: true to add, false to remove
  */
-export const toggleClass = (selector, className, force) => {
+export const toggleClass = (
+    selector: string | Element | null | undefined,
+    className: string,
+    force: boolean
+) => {
     const el = getElement(selector);
     if (!el || !(el instanceof Element)) return;
     if (force === undefined) {
@@ -67,11 +64,12 @@ export const toggleClass = (selector, className, force) => {
 
 /**
  * Sets a CSS style property on an element.
- * @param {string|Element|null|undefined} selector - Selector string or DOM element
- * @param {string} property - CSS property name (camelCase or kebab-case)
- * @param {string} value - CSS property value
  */
-export const setStyle = (selector, property, value) => {
+export const setStyle = (
+    selector: string | Element | null | undefined,
+    property: string,
+    value: string
+) => {
     const el = getElement(selector);
     if (!el || !(el instanceof HTMLElement)) return;
     el.style.setProperty(property, value);
@@ -79,28 +77,27 @@ export const setStyle = (selector, property, value) => {
 
 /**
  * Track active timers per element so we can cancel animations when needed.
- * @type {WeakMap<HTMLElement, Set<number>>}
  */
-const elementTimers = new WeakMap();
+const elementTimers: WeakMap<HTMLElement, Set<number>> = new WeakMap();
 
 /**
  * Registers a timeout/interval id with an element for later cleanup.
- * @param {HTMLElement} element
- * @param {number} timerId
  */
-const trackTimer = (element, timerId) => {
-    if (!elementTimers.has(element)) {
-        elementTimers.set(element, new Set());
+const trackTimer = (element: HTMLElement, timerId: number) => {
+    let timers = elementTimers.get(element);
+
+    if (!timers) {
+        timers = new Set<number>();
+        elementTimers.set(element, timers);
     }
-    /** @type {Set<number>} */ (elementTimers.get(element)).add(timerId);
+
+    timers.add(timerId);
 };
 
 /**
  * Clears a tracked timer and removes it from the element registry.
- * @param {HTMLElement} element
- * @param {number} timerId
  */
-const clearTrackedTimer = (element, timerId) => {
+const clearTrackedTimer = (element: HTMLElement, timerId: number) => {
     const timers = elementTimers.get(element);
     if (!timers) return;
     if (timers.has(timerId)) {
@@ -114,9 +111,8 @@ const clearTrackedTimer = (element, timerId) => {
 
 /**
  * Clears all timers registered for an element.
- * @param {HTMLElement} element
  */
-const clearAllTimers = (element) => {
+const clearAllTimers = (element: HTMLElement) => {
     const timers = elementTimers.get(element);
     if (!timers) return;
     timers.forEach((timerId) => clearTimeout(timerId));
@@ -126,19 +122,19 @@ const clearAllTimers = (element) => {
 
 /**
  * Cache for default display values by tag name.
- * @type {Map<string, string>}
  */
-const defaultDisplayCache = new Map();
+const defaultDisplayCache: Map<string, string> = new Map();
 
 /**
  * Computes the default display value for a given element tag.
- * @param {string} nodeName
- * @returns {string}
  */
-const getDefaultDisplay = (nodeName) => {
+const getDefaultDisplay = (nodeName: string): string => {
     const tagName = nodeName.toLowerCase();
     if (defaultDisplayCache.has(tagName)) {
-        return /** @type {string} */ (defaultDisplayCache.get(tagName));
+        const cached = defaultDisplayCache.get(tagName);
+        if (cached !== undefined) {
+            return cached;
+        }
     }
     if (!document.body) {
         return "block";
@@ -156,24 +152,21 @@ const getDefaultDisplay = (nodeName) => {
 
 /**
  * Shows an element by setting its display property.
- * @param {string|Element|null|undefined} selector - Selector string or DOM element
- * @param {string} [displayValue] - Display value to use (e.g., "block", "flex"); defaults to the element's natural display.
  */
-export const show = (selector, displayValue) => {
+export const show = (selector: string | Element | null | undefined, displayValue?: string) => {
     const el = getElement(selector);
     if (!el || !(el instanceof HTMLElement)) return;
     el.style.removeProperty("display");
     const computedDisplay = window.getComputedStyle(el).display;
     if (computedDisplay === "none") {
-        el.style.display = displayValue || getDefaultDisplay(el.nodeName);
+        el.style.display = displayValue ?? getDefaultDisplay(el.nodeName);
     }
 };
 
 /**
  * Hides an element by setting its display to "none".
- * @param {string|Element|null|undefined} selector - Selector string or DOM element
  */
-export const hide = (selector) => {
+export const hide = (selector: string | Element | null | undefined) => {
     const el = getElement(selector);
     if (!el || !(el instanceof HTMLElement)) return;
     el.style.display = "none";
@@ -181,9 +174,8 @@ export const hide = (selector) => {
 
 /**
  * Removes all child nodes from an element.
- * @param {string|Element|null|undefined} selector - Selector string or DOM element
  */
-export const empty = (selector) => {
+export const empty = (selector: string | Element | null | undefined) => {
     const el = getElement(selector);
     if (!el || !(el instanceof Element)) return;
     while (el.firstChild) {
@@ -193,11 +185,11 @@ export const empty = (selector) => {
 
 /**
  * Appends a child element or HTML string to a target element.
- * @param {string|Element|null|undefined} selector - Selector string or DOM element
- * @param {string|Element} child - HTML string or DOM element to append
- * @returns {Element|null} The appended element or null if operation failed
  */
-export const append = (selector, child) => {
+export const append = (
+    selector: string | Element | null | undefined,
+    child: string | Element
+): Element | null => {
     const el = getElement(selector);
     if (!el || child == null || !(el instanceof Element)) return null;
     if (typeof child === "string") {
@@ -214,9 +206,8 @@ export const append = (selector, child) => {
 
 /**
  * Stops all running animations on an element by clearing transitions.
- * @param {string|Element|null|undefined} selector - Selector string or DOM element
  */
-export const stopAnimations = (selector) => {
+export const stopAnimations = (selector: string | Element | null | undefined) => {
     const el = getElement(selector);
     if (!el || !(el instanceof HTMLElement)) return;
     clearAllTimers(el);
@@ -227,12 +218,12 @@ export const stopAnimations = (selector) => {
 
 /**
  * Fades in an element by animating opacity from 0 to 1.
- * @param {string|Element|null|undefined} selector - Selector string or DOM element
- * @param {number} [duration] - Animation duration in milliseconds
- * @param {string} [displayValue] - Optional display value to use when showing
- * @returns {Promise<void>} Promise that resolves when animation completes
  */
-export const fadeIn = (selector, duration, displayValue) => {
+export const fadeIn = (
+    selector: string | Element | null | undefined,
+    duration: number,
+    displayValue?: string
+): Promise<void> => {
     const el = getElement(selector);
     if (!el || !(el instanceof HTMLElement)) return Promise.resolve();
 
@@ -264,11 +255,11 @@ export const fadeIn = (selector, duration, displayValue) => {
 
 /**
  * Fades out an element by animating opacity from 1 to 0.
- * @param {string|Element|null|undefined} selector - Selector string or DOM element
- * @param {number} [duration] - Animation duration in milliseconds
- * @returns {Promise<void>} Promise that resolves when animation completes
  */
-export const fadeOut = (selector, duration) => {
+export const fadeOut = (
+    selector: string | Element | null | undefined,
+    duration: number
+): Promise<void> => {
     const el = getElement(selector);
     if (!el || !(el instanceof HTMLElement)) return Promise.resolve();
 
@@ -294,11 +285,8 @@ export const fadeOut = (selector, duration) => {
 
 /**
  * Creates a delay associated with an element.
- * @param {string|Element} selector - Selector string or DOM element (not used but kept for API compatibility)
- * @param {number} duration - Delay duration in milliseconds
- * @returns {Promise<void>} Promise that resolves after the delay
  */
-export const delay = (selector, duration) => {
+export const delay = (selector: string | Element, duration: number): Promise<void> => {
     const el = getElement(selector);
     if (!el || !(el instanceof HTMLElement)) {
         return new Promise((resolve) => {
@@ -317,13 +305,13 @@ export const delay = (selector, duration) => {
 
 /**
  * Adds an event listener to an element and returns a cleanup function.
- * @param {string|Element|Window|Document} selector - Selector string or event target
- * @param {string} event - Event type (e.g., "click", "mouseover")
- * @param {EventListener} handler - Event handler function
- * @param {AddEventListenerOptions|boolean} [options] - Optional event listener options
- * @returns {Function} Cleanup function to remove the event listener
  */
-export const on = (selector, event, handler, options) => {
+export const on = (
+    selector: string | Element | Window | Document,
+    event: string,
+    handler: EventListener,
+    options: AddEventListenerOptions | boolean
+): Function => {
     const el = getElement(selector);
     if (!el) return () => {};
     el.addEventListener(event, handler, options);
@@ -334,12 +322,12 @@ export const on = (selector, event, handler, options) => {
 
 /**
  * Attaches mouseenter and mouseleave event handlers to an element.
- * @param {string|Element} selector - Selector string or DOM element
- * @param {EventListener} [enter] - Handler for mouseenter event
- * @param {EventListener} [leave] - Handler for mouseleave event
- * @returns {Function} Cleanup function to remove both event listeners
  */
-export const hover = (selector, enter, leave) => {
+export const hover = (
+    selector: string | Element,
+    enter: EventListener,
+    leave: EventListener
+): Function => {
     const el = getElement(selector);
     if (!el) return () => {};
     const enterHandler = typeof enter === "function" ? enter : () => {};
@@ -354,11 +342,11 @@ export const hover = (selector, enter, leave) => {
 
 /**
  * Gets or sets the text content of an element.
- * @param {string|Element|null|undefined} selector - Selector string or DOM element
- * @param {string} [value] - Optional text value to set. If omitted, returns current text content.
- * @returns {string|null|undefined} Current text content if getting, or the set value if setting
  */
-export const text = (selector, value) => {
+export const text = (
+    selector: string | Element | null | undefined,
+    value: string
+): string | null | undefined => {
     const el = getElement(selector);
     if (!el || !(el instanceof Element)) return undefined;
     if (value === undefined) {
@@ -370,10 +358,8 @@ export const text = (selector, value) => {
 
 /**
  * Gets the width of an element or window.
- * @param {string|Element|Window} selector - Selector string, DOM element, or window
- * @returns {number} Width in pixels
  */
-export const width = (selector) => {
+export const width = (selector: string | Element | Window): number => {
     const el = getElement(selector);
     if (!el) return 0;
     if (el === window) return window.innerWidth;
