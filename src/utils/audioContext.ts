@@ -1,4 +1,10 @@
-let cachedAudioContext = null;
+declare global {
+    interface Window {
+        audioContext__?: AudioContext;
+    }
+}
+
+let cachedAudioContext: AudioContext | null = null;
 
 export function getAudioContext() {
     if (cachedAudioContext) {
@@ -35,3 +41,5 @@ export function resumeAudioContext() {
 
     return context;
 }
+
+export {};
