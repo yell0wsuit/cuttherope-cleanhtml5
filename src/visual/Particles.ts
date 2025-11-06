@@ -5,27 +5,35 @@ import MathHelper from "@/utils/MathHelper";
 import Canvas from "@/utils/Canvas";
 import resolution from "@/resolution";
 import Radians from "@/utils/Radians";
+import type Texture2D from "@/core/Texture2D";
 
-/**
- * @constructor
- */
 class PointSprite {
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @param {number} size
-     */
-    constructor(x, y, size) {
+    x: number;
+    y: number;
+    size: number;
+
+    constructor(x: number, y: number, size: number) {
         this.x = x;
         this.y = y;
         this.size = size;
     }
 }
 
-/**
- * @constructor
- */
-class Particle {
+export class Particle {
+    startPos: Vector;
+    pos: Vector;
+    dir: Vector;
+    radialAccel: number;
+    tangentialAccel: number;
+    color: RGBAColor;
+    deltaColor: RGBAColor;
+    size: number;
+    life: number;
+    deltaAngle: number;
+    angle: number;
+    width: number;
+    height: number;
+
     constructor() {
         this.startPos = new Vector(0, 0);
         this.pos = new Vector(0, 0);
@@ -46,18 +54,45 @@ class Particle {
 }
 
 class Particles extends BaseElement {
-    /**
-     * @param {number} numParticles
-     */
-    constructor(numParticles) {
+    totalParticles: number;
+    particles: Particle[];
+    active: boolean;
+    duration: number;
+    elapsed: number;
+    gravity: Vector;
+    posVar: Vector;
+    angle: number;
+    angleVar: number;
+    speed: number;
+    speedVar: number;
+    tangentialAccel: number;
+    tangentialAccelVar: number;
+    radialAccel: number;
+    radialAccelVar: number;
+    size: number;
+    sizeVar: number;
+    life: number;
+    lifeVar: number;
+    startColor: RGBAColor;
+    startColorVar: RGBAColor;
+    endColor: RGBAColor;
+    endColorVar: RGBAColor;
+    blendAdditive: boolean;
+    colorModulate: boolean;
+    emissionRate: number;
+    emitCounter: number;
+    texture: Texture2D | null;
+    vertices: PointSprite[];
+    colors: RGBAColor[];
+    particleIdx: number;
+    onFinished: ((system: Particles) => void) | null;
+
+    constructor(numParticles: number) {
         super();
         this.width = resolution.CANVAS_WIDTH;
         this.height = resolution.CANVAS_HEIGHT;
 
         this.totalParticles = numParticles;
-        /**
-         * @type {Particle[]}
-         */
         this.particles = [];
 
         // not active by default
@@ -122,37 +157,23 @@ class Particles extends BaseElement {
         this.emitCounter = 0;
 
         // Texture of the particles
-        /**
-         * @type {Texture2D | null}
-         */
         this.texture = null;
 
         // Array of (x,y,size)
-        /**
-         * @type {PointSprite[]}
-         */
         this.vertices = [];
+
         // Array of colors
-        /**
-         * @type {RGBAColor[]}
-         */
         this.colors = [];
 
         //  particle idx
         this.particleIdx = 0;
 
         // callback when particle system has finished
-        /**
-         * @type {((arg0: this) => void) | null}
-         */
         this.onFinished = null;
     }
 
-    /**
-     * Creates and adds a particle to the system
-     * @return {boolean} false if the system is full, otherwise true
-     */
-    addParticle() {
+    // Creates and adds a particle to the system
+    addParticle(): boolean {
         if (this.particles.length == this.totalParticles) {
             return false;
         }
@@ -163,10 +184,7 @@ class Particles extends BaseElement {
         return true;
     }
 
-    /**
-     * @param {Particle} particle
-     */
-    initParticle(particle) {
+    initParticle(particle: Particle) {
         particle.pos.x = this.x + this.posVar.x * MathHelper.randomMinus1to1();
         particle.pos.y = this.y + this.posVar.y * MathHelper.randomMinus1to1();
         particle.startPos.copyFrom(particle.pos);
@@ -215,10 +233,7 @@ class Particles extends BaseElement {
         particle.size = this.size + this.sizeVar * MathHelper.randomMinus1to1();
     }
 
-    /**
-     * @param {number} delta
-     */
-    update(delta) {
+    update(delta: number) {
         super.update(delta);
         if (this.onFinished) {
             if (this.particles.length === 0 && !this.active) {
@@ -244,6 +259,8 @@ class Particles extends BaseElement {
         this.particleIdx = 0;
         while (this.particleIdx < this.particles.length) {
             const p = this.particles[this.particleIdx];
+            if (!p) break;
+
             if (p.life > 0) {
                 this.updateParticleLocation(p, delta);
 
@@ -263,11 +280,7 @@ class Particles extends BaseElement {
         }
     }
 
-    /**
-     * @param {Particle} p
-     * @param {number} delta
-     */
-    updateParticleLocation(p, delta) {
+    updateParticleLocation(p: Particle, delta: number) {
         let radial;
 
         // radial acceleration
@@ -297,12 +310,7 @@ class Particles extends BaseElement {
         p.pos.add(tmp);
     }
 
-    /**
-     * @param {Particle} particle
-     * @param {number} index
-     * @param {number} delta
-     */
-    updateParticle(particle, index, delta) {
+    updateParticle(particle: Particle, index: number, delta: number) {
         this.vertices[this.particleIdx] = new PointSprite(
             particle.pos.x,
             particle.pos.y,
@@ -312,17 +320,11 @@ class Particles extends BaseElement {
         this.colors[this.particleIdx] = particle.color;
     }
 
-    /**
-     * @param {number} index
-     */
-    removeParticle(index) {
+    removeParticle(index: number) {
         this.particles.splice(index, 1);
     }
 
-    /**
-     * @param {number} initialParticles
-     */
-    startSystem(initialParticles) {
+    startSystem(initialParticles: number) {
         this.particles.length = 0;
         for (let i = 0; i < initialParticles; i++) {
             this.addParticle();
@@ -347,15 +349,16 @@ class Particles extends BaseElement {
         // only draw if the image is non-transparent
         if (this.color.a !== 0) {
             const ctx = Canvas.context;
-            const image = this.texture.image;
+            const image = this.texture?.image;
 
-            if (!ctx) {
+            if (!ctx || !image) {
                 return;
             }
 
             for (let i = 0, len = this.particleIdx; i < len; i++) {
                 const p = this.particles[i];
-                ctx.drawImage(image, Math.round(p.x), Math.round(p.y));
+                if (!p) continue;
+                ctx.drawImage(image, Math.round(p.pos.x), Math.round(p.pos.y));
             }
         }
 

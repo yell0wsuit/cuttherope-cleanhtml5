@@ -1,15 +1,15 @@
-import Particles from "@/visual/Particles";
+import Particles, { Particle } from "@/visual/Particles";
 import Rectangle from "@/core/Rectangle";
 import MathHelper from "@/utils/MathHelper";
 import ImageMultiDrawer from "@/visual/ImageMultiDrawer";
 import resolution from "@/resolution";
+import type Texture2D from "@/core/Texture2D";
 
 class MultiParticles extends Particles {
-    /**
-     * @param {number} numParticles
-     * @param {Texture2D} texture
-     */
-    constructor(numParticles, texture) {
+    imageGrid: Texture2D;
+    drawer: ImageMultiDrawer;
+
+    constructor(numParticles: number, texture: Texture2D) {
         super(numParticles);
 
         this.imageGrid = texture;
@@ -18,13 +18,12 @@ class MultiParticles extends Particles {
         this.height = resolution.CANVAS_HEIGHT;
     }
 
-    /**
-     * @param {Particle} particle
-     */
-    initParticle(particle) {
+    initParticle(particle: Particle) {
         const texture = this.imageGrid;
         const n = MathHelper.randomRange(0, texture.rects.length - 1);
         const tquad = texture.rects[n];
+        if (!tquad) return;
+
         const vquad = new Rectangle(0, 0, 0, 0); // don't draw initially
 
         this.drawer.setTextureQuad(this.particles.length, tquad, vquad, 1);
@@ -35,12 +34,7 @@ class MultiParticles extends Particles {
         particle.height = tquad.h * particle.size;
     }
 
-    /**
-     * @param {Particle} particle
-     * @param {number} index
-     * @param {number} delta
-     */
-    updateParticle(particle, index, delta) {
+    updateParticle(particle: Particle, index: number, delta: number) {
         // update the current position
         this.drawer.vertices[index] = new Rectangle(
             particle.pos.x - particle.width / 2,
@@ -56,10 +50,7 @@ class MultiParticles extends Particles {
         this.colors[index] = particle.color;
     }
 
-    /**
-     * @param {number} index
-     */
-    removeParticle(index) {
+    removeParticle(index: number) {
         this.drawer.removeQuads(index);
         super.removeParticle(index);
     }
