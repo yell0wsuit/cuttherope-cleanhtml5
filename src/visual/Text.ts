@@ -4,128 +4,89 @@ import Alignment from "@/core/Alignment";
 import ImageMultiDrawer from "@/visual/ImageMultiDrawer";
 import Canvas from "@/utils/Canvas";
 import ResourceId from "@/resources/ResourceId";
+//@ts-ignore migrate ResourceMgr to TS later
 import ResourceMgr from "@/resources/ResourceMgr";
 import resolution from "@/resolution";
 import MathHelper from "@/utils/MathHelper";
 import settings from "@/game/CTRSettings";
+import type Font from "@/visual/Font";
 
 //settings.getLangId()
 
-/**
- * @typedef {Object} XmlElement
- * @property {(name: string) => boolean} hasAttribute - Check if attribute exists
- * @property {(name: string) => string} attr - Get attribute as string
- * @property {(name: string, defaultValue?: number) => number} attrInt - Get attribute as integer
- * @property {(name: string, defaultValue?: number) => number} attrFloat - Get attribute as float
- */
+interface XmlElement {
+    hasAttribute: (name: string) => boolean;
+    attr: (name: string) => string;
+    attrInt: (name: string, defaultValue?: number) => number;
+    attrFloat: (name: string, defaultValue?: number) => number;
+}
 
-/**
- * @typedef {Object} DrawSystemOptions
- * @property {number} fontId - Font resource ID
- * @property {boolean | undefined} [canvas] - Whether to render to canvas
- * @property {HTMLCanvasElement | HTMLImageElement} img - Image or canvas element
- * @property {number | undefined} [width] - Optional width constraint
- * @property {number | undefined} [maxScaleWidth] - Optional maximum scaled width
- * @property {string} text - Text to render
- * @property {number | undefined} [alignment] - Text alignment
- * @property {number | undefined} [alpha] - Opacity value
- */
+interface DrawTextOptionsBase {
+    text: string;
+    width?: number | undefined;
+    alignment?: Alignment | undefined;
+    scaleToUI?: boolean | undefined;
+    alpha?: number | null | undefined;
+    scale?: number | undefined;
+    maxScaleWidth?: number | undefined;
+    canvas?: boolean | undefined;
+    img?: HTMLImageElement | HTMLCanvasElement | undefined;
+    imgId?: string | undefined;
+    imgSel?: string | undefined;
+    imgParentId?: string | undefined;
+}
 
-/**
- * @typedef {Object} DrawImgOptions
- * @property {HTMLImageElement | HTMLCanvasElement} [img] - Image or canvas element
- * @property {string} [imgId] - Image element ID
- * @property {string} [imgSel] - Image selector
- * @property {string} [imgParentId] - Parent element ID
- * @property {boolean} [canvas] - Whether to use canvas rendering
- * @property {string | number} text - Text to render
- * @property {number} fontId - Font resource ID
- * @property {number} [width] - Optional width constraint
- * @property {number} [alignment] - Text alignment
- * @property {boolean} [scaleToUI] - Whether to scale to UI
- * @property {number | null} [alpha] - Opacity value (0-1)
- * @property {number} [scale] - Custom scale factor
- * @property {number} [maxScaleWidth] - Optional maximum scaled width
- */
+interface DrawImgOptions extends DrawTextOptionsBase {
+    /** Font resource ID */
+    fontId: number;
+}
 
-/**
- * @typedef {Object} DrawSmallOptions - Options for drawSmall method (fontId is set automatically)
- * @property {HTMLImageElement | HTMLCanvasElement} [img] - Image or canvas element
- * @property {string} [imgId] - Image element ID
- * @property {string} [imgSel] - Image selector
- * @property {string} [imgParentId] - Parent element ID
- * @property {boolean} [canvas] - Whether to use canvas rendering
- * @property {string | number} text - Text to render
- * @property {number} [width] - Optional width constraint
- * @property {number} [alignment] - Text alignment
- * @property {boolean} [scaleToUI] - Whether to scale to UI
- * @property {number | null} [alpha] - Opacity value (0-1)
- * @property {number} [scale] - Custom scale factor
- * @property {number} [maxScaleWidth] - Optional maximum scaled width
- */
+interface DrawSmallOptions extends DrawTextOptionsBase {
+    fontId?: number | undefined; // auto-filled by Text.drawSmall
+}
 
-/**
- * @typedef {Object} DrawBigOptions - Options for drawBig method (fontId is set automatically)
- * @property {HTMLImageElement | HTMLCanvasElement} [img] - Image or canvas element
- * @property {string} [imgId] - Image element ID
- * @property {string} [imgSel] - Image selector
- * @property {string} [imgParentId] - Parent element ID
- * @property {boolean} [canvas] - Whether to use canvas rendering
- * @property {string | number} text - Text to render
- * @property {number} [width] - Optional width constraint
- * @property {number} [alignment] - Text alignment
- * @property {boolean} [scaleToUI] - Whether to scale to UI
- * @property {number | null} [alpha] - Opacity value (0-1)
- * @property {number} [scale] - Custom scale factor
- * @property {number} [maxScaleWidth] - Optional maximum scaled width
- */
+interface DrawBigOptions extends DrawTextOptionsBase {
+    fontId?: number | undefined; // auto-filled by Text.drawBig
+}
 
-/**
- * @typedef {Object} DrawBigNumbersOptions - Options for drawBigNumbers method (fontId is set automatically)
- * @property {HTMLImageElement | HTMLCanvasElement} [img] - Image or canvas element
- * @property {string} [imgId] - Image element ID
- * @property {string} [imgSel] - Image selector
- * @property {string} [imgParentId] - Parent element ID
- * @property {boolean} [canvas] - Whether to use canvas rendering
- * @property {string | number} text - Text to render
- * @property {number} [width] - Optional width constraint
- * @property {number} [alignment] - Text alignment
- * @property {boolean} [scaleToUI] - Whether to scale to UI
- * @property {number | null} [alpha] - Opacity value (0-1)
- * @property {number} [scale] - Custom scale factor
- * @property {number} [maxScaleWidth] - Optional maximum scaled width
- */
+interface DrawBigNumbersOptions extends DrawTextOptionsBase {
+    fontId?: number | undefined; // auto-filled by Text.drawBigNumbers
+}
 
-/**
- * @typedef {Object} FontOptions
- * @property {number} fontId - Font resource ID
- * @property {number | undefined} [alignment] - Text alignment
- * @property {number | undefined} [alpha] - Opacity value (0-1)
- */
+interface DrawSystemOptions extends DrawTextOptionsBase {
+    fontId: number;
+    img: HTMLCanvasElement | HTMLImageElement;
+}
+
+interface FontOptions {
+    fontId: number;
+    alignment?: Alignment | undefined;
+    alpha?: number | null | undefined;
+}
 
 class FormattedString {
-    /**
-     * @param {string} str
-     * @param {number} width
-     */
-    constructor(str, width) {
+    string: string;
+    width: number;
+
+    constructor(str: string, width: number) {
         this.string = str;
         this.width = width;
     }
 }
 
 class Text extends BaseElement {
-    /**
-     * @param {Texture2D} font
-     */
-    constructor(font) {
+    font: Font;
+    formattedStrings: FormattedString[];
+    align: Alignment;
+    wrapWidth: number;
+    wrapLongWords: boolean;
+    maxHeight: number;
+    d: ImageMultiDrawer;
+    string: string;
+
+    constructor(font: Font) {
         super();
         this.font = font;
-        /**
-         * @type {FormattedString[]}
-         */
         this.formattedStrings = [];
-        /** @type {string} */
         this.string = "";
         this.width = Constants.UNDEFINED;
         this.height = Constants.UNDEFINED;
@@ -133,15 +94,10 @@ class Text extends BaseElement {
         this.d = new ImageMultiDrawer(font.texture);
         this.wrapLongWords = false;
         this.maxHeight = Constants.UNDEFINED;
-        /** @type {number} */
         this.wrapWidth = 0;
     }
 
-    /**
-     * @param {string} newString
-     * @param {number | null} width
-     */
-    setString(newString, width) {
+    setString(newString: string, width: number | null) {
         this.string = newString;
         if (width == null || width === Constants.UNDEFINED) {
             this.wrapWidth = Math.ceil(this.font.stringWidth(newString));
@@ -156,9 +112,9 @@ class Text extends BaseElement {
     }
 
     updateDrawerValues() {
-        let dx = 0,
-            dy = 0,
-            n = 0;
+        let dx = 0;
+        let dy = 0;
+        let n = 0;
         const itemHeight = this.font.fontHeight();
         const dotsString = "..";
         const dotsOffset = this.font.getCharOffset(dotsString, 0);
@@ -173,6 +129,8 @@ class Text extends BaseElement {
 
         for (let i = 0; i < linesToDraw; i++) {
             const fs = this.formattedStrings[i];
+            if (!fs) continue;
+
             const s = fs.string;
             const len = s.length;
 
@@ -187,18 +145,26 @@ class Text extends BaseElement {
             }
 
             for (let c = 0; c < len; c++) {
-                if (s[c] === " ") {
+                const char = s[c];
+                if (!char) continue;
+
+                if (char === " ") {
                     dx += this.font.spaceWidth + this.font.getCharOffset(s, c);
                 } else {
-                    const quadIndex = this.font.getCharQuad(s[c]);
-                    const itemWidth = this.font.texture.rects[quadIndex].w;
+                    const quadIndex = this.font.getCharQuad(char);
+                    const rect = this.font.texture.rects[quadIndex];
+                    if (!rect) continue;
+
+                    const itemWidth = rect.w;
                     this.d.mapTextureQuad(quadIndex, Math.round(dx), Math.round(dy), n++);
                     dx += itemWidth + this.font.getCharOffset(s, c);
                 }
 
                 if (drawEllipsis && i === linesToDraw - 1) {
                     const dotIndex = this.font.getCharQuad(".");
-                    const dotWidth = this.font.texture.rects[dotIndex].w;
+                    const dotRect = this.font.texture.rects[dotIndex];
+                    if (!dotRect) continue;
+                    const dotWidth = dotRect.w;
                     if (
                         c === len - 1 ||
                         (c === len - 2 &&
@@ -264,6 +230,7 @@ class Text extends BaseElement {
 
         while (dx < len) {
             const c = s[dx++];
+            if (!c) continue;
 
             if (c == " " || c == "\n") {
                 wp += wc;
@@ -277,7 +244,9 @@ class Text extends BaseElement {
                 }
             } else {
                 const quadIndex = this.font.getCharQuad(c);
-                const charWidth = this.font.texture.rects[quadIndex].w;
+                const rect = this.font.texture.rects[quadIndex];
+                if (!rect) continue;
+                const charWidth = rect.w;
                 wc += charWidth + this.font.getCharOffset(s, dx - 1);
             }
 
@@ -315,6 +284,8 @@ class Text extends BaseElement {
         for (let i = 0; i < strCount; i++) {
             const start = strIdx[i << 1];
             const end = strIdx[(i << 1) + 1];
+            if (start === undefined || end === undefined) continue;
+
             const str = this.string.substring(start, end);
             const wd = this.font.stringWidth(str);
             const fs = new FormattedString(str, wd);
@@ -322,11 +293,7 @@ class Text extends BaseElement {
         }
     }
 
-    /**
-     * @param {XmlElement} xml
-     * @returns {Text}
-     */
-    createFromXml(xml) {
+    createFromXml(xml: XmlElement): Text {
         const resId = xml.attrInt("font"),
             font = ResourceMgr.getFont(resId),
             element = new Text(font);
@@ -352,11 +319,7 @@ class Text extends BaseElement {
         return element;
     }
 
-    /**
-     * @param {DrawSystemOptions} options
-     */
-    static drawSystem(options) {
-        // Scale factor for 1920x1080 (1920/1024 = 1.875)
+    static drawSystem(options: DrawSystemOptions) {
         const scaleFactor = resolution.CANVAS_WIDTH / 1024;
 
         // Use different line heights based on font ID, scaled for resolution
@@ -371,14 +334,15 @@ class Text extends BaseElement {
         const baseBottomPadding = options.fontId === 4 ? 0 : 6;
         const bottomPadding = Math.round(baseBottomPadding * scaleFactor);
 
-        const cnv = /** @type {HTMLCanvasElement} */ (
-            options.canvas ? options.img : document.createElement("canvas")
-        );
+        const cnv = options.canvas
+            ? (options.img as HTMLCanvasElement)
+            : document.createElement("canvas");
         cnv.width =
             options.width || options.maxScaleWidth || options.text.length * 16 * scaleFactor;
         cnv.height = lineHeight + topPadding + bottomPadding;
 
-        const ctx = /** @type {CanvasRenderingContext2D} */ (cnv.getContext("2d"));
+        const ctx = (options.canvas ? (options.img as HTMLCanvasElement) : cnv).getContext("2d");
+        if (!ctx) return options.img;
         let x = cnv.width / 2;
 
         if (options.alignment === 1) {
@@ -390,18 +354,20 @@ class Text extends BaseElement {
         // detect overflow by measuring or newline character
         const metric = ctx.measureText(options.text);
         if (options.text.indexOf("\n") > 0 || (options.width && metric.width > options.width)) {
-            const text = stringToArray(ctx, options.text, options.width || 0);
-            cnv.height = lineHeight * text.length + topPadding + bottomPadding;
+            const textArray = stringToArray(ctx, options.text, options.width || 0);
+            cnv.height = lineHeight * textArray.length + topPadding + bottomPadding;
 
             setupFont(ctx, options);
 
-            for (let i = 0; i < text.length; ++i) {
+            for (let i = 0; i < textArray.length; ++i) {
+                const line = textArray[i];
+                if (!line) continue;
                 const yPos =
                     topPadding + (i + 1) * lineHeight - (lineHeight - Math.round(18 * scaleFactor));
                 if (options.fontId === 4) {
-                    ctx.strokeText(text[i], x, yPos);
+                    ctx.strokeText(line, x, yPos);
                 }
-                ctx.fillText(text[i], x, yPos);
+                ctx.fillText(line, x, yPos);
             }
         } else {
             // use the measured width
@@ -418,7 +384,7 @@ class Text extends BaseElement {
         }
 
         if (!options.canvas) {
-            const imgElement = /** @type {HTMLImageElement} */ (options.img);
+            const imgElement = options.img as HTMLImageElement;
             imgElement.src = cnv.toDataURL("image/png");
             imgElement.style.paddingTop = "18px";
         }
@@ -429,39 +395,40 @@ class Text extends BaseElement {
         return options.img;
     }
 
-    /**
-     * @param {DrawImgOptions} options
-     * @returns {HTMLImageElement | HTMLCanvasElement}
-     */
-    static drawImg(options) {
+    static drawImg(options: DrawImgOptions): HTMLImageElement | HTMLCanvasElement {
         // get or create the image element
-        let img = options.img;
+        let img: HTMLImageElement | HTMLCanvasElement | undefined = options.img;
         if (!img && options.imgId) {
             const element = document.getElementById(options.imgId);
-            if (element) img = /** @type {HTMLImageElement | HTMLCanvasElement} */ (element);
+            if (element instanceof HTMLImageElement || element instanceof HTMLCanvasElement) {
+                img = element;
+            }
         }
         if (!img && options.imgSel) {
             const element = document.querySelector(options.imgSel);
-            if (element) img = /** @type {HTMLImageElement | HTMLCanvasElement} */ (element);
+            if (element instanceof HTMLImageElement || element instanceof HTMLCanvasElement) {
+                img = element;
+            }
         }
         if (!img && options.imgParentId) {
             // obtains img child or prepends new Image if necessary
             const parent = document.getElementById(options.imgParentId);
             if (parent) {
-                let imgElement = /** @type {HTMLImageElement | HTMLCanvasElement | null} */ (
-                    parent.querySelector(options.canvas ? "canvas" : "img")
-                );
+                let imgElement = parent.querySelector(options.canvas ? "canvas" : "img") as
+                    | HTMLImageElement
+                    | HTMLCanvasElement
+                    | null;
                 if (!imgElement) {
-                    imgElement = /** @type {HTMLImageElement | HTMLCanvasElement} */ (
-                        document.createElement(options.canvas ? "canvas" : "img")
-                    );
+                    imgElement = document.createElement(options.canvas ? "canvas" : "img") as
+                        | HTMLImageElement
+                        | HTMLCanvasElement;
                     parent.insertBefore(imgElement, parent.firstChild);
                 }
                 img = imgElement;
             }
         }
         if (!img) {
-            img = /** @type {HTMLImageElement} */ (new Image());
+            img = new Image() as HTMLImageElement;
         }
 
         const lang = settings.getLangId();
@@ -469,8 +436,7 @@ class Text extends BaseElement {
             const langElement = document.getElementById("lang");
             if (langElement) langElement.classList.add("lang-system");
 
-            /** @type {DrawSystemOptions} */
-            const systemOptions = {
+            const systemOptions: DrawSystemOptions = {
                 fontId: options.fontId,
                 canvas: options.canvas,
                 img: img,
@@ -496,9 +462,10 @@ class Text extends BaseElement {
         const existingCanvas = Canvas.element;
 
         // create a temporary canvas to use
-        const targetCanvas = options.canvas
-            ? /** @type {HTMLCanvasElement} */ (img)
-            : document.createElement("canvas");
+        const targetCanvas =
+            options.canvas && img instanceof HTMLCanvasElement
+                ? img
+                : document.createElement("canvas");
         Canvas.setTarget(targetCanvas);
 
         const font = ResourceMgr.getFont(fontId);
@@ -512,8 +479,9 @@ class Text extends BaseElement {
         t.setString(text, width ?? null);
 
         // set the canvas width and height
-        const canvas = /** @type {HTMLCanvasElement} */ (Canvas.element);
-        const ctx = /** @type {CanvasRenderingContext2D} */ (Canvas.context);
+        const canvas = Canvas.element;
+        const ctx = Canvas.context;
+        if (!canvas || !ctx) return img;
         const imgWidth = (width || Math.ceil(t.width)) + Math.ceil(t.x * 2);
         const imgHeight = Math.ceil(t.height);
         canvas.width = imgWidth;
@@ -526,9 +494,8 @@ class Text extends BaseElement {
 
         // draw the text and get the image data
         t.draw();
-        if (!options.canvas) {
-            const imgElement = /** @type {HTMLImageElement} */ (img);
-            imgElement.src = canvas.toDataURL("image/png");
+        if (!options.canvas && img instanceof HTMLImageElement) {
+            img.src = canvas.toDataURL("image/png");
         }
 
         if (alpha !== previousAlpha) {
@@ -568,72 +535,64 @@ class Text extends BaseElement {
         return img;
     }
 
-    /**
-     * @param {DrawSmallOptions} options
-     * @returns {HTMLImageElement | HTMLCanvasElement}
-     */
-    static drawSmall(options) {
-        const fullOptions = /** @type {DrawImgOptions} */ ({
+    static drawSmall(options: DrawSmallOptions): HTMLImageElement | HTMLCanvasElement {
+        return Text.drawImg({
             ...options,
             fontId: ResourceId.FNT_SMALL_FONT,
-        });
-        return Text.drawImg(fullOptions);
+        } as DrawImgOptions);
     }
 
-    /**
-     * @param {DrawBigOptions} options
-     * @returns {HTMLImageElement | HTMLCanvasElement}
-     */
-    static drawBig(options) {
-        const fullOptions = /** @type {DrawImgOptions} */ ({
+    static drawBig(options: DrawBigOptions): HTMLImageElement | HTMLCanvasElement {
+        return Text.drawImg({
             ...options,
             fontId: ResourceId.FNT_BIG_FONT,
-        });
-        return Text.drawImg(fullOptions);
+        } as DrawImgOptions);
     }
 
-    /**
-     * @param {DrawBigNumbersOptions} options
-     * @returns {HTMLImageElement | HTMLCanvasElement}
-     */
-    static drawBigNumbers(options) {
-        const fullOptions = /** @type {DrawImgOptions} */ ({
+    static drawBigNumbers(options: DrawBigNumbersOptions): HTMLImageElement | HTMLCanvasElement {
+        return Text.drawImg({
             ...options,
             fontId: ResourceId.FNT_FONT_NUMBERS_BIG,
-        });
-        return Text.drawImg(fullOptions);
+        } as DrawImgOptions);
     }
 }
 
-/**
- * @param {CanvasRenderingContext2D} ctx
- * @param {string} string
- * @param {number} width
- * @returns {string[]}
- */
-function stringToArray(ctx, string, width) {
+const stringToArray = (ctx: CanvasRenderingContext2D, string: string, width: number): string[] => {
     // convert string to array of lines then words
     const lines = string.split("\n");
-    /** @type {string[][]} */
-    const input = [];
+    const input: string[][] = [];
     for (let i = 0; i < lines.length; ++i) {
-        input[i] = lines[i].split(" ");
+        const lineStr = lines[i];
+        if (lineStr) {
+            input[i] = lineStr.split(" ");
+        }
     }
 
     let i = 0;
     let j = 0;
-    /** @type {string[]} */
-    const output = [];
+    const output: string[] = [];
     let runningWidth = 0;
     let line = 0;
 
     while (i < input.length) {
-        while (j < input[i].length) {
+        const currentInput = input[i];
+        if (!currentInput) {
+            i++;
+            continue;
+        }
+
+        while (j < currentInput.length) {
             if (!output[line]) {
                 output[line] = "";
             }
 
-            const text = `${input[i][j]} `;
+            const word = currentInput[j];
+            if (!word) {
+                j++;
+                continue;
+            }
+
+            const text = `${word} `;
             const w = ctx.measureText(text).width;
 
             // overflow to a newline
@@ -647,7 +606,10 @@ function stringToArray(ctx, string, width) {
             }
         }
 
-        output[line] = output[line].trim();
+        const currentLine = output[line];
+        if (currentLine) {
+            output[line] = currentLine.trim();
+        }
         i++;
         line++;
         j = 0;
@@ -655,13 +617,9 @@ function stringToArray(ctx, string, width) {
     }
 
     return output;
-}
+};
 
-/**
- * @param {CanvasRenderingContext2D} ctx
- * @param {FontOptions} options
- */
-function setupFont(ctx, options) {
+const setupFont = (ctx: CanvasRenderingContext2D, options: FontOptions) => {
     const color = options.fontId === 5 ? "#000" : "#fff";
     if (options.alignment !== 1) {
         ctx.textAlign = "center";
@@ -669,7 +627,6 @@ function setupFont(ctx, options) {
 
     ctx.fillStyle = color;
 
-    // Scale factor for 1920x1080 (1920/1024 = 1.875)
     const scaleFactor = resolution.CANVAS_WIDTH / 1024;
 
     // Font ID 4 uses larger font size, Font ID 5 uses 22px
@@ -687,6 +644,6 @@ function setupFont(ctx, options) {
     if (options.alpha) {
         ctx.globalAlpha = options.alpha;
     }
-}
+};
 
 export default Text;
