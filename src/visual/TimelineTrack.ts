@@ -1,23 +1,31 @@
 import KeyFrame from "@/visual/KeyFrame";
 import TrackType from "@/visual/TrackType";
+import type Timeline from "@/visual/Timeline";
+import type Action from "@/visual/Action";
+import type { ActionData } from "@/visual/Action";
 import Constants from "@/utils/Constants";
 
-/**
- * @typedef {object} TrackStrategy
- * @property {(track: TimelineTrack, keyFrame: KeyFrame, delta: number) => void} applyEaseStep
- * @property {(track: TimelineTrack, delta: number) => void} applyLinearStep
- * @property {(track: TimelineTrack, keyFrame: KeyFrame) => void} setElementFromKeyFrame
- * @property {(track: TimelineTrack, keyFrame: KeyFrame) => void} setKeyFrameFromElement
- * @property {(track: TimelineTrack, src: KeyFrame, dst: KeyFrame) => void} initKeyFrameStepFrom
- * @property {(track: TimelineTrack, src: KeyFrame, dst: KeyFrame, isEaseIn: boolean, isEaseOut: boolean) => void} configureEase
- */
+interface TrackStrategy {
+    applyEaseStep(track: TimelineTrack, keyFrame: KeyFrame, delta: number): void;
+    applyLinearStep(track: TimelineTrack, delta: number): void;
+    setElementFromKeyFrame(track: TimelineTrack, keyFrame: KeyFrame): void;
+    setKeyFrameFromElement(track: TimelineTrack, keyFrame: KeyFrame): void;
+    initKeyFrameStepFrom(track: TimelineTrack, src: KeyFrame, dst: KeyFrame): void;
+    configureEase(
+        track: TimelineTrack,
+        src: KeyFrame,
+        dst: KeyFrame,
+        isEaseIn: boolean,
+        isEaseOut: boolean
+    ): void;
+}
 
-/**
- * @type {Record<number, TrackStrategy>}
- */
-const TRACK_STRATEGIES = {
+const TRACK_STRATEGIES: Record<number, TrackStrategy> = {
     [TrackType.POSITION]: {
         applyEaseStep(track, _keyFrame, delta) {
+            const element = track.t.element;
+            if (!element) return;
+
             const saPos = track.currentStepAcceleration.value.pos;
             const xPosDelta = saPos.x * delta;
             const yPosDelta = saPos.y * delta;
@@ -28,17 +36,19 @@ const TRACK_STRATEGIES = {
             spsPos.x += xPosDelta;
             spsPos.y += yPosDelta;
 
-            track.t.element.x += (oldPosX + xPosDelta / 2) * delta;
-            track.t.element.y += (oldPosY + yPosDelta / 2) * delta;
+            element.x += (oldPosX + xPosDelta / 2) * delta;
+            element.y += (oldPosY + yPosDelta / 2) * delta;
         },
         applyLinearStep(track, delta) {
             const spsValue = track.currentStepPerSecond.value.pos;
             const element = track.t.element;
+            if (!element) return;
             element.x += spsValue.x * delta;
             element.y += spsValue.y * delta;
         },
         setElementFromKeyFrame(track, keyFrame) {
             const element = track.t.element;
+            if (!element) return;
             const kfPos = keyFrame.value.pos;
 
             if (!track.relative) {
@@ -54,6 +64,7 @@ const TRACK_STRATEGIES = {
         setKeyFrameFromElement(track, keyFrame) {
             const kfValue = keyFrame.value.pos;
             const element = track.t.element;
+            if (!element) return;
             kfValue.x = element.x;
             kfValue.y = element.y;
         },
@@ -84,6 +95,9 @@ const TRACK_STRATEGIES = {
     },
     [TrackType.SCALE]: {
         applyEaseStep(track, _keyFrame, delta) {
+            const element = track.t.element;
+            if (!element) return;
+
             const saScale = track.currentStepAcceleration.value.scale;
             const xScaleDelta = saScale.x * delta;
             const yScaleDelta = saScale.y * delta;
@@ -94,17 +108,19 @@ const TRACK_STRATEGIES = {
             spsScale.x += xScaleDelta;
             spsScale.y += yScaleDelta;
 
-            track.t.element.scaleX += (oldScaleX + xScaleDelta / 2) * delta;
-            track.t.element.scaleY += (oldScaleY + yScaleDelta / 2) * delta;
+            element.scaleX += (oldScaleX + xScaleDelta / 2) * delta;
+            element.scaleY += (oldScaleY + yScaleDelta / 2) * delta;
         },
         applyLinearStep(track, delta) {
             const spsScale = track.currentStepPerSecond.value.scale;
             const element = track.t.element;
+            if (!element) return;
             element.scaleX += spsScale.x * delta;
             element.scaleY += spsScale.y * delta;
         },
         setElementFromKeyFrame(track, keyFrame) {
             const element = track.t.element;
+            if (!element) return;
             const kfScale = keyFrame.value.scale;
             if (!track.relative) {
                 element.scaleX = kfScale.x;
@@ -119,6 +135,7 @@ const TRACK_STRATEGIES = {
         setKeyFrameFromElement(track, keyFrame) {
             const kfScale = keyFrame.value.scale;
             const element = track.t.element;
+            if (!element) return;
             kfScale.x = element.scaleX;
             kfScale.y = element.scaleY;
         },
@@ -149,26 +166,38 @@ const TRACK_STRATEGIES = {
     },
     [TrackType.ROTATION]: {
         applyEaseStep(track, _keyFrame, delta) {
+            const element = track.t.element;
+            if (!element) return;
+
             const acceleration = track.currentStepAcceleration.value.rotationAngle * delta;
             const current = track.currentStepPerSecond.value.rotationAngle;
             track.currentStepPerSecond.value.rotationAngle += acceleration;
-            track.t.element.rotation += (current + acceleration / 2) * delta;
+            element.rotation += (current + acceleration / 2) * delta;
         },
         applyLinearStep(track, delta) {
+            const element = track.t.element;
+            if (!element) return;
+
             const spsRotation = track.currentStepPerSecond.value.rotationAngle;
-            track.t.element.rotation += spsRotation * delta;
+            element.rotation += spsRotation * delta;
         },
         setElementFromKeyFrame(track, keyFrame) {
+            const element = track.t.element;
+            if (!element) return;
+
             if (!track.relative) {
-                track.t.element.rotation = keyFrame.value.rotationAngle;
+                element.rotation = keyFrame.value.rotationAngle;
                 return;
             }
 
-            track.t.element.rotation =
+            element.rotation =
                 track.elementPrevState.value.rotationAngle + keyFrame.value.rotationAngle;
         },
         setKeyFrameFromElement(track, keyFrame) {
-            keyFrame.value.rotationAngle = track.t.element.rotation;
+            const element = track.t.element;
+            if (!element) return;
+
+            keyFrame.value.rotationAngle = element.rotation;
         },
         initKeyFrameStepFrom(track, src, dst) {
             track.currentStepPerSecond.value.rotationAngle =
@@ -192,6 +221,9 @@ const TRACK_STRATEGIES = {
     },
     [TrackType.COLOR]: {
         applyEaseStep(track, _keyFrame, delta) {
+            const element = track.t.element;
+            if (!element) return;
+
             const spsColor = track.currentStepPerSecond.value.color;
             const oldColorR = spsColor.r;
             const oldColorG = spsColor.g;
@@ -210,22 +242,28 @@ const TRACK_STRATEGIES = {
             spsColor.b += deltaB * 2;
             spsColor.a += deltaA * 2;
 
-            const elementColor = track.t.element.color;
+            const elementColor = element.color;
             elementColor.r += (oldColorR + deltaR / 2) * delta;
             elementColor.g += (oldColorG + deltaG / 2) * delta;
             elementColor.b += (oldColorB + deltaB / 2) * delta;
             elementColor.a += (oldColorA + deltaA / 2) * delta;
         },
         applyLinearStep(track, delta) {
+            const element = track.t.element;
+            if (!element) return;
+
             const spsColor = track.currentStepPerSecond.value.color;
-            const elementColor = track.t.element.color;
+            const elementColor = element.color;
             elementColor.r += spsColor.r * delta;
             elementColor.g += spsColor.g * delta;
             elementColor.b += spsColor.b * delta;
             elementColor.a += spsColor.a * delta;
         },
         setElementFromKeyFrame(track, keyFrame) {
-            const elementColor = track.t.element.color;
+            const element = track.t.element;
+            if (!element) return;
+
+            const elementColor = element.color;
             const kfColor = keyFrame.value.color;
             if (!track.relative) {
                 elementColor.copyFrom(kfColor);
@@ -239,7 +277,10 @@ const TRACK_STRATEGIES = {
             elementColor.a = prevColor.a + kfColor.a;
         },
         setKeyFrameFromElement(track, keyFrame) {
-            keyFrame.value.color.copyFrom(track.t.element.color);
+            const element = track.t.element;
+            if (!element) return;
+
+            keyFrame.value.color.copyFrom(element.color);
         },
         initKeyFrameStepFrom(track, src, dst) {
             const spsColor = track.currentStepPerSecond.value.color;
@@ -271,110 +312,65 @@ const TRACK_STRATEGIES = {
     },
 };
 
-/**
- * @enum {number}
- */
 const TrackState = {
     NOT_ACTIVE: 0,
     ACTIVE: 1,
-};
+} as const;
+
+type TrackStateType = (typeof TrackState)[keyof typeof TrackState];
 
 class TimelineTrack {
-    /**
-     * @param {import('./Timeline').default} timeline
-     * @param {number} trackType
-     */
-    constructor(timeline, trackType) {
-        /**
-         * @type {number}
-         */
+    readonly type: number;
+    state: TrackStateType;
+    relative: boolean;
+    startTime: number;
+    endTime: number;
+    keyFrames: KeyFrame[];
+    readonly t: Timeline;
+    strategy: TrackStrategy | null;
+    nextKeyFrame: number;
+    currentStepPerSecond: KeyFrame;
+    currentStepAcceleration: KeyFrame;
+    elementPrevState: KeyFrame;
+    keyFrameTimeLeft: number;
+    overrun: number;
+    actionSets?: Action[][];
+
+    constructor(timeline: Timeline, trackType: number) {
         this.type = trackType;
-        /**
-         * @type {number}
-         */
         this.state = TrackState.NOT_ACTIVE;
-        /**
-         * @type {boolean}
-         */
         this.relative = false;
 
-        /**
-         * @type {number}
-         */
         this.startTime = 0;
-        /**
-         * @type {number}
-         */
         this.endTime = 0;
 
-        /**
-         * @type {KeyFrame[]}
-         */
         this.keyFrames = [];
 
-        /**
-         * @type {import('./Timeline').default}
-         */
         this.t = timeline;
 
-        /**
-         * @type {TrackStrategy | null}
-         */
         this.strategy = TRACK_STRATEGIES[trackType] ?? null;
 
-        /**
-         * @type {number}
-         */
         this.nextKeyFrame = Constants.UNDEFINED;
-        /**
-         * @type {KeyFrame}
-         */
         this.currentStepPerSecond = KeyFrame.newEmpty();
-        /**
-         * @type {KeyFrame}
-         */
         this.currentStepAcceleration = KeyFrame.newEmpty();
-        /**
-         * @type {KeyFrame}
-         */
         this.elementPrevState = KeyFrame.newEmpty();
-        /**
-         * @type {number}
-         */
         this.keyFrameTimeLeft = 0;
-        /**
-         * @type {number}
-         */
         this.overrun = 0;
-
-        /**
-         * Array of action sets, where each action set is an array of Action objects
-         * Only defined for ACTION track types
-         * @type {(Action[])[] | undefined}
-         */
-        this.actionSets = undefined;
 
         if (trackType === TrackType.ACTION) {
             this.actionSets = [];
         }
     }
 
-    deactivate() {
+    deactivate(): void {
         this.state = TrackState.NOT_ACTIVE;
     }
 
-    /**
-     * @param {KeyFrame} keyFrame
-     */
-    addKeyFrame(keyFrame) {
+    addKeyFrame(keyFrame: KeyFrame): void {
         this.setKeyFrame(keyFrame, this.keyFrames.length);
     }
 
-    /**
-     * @param {KeyFrame} keyFrame
-     * @param {number} index
-     */
-    setKeyFrame(keyFrame, index) {
+    setKeyFrame(keyFrame: KeyFrame, index: number): void {
         this.keyFrames[index] = keyFrame;
 
         if (this.type === TrackType.ACTION && this.actionSets) {
@@ -382,26 +378,22 @@ class TimelineTrack {
         }
     }
 
-    /**
-     * @param {number} frameIndex
-     */
-    getFrameTime(frameIndex) {
+    getFrameTime(frameIndex: number): number {
         let total = 0;
         for (let i = 0; i <= frameIndex; i++) {
-            total += this.keyFrames[i].timeOffset;
+            const kf = this.keyFrames[i];
+            if (!kf) continue;
+            total += kf.timeOffset;
         }
         return total;
     }
 
-    updateRange() {
+    updateRange(): void {
         this.startTime = this.getFrameTime(0);
         this.endTime = this.getFrameTime(this.keyFrames.length - 1);
     }
 
-    /**
-     * @param {number} delta
-     */
-    updateActionTrack(delta) {
+    updateActionTrack(delta: number): void {
         if (this.state === TrackState.NOT_ACTIVE) {
             if (!this.t.timelineDirReverse) {
                 if (!(this.t.time - delta > this.endTime || this.t.time < this.startTime)) {
@@ -411,12 +403,16 @@ class TimelineTrack {
                         this.overrun = this.t.time - this.startTime;
 
                         this.nextKeyFrame++;
-                        this.initActionKeyFrame(
-                            this.keyFrames[this.nextKeyFrame - 1],
-                            this.keyFrames[this.nextKeyFrame].timeOffset
-                        );
+                        const prevKf = this.keyFrames[this.nextKeyFrame - 1];
+                        const nextKf = this.keyFrames[this.nextKeyFrame];
+                        if (prevKf && nextKf) {
+                            this.initActionKeyFrame(prevKf, nextKf.timeOffset);
+                        }
                     } else {
-                        this.initActionKeyFrame(this.keyFrames[0], 0);
+                        const firstKf = this.keyFrames[0];
+                        if (firstKf) {
+                            this.initActionKeyFrame(firstKf, 0);
+                        }
                     }
                 }
             } else {
@@ -426,12 +422,16 @@ class TimelineTrack {
                         this.nextKeyFrame = this.keyFrames.length - 1;
                         this.overrun = this.endTime - this.t.time;
                         this.nextKeyFrame--;
-                        this.initActionKeyFrame(
-                            this.keyFrames[this.nextKeyFrame + 1],
-                            this.keyFrames[this.nextKeyFrame].timeOffset
-                        );
+                        const nextKf = this.keyFrames[this.nextKeyFrame + 1];
+                        const prevKf = this.keyFrames[this.nextKeyFrame];
+                        if (nextKf && prevKf) {
+                            this.initActionKeyFrame(nextKf, prevKf.timeOffset);
+                        }
                     } else {
-                        this.initActionKeyFrame(this.keyFrames[0], 0);
+                        const firstKf = this.keyFrames[0];
+                        if (firstKf) {
+                            this.initActionKeyFrame(firstKf, 0);
+                        }
                     }
                 }
             }
@@ -444,37 +444,43 @@ class TimelineTrack {
         // time >= timeline length but keyFrameTimeLeft is not <= 0
         if (this.keyFrameTimeLeft <= Constants.FLOAT_PRECISION) {
             if (this.t.onKeyFrame) {
-                this.t.onKeyFrame(this.t, this.keyFrames[this.nextKeyFrame], this.nextKeyFrame);
+                this.t.onKeyFrame(this.t, this.type, this.nextKeyFrame);
             }
 
             this.overrun = -this.keyFrameTimeLeft;
 
             if (this.nextKeyFrame === this.keyFrames.length - 1) {
-                this.setElementFromKeyFrame(this.keyFrames[this.nextKeyFrame]);
+                const kf = this.keyFrames[this.nextKeyFrame];
+                if (kf) {
+                    this.setElementFromKeyFrame(kf);
+                }
                 this.state = TrackState.NOT_ACTIVE;
             } else if (this.nextKeyFrame === 0) {
-                this.setElementFromKeyFrame(this.keyFrames[this.nextKeyFrame]);
+                const kf = this.keyFrames[this.nextKeyFrame];
+                if (kf) {
+                    this.setElementFromKeyFrame(kf);
+                }
                 this.state = TrackState.NOT_ACTIVE;
             } else {
                 if (!this.t.timelineDirReverse) {
                     this.nextKeyFrame++;
-                    this.initActionKeyFrame(
-                        this.keyFrames[this.nextKeyFrame - 1],
-                        this.keyFrames[this.nextKeyFrame].timeOffset
-                    );
+                    const prevKf = this.keyFrames[this.nextKeyFrame - 1];
+                    const nextKf = this.keyFrames[this.nextKeyFrame];
+                    if (prevKf && nextKf) {
+                        this.initActionKeyFrame(prevKf, nextKf.timeOffset);
+                    }
                 } else {
                     this.nextKeyFrame--;
                     const kf = this.keyFrames[this.nextKeyFrame + 1];
-                    this.initActionKeyFrame(kf, kf.timeOffset);
+                    if (kf) {
+                        this.initActionKeyFrame(kf, kf.timeOffset);
+                    }
                 }
             }
         }
     }
 
-    /**
-     * @param {number} delta
-     */
-    updateNonActionTrack(delta) {
+    updateNonActionTrack(delta: number): void {
         const t = this.t;
         let kf;
         if (this.state === TrackState.NOT_ACTIVE) {
@@ -485,17 +491,19 @@ class TimelineTrack {
                     this.overrun = t.time - this.startTime;
                     this.nextKeyFrame++;
                     kf = this.keyFrames[this.nextKeyFrame];
-                    this.initKeyFrameStepFrom(
-                        this.keyFrames[this.nextKeyFrame - 1],
-                        kf,
-                        kf.timeOffset
-                    );
+                    const prevKf = this.keyFrames[this.nextKeyFrame - 1];
+                    if (kf && prevKf) {
+                        this.initKeyFrameStepFrom(prevKf, kf, kf.timeOffset);
+                    }
                 } else {
                     this.nextKeyFrame = this.keyFrames.length - 1;
                     this.overrun = this.endTime - t.time;
                     this.nextKeyFrame--;
                     kf = this.keyFrames[this.nextKeyFrame + 1];
-                    this.initKeyFrameStepFrom(kf, this.keyFrames[this.nextKeyFrame], kf.timeOffset);
+                    const prevKf = this.keyFrames[this.nextKeyFrame];
+                    if (kf && prevKf) {
+                        this.initKeyFrameStepFrom(kf, prevKf, kf.timeOffset);
+                    }
                 }
             }
             return;
@@ -504,7 +512,7 @@ class TimelineTrack {
         this.keyFrameTimeLeft -= delta;
         kf = this.keyFrames[this.nextKeyFrame];
         const strategy = this.strategy;
-        if (!strategy) {
+        if (!strategy || !kf) {
             return;
         }
 
@@ -519,40 +527,44 @@ class TimelineTrack {
 
         if (this.keyFrameTimeLeft <= Constants.FLOAT_PRECISION) {
             if (t.onKeyFrame) {
-                t.onKeyFrame(t, this.keyFrames[this.nextKeyFrame], this.nextKeyFrame);
+                t.onKeyFrame(t, this.type, this.nextKeyFrame);
             }
 
             this.overrun = -this.keyFrameTimeLeft;
 
             if (this.nextKeyFrame === this.keyFrames.length - 1) {
-                this.setElementFromKeyFrame(this.keyFrames[this.nextKeyFrame]);
+                const endKf = this.keyFrames[this.nextKeyFrame];
+                if (endKf) {
+                    this.setElementFromKeyFrame(endKf);
+                }
                 this.state = TrackState.NOT_ACTIVE;
             } else if (this.nextKeyFrame === 0) {
-                this.setElementFromKeyFrame(this.keyFrames[this.nextKeyFrame]);
+                const startKf = this.keyFrames[this.nextKeyFrame];
+                if (startKf) {
+                    this.setElementFromKeyFrame(startKf);
+                }
                 this.state = TrackState.NOT_ACTIVE;
             } else {
                 if (!t.timelineDirReverse) {
                     this.nextKeyFrame++;
                     kf = this.keyFrames[this.nextKeyFrame];
-                    this.initKeyFrameStepFrom(
-                        this.keyFrames[this.nextKeyFrame - 1],
-                        kf,
-                        kf.timeOffset
-                    );
+                    const prevKf = this.keyFrames[this.nextKeyFrame - 1];
+                    if (kf && prevKf) {
+                        this.initKeyFrameStepFrom(prevKf, kf, kf.timeOffset);
+                    }
                 } else {
                     this.nextKeyFrame--;
                     kf = this.keyFrames[this.nextKeyFrame + 1];
-                    this.initKeyFrameStepFrom(kf, this.keyFrames[this.nextKeyFrame], kf.timeOffset);
+                    const nextKf = this.keyFrames[this.nextKeyFrame];
+                    if (kf && nextKf) {
+                        this.initKeyFrameStepFrom(kf, nextKf, kf.timeOffset);
+                    }
                 }
             }
         }
     }
 
-    /**
-     * @param {KeyFrame} kf
-     * @param {number} time
-     */
-    initActionKeyFrame(kf, time) {
+    initActionKeyFrame(kf: KeyFrame, time: number): void {
         this.keyFrameTimeLeft = time;
         this.setElementFromKeyFrame(kf);
 
@@ -562,15 +574,16 @@ class TimelineTrack {
         }
     }
 
-    /**
-     * @param {KeyFrame} kf
-     */
-    setElementFromKeyFrame(kf) {
+    setElementFromKeyFrame(kf: KeyFrame): void {
         if (this.type === TrackType.ACTION) {
             const actionSet = kf.value.actionSet;
             for (let i = 0, len = actionSet.length; i < len; i++) {
                 const action = actionSet[i];
-                action.actionTarget.handleAction(action.data);
+                if (!action) continue;
+                const target = action.actionTarget as {
+                    handleAction: (data: ActionData) => boolean;
+                };
+                target.handleAction(action.data);
             }
             return;
         }
@@ -578,10 +591,7 @@ class TimelineTrack {
         this.strategy?.setElementFromKeyFrame(this, kf);
     }
 
-    /**
-     * @param {KeyFrame} kf
-     */
-    setKeyFrameFromElement(kf) {
+    setKeyFrameFromElement(kf: KeyFrame): void {
         if (this.type === TrackType.ACTION) {
             return;
         }
@@ -589,12 +599,7 @@ class TimelineTrack {
         this.strategy?.setKeyFrameFromElement(this, kf);
     }
 
-    /**
-     * @param {KeyFrame} src
-     * @param {KeyFrame} dst
-     * @param {number} time
-     */
-    initKeyFrameStepFrom(src, dst, time) {
+    initKeyFrameStepFrom(src: KeyFrame, dst: KeyFrame, time: number): void {
         this.keyFrameTimeLeft = time;
 
         this.setKeyFrameFromElement(this.elementPrevState);
@@ -615,4 +620,6 @@ class TimelineTrack {
     }
 }
 
+export type { TrackStrategy, TrackStateType };
+export { TrackState };
 export default TimelineTrack;
