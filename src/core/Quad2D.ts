@@ -1,22 +1,19 @@
 /**
  * Quad2D constructor
- * @constructor
- * @param {number} x
- * @param {number} y
- * @param {number} w width
- * @param {number} h height
  */
 class Quad2D {
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @param {number} w
-     * @param {number} h
-     */
+    public tlX: number;
+    public tlY: number;
+    public trX: number;
+    public trY: number;
+    public blX: number;
+    public blY: number;
+    public brX: number;
+    public brY: number;
 
-    constructor(x, y, w, h) {
-        const rightX = x + w,
-            bottomY = y + h;
+    constructor(x: number, y: number, w: number, h: number) {
+        const rightX = x + w;
+        const bottomY = y + h;
 
         // top left
         this.tlX = x;

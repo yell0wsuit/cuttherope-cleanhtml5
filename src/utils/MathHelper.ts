@@ -6,51 +6,51 @@ import Constants from "@/utils/Constants";
 class MathHelper {
     /**
      * Fits value v to [minV, maxV]
-     * @param {number} v value
-     * @param {number} minV
-     * @param {number} maxV
-     * @return {number}
+     * @param v value
+     * @param minV
+     * @param maxV
+     * @return number
      */
-    static fitToBoundaries(v, minV, maxV) {
+    static fitToBoundaries(v: number, minV: number, maxV: number): number {
         return Math.max(Math.min(v, maxV), minV);
     }
 
     /**
      * Returns true if values have the same sign
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean}
+     * @param x
+     * @param y
+     * @return boolean
      */
-    static sameSign(x, y) {
+    static sameSign(x: number, y: number): boolean {
         return x < 0 === y < 0;
     }
 
     /**
      * Returns a random integer from the interval
-     * @param {number} from
-     * @param {number} to
+     * @param from
+     * @param to
      */
-    static randomRange(from, to) {
-        return ~~(Math.random() * (to - from + 1) + from);
+    static randomRange(from: number, to: number): number {
+        return Math.floor(Math.random() * (to - from + 1) + from);
     }
 
-    static randomBool() {
+    static randomBool(): boolean {
         return Math.random() > 0.5;
     }
 
-    static randomMinus1to1() {
+    static randomMinus1to1(): number {
         return Math.random() * 2 - 1;
     }
 
     /**
      * Returns the max of 4 numbers
-     * @param {number} v1
-     * @param {number} v2
-     * @param {number} v3
-     * @param {number} v4
-     * @return {number}
+     * @param v1
+     * @param v2
+     * @param v3
+     * @param v4
+     * @return number
      */
-    static maxOf4(v1, v2, v3, v4) {
+    static maxOf4(v1: number, v2: number, v3: number, v4: number): number {
         if (v1 >= v2 && v1 >= v3 && v1 >= v4) return v1;
         if (v2 >= v1 && v2 >= v3 && v2 >= v4) return v2;
         if (v3 >= v2 && v3 >= v1 && v3 >= v4) return v3;
@@ -61,13 +61,13 @@ class MathHelper {
 
     /**
      * Returns the minimum of 4 numbers
-     * @param {number} v1
-     * @param {number} v2
-     * @param {number} v3
-     * @param {number} v4
-     * @return {number}
+     * @param v1
+     * @param v2
+     * @param v3
+     * @param v4
+     * @return number
      */
-    static minOf4(v1, v2, v3, v4) {
+    static minOf4(v1: number, v2: number, v3: number, v4: number): number {
         if (v1 <= v2 && v1 <= v3 && v1 <= v4) return v1;
         if (v2 <= v1 && v2 <= v3 && v2 <= v4) return v2;
         if (v3 <= v2 && v3 <= v1 && v3 <= v4) return v3;
@@ -77,19 +77,18 @@ class MathHelper {
     }
 
     /**
-     * @param {number} x1
-     * @param {number} y1
-     * @param {number} x2
-     * @param {number} y2
-     * @param {number} x3
-     * @param {number} y3
-     * @param {number} x4
-     * @param {number} y4
-     * @return {boolean}
+     * @return boolean
      */
-    static lineInLine(x1, y1, x2, y2, x3, y3, x4, y4) {
-        //let DPx, DPy, QAx, QAy, QBx, QBy, d, la, lb;
-
+    static lineInLine(
+        x1: number,
+        y1: number,
+        x2: number,
+        y2: number,
+        x3: number,
+        y3: number,
+        x4: number,
+        y4: number
+    ): boolean {
         const DPx = x3 - x1 + x4 - x2;
         const DPy = y3 - y1 + y4 - y2;
         const QAx = x2 - x1;
@@ -105,20 +104,13 @@ class MathHelper {
     }
 
     // round to arbitrary precision
-    /**
-     * @param {number} value
-     * @param {number} precision
-     */
-    static roundPrecision(value, precision) {
+    static roundPrecision(value: number, precision: number): number {
         const scalar = Math.pow(10, precision);
         return Math.round(value * scalar) / scalar;
     }
 
     // round to 2 decimals of precision
-    /**
-     * @param {number} value
-     */
-    static roundP2(value) {
+    static roundP2(value: number): number {
         return Math.round(value * 100) / 100;
     }
 }
