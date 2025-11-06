@@ -1,9 +1,17 @@
 import ImageElement from "@/visual/ImageElement";
 import Canvas from "@/utils/Canvas";
 import Constants from "@/utils/Constants";
+//@ts-ignore migrate Log to TS later
 import Log from "@/utils/Log";
+import type Texture2D from "@/core/Texture2D";
 
 class Font extends ImageElement {
+    chars: string;
+    charOffset: number;
+    lineOffset: number;
+    spaceWidth: number;
+    kerning: { [s: string]: number } | null;
+
     constructor() {
         super();
 
@@ -14,35 +22,23 @@ class Font extends ImageElement {
         this.kerning = null;
     }
 
-    /**
-     * @param {string} chars
-     * @param {Texture2D} charTexture
-     * @param {Object.<string, number>|null} kerningDictionary
-     * @returns {void}
-     */
-    initWithVariableSizeChars(chars, charTexture, kerningDictionary) {
+    initWithVariableSizeChars(
+        chars: string,
+        charTexture: Texture2D,
+        kerningDictionary: { [s: string]: number } | null
+    ): void {
         this.chars = chars;
         this.initTexture(charTexture);
         this.kerning = kerningDictionary;
     }
 
-    /**
-     * @param {number} charOffset
-     * @param {number} lineOffset
-     * @param {number} spaceWidth
-     * @returns {void}
-     */
-    setOffsets(charOffset, lineOffset, spaceWidth) {
+    setOffsets(charOffset: number, lineOffset: number, spaceWidth: number): void {
         this.charOffset = charOffset;
         this.lineOffset = lineOffset;
         this.spaceWidth = spaceWidth;
     }
 
-    /**
-     * @param {string} c
-     * @returns {number}
-     */
-    getCharQuad(c) {
+    getCharQuad(c: string): number {
         const charIndex = this.chars.indexOf(c);
         if (charIndex >= 0) {
             return charIndex;
@@ -54,20 +50,15 @@ class Font extends ImageElement {
         return this.chars.indexOf(".");
     }
 
-    /**
-     * @param {number} index
-     * @param {number} x
-     * @param {number} y
-     * @returns {void}
-     */
-    drawQuadWOBind(index, x, y) {
+    drawQuadWOBind(index: number, x: number, y: number): void {
         const rect = this.texture.rects[index];
-        const quadWidth = Math.ceil(rect.w);
-        const quadHeight = Math.ceil(rect.h);
 
-        if (!Canvas.context) {
+        if (!rect || !this.texture.image || !Canvas.context) {
             return;
         }
+
+        const quadWidth = Math.ceil(rect.w);
+        const quadHeight = Math.ceil(rect.h);
 
         Canvas.context.drawImage(
             this.texture.image,
@@ -82,22 +73,24 @@ class Font extends ImageElement {
         ); // destination coordinates
     }
 
-    /**
-     * @param {string} str
-     * @returns {number}
-     */
-    stringWidth(str) {
+    stringWidth(str: string): number {
         let strWidth = 0;
         const len = str.length;
         let lastOffset = 0;
         for (let c = 0; c < len; c++) {
             lastOffset = this.getCharOffset(str, c);
 
-            if (str[c] === " ") {
+            const char = str[c];
+            if (!char) continue;
+
+            if (char === " ") {
                 strWidth += this.spaceWidth + lastOffset;
             } else {
-                const quadIndex = this.getCharQuad(str[c]),
-                    itemWidth = this.texture.rects[quadIndex].w;
+                const quadIndex = this.getCharQuad(char);
+                const rect = this.texture.rects[quadIndex];
+                if (!rect) continue;
+
+                const itemWidth = rect.w;
                 strWidth += itemWidth + lastOffset;
             }
         }
@@ -105,19 +98,12 @@ class Font extends ImageElement {
         return Math.ceil(strWidth);
     }
 
-    /**
-     * @returns {number}
-     */
-    fontHeight() {
-        return this.texture.rects[0].h;
+    fontHeight(): number {
+        const rect = this.texture.rects[0];
+        return rect ? rect.h : 0;
     }
 
-    /**
-     * @param {string} str
-     * @param {number} charIndex
-     * @returns {number}
-     */
-    getCharOffset(str, charIndex) {
+    getCharOffset(str: string, charIndex: number): number {
         // no offset if its the last character
         if (charIndex === str.length - 1) {
             return 0;
@@ -128,8 +114,15 @@ class Font extends ImageElement {
             return this.charOffset;
         }
 
+        const char1 = str[charIndex];
+        const char2 = str[charIndex + 1];
+
+        if (!char1 || !char2) {
+            return this.charOffset;
+        }
+
         // see if kerning is specified for char pair or use the default offset
-        const chars = str[charIndex] + str[charIndex + 1];
+        const chars = char1 + char2;
         const v = this.kerning[chars];
         if (v != null) {
             return v;
