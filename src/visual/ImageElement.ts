@@ -100,10 +100,10 @@ class ImageElement extends BaseElement {
 
         const rect = this.texture.rects[n];
         if (!rect) return;
-        let quadWidth = rect.w,
-            quadHeight = rect.h,
-            qx = this.drawX,
-            qy = this.drawY;
+        let quadWidth = rect.w;
+        let quadHeight = rect.h;
+        let qx = this.drawX;
+        let qy = this.drawY;
 
         if (this.restoreCutTransparency) {
             const offset = this.texture.offsets[n];
@@ -158,14 +158,14 @@ class ImageElement extends BaseElement {
         const ctx = Canvas.context;
         if (!ctx || !this.texture.image) return;
 
-        let qx = 0,
-            qy = 0,
-            qw: number,
-            qh: number,
-            yoff,
-            xoff,
-            wd,
-            hg;
+        let qx = 0;
+        let qy = 0;
+        let qw: number;
+        let qh: number;
+        let xoff;
+        let yoff;
+        let wd;
+        let hg;
 
         if (q === Constants.UNDEFINED) {
             qw = this.texture.imageWidth;
