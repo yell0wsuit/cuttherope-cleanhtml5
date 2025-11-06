@@ -3,49 +3,34 @@
  * Replaces the global window.sounds__ pattern
  */
 
-/**
- * @typedef {Object} SoundData
- * @property {AudioBuffer} buffer - The audio buffer
- * @property {GainNode} gainNode - The gain node for volume control
- * @property {Set<AudioBufferSourceNode>} playingSources - Set of currently playing source nodes
- * @property {boolean} isPaused - Whether the sound is paused
- * @property {number} volume - Volume level (0-1)
- */
+interface SoundData {
+    buffer: AudioBuffer;
+    gainNode: GainNode;
+    playingSources: Set<AudioBufferSourceNode>;
+    isPaused: boolean;
+    volume: number;
+}
 
 class SoundRegistry {
+    sounds: Map<string, SoundData>;
+
     constructor() {
         this.sounds = new Map();
     }
 
-    /**
-     * @param {string} id
-     * @param {SoundData} soundData - Sound data object containing buffer, gainNode, and playingSources
-     */
-    set(id, soundData) {
+    set(id: string, soundData: SoundData) {
         this.sounds.set(id, soundData);
     }
 
-    /**
-     * @param {string} id
-     * @returns {SoundData|undefined} Sound data object or undefined if not found
-     */
-    get(id) {
+    get(id: string): SoundData | undefined {
         return this.sounds.get(id);
     }
 
-    /**
-     * @param {string} id
-     * @returns {boolean} True if the sound exists in the registry
-     */
-    has(id) {
+    has(id: string): boolean {
         return this.sounds.has(id);
     }
 
-    /**
-     * @param {string} id
-     * @returns {boolean} True if the sound was deleted, false if it didn't exist
-     */
-    delete(id) {
+    delete(id: string): boolean {
         const soundData = this.sounds.get(id);
         if (soundData) {
             // Stop all playing sources
@@ -75,9 +60,6 @@ class SoundRegistry {
         return this.sounds.delete(id);
     }
 
-    /**
-     * Clears all sounds from the registry and cleans up resources
-     */
     clear() {
         // Clean up all sounds
         for (const [id] of this.sounds) {
@@ -86,10 +68,7 @@ class SoundRegistry {
         this.sounds.clear();
     }
 
-    /**
-     * @returns {string[]} Array of all sound IDs in the registry
-     */
-    getAll() {
+    getAll(): string[] {
         return Array.from(this.sounds.keys());
     }
 }

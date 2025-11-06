@@ -1,27 +1,26 @@
 /**
  * ResEntry constructor
- * @param {string} path location of the file
- * @param {ResourceType} type resource type (IMAGE, SOUND, etc)
  */
 
-/**
- * @typedef {Object} ResEntryOptions
- * @property {string} atlasPath - Path to the texture atlas file
- * @property {string} atlasFormat - Format of the texture atlas
- * @property {string[]} [frameOrder] - Order of frames in the atlas
- * @property {string} [offsetNormalization] - Offset normalization setting
- */
+interface ResEntryOptions {
+    atlasPath: string;
+    atlasFormat: string;
+    frameOrder?: string[];
+    offsetNormalization?: string;
+}
 
 class ResEntry {
-    /**
-     * @param {string} path
-     * @param {number} type
-     * @param {ResEntryOptions} [options]
-     */
+    path: string;
+    type: number;
+    atlasPath?: string;
+    atlasFormat?: string;
+    frameOrder?: string[];
+    offsetNormalization?: string;
+
     constructor(
-        path,
-        type,
-        options = {
+        path: string,
+        type: number,
+        options: ResEntryOptions = {
             atlasPath: "",
             atlasFormat: "",
             frameOrder: [],

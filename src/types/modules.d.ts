@@ -72,18 +72,9 @@ declare module "@/resources/ResourcePacks" {
     export default ResourcePacks;
 }
 
-declare module "@/resources/ResourceId" {
-    const ResourceId: Record<string, number>;
-    export default ResourceId;
-}
-
 declare module "@/ui/BoxType" {
     const BoxType: Record<string, string>;
     export default BoxType;
-}
-
-declare module "@/resources/ResData" {
-    export const IS_JANUARY: boolean;
 }
 
 declare module "@/resources/JsonLoader" {

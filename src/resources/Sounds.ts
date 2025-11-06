@@ -1,31 +1,27 @@
 import { getAudioContext, resumeAudioContext } from "@/utils/audioContext";
 import { soundRegistry } from "@/utils/soundRegistry";
 
-/**
- * @typedef {object} SoundSource
- * @property {AudioBufferSourceNode} [node]
- * @property {boolean} [__skipOnEnd]
- * @property {(() => void) | null} [__onComplete]
- * @property {number} [__startedAt]
- * @property {number} [__startOffset]
- * @property {string | null} [__instanceId]
- */
+interface SoundSource {
+    __skipOnEnd?: boolean;
+    __onComplete?: (() => void) | null;
+    __startedAt?: number;
+    __startOffset?: number;
+    __instanceId?: string | null;
+}
 
-/**
- * @typedef {object} SoundData
- * @property {AudioBuffer} buffer
- * @property {GainNode} gainNode
- * @property {Set<AudioBufferSourceNode & SoundSource>} playingSources
- * @property {boolean} [isPaused]
- * @property {number} [volume]
- * @property {number} [resumeOffset]
- */
+interface SoundData {
+    buffer: AudioBuffer;
+    gainNode: GainNode;
+    playingSources: Set<AudioBufferSourceNode & SoundSource>;
+    isPaused?: boolean;
+    volume?: number;
+    resumeOffset?: number;
+}
 
-/**
- * @typedef {object} PlayOptions
- * @property {number} [offset] - Playback start offset (seconds)
- * @property {string} [instanceId] - Optional unique instance identifier
- */
+interface PlayOptions {
+    offset?: number;
+    instanceId?: string;
+}
 
 /**
  * SoundManager — manages playback of pre-decoded Web Audio buffers.
@@ -34,12 +30,7 @@ import { soundRegistry } from "@/utils/soundRegistry";
 class SoundManager {
     constructor() {}
 
-    /**
-     * Retrieve the sound data by sound ID.
-     * @param {number | string} soundId
-     * @returns {SoundData | null}
-     */
-    getSoundData(soundId) {
+    getSoundData(soundId: number | string): SoundData | null {
         const id = `s${soundId}`;
         const soundData = soundRegistry.get(id);
         if (!soundData || !soundData.buffer) {
@@ -49,24 +40,26 @@ class SoundManager {
         return soundData;
     }
 
-    /**
-     * Stops currently playing sources for a given sound.
-     * @param {SoundData} soundData
-     * @param {boolean} [shouldInvokeCallback=false]
-     * @param {(source: AudioBufferSourceNode & SoundSource) => boolean} [predicate]
-     * @returns {number} number of stopped sources
-     */
-    stopSources(soundData, shouldInvokeCallback = false, predicate) {
+    stopSources(
+        soundData: SoundData,
+        shouldInvokeCallback: boolean = false,
+        predicate?: (source: AudioBufferSourceNode & SoundSource) => boolean
+    ): number {
         if (!soundData) return 0;
         const sources = Array.from(soundData.playingSources);
         let stoppedCount = 0;
 
+        // If no predicate provided, clear all directly
         if (!predicate) soundData.playingSources.clear();
 
         for (const source of sources) {
+            // If predicate exists, only stop matching sources
             if (predicate && !predicate(source)) continue;
+
             stoppedCount++;
-            if (predicate) soundData.playingSources.delete(source);
+
+            // Always remove stopped sources from the set
+            soundData.playingSources.delete(source);
 
             const callback = shouldInvokeCallback ? source.__onComplete : null;
             source.__skipOnEnd = true;
@@ -96,12 +89,7 @@ class SoundManager {
         return stoppedCount;
     }
 
-    /**
-     * Calculates playback resume offset.
-     * @param {SoundData} soundData
-     * @returns {number}
-     */
-    calculateResumeOffset(soundData) {
+    calculateResumeOffset(soundData: SoundData): number {
         if (!soundData || soundData.playingSources.size === 0) return soundData?.resumeOffset ?? 0;
 
         const context = getAudioContext();
@@ -118,21 +106,15 @@ class SoundManager {
         return duration > 0 ? totalOffset % duration : totalOffset;
     }
 
-    /**
-     * Runs a callback when the sound system is ready.
-     * @param {() => void} callback
-     */
-    onReady(callback) {
+    onReady(callback: () => void) {
         if (typeof callback === "function") callback();
     }
 
-    /**
-     * Plays a sound buffer.
-     * @param {number | string} soundId
-     * @param {(() => void)=} onComplete
-     * @param {PlayOptions=} options
-     */
-    play(soundId, onComplete, options = {}) {
+    play(
+        soundId: number | string,
+        onComplete: (() => void) | undefined,
+        options: PlayOptions | undefined = {}
+    ) {
         const soundData = this.getSoundData(soundId);
         if (!soundData) return;
 
@@ -143,7 +125,7 @@ class SoundManager {
         }
 
         /** @type {AudioBufferSourceNode & SoundSource} */
-        const source = context.createBufferSource();
+        const source: AudioBufferSourceNode & SoundSource = context.createBufferSource();
         source.buffer = soundData.buffer;
         source.__skipOnEnd = false;
         source.__onComplete = onComplete || null;
@@ -197,19 +179,15 @@ class SoundManager {
         try {
             source.start(0, offset);
         } catch (error) {
-            console.error("Failed to start audio source", error);
             soundData.playingSources.delete(source);
             soundData.resumeOffset = 0;
-            this.#safeInvokeCallback(source, /** @type {Error} */ (error));
+            const err = error instanceof Error ? error : new Error(String(error));
+            this.#safeInvokeCallback(source, err);
+            console.error("Failed to start audio source", err);
         }
     }
 
-    /**
-     * Safely invokes completion callback for a source.
-     * @param {AudioBufferSourceNode & SoundSource} source
-     * @param {Error | null} [error]
-     */
-    #safeInvokeCallback(source, error = null) {
+    #safeInvokeCallback(source: AudioBufferSourceNode & SoundSource, error: Error | null = null) {
         const callback = source.__onComplete;
         source.__onComplete = null;
         source.onended = null;
@@ -229,29 +207,17 @@ class SoundManager {
         }
     }
 
-    /**
-     * @param {number | string} soundId
-     * @returns {boolean}
-     */
-    isPlaying(soundId) {
+    isPlaying(soundId: number | string): boolean {
         const soundData = this.getSoundData(soundId);
         return !!(soundData && soundData.playingSources.size > 0);
     }
 
-    /**
-     * @param {number | string} soundId
-     * @returns {boolean}
-     */
-    isPaused(soundId) {
+    isPaused(soundId: number | string): boolean {
         const soundData = this.getSoundData(soundId);
         return !!(soundData && soundData.isPaused && soundData.playingSources.size === 0);
     }
 
-    /**
-     * Pauses playback and stores current offset.
-     * @param {number | string} soundId
-     */
-    pause(soundId) {
+    pause(soundId: number | string) {
         const soundData = this.getSoundData(soundId);
         if (!soundData) return;
 
@@ -260,11 +226,7 @@ class SoundManager {
         soundData.isPaused = true;
     }
 
-    /**
-     * Stops all active instances of a sound.
-     * @param {number | string} soundId
-     */
-    stop(soundId) {
+    stop(soundId: number | string) {
         const soundData = this.getSoundData(soundId);
         if (!soundData) return;
 
@@ -273,12 +235,7 @@ class SoundManager {
         soundData.resumeOffset = 0;
     }
 
-    /**
-     * Stops only a specific sound instance by its ID.
-     * @param {number | string} soundId
-     * @param {string} instanceId
-     */
-    stopInstance(soundId, instanceId) {
+    stopInstance(soundId: number | string, instanceId: string) {
         if (!instanceId) return;
         const soundData = this.getSoundData(soundId);
         if (!soundData) return;
@@ -295,22 +252,12 @@ class SoundManager {
         }
     }
 
-    /**
-     * Gets the last resume offset for a sound.
-     * @param {number | string} soundId
-     * @returns {number}
-     */
-    getResumeOffset(soundId) {
+    getResumeOffset(soundId: number | string): number {
         const soundData = this.getSoundData(soundId);
         return soundData?.resumeOffset || 0;
     }
 
-    /**
-     * Sets volume for a given sound.
-     * @param {number | string} soundId
-     * @param {number} percent - Volume in range [0–100]
-     */
-    setVolume(soundId, percent) {
+    setVolume(soundId: number | string, percent: number) {
         const soundData = this.getSoundData(soundId);
         if (!soundData) return;
 
