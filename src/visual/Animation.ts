@@ -1,11 +1,12 @@
 import ImageElement from "@/visual/ImageElement";
-import Quad2D from "@/core/Quad2D";
-import TrackType from "@/visual/TrackType";
-import Timeline from "@/visual/Timeline";
+import Timeline, { type TimelineLoopType } from "@/visual/Timeline";
 import Action from "@/visual/Action";
 import ActionType from "@/visual/ActionType";
+import TrackType from "@/visual/TrackType";
 import KeyFrame from "@/visual/KeyFrame";
 import Constants from "@/utils/Constants";
+
+type ActionTypeValue = (typeof ActionType)[keyof typeof ActionType];
 
 /**
  * Animation element based on timeline
@@ -15,61 +16,51 @@ class Animation extends ImageElement {
         super();
     }
 
-    /**
-     * @param {number} delay
-     * @param {number} loop
-     * @param {number} start
-     * @param {number} end
-     * @return {number}
-     */
-    addAnimationDelay(delay, loop, start, end) {
+    addAnimationDelay(delay: number, loop: TimelineLoopType, start: number, end: number): number {
         const index = this.timelines.length;
         this.addAnimationEndpoints(index, delay, loop, start, end);
         return index;
     }
 
-    /**
-     * @param {number} delay
-     * @param {number} loopType
-     * @param {number} count
-     * @param {number[]} sequence
-     */
-    addAnimationWithDelay(delay, loopType, count, sequence) {
+    addAnimationWithDelay(
+        delay: number,
+        loopType: TimelineLoopType,
+        count: number,
+        sequence: number[]
+    ): void {
         const index = this.timelines.length;
         this.addAnimationSequence(index, delay, loopType, count, sequence);
     }
 
-    /**
-     * @param {number} animationId
-     * @param {number} delay
-     * @param {number} loopType
-     * @param {number} count
-     * @param {number[]} sequence
-     * @param {number | undefined} [resourceId]
-     */
-    addAnimationSequence(animationId, delay, loopType, count, sequence, resourceId) {
+    addAnimationSequence(
+        animationId: number,
+        delay: number,
+        loopType: TimelineLoopType,
+        count: number,
+        sequence: number[],
+        resourceId?: number
+    ): void {
         this.addAnimation(
             animationId,
             delay,
             loopType,
             count,
-            sequence[0],
+            sequence[0] ?? 0,
             Constants.UNDEFINED,
             sequence,
             resourceId
         );
     }
 
-    /**
-     * @param {number} animationId
-     * @param {number} delay
-     * @param {number} loopType
-     * @param {number} start
-     * @param {number} end
-     * @param {number[]} [argumentList]
-     * @param {number | undefined} [resourceId]
-     */
-    addAnimationEndpoints(animationId, delay, loopType, start, end, argumentList, resourceId) {
+    addAnimationEndpoints(
+        animationId: number,
+        delay: number,
+        loopType: TimelineLoopType,
+        start: number,
+        end: number,
+        argumentList?: number[],
+        resourceId?: number
+    ): void {
         const count = end - start + 1;
 
         this.addAnimation(
@@ -84,17 +75,16 @@ class Animation extends ImageElement {
         );
     }
 
-    /**
-     * @param {number} animationId
-     * @param {number} delay
-     * @param {number} loopType
-     * @param {number} count
-     * @param {number} start
-     * @param {number} end
-     * @param {number[] | undefined} argumentList
-     * @param {number | undefined} resourceId
-     */
-    addAnimation(animationId, delay, loopType, count, start, end, argumentList, resourceId) {
+    addAnimation(
+        animationId: number,
+        delay: number,
+        loopType: TimelineLoopType,
+        count: number,
+        start: number,
+        end: number,
+        argumentList: number[] | undefined,
+        resourceId: number | undefined
+    ): void {
         const t = new Timeline();
         let as = [Action.create(this, ActionType.SET_DRAWQUAD, start, 0)];
 
@@ -105,7 +95,7 @@ class Animation extends ImageElement {
         let si = start;
         for (let i = 1; i < count; i++) {
             if (argumentList) {
-                si = argumentList[i];
+                si = argumentList[i] ?? si;
             } else {
                 si++;
             }
@@ -124,65 +114,56 @@ class Animation extends ImageElement {
 
         this.addTimelineWithID(t, animationId);
 
-        t.resourceId = resourceId;
+        if (resourceId !== undefined) {
+            t.resourceId = resourceId;
+        }
     }
 
-    /**
-     * @param {number} delay
-     * @param {number} index
-     * @param {number} animationId
-     */
-    setDelay(delay, index, animationId) {
+    setDelay(delay: number, index: number, animationId: number): void {
         const timeline = this.getTimeline(animationId);
+        if (!timeline) return;
         const track = timeline.getTrack(TrackType.ACTION);
         if (!track) return;
         const kf = track.keyFrames[index];
+        if (!kf) return;
         kf.timeOffset = delay;
     }
 
-    /**
-     * @param {number} index
-     * @param {number} animationId
-     */
-    setPause(index, animationId) {
+    setPause(index: number, animationId: number): void {
         this.setAction(ActionType.PAUSE_TIMELINE, this, 0, 0, index, animationId);
     }
 
-    /**
-     * @param {string} actionName
-     * @param {Object} target
-     * @param {number} param
-     * @param {number} subParam
-     * @param {number} index
-     * @param {number} animationId
-     */
-    setAction(actionName, target, param, subParam, index, animationId) {
+    setAction(
+        actionName: ActionTypeValue,
+        target: object,
+        param: number,
+        subParam: number,
+        index: number,
+        animationId: number
+    ): void {
         const timeline = this.getTimeline(animationId);
+        if (!timeline) return;
         const track = timeline.getTrack(TrackType.ACTION);
         if (!track) return;
         const kf = track.keyFrames[index];
+        if (!kf) return;
         const action = Action.create(target, actionName, param, subParam);
 
         kf.value.actionSet.push(action);
     }
 
-    /**
-     * @param {number} a2
-     * @param {number} a1
-     * @param {number} delay
-     */
-    switchToAnimation(a2, a1, delay) {
-        const timeline = this.getTimeline(a1),
-            as = [Action.create(this, ActionType.PLAY_TIMELINE, 0, a2)],
-            kf = KeyFrame.makeAction(as, delay);
+    switchToAnimation(a2: number, a1: number, delay: number): void {
+        const timeline = this.getTimeline(a1);
+        if (!timeline) return;
+        const as = [Action.create(this, ActionType.PLAY_TIMELINE, 0, a2)];
+        const kf = KeyFrame.makeAction(as, delay);
         timeline.addKeyFrame(kf);
     }
 
     /**
      * Go to the specified sequence frame of the current animation
-     * @param {number} index
      */
-    jumpTo(index) {
+    jumpTo(index: number): void {
         const timeline = this.currentTimeline;
         if (timeline) {
             timeline.jumpToTrack(TrackType.ACTION, index);

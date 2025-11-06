@@ -1,8 +1,8 @@
 import TimelineTrack from "@/visual/TimelineTrack";
 import Constants from "@/utils/Constants";
+import TrackType from "@/visual/TrackType";
 import type KeyFrame from "@/visual/KeyFrame";
 import type BaseElement from "@/visual/BaseElement";
-import type TrackType from "@/visual/TrackType";
 
 const LoopType = {
     NO_LOOP: 0,
@@ -30,7 +30,7 @@ class Timeline {
     loopType: TimelineLoopType;
     tracks: (TimelineTrack | undefined)[];
     onFinished: ((timeline: Timeline) => void) | null;
-    onKeyFrame: ((timeline: Timeline, trackType: TrackType, keyFrameIndex: number) => void) | null;
+    onKeyFrame: ((timeline: Timeline, trackType: number, keyFrameIndex: number) => void) | null;
     timelineDirReverse: boolean;
     element: BaseElement | null;
     resourceId?: number;
@@ -128,7 +128,7 @@ class Timeline {
         for (let i = 0, len = this.tracks.length; i < len; i++) {
             const track = this.tracks[i];
             if (track != null) {
-                if (track.type === 4 /* TrackType.ACTION */) track.updateActionTrack(delta);
+                if (track.type === TrackType.ACTION) track.updateActionTrack(delta);
                 else track.updateNonActionTrack(delta);
             }
         }
