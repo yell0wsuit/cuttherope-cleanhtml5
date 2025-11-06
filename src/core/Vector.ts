@@ -88,8 +88,9 @@ class Vector {
 
         for (let j = 0; j < count; j++) {
             const point = points[j];
-            xs[j] = point!.x;
-            ys[j] = point!.y;
+            if (!point) continue;
+            xs[j] = point.x;
+            ys[j] = point.y;
         }
 
         let countMinusOne = count - 1;
@@ -97,17 +98,19 @@ class Vector {
             let i = 0;
             let iPlusOne = 1;
             for (; i < countMinusOne; i++, iPlusOne++) {
-                const currentX = xs[i]!;
-                const nextX = xs[iPlusOne]!;
+                const currentX = xs[i];
+                const nextX = xs[iPlusOne];
+                if (currentX === undefined || nextX === undefined) continue;
                 xs[i] = currentX * d1 + nextX * delta;
 
-                const currentY = ys[i]!;
-                const nextY = ys[iPlusOne]!;
+                const currentY = ys[i];
+                const nextY = ys[iPlusOne];
+                if (currentY === undefined || nextY === undefined) continue;
                 ys[i] = currentY * d1 + nextY * delta;
             }
         }
-        result.x = xs[0]!;
-        result.y = ys[0]!;
+        result.x = xs[0] ?? 0;
+        result.y = ys[0] ?? 0;
     }
 
     static forAngle(angle: number): Vector {

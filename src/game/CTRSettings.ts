@@ -11,7 +11,7 @@ const SETTING_KEYS = {
     CLICK_TO_CUT: "clickToCut",
     IS_HD: "isHD",
     LANGUAGE: "language",
-} as const satisfies Record<string, string>;
+} as const;
 
 const SETTING_DEFAULTS = {
     music: true,
