@@ -11,15 +11,16 @@ enum Alignment {
 
 namespace Alignment {
     export function parse(s: string): Alignment {
+        const upper = s.trim().toUpperCase();
         let a = Alignment.UNDEFINED;
 
-        if (s.includes("LEFT")) a = Alignment.LEFT;
-        else if (s.includes("HCENTER") || s === "CENTER") a = Alignment.HCENTER;
-        else if (s.includes("RIGHT")) a = Alignment.RIGHT;
+        if (upper.includes("LEFT")) a = Alignment.LEFT;
+        else if (upper.includes("HCENTER") || upper === "CENTER") a = Alignment.HCENTER;
+        else if (upper.includes("RIGHT")) a = Alignment.RIGHT;
 
-        if (s.includes("TOP")) a |= Alignment.TOP;
-        else if (s.includes("VCENTER") || s === "CENTER") a |= Alignment.VCENTER;
-        else if (s.includes("BOTTOM")) a |= Alignment.BOTTOM;
+        if (upper.includes("TOP")) a |= Alignment.TOP;
+        else if (upper.includes("VCENTER") || upper === "CENTER") a |= Alignment.VCENTER;
+        else if (upper.includes("BOTTOM")) a |= Alignment.BOTTOM;
 
         return a;
     }
