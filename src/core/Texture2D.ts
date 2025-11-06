@@ -1,14 +1,11 @@
 import Vector from "@/core/Vector";
 import Quad2D from "@/core/Quad2D";
+import type Rectangle from "@/core/Rectangle";
 
-/**
- * @typedef {import("@/core/Rectangle").default} Rectangle
- */
-
-const isHtmlImageElement = (/** @type {unknown} */ value) =>
+const isHtmlImageElement = (value: unknown): value is HTMLImageElement =>
     typeof HTMLImageElement !== "undefined" && value instanceof HTMLImageElement;
 
-const getComputedDimension = (/** @type {HTMLImageElement} */ image) => {
+const getComputedDimension = (image: HTMLImageElement) => {
     if (!image || typeof window === "undefined" || !window.getComputedStyle) {
         return { width: 0, height: 0 };
     }
@@ -26,7 +23,16 @@ const getComputedDimension = (/** @type {HTMLImageElement} */ image) => {
 };
 
 const normalizeImageInput = (
-    /** @type {{ drawable: ImageBitmap; width: number; height: number; sourceUrl: string; }} */ input
+    input:
+        | {
+              drawable: ImageBitmap | HTMLImageElement;
+              width?: number;
+              height?: number;
+              sourceUrl?: string;
+          }
+        | ImageBitmap
+        | HTMLImageElement
+        | null
 ) => {
     if (!input) {
         return {
@@ -39,9 +45,14 @@ const normalizeImageInput = (
 
     if (typeof input === "object" && "drawable" in input) {
         const drawable = input.drawable;
-        const width = input.width || drawable?.naturalWidth || drawable?.width || 0;
-        const height = input.height || drawable?.naturalHeight || drawable?.height || 0;
-        const sourceUrl = input.sourceUrl || drawable?.src || "";
+        const naturalWidth = isHtmlImageElement(drawable) ? drawable.naturalWidth : drawable?.width;
+        const naturalHeight = isHtmlImageElement(drawable)
+            ? drawable.naturalHeight
+            : drawable?.height;
+        const width = input.width || naturalWidth || 0;
+        const height = input.height || naturalHeight || 0;
+        const sourceUrl =
+            input.sourceUrl || (isHtmlImageElement(drawable) ? drawable.src : "") || "";
 
         return {
             drawable,
@@ -52,9 +63,11 @@ const normalizeImageInput = (
     }
 
     const drawable = input;
-    const width = drawable?.naturalWidth || drawable?.width || 0;
-    const height = drawable?.naturalHeight || drawable?.height || 0;
-    const sourceUrl = drawable?.src || "";
+    const naturalWidth = isHtmlImageElement(drawable) ? drawable.naturalWidth : drawable?.width;
+    const naturalHeight = isHtmlImageElement(drawable) ? drawable.naturalHeight : drawable?.height;
+    const width = naturalWidth || 0;
+    const height = naturalHeight || 0;
+    const sourceUrl = isHtmlImageElement(drawable) ? drawable.src : "";
 
     return {
         drawable,
@@ -65,47 +78,27 @@ const normalizeImageInput = (
 };
 
 class Texture2D {
-    /**
-     * @type {ImageBitmap | null}
-     */
-    image;
+    image: HTMLImageElement | ImageBitmap | null;
+    width = 0;
+    height = 0;
+    imageWidth: number;
+    imageHeight: number;
+    rects: Array<{ x: number; y: number; w: number; h: number }>;
+    offsets: Vector[];
+    adjustmentMaxX: number;
+    adjustmentMaxY: number;
+    preCutSize: Vector;
+    quads: Quad2D[] = [];
+    imageSrc: any;
+    _invWidth: number;
+    _invHeight: number;
 
-    /**
-     * @type {Rectangle[]}
-     */
-    rects;
-
-    /**
-     * @type {Vector[]}
-     */
-    offsets;
-
-    /**
-     * @type {Vector}
-     */
-    preCutSize;
-
-    /**
-     * @type {string}
-     */
-    imageSrc;
-
-    /**
-     * @private
-     * @type {number}
-     */
-    _invWidth;
-
-    /**
-     * @private
-     * @type {number}
-     */
-    _invHeight;
-
-    /**
-     * @param {{ drawable: ImageBitmap; width: number; height: number; sourceUrl: string; }} imageInput
-     */
-    constructor(imageInput) {
+    constructor(imageInput: {
+        drawable: ImageBitmap;
+        width: number;
+        height: number;
+        sourceUrl: string;
+    }) {
         const { drawable, width, height, sourceUrl } = normalizeImageInput(imageInput);
 
         this.image = drawable;
@@ -135,29 +128,19 @@ class Texture2D {
         this.adjustmentMaxY = 0;
     }
 
-    /**
-     * @param {Rectangle} rect
-     */
-    addRect(rect) {
+    addRect(rect: Rectangle) {
         this.rects.push(rect);
         this.offsets.push(new Vector(0, 0));
     }
 
-    /**
-     * @param {number} index
-     * @param {number} x
-     * @param {number} y
-     */
-    setOffset(index, x, y) {
+    setOffset(index: number, x: number, y: number) {
         const offset = this.offsets[index];
+        if (!offset) return;
         offset.x = x;
         offset.y = y;
     }
 
-    /**
-     * @param {Rectangle} rect
-     */
-    getCoordinates(rect) {
+    getCoordinates(rect: Rectangle) {
         return new Quad2D(
             this._invWidth * rect.x,
             this._invHeight * rect.y,
