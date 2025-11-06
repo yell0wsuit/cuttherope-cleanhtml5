@@ -8,6 +8,6 @@ const TrackType = {
     COLOR: 3,
     ACTION: 4,
     COUNT: 5,
-};
+} as const;
 
 export default TrackType;
