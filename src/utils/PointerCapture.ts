@@ -1,84 +1,75 @@
-/**
- * @typedef {Object} PointerCaptureSettings
- * @property {HTMLElement} element - The DOM element to capture pointer events on
- * @property {() => number} [getZoom] - Optional function that returns the current zoom level
- * @property {(x: number, y: number) => void} [onStart] - Callback for pointer start events
- * @property {(x: number, y: number) => void} [onMove] - Callback for pointer move events
- * @property {(x: number, y: number) => void} [onEnd] - Callback for pointer end events
- * @property {(x: number, y: number) => void} [onOut] - Callback for pointer out events
- */
+interface PointerCaptureSettings {
+    element: HTMLElement;
+    getZoom?: () => number;
+    onStart?: (x: number, y: number) => void;
+    onMove?: (x: number, y: number) => void;
+    onEnd?: (x: number, y: number) => void;
+    onOut?: (x: number, y: number) => void;
+}
 
 /**
  * Captures and normalizes pointer events using the modern Pointer Events API
  */
 class PointerCapture {
-    /**
-     * @param {PointerCaptureSettings} settings - Configuration object for pointer capture
-     */
-    constructor(settings) {
-        /** @type {HTMLElement} */
+    el: HTMLElement;
+    getZoom: (() => number) | undefined;
+    activePointerId: number | null;
+    startHandler: (event: PointerEvent) => void;
+    moveHandler: (event: PointerEvent) => void;
+    endHandler: (event: PointerEvent) => void;
+    cancelHandler: (event: PointerEvent) => void;
+
+    constructor(settings: PointerCaptureSettings) {
         this.el = settings.element;
-        /** @type {(() => number)|undefined} */
         this.getZoom = settings.getZoom;
-        /** @type {number|null} */
         this.activePointerId = null;
 
         // Save references to the event handlers so they can be removed
-        /** @type {(event: Event) => void} */
-        this.startHandler = (event) => {
-            const pointerEvent = /** @type {PointerEvent} */ (event);
+        this.startHandler = (event: PointerEvent): void => {
             event.preventDefault();
 
             // Only handle the first pointer
             if (this.activePointerId === null) {
-                this.activePointerId = pointerEvent.pointerId;
-                this.el.setPointerCapture(pointerEvent.pointerId);
+                this.activePointerId = event.pointerId;
+                this.el.setPointerCapture(event.pointerId);
 
                 if (settings.onStart) {
-                    this.translatePosition(pointerEvent, settings.onStart);
+                    this.translatePosition(event, settings.onStart);
                 }
             }
         };
 
-        /** @type {(event: Event) => void} */
-        this.moveHandler = (event) => {
-            const pointerEvent = /** @type {PointerEvent} */ (event);
-
+        this.moveHandler = (event: PointerEvent): void => {
             // Always allow move events (for hover effects), but only prevent default
             // when actively dragging to allow normal scrolling when not interacting
-            if (this.activePointerId !== null && pointerEvent.pointerId === this.activePointerId) {
+            if (this.activePointerId !== null && event.pointerId === this.activePointerId) {
                 event.preventDefault();
             }
 
             // Fire onMove for any pointer movement (hover or drag)
             if (settings.onMove) {
-                this.translatePosition(pointerEvent, settings.onMove);
+                this.translatePosition(event, settings.onMove);
             }
         };
 
-        /** @type {(event: Event) => void} */
-        this.endHandler = (event) => {
-            const pointerEvent = /** @type {PointerEvent} */ (event);
+        this.endHandler = (event: PointerEvent): void => {
             event.preventDefault();
 
-            if (pointerEvent.pointerId === this.activePointerId) {
+            if (event.pointerId === this.activePointerId) {
                 this.activePointerId = null;
 
                 if (settings.onEnd) {
-                    this.translatePosition(pointerEvent, settings.onEnd);
+                    this.translatePosition(event, settings.onEnd);
                 }
             }
         };
 
-        /** @type {(event: Event) => void} */
-        this.cancelHandler = (event) => {
-            const pointerEvent = /** @type {PointerEvent} */ (event);
-
-            if (pointerEvent.pointerId === this.activePointerId) {
+        this.cancelHandler = (event: PointerEvent): void => {
+            if (event.pointerId === this.activePointerId) {
                 this.activePointerId = null;
 
                 if (settings.onOut) {
-                    this.translatePosition(pointerEvent, settings.onOut);
+                    this.translatePosition(event, settings.onOut);
                 }
             }
         };
@@ -86,10 +77,8 @@ class PointerCapture {
 
     /**
      * Translates from page-relative to element-relative position
-     * @param {PointerEvent} event - The pointer event
-     * @param {(x: number, y: number) => void} callback - Callback function with translated coordinates
      */
-    translatePosition(event, callback) {
+    translatePosition(event: PointerEvent, callback: (x: number, y: number) => void) {
         const rect = this.el.getBoundingClientRect();
         const zoom = this.getZoom ? this.getZoom() : 1;
 
