@@ -1,47 +1,65 @@
 import TimelineTrack from "@/visual/TimelineTrack";
-import TrackType from "@/visual/TrackType";
 import Constants from "@/utils/Constants";
+import type KeyFrame from "@/visual/KeyFrame";
+import type BaseElement from "@/visual/BaseElement";
+import type TrackType from "@/visual/TrackType";
+
+const LoopType = {
+    NO_LOOP: 0,
+    REPLAY: 1,
+    PING_PONG: 2,
+} as const;
+
+const StateType = {
+    STOPPED: 0,
+    PLAYING: 1,
+    PAUSED: 2,
+} as const;
+
+type TimelineLoopType = (typeof LoopType)[keyof typeof LoopType];
+type TimelineStateType = (typeof StateType)[keyof typeof StateType];
 
 class Timeline {
+    static readonly LoopType = LoopType;
+    static readonly StateType = StateType;
+
+    time: number;
+    length: number;
+    loopsLimit: number;
+    state: TimelineStateType;
+    loopType: TimelineLoopType;
+    tracks: (TimelineTrack | undefined)[];
+    onFinished: ((timeline: Timeline) => void) | null;
+    onKeyFrame: ((timeline: Timeline, trackType: TrackType, keyFrameIndex: number) => void) | null;
+    timelineDirReverse: boolean;
+    element: BaseElement | null;
+    resourceId?: number;
+
     constructor() {
         this.time = 0;
         this.length = 0;
         this.loopsLimit = Constants.UNDEFINED;
         this.state = Timeline.StateType.STOPPED;
         this.loopType = Timeline.LoopType.NO_LOOP;
-        /**
-         * @type {(TimelineTrack | undefined)[]}
-         */
         this.tracks = [];
 
         // callback fired when the timeline finishes playing
-        /**
-         * @type {((t: Timeline) => void) | null}
-         */
         this.onFinished = null;
 
         // callback fired when the timeline reaches a key frame
         this.onKeyFrame = null;
 
         this.timelineDirReverse = false;
-
         this.element = null;
     }
 
-    /**
-     * @param {KeyFrame} keyFrame
-     */
-    addKeyFrame(keyFrame) {
+    addKeyFrame(keyFrame: KeyFrame): void {
         const track = this.tracks[keyFrame.trackType];
         const index = track == null ? 0 : track.keyFrames.length;
         this.setKeyFrame(keyFrame, index);
     }
 
-    /**
-     * @param {KeyFrame} keyFrame
-     * @param {number} index
-     */
-    setKeyFrame(keyFrame, index) {
+    setKeyFrame(keyFrame: KeyFrame, index: number): void {
         let track = this.tracks[keyFrame.trackType];
         if (!track) {
             this.tracks[keyFrame.trackType] = track = new TimelineTrack(this, keyFrame.trackType);
@@ -49,14 +67,11 @@ class Timeline {
         track.setKeyFrame(keyFrame, index);
     }
 
-    /**
-     * @param {number} index
-     */
-    getTrack(index) {
+    getTrack(index: number): TimelineTrack | undefined {
         return this.tracks[index];
     }
 
-    play() {
+    play(): void {
         if (this.state !== Timeline.StateType.PAUSED) {
             this.time = 0;
             this.timelineDirReverse = false;
@@ -76,15 +91,11 @@ class Timeline {
         this.state = Timeline.StateType.PLAYING;
     }
 
-    pause() {
+    pause(): void {
         this.state = Timeline.StateType.PAUSED;
     }
 
-    /**
-     * @param {number} trackIndex
-     * @param {number} keyFrame
-     */
-    jumpToTrack(trackIndex, keyFrame) {
+    jumpToTrack(trackIndex: number, keyFrame: number): void {
         if (this.state === Timeline.StateType.STOPPED) {
             this.state = Timeline.StateType.PAUSED;
         }
@@ -94,12 +105,12 @@ class Timeline {
         this.update(delta);
     }
 
-    stop() {
+    stop(): void {
         this.state = Timeline.StateType.STOPPED;
         this.deactivateTracks();
     }
 
-    deactivateTracks() {
+    deactivateTracks(): void {
         for (let i = 0, len = this.tracks.length; i < len; i++) {
             const track = this.tracks[i];
             if (track) {
@@ -108,10 +119,7 @@ class Timeline {
         }
     }
 
-    /**
-     * @param {number} delta
-     */
-    update(delta) {
+    update(delta: number): void {
         if (this.state !== Timeline.StateType.PLAYING) return;
 
         if (!this.timelineDirReverse) this.time += delta;
@@ -120,7 +128,7 @@ class Timeline {
         for (let i = 0, len = this.tracks.length; i < len; i++) {
             const track = this.tracks[i];
             if (track != null) {
-                if (track.type === TrackType.ACTION) track.updateActionTrack(delta);
+                if (track.type === 4 /* TrackType.ACTION */) track.updateActionTrack(delta);
                 else track.updateNonActionTrack(delta);
             }
         }
@@ -175,22 +183,6 @@ class Timeline {
     }
 }
 
-/**
- * @enum {number}
- */
-Timeline.LoopType = {
-    NO_LOOP: 0,
-    REPLAY: 1,
-    PING_PONG: 2,
-};
-
-/**
- * @enum {number}
- */
-Timeline.StateType = {
-    STOPPED: 0,
-    PLAYING: 1,
-    PAUSED: 2,
-};
-
+export type { TimelineLoopType, TimelineStateType };
+export { LoopType, StateType };
 export default Timeline;
