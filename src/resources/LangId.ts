@@ -3,39 +3,24 @@
  * Provides methods for converting between language codes and internal language IDs.
  */
 class LangId {
-    /** @type {number} English */
-    static EN = 0;
-    /** @type {number} French */
-    static FR = 1;
-    /** @type {number} German */
-    static DE = 2;
-    /** @type {number} Russian */
-    static RU = 3;
-    /** @type {number} Korean (system) */
-    static KO = 4;
-    /** @type {number} Chinese */
-    static ZH = 5;
-    /** @type {number} Japanese */
-    static JA = 6;
-    /** @type {number} Spanish */
-    static ES = 7;
-    /** @type {number} Catalan */
-    static CA = 8;
-    /** @type {number} Brazilian Portuguese (system) */
-    static BR = 9;
-    /** @type {number} Italian */
-    static IT = 10;
-    /** @type {number} Dutch */
-    static NL = 11;
+    static EN: number = 0;
+    static FR: number = 1;
+    static DE: number = 2;
+    static RU: number = 3;
+    static KO: number = 4;
+    static ZH: number = 5;
+    static JA: number = 6;
+    static ES: number = 7;
+    static CA: number = 8;
+    static BR: number = 9;
+    static IT: number = 10;
+    static NL: number = 11;
 
     /**
      * Converts a language code string to a LangId constant.
      * Supports both ISO 639-1 codes (e.g., "en") and BCP-47 style codes (e.g., "en-US").
-     *
-     * @param {string} val - The language code to convert
-     * @returns {number | null} The corresponding LangId constant, or null if not recognized
      */
-    static fromString(val) {
+    static fromString(val: string): number | null {
         switch (val) {
             case "de":
                 return LangId.DE;
@@ -100,11 +85,8 @@ class LangId {
 
     /**
      * Converts a LangId constant to its corresponding ISO 639-1 language code.
-     *
-     * @param {number} langId - The LangId constant to convert
-     * @returns {string} The corresponding ISO 639-1 language code (defaults to "en" if not recognized)
      */
-    static toCountryCode(langId) {
+    static toCountryCode(langId: number): string {
         switch (langId) {
             case LangId.DE:
                 return "de";
