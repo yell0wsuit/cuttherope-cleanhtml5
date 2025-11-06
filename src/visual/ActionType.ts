@@ -10,4 +10,7 @@ const ActionType = {
     JUMP_TO_TIMELINE_FRAME: "ACTION_JUMP_TO_TIMELINE_FRAME",
 } as const;
 
+type ActionTypeValue = (typeof ActionType)[keyof typeof ActionType];
+
+export type { ActionTypeValue };
 export default ActionType;
