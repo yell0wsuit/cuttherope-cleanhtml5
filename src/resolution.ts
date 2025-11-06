@@ -16,11 +16,11 @@ interface ResolutionCandidate {
 }
 
 const resolutionCandidates: ResolutionCandidate[] = [
-    { profile: res2560, isHd: true, minWidth: 2400, minHeight: 1350 },
+    //{ profile: res2560, isHd: true, minWidth: 2400, minHeight: 1350 },
     { profile: res1920, isHd: true, minWidth: 1600, minHeight: 900 },
-    { profile: res1024, isHd: true, minWidth: 1024, minHeight: 576 },
-    { profile: res768, isHd: false, minWidth: 768, minHeight: 432 },
-    { profile: res480, isHd: false, minWidth: 0, minHeight: 0 },
+    //{ profile: res1024, isHd: true, minWidth: 1024, minHeight: 576 },
+    //{ profile: res768, isHd: false, minWidth: 768, minHeight: 432 },
+    //{ profile: res480, isHd: false, minWidth: 0, minHeight: 0 },
 ];
 
 const getViewportSize = (): { width: number; height: number } => {
