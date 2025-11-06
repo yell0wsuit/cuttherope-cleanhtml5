@@ -3,6 +3,11 @@ import Constants from "@/utils/Constants";
 import TrackType from "@/visual/TrackType";
 import type KeyFrame from "@/visual/KeyFrame";
 import type BaseElement from "@/visual/BaseElement";
+import type {
+    TimelineElement,
+    TimelineLike,
+    TimelineKeyFrameListener,
+} from "@/visual/TimelineTypes";
 
 const LoopType = {
     NO_LOOP: 0,
@@ -19,7 +24,7 @@ const StateType = {
 type TimelineLoopType = (typeof LoopType)[keyof typeof LoopType];
 type TimelineStateType = (typeof StateType)[keyof typeof StateType];
 
-class Timeline {
+class Timeline implements TimelineLike {
     static readonly LoopType = LoopType;
     static readonly StateType = StateType;
 
@@ -30,9 +35,9 @@ class Timeline {
     loopType: TimelineLoopType;
     tracks: (TimelineTrack | undefined)[];
     onFinished: ((timeline: Timeline) => void) | null;
-    onKeyFrame: ((timeline: Timeline, trackType: number, keyFrameIndex: number) => void) | null;
+    onKeyFrame: TimelineKeyFrameListener | null;
     timelineDirReverse: boolean;
-    element: BaseElement | null;
+    element: TimelineElement | null;
     resourceId?: number;
 
     constructor() {

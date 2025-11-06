@@ -1,6 +1,6 @@
 import KeyFrame from "@/visual/KeyFrame";
 import TrackType from "@/visual/TrackType";
-import type Timeline from "@/visual/Timeline";
+import type { TimelineLike } from "@/visual/TimelineTypes";
 import type Action from "@/visual/Action";
 import type { ActionData } from "@/visual/Action";
 import Constants from "@/utils/Constants";
@@ -326,7 +326,7 @@ class TimelineTrack {
     startTime: number;
     endTime: number;
     keyFrames: KeyFrame[];
-    readonly t: Timeline;
+    readonly t: TimelineLike;
     strategy: TrackStrategy | null;
     nextKeyFrame: number;
     currentStepPerSecond: KeyFrame;
@@ -336,7 +336,7 @@ class TimelineTrack {
     overrun: number;
     actionSets?: Action[][];
 
-    constructor(timeline: Timeline, trackType: number) {
+    constructor(timeline: TimelineLike, trackType: number) {
         this.type = trackType;
         this.state = TrackState.NOT_ACTIVE;
         this.relative = false;
