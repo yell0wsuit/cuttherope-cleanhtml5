@@ -1,7 +1,7 @@
-class ActionData {
-    actionName: string;
-    actionParam: number;
-    actionSubParam: number;
+export class ActionData {
+    readonly actionName: string;
+    readonly actionParam: number;
+    readonly actionSubParam: number;
 
     constructor(name: string, param: number, subParam: number) {
         this.actionName = name;
@@ -10,14 +10,14 @@ class ActionData {
     }
 }
 
-class Action {
-    actionTarget: object;
-    data: ActionData;
+class Action<TTarget extends object = object> {
+    readonly actionTarget: TTarget;
+    readonly data: ActionData;
     actionName: string;
     actionParam: number;
     actionSubParam: number;
 
-    constructor(target: object, data: ActionData) {
+    constructor(target: TTarget, data: ActionData) {
         this.actionTarget = target;
         this.data = data;
         this.actionName = "";
@@ -25,7 +25,12 @@ class Action {
         this.actionSubParam = 0;
     }
 
-    static create(target: object, actionName: string, param: number, subParam: number) {
+    static create<TTarget extends object>(
+        target: TTarget,
+        actionName: string,
+        param: number,
+        subParam: number
+    ): Action<TTarget> {
         const data = new ActionData(actionName, param, subParam);
         return new Action(target, data);
     }
