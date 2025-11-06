@@ -1,1 +1,1 @@
-export type ResolutionProfile = Record<string, unknown>;
+export type ResolutionProfile = Record<string, number>;
