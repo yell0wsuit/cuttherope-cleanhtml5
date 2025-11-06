@@ -89,7 +89,7 @@ class Texture2D {
     adjustmentMaxY: number;
     preCutSize: Vector;
     quads: Quad2D[] = [];
-    imageSrc: any;
+    imageSrc: string;
     _invWidth: number;
     _invHeight: number;
 

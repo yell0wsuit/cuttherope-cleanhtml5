@@ -27,7 +27,7 @@ class Camera2D {
     }
 
     // Changes the camera position (but doesn't actually transform the canvas)
-    moveTo(x: number, y: number, immediate: boolean) {
+    moveTo(x: number, y: number, immediate: boolean): void {
         this.target.x = x;
         this.target.y = y;
 
@@ -43,7 +43,7 @@ class Camera2D {
         }
     }
 
-    update(delta: number) {
+    update(delta: number): void {
         if (!this.pos.equals(this.target)) {
             // add to the current position and round
             this.pos.add(Vector.multiply(this.offset, delta));
@@ -61,13 +61,13 @@ class Camera2D {
         }
     }
 
-    applyCameraTransformation() {
+    applyCameraTransformation(): void {
         if (this.pos.x !== 0 || this.pos.y !== 0) {
             Canvas.context && Canvas.context.translate(-this.pos.x, -this.pos.y);
         }
     }
 
-    cancelCameraTransformation() {
+    cancelCameraTransformation(): void {
         if (this.pos.x !== 0 || this.pos.y !== 0) {
             Canvas.context && Canvas.context.translate(this.pos.x, this.pos.y);
         }
