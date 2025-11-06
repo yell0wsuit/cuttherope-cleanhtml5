@@ -1,30 +1,25 @@
 import RGBAColor from "@/core/RGBAColor";
 
+type Point = { x: number; y: number };
+
 /**
  * Canvas wrapper class for 2D rendering operations
  */
 class Canvas {
-    /**
-     * @type {HTMLCanvasElement | null}
-     */
-    element = null;
+    element: HTMLCanvasElement | null = null;
+
+    context: CanvasRenderingContext2D | null = null;
 
     /**
-     * @type {CanvasRenderingContext2D | null}
-     */
-    context = null;
-
-    /**
-     * @type {HTMLElement | null}
      * @deprecated Use element instead
      */
-    id = null;
+    id: HTMLElement | null = null;
 
     /**
      * Initialize canvas from element ID
-     * @param {string} elementId - The DOM element ID
+     * @param elementId - The DOM element ID
      */
-    domReady(elementId) {
+    domReady(elementId: string): void {
         const element = document.getElementById(elementId);
         if (element instanceof HTMLCanvasElement) {
             this.setTarget(element);
@@ -33,9 +28,9 @@ class Canvas {
 
     /**
      * Set the target canvas element
-     * @param {HTMLCanvasElement} element - The canvas element
+     * @param element - The canvas element
      */
-    setTarget(element) {
+    setTarget(element: HTMLCanvasElement): void {
         this.id = element;
         this.element = element;
         const context = this.element.getContext("2d");
@@ -48,9 +43,9 @@ class Canvas {
 
     /**
      * Sets the fill and stroke styles using an RGBAColor
-     * @param {RGBAColor} color - The color to set
+     * @param color - The color to set
      */
-    setStyleColor(color) {
+    setStyleColor(color: RGBAColor): void {
         const rgba = color.rgbaStyle();
 
         if (!this.context) {
@@ -59,14 +54,13 @@ class Canvas {
 
         this.context.fillStyle = rgba;
         this.context.strokeStyle = rgba;
-        //console.log('Color changed to: ' + rgba);
     }
 
     /**
      * Sets the fill and stroke styles using a raw style string
-     * @param {string} style - The style string (e.g., 'rgba(255, 0, 0, 1)')
+     * @param style - The style string (e.g., "rgba(255, 0, 0, 1)")
      */
-    setStyles(style) {
+    setStyles(style: string): void {
         if (!this.context) {
             return;
         }
@@ -80,31 +74,32 @@ class Canvas {
      *   0 -- 2 -- 4 -- 6
      *   |    |    |    |
      *   1 -- 3 -- 5 -- 7
-     * @param {Array<{x: number, y: number}>} points - Array of points
-     * @param {string} style - Fill style
+     * @param points - Array of points
+     * @param style - Fill style
      */
-    fillTriangleStrip(points, style) {
+    fillTriangleStrip(points: readonly Point[], style: string): void {
         const ctx = this.context;
-        let point = points[0];
-        if (ctx) {
-            ctx.fillStyle = style;
-            ctx.beginPath();
-            ctx.moveTo(point.x, point.y);
+        if (!ctx || points.length === 0) {
+            return;
         }
+
+        ctx.fillStyle = style;
+        ctx.beginPath();
+        ctx.moveTo(points[0]!.x, points[0]!.y);
 
         // draw the bottom portion of the shape
         for (let i = 1, len = points.length; i < len; i += 2) {
-            point = points[i];
-            ctx && ctx.lineTo(point.x, point.y);
+            const point = points[i]!;
+            ctx.lineTo(point.x, point.y);
         }
 
         // draw the top portion
         for (let i = points.length - 2; i >= 0; i -= 2) {
-            point = points[i];
-            ctx && ctx.lineTo(point.x, point.y);
+            const point = points[i]!;
+            ctx.lineTo(point.x, point.y);
         }
 
-        ctx && ctx.fill(); // auto-closes path
+        ctx.fill(); // auto-closes path
     }
 }
 

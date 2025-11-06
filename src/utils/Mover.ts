@@ -2,62 +2,63 @@ import MathHelper from "@/utils/MathHelper";
 import Vector from "@/core/Vector";
 
 class Mover {
-    /**
-     * @param {number} pathCapacity
-     * @param {number} moveSpeed
-     * @param {number} rotateSpeed
-     */
-    constructor(pathCapacity, moveSpeed, rotateSpeed) {
-        this.pathCapacity = pathCapacity;
-        this.rotateSpeed = rotateSpeed || 0;
-        /**
-         * @type {Vector[]}
-         */
-        this.path = [];
-        /**
-         * @type {number[]}
-         */
-        this.moveSpeed = new Array(pathCapacity > 0 ? pathCapacity : 0);
-        if (pathCapacity > 0) {
-            for (let i = 0; i < pathCapacity; i++) {
+    static readonly MAX_CAPACITY = 100;
+
+    readonly path: Vector[] = [];
+
+    readonly moveSpeed: number[];
+
+    readonly pos: Vector = new Vector(0, 0);
+
+    angle = 0;
+
+    targetPoint = 0;
+
+    offset: Vector = new Vector(0, 0);
+
+    paused = false;
+
+    reverse = false;
+
+    overrun = 0;
+
+    constructor(
+        readonly pathCapacity: number,
+        moveSpeed: number,
+        public rotateSpeed: number = 0
+    ) {
+        const capacity = pathCapacity > 0 ? pathCapacity : 0;
+        this.moveSpeed = new Array<number>(capacity);
+        if (capacity > 0) {
+            for (let i = 0; i < capacity; i++) {
                 this.moveSpeed[i] = moveSpeed || 0;
             }
         }
-        this.pos = new Vector(0, 0);
-        this.angle = 0;
-        this.targetPoint = 0;
-        this.offset = new Vector(0, 0);
-        this.paused = false;
-        this.reverse = false;
-        this.overrun = 0;
     }
 
-    /**
-     * @param {number} speed
-     */
-    setMoveSpeed(speed) {
+    setMoveSpeed(speed: number): void {
         for (let i = 0, len = this.pathCapacity; i < len; i++) {
             this.moveSpeed[i] = speed;
         }
     }
 
-    /**
-     * @param {string} path
-     * @param {Vector} start
-     */
-    setPathFromString(path, start) {
+    setPathFromString(path: string, start: Vector): void {
+        if (path.length === 0) {
+            return;
+        }
+
         if (path[0] === "R") {
-            const clockwise = path[1] === "C",
-                rad = parseInt(path.slice(2), 10),
-                pointsCount = rad / 2;
-            let kIncrement = (2 * Math.PI) / pointsCount,
-                theta = 0;
+            const clockwise = path[1] === "C";
+            const rad = parseInt(path.slice(2), 10);
+            const pointsCount = rad / 2;
+            let kIncrement = (2 * Math.PI) / pointsCount;
+            let theta = 0;
 
             if (!clockwise) kIncrement = -kIncrement;
 
             for (let i = 0; i < pointsCount; ++i) {
-                const nx = start.x + rad * Math.cos(theta),
-                    ny = start.y + rad * Math.sin(theta);
+                const nx = start.x + rad * Math.cos(theta);
+                const ny = start.y + rad * Math.sin(theta);
 
                 this.addPathPoint(new Vector(nx, ny));
                 theta += kIncrement;
@@ -65,93 +66,94 @@ class Mover {
         } else {
             this.addPathPoint(start.copy());
 
+            let pathString = path;
+
             // remove the trailing comma
-            if (path[path.length - 1] === ",") {
-                path = path.slice(0, path.length - 1);
+            if (pathString[pathString.length - 1] === ",") {
+                pathString = pathString.slice(0, pathString.length - 1);
             }
 
-            const parts = path.split(","),
-                len = parts.length;
+            const parts = pathString.split(",");
+            const len = parts.length;
 
-            let i;
-            for (i = 0; i < len; i += 2) {
-                const xs = parseFloat(parts[i]),
-                    ys = parseFloat(parts[i + 1]),
-                    pathPoint = new Vector(start.x + xs, start.y + ys);
+            for (let i = 0; i < len; i += 2) {
+                const xs = parseFloat(parts[i]!);
+                const ys = parseFloat(parts[i + 1]!);
+                const pathPoint = new Vector(start.x + xs, start.y + ys);
                 this.addPathPoint(pathPoint);
             }
         }
     }
 
-    /**
-     * @param {Vector} pathPoint
-     */
-    addPathPoint(pathPoint) {
+    addPathPoint(pathPoint: Vector): void {
         this.path.push(pathPoint);
     }
 
-    start() {
+    start(): void {
         if (this.path.length > 0) {
-            this.pos.copyFrom(this.path[0]);
-            this.targetPoint = 1;
+            this.pos.copyFrom(this.path[0]!);
+            this.targetPoint = 1 % this.path.length;
             this.calculateOffset();
         }
     }
 
-    pause() {
+    pause(): void {
         this.paused = true;
     }
 
-    unpause() {
+    unpause(): void {
         this.paused = false;
     }
 
-    /**
-     * @param {number} rotateSpeed
-     */
-    setRotateSpeed(rotateSpeed) {
+    setRotateSpeed(rotateSpeed: number): void {
         this.rotateSpeed = rotateSpeed;
     }
 
-    /**
-     * @param {number} point
-     */
-    jumpToPoint(point) {
+    jumpToPoint(point: number): void {
+        if (!this.path[point]) {
+            return;
+        }
+
         this.targetPoint = point;
-        this.pos.copyFrom(this.path[point]);
+        this.pos.copyFrom(this.path[point]!);
         this.calculateOffset();
     }
 
-    calculateOffset() {
+    private calculateOffset(): void {
         const target = this.path[this.targetPoint];
+        if (!target) {
+            this.offset.setToZero();
+            return;
+        }
+
         this.offset = Vector.subtract(target, this.pos);
+        if (this.offset.isZero()) {
+            this.offset.setToZero();
+            return;
+        }
+
         this.offset.normalize();
-        this.offset.multiply(this.moveSpeed[this.targetPoint]);
+        const targetSpeed = this.moveSpeed[this.targetPoint] ?? 0;
+        this.offset.multiply(targetSpeed);
     }
 
-    /**
-     * @param {number} moveSpeed
-     * @param {number} index
-     */
-    setMoveSpeedAt(moveSpeed, index) {
+    setMoveSpeedAt(moveSpeed: number, index: number): void {
         this.moveSpeed[index] = moveSpeed;
     }
 
-    /**
-     * @param {boolean} reverse
-     */
-    setMoveReverse(reverse) {
+    setMoveReverse(reverse: boolean): void {
         this.reverse = reverse;
     }
 
-    /**
-     * @param {number} delta
-     */
-    update(delta) {
+    update(delta: number): void {
         if (this.paused) return;
 
         if (this.path.length > 0) {
             const target = this.path[this.targetPoint];
+            if (!target) {
+                return;
+            }
+
             let switchPoint = false;
 
             if (!this.pos.equals(target)) {
@@ -171,7 +173,10 @@ class Mover {
                     this.overrun = Vector.subtract(this.pos, target).getLength();
 
                     // overrun in seconds
-                    this.overrun /= this.offset.getLength();
+                    const offsetLength = this.offset.getLength();
+                    if (offsetLength !== 0) {
+                        this.overrun /= offsetLength;
+                    }
                     this.pos.copyFrom(target);
                     switchPoint = true;
                 }
@@ -201,14 +206,7 @@ class Mover {
         }
     }
 
-    // Static methods
-    /**
-     * @param {number} v
-     * @param {number} t
-     * @param {number} speed
-     * @param {number} delta
-     */
-    static moveToTarget(v, t, speed, delta) {
+    static moveToTarget(v: number, t: number, speed: number, delta: number): number {
         if (t !== v) {
             if (t > v) {
                 v += speed * delta;
@@ -225,15 +223,12 @@ class Mover {
         return v;
     }
 
-    /**
-     *
-     * @param {number} v value
-     * @param {number} t target
-     * @param {number} speed
-     * @param {number} delta
-     * @return {Object}
-     */
-    static moveToTargetWithStatus(v, t, speed, delta) {
+    static moveToTargetWithStatus(
+        v: number,
+        t: number,
+        speed: number,
+        delta: number
+    ): { value: number; reachedZero: boolean } {
         let reachedZero = false;
         if (t !== v) {
             if (t > v) {
@@ -252,19 +247,9 @@ class Mover {
 
         return {
             value: v,
-            reachedZero: reachedZero,
+            reachedZero,
         };
     }
 }
-
-// NOTE: sometimes we need the status indicating whether the
-// variable was moved to zero. However, for performance we'll
-// offer another version without status.
-
-/**
- * @const
- * @type {number}
- */
-Mover.MAX_CAPACITY = 100;
 
 export default Mover;
