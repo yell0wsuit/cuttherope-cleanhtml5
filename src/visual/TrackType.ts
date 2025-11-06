@@ -1,6 +1,3 @@
-/**
- * @enum {number}
- */
 const TrackType = {
     POSITION: 0,
     SCALE: 1,
@@ -10,4 +7,7 @@ const TrackType = {
     COUNT: 5,
 } as const;
 
+type TrackTypeValue = (typeof TrackType)[keyof typeof TrackType];
+
+export type { TrackTypeValue };
 export default TrackType;
