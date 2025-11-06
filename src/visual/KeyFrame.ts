@@ -2,16 +2,29 @@ import Vector from "@/core/Vector";
 import RGBAColor from "@/core/RGBAColor";
 import Action from "@/visual/Action";
 import TrackType from "@/visual/TrackType";
+import type { TrackTypeValue } from "@/visual/TrackType";
+
+const TransitionType = {
+    LINEAR: 0,
+    IMMEDIATE: 1,
+    EASE_IN: 2,
+    EASE_OUT: 3,
+} as const;
+
+type KeyFrameTransitionType = (typeof TransitionType)[keyof typeof TransitionType];
 
 class KeyFrameValue {
+    pos: Vector;
+    scale: Vector;
+    rotationAngle: number;
+    color: RGBAColor;
+    actionSet: Action[];
+
     constructor() {
         this.pos = Vector.newZero();
         this.scale = Vector.newZero();
         this.rotationAngle = 0;
         this.color = RGBAColor.solidOpaque.copy();
-        /**
-         * @type {Action[]}
-         */
         this.actionSet = [];
     }
     copy() {
@@ -27,31 +40,26 @@ class KeyFrameValue {
     }
 }
 
-/**
- * KeyFrame constructor
- * @param {number} time
- * @param {TrackType} trackType
- * @param {number} transitionType
- * @param {KeyFrameValue} value
- */
 class KeyFrame {
-    /**
-     * @param {number} time
-     * @param {number} trackType
-     * @param {number} transitionType
-     * @param {KeyFrameValue} value
-     */
-    constructor(time, trackType, transitionType, value) {
+    static readonly TransitionType = TransitionType;
+    timeOffset: number;
+    trackType: TrackTypeValue;
+    transitionType: KeyFrameTransitionType;
+    value: KeyFrameValue;
+
+    constructor(
+        time: number,
+        trackType: TrackTypeValue,
+        transitionType: KeyFrameTransitionType,
+        value: KeyFrameValue
+    ) {
         this.timeOffset = time;
         this.trackType = trackType;
         this.transitionType = transitionType;
         this.value = value;
     }
-    /**
-     * Creates an empty keyframe
-     * @return {KeyFrame}
-     */
-    static newEmpty() {
+
+    static newEmpty(): KeyFrame {
         return new KeyFrame(
             0, // time
             TrackType.POSITION, // default track type
@@ -59,72 +67,52 @@ class KeyFrame {
             new KeyFrameValue()
         );
     }
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @param {number} transition
-     * @param {number} time
-     */
-    static makePos(x, y, transition, time) {
+
+    static makePos(x: number, y: number, transition: KeyFrameTransitionType, time: number) {
         const v = new KeyFrameValue();
         v.pos.x = x;
         v.pos.y = y;
         return new KeyFrame(time, TrackType.POSITION, transition, v);
     }
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @param {number} transition
-     * @param {number} time
-     */
-    static makeScale(x, y, transition, time) {
+
+    static makeScale(x: number, y: number, transition: KeyFrameTransitionType, time: number) {
         const v = new KeyFrameValue();
         v.scale.x = x;
         v.scale.y = y;
         return new KeyFrame(time, TrackType.SCALE, transition, v);
     }
-    /**
-     * @param {number} r
-     * @param {number} transition
-     * @param {number} time
-     */
-    static makeRotation(r, transition, time) {
+
+    static makeRotation(r: number, transition: KeyFrameTransitionType, time: number) {
         const v = new KeyFrameValue();
         v.rotationAngle = r;
         return new KeyFrame(time, TrackType.ROTATION, transition, v);
     }
-    /**
-     * @param {RGBAColor} color
-     * @param {number} transition
-     * @param {number} time
-     */
-    static makeColor(color, transition, time) {
+
+    static makeColor(color: RGBAColor, transition: KeyFrameTransitionType, time: number) {
         const v = new KeyFrameValue();
         v.color = color;
         return new KeyFrame(time, TrackType.COLOR, transition, v);
     }
-    /**
-     * @param {Action[]} actions
-     * @param {number} time
-     */
-    static makeAction(actions, time) {
+
+    static makeAction(actions: Action[], time: number) {
         const v = new KeyFrameValue();
         v.actionSet = actions;
         return new KeyFrame(time, TrackType.ACTION, KeyFrame.TransitionType.LINEAR, v);
     }
-    /**
-     * @param {Object} target
-     * @param {string} actionName
-     * @param {number} actionParam
-     * @param {number} actionSubParam
-     * @param {number} time
-     */
-    static makeSingleAction(target, actionName, actionParam, actionSubParam, time) {
+
+    static makeSingleAction(
+        target: object,
+        actionName: string,
+        actionParam: number,
+        actionSubParam: number,
+        time: number
+    ) {
         const v = new KeyFrameValue();
         const action = Action.create(target, actionName, actionParam, actionSubParam);
         v.actionSet = [action];
         return new KeyFrame(time, TrackType.ACTION, KeyFrame.TransitionType.LINEAR, v);
     }
+
     copy() {
         return new KeyFrame(
             this.timeOffset,
@@ -134,15 +122,5 @@ class KeyFrame {
         );
     }
 }
-
-/**
- * @enum {number}
- */
-KeyFrame.TransitionType = {
-    LINEAR: 0,
-    IMMEDIATE: 1,
-    EASE_IN: 2,
-    EASE_OUT: 3,
-};
 
 export default KeyFrame;
