@@ -1,5 +1,7 @@
 import Constants from "@/utils/Constants";
 import PubSub from "@/utils/PubSub";
+import type CTRRootController from "@/game/CTRRootController";
+import type GameView from "@/game/GameView";
 
 // COMMENTS from iOS sources:
 // controller philosophy
@@ -9,92 +11,53 @@ import PubSub from "@/utils/PubSub";
 // - controller can have childs, when controller's child is active, controller itself is paused
 // - child controller notifies parent after deactivation
 
-//noinspection JSUnusedLocalSymbols
-/**
- * @constructor
- */
+const StateType = {
+    INACTIVE: 0,
+    ACTIVE: 1,
+    PAUSED: 2,
+} as const;
+
+type StateNumType = (typeof StateType)[keyof typeof StateType];
+
 class ViewController {
-    /**
-     * @param {CTRRootController} parent
-     */
-    constructor(parent) {
-        /**
-         * @type {number}
-         */
-        this.controllerState = ViewController.StateType.INACTIVE;
+    static StateType = StateType;
+    static StateNumType = StateType;
 
-        /**
-         * @type {(GameView)[]}
-         */
+    controllerState: StateNumType;
+    views: (GameView | null)[];
+    children: (ViewController | null)[];
+    activeViewID: number;
+    activeChildID: number;
+    pausedViewID: number;
+    parent: CTRRootController;
+    lastTime: number;
+    delta: number;
+    frames: number;
+    accumDt: number;
+    frameRate: number;
+    frameBalance: number;
+    avgDelta: number;
+    pastDeltas: number[];
+
+    constructor(parent: CTRRootController) {
+        this.controllerState = StateType.INACTIVE;
         this.views = [];
-
-        /**
-         * @type {(GameController)[]}
-         */
         this.children = [];
-
-        /**
-         * @type {number}
-         */
         this.activeViewID = Constants.UNDEFINED;
-
-        /**
-         * @type {number}
-         */
         this.activeChildID = Constants.UNDEFINED;
-
-        /**
-         * @type {number}
-         */
         this.pausedViewID = Constants.UNDEFINED;
-
-        /**
-         * @type {CTRRootController}
-         */
         this.parent = parent;
-
-        /**
-         * @type {number}
-         */
         this.lastTime = Constants.UNDEFINED;
-
-        /**
-         * @type {number}
-         */
         this.delta = 0;
-
-        /**
-         * @type {number}
-         */
         this.frames = 0;
-
-        /**
-         * @type {number}
-         */
         this.accumDt = 0;
-
-        /**
-         * @type {number}
-         */
         this.frameRate = 0;
-
         // like a bank account for frame updates. we try to keep our
         // balance under 1 by doing extra frame updates when above 1
-        /**
-         * @type {number}
-         */
         this.frameBalance = 0;
-
         // initially assume we are getting 60 fps
-        /**
-         * @type {number}
-         */
         this.avgDelta = 1 / 60;
-
         // keep the last five deltas (init with target fps)
-        /**
-         * @type {number[]}
-         */
         this.pastDeltas = [
             this.avgDelta,
             this.avgDelta,
@@ -104,17 +67,17 @@ class ViewController {
         ];
     }
 
-    activate() {
+    activate(): void {
         //Debug.log('View controller activated');
         this.controllerState = ViewController.StateType.ACTIVE;
         PubSub.publish(PubSub.ChannelId.ControllerActivated, this);
     }
 
-    deactivate() {
+    deactivate(): void {
         PubSub.publish(PubSub.ChannelId.ControllerDeactivateRequested, this);
     }
 
-    deactivateImmediately() {
+    deactivateImmediately(): void {
         this.controllerState = ViewController.StateType.INACTIVE;
         if (this.activeViewID !== Constants.UNDEFINED) {
             this.hideActiveView();
@@ -124,7 +87,7 @@ class ViewController {
         this.parent.onChildDeactivated(this.parent.activeChildID);
     }
 
-    pause() {
+    pause(): void {
         this.controllerState = ViewController.StateType.PAUSED;
         PubSub.publish(PubSub.ChannelId.ControllerPaused, this);
 
@@ -134,7 +97,7 @@ class ViewController {
         }
     }
 
-    unpause() {
+    unpause(): void {
         this.controllerState = ViewController.StateType.ACTIVE;
         if (this.activeChildID !== Constants.UNDEFINED) {
             this.activeChildID = Constants.UNDEFINED;
@@ -147,7 +110,7 @@ class ViewController {
         }
     }
 
-    update() {
+    update(): void {
         if (this.activeViewID === Constants.UNDEFINED) {
             return;
         }
@@ -164,14 +127,11 @@ class ViewController {
         }
     }
 
-    resetLastTime() {
+    resetLastTime(): void {
         this.lastTime = Constants.UNDEFINED;
     }
 
-    /**
-     * @param {number | undefined} [time]
-     */
-    calculateTimeDelta(time) {
+    calculateTimeDelta(time: number | undefined): void {
         if (time) {
             this.delta = this.lastTime !== Constants.UNDEFINED ? (time - this.lastTime) / 1000 : 0;
             this.lastTime = time;
@@ -182,14 +142,11 @@ class ViewController {
         this.frameBalance += this.clampDelta(this.delta) / 0.016;
     }
 
-    /**
-     * Make sure a delta doesn't exceed some reasonable bounds
-     * Delta changes might be large if we are using requestAnimationFrame
-     * and the user switches tabs (the browser will stop calling us to
-     * preserve power).
-     * @param {number} delta
-     */
-    clampDelta(delta) {
+    // Make sure a delta doesn't exceed some reasonable bounds
+    // Delta changes might be large if we are using requestAnimationFrame
+    // and the user switches tabs (the browser will stop calling us to
+    // preserve power).
+    clampDelta(delta: number): number {
         if (delta < 0.016) {
             // sometimes we'll get a bunch of frames batched together
             // but we don't want to go below the 60 fps delta
@@ -201,7 +158,7 @@ class ViewController {
         return delta;
     }
 
-    calculateFPS() {
+    calculateFPS(): void {
         this.frames++;
         this.accumDt += this.delta;
 
@@ -219,29 +176,21 @@ class ViewController {
             this.avgDelta = 0;
             const len = this.pastDeltas.length;
             for (let i = 0; i < len; i++) {
-                this.avgDelta += this.pastDeltas[i];
+                this.avgDelta += this.pastDeltas[i] ?? 0;
             }
             this.avgDelta /= len;
         }
     }
 
-    /**
-     * @param {GameView} v
-     * @param {number} index
-     */
-
-    addView(v, index) {
+    addView(v: GameView, index: number): void {
         this.views[index] = v;
     }
 
-    /**
-     * @param {number} viewIndex
-     */
-    deleteView(viewIndex) {
+    deleteView(viewIndex: number): void {
         this.views[viewIndex] = null;
     }
 
-    hideActiveView() {
+    hideActiveView(): void {
         const previousView = this.views[this.activeViewID];
         if (previousView) {
             PubSub.publish(PubSub.ChannelId.ControllerViewHidden, previousView);
@@ -250,49 +199,38 @@ class ViewController {
         }
     }
 
-    /**
-     * @param {number} index
-     */
-    showView(index) {
+    showView(index: number): void {
         if (this.activeViewID != Constants.UNDEFINED) {
             this.hideActiveView();
         }
         this.activeViewID = index;
         const v = this.views[index];
-        PubSub.publish(PubSub.ChannelId.ControllerViewShow, v);
-        v.show();
+        if (v) {
+            PubSub.publish(PubSub.ChannelId.ControllerViewShow, v);
+            v.show();
+        }
     }
 
-    activeView() {
+    activeView(): GameView | null | undefined {
         return this.views[this.activeViewID];
     }
 
-    /**
-     * @param {number} index
-     */
-    getView(index) {
+    getView(index: number): GameView | null | undefined {
         return this.views[index];
     }
 
-    /**
-     * @param {GameController} controller
-     * @param {number} index
-     */
-    addChildWithID(controller, index) {
+    addChildWithID(controller: ViewController, index: number): void {
         this.children[index] = controller;
     }
 
-    /**
-     * @param {number} index
-     */
-    deleteChild(index) {
+    deleteChild(index: number): void {
         this.children[index] = null;
         if (this.activeChildID === index) {
             this.activeChildID = Constants.UNDEFINED;
         }
     }
 
-    deactivateActiveChild() {
+    deactivateActiveChild(): void {
         if (this.activeChildID !== Constants.UNDEFINED) {
             const prevController = this.children[this.activeChildID];
             if (prevController) {
@@ -302,103 +240,63 @@ class ViewController {
         }
     }
 
-    /**
-     * @param {number} index
-     */
-    activateChild(index) {
+    activateChild(index: number): void {
         if (this.activeChildID !== Constants.UNDEFINED) {
             this.deactivateActiveChild();
         }
 
         this.pause();
         this.activeChildID = index;
-        this.children[index].activate();
+        const child = this.children[index];
+        if (child) {
+            child.activate();
+        }
     }
 
-    /**
-     * @param {number} childType
-     */
-    onChildDeactivated(childType) {
+    onChildDeactivated(childType: number): void {
         this.unpause();
     }
 
-    activeChild() {
+    activeChild(): ViewController | null | undefined {
         return this.children[this.activeChildID];
     }
 
-    /**
-     * @param {number} index
-     */
-    getChild(index) {
+    getChild(index: number): ViewController | null | undefined {
         return this.children[index];
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean} true if event was handled
-     */
-    mouseDown(x, y) {
+    mouseDown(x: number, y: number): boolean {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
         return this.views[this.activeViewID].onTouchDown(x, y);
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean} true if event was handled
-     */
-    mouseUp(x, y) {
+    mouseUp(x: number, y: number): boolean {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
         return this.views[this.activeViewID].onTouchUp(x, y);
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean} true if event was handled
-     */
-    mouseDragged(x, y) {
+    mouseDragged(x: number, y: number): boolean {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
         return this.views[this.activeViewID].onTouchMove(x, y);
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean} true if event was handled
-     */
-    mouseMoved(x, y) {
+    mouseMoved(x: number, y: number): boolean {
         // only drag events are used
         return false;
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean} true if event was handled
-     */
-    doubleClick(x, y) {
+    doubleClick(x: number, y: number): boolean {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
         return this.views[this.activeViewID].onDoubleClick(x, y);
     }
 }
-
-/**
- * @enum {number}
- */
-ViewController.StateType = {
-    INACTIVE: 0,
-    ACTIVE: 1,
-    PAUSED: 2,
-};
 
 export default ViewController;
