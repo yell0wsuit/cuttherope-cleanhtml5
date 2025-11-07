@@ -113,7 +113,7 @@ class SoundManager {
     play(
         soundId: number | string,
         onComplete: (() => void) | undefined,
-        options: PlayOptions | undefined = {}
+        options: PlayOptions = {}
     ) {
         const soundData = this.getSoundData(soundId);
         if (!soundData) return;
@@ -124,7 +124,6 @@ class SoundManager {
             return;
         }
 
-        /** @type {AudioBufferSourceNode & SoundSource} */
         const source: AudioBufferSourceNode & SoundSource = context.createBufferSource();
         source.buffer = soundData.buffer;
         source.__skipOnEnd = false;
