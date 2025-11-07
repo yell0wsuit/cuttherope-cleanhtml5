@@ -7,10 +7,6 @@ import Constants from "@/utils/Constants";
 import ResourceId from "@/resources/ResourceId";
 import Timeline from "@/visual/Timeline";
 
-/**
- * @const
- * @type {number}
- */
 const BOUNCER_HEIGHT = 10;
 
 const IMG_OBJ_BOUNCER_01_start = 0;
@@ -26,13 +22,14 @@ const IMG_OBJ_BOUNCER_02_Frame_4 = 3;
 const IMG_OBJ_BOUNCER_02_end = 4;
 
 class Bouncer extends CTRGameObject {
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @param {number} width
-     * @param {number} angle
-     */
-    constructor(x, y, width, angle) {
+    angle: number;
+    skip: number;
+    t1: Vector;
+    t2: Vector;
+    b1: Vector;
+    b2: Vector;
+
+    constructor(x: number, y: number, width: number, angle: number) {
         super();
 
         this.angle = 0;
@@ -42,7 +39,7 @@ class Bouncer extends CTRGameObject {
         this.b1 = Vector.newZero();
         this.b2 = Vector.newZero();
 
-        let imageId = Constants.UNDEFINED;
+        let imageId: number = Constants.UNDEFINED;
         if (width === 1) {
             imageId = ResourceId.IMG_OBJ_BOUNCER_01;
         } else if (width === 2) {
@@ -55,15 +52,17 @@ class Bouncer extends CTRGameObject {
         this.y = y;
 
         this.updateRotation();
-        const delay = 0.04,
-            k = this.addAnimationDelay(
-                delay,
-                Timeline.LoopType.NO_LOOP,
-                IMG_OBJ_BOUNCER_01_start,
-                IMG_OBJ_BOUNCER_01_end
-            ),
-            t = this.getTimeline(k);
-        t.addKeyFrame(KeyFrame.makeSingleAction(this, ActionType.SET_DRAWQUAD, 0, 0, delay));
+        const delay = 0.04;
+        const k = this.addAnimationDelay(
+            delay,
+            Timeline.LoopType.NO_LOOP,
+            IMG_OBJ_BOUNCER_01_start,
+            IMG_OBJ_BOUNCER_01_end
+        );
+        const t = this.getTimeline(k);
+        if (t) {
+            t.addKeyFrame(KeyFrame.makeSingleAction(this, ActionType.SET_DRAWQUAD, 0, 0, delay));
+        }
     }
 
     updateRotation() {
@@ -87,10 +86,7 @@ class Bouncer extends CTRGameObject {
         this.b2.rotateAround(angle, x, y);
     }
 
-    /**
-     * @param {number} delta
-     */
-    update(delta) {
+    update(delta: number) {
         super.update(delta);
         if (this.mover) {
             this.updateRotation();
