@@ -2,6 +2,8 @@
  * ResEntry constructor
  */
 
+import type Texture2D from "@/core/Texture2D";
+
 interface ResEntryOptions {
     atlasPath: string;
     atlasFormat: string;
@@ -16,6 +18,7 @@ class ResEntry {
     atlasFormat?: string;
     frameOrder?: string[];
     offsetNormalization?: string;
+    texture?: Texture2D; // Added at runtime by ResourceMgr
 
     constructor(
         path: string,

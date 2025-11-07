@@ -36,9 +36,15 @@ class ImageElement extends BaseElement {
     getTexture(resId: number): Texture2D {
         // using the resMgr would create a circular dependency,
         // so we'll assume its been loaded and fetch directly
-        const texture = RES_DATA[resId].texture;
+        const resEntry = RES_DATA[resId];
+        if (!resEntry) {
+            throw new Error(`ResEntry not found for resId: ${resId}`);
+        }
+
+        const texture = resEntry.texture;
         if (!texture) {
-            Log.debug(`Image not loaded: ${RES_DATA[resId].path}`);
+            Log.debug(`Image not loaded: ${resEntry.path}`);
+            throw new Error(`Texture not loaded for: ${resEntry.path}`);
         }
         return texture;
     }
