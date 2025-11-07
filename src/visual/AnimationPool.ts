@@ -1,28 +1,29 @@
 import BaseElement from "@/visual/BaseElement";
+import type Particles from "./Particles";
+import type Timeline from "./Timeline";
 
 /**
  * Container to hold animated objects which can be automatically deleted
  * once their animation timelines have completed
  */
 class AnimationPool extends BaseElement {
+    removeList: BaseElement[];
+
     constructor() {
         super();
 
         // keeps track of child elements whose timeline has completed
         // and can be removed
-        /**
-         * @type {(BaseElement)[]}
-         */
         this.removeList = [];
     }
 
-    /**
-     * @param {number} delta
-     */
-    update(delta) {
+    update(delta: number) {
         // remove the children
         for (let i = 0, len = this.removeList.length; i < len; i++) {
-            this.removeChild(this.removeList[i]);
+            const element = this.removeList[i];
+            if (element) {
+                this.removeChild(element);
+            }
         }
 
         // clear the remove list
@@ -30,11 +31,10 @@ class AnimationPool extends BaseElement {
         super.update(delta);
     }
 
-    /**
-     * @param {Timeline} timeline
-     */
-    timelineFinished(timeline) {
-        this.removeList.push(timeline.element);
+    timelineFinished(timeline: Timeline) {
+        if (timeline.element && timeline.element instanceof BaseElement) {
+            this.removeList.push(timeline.element);
+        }
     }
 
     /**
@@ -43,15 +43,12 @@ class AnimationPool extends BaseElement {
     timelineFinishedDelegate() {
         // save a reference to ourselves since we may be called in a
         // different context (typically by another class)
-        return (/** @type {Timeline} */ timeline) => {
+        return (timeline: Timeline) => {
             this.timelineFinished(timeline);
         };
     }
 
-    /**
-     * @param {Particles} particles
-     */
-    particlesFinished(particles) {
+    particlesFinished(particles: Particles) {
         this.removeList.push(particles);
     }
 
@@ -61,7 +58,7 @@ class AnimationPool extends BaseElement {
     particlesFinishedDelegate() {
         // save a reference to ourselves since we may be called in a
         // different context (typically by another class)
-        return (/** @type {Particles} */ particles) => {
+        return (particles: Particles) => {
             this.particlesFinished(particles);
         };
     }
