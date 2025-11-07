@@ -1,6 +1,6 @@
 import ResInfo from "@/ResInfo";
 import RES_DATA from "@/resources/ResData";
-import ResScaler from "@/resources/ResScale";
+import ResScaler, { type ResourceInfo } from "@/resources/ResScale";
 import ResourceType from "@/resources/ResourceType";
 import resolution from "@/resolution";
 import Font from "@/visual/Font";
@@ -9,16 +9,16 @@ import Vector from "@/core/Vector";
 import Rectangle from "@/core/Rectangle";
 import Log from "@/utils/Log";
 import { parseTexturePackerAtlas } from "@/resources/TextureAtlasParser";
+import type ResEntry from "./ResEntry";
+
 /**
  * Resource manager for handling game assets including textures, fonts, and atlases
  */
 class ResourceMgr {
     /**
      * Handles loaded image resources
-     * @param {string} resId - Resource identifier
-     * @param {HTMLImageElement} img - Loaded image
      */
-    static onResourceLoaded(resId, img) {
+    static onResourceLoaded(resId: number, img: HTMLImageElement) {
         const resource = RES_DATA[resId];
         if (!resource) {
             return;
@@ -30,10 +30,8 @@ class ResourceMgr {
 
     /**
      * Handles loaded atlas data
-     * @param {string} resId - Resource identifier
-     * @param {Object} atlasData - Parsed atlas data
      */
-    static onAtlasLoaded(resId, atlasData) {
+    static onAtlasLoaded(resId: number, atlasData: any) {
         const resource = RES_DATA[resId];
         if (!resource) {
             return;
@@ -46,10 +44,8 @@ class ResourceMgr {
 
     /**
      * Handles atlas loading errors
-     * @param {string} resId - Resource identifier
-     * @param {Error} error - Error that occurred
      */
-    static onAtlasError(resId, error) {
+    static onAtlasError(resId: number, error: Error) {
         const resource = RES_DATA[resId];
         if (!resource) {
             return;
@@ -62,12 +58,9 @@ class ResourceMgr {
 
     /**
      * Parses atlas data for a resource
-     * @param {ResEntry} resource - Resource entry
-     * @param {Object} atlasData - Raw atlas data
-     * @returns {Object} Parsed atlas info
      * @private
      */
-    static _parseAtlasForResource(resource, atlasData) {
+    static _parseAtlasForResource(resource: ResEntry, atlasData: any): any {
         const format = resource.atlasFormat || "texture-packer";
         const existingInfo = resource.info || {};
 
@@ -86,10 +79,9 @@ class ResourceMgr {
 
     /**
      * Finalizes texture resource after image and optional atlas are loaded
-     * @param {string} resId - Resource identifier
      * @private
      */
-    static _finalizeTextureResource(resId) {
+    static _finalizeTextureResource(resId: number) {
         const resource = RES_DATA[resId];
         if (!resource || !resource.pendingImage) {
             return;
@@ -111,8 +103,8 @@ class ResourceMgr {
                 resource.texture = new Texture2D(img);
                 this.setQuads(resource);
                 if (resource.info) {
-                    const font = new Font(),
-                        info = resource.info;
+                    const font = new Font();
+                    const info = resource.info;
                     font.initWithVariableSizeChars(info.chars, resource.texture, info.kerning);
                     font.setOffsets(info.charOffset, info.lineOffset, info.spaceWidth);
                     resource.font = font;
@@ -123,9 +115,8 @@ class ResourceMgr {
 
     /**
      * Sets texture quads from xml info
-     * @param {ResEntry} resource - Resource entry
      */
-    static setQuads(resource) {
+    static setQuads(resource: ResEntry) {
         if (!resource || !resource.texture) {
             return;
         }
@@ -185,45 +176,48 @@ class ResourceMgr {
 
     /**
      * Gets texture for a resource
-     * @param {string} resId - Resource identifier
-     * @returns {Texture2D|null} Texture or null if not loaded
      */
-    static getTexture(resId) {
+    static getTexture(resId: number): Texture2D | null {
         const resEntry = RES_DATA[resId];
-        if (resEntry.texture) {
+        if (resEntry?.texture) {
             return resEntry.texture;
         }
 
-        Log.debug(`Image not yet loaded: ${resEntry.path}`);
+        Log.debug(`Image not yet loaded: ${resEntry?.path}`);
         return null;
     }
 
     /**
      * Gets font for a resource
-     * @param {string} resId - Resource identifier
-     * @returns {Font|null} Font or null if not loaded
      */
-    static getFont(resId) {
+    static getFont(resId: number): Font | null {
         const resEntry = RES_DATA[resId];
-        if (resEntry.font) {
+        if (resEntry?.font) {
             return resEntry.font;
         }
 
-        Log.debug(`Font not yet loaded: ${resEntry.path}`);
+        Log.debug(`Font not yet loaded: ${resEntry?.path}`);
         return null;
     }
 }
 
 // Initialize resource infos - merge and scale resource entries
 export const initializeResources = () => {
-    const infos = ResInfo;
+    const infos = [...ResInfo] as ResourceInfo[];
     ResScaler.scaleResourceInfos(infos, resolution.CANVAS_SCALE);
     for (let i = 0, len = infos.length; i < len; i++) {
         const info = infos[i];
-        delete info.originalRects;
-        delete info.offsetAdjustments;
+        if (info) {
+            delete info.originalRects;
+            delete info.offsetAdjustments;
 
-        RES_DATA[info.id].info = info;
+            if (info.id !== undefined) {
+                const resource = RES_DATA[info.id];
+                if (resource) {
+                    resource.info = info;
+                }
+            }
+        }
     }
 };
 

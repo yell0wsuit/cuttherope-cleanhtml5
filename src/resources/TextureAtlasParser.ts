@@ -47,8 +47,9 @@ interface TexturePackerAtlas {
  * Extra options for parseTexturePackerAtlas.
  */
 interface ParseAtlasOptions {
-    existingInfo?: object;
-    offsetNormalization?: "center";
+    existingInfo?: object | undefined;
+    offsetNormalization?: "center" | undefined;
+    frameOrder?: string[] | undefined;
 }
 
 /**
@@ -116,7 +117,7 @@ export const parseTexturePackerAtlas = (
     atlasData: TexturePackerAtlas,
     options: ParseAtlasOptions = {}
 ): ParsedAtlasInfo => {
-    const { existingInfo = {}, offsetNormalization } = options;
+    const { existingInfo = {}, offsetNormalization, frameOrder } = options;
 
     if (!atlasData || !atlasData.frames) return existingInfo as ParsedAtlasInfo;
 
@@ -129,7 +130,9 @@ export const parseTexturePackerAtlas = (
     }
 
     let entries = createFrameEntries(atlasData.frames);
-    if (autoFrameOrder) entries = orderFrameEntries(entries, autoFrameOrder);
+    // Use provided frameOrder, or fall back to auto-detected order
+    const orderToUse = frameOrder || autoFrameOrder;
+    if (orderToUse) entries = orderFrameEntries(entries, orderToUse);
     if (entries.length === 0) return existingInfo as ParsedAtlasInfo;
 
     const info: ParsedAtlasInfo = {

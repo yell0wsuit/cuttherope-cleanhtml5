@@ -1,7 +1,7 @@
 import Vector from "@/core/Vector";
 import Rectangle from "@/core/Rectangle";
 
-interface ResourceInfo {
+export interface ResourceInfo {
     charOffset?: number;
     lineOffset?: number;
     spaceWidth?: number;
@@ -17,6 +17,8 @@ interface ResourceInfo {
     offsetAdjustments?: Vector[];
     skipOffsetAdjustment?: boolean;
     resScale?: number;
+    chars?: string;
+    kerning?: Record<string, number>;
 }
 
 /**
