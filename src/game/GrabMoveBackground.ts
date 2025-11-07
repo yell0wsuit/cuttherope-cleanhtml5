@@ -24,7 +24,18 @@ class GrabMoveBackground extends ImageElement {
         tiledImage.width = length + resolution.GRAB_MOVE_BG_WIDTH;
 
         const completeImage = tiledImage.getImage();
-        this.initTexture(new Texture2D(completeImage ?? null));
+        const generatedWidth = Math.ceil(tiledImage.width);
+        const generatedHeight = Math.ceil(tiledImage.height);
+
+        const textureSource = completeImage
+            ? {
+                  drawable: completeImage,
+                  width: generatedWidth,
+                  height: generatedHeight,
+              }
+            : null;
+
+        this.initTexture(new Texture2D(textureSource));
     }
 }
 
