@@ -17,6 +17,10 @@ const IMG_OBJ_STAR_IDLE_timed_start = 19;
 const IMG_OBJ_STAR_IDLE_timed_end = 55;
 
 class Star extends CTRGameObject {
+    time: number;
+    timeout: number;
+    timedAnim: Animation | null;
+
     constructor() {
         super();
 
@@ -32,7 +36,7 @@ class Star extends CTRGameObject {
     }
 
     createAnimations() {
-        let t;
+        let t: Timeline;
         if (this.timeout > 0) {
             // create animation
             this.timedAnim = new Animation();
@@ -110,17 +114,14 @@ class Star extends CTRGameObject {
             IMG_OBJ_STAR_IDLE_idle_end
         );
         sr.playTimeline(0);
-        sr.getTimeline(0).update(MathHelper.randomRange(0, 20) / 10);
+        sr.getTimeline(0)?.update(MathHelper.randomRange(0, 20) / 10);
         sr.anchor = sr.parentAnchor = Alignment.CENTER;
-        sr.drawPosIncrement = 0.0001;
+        //sr.drawPosIncrement = 0.0001;
 
         this.addChild(sr);
     }
 
-    /**
-     * @param {number} delta
-     */
-    update(delta) {
+    update(delta: number) {
         if (this.timeout > 0) {
             if (this.time > 0) {
                 this.time = Mover.moveToTarget(this.time, 0, 1, delta);
