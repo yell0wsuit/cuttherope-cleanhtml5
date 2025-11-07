@@ -8,6 +8,7 @@ import SoundMgr from "@/game/CTRSoundMgr";
 import PubSub from "@/utils/PubSub";
 import ScoreManager from "@/ui/ScoreManager";
 import { IS_XMAS } from "@/resources/ResData";
+import { fadeIn, fadeOut } from "@/utils/domHelpers";
 
 // Helper function to get the default box index based on holiday period
 // During Christmas season (Dec/Jan), default to Holiday Gift Box (index 0)
@@ -28,42 +29,6 @@ const ensureVideoElement = (): HTMLVideoElement | null => {
         document.getElementById("video")?.appendChild(vid);
     }
     return vid;
-};
-
-const fadeIn = (element: HTMLElement, duration: number, callback?: () => void) => {
-    element.style.opacity = "0";
-    element.style.display = "block";
-    let start: number | null = null;
-    const animate = (timestamp: number) => {
-        if (!start) start = timestamp;
-        const progress = timestamp - start;
-        element.style.opacity = String(Math.min(progress / duration, 1));
-        if (progress < duration) {
-            requestAnimationFrame(animate);
-        } else if (callback) {
-            callback();
-        }
-    };
-    requestAnimationFrame(animate);
-};
-
-const fadeOut = (element: HTMLElement, duration: number, callback?: () => void) => {
-    element.style.opacity = "1";
-    let start: number | null = null;
-    const animate = (timestamp: number) => {
-        if (!start) start = timestamp;
-        const progress = timestamp - start;
-        element.style.opacity = String(Math.max(1 - progress / duration, 0));
-        if (progress < duration) {
-            requestAnimationFrame(animate);
-        } else {
-            element.style.display = "none";
-            if (callback) {
-                callback();
-            }
-        }
-    };
-    requestAnimationFrame(animate);
 };
 
 class VideoManager {
@@ -123,7 +88,7 @@ class VideoManager {
                 // HAVE_ENOUGH_DATA  (canplaythrough)
 
                 SoundMgr.pauseMusic();
-                fadeIn(vid, 300, () => {
+                fadeIn(vid, 300, "block").then(() => {
                     vid.play();
                 });
                 vid.addEventListener("ended", this.closeIntroVideo);
@@ -138,7 +103,7 @@ class VideoManager {
     closeIntroVideo = () => {
         const vid = document.getElementById("vid") as HTMLVideoElement | null;
         if (vid) {
-            fadeOut(vid, 500, () => {
+            fadeOut(vid, 500).then(() => {
                 vid.pause();
                 vid.currentTime = 0;
             });
@@ -186,7 +151,7 @@ class VideoManager {
                 if (!SoundMgr.musicEnabled) {
                     vid.volume = 0;
                 }
-                fadeIn(vid, 300, () => {
+                fadeIn(vid, 300, "block").then(() => {
                     vid.play();
                 });
                 vid.addEventListener("ended", this.closeOutroVideo);
@@ -202,7 +167,7 @@ class VideoManager {
         panelManager.showPanel(PanelId.GAMECOMPLETE, true);
         const vid = document.getElementById("vid") as HTMLVideoElement | null;
         if (vid) {
-            fadeOut(vid, 500, () => {
+            fadeOut(vid, 500).then(() => {
                 vid.pause();
                 vid.currentTime = 0;
                 vid.remove();
