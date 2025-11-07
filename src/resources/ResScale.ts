@@ -1,32 +1,28 @@
 import Vector from "@/core/Vector";
 import Rectangle from "@/core/Rectangle";
 
-/**
- * @typedef {Object} ResourceInfo
- * @property {number} [charOffset] - Character offset for font rendering
- * @property {number} [lineOffset] - Line offset for font rendering
- * @property {number} [spaceWidth] - Width of space character
- * @property {number} [preCutWidth] - Width before cutting
- * @property {number} [preCutHeight] - Height before cutting
- * @property {(number[] | Rectangle[])} [rects] - Flat array of rectangle coordinates or Rectangle array
- * @property {Rectangle[]} [originalRects] - Parsed rectangle objects
- * @property {number} [id] - Resource identifier
- * @property {number} [adjustmentMaxX] - Maximum X adjustment
- * @property {number} [adjustmentMaxY] - Maximum Y adjustment
- * @property {(number[] | Vector[])} [offsets] - Flat array of offset coordinates or Vector array
- * @property {Vector[]} [originalOffsets] - Parsed offset vectors
- * @property {Vector[]} [offsetAdjustments] - Offset adjustment vectors
- * @property {boolean} [skipOffsetAdjustment] - Whether to skip offset adjustment
- * @property {number} [resScale] - Resource-specific scale factor
- */
+interface ResourceInfo {
+    charOffset?: number;
+    lineOffset?: number;
+    spaceWidth?: number;
+    preCutWidth?: number;
+    preCutHeight?: number;
+    rects?: number[] | Rectangle[];
+    originalRects?: Rectangle[];
+    id?: number;
+    adjustmentMaxX?: number;
+    adjustmentMaxY?: number;
+    offsets?: number[] | Vector[];
+    originalOffsets?: Vector[];
+    offsetAdjustments?: Vector[];
+    skipOffsetAdjustment?: boolean;
+    resScale?: number;
+}
 
 /**
  * Scales a number and rounds to 4 decimal places of precision
- * @param {number} value - The value to scale
- * @param {number} scale - The scale factor
- * @returns {number} The scaled and rounded value
  */
-const scaleNumber = (value, scale) => {
+const scaleNumber = (value: number, scale: number): number => {
     return Math.round(value * scale * 10000) / 10000;
 };
 
@@ -36,30 +32,25 @@ const scaleNumber = (value, scale) => {
 class ResScaler {
     /**
      * Scales multiple resource infos
-     * @param {ResourceInfo[]} infos - Array of resource info objects
-     * @param {number} canvasScale - The canvas scale factor
      */
-    scaleResourceInfos(infos, canvasScale) {
+    scaleResourceInfos(infos: ResourceInfo[], canvasScale: number) {
         // the canvas scale is ratio of the canvas target size compared
         // to the resolution the original assets were designed for. The
         // resource scale handles resources that were designed for a
         // different resolution. Most of the assets were designed for
         // 2560 x 1440 but a few of the later sprites target 2048 x 1080
 
-        let resScale, i, len, info;
-        for (i = 0, len = infos.length; i < len; i++) {
-            info = infos[i];
-            resScale = info.resScale || 1;
-            this.scaleResourceInfo(infos[i], scaleNumber(canvasScale, resScale));
+        for (let i = 0, len = infos.length; i < len; i++) {
+            const info = infos[i]!;
+            const resScale = info.resScale || 1;
+            this.scaleResourceInfo(info, scaleNumber(canvasScale, resScale));
         }
     }
 
     /**
      * Scales a single resource info object
-     * @param {ResourceInfo} info - Resource info object to scale
-     * @param {number} scale - Scale factor to apply
      */
-    scaleResourceInfo(info, scale) {
+    scaleResourceInfo(info: ResourceInfo, scale: number) {
         if (info.charOffset) {
             info.charOffset = scaleNumber(info.charOffset, scale);
         }
@@ -76,32 +67,28 @@ class ResScaler {
             info.preCutHeight = Math.ceil(scaleNumber(info.preCutHeight, scale));
         }
         if (info.rects && Array.isArray(info.rects) && typeof info.rects[0] === "number") {
-            info.originalRects = this.parseOriginalRects(/** @type {number[]} */ (info.rects));
+            info.originalRects = this.parseOriginalRects(info.rects as number[]);
             const extra = false;
 
-            info.rects = this.scaleRects(info.originalRects, scale, info.id);
+            info.rects = this.scaleRects(info.originalRects, scale, info.id ?? 0);
         }
         info.adjustmentMaxX = 0;
         info.adjustmentMaxX = 0;
         if (info.offsets && Array.isArray(info.offsets) && typeof info.offsets[0] === "number") {
-            info.originalOffsets = this.parseOriginalOffsets(
-                /** @type {number[]} */ (info.offsets)
-            );
+            info.originalOffsets = this.parseOriginalOffsets(info.offsets as number[]);
             this.scaleOffsets(info, scale);
         }
     }
 
     /**
      * Parses rectangles from flat array format
-     * @param {number[]} rects - Flat array of rectangle coordinates
-     * @returns {Rectangle[]} Array of Rectangle objects
      */
-    parseOriginalRects(rects) {
+    parseOriginalRects(rects: number[]): Rectangle[] {
         let i = 0;
-        const len = rects.length,
-            originalRects = [];
+        const len = rects.length;
+        const originalRects: Rectangle[] = [];
         while (i < len) {
-            const rect = new Rectangle(rects[i++], rects[i++], rects[i++], rects[i++]);
+            const rect = new Rectangle(rects[i++]!, rects[i++]!, rects[i++]!, rects[i++]!);
             originalRects.push(rect);
         }
         return originalRects;
@@ -109,12 +96,8 @@ class ResScaler {
 
     /**
      * Scales rectangles for sprite sheet layout
-     * @param {Rectangle[]} originalRects - Original rectangle array
-     * @param {number} scale - Scale factor
-     * @param {number} [id] - Resource ID
-     * @returns {Rectangle[]} Scaled and repositioned rectangles
      */
-    scaleRects(originalRects, scale, id) {
+    scaleRects(originalRects: Rectangle[], scale: number, id: number): Rectangle[] {
         const PADDING = 2; // Changed from 4 to 2 to match minified version
         const newRects = [];
         const numRects = originalRects.length;
@@ -136,7 +119,7 @@ class ResScaler {
         //}
 
         for (let j = 0; j < numRects; j++) {
-            const oldRect = originalRects[j];
+            const oldRect = originalRects[j]!;
 
             // Move to next column when we've filled the current one
             columnIndex = (columnIndex + 1) % numColumns;
@@ -165,15 +148,13 @@ class ResScaler {
 
     /**
      * Parses offsets from flat array format
-     * @param {number[]} offsets - Flat array of offset coordinates
-     * @returns {Vector[]} Array of Vector objects
      */
-    parseOriginalOffsets(offsets) {
+    parseOriginalOffsets(offsets: number[]): Vector[] {
         let i = 0;
-        const len = offsets.length,
-            originalOffsets = [];
+        const len = offsets.length;
+        const originalOffsets: Vector[] = [];
         while (i < len) {
-            const rect = new Vector(offsets[i++], offsets[i++]);
+            const rect = new Vector(offsets[i++]!, offsets[i++]!);
             originalOffsets.push(rect);
         }
         return originalOffsets;
@@ -181,10 +162,8 @@ class ResScaler {
 
     /**
      * Scales offsets with optional adjustments
-     * @param {ResourceInfo} info - Resource info object with offsets
-     * @param {number} scale - Scale factor to apply
      */
-    scaleOffsets(info, scale) {
+    scaleOffsets(info: ResourceInfo, scale: number) {
         // Previously we chopped the decimal portion of offsets and then
         // offset the image by that amount when scaling the sprite sheet.
         // That allows us to always have round offsets to avoid twitchy
@@ -195,30 +174,25 @@ class ResScaler {
         // of rounding) for moving and animated elements.
         const ALLOW_OFFSET_ADJUSTMENT = false;
 
-        const adjustments = []; // how much to offset the offsets :)
-        const oldOffsets = info.originalOffsets;
-        const newOffsets = [];
-        let scaledOffset, adjustment, i, len;
-        for (i = 0, len = oldOffsets.length; i < len; i++) {
-            scaledOffset = oldOffsets[i].copy();
+        const adjustments: Vector[] = []; // how much to offset the offsets :)
+        const oldOffsets = info.originalOffsets!;
+        const newOffsets: Vector[] = [];
+        for (let i = 0, len = oldOffsets.length; i < len; i++) {
+            const scaledOffset = oldOffsets[i]!.copy();
             scaledOffset.x = scaleNumber(scaledOffset.x, scale);
             scaledOffset.y = scaleNumber(scaledOffset.y, scale);
 
-            if (!ALLOW_OFFSET_ADJUSTMENT || info.skipOffsetAdjustment) {
-                // the backgrounds use offsets to place other elements, so
-                // we don't always want to pixel adjust the offset because
-                // the c# resizer can only safely adjust the current image.
-                adjustment = new Vector(0, 0);
-            } else {
-                // find the amount we need to adjust the offset by
-                adjustment = new Vector(
+            const adjustment: Vector = (!ALLOW_OFFSET_ADJUSTMENT || info.skipOffsetAdjustment)
+                ? new Vector(0, 0)
+                : new Vector(
                     scaleNumber((scaledOffset.x - scaledOffset.x) | 0, 1),
                     scaleNumber((scaledOffset.y - scaledOffset.y) | 0, 1)
                 );
 
+            if (ALLOW_OFFSET_ADJUSTMENT && !info.skipOffsetAdjustment) {
                 // remember the biggest adjust we made
-                info.adjustmentMaxX = Math.max(info.adjustmentMaxX, Math.ceil(adjustment.x));
-                info.adjustmentMaxY = Math.max(info.adjustmentMaxY, Math.ceil(adjustment.y));
+                info.adjustmentMaxX = Math.max(info.adjustmentMaxX ?? 0, Math.ceil(adjustment.x));
+                info.adjustmentMaxY = Math.max(info.adjustmentMaxY ?? 0, Math.ceil(adjustment.y));
 
                 // chop off the decimal portion of the offset
                 scaledOffset.x = scaledOffset.x | 0;
