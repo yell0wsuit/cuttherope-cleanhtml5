@@ -25,13 +25,14 @@ const getComputedDimension = (image: HTMLImageElement) => {
 const normalizeImageInput = (
     input:
         | {
-              drawable: ImageBitmap | HTMLImageElement;
+              drawable: ImageBitmap | HTMLImageElement | HTMLCanvasElement;
               width?: number;
               height?: number;
               sourceUrl?: string;
           }
         | ImageBitmap
         | HTMLImageElement
+        | HTMLCanvasElement
         | null
 ) => {
     if (!input) {
@@ -78,7 +79,7 @@ const normalizeImageInput = (
 };
 
 class Texture2D {
-    image: HTMLImageElement | ImageBitmap | null;
+    image: HTMLImageElement | HTMLCanvasElement | ImageBitmap | null;
     width = 0;
     height = 0;
     imageWidth: number;
@@ -93,12 +94,19 @@ class Texture2D {
     _invWidth: number;
     _invHeight: number;
 
-    constructor(imageInput: {
-        drawable: ImageBitmap;
-        width: number;
-        height: number;
-        sourceUrl: string;
-    }) {
+    constructor(
+        imageInput:
+            | {
+                  drawable: ImageBitmap | HTMLImageElement | HTMLCanvasElement;
+                  width?: number;
+                  height?: number;
+                  sourceUrl?: string;
+              }
+            | ImageBitmap
+            | HTMLImageElement
+            | HTMLCanvasElement
+            | null
+    ) {
         const { drawable, width, height, sourceUrl } = normalizeImageInput(imageInput);
 
         this.image = drawable;
