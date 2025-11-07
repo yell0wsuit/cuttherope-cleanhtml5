@@ -3,12 +3,11 @@ import Mover from "@/utils/Mover";
 import Vector from "@/core/Vector";
 
 class CTRMover extends Mover {
-    constructor(pathCapacity, moveSpeed, rotateSpeed) {
+    constructor(pathCapacity: number, moveSpeed: number, rotateSpeed: number) {
         super(pathCapacity, moveSpeed, rotateSpeed);
     }
 
-    setPathAndStart(path, startX, startY) {
-        let i, nx, ny, xs, ys;
+    setPathAndStart(path: string, startX: number, startY: number): void {
         const MOVER_SCALE = resolution.MOVER_SCALE;
 
         if (path[0] === "R") {
@@ -24,23 +23,24 @@ class CTRMover extends Mover {
 
             if (!clockwise) k_increment = -k_increment;
 
-            for (i = 0; i < pointsCount; i++) {
-                nx = startX + rad * Math.cos(theta);
-                ny = startY + rad * Math.sin(theta);
+            for (let i = 0; i < pointsCount; i++) {
+                const nx = startX + rad * Math.cos(theta);
+                const ny = startY + rad * Math.sin(theta);
 
                 this.addPathPoint(new Vector(nx, ny));
                 theta += k_increment;
             }
         } else {
             this.addPathPoint(new Vector(startX, startY));
-            if (path[path.length - 1] === ",") {
-                path = path.slice(0, path.length - 1);
+            let pathStr = path;
+            if (pathStr[pathStr.length - 1] === ",") {
+                pathStr = pathStr.slice(0, pathStr.length - 1);
             }
-            const parts = path.split(","),
-                numParts = parts.length;
-            for (i = 0; i < numParts; i += 2) {
-                xs = parts[i];
-                ys = parts[i + 1];
+            const parts = pathStr.split(",");
+            const numParts = parts.length;
+            for (let i = 0; i < numParts; i += 2) {
+                const xs = parseFloat(parts[i]!);
+                const ys = parseFloat(parts[i + 1]!);
 
                 this.addPathPoint(new Vector(startX + xs * MOVER_SCALE, startY + ys * MOVER_SCALE));
             }
