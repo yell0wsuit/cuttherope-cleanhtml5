@@ -1,53 +1,50 @@
-import edition from "@/config/editions/net-edition";
 import PubSub from "@/utils/PubSub";
+
+interface RoamingProvider {
+    get(key: string): string | null;
+    set(key: string, value: string): void;
+    remove(key: string): void;
+}
+
 let currentUserId = "";
-PubSub.subscribe(PubSub.ChannelId.UserIdChanged, function (/** @type {string} */ userId) {
-    currentUserId = userId;
+PubSub.subscribe(PubSub.ChannelId.UserIdChanged, (userId: unknown) => {
+    currentUserId = userId as string;
 });
 
-/**
- * @type {{ get: any; remove: any; set: any; } | null}
- */
-let roamingProvider = null;
-PubSub.subscribe(
-    PubSub.ChannelId.RoamingSettingProvider,
-    function (/** @type {{ [x: string]: any; }} */ provider) {
-        // copy methods (which will be minified)
-        if (provider) {
-            roamingProvider = {
-                set: provider["set"],
-                get: provider["get"],
-                remove: provider["remove"],
-            };
-        } else {
-            roamingProvider = null;
-        }
-
-        PubSub.publish(PubSub.ChannelId.RoamingDataChanged);
+let roamingProvider: RoamingProvider | null = null;
+PubSub.subscribe(PubSub.ChannelId.RoamingSettingProvider, (provider: unknown) => {
+    // copy methods (which will be minified)
+    if (provider && typeof provider === "object") {
+        const providerObj = provider as { [key: string]: any };
+        roamingProvider = {
+            set: providerObj["set"],
+            get: providerObj["get"],
+            remove: providerObj["remove"],
+        };
+    } else {
+        roamingProvider = null;
     }
-);
 
-const SCORES_PREFIX = "scores",
-    STARS_PREFIX = "stars",
-    ACHIEVEMENTS_PREFIX = "achievements";
+    PubSub.publish(PubSub.ChannelId.RoamingDataChanged);
+});
+
+const SCORES_PREFIX = "scores";
+const STARS_PREFIX = "stars";
+const ACHIEVEMENTS_PREFIX = "achievements";
 
 // appends the current user's id to the key prefix
-/**
- * @param {string} prefix
- * @param {number} [boxIndex]
- */
-function getFullKey(prefix, boxIndex) {
+const getFullKey = (prefix: string, boxIndex?: number): string => {
     let key = prefix;
     if (currentUserId) {
         key += `-${currentUserId}`;
     }
 
     return key;
-}
+};
 
 /* Unfortunately Windows doesn't tell us which value changed. Keeping this
        code in case we ever intergrate with another settings store that does
-    function onSettingChanged(key, value) {
+    const onSettingChanged = (key: string, value: string | null) => {
 
         let parts = (key || '').split('-');
         if (parts.length === 0) {
@@ -58,41 +55,37 @@ function getFullKey(prefix, boxIndex) {
         switch(parts[0]) {
             case SCORES_PREFIX:
             case STARS_PREFIX:
-                let userId = (parts.length === 3) ? parts[2] : '';
+                userId = (parts.length === 3) ? parts[2] : "";
                 if (userId === currentUserId) {
                     // only need to change data for current user
                 }
                 break;
             case ACHIEVEMENTS_PREFIX:
-                let userId = (parts.length === 2) ? parts[1] : '';
+                userId = (parts.length === 2) ? parts[1] : "";
                 if (userId === currentUserId) {
                     // only need to change data for current user
                 }
                 break;
         }
     }
-    */
+*/
 
 // deserializes hex (and possibly undefined or null values) from a string
-/**
- * @param {string} keyPrefix
- */
-function getHexValues(keyPrefix) {
+const getHexValues = (keyPrefix: string): (number | null)[] | null => {
     if (!roamingProvider) {
         return null;
     }
 
     const key = getFullKey(keyPrefix);
-    const values = [];
+    const values: (number | null)[] = [];
     const rawValues = (roamingProvider.get(key) || "").split(","); // split csv
     const len = rawValues.length;
 
-    let i, val;
-
-    for (i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
+        let val: number | null;
         if (i < rawValues.length) {
             // parse value which is stored in hex
-            val = parseInt(rawValues[i], 16);
+            val = parseInt(rawValues[i] || "", 16);
             if (isNaN(val)) {
                 val = null;
             }
@@ -103,16 +96,12 @@ function getHexValues(keyPrefix) {
     }
 
     return values;
-}
+};
 
 // serializes numbers into hex CSVs with compact nulls
-/**
- * @param {string} keyPrefix
- * @param {string | any[] | null} values
- */
-function saveHexValues(keyPrefix, values) {
+const saveHexValues = (keyPrefix: string, values: (number | null)[] | null): void => {
     if (!roamingProvider) {
-        return null;
+        return;
     }
 
     const key = getFullKey(keyPrefix);
@@ -120,12 +109,11 @@ function saveHexValues(keyPrefix, values) {
     if (!values) {
         roamingProvider.remove(key);
     } else {
-        const rawValues = [],
-            len = values.length;
-        let i, val;
+        const rawValues: string[] = [];
+        const len = values.length;
 
-        for (i = 0; i < len; i++) {
-            val = values[i];
+        for (let i = 0; i < len; i++) {
+            const val = values[i];
             if (val == null) {
                 // we have limited storage space so we'll shorten null values
                 rawValues.push("");
@@ -138,29 +126,21 @@ function saveHexValues(keyPrefix, values) {
         // save comma separated values
         roamingProvider.set(key, rawValues.join(","));
     }
-}
+};
 
-/**
- * @param {string} keyPrefix
- * @param {number} index
- */
-function getValue(keyPrefix, index) {
+const getValue = (keyPrefix: string, index: number): number | null => {
     if (!roamingProvider) {
         return null;
     }
 
     const values = getHexValues(keyPrefix);
     if (values) {
-        return values.length > index ? values[index] : null;
+        return values.length > index ? (values[index] ?? null) : null;
     }
-}
+    return null;
+};
 
-/**
- * @param {string} keyPrefix
- * @param {number} index
- * @param {number | null} value
- */
-function saveValue(keyPrefix, index, value) {
+const saveValue = (keyPrefix: string, index: number, value: number | null): void => {
     if (!roamingProvider) {
         return;
     }
@@ -176,57 +156,35 @@ function saveValue(keyPrefix, index, value) {
         values[index] = value;
         saveHexValues(keyPrefix, values);
     }
-}
-
-const RoamingSettings = {
-    // scores
-    /**
-     * @param {number} boxIndex
-     * @param {number} levelIndex
-     */
-    getScore(boxIndex, levelIndex) {
-        return getValue(`${SCORES_PREFIX}-${boxIndex}`, levelIndex);
-    },
-    /**
-     * @param {number} boxIndex
-     * @param {number} levelIndex
-     * @param {number} score
-     */
-    setScore(boxIndex, levelIndex, score) {
-        saveValue(`${SCORES_PREFIX}-${boxIndex}`, levelIndex, score);
-    },
-
-    // stars
-    /**
-     * @param {number} boxIndex
-     * @param {number} levelIndex
-     */
-    getStars(boxIndex, levelIndex) {
-        return getValue(`${STARS_PREFIX}-${boxIndex}`, levelIndex);
-    },
-    /**
-     * @param {number} boxIndex
-     * @param {number} levelIndex
-     * @param {number} stars
-     */
-    setStars(boxIndex, levelIndex, stars) {
-        saveValue(`${STARS_PREFIX}-${boxIndex}`, levelIndex, stars);
-    },
-
-    // achievement counts
-    /**
-     * @param {number} achievementIndex
-     */
-    getAchievementCount(achievementIndex) {
-        return getValue(ACHIEVEMENTS_PREFIX, achievementIndex);
-    },
-    /**
-     * @param {number} achievementIndex
-     * @param {number} count
-     */
-    setAchievementCount(achievementIndex, count) {
-        saveValue(ACHIEVEMENTS_PREFIX, achievementIndex, count);
-    },
 };
 
-export default RoamingSettings;
+class RoamSettings {
+    // scores
+    static getScore(boxIndex: number, levelIndex: number): number | null {
+        return getValue(`${SCORES_PREFIX}-${boxIndex}`, levelIndex);
+    }
+
+    static setScore(boxIndex: number, levelIndex: number, score: number): void {
+        saveValue(`${SCORES_PREFIX}-${boxIndex}`, levelIndex, score);
+    }
+
+    // stars
+    static getStars(boxIndex: number, levelIndex: number): number | null {
+        return getValue(`${STARS_PREFIX}-${boxIndex}`, levelIndex);
+    }
+
+    static setStars(boxIndex: number, levelIndex: number, stars: number): void {
+        saveValue(`${STARS_PREFIX}-${boxIndex}`, levelIndex, stars);
+    }
+
+    // achievement counts
+    static getAchievementCount(achievementIndex: number): number | null {
+        return getValue(ACHIEVEMENTS_PREFIX, achievementIndex);
+    }
+
+    static setAchievementCount(achievementIndex: number, count: number): void {
+        saveValue(ACHIEVEMENTS_PREFIX, achievementIndex, count);
+    }
+}
+
+export default RoamSettings;
