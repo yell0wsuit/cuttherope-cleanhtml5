@@ -28,63 +28,38 @@ const CONTROLLER_SHIFT_PARAM1 = 22.5 * resolution.PM;
 const CONTROLLER_SHIFT_PARAM2 = 0.03 * resolution.PM;
 
 class StickerImage extends ImageElement {
+    drawPosIncrement: number;
+
     constructor() {
         super();
         this.initTextureWithId(ResourceId.IMG_OBJ_VINIL);
         this.setTextureQuad(IMG_OBJ_VINIL_odj_vinil_sticker);
+        this.drawPosIncrement = 0;
     }
 }
 
 class RotatedCircle extends BaseElement {
-    /**
-     * @type {string[]}
-     */
-    containedObjects;
-
-    /**
-     * @type {RotatedCircle[]}
-     */
-    circles;
-
-    /**
-     * @type {number}
-     */
-    soundPlaying;
-
-    /**
-     * @type {Vector}
-     */
-    lastTouch;
-
-    /**
-     * @type {StickerImage}
-     */
-    vinilStickerL;
-
-    /**
-     * @type {StickerImage}
-     */
-    vinilStickerR;
-
-    /**
-     * @type {ImageElement}
-     */
-    vinilActiveControllerL;
-
-    /**
-     * @type {ImageElement}
-     */
-    vinilActiveControllerR;
-
-    /**
-     * @type {ImageElement}
-     */
-    vinil;
-
-    /**
-     * @type {boolean}
-     */
-    passColorToChilds;
+    containedObjects: string[];
+    circles: RotatedCircle[];
+    soundPlaying: number;
+    lastTouch: Vector;
+    vinilStickerL: StickerImage;
+    vinilStickerR: StickerImage;
+    vinilActiveControllerL: ImageElement;
+    vinilActiveControllerR: ImageElement;
+    vinil: ImageElement;
+    passColorToChilds: boolean;
+    vinilCenter: ImageElement;
+    vinilHighlightL: ImageElement;
+    vinilHighlightR: ImageElement;
+    vinilControllerL: ImageElement;
+    vinilControllerR: ImageElement;
+    size: number;
+    sizeInPixels: number;
+    zone?: RotatedCircle;
+    operating: number;
+    handle1?: Vector;
+    handle2?: Vector;
 
     constructor() {
         super();
@@ -92,6 +67,9 @@ class RotatedCircle extends BaseElement {
         this.circles = [];
         this.soundPlaying = Constants.UNDEFINED;
         this.lastTouch = Vector.newUndefined();
+        this.size = 0;
+        this.sizeInPixels = 0;
+        this.operating = Constants.UNDEFINED;
 
         this.vinilStickerL = new StickerImage();
         this.vinilStickerL.anchor = Alignment.RIGHT | Alignment.VCENTER;
@@ -169,10 +147,7 @@ class RotatedCircle extends BaseElement {
         this.addChild(this.vinilControllerR);
     }
 
-    /**
-     * @param {number} value
-     */
-    setSize(value) {
+    setSize(value: number) {
         this.size = value;
 
         const newScale = this.size / HUNDRED_PERCENT_SCALE_SIZE;
@@ -216,10 +191,7 @@ class RotatedCircle extends BaseElement {
         return !this.vinilControllerL.visible;
     }
 
-    /**
-     * @param {boolean} value
-     */
-    setHasOneHandle(value) {
+    setHasOneHandle(value: boolean) {
         this.vinilControllerL.visible = !value;
     }
 
@@ -227,10 +199,7 @@ class RotatedCircle extends BaseElement {
         return this.vinilActiveControllerL.visible;
     }
 
-    /**
-     * @param {boolean} value
-     */
-    setIsLeftControllerActive(value) {
+    setIsLeftControllerActive(value: boolean) {
         this.vinilActiveControllerL.visible = value;
     }
 
@@ -238,19 +207,20 @@ class RotatedCircle extends BaseElement {
         return this.vinilActiveControllerR.visible;
     }
 
-    /**
-     * @param {boolean} value
-     */
-    setIsRightControllerActive(value) {
+    setIsRightControllerActive(value: boolean) {
         this.vinilActiveControllerR.visible = value;
     }
 
     containsSameObjectWithAnotherCircle() {
         const len = this.circles.length;
-        let i, anotherCircle;
+        let i: number;
         for (i = 0; i < len; i++) {
-            anotherCircle = this.circles[i];
-            if (anotherCircle != this && this.containsSameObjectWithCircle(anotherCircle)) {
+            const anotherCircle = this.circles[i];
+            if (
+                anotherCircle &&
+                anotherCircle != this &&
+                this.containsSameObjectWithCircle(anotherCircle)
+            ) {
                 return true;
             }
         }
@@ -286,17 +256,17 @@ class RotatedCircle extends BaseElement {
             return;
         }
         const previousAlpha = ctx.globalAlpha;
-        let i, anotherCircle;
+        let i: number;
 
         if (previousAlpha !== CONTOUR_ALPHA) {
             ctx.globalAlpha = CONTOUR_ALPHA;
         }
 
         for (i = 0; i < len; i++) {
-            anotherCircle = this.circles[i];
+            const anotherCircle = this.circles[i];
 
-            if (!this.sizeInPixels || !anotherCircle.sizeInPixels) {
-                return;
+            if (!anotherCircle || !this.sizeInPixels || !anotherCircle.sizeInPixels) {
+                continue;
             }
 
             if (
@@ -328,16 +298,15 @@ class RotatedCircle extends BaseElement {
         this.vinilCenter.draw();
     }
 
-    /**
-     * @param {number} cx1
-     * @param {number} cy1
-     * @param {number} radius1
-     * @param {number} cx2
-     * @param {number} cy2
-     * @param {number} radius2
-     * @param {number} width
-     */
-    drawCircleIntersection(cx1, cy1, radius1, cx2, cy2, radius2, width) {
+    drawCircleIntersection(
+        cx1: number,
+        cy1: number,
+        radius1: number,
+        cx2: number,
+        cy2: number,
+        radius2: number,
+        width: number
+    ) {
         const circleDistance = Vector.distance(cx1, cy1, cx2, cy2);
         if (circleDistance >= radius1 + radius2 || radius1 >= circleDistance + radius2) {
             return;
@@ -401,10 +370,7 @@ class RotatedCircle extends BaseElement {
         this.vinilActiveControllerR.y = this.vinilControllerR.y;
     }
 
-    /**
-     * @param {RotatedCircle} anotherCircle
-     */
-    containsSameObjectWithCircle(anotherCircle) {
+    containsSameObjectWithCircle(anotherCircle: RotatedCircle) {
         // check for copy of self
         if (
             this.x === anotherCircle.x &&
@@ -415,19 +381,17 @@ class RotatedCircle extends BaseElement {
         }
 
         const len = this.containedObjects.length;
-        let i, object;
+        let i: number;
         for (i = 0; i < len; i++) {
-            if (anotherCircle.containedObjects.indexOf(this.containedObjects[i]) >= 0) {
+            const obj = this.containedObjects[i];
+            if (obj && anotherCircle.containedObjects.indexOf(obj) >= 0) {
                 return true;
             }
         }
         return false;
     }
 
-    /**
-     * @param {RotatedCircle} zone
-     */
-    copy(zone) {
+    copy(zone: RotatedCircle) {
         const copiedCircle = new RotatedCircle();
         copiedCircle.zone = zone;
         copiedCircle.x = this.x;
