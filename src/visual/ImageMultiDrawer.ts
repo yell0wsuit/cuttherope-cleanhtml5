@@ -2,6 +2,7 @@ import BaseElement from "@/visual/BaseElement";
 import Canvas from "@/utils/Canvas";
 import Constants from "@/utils/Constants";
 import Rectangle from "@/core/Rectangle";
+import Vector from "@/core/Vector";
 import type Texture2D from "@/core/Texture2D";
 
 /**
@@ -14,6 +15,8 @@ class ImageMultiDrawer extends BaseElement {
     texCoordinates: Rectangle[];
     vertices: Rectangle[];
     alphas: Array<number | null | undefined>;
+    rotationAngles: number[];
+    rotationPositions: Vector[];
 
     constructor(texture: Texture2D) {
         super();
@@ -29,6 +32,10 @@ class ImageMultiDrawer extends BaseElement {
 
         // hold the alpha for each quad (if null then we assume alpha=1)
         this.alphas = [];
+
+        // hold rotation angles and positions for rotatable particles
+        this.rotationAngles = [];
+        this.rotationPositions = [];
 
         // NOTE: in OpenGL its possible to draw multiple quads at once. In
         // canvas we'll just draw them sequentially (no need for indices buffer)

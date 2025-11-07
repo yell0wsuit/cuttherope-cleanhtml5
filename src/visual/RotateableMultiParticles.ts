@@ -2,19 +2,22 @@ import MultiParticles from "@/visual/MultiParticles";
 import Radians from "@/utils/Radians";
 import MathHelper from "@/utils/MathHelper";
 import Vector from "@/core/Vector";
+import type Texture2D from "@/core/Texture2D";
+import { Particle } from "@/visual/Particles";
 
 class RotateableMultiParticles extends MultiParticles {
-    /**
-     * @param {number} numParticles
-     * @param {Texture2D} texture
-     */
-    constructor(numParticles, texture) {
+    rotateSpeed: number;
+    rotateSpeedVar: number;
+
+    constructor(numParticles: number, texture: Texture2D) {
         super(numParticles, texture);
+        this.rotateSpeed = 0;
+        this.rotateSpeedVar = 0;
         this.drawer.rotationAngles = [];
         this.drawer.rotationPositions = [];
     }
 
-    initParticle(particle) {
+    initParticle(particle: Particle) {
         super.initParticle(particle);
         particle.angle = 0;
         particle.deltaAngle = Radians.fromDegrees(
@@ -26,14 +29,7 @@ class RotateableMultiParticles extends MultiParticles {
         this.drawer.rotationPositions[index] = new Vector(0, 0);
     }
 
-    /**
-     * @param {Vector} v
-     * @param {number} cosA
-     * @param {number} sinA
-     * @param {number} cx
-     * @param {number} cy
-     */
-    rotatePreCalc(v, cosA, sinA, cx, cy) {
+    rotatePreCalc(v: Vector, cosA: number, sinA: number, cx: number, cy: number) {
         v.x -= cx;
         v.y -= cy;
 
@@ -44,24 +40,19 @@ class RotateableMultiParticles extends MultiParticles {
         v.y = ny + cy;
     }
 
-    /**
-     * @param {Particle} particle
-     * @param {number} index
-     * @param {number} delta
-     */
-    updateParticle(particle, index, delta) {
+    updateParticle(particle: Particle, index: number, delta: number) {
         super.updateParticle(particle, index, delta);
         particle.angle += particle.deltaAngle * delta;
 
         // we need to save the angle and position for drawing rotation
         this.drawer.rotationAngles[index] = particle.angle;
-        this.drawer.rotationPositions[index].copyFrom(particle.pos);
+        const rotPos = this.drawer.rotationPositions[index];
+        if (rotPos) {
+            rotPos.copyFrom(particle.pos);
+        }
     }
 
-    /**
-     * @param {number} index
-     */
-    removeParticle(index) {
+    removeParticle(index: number) {
         this.drawer.rotationAngles.splice(index, 1);
         this.drawer.rotationPositions.splice(index, 1);
         super.removeParticle(index);
