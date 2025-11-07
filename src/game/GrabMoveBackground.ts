@@ -9,10 +9,7 @@ const IMG_OBJ_HOOK_MOVABLE_bottom_tile_right = 1;
 const IMG_OBJ_HOOK_MOVABLE_bottom_tile_middle = 2;
 
 class GrabMoveBackground extends ImageElement {
-    /**
-     * @param {number} length
-     */
-    constructor(length) {
+    constructor(length: number) {
         super();
 
         // render the tiled image once and cache the image
@@ -27,7 +24,7 @@ class GrabMoveBackground extends ImageElement {
         tiledImage.width = length + resolution.GRAB_MOVE_BG_WIDTH;
 
         const completeImage = tiledImage.getImage();
-        this.initTexture(new Texture2D(completeImage));
+        this.initTexture(new Texture2D(completeImage ?? null));
     }
 }
 
