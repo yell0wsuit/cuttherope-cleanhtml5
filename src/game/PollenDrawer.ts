@@ -66,12 +66,16 @@ class PollenDrawer extends BaseElement {
     }
 
     addPollen(v: Vector, pi: number) {
-        const size = [0.3, 0.3, 0.5, 0.5, 0.6],
-            sizeCounts = size.length;
-        let sX = 1,
-            sY = 1,
-            rx = size[MathHelper.randomRange(0, sizeCounts - 1)] ?? 0.5,
-            ry = rx;
+        const size = [0.3, 0.3, 0.5, 0.5, 0.6];
+        const sizeCounts = size.length;
+        let sX = 1;
+        let sY = 1;
+        let rx = size[MathHelper.randomRange(0, sizeCounts - 1)];
+        let ry = rx;
+
+        if (!rx || !ry) {
+            return;
+        }
 
         if (MathHelper.randomBool()) {
             rx *= 1 + MathHelper.randomRange(0, 1) / 10;
@@ -82,12 +86,12 @@ class PollenDrawer extends BaseElement {
         sX *= rx;
         sY *= ry;
 
-        const w = this.qw * sX,
-            h = this.qh * sY,
-            maxScale = 1,
-            d = Math.min(maxScale - sX, maxScale - sY),
-            delta = Math.random(),
-            pollen = new Pollen();
+        const w = this.qw * sX;
+        const h = this.qh * sY;
+        const maxScale = 1;
+        const d = Math.min(maxScale - sX, maxScale - sY);
+        const delta = Math.random();
+        const pollen = new Pollen();
 
         pollen.parentIndex = pi;
         pollen.x = v.x;
@@ -121,11 +125,11 @@ class PollenDrawer extends BaseElement {
         const v2 = grab.mover.path[toIndex];
         if (!v1 || !v2) return;
 
-        const MIN_DISTANCE = resolution.POLLEN_MIN_DISTANCE,
-            v = Vector.subtract(v2, v1),
-            vLen = v.getLength(),
-            times = ~~(vLen / MIN_DISTANCE),
-            POLLEN_MAX_OFFSET = resolution.POLLEN_MAX_OFFSET;
+        const MIN_DISTANCE = resolution.POLLEN_MIN_DISTANCE;
+        const v = Vector.subtract(v2, v1);
+        const vLen = v.getLength();
+        const times = Math.trunc(vLen / MIN_DISTANCE);
+        const POLLEN_MAX_OFFSET = resolution.POLLEN_MAX_OFFSET;
         let i, vn;
 
         v.normalize();

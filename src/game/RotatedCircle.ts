@@ -234,7 +234,7 @@ class RotatedCircle extends BaseElement {
             if (!this.sizeInPixels) {
                 return;
             }
-            const radius = this.sizeInPixels + ~~(lineWidth / 2);
+            const radius = this.sizeInPixels + Math.trunc(lineWidth / 2);
             if (ctx) {
                 ctx.beginPath();
                 ctx.lineWidth = lineWidth;

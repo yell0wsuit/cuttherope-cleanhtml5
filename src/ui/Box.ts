@@ -300,10 +300,10 @@ class Box {
 
         const textWidth = this.textImg.naturalWidth || this.textImg.width || 0;
         const textHeight = this.textImg.naturalHeight || this.textImg.height || 0;
-        const x = ~~(
+        const x = Math.trunc(
             resolution.uiScaledNumber(25) +
-            this.boxTextMargin +
-            (this.boxWidth - this.boxTextMargin * 2 - textWidth) / 2
+                this.boxTextMargin +
+                (this.boxWidth - this.boxTextMargin * 2 - textWidth) / 2
         );
         const y = resolution.uiScaledNumber(70);
 
