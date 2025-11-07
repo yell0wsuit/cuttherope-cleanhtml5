@@ -78,11 +78,12 @@ declare module "@/ui/BoxType" {
 }
 
 declare module "@/resources/JsonLoader" {
-    import type { RawBoxMetadataJson, LoadedLevelEntry } from "@/types/json";
+    import type { RawBoxMetadataJson, LoadedLevelEntry, MenuStringEntry } from "@/types/json";
 
     const JsonLoader: {
         getBoxMetadata(): RawBoxMetadataJson[] | null | undefined;
         getAllLevels(): Iterable<[string, LoadedLevelEntry[]]>;
+        getMenuStrings(): MenuStringEntry[] | undefined;
     };
 
     export default JsonLoader;

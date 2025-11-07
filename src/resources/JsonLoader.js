@@ -2,6 +2,7 @@
 /** @typedef {import("@/types/json").LevelJson} LevelJson */
 /** @typedef {import("@/types/json").LoadedLevelEntry} LoadedLevelEntry */
 /** @typedef {import("@/types/json").RawBoxMetadataJson} RawBoxMetadataJson */
+/** @typedef {import("@/types/json").MenuStringEntry} MenuStringEntry */
 
 /**
  * Helper function to load and parse JSON from a URL
@@ -71,12 +72,17 @@ class JsonLoader {
         const baseUrl = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
 
         try {
-            // First, load the box metadata to get level counts
+            // First, load the box metadata and menu strings
             const boxMetadataUrl = `${baseUrl}/data/config/editions/net-box-text.json`;
-            const boxMetadata = /** @type {RawBoxMetadataJson[]} */ (
-                await loadJson(boxMetadataUrl)
-            );
-            this.jsonCache.set("boxMetadata", boxMetadata);
+            const menuStringsUrl = `${baseUrl}/data/resources/menu-strings.json`;
+
+            const [boxMetadata, menuStrings] = await Promise.all([
+                loadJson(boxMetadataUrl),
+                loadJson(menuStringsUrl),
+            ]);
+
+            this.jsonCache.set("boxMetadata", /** @type {RawBoxMetadataJson[]} */ (boxMetadata));
+            this.jsonCache.set("menuStrings", menuStrings);
 
             /**
              * Files queued for JSON loading.
@@ -99,9 +105,9 @@ class JsonLoader {
                 }
             });
 
-            // Set total to metadata (1) + level files
-            this.totalJsonFiles = 1 + levelFiles.length;
-            this.loadedJsonFiles = 1; // Box metadata already loaded
+            // Set total to metadata (1) + menu strings (1) + level files
+            this.totalJsonFiles = 2 + levelFiles.length;
+            this.loadedJsonFiles = 2; // Box metadata and menu strings already loaded
 
             if (this.progressCallback) {
                 this.progressCallback(this.loadedJsonFiles, this.totalJsonFiles);
@@ -181,6 +187,19 @@ class JsonLoader {
         const metadata = this.jsonCache.get("boxMetadata");
         if (Array.isArray(metadata)) {
             return metadata;
+        }
+        return undefined;
+    }
+
+    /**
+     * @returns {MenuStringEntry[] | undefined}
+     */
+    getMenuStrings() {
+        const menuStrings = /** @type {MenuStringEntry[] | undefined} */ (
+            this.jsonCache.get("menuStrings")
+        );
+        if (Array.isArray(menuStrings)) {
+            return menuStrings;
         }
         return undefined;
     }

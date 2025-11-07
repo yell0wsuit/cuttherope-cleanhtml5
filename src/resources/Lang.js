@@ -1,11 +1,12 @@
 import edition from "@/config/editions/net-edition";
 import settings from "@/game/CTRSettings";
 import LangId from "@/resources/LangId";
-import menuStrings from "@/resources/MenuStrings";
+import JsonLoader from "@/resources/JsonLoader";
 import Log from "@/utils/Log";
 
 /**
- * @typedef {import('@/config/editions/net-edition').BoxText} BoxText
+ * @typedef {import('@/types/json').BoxTextJson} BoxText
+ * @typedef {import('@/types/json').MenuStringEntry} MenuStringEntry
  */
 
 /**
@@ -69,6 +70,12 @@ class Lang {
      * @returns {string}
      */
     menuText(menuStringId) {
+        const menuStrings = JsonLoader.getMenuStrings();
+        if (!menuStrings) {
+            Log.alert("Menu strings not loaded yet");
+            return "";
+        }
+
         for (const locEntry of menuStrings) {
             if (locEntry.id === menuStringId) {
                 return getLocalizedText(locEntry);
