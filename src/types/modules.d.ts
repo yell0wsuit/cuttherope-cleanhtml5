@@ -72,11 +72,6 @@ declare module "@/resources/ResourcePacks" {
     export default ResourcePacks;
 }
 
-declare module "@/ui/BoxType" {
-    const BoxType: Record<string, string>;
-    export default BoxType;
-}
-
 declare module "@/resources/JsonLoader" {
     import type { RawBoxMetadataJson, LoadedLevelEntry, MenuStringEntry } from "@/types/json";
 

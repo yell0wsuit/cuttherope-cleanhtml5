@@ -13,10 +13,8 @@ import settings from "@/game/CTRSettings";
 import { IS_XMAS } from "@/resources/ResData";
 
 // cache upgrade UI elements
-/**
- * @type {HTMLElement | null}
- */
-/*let upgradeButton;
+/*
+let upgradeButton;
 
 function initializeUpgradeButton() {
     upgradeButton = document.getElementById("boxUpgradePlate");
@@ -62,7 +60,7 @@ if (document.readyState === "loading") {
 //});
 
 // localize UI element text
-PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
+PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
     Text.drawBig({
         text: Lang.menuText(MenuStringId.BUY_FULL_GAME),
         imgParentId: "boxUpgradePlate",
@@ -72,15 +70,41 @@ PubSub.subscribe(PubSub.ChannelId.LanguageChanged, function () {
 
 const boxImageBase = platform.boxImageBaseUrl || platform.uiImageBaseUrl;
 
+type SubscriptionHandle = Readonly<{
+    name: number;
+    callback: (...args: unknown[]) => void;
+}>;
+
 class Box {
-    /**
-     * @param {number} boxIndex
-     * @param {string | null} bgimg
-     * @param {number} reqstars
-     * @param {boolean} islocked
-     * @param {string} type
-     */
-    constructor(boxIndex, bgimg, reqstars, islocked, type) {
+    index: number;
+    islocked: boolean;
+    visible: boolean;
+    pubSubSubscriptions: SubscriptionHandle[];
+    purchased: boolean;
+    bounceStartTime: number;
+    opacity: number;
+    type: string;
+    yOffset: number;
+    boxImg: HTMLImageElement;
+    textImg: HTMLImageElement;
+    boxWidth: number;
+    boxTextMargin: number;
+    textRendered: boolean;
+    renderText: () => void;
+    reqImg: HTMLImageElement;
+    omNomImg: HTMLImageElement;
+    lockImg: HTMLImageElement;
+    starImg: HTMLImageElement;
+    perfectMark: HTMLImageElement;
+    includeBoxNumberInTitle: boolean;
+
+    constructor(
+        boxIndex: number,
+        bgimg: string | null,
+        reqstars: number,
+        islocked: boolean,
+        type: string
+    ) {
         this.index = boxIndex;
         this.islocked = islocked;
         this.visible = true;
@@ -100,9 +124,9 @@ class Box {
             this.boxImg.src = boxImageBase + bgimg;
         }
 
-        const textImg = (this.textImg = new Image()),
-            boxWidth = (this.boxWidth = resolution.uiScaledNumber(350)),
-            boxTextMargin = (this.boxTextMargin = resolution.uiScaledNumber(20));
+        const textImg = (this.textImg = new Image());
+        const boxWidth = (this.boxWidth = resolution.uiScaledNumber(350));
+        const boxTextMargin = (this.boxTextMargin = resolution.uiScaledNumber(20));
 
         this.textRendered = false;
         this.renderText = () => {
@@ -121,7 +145,7 @@ class Box {
             PubSub.subscribe(PubSub.ChannelId.LanguageChanged, this.renderText)
         );
 
-        this.reqImg = Text.drawBig({ text: reqstars, scaleToUI: true });
+        this.reqImg = Text.drawBig({ text: String(reqstars), scaleToUI: true }) as HTMLImageElement;
 
         this.omNomImg = new Image();
         this.omNomImg.src = `${platform.uiImageBaseUrl}box_omnom.png`;
@@ -138,23 +162,19 @@ class Box {
         this.includeBoxNumberInTitle = true;
     }
 
-    isRequired() {
+    isRequired = (): boolean => {
         return true;
-    }
+    };
 
-    isGameBox() {
+    isGameBox = (): boolean => {
         return true;
-    }
+    };
 
-    isClickable() {
+    isClickable = (): boolean => {
         return true;
-    }
+    };
 
-    /**
-     * @param {CanvasRenderingContext2D} ctx
-     * @param {number | null} omnomoffset
-     */
-    draw(ctx, omnomoffset) {
+    draw = (ctx: CanvasRenderingContext2D, omnomoffset: number | null): void => {
         const prevAlpha = ctx.globalAlpha;
         if (this.opacity !== prevAlpha) {
             ctx.globalAlpha = this.opacity;
@@ -167,13 +187,9 @@ class Box {
         if (this.opacity !== prevAlpha) {
             ctx.globalAlpha = prevAlpha;
         }
-    }
+    };
 
-    /**
-     * @param {CanvasRenderingContext2D} ctx
-     * @param {number | null} omnomoffset
-     */
-    render(ctx, omnomoffset) {
+    render = (ctx: CanvasRenderingContext2D, omnomoffset: number | null): void => {
         const isGameBox = this.isGameBox();
         const yOffset = resolution.uiScaledNumber(this.yOffset || 0);
         const shouldHideLockDetails = this.type === BoxType.HOLIDAY && !IS_XMAS;
@@ -292,12 +308,9 @@ class Box {
         const y = resolution.uiScaledNumber(70);
 
         ctx.drawImage(this.textImg, x, y);
-    }
+    };
 
-    /**
-     * @param {CanvasRenderingContext2D} ctx
-     */
-    bounce(ctx) {
+    bounce = (ctx: CanvasRenderingContext2D): void => {
         if (!ctx) {
             return;
         }
@@ -315,7 +328,9 @@ class Box {
             // get the elapsed time
             const t = Date.now() - this.bounceStartTime;
 
-            let d, x, y;
+            let d: number;
+            let x: number = 1.0;
+            let y: number = 1.0;
 
             if (t < s1) {
                 d = Easing.easeOutSine(t, 0, 0.05, s1); // to 0.95
@@ -365,11 +380,11 @@ class Box {
 
         // start the animation
         renderBounce();
-    }
+    };
 
-    cancelBounce() {
+    cancelBounce = (): void => {
         this.bounceStartTime = 0;
-    }
+    };
 
     /*onSelected() {
         if (!this.purchased) {
@@ -384,15 +399,18 @@ class Box {
     //hidePurchaseButton();
     //}
 
-    destroy() {
+    destroy = (): void => {
         if (!this.pubSubSubscriptions) {
             return;
         }
 
         while (this.pubSubSubscriptions.length) {
-            PubSub.unsubscribe(this.pubSubSubscriptions.pop());
+            const sub = this.pubSubSubscriptions.pop();
+            if (sub) {
+                PubSub.unsubscribe(sub);
+            }
         }
-    }
+    };
 }
 
 export default Box;
