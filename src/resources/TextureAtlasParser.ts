@@ -3,69 +3,75 @@ import Vector from "@/core/Vector";
 
 /**
  * A single frame entry (after parsing).
- * @typedef {Object} FrameEntry
- * @property {string} name - The frame’s identifier or filename.
- * @property {FrameData} data - Frame metadata.
  */
+interface FrameEntry {
+    name: string;
+    data: FrameData;
+}
 
 /**
  * Frame data structure from TexturePacker JSON.
- * @typedef {Object} FrameData
- * @property {Rectangle} frame - Frame rectangle within atlas.
- * @property {boolean} [rotated] - Whether the frame was rotated.
- * @property {Rectangle} [spriteSourceSize] - Original source rect before trimming.
- * @property {{w:number, h:number}} [sourceSize] - Original full image size.
- * @property {boolean} [trimmed] - Whether the frame was trimmed.
- * @property {string} [filename] - Frame filename.
- * @property {string} [name] - Optional alternate name.
  */
+interface FrameData {
+    frame: Rectangle;
+    rotated?: boolean;
+    spriteSourceSize?: Rectangle;
+    sourceSize?: { w: number; h: number };
+    trimmed?: boolean;
+    filename?: string;
+    name?: string;
+}
 
 /**
  * Metadata block from TexturePacker JSON.
- * @typedef {Object} TexturePackerMeta
- * @property {string} app
- * @property {string} version
- * @property {string} image
- * @property {string} format
- * @property {{w:number, h:number}} size
- * @property {string} scale
- * @property {string} [smartupdate]
  */
+interface TexturePackerMeta {
+    app: string;
+    version: string;
+    image: string;
+    format: string;
+    size: { w: number; h: number };
+    scale: string;
+    smartupdate?: string;
+}
 
 /**
  * Complete TexturePacker JSON structure.
- * @typedef {Object} TexturePackerAtlas
- * @property {Record<string, FrameData> | FrameData[]} frames
- * @property {TexturePackerMeta} [meta]
  */
+interface TexturePackerAtlas {
+    frames: Record<string, FrameData> | FrameData[];
+    meta?: TexturePackerMeta;
+}
 
 /**
  * Extra options for parseTexturePackerAtlas.
- * @typedef {Object} ParseAtlasOptions
- * @property {object} [existingInfo] - Optional previously parsed data to merge.
- * @property {"center"} [offsetNormalization] - Optional normalization behavior.
  */
+interface ParseAtlasOptions {
+    existingInfo?: object;
+    offsetNormalization?: "center";
+}
 
 /**
  * Parsed result info.
- * @typedef {Object} ParsedAtlasInfo
- * @property {Rectangle[]} rects
- * @property {{x:number, y:number}[]} [offsets]
- * @property {number} [preCutWidth]
- * @property {number} [preCutHeight]
- * @property {string[]} frameKeys
- * @property {Record<string, number>} frameIndexByName
- * @property {number} [adjustmentMaxX]
- * @property {number} [adjustmentMaxY]
- * @property {TexturePackerMeta|null} [atlasMeta]
  */
+interface ParsedAtlasInfo {
+    rects: Rectangle[];
+    offsets?: { x: number; y: number }[];
+    preCutWidth?: number;
+    preCutHeight?: number;
+    frameKeys: string[];
+    frameIndexByName: Record<string, number>;
+    adjustmentMaxX?: number;
+    adjustmentMaxY?: number;
+    atlasMeta?: TexturePackerMeta | null;
+}
 
 /**
  * Builds frame entries from the TexturePacker frames block.
  * @param {Record<string, FrameData> | FrameData[]} frames
  * @returns {FrameEntry[]}
  */
-const createFrameEntries = (frames) => {
+const createFrameEntries = (frames: Record<string, FrameData> | FrameData[]): FrameEntry[] => {
     if (!frames) return [];
 
     // If frames is an array, preserve its natural order
@@ -81,17 +87,14 @@ const createFrameEntries = (frames) => {
         .sort()
         .map((name) => ({
             name,
-            data: frames[name],
+            data: frames[name]!,
         }));
 };
 
 /**
  * Orders frame entries according to a defined sequence.
- * @param {FrameEntry[]} entries
- * @param {string[]} [frameOrder]
- * @returns {FrameEntry[]}
  */
-const orderFrameEntries = (entries, frameOrder) => {
+const orderFrameEntries = (entries: FrameEntry[], frameOrder: string[]): FrameEntry[] => {
     if (!frameOrder || frameOrder.length === 0) return entries;
 
     const orderMap = new Map(frameOrder.map((name, i) => [name, i]));
@@ -109,10 +112,13 @@ const orderFrameEntries = (entries, frameOrder) => {
  * @param {ParseAtlasOptions} [options]
  * @returns {ParsedAtlasInfo}
  */
-export const parseTexturePackerAtlas = (atlasData, options = {}) => {
+export const parseTexturePackerAtlas = (
+    atlasData: TexturePackerAtlas,
+    options: ParseAtlasOptions = {}
+): ParsedAtlasInfo => {
     const { existingInfo = {}, offsetNormalization } = options;
 
-    if (!atlasData || !atlasData.frames) return /** @type {ParsedAtlasInfo} */ (existingInfo);
+    if (!atlasData || !atlasData.frames) return existingInfo as ParsedAtlasInfo;
 
     // Auto-detect order directly from JSON array if available
     let autoFrameOrder = null;
@@ -124,24 +130,19 @@ export const parseTexturePackerAtlas = (atlasData, options = {}) => {
 
     let entries = createFrameEntries(atlasData.frames);
     if (autoFrameOrder) entries = orderFrameEntries(entries, autoFrameOrder);
-    if (entries.length === 0) return /** @type {ParsedAtlasInfo} */ (existingInfo);
+    if (entries.length === 0) return existingInfo as ParsedAtlasInfo;
 
-    /** @type {ParsedAtlasInfo} */
-    const info = {
+    const info: ParsedAtlasInfo = {
         ...existingInfo,
         rects: [],
         frameKeys: [],
         frameIndexByName: {},
     };
 
-    /** @type {Rectangle[]} */
-    const rects = [];
-    /** @type {Vector[]} */
-    const offsets = [];
-    /** @type {{w:number,h:number}[]} */
-    const rectSizes = [];
-    /** @type {string[]} */
-    const frameKeys = [];
+    const rects: Rectangle[] = [];
+    const offsets: Vector[] = [];
+    const rectSizes: { w: number; h: number }[] = [];
+    const frameKeys: string[] = [];
 
     let hasNonZeroOffset = false;
     let preCutWidth = info.preCutWidth ?? 0;
@@ -186,7 +187,7 @@ export const parseTexturePackerAtlas = (atlasData, options = {}) => {
             const cy = Math.round(((preCutHeight || s.h) - s.h) / 2);
             return new Vector(cx, cy);
         });
-        for (let i = 0; i < centered.length; i++) offsets[i] = centered[i];
+        offsets.splice(0, offsets.length, ...centered);
         hasNonZeroOffset = centered.some((o) => o.x || o.y);
     }
 
@@ -200,10 +201,13 @@ export const parseTexturePackerAtlas = (atlasData, options = {}) => {
     }
 
     info.frameKeys = frameKeys;
-    info.frameIndexByName = frameKeys.reduce((acc, name, i) => {
-        acc[name] = i;
-        return acc;
-    }, /** @type {Record<string, number>} */ ({}));
+    info.frameIndexByName = frameKeys.reduce(
+        (acc, name, i) => {
+            acc[name] = i;
+            return acc;
+        },
+        {} as Record<string, number>
+    );
 
     // When frames are trimmed and carry offsets, pad the drawn quad by 1px
     // so restored transparency aligns perfectly with the untrimmed size.
