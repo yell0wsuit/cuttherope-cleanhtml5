@@ -4,6 +4,9 @@ import MathHelper from "@/utils/MathHelper";
 import Rectangle from "@/core/Rectangle";
 import RES_DATA from "@/resources/ResData";
 import ResourceId from "@/resources/ResourceId";
+import type Texture2D from "@/core/Texture2D";
+import type { Particle } from "@/visual/Particles";
+import type ResEntry from "@/resources/ResEntry";
 
 const IMG_OBJ_CANDY_01_piece_01 = 3;
 const IMG_OBJ_CANDY_01_piece_02 = 4;
@@ -25,24 +28,34 @@ const PADDINGTON_BREAK_FRAME_NAMES = [
     "frame_0007.png",
 ];
 
-class CandyBreak extends RotateableMultiParticles {
-    /**
-     * @param {number} numParticles
-     * @param {Texture2D} texture
-     * @param {{ resourceId: number; }} options
-     */
-    constructor(numParticles, texture, options) {
-        super(numParticles, texture);
+type CandyBreakOptions = {
+    resourceId?: number;
+};
 
-        /**
-         * @type {number[]}
-         */
+class CandyBreak extends RotateableMultiParticles {
+    pieceFrameIndices: number[];
+    duration: number;
+    angle: number;
+    angleVar: number;
+    speed: number;
+    speedVar: number;
+    radialAccel: number;
+    radialAccelVar: number;
+    tangentialAccel: number;
+    tangentialAccelVar: number;
+    life: number;
+    lifeVar: number;
+    size: number;
+    sizeVar: number;
+    emissionRate: number;
+    rotateSpeed: number;
+    rotateSpeedVar: number;
+
+    constructor(numParticles: number, texture: Texture2D, options: CandyBreakOptions = {}) {
+        super(numParticles, texture);
         this.pieceFrameIndices = this._resolvePieceFrameIndices(options.resourceId);
 
         // duration
-        /**
-         * @type {number}
-         */
         this.duration = 2;
 
         // gravity
@@ -50,79 +63,34 @@ class CandyBreak extends RotateableMultiParticles {
         this.gravity.y = 500.0;
 
         // angle
-        /**
-         * @type {number}
-         */
         this.angle = -90;
-        /**
-         * @type {number}
-         */
         this.angleVar = 50;
 
         // speed of particles
-        /**
-         * @type {number}
-         */
         this.speed = 150.0;
-        /**
-         * @type {number}
-         */
         this.speedVar = 70.0;
 
         // radial
-        /**
-         * @type {number}
-         */
         this.radialAccel = 0;
-        /**
-         * @type {number}
-         */
         this.radialAccelVar = 1;
 
         // tCTRial
-        /**
-         * @type {number}
-         */
         this.tangentialAccel = 0;
-        /**
-         * @type {number}
-         */
         this.tangentialAccelVar = 1;
 
         // emitter position
-        /**
-         * @type {number}
-         */
         this.posVar.x = 0.0;
-        /**
-         * @type {number}
-         */
         this.posVar.y = 0.0;
 
         // life of particles
-        /**
-         * @type {number}
-         */
         this.life = 2;
-        /**
-         * @type {number}
-         */
         this.lifeVar = 0;
 
         // size, in pixels
-        /**
-         * @type {number}
-         */
         this.size = 1;
-        /**
-         * @type {number}
-         */
         this.sizeVar = 0.0;
 
         // emits per second
-        /**
-         * @type {number}
-         */
         this.emissionRate = 100;
 
         // color of particles
@@ -143,26 +111,14 @@ class CandyBreak extends RotateableMultiParticles {
         this.endColorVar.b = 0.0;
         this.endColorVar.a = 0.0;
 
-        /**
-         * @type {number}
-         */
         this.rotateSpeed = 0.0;
-        /**
-         * @type {number}
-         */
         this.rotateSpeedVar = 600;
 
         // additive
-        /**
-         * @type {boolean}
-         */
         this.blendAdditive = false;
     }
 
-    /**
-     * @param {Particles} particle
-     */
-    initParticle(particle) {
+    initParticle(particle: Particle) {
         super.initParticle(particle);
 
         const texture = this.imageGrid;
@@ -171,29 +127,29 @@ class CandyBreak extends RotateableMultiParticles {
                 ? this.pieceFrameIndices
                 : DEFAULT_PIECE_FRAME_INDICES;
         const randomIndex = MathHelper.randomRange(0, frameIndices.length - 1);
-        const frameToUse = frameIndices[randomIndex];
+        const frameToUse = frameIndices[randomIndex]!;
         const tquad = texture.rects[frameToUse];
+        if (!tquad) {
+            return;
+        }
         const vquad = new Rectangle(0, 0, 0, 0); // don't draw initially
 
-        this.drawer.setTextureQuad(this.particles.length, tquad, vquad);
+        this.drawer.setTextureQuad(this.particles.length, tquad, vquad, undefined);
 
         particle.width = tquad.w * this.size;
         particle.height = tquad.h * this.size;
     }
 
-    /**
-     * @param {number} resourceId
-     */
-    _resolvePieceFrameIndices(resourceId) {
+    private _resolvePieceFrameIndices(resourceId?: number): number[] {
         if (!resourceId) {
             return DEFAULT_PIECE_FRAME_INDICES.slice();
         }
 
         if (resourceId === ResourceId.IMG_OBJ_CANDY_PADDINGTON) {
-            /**
-             * @type {number[]}
-             */
-            const indices = this._lookupFrameIndices(resourceId, PADDINGTON_BREAK_FRAME_NAMES);
+            const indices: number[] = this._lookupFrameIndices(
+                resourceId,
+                PADDINGTON_BREAK_FRAME_NAMES
+            );
             if (indices.length) {
                 return indices;
             }
@@ -202,31 +158,19 @@ class CandyBreak extends RotateableMultiParticles {
         return DEFAULT_PIECE_FRAME_INDICES.slice();
     }
 
-    /**
-     * @param {number} resourceId
-     * @param {string[]} frameNames
-     */
-    _lookupFrameIndices(resourceId, frameNames) {
-        /**
-         * @type {ResEntry}
-         */
-        const resource = RES_DATA[resourceId];
-
-        /**
-         * @type {object}
-         */
-        const frameIndexByName = resource?.info?.frameIndexByName;
+    private _lookupFrameIndices(resourceId: number, frameNames: string[]): number[] {
+        const resource: ResEntry | undefined = RES_DATA[resourceId];
+        const frameIndexByName = resource?.info?.frameIndexByName as
+            | Record<string, number>
+            | undefined;
 
         if (!frameIndexByName) {
             return [];
         }
 
         return frameNames
-            .map(
-                (/** @type {string} */ name) =>
-                    /** @type {Record<string, number>} */ (frameIndexByName)[name]
-            )
-            .filter((/** @type {number} */ index) => index !== undefined);
+            .map((name) => frameIndexByName[name])
+            .filter((index): index is number => index !== undefined);
     }
 }
 
