@@ -7,12 +7,17 @@ import ResourceId from "@/resources/ResourceId";
 const IMG_BGR_08_P1__position_window = 1;
 const IMG_OBJ_STAR_IDLE_window = 58;
 
+const TimelineId = {
+    NORMAL: 0,
+    UPSIDE_DOWN: 1,
+} as const;
+
+type TimelineId = (typeof TimelineId)[keyof typeof TimelineId];
+
 class EarthImage extends ImageElement {
-    /**
-     * @param {number} offsetX
-     * @param {number} offsetY
-     */
-    constructor(offsetX, offsetY) {
+    static readonly TimelineId = TimelineId;
+
+    constructor(offsetX: number, offsetY: number) {
         super();
         this.initTextureWithId(ResourceId.IMG_OBJ_STAR_IDLE);
         this.setTextureQuad(IMG_OBJ_STAR_IDLE_window);
@@ -33,13 +38,5 @@ class EarthImage extends ImageElement {
         this.y += offsetY;
     }
 }
-
-/**
- * @enum {number}
- */
-EarthImage.TimelineId = {
-    NORMAL: 0,
-    UPSIDE_DOWN: 1,
-};
 
 export default EarthImage;
