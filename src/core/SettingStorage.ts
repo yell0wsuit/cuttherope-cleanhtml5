@@ -3,18 +3,20 @@ import PubSub from "@/utils/PubSub";
 
 class SettingStorage {
     static STORAGE_KEY = "ctr-js-data";
+    editionPrefix: string;
+    prefix: string;
+    settingCache: { [key: string]: string };
 
     constructor() {
-        /** @type {edition} */
-        const editionConfig = /** @type {edition} */ (edition);
+        const editionConfig: typeof edition = edition;
         this.editionPrefix = editionConfig.settingPrefix || "";
         this.prefix = this.editionPrefix;
 
-        /** @type {Object<string, string>} */
         this.settingCache = {};
 
         // Subscribe to user ID changes
-        PubSub.subscribe(PubSub.ChannelId.UserIdChanged, (/** @type {string} */ userId) => {
+        PubSub.subscribe(PubSub.ChannelId.UserIdChanged, (data: unknown) => {
+            const userId = typeof data === "string" ? data : "";
             this.prefix = userId ? `${userId}-${this.editionPrefix}` : this.editionPrefix;
         });
 
@@ -25,15 +27,14 @@ class SettingStorage {
     /**
      * Migration: consolidate existing localStorage keys into the single storage object
      */
-    migrateOldData() {
+    migrateOldData(): void {
         if (!window.localStorage) return;
 
         const existingData = localStorage.getItem(SettingStorage.STORAGE_KEY);
         if (existingData) return; // Already migrated
 
-        /** @type {Object<string, string | null>} */
-        const dataToMigrate = {};
-        const keysToRemove = [];
+        const dataToMigrate: { [s: string]: string | null } = {};
+        const keysToRemove: string[] = [];
 
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
@@ -54,9 +55,8 @@ class SettingStorage {
 
     /**
      * Get all data from consolidated storage
-     * @returns {Object<string, string>}
      */
-    getAllData() {
+    getAllData(): { [s: string]: string } {
         if (!window.localStorage) return {};
         try {
             const data = localStorage.getItem(SettingStorage.STORAGE_KEY);
@@ -69,9 +69,8 @@ class SettingStorage {
 
     /**
      * Save data to consolidated storage
-     * @param {Object<string, string>} data
      */
-    saveAllData(data) {
+    saveAllData(data: { [s: string]: string }): void {
         if (!window.localStorage) return;
         try {
             localStorage.setItem(SettingStorage.STORAGE_KEY, JSON.stringify(data));
@@ -82,22 +81,18 @@ class SettingStorage {
 
     /**
      * Get setting by key
-     * @param {string} key
-     * @returns {string | null}
      */
-    get(key) {
+    get(key: string): string | null {
         if (!window.localStorage) return null;
-        if (key in this.settingCache) return this.settingCache[key];
+        if (key in this.settingCache) return this.settingCache[key] ?? null;
         const data = this.getAllData();
-        return data[this.prefix + key] || null;
+        return data[this.prefix + key] ?? null;
     }
 
     /**
      * Set setting value
-     * @param {string} key
-     * @param {string | number | null} value
      */
-    set(key, value) {
+    set(key: string, value: string | number | null): void {
         if (!window.localStorage) return;
         const data = this.getAllData();
         const fullKey = this.prefix + key;
@@ -116,9 +111,8 @@ class SettingStorage {
 
     /**
      * Remove setting by key
-     * @param {string} key
      */
-    remove(key) {
+    remove(key: string): void {
         if (!window.localStorage) return;
         delete this.settingCache[key];
         const data = this.getAllData();
@@ -128,22 +122,16 @@ class SettingStorage {
 
     /**
      * Get boolean value with default
-     * @param {string} key
-     * @param {boolean | null} defaultValue
-     * @returns {boolean | null}
      */
-    getBoolOrDefault(key, defaultValue) {
+    getBoolOrDefault(key: string, defaultValue: boolean | null): boolean | null {
         const val = this.get(key);
         return val == null ? defaultValue : val === "true";
     }
 
     /**
      * Get integer value with default
-     * @param {string} key
-     * @param {number | null} defaultValue
-     * @returns {number | null}
      */
-    getIntOrDefault(key, defaultValue) {
+    getIntOrDefault(key: string, defaultValue: number | null): number | null {
         const val = this.get(key);
         return val == null ? defaultValue : parseInt(val, 10);
     }
