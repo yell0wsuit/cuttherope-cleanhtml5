@@ -18,23 +18,17 @@ import MathHelper from "@/utils/MathHelper";
 import HorizontallyTiledImage from "@/visual/HorizontallyTiledImage";
 import GrabMoveBackground from "@/game/GrabMoveBackground";
 
-/**
- * @enum {number}
- */
 const SpiderState = {
     START: 0,
     WALK: 1,
     BUSTER: 2,
     CATCH: 3,
-};
+} as const;
 
-/**
- * @enum {number}
- */
 const GunState = {
     SHOW: 0,
     HIDE: 1,
-};
+} as const;
 
 // TODO: move into spider
 const IMG_OBJ_SPIDER_activation_start = 0;
@@ -65,13 +59,52 @@ const IMG_OBJ_BEE_HD_obj_bee = 1;
 const IMG_OBJ_BEE_HD_wings_start = 2;
 const IMG_OBJ_BEE_HD_wings_end = 4;
 
-/**
- * Cache for storing pre-rendered grab circle canvases
- * @type {Object.<string, HTMLCanvasElement>}
- */
-const grabCircleCache = {};
+const grabCircleCache: Record<string, HTMLCanvasElement> = {};
 
 class Grab extends CTRGameObject {
+    rope: Bungee | null;
+    gun: boolean;
+    gunFired: boolean;
+    invisible: boolean;
+    kicked: boolean;
+    wheel: boolean;
+    wheelOperating: number;
+    lastWheelTouch: Vector;
+    moveLength: number;
+    moveVertical: boolean;
+    moveOffset: number;
+    moveBackground: GrabMoveBackground | null;
+    grabMoverHighlight: ImageElement | null;
+    grabMover: ImageElement | null;
+    moverDragging: number;
+    minMoveValue: number;
+    maxMoveValue: number;
+    hasSpider: boolean;
+    spiderActive: boolean;
+    spider: Animation | null;
+    spiderPos: number;
+    shouldActivate: boolean;
+    wheelDirty: boolean;
+    launcher: boolean;
+    launcherSpeed: number;
+    launcherIncreaseSpeed: boolean;
+    hideRadius: boolean;
+    radiusAlpha: number;
+    radius: number;
+    previousRadius: number | undefined;
+    balloon: boolean;
+    bee: ImageElement | null;
+    wheelImage?: ImageElement;
+    wheelImage2?: ImageElement;
+    wheelImage3?: ImageElement;
+    wheelHighlight?: ImageElement;
+    back: ImageElement | null;
+    front: ImageElement | null;
+    gunBack: ImageElement | null;
+    gunArrow: ImageElement | null;
+    gunCup: ImageElement | null;
+    kickable?: boolean;
+
     constructor() {
         super();
         this.rope = null;
@@ -110,17 +143,18 @@ class Grab extends CTRGameObject {
         this.hideRadius = false;
         this.radiusAlpha = 0;
         this.radius = 0;
+        this.previousRadius = undefined;
 
         this.balloon = false;
+        this.bee = null;
+        this.back = null;
+        this.front = null;
+        this.gunBack = null;
+        this.gunArrow = null;
+        this.gunCup = null;
     }
 
-    /**
-     *
-     * @param {Vector} v1 start
-     * @param {Vector} v2 end
-     * @param {Vector} c center
-     */
-    getRotateAngle(v1, v2, c) {
+    getRotateAngle(v1: Vector, v2: Vector, c: Vector) {
         const m1 = Vector.subtract(v1, c);
         const m2 = Vector.subtract(v2, c);
 
@@ -128,19 +162,12 @@ class Grab extends CTRGameObject {
         return Radians.toDegrees(a);
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     */
-    handleWheelTouch(x, y) {
+    handleWheelTouch(x: number, y: number) {
         this.lastWheelTouch.x = x;
         this.lastWheelTouch.y = y;
     }
 
-    /**
-     * @param {Vector} v
-     */
-    handleWheelRotate(v) {
+    handleWheelRotate(v: Vector) {
         SoundMgr.playSound(ResourceId.SND_WHEEL);
 
         const center = new Vector(this.x, this.y);
@@ -149,6 +176,10 @@ class Grab extends CTRGameObject {
             a -= 360;
         } else if (a < -180) {
             a += 360;
+        }
+
+        if (!this.wheelImage2 || !this.wheelImage3 || !this.wheelHighlight) {
+            return;
         }
 
         this.wheelImage2.rotation += a;
@@ -163,7 +194,7 @@ class Grab extends CTRGameObject {
         if (this.rope) {
             if (a > 0) {
                 if (this.rope.getLength() < resolution.GRAB_ROPE_ROLL_MAX_LENGTH) {
-                    this.rope.roll(a);
+                    this.rope.roll(a, null);
                 }
             } else if (a !== 0) {
                 if (this.rope.parts.length > 3) {
@@ -175,10 +206,7 @@ class Grab extends CTRGameObject {
         this.lastWheelTouch.copyFrom(v);
     }
 
-    /**
-     * @param {number} delta
-     */
-    update(delta) {
+    update(delta: number) {
         super.update(delta);
 
         if (this.launcher && this.rope) {
@@ -198,7 +226,9 @@ class Grab extends CTRGameObject {
                 if (moveResult.reachedZero) this.launcherIncreaseSpeed = true;
             }
 
-            this.mover.setMoveSpeed(this.launcherSpeed);
+            if (this.mover) {
+                this.mover.setMoveSpeed(this.launcherSpeed);
+            }
         }
 
         if (this.hideRadius) {
@@ -209,37 +239,38 @@ class Grab extends CTRGameObject {
             }
         }
 
-        if (this.bee) {
-            const vt = this.mover.path[this.mover.targetPoint],
-                vp = this.mover.pos,
-                v = Vector.subtract(vt, vp),
-                MAX_ANGLE = 10;
+        if (this.bee && this.mover) {
+            const vt = this.mover.path[this.mover.targetPoint];
+            const vp = this.mover.pos;
+            const MAX_ANGLE = 10;
             let a = 0;
 
-            if (Math.abs(v.x) > 15) {
-                a = v.x > 0 ? MAX_ANGLE : -MAX_ANGLE;
+            if (vt) {
+                const v = Vector.subtract(vt, vp);
+                if (Math.abs(v.x) > 15) {
+                    a = v.x > 0 ? MAX_ANGLE : -MAX_ANGLE;
+                }
             }
 
             this.bee.rotation = Mover.moveToTarget(this.bee.rotation, a, 60, delta);
         }
 
-        if (this.wheel && this.wheelDirty && this.rope) {
+        if (this.wheel && this.wheelDirty && this.rope && this.wheelImage2) {
             const len = this.rope.getLength() * 0.7;
             if (len === 0) {
                 this.wheelImage2.scaleX = this.wheelImage2.scaleY = 0;
             } else {
-                this.wheelImage2.scaleX = this.wheelImage2.scaleY = Math.max(
+                const scale = Math.max(
                     0,
                     Math.min(1.2, 1 - len / resolution.GRAB_WHEEL_SCALE_DIVISOR)
                 );
+                this.wheelImage2.scaleX = scale;
+                this.wheelImage2.scaleY = scale;
             }
         }
     }
 
-    /**
-     * @param {number} delta
-     */
-    updateSpider(delta) {
+    updateSpider(delta: number) {
         if (this.spider && this.hasSpider && this.shouldActivate) {
             this.shouldActivate = false;
             this.spiderActive = true;
@@ -263,6 +294,7 @@ class Grab extends CTRGameObject {
                 for (let i = 0, numPts = drawPts.length; i < numPts; i++) {
                     const c1 = drawPts[i];
                     const c2 = drawPts[i + 1];
+                    if (!c1 || !c2) continue;
                     const b = c1.distance(c2);
                     const len = a > b ? a : b;
 
@@ -310,26 +342,20 @@ class Grab extends CTRGameObject {
         this.preDraw();
 
         if (this.moveLength > 0) {
-            this.moveBackground.draw();
+            this.moveBackground?.draw();
         } else {
-            this.back.draw();
+            this.back?.draw();
         }
 
         if (this.radius !== Constants.UNDEFINED || this.hideRadius) {
-            const color = new RGBAColor(0.2, 0.5, 0.9, this.radiusAlpha),
-                drawRadius =
-                    this.radius !== Constants.UNDEFINED ? this.radius : this.previousRadius;
+            const color = new RGBAColor(0.2, 0.5, 0.9, this.radiusAlpha);
+            const drawRadius =
+                this.radius !== Constants.UNDEFINED ? this.radius : this.previousRadius;
             this.drawGrabCircle(this.x, this.y, drawRadius, color);
         }
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @param {number | undefined} radius
-     * @param {RGBAColor} color
-     */
-    drawGrabCircle(x, y, radius, color) {
+    drawGrabCircle(x: number, y: number, radius: number | undefined, color: RGBAColor) {
         if (!radius) {
             return;
         }
@@ -340,7 +366,7 @@ class Grab extends CTRGameObject {
 
         // generate a key for the cache
         const key = `${radius.toString()}|${color.rgbaStyle()}`;
-        let circleCnv;
+        let circleCnv: HTMLCanvasElement;
 
         // check the cache first
         if (grabCircleCache[key]) {
@@ -353,10 +379,10 @@ class Grab extends CTRGameObject {
 
             //document.body.appendChild(circleCnv)
 
-            const ctx = circleCnv.getContext("2d"),
-                totalRadians = 2 * Math.PI,
-                radiusScaleFactor = resolution.CANVAS_SCALE * 2,
-                scaledRadius = radius / radiusScaleFactor;
+            const ctx = circleCnv.getContext("2d");
+            const totalRadians = 2 * Math.PI;
+            const radiusScaleFactor = resolution.CANVAS_SCALE * 2;
+            const scaledRadius = radius / radiusScaleFactor;
             let segments = Math.max(16, Math.round(scaledRadius));
 
             // make sure we have an even number of segments
@@ -417,15 +443,17 @@ class Grab extends CTRGameObject {
         const b = this.rope;
 
         if (this.wheel) {
-            this.wheelHighlight.visible = this.wheelOperating !== Constants.UNDEFINED;
-            this.wheelImage3.visible = this.wheelOperating === Constants.UNDEFINED;
-            this.wheelImage.draw();
+            if (this.wheelHighlight && this.wheelImage3 && this.wheelImage) {
+                this.wheelHighlight.visible = this.wheelOperating !== Constants.UNDEFINED;
+                this.wheelImage3.visible = this.wheelOperating === Constants.UNDEFINED;
+                this.wheelImage.draw();
+            }
         }
 
         if (this.gun) {
-            this.gunBack.draw();
+            this.gunBack?.draw();
             if (!this.gunFired) {
-                this.gunArrow.draw();
+                this.gunArrow?.draw();
             }
         }
 
@@ -434,36 +462,34 @@ class Grab extends CTRGameObject {
         }
 
         if (this.moveLength <= 0) {
-            this.front.draw();
+            this.front?.draw();
         } else {
             if (this.moverDragging != Constants.UNDEFINED) {
-                this.grabMoverHighlight.draw();
+                this.grabMoverHighlight?.draw();
             } else {
-                this.grabMover.draw();
+                this.grabMover?.draw();
             }
         }
 
         if (this.wheel) {
-            this.wheelImage2.draw();
+            this.wheelImage2?.draw();
         }
 
         this.postDraw();
     }
 
     drawSpider() {
-        if (this.spider) {
-            this.spider.draw();
-        }
+        this.spider?.draw();
     }
 
     drawGunCup() {
-        this.gunCup.draw();
+        this.gunCup?.draw();
     }
 
     /**
      * @param {Bungee} rope
      */
-    setRope(rope) {
+    setRope(rope: Bungee) {
         this.rope = rope;
         this.previousRadius = this.radius;
         this.radius = Constants.UNDEFINED;
@@ -482,10 +508,7 @@ class Grab extends CTRGameObject {
         m.start();
     }
 
-    /**
-     * @param {number} radius
-     */
-    setRadius(radius) {
+    setRadius(radius: number) {
         this.previousRadius = this.radius;
         this.radius = radius;
 
@@ -558,12 +581,7 @@ class Grab extends CTRGameObject {
         }
     }
 
-    /**
-     * @param {number} length
-     * @param {boolean} vertical
-     * @param {number} offset
-     */
-    setMoveLength(length, vertical, offset) {
+    setMoveLength(length: number, vertical: boolean, offset: number) {
         this.moveLength = length;
         this.moveVertical = vertical;
         this.moveOffset = offset;
@@ -634,21 +652,21 @@ class Grab extends CTRGameObject {
         );
         this.bee.addChild(wings);
 
-        const p = this.bee.texture.offsets[IMG_OBJ_BEE_HD__rotation_center];
-        this.bee.x = -p.x;
-        this.bee.y = -p.y;
+        const texture = this.bee.texture;
+        const p = texture?.offsets[IMG_OBJ_BEE_HD__rotation_center];
+        if (p) {
+            this.bee.x = -p.x;
+            this.bee.y = -p.y;
 
-        this.bee.rotationCenterX = p.x - this.bee.width / 2;
-        this.bee.rotationCenterY = p.y - this.bee.width / 2;
+            this.bee.rotationCenterX = p.x - this.bee.width / 2;
+            this.bee.rotationCenterY = p.y - this.bee.width / 2;
+        }
         this.bee.scaleX = this.bee.scaleY = 1 / 1.3;
 
         this.addChild(this.bee);
     }
 
-    /**
-     * @param {boolean} hasSpider
-     */
-    setSpider(hasSpider) {
+    setSpider(hasSpider: boolean) {
         this.hasSpider = hasSpider;
         this.shouldActivate = false;
         this.spiderActive = false;
