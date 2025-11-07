@@ -1,7 +1,6 @@
 import js from "@eslint/js";
 import globals from "globals";
 import { defineConfig } from "eslint/config";
-import tseslint from "typescript-eslint";
 
 export default defineConfig([
     {
@@ -10,6 +9,10 @@ export default defineConfig([
         extends: ["js/recommended"],
         languageOptions: { globals: globals.browser },
         ignores: ["node_modules/**", "dist/**", "public/**"],
+        rules: {
+            "no-var": "error",
+            "prefer-const": "error",
+            "no-unused-vars": "warn",
+        },
     },
-    tseslint.configs.recommended,
 ]);
