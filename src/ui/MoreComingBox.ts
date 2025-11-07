@@ -14,18 +14,18 @@ class MoreComingBox extends Box {
         this.includeBoxNumberInTitle = false;
     }
 
-    isRequired() {
+    isRequired = (): boolean => {
         // not a box required for game completion
         return false;
-    }
+    };
 
-    isGameBox() {
+    isGameBox = (): boolean => {
         return false;
-    }
+    };
 
-    isClickable() {
+    isClickable = (): boolean => {
         return false;
-    }
+    };
 }
 
 export default MoreComingBox;
