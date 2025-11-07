@@ -2,6 +2,7 @@ import resolution from "@/resolution";
 import ResourceMgr from "@/resources/ResourceMgr";
 import ResourceId from "@/resources/ResourceId";
 import MathHelper from "@/utils/MathHelper";
+import type Texture2D from "@/core/Texture2D";
 
 const BASE_CANVAS_AREA = 1920 * 1080;
 const MAX_SNOWFLAKES = 80;
@@ -19,7 +20,37 @@ const TWINKLE_SPEED_MIN = 0.4;
 const TWINKLE_SPEED_MAX = 1;
 const START_DELAY_MS = 2000;
 
+interface Snowflake {
+    frameIndex: number;
+    scale: number;
+    speedY: number;
+    speedX: number;
+    swingAmplitude: number;
+    swingSpeed: number;
+    swingPhase: number;
+    alphaBase: number;
+    alphaRange: number;
+    twinklePhase: number;
+    twinkleSpeed: number;
+    baseX: number;
+    y: number;
+}
+
 class SnowfallOverlay {
+    canvas: HTMLCanvasElement | null;
+    ctx: CanvasRenderingContext2D | null;
+    snowflakes: Snowflake[];
+    texture: Texture2D | null;
+    running: boolean;
+    frameHandle: number | null;
+    retryHandle: number | null;
+    lastTimestamp: number;
+    fading: boolean;
+    fadeElapsed: number;
+    fadeDuration: number;
+    globalAlpha: number;
+    startTimeout: number | null;
+
     constructor() {
         this.canvas = null;
         this.ctx = null;
@@ -159,6 +190,10 @@ class SnowfallOverlay {
     }
 
     prepareSnowflakes() {
+        if (!this.canvas) {
+            return;
+        }
+
         this.snowflakes.length = 0;
         const count = this.computeSnowflakeCount();
         for (let i = 0; i < count; i++) {
@@ -168,7 +203,11 @@ class SnowfallOverlay {
         }
     }
 
-    createSnowflake(populateScreen = false) {
+    createSnowflake(populateScreen = false): Snowflake {
+        if (!this.canvas) {
+            throw new Error("Canvas not initialized");
+        }
+
         const frameCount = this.texture?.rects?.length || 0;
         const frameIndex = frameCount > 0 ? MathHelper.randomRange(0, frameCount - 1) : 0;
 
@@ -204,7 +243,7 @@ class SnowfallOverlay {
         };
     }
 
-    resetSnowflake(flake) {
+    resetSnowflake(flake: Snowflake) {
         const replacement = this.createSnowflake(false);
         Object.assign(flake, replacement);
     }
@@ -212,6 +251,10 @@ class SnowfallOverlay {
     _beginSnowfall() {
         if (!this.ensureTexture()) {
             this.start();
+            return;
+        }
+
+        if (!this.canvas) {
             return;
         }
 
@@ -257,7 +300,7 @@ class SnowfallOverlay {
         }
     }
 
-    tick(timestamp) {
+    tick(timestamp: number) {
         if (!this.running) {
             return;
         }
@@ -284,12 +327,20 @@ class SnowfallOverlay {
         }
     }
 
-    updateSnowflakes(delta) {
+    updateSnowflakes(delta: number) {
+        if (!this.canvas) {
+            return;
+        }
+
         const width = this.canvas.width;
         const height = this.canvas.height;
 
         for (let i = 0, len = this.snowflakes.length; i < len; i++) {
             const flake = this.snowflakes[i];
+            if (!flake) {
+                continue;
+            }
+
             flake.y += flake.speedY * delta;
             flake.baseX += flake.speedX * delta;
             flake.swingPhase += flake.swingSpeed * delta;
@@ -309,7 +360,7 @@ class SnowfallOverlay {
     }
 
     drawSnowflakes() {
-        if (!this.ctx || !this.texture) {
+        if (!this.ctx || !this.texture || !this.canvas) {
             return;
         }
 
@@ -322,8 +373,16 @@ class SnowfallOverlay {
         const preCutHeight = this.texture.preCutSize?.y || 0;
         const image = this.texture.image;
 
+        if (!image) {
+            return;
+        }
+
         for (let i = 0, len = this.snowflakes.length; i < len; i++) {
             const flake = this.snowflakes[i];
+            if (!flake) {
+                continue;
+            }
+
             const rect = rects[flake.frameIndex];
             if (!rect) {
                 continue;
