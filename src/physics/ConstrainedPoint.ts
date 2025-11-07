@@ -5,12 +5,11 @@ import Constants from "@/utils/Constants";
 import Gravity from "@/physics/Gravity";
 
 class Constraint {
-    /**
-     * @param {ConstrainedPoint} cp
-     * @param {number} restLength
-     * @param {number} type
-     */
-    constructor(cp, restLength, type) {
+    cp: ConstrainedPoint;
+    restLength: number;
+    type: number;
+
+    constructor(cp: ConstrainedPoint, restLength: number, type: number) {
         this.cp = cp;
         this.restLength = restLength;
         this.type = type;
@@ -18,13 +17,14 @@ class Constraint {
 }
 
 class ConstrainedPoint extends MaterialPoint {
+    prevPos: Vector;
+    pin: Vector;
+    constraints: Constraint[];
+
     constructor() {
         super();
         this.prevPos = new Vector(Constants.INT_MAX, Constants.INT_MAX);
         this.pin = new Vector(Constants.UNDEFINED, Constants.UNDEFINED);
-        /**
-         * @type {Constraint[]}
-         */
         this.constraints = [];
         this.totalForce = Vector.newZero();
     }
@@ -32,7 +32,7 @@ class ConstrainedPoint extends MaterialPoint {
     /**
      * Resets the point by clearing previous position and removing constraints
      */
-    resetAll() {
+    resetAll(): void {
         super.resetAll();
         this.prevPos.x = Constants.INT_MAX;
         this.prevPos.y = Constants.INT_MAX;
@@ -42,30 +42,27 @@ class ConstrainedPoint extends MaterialPoint {
     /**
      * removes all constraints
      */
-    removeConstraints() {
+    removeConstraints(): void {
         this.constraints = [];
     }
 
     /**
      * Add a new constraint
-     * @param {ConstrainedPoint} cp
-     * @param {number} restLength
-     * @param {ConstraintType} type
      */
-    addConstraint(cp, restLength, type) {
+    addConstraint(cp: ConstrainedPoint, restLength: number, type: number): void {
         const ct = new Constraint(cp, restLength, type);
         this.constraints.push(ct);
     }
 
     /**
      * Removes the specified constraint
-     * @param {ConstrainedPoint} cp
      */
-    removeConstraint(cp) {
+    removeConstraint(cp: ConstrainedPoint): void {
         const constraints = this.constraints;
         const len = constraints.length;
         for (let i = 0; i < len; i++) {
-            if (constraints[i].cp === cp) {
+            const constraint = constraints[i];
+            if (constraint && constraint.cp === cp) {
                 constraints.splice(i, 1);
                 return;
             }
@@ -74,22 +71,17 @@ class ConstrainedPoint extends MaterialPoint {
 
     /**
      * Removes the constraint at the specified index
-     * @param {number} index
      */
-    removeConstraintAtIndex(index) {
+    removeConstraintAtIndex(index: number): void {
         this.constraints.splice(index, 1);
     }
 
-    /**
-     * @param {ConstrainedPoint} fromCp
-     * @param {ConstrainedPoint} toCp
-     */
-    changeConstraint(fromCp, toCp) {
+    changeConstraint(fromCp: ConstrainedPoint, toCp: ConstrainedPoint): void {
         const constraints = this.constraints;
         const len = constraints.length;
         for (let i = 0; i < len; i++) {
             const constraint = constraints[i];
-            if (constraint.cp === fromCp) {
+            if (constraint && constraint.cp === fromCp) {
                 constraint.cp = toCp;
                 return;
             }
@@ -98,14 +90,13 @@ class ConstrainedPoint extends MaterialPoint {
 
     /**
      * Returns true if the constrained point is used by a constraint in the system
-     * @param {ConstrainedPoint} cp
-     * @return {boolean}
      */
-    hasConstraint(cp) {
+    hasConstraint(cp: ConstrainedPoint): boolean {
         const constraints = this.constraints;
         const len = constraints.length;
         for (let i = 0; i < len; i++) {
-            if (constraints[i].cp === cp) {
+            const constraint = constraints[i];
+            if (constraint && constraint.cp === cp) {
                 return true;
             }
         }
@@ -113,33 +104,28 @@ class ConstrainedPoint extends MaterialPoint {
         return false;
     }
 
-    /**
-     * @param {ConstrainedPoint} cp
-     * @param {number} restLength
-     */
-    changeRestLength(cp, restLength) {
+    changeRestLength(cp: ConstrainedPoint, restLength: number): void {
         const constraints = this.constraints;
         const len = constraints.length;
         for (let i = 0; i < len; i++) {
             const constraint = constraints[i];
-            if (constraint.cp === cp) {
+            if (constraint && constraint.cp === cp) {
                 constraint.restLength = restLength;
                 return;
             }
         }
     }
 
-    /**
-     * @param {ConstrainedPoint} fromCp
-     * @param {ConstrainedPoint} toCp
-     * @param {number} restLength
-     */
-    changeConstraintAndLength(fromCp, toCp, restLength) {
+    changeConstraintAndLength(
+        fromCp: ConstrainedPoint,
+        toCp: ConstrainedPoint,
+        restLength: number
+    ): void {
         const constraints = this.constraints;
         const len = constraints.length;
         for (let i = 0; i < len; i++) {
             const constraint = constraints[i];
-            if (constraint.cp === fromCp) {
+            if (constraint && constraint.cp === fromCp) {
                 constraint.cp = toCp;
                 constraint.restLength = restLength;
                 return;
@@ -147,16 +133,12 @@ class ConstrainedPoint extends MaterialPoint {
         }
     }
 
-    /**
-     * @param {ConstrainedPoint} cp
-     * @return {number}
-     */
-    restLength(cp) {
+    restLength(cp: ConstrainedPoint): number {
         const constraints = this.constraints;
         const len = constraints.length;
         for (let i = 0; i < len; i++) {
             const constraint = constraints[i];
-            if (constraint.cp === cp) {
+            if (constraint && constraint.cp === cp) {
                 return constraint.restLength;
             }
         }
@@ -164,10 +146,7 @@ class ConstrainedPoint extends MaterialPoint {
         return Constants.UNDEFINED;
     }
 
-    /**
-     * @param {number} delta
-     */
-    update(delta) {
+    update(delta: number): void {
         const totalForce = this.totalForce;
         const currentGravity = Gravity.current;
 
@@ -213,12 +192,12 @@ class ConstrainedPoint extends MaterialPoint {
         this.pos.y += this.posDelta.y;
     }
 
-    satisfyConstraints() {
+    satisfyConstraints(): void {
         // NOTE: this method is a perf hotspot so be careful with changes
         const pin = this.pin;
         const pos = this.pos;
         const invWeight = this.invWeight;
-        let tmp1X, tmp1Y, tmp2X, tmp2Y;
+        let tmp1X: number, tmp1Y: number, tmp2X: number, tmp2Y: number;
 
         if (pin.x !== -1 /* Constants.UNDEFINED */) {
             pos.x = pin.x;
@@ -231,6 +210,8 @@ class ConstrainedPoint extends MaterialPoint {
 
         for (let i = 0; i < num; i++) {
             const c = constraints[i];
+            if (!c) continue;
+
             const cp = c.cp;
             const cpPos = cp.pos;
 
@@ -285,18 +266,15 @@ class ConstrainedPoint extends MaterialPoint {
                     return;
                 }
                 const tmp2Multiplier = invWeight2 * diff;
-                if (tmp2X && tmp2Y) {
-                    cpPos.x -= tmp2X * tmp2Multiplier;
-                    cpPos.y -= tmp2Y * tmp2Multiplier;
+                if (tmp2X! && tmp2Y!) {
+                    cpPos.x -= tmp2X! * tmp2Multiplier;
+                    cpPos.y -= tmp2Y! * tmp2Multiplier;
                 }
             }
         }
     }
 
-    /**
-     * @param {number} delta
-     */
-    qcpUpdate(delta) {
+    qcpUpdate(delta: number): void {
         // qcpUpdate only differs from update in that it includes material
         // force calculations, however those don't appear to be used. So
         // for now, qcpUpdate simply calls update
@@ -304,7 +282,7 @@ class ConstrainedPoint extends MaterialPoint {
         this.update(delta);
     }
 
-    posString() {
+    posString(): string {
         return `${this.pos.x.toFixed(2)}, ${this.pos.y.toFixed(2)}`;
     }
 }

@@ -1,8 +1,6 @@
-/**
- * @param {ConstrainedPoint[]} arr
- * @param {number} n
- */
-function satisfyConstraintArray(arr, n) {
+import type ConstrainedPoint from "./ConstrainedPoint";
+
+function satisfyConstraintArray(arr: ConstrainedPoint[], n: number) {
     // NOTE: this method is a perf hotspot so be careful with changes
     n = n || 1;
 
@@ -11,10 +9,11 @@ function satisfyConstraintArray(arr, n) {
 
     if (!len) return;
 
-    //loop over the rest length
+    // loop over the rest length
     while (n--) {
         for (let cIndex = 0; cIndex < len; ++cIndex) {
             cons = arr[cIndex];
+            if (!cons) continue;
 
             const constraints = cons.constraints;
             const num = constraints.length;
@@ -32,6 +31,8 @@ function satisfyConstraintArray(arr, n) {
 
             for (let i = 0; i < num; i++) {
                 const c = constraints[i];
+                if (!c) continue;
+
                 const cp = c.cp;
                 const cpPos = cp.pos;
 

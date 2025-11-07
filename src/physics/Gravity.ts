@@ -6,11 +6,8 @@ export const GCONST = 9.8 * Constants.PIXEL_TO_SI_METERS_K;
  * Gravity class for managing gravitational forces in the physics simulation.
  */
 class Gravity {
-    /**
-     * @const
-     * @type {number}
-     */
     static EARTH_Y = GCONST;
+    current: Vector;
 
     /**
      * Creates a new Gravity instance.
@@ -22,30 +19,28 @@ class Gravity {
     /**
      * Toggles the direction of gravity (flips vertical component).
      */
-    toggle() {
+    toggle(): void {
         this.current.y = -this.current.y;
     }
 
     /**
      * Checks if gravity is zero.
-     * @returns {boolean} True if both x and y components are zero.
      */
-    isZero() {
+    isZero(): boolean {
         return this.current.y === 0 && this.current.x === 0;
     }
 
     /**
      * Checks if gravity is at normal Earth gravity.
-     * @returns {boolean} True if gravity matches Earth's gravity pointing downward.
      */
-    isNormal() {
+    isNormal(): boolean {
         return this.current.y === Gravity.EARTH_Y && this.current.x === 0;
     }
 
     /**
      * Resets gravity to default Earth gravity.
      */
-    reset() {
+    reset(): void {
         this.current.x = 0;
         this.current.y = GCONST;
     }

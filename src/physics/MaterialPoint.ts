@@ -3,6 +3,16 @@ import Vector from "@/core/Vector";
 import Gravity, { GCONST } from "@/physics/Gravity";
 
 class MaterialPoint {
+    disableGravity: boolean;
+    weight!: number;
+    invWeight!: number;
+    gravity!: Vector;
+    v: Vector; // velocity vector
+    a: Vector; // acceleration vector
+    pos: Vector;
+    posDelta: Vector;
+    totalForce: Vector;
+
     constructor() {
         this.disableGravity = false;
         this.setWeight(1);
@@ -16,16 +26,13 @@ class MaterialPoint {
         this.totalForce = newZero();
     }
 
-    /**
-     * @param {number} w
-     */
-    setWeight(w) {
+    setWeight(w: number): void {
         this.weight = w;
         this.invWeight = 1 / w;
         this.gravity = new Vector(0, GCONST * w);
     }
 
-    resetAll() {
+    resetAll(): void {
         const newZero = Vector.newZero;
         this.v = newZero(); // velocity vector
         this.a = newZero(); // acceleration vector
@@ -34,11 +41,7 @@ class MaterialPoint {
         this.totalForce = newZero();
     }
 
-    /**
-     * @param {number} delta
-     * @param {number} precision
-     */
-    updateWithPrecision(delta, precision) {
+    updateWithPrecision(delta: number, precision: number): void {
         // Calculate number Of iterations to be made at this update depending
         // on maxPossible_dt And dt (chop off fractional part and add 1)
         const numIterations = ((delta / precision) >> 0) + 1;
@@ -54,10 +57,7 @@ class MaterialPoint {
         }
     }
 
-    /**
-     * @param {number} delta
-     */
-    update(delta) {
+    update(delta: number): void {
         this.totalForce = Vector.newZero();
 
         // incorporate gravity
@@ -82,11 +82,7 @@ class MaterialPoint {
         this.pos.add(this.posDelta);
     }
 
-    /**
-     * @param {Vector} impulse
-     * @param {number} delta
-     */
-    applyImpulse(impulse, delta) {
+    applyImpulse(impulse: Vector, delta: number): void {
         if (!impulse.isZero()) {
             const im = Vector.multiply(impulse, delta / Constants.TIME_SCALE);
             this.pos.add(im);
