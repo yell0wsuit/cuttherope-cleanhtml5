@@ -1,4 +1,5 @@
 import ResourceId from "@/resources/ResourceId";
+
 const RES_INFO_2560 = [
     { id: 0 },
     { id: 1 },
@@ -975,6 +976,6 @@ const RES_INFO_2560 = [
         preCutWidth: 2048,
         preCutHeight: 1866,
     },
-];
+] as const;
 
 export default RES_INFO_2560;
