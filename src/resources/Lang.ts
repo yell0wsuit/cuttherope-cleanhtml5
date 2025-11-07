@@ -3,17 +3,13 @@ import settings from "@/game/CTRSettings";
 import LangId from "@/resources/LangId";
 import JsonLoader from "@/resources/JsonLoader";
 import Log from "@/utils/Log";
-
-/**
- * @typedef {import('@/types/json').BoxTextJson} BoxText
- * @typedef {import('@/types/json').MenuStringEntry} MenuStringEntry
- */
+import type { BoxTextJson, MenuStringEntry } from "@/types/json";
 
 /**
  * Helper to return the correct string from a localized entry.
  * Defaults to English if no translation is available.
  */
-const getLocalizedText = (/** @type {BoxText} */ locEntry) => {
+const getLocalizedText = (locEntry: BoxTextJson): string => {
     switch (settings.getLangId()) {
         case LangId.FR:
             return locEntry.fr || locEntry.en;
@@ -47,14 +43,12 @@ const getLocalizedText = (/** @type {BoxText} */ locEntry) => {
  * Language manager class that handles localization text lookups.
  */
 class Lang {
-    /**
-     * Get localized box text.
-     * @param {number} boxIndex
-     * @param {boolean} includeNumber
-     * @returns {string}
-     */
-    boxText(boxIndex, includeNumber) {
+    boxText(boxIndex: number, includeNumber: boolean): string {
         const locEntry = edition.boxText[boxIndex];
+        if (!locEntry) {
+            return "";
+        }
+
         let text = getLocalizedText(locEntry);
 
         if (text && includeNumber) {
@@ -64,12 +58,7 @@ class Lang {
         return text;
     }
 
-    /**
-     * Get localized menu text.
-     * @param {number} menuStringId
-     * @returns {string}
-     */
-    menuText(menuStringId) {
+    menuText(menuStringId: number): string {
         const menuStrings = JsonLoader.getMenuStrings();
         if (!menuStrings) {
             Log.alert("Menu strings not loaded yet");
@@ -86,20 +75,11 @@ class Lang {
         return "";
     }
 
-    /**
-     * Direct access to the text resolver.
-     * @param {BoxText} locEntry
-     * @returns {string}
-     */
-    getText(locEntry) {
+    getText(locEntry: BoxTextJson): string {
         return getLocalizedText(locEntry);
     }
 
-    /**
-     * Get the current language ID.
-     * @returns {LangId}
-     */
-    getCurrentId() {
+    getCurrentId(): LangId {
         return settings.getLangId();
     }
 }
