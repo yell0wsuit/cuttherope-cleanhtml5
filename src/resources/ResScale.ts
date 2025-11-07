@@ -184,12 +184,13 @@ class ResScaler {
             scaledOffset.x = scaleNumber(scaledOffset.x, scale);
             scaledOffset.y = scaleNumber(scaledOffset.y, scale);
 
-            const adjustment: Vector = (!ALLOW_OFFSET_ADJUSTMENT || info.skipOffsetAdjustment)
-                ? new Vector(0, 0)
-                : new Vector(
-                    scaleNumber((scaledOffset.x - scaledOffset.x) | 0, 1),
-                    scaleNumber((scaledOffset.y - scaledOffset.y) | 0, 1)
-                );
+            const adjustment: Vector =
+                !ALLOW_OFFSET_ADJUSTMENT || info.skipOffsetAdjustment
+                    ? new Vector(0, 0)
+                    : new Vector(
+                          scaleNumber((scaledOffset.x - scaledOffset.x) | 0, 1),
+                          scaleNumber((scaledOffset.y - scaledOffset.y) | 0, 1)
+                      );
 
             if (ALLOW_OFFSET_ADJUSTMENT && !info.skipOffsetAdjustment) {
                 // remember the biggest adjust we made
