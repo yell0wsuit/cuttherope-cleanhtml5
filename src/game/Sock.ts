@@ -13,6 +13,31 @@ import { IS_XMAS } from "@/resources/ResData";
 const hatOrSock = IS_XMAS ? ResourceId.IMG_OBJ_SOCKS_XMAS : ResourceId.IMG_OBJ_SOCKS;
 
 class Sock extends CTRGameObject {
+    static readonly Quads = {
+        IMG_OBJ_SOCKS_hat_01: 0,
+        IMG_OBJ_SOCKS_hat_02: 1,
+        IMG_OBJ_SOCKS_glow_start: 2,
+        IMG_OBJ_SOCKS_level: 3,
+        IMG_OBJ_SOCKS_glow_end: 4,
+    } as const;
+
+    static readonly StateType = {
+        RECEIVING: 0,
+        THROWING: 1,
+        IDLE: 2,
+    } as const;
+
+    static readonly IDLE_TIMEOUT = 0.8;
+
+    group: number;
+    angle: number;
+    t1: Vector;
+    t2: Vector;
+    b1: Vector;
+    b2: Vector;
+    idleTimeout: number;
+    light: Animation | null;
+
     constructor() {
         super();
 
@@ -24,6 +49,7 @@ class Sock extends CTRGameObject {
         this.b2 = new Vector(0, 0);
 
         this.idleTimeout = 0;
+        this.light = null;
     }
 
     createAnimations() {
@@ -108,40 +134,12 @@ class Sock extends CTRGameObject {
         }*/
     }
 
-    /**
-     * @param {number} delta
-     */
-    update(delta) {
+    update(delta: number) {
         super.update(delta);
         if (this.mover) {
             this.updateRotation();
         }
     }
 }
-
-/**
- * @enum {number}
- */
-Sock.Quads = {
-    IMG_OBJ_SOCKS_hat_01: 0,
-    IMG_OBJ_SOCKS_hat_02: 1,
-    IMG_OBJ_SOCKS_glow_start: 2,
-    IMG_OBJ_SOCKS_level: 3,
-    IMG_OBJ_SOCKS_glow_end: 4,
-};
-
-/**
- * @enum {number}
- */
-Sock.StateType = {
-    RECEIVING: 0,
-    THROWING: 1,
-    IDLE: 2,
-};
-
-/**
- * @const {number}
- */
-Sock.IDLE_TIMEOUT = 0.8;
 
 export default Sock;
