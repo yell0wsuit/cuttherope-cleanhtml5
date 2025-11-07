@@ -41,7 +41,7 @@ const toResourceId = (
         return value;
     }
 
-    const resolved = ResourceId[value];
+    const resolved = ResourceId[value as keyof typeof ResourceId];
     return typeof resolved === "number" ? resolved : null;
 };
 
