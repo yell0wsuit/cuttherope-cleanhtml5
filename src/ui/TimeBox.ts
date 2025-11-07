@@ -44,39 +44,27 @@ const BoxKeySeeds = [9240, 7453, 3646, 7305, 5093, 3829];
 const LOCK_KEY_PREFIX = String.fromCharCode(98, 107); // prefix is 'bk'
 const XOR_VALUE = ScoreManager.getXorValue();
 
-/**
- * @param {number} boxIndex
- * @returns {string}
- */
-const getLockKey = function (boxIndex) {
-    return LOCK_KEY_PREFIX + (BoxKeySeeds[boxIndex] ^ XOR_VALUE);
+const getLockKey = (boxIndex: number): string => {
+    return LOCK_KEY_PREFIX + ((BoxKeySeeds[boxIndex] ?? 0) ^ XOR_VALUE);
 };
 
-/**
- * @param {number} boxIndex
- * @returns {boolean}
- */
-const isLocked = function (boxIndex) {
+const isLocked = (boxIndex: number): boolean => {
     const key = getLockKey(boxIndex);
     const value = SettingStorage.getIntOrDefault(key, 0);
-    const correctValue = (BoxKeySeeds[boxIndex] - 1000) ^ XOR_VALUE;
+    const correctValue = ((BoxKeySeeds[boxIndex] ?? 0) - 1000) ^ XOR_VALUE;
 
     return value !== correctValue && !QueryStrings.unlockAllBoxes;
 };
 
-/**
- * @param {number} boxIndex
- */
-const unlockBox = function (boxIndex) {
+const unlockBox = (boxIndex: number): void => {
     const key = getLockKey(boxIndex);
-    const value = (BoxKeySeeds[boxIndex] - 1000) ^ XOR_VALUE;
+    const value = ((BoxKeySeeds[boxIndex] ?? 0) - 1000) ^ XOR_VALUE;
 
     SettingStorage.set(key, value);
 };
 
-/** @type {HTMLElement | null} */
-let enterCodeButton = null;
-document.addEventListener("DOMContentLoaded", function () {
+let enterCodeButton: HTMLElement | null = null;
+document.addEventListener("DOMContentLoaded", () => {
     enterCodeButton = document.getElementById("boxEnterCodeButton");
     if (enterCodeButton) {
         enterCodeButton.style.display = "none";
@@ -84,14 +72,10 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // cache text images shared between boxes
-/** @type {HTMLImageElement | null} */
-let availableTextImg = null;
-/** @type {HTMLImageElement | null} */
-let collectTextImg = null;
-/** @type {HTMLImageElement | null} */
-let toUnlockTextImg = null;
-/** @type {HTMLImageElement | null} */
-let bkCodeTextImg = null;
+let availableTextImg: HTMLImageElement | null = null;
+let collectTextImg: HTMLImageElement | null = null;
+let toUnlockTextImg: HTMLImageElement | null = null;
+let bkCodeTextImg: HTMLImageElement | null = null;
 
 const MonthNames = [
     "January",
@@ -109,28 +93,35 @@ const MonthNames = [
 ];
 
 class TimeBox extends Box {
-    /**
-     * @param {number} boxIndex
-     * @param {string | null} bgimg
-     * @param {number} reqstars
-     * @param {boolean} islocked
-     * @param {string} type
-     */
-    constructor(boxIndex, bgimg, reqstars, islocked, type) {
+    lockedBoxImg: HTMLImageElement;
+    isBkCodeLocked: boolean;
+    isTimeLocked: boolean;
+    dateImg: HTMLImageElement | null;
+
+    static unlockBox = unlockBox;
+    static isLocked = isLocked;
+
+    constructor(
+        boxIndex: number,
+        bgimg: string | null,
+        reqstars: number,
+        islocked: boolean,
+        type: string
+    ) {
         super(boxIndex, bgimg, reqstars, islocked, type);
         this.lockedBoxImg = new Image();
         this.lockedBoxImg.src = this.boxImg.src.replace(".png", "_locked.png");
         this.isBkCodeLocked = isLocked(boxIndex);
         this.isTimeLocked =
-            QueryStrings.unlockAllBoxes !== true && Date.now() < BoxOpenDates[boxIndex];
+            QueryStrings.unlockAllBoxes !== true && Date.now() < (BoxOpenDates[boxIndex] ?? 0);
         this.dateImg = null;
     }
 
-    isClickable() {
+    isClickable = (): boolean => {
         return !this.isTimeLocked && !this.isBkCodeLocked;
-    }
+    };
 
-    onSelected() {
+    onSelected = (): void => {
         if (!this.isTimeLocked && this.isBkCodeLocked && enterCodeButton) {
             enterCodeButton.style.removeProperty("display");
             const computedDisplay = window.getComputedStyle(enterCodeButton).display;
@@ -142,20 +133,16 @@ class TimeBox extends Box {
             enterCodeButton.getBoundingClientRect(); // force reflow
             enterCodeButton.style.opacity = "1";
         }
-    }
+    };
 
-    onUnselected() {
+    onUnselected = (): void => {
         if (enterCodeButton) {
             enterCodeButton.style.display = "none";
             enterCodeButton.style.transition = "";
         }
-    }
+    };
 
-    /**
-     * @param {CanvasRenderingContext2D} ctx
-     * @param {number} omnomoffset
-     */
-    render(ctx, omnomoffset) {
+    render = (ctx: CanvasRenderingContext2D, omnomoffset: number | null): void => {
         const locked = this.islocked || this.isTimeLocked || this.isBkCodeLocked;
 
         // draw the base box image
@@ -189,7 +176,7 @@ class TimeBox extends Box {
             // draw date the box will open
             if (!this.dateImg) {
                 this.dateImg = new Image();
-                const openDate = new Date(BoxOpenDates[this.index]);
+                const openDate = new Date(BoxOpenDates[this.index] ?? 0);
                 Text.drawBig({
                     text: `${MonthNames[openDate.getMonth()]} ${openDate.getDate()}`,
                     img: this.dateImg,
@@ -250,21 +237,25 @@ class TimeBox extends Box {
             }
 
             // prefer css dimensions (scaled) for text
-            const reqImgWidth = this.reqImg ? this.reqImg.offsetWidth || this.reqImg.width || 0 : 0,
-                reqImgHeight = this.reqImg
-                    ? this.reqImg.offsetHeight || this.reqImg.height || 0
-                    : 0,
-                textWidth = reqImgWidth * 1.2,
-                textHeight = reqImgHeight * 1.2,
-                // ok to use raw image width for star (image already scaled)
-                starWidth = this.starImg ? this.starImg.offsetWidth || this.starImg.width || 0 : 0,
-                starMargin = resolution.uiScaledNumber(-4),
-                // center the text and star label
-                labelWidth = textWidth + starMargin + starWidth,
-                labelMaxWidth = resolution.uiScaledNumber(125),
-                labelOffsetX = (labelMaxWidth - labelWidth) / 2,
-                labelMinX = resolution.uiScaledNumber(140),
-                labelX = labelMinX + labelOffsetX;
+            const reqImgWidth = this.reqImg
+                ? this.reqImg.offsetWidth || this.reqImg.width || 0
+                : 0;
+            const reqImgHeight = this.reqImg
+                ? this.reqImg.offsetHeight || this.reqImg.height || 0
+                : 0;
+            const textWidth = reqImgWidth * 1.2;
+            const textHeight = reqImgHeight * 1.2;
+            // ok to use raw image width for star (image already scaled)
+            const starWidth = this.starImg
+                ? this.starImg.offsetWidth || this.starImg.width || 0
+                : 0;
+            const starMargin = resolution.uiScaledNumber(-4);
+            // center the text and star label
+            const labelWidth = textWidth + starMargin + starWidth;
+            const labelMaxWidth = resolution.uiScaledNumber(125);
+            const labelOffsetX = (labelMaxWidth - labelWidth) / 2;
+            const labelMinX = resolution.uiScaledNumber(140);
+            const labelX = labelMinX + labelOffsetX;
 
             ctx.drawImage(this.starImg, labelX, resolution.uiScaledNumber(160));
             ctx.drawImage(
@@ -292,10 +283,7 @@ class TimeBox extends Box {
                 );
             }
         }
-    }
+    };
 }
-
-TimeBox.unlockBox = unlockBox;
-TimeBox.isLocked = isLocked;
 
 export default TimeBox;
