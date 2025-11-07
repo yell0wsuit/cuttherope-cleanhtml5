@@ -121,8 +121,8 @@ class TileMap extends BaseElement {
     }
 
     updateVars() {
-        this.maxColsOnScreen = 2 + ~~(this.cameraViewWidth / (this.tileWidth + 1));
-        this.maxRowsOnScreen = 2 + ~~(this.cameraViewHeight / (this.tileHeight + 1));
+        this.maxColsOnScreen = 2 + Math.trunc(this.cameraViewWidth / (this.tileWidth + 1));
+        this.maxRowsOnScreen = 2 + Math.trunc(this.cameraViewHeight / (this.tileHeight + 1));
 
         if (this.repeatedVertically === TileMap.RepeatType.NONE) {
             this.maxRowsOnScreen = Math.min(this.maxRowsOnScreen, this.rows);
@@ -175,7 +175,7 @@ class TileMap extends BaseElement {
 
         if (this.repeatedVertically !== TileMap.RepeatType.NONE) {
             const ys = tileMapStartY - my;
-            a = ~~ys % this.tileMapHeight;
+            a = Math.trunc(ys) % this.tileMapHeight;
             if (ys < 0) {
                 tileMapStartY = a + my;
             } else {
@@ -185,7 +185,7 @@ class TileMap extends BaseElement {
 
         if (this.repeatedHorizontally !== TileMap.RepeatType.NONE) {
             const xs = tileMapStartX - mx;
-            a = ~~xs % this.tileMapWidth;
+            a = Math.trunc(xs) % this.tileMapWidth;
             if (xs < 0) {
                 tileMapStartX = a + mx;
             } else {
@@ -226,8 +226,8 @@ class TileMap extends BaseElement {
         );
 
         const startPos = new Vector(
-            ~~(~~checkPoint.x / this.tileWidth),
-            ~~(~~checkPoint.y / this.tileHeight)
+            Math.trunc(Math.trunc(checkPoint.x) / this.tileWidth),
+            Math.trunc(Math.trunc(checkPoint.y) / this.tileHeight)
         );
 
         const highestQuadY = tileMapStartY + startPos.y * this.tileHeight;
@@ -302,12 +302,12 @@ class TileMap extends BaseElement {
 
                 if (this.horizontalRandom) {
                     v = Math.sin(currentQuadPos.x) * this.randomSeed;
-                    ri = Math.abs(~~v % this.columns);
+                    ri = Math.abs(Math.trunc(v) % this.columns);
                 }
 
                 if (this.verticalRandom) {
                     v = Math.sin(currentQuadPos.y) * this.randomSeed;
-                    rj = Math.abs(~~v % this.rows);
+                    rj = Math.abs(Math.trunc(v) % this.rows);
                 }
 
                 if (ri >= this.columns) {

@@ -146,8 +146,8 @@ class BaseElement {
 
         // apply transformations
         if (changeScale || changeRotation) {
-            const rotationOffsetX = ~~(this.drawX + this.width / 2 + this.rotationCenterX);
-            const rotationOffsetY = ~~(this.drawY + this.height / 2 + this.rotationCenterY);
+            const rotationOffsetX = Math.trunc(this.drawX + this.width / 2 + this.rotationCenterX);
+            const rotationOffsetY = Math.trunc(this.drawY + this.height / 2 + this.rotationCenterY);
             const translatedRotation = rotationOffsetX !== 0 || rotationOffsetY !== 0;
 
             // move to the right position in the canvas before changes
