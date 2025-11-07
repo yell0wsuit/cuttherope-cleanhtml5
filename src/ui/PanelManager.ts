@@ -1,6 +1,8 @@
 import PanelId from "@/ui/PanelId";
 import Panel from "@/ui/Panel";
+// @ts-ignore - migrate BoxPanel later
 import BoxPanel from "@/ui/BoxPanel";
+// @ts-ignore - migrate LevelPanel laters
 import LevelPanel from "@/ui/LevelPanel";
 import resolution from "@/resolution";
 import platform from "@/config/platforms/platform-web";
@@ -8,7 +10,34 @@ import Easing from "@/ui/Easing";
 import PubSub from "@/utils/PubSub";
 import edition from "@/config/editions/net-edition";
 
+type PanelIdType = (typeof PanelId)[keyof typeof PanelId];
+
 class PanelManager {
+    // Panel list
+    panels: Panel[];
+
+    // Fade properties
+    fadeInDur: number;
+    fadePause: number;
+    fadeOutDur: number;
+    fadeTo: number;
+    fadeToBlack: HTMLElement | null;
+    isFading: boolean;
+
+    // Shadow properties
+    shadowIsRotating: boolean;
+    shadowAngle: number;
+    shadowCanvas: HTMLCanvasElement | null;
+    shadowImage: HTMLImageElement | null;
+    shadowOpacity: number;
+    shadowIsVisible: boolean;
+    shadowSpeedup: number;
+    shadowPanelElement: HTMLElement | null;
+
+    // Panel state
+    currentPanelId: PanelIdType;
+    onShowPanel: ((panelId: PanelIdType) => void) | null;
+
     constructor() {
         // panel list
         this.panels = [
@@ -59,14 +88,14 @@ class PanelManager {
     }
 
     /** Find a panel by its ID */
-    getPanelById(panelId) {
+    getPanelById(panelId: PanelIdType): Panel | null {
         return this.panels.find((p) => p.id === panelId) ?? null;
     }
 
     /** Prepare DOM references */
-    domReady() {
+    domReady(): void {
         this.fadeToBlack = document.getElementById("fadeToBlack");
-        this.shadowCanvas = document.getElementById("shadowCanvas");
+        this.shadowCanvas = document.getElementById("shadowCanvas") as HTMLCanvasElement | null;
         this.shadowPanelElement = document.getElementById("shadowPanel");
 
         if (this.shadowCanvas) {
@@ -76,13 +105,13 @@ class PanelManager {
     }
 
     /** Initialize when app is ready */
-    appReady(onInitializePanel) {
+    appReady(onInitializePanel?: (panelId: PanelIdType) => void): void {
         this.shadowImage = new Image();
         this.shadowImage.src = `${platform.uiImageBaseUrl}shadow.png`;
 
         if (onInitializePanel) {
             for (const panel of this.panels) {
-                onInitializePanel(panel.id);
+                onInitializePanel(panel.id as PanelIdType);
             }
         }
     }
@@ -91,15 +120,17 @@ class PanelManager {
     // Shadow handling
     // =====================
 
-    showShadow() {
+    showShadow(): void {
         if (this.shadowIsVisible) return;
 
-        const ctx = this.shadowCanvas?.getContext("2d");
-        if (ctx) {
-            ctx.save();
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.clearRect(0, 0, this.shadowCanvas.width, this.shadowCanvas.height);
-            ctx.restore();
+        if (this.shadowCanvas) {
+            const ctx = this.shadowCanvas.getContext("2d");
+            if (ctx) {
+                ctx.save();
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.clearRect(0, 0, this.shadowCanvas.width, this.shadowCanvas.height);
+                ctx.restore();
+            }
         }
 
         this.shadowOpacity = 0.0;
@@ -112,7 +143,7 @@ class PanelManager {
         if (!this.shadowIsRotating) this.beginRotateShadow();
     }
 
-    hideShadow() {
+    hideShadow(): void {
         this.shadowIsVisible = false;
         this.shadowIsRotating = false;
         if (this.shadowPanelElement) {
@@ -120,15 +151,17 @@ class PanelManager {
         }
     }
 
-    beginRotateShadow() {
-        if (!this.shadowCanvas) return;
+    beginRotateShadow(): void {
+        if (!this.shadowCanvas || !this.shadowImage) return;
 
         const ctx = this.shadowCanvas.getContext("2d");
+        if (!ctx) return;
+
         const raf = window.requestAnimationFrame;
         let lastRotateTime = Date.now();
 
         const renderShadow = () => {
-            if (!this.shadowIsRotating) return;
+            if (!this.shadowIsRotating || !this.shadowCanvas || !this.shadowImage || !ctx) return;
 
             const now = Date.now();
             const delta = now - lastRotateTime;
@@ -165,7 +198,7 @@ class PanelManager {
     // Fade transitions
     // =====================
 
-    runBlackFadeIn(callback) {
+    runBlackFadeIn(callback?: () => void): void {
         const startTime = Date.now();
         if (!this.fadeToBlack) {
             callback?.();
@@ -177,6 +210,8 @@ class PanelManager {
         this.fadeToBlack.style.display = "block";
 
         const loop = () => {
+            if (!this.fadeToBlack) return;
+
             const diff = Date.now() - startTime;
             const v = Easing.noEase(diff, 0, this.fadeTo, this.fadeInDur);
             this.fadeToBlack.style.opacity = String(v);
@@ -184,7 +219,9 @@ class PanelManager {
             if (diff < this.fadeInDur) {
                 window.requestAnimationFrame(loop);
             } else {
-                this.fadeToBlack.style.opacity = String(this.fadeTo);
+                if (this.fadeToBlack) {
+                    this.fadeToBlack.style.opacity = String(this.fadeTo);
+                }
                 callback?.();
             }
         };
@@ -192,11 +229,13 @@ class PanelManager {
         window.requestAnimationFrame(loop);
     }
 
-    runBlackFadeOut() {
+    runBlackFadeOut(): void {
         if (!this.isFading || !this.fadeToBlack) return;
 
         const startTime = Date.now();
         const loop = () => {
+            if (!this.fadeToBlack) return;
+
             const diff = Date.now() - startTime;
             const v = this.fadeTo - Easing.noEase(diff, 0, this.fadeTo, this.fadeInDur);
             this.fadeToBlack.style.opacity = String(v);
@@ -204,8 +243,10 @@ class PanelManager {
             if (diff < this.fadeInDur) {
                 window.requestAnimationFrame(loop);
             } else {
-                this.fadeToBlack.style.opacity = "0";
-                this.fadeToBlack.style.display = "none";
+                if (this.fadeToBlack) {
+                    this.fadeToBlack.style.opacity = "0";
+                    this.fadeToBlack.style.display = "none";
+                }
                 this.isFading = false;
             }
         };
@@ -217,7 +258,7 @@ class PanelManager {
     // Panel switching
     // =====================
 
-    showPanel(panelId, skipFade = false) {
+    showPanel(panelId: PanelIdType, skipFade = false): void {
         this.currentPanelId = panelId;
         const panel = this.getPanelById(panelId);
         if (!panel) return;

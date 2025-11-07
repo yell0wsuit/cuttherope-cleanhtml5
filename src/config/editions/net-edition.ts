@@ -48,6 +48,7 @@ const toResourceId = (
 class NetEdition {
     private _cachedNormalizedMetadata: BoxMetadata[] | null = null;
 
+    shadowSpeedup?: number = 1;
     siteUrl = "http://www.cuttherope.net";
     disableHiddenDrawings = true;
     languages: number[] = [
