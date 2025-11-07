@@ -4,7 +4,6 @@ import Alignment from "@/core/Alignment";
 import ImageMultiDrawer from "@/visual/ImageMultiDrawer";
 import Canvas from "@/utils/Canvas";
 import ResourceId from "@/resources/ResourceId";
-//@ts-ignore migrate ResourceMgr to TS later
 import ResourceMgr from "@/resources/ResourceMgr";
 import resolution from "@/resolution";
 import MathHelper from "@/utils/MathHelper";
@@ -293,10 +292,14 @@ class Text extends BaseElement {
         }
     }
 
+    /*
     createFromXml(xml: XmlElement): Text {
-        const resId = xml.attrInt("font"),
-            font = ResourceMgr.getFont(resId),
-            element = new Text(font);
+        const resId = xml.attrInt("font");
+        const font = ResourceMgr.getFont(resId);
+        if (!font) {
+            throw new Error(`Font resource ${resId} not found`);
+        }
+        const element = new Text(font);
 
         if (xml.hasAttribute("align")) {
             element.align = Alignment.parse(xml.attr("align"));
@@ -304,7 +307,8 @@ class Text extends BaseElement {
 
         if (xml.hasAttribute("string")) {
             const strId = xml.attrInt("string");
-            const str = ResourceMgr.getString(strId);
+            // TODO: Implement ResourceMgr.getString() when string resources are added
+            const str = String(strId);
             const strWidth = xml.hasAttribute("width")
                 ? xml.attrFloat("width")
                 : Constants.UNDEFINED;
@@ -318,6 +322,7 @@ class Text extends BaseElement {
 
         return element;
     }
+    */
 
     static drawSystem(options: DrawSystemOptions) {
         const scaleFactor = resolution.CANVAS_WIDTH / 1024;
@@ -469,6 +474,9 @@ class Text extends BaseElement {
         Canvas.setTarget(targetCanvas);
 
         const font = ResourceMgr.getFont(fontId);
+        if (!font) {
+            throw new Error(`Font resource ${fontId} not found`);
+        }
         const t = new Text(font);
         const padding = 24 * resolution.CANVAS_SCALE; // add padding to each side
 
