@@ -12,6 +12,19 @@ import Rectangle from "@/core/Rectangle";
 const IMG_OBJ_POLLEN_HD_obj_pollen = 0;
 
 class Pollen {
+    parentIndex: number;
+    x: number;
+    y: number;
+    scaleX: number;
+    startScaleX: number;
+    endScaleX: number;
+    scaleY: number;
+    startScaleY: number;
+    endScaleY: number;
+    alpha: number;
+    startAlpha: number;
+    endAlpha: number;
+
     constructor() {
         this.parentIndex = 0;
         this.x = 0;
@@ -32,26 +45,32 @@ class Pollen {
 }
 
 class PollenDrawer extends BaseElement {
+    qw: number;
+    qh: number;
+    drawer: ImageMultiDrawer;
+    pollens: Pollen[];
     constructor() {
         super();
 
         const pollen = ResourceMgr.getTexture(ResourceId.IMG_OBJ_POLLEN_HD);
+        if (!pollen) {
+            throw new Error("Failed to load pollen texture");
+        }
 
         this.qw = pollen.imageWidth;
         this.qh = pollen.imageHeight;
 
         this.drawer = new ImageMultiDrawer(pollen);
-        this.drawer.drawPosIncrement = 0.1;
 
         this.pollens = [];
     }
 
-    addPollen(v, pi) {
+    addPollen(v: Vector, pi: number) {
         const size = [0.3, 0.3, 0.5, 0.5, 0.6],
             sizeCounts = size.length;
         let sX = 1,
             sY = 1,
-            rx = size[MathHelper.randomRange(0, sizeCounts - 1)],
+            rx = size[MathHelper.randomRange(0, sizeCounts - 1)] ?? 0.5,
             ry = rx;
 
         if (MathHelper.randomBool()) {
@@ -83,17 +102,26 @@ class PollenDrawer extends BaseElement {
         pollen.startAlpha = 1;
         pollen.alpha = 0.7 * delta + 0.3;
 
-        const tquad = this.drawer.texture.rects[IMG_OBJ_POLLEN_HD_obj_pollen],
-            vquad = new Rectangle(v.x - w / 2, v.y - h / 2, w, h);
+        const tquad = this.drawer.texture.rects[IMG_OBJ_POLLEN_HD_obj_pollen];
+        if (!tquad) {
+            throw new Error("Failed to find pollen texture quad");
+        }
+        const vquad = new Rectangle(v.x - w / 2, v.y - h / 2, w, h);
 
         this.drawer.setTextureQuad(this.pollens.length, tquad, vquad, pollen.alpha);
         this.pollens.push(pollen);
     }
 
-    fillWithPollenFromPath(fromIndex, toIndex, grab) {
+    fillWithPollenFromPath(
+        fromIndex: number,
+        toIndex: number,
+        grab: { mover: { path: Vector[] } }
+    ) {
+        const v1 = grab.mover.path[fromIndex];
+        const v2 = grab.mover.path[toIndex];
+        if (!v1 || !v2) return;
+
         const MIN_DISTANCE = resolution.POLLEN_MIN_DISTANCE,
-            v1 = grab.mover.path[fromIndex],
-            v2 = grab.mover.path[toIndex],
             v = Vector.subtract(v2, v1),
             vLen = v.getLength(),
             times = ~~(vLen / MIN_DISTANCE),
@@ -110,15 +138,16 @@ class PollenDrawer extends BaseElement {
         }
     }
 
-    update(delta) {
+    update(delta: number) {
         super.update(delta);
         this.drawer.update(delta);
 
         const len = this.pollens.length;
-        let i, pollen, temp, w, h, moveResult, a;
+        let i, pollen: Pollen | undefined, temp, w, h, moveResult;
 
         for (i = 0; i < len; i++) {
             pollen = this.pollens[i];
+            if (!pollen) continue;
 
             // increment the scale
             moveResult = Mover.moveToTargetWithStatus(pollen.scaleX, pollen.endScaleX, 1, delta);
