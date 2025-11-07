@@ -12,12 +12,10 @@ import { IS_XMAS } from "@/resources/ResData";
 // Helper function to get the default box index based on holiday period
 // During Christmas season (Dec/Jan), default to Holiday Gift Box (index 0)
 // Otherwise, default to Cardboard Box (index 1)
-const getDefaultBoxIndex = function () {
-    return IS_XMAS ? 0 : 1;
-};
+const getDefaultBoxIndex = () => (IS_XMAS ? 0 : 1);
 
-const ensureVideoElement = function () {
-    let vid = document.getElementById("vid");
+const ensureVideoElement = (): HTMLVideoElement | null => {
+    let vid = document.getElementById("vid") as HTMLVideoElement | null;
     if (!vid) {
         try {
             vid = document.createElement("video");
@@ -27,19 +25,19 @@ const ensureVideoElement = function () {
         }
         vid.id = "vid";
         vid.className = "ctrPointer";
-        document.getElementById("video").appendChild(vid);
+        document.getElementById("video")?.appendChild(vid);
     }
     return vid;
 };
 
-const fadeIn = function (element, duration, callback) {
-    element.style.opacity = 0;
+const fadeIn = (element: HTMLElement, duration: number, callback?: () => void) => {
+    element.style.opacity = "0";
     element.style.display = "block";
-    let start = null;
-    const animate = (timestamp) => {
+    let start: number | null = null;
+    const animate = (timestamp: number) => {
         if (!start) start = timestamp;
         const progress = timestamp - start;
-        element.style.opacity = Math.min(progress / duration, 1);
+        element.style.opacity = String(Math.min(progress / duration, 1));
         if (progress < duration) {
             requestAnimationFrame(animate);
         } else if (callback) {
@@ -49,13 +47,13 @@ const fadeIn = function (element, duration, callback) {
     requestAnimationFrame(animate);
 };
 
-const fadeOut = function (element, duration, callback) {
-    element.style.opacity = 1;
-    let start = null;
-    const animate = (timestamp) => {
+const fadeOut = (element: HTMLElement, duration: number, callback?: () => void) => {
+    element.style.opacity = "1";
+    let start: number | null = null;
+    const animate = (timestamp: number) => {
         if (!start) start = timestamp;
         const progress = timestamp - start;
-        element.style.opacity = Math.max(1 - progress / duration, 0);
+        element.style.opacity = String(Math.max(1 - progress / duration, 0));
         if (progress < duration) {
             requestAnimationFrame(animate);
         } else {
@@ -68,18 +66,18 @@ const fadeOut = function (element, duration, callback) {
     requestAnimationFrame(animate);
 };
 
-let closeIntroCallback = null;
+class VideoManager {
+    private closeIntroCallback: (() => void) | null = null;
 
-const VideoManager = {
-    loadIntroVideo() {
+    loadIntroVideo = () => {
         // only load the video if the first level hasn't been played
         const defaultBoxIndex = getDefaultBoxIndex();
         const firstLevelStars = ScoreManager.getStars(defaultBoxIndex, 0) || 0;
         if (firstLevelStars === 0) {
-            const vid = ensureVideoElement(),
-                size = resolution.VIDEO_WIDTH,
-                extension = platform.getVideoExtension(),
-                baseUrl = platform.videoBaseUrl;
+            const vid = ensureVideoElement();
+            const size = resolution.VIDEO_WIDTH;
+            const extension = platform.getVideoExtension();
+            const baseUrl = platform.videoBaseUrl;
             if (vid != null && extension != null) {
                 try {
                     vid.src = `${baseUrl}intro_${size}${extension}`;
@@ -89,34 +87,34 @@ const VideoManager = {
                 }
             }
         }
-    },
+    };
 
-    removeIntroVideo() {
+    removeIntroVideo = () => {
         // we want to remove the video element to free up resources
         // as suggested by the IE team
         const defaultBoxIndex = getDefaultBoxIndex();
         const firstLevelStars = ScoreManager.getStars(defaultBoxIndex, 0) || 0;
         if (firstLevelStars > 0) {
-            const vid = document.getElementById("vid");
+            const vid = document.getElementById("vid") as HTMLVideoElement | null;
             if (vid) {
                 vid.remove();
             }
         }
-    },
+    };
 
-    playIntroVideo(callback) {
+    playIntroVideo = (callback: () => void) => {
         // always show the intro video if the 1st level hasn't been played
         const defaultBoxIndex = getDefaultBoxIndex();
-        const firstLevelStars = ScoreManager.getStars(defaultBoxIndex, 0) || 0,
-            // the video might not exist if the user just reset the game
-            // (we don't want to replay it during the same app session)
-            vid = document.getElementById("vid");
+        const firstLevelStars = ScoreManager.getStars(defaultBoxIndex, 0) || 0;
+        // the video might not exist if the user just reset the game
+        // (we don't want to replay it during the same app session)
+        const vid = document.getElementById("vid") as HTMLVideoElement | null;
 
-        closeIntroCallback = callback;
+        this.closeIntroCallback = callback;
 
         if (firstLevelStars === 0 && vid) {
             // make sure we can play the video
-            const readyState = vid["readyState"];
+            const readyState = vid.readyState;
             if (
                 readyState === 2 || // HAVE_CURRENT_DATA (loadeddata)
                 readyState === 3 || // HAVE_FUTURE_DATA  (canplay)
@@ -125,41 +123,41 @@ const VideoManager = {
                 // HAVE_ENOUGH_DATA  (canplaythrough)
 
                 SoundMgr.pauseMusic();
-                fadeIn(vid, 300, function () {
+                fadeIn(vid, 300, () => {
                     vid.play();
                 });
-                vid.addEventListener("ended", VideoManager.closeIntroVideo);
-                vid.addEventListener("mousedown", VideoManager.closeIntroVideo);
+                vid.addEventListener("ended", this.closeIntroVideo);
+                vid.addEventListener("mousedown", this.closeIntroVideo);
                 return;
             }
         }
 
-        VideoManager.closeIntroVideo();
-    },
+        this.closeIntroVideo();
+    };
 
-    closeIntroVideo() {
-        const vid = document.getElementById("vid");
+    closeIntroVideo = () => {
+        const vid = document.getElementById("vid") as HTMLVideoElement | null;
         if (vid) {
-            fadeOut(vid, 500, function () {
+            fadeOut(vid, 500, () => {
                 vid.pause();
                 vid.currentTime = 0;
             });
         }
 
-        if (closeIntroCallback) {
-            closeIntroCallback();
+        if (this.closeIntroCallback) {
+            this.closeIntroCallback();
         }
-    },
+    };
 
-    loadOutroVideo() {
+    loadOutroVideo = () => {
         // we can re-use the same video element used for the intro
         // because we only show the intro video once per session.
 
         // get the size and supported format extension
-        const vid = ensureVideoElement(),
-            size = resolution.VIDEO_WIDTH,
-            extension = platform.getVideoExtension(),
-            baseUrl = platform.videoBaseUrl;
+        const vid = ensureVideoElement();
+        const size = resolution.VIDEO_WIDTH;
+        const extension = platform.getVideoExtension();
+        const baseUrl = platform.videoBaseUrl;
 
         // start loading the video
         if (vid != null && extension != null) {
@@ -170,13 +168,13 @@ const VideoManager = {
                 // loading the video sometimes causes an exception on win8
             }
         }
-    },
+    };
 
-    playOutroVideo() {
-        const vid = document.getElementById("vid");
+    playOutroVideo = () => {
+        const vid = document.getElementById("vid") as HTMLVideoElement | null;
         if (vid) {
             // make sure we can play the video
-            const readyState = vid["readyState"];
+            const readyState = vid.readyState;
             if (
                 readyState === 2 || // HAVE_CURRENT_DATA (loadeddata)
                 readyState === 3 || // HAVE_FUTURE_DATA  (canplay)
@@ -188,38 +186,40 @@ const VideoManager = {
                 if (!SoundMgr.musicEnabled) {
                     vid.volume = 0;
                 }
-                fadeIn(vid, 300, function () {
+                fadeIn(vid, 300, () => {
                     vid.play();
                 });
-                vid.addEventListener("ended", VideoManager.closeOutroVideo);
-                vid.addEventListener("mousedown", VideoManager.closeOutroVideo);
+                vid.addEventListener("ended", this.closeOutroVideo);
+                vid.addEventListener("mousedown", this.closeOutroVideo);
             } else {
                 vid.remove();
                 panelManager.showPanel(PanelId.GAMECOMPLETE, false);
             }
         }
-    },
+    };
 
-    closeOutroVideo() {
+    closeOutroVideo = () => {
         panelManager.showPanel(PanelId.GAMECOMPLETE, true);
-        const vid = document.getElementById("vid");
+        const vid = document.getElementById("vid") as HTMLVideoElement | null;
         if (vid) {
-            fadeOut(vid, 500, function () {
+            fadeOut(vid, 500, () => {
                 vid.pause();
                 vid.currentTime = 0;
                 vid.remove();
             });
         }
-    },
+    };
 
-    domReady() {
+    domReady = () => {
         this.loadIntroVideo();
-    },
-};
+    };
+}
+
+const videoManager = new VideoManager();
 
 // reload the intro video when the game progress is cleared
-PubSub.subscribe(PubSub.ChannelId.LoadIntroVideo, function () {
-    VideoManager.loadIntroVideo();
+PubSub.subscribe(PubSub.ChannelId.LoadIntroVideo, () => {
+    videoManager.loadIntroVideo();
 });
 
-export default VideoManager;
+export default videoManager;
