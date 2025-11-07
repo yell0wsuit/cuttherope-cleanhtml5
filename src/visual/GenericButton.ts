@@ -3,26 +3,40 @@ import ImageElement from "@/visual/ImageElement";
 import Rectangle from "@/core/Rectangle";
 import Constants from "@/utils/Constants";
 import Alignment from "@/core/Alignment";
+import type Texture2D from "@/core/Texture2D";
+
 const TOUCH_MOVE_AND_UP_ZONE_INCREASE = 15;
 
+const StateType = {
+    UP: 0,
+    DOWN: 1,
+} as const;
+
+type StateNumType = (typeof StateType)[keyof typeof StateType];
+
 class GenericButton extends BaseElement {
-    /**
-     * @param {number} id
-     */
-    constructor(id) {
+    static readonly StateType = StateType;
+
+    buttonId: number;
+    state: StateNumType;
+    touchLeftInc: number;
+    touchRightInc: number;
+    touchTopInc: number;
+    touchBottomInc: number;
+    onButtonPressed: ((buttonId: number) => void) | null;
+    forcedTouchZone: Rectangle;
+
+    constructor(id: number) {
         super();
 
         this.buttonId = id;
-        this.state = GenericButton.StateType.UP;
+        this.state = StateType.UP;
 
         this.touchLeftInc = 0.0;
         this.touchRightInc = 0.0;
         this.touchTopInc = 0.0;
         this.touchBottomInc = 0.0;
 
-        /**
-         * @type {((n: number) => void) | null}
-         */
         this.onButtonPressed = null;
 
         this.forcedTouchZone = new Rectangle(
@@ -33,22 +47,14 @@ class GenericButton extends BaseElement {
         );
     }
 
-    /**
-     * @param {ImageElement} up
-     * @param {ImageElement} down
-     */
-    initWithElements(up, down) {
+    initWithElements(up: ImageElement, down: ImageElement): void {
         up.parentAnchor = down.parentAnchor = Alignment.TOP | Alignment.LEFT;
         this.addChildWithID(up, GenericButton.StateType.UP);
         this.addChildWithID(down, GenericButton.StateType.DOWN);
         this.setState(GenericButton.StateType.UP);
     }
 
-    /**
-     * @param {Texture2D} upTexture
-     * @param {Texture2D} downTexture
-     */
-    initWithTextures(upTexture, downTexture) {
+    initWithTextures(upTexture: Texture2D, downTexture: Texture2D): void {
         const up = new ImageElement();
         up.initTexture(upTexture);
 
@@ -58,44 +64,31 @@ class GenericButton extends BaseElement {
         this.initWithElements(up, down);
     }
 
-    /**
-     * @param {Rectangle} rect
-     */
-    forceTouchRect(rect) {
+    forceTouchRect(rect: Rectangle): void {
         this.forcedTouchZone = rect;
     }
 
-    /**
-     * @param {number} left
-     * @param {number} right
-     * @param {number} top
-     * @param {number} bottom
-     */
-    setTouchIncrease(left, right, top, bottom) {
+    setTouchIncrease(left: number, right: number, top: number, bottom: number): void {
         this.touchLeftInc = left;
         this.touchRightInc = right;
         this.touchTopInc = top;
         this.touchBottomInc = bottom;
     }
 
-    /**
-     * @param {number} s
-     */
-    setState(s) {
+    setState(s: StateNumType): void {
         this.state = s;
-        const up = this.getChild(GenericButton.StateType.UP),
-            down = this.getChild(GenericButton.StateType.DOWN);
+        const up = this.getChild(GenericButton.StateType.UP);
+        const down = this.getChild(GenericButton.StateType.DOWN);
+
+        if (!up || !down) {
+            throw new Error("Button elements not initialized");
+        }
 
         up.setEnabled(s === GenericButton.StateType.UP);
         down.setEnabled(s === GenericButton.StateType.DOWN);
     }
 
-    /**
-     * @param {number} tx
-     * @param {number} ty
-     * @param {boolean} td
-     */
-    isInTouchZone(tx, ty, td) {
+    isInTouchZone(tx: number, ty: number, td: boolean): boolean {
         const tzIncrease = td ? 0 : TOUCH_MOVE_AND_UP_ZONE_INCREASE;
 
         if (this.forcedTouchZone.w !== Constants.UNDEFINED) {
@@ -119,11 +112,7 @@ class GenericButton extends BaseElement {
         }
     }
 
-    /**
-     * @param {number} tx
-     * @param {number} ty
-     */
-    onTouchDown(tx, ty) {
+    onTouchDown(tx: number, ty: number): boolean {
         super.onTouchDown(tx, ty);
 
         if (this.state === GenericButton.StateType.UP) {
@@ -136,11 +125,7 @@ class GenericButton extends BaseElement {
         return false;
     }
 
-    /**
-     * @param {number} tx
-     * @param {number} ty
-     */
-    onTouchUp(tx, ty) {
+    onTouchUp(tx: number, ty: number): boolean {
         super.onTouchUp(tx, ty);
 
         if (this.state === GenericButton.StateType.DOWN) {
@@ -156,11 +141,7 @@ class GenericButton extends BaseElement {
         return false;
     }
 
-    /**
-     * @param {number} tx
-     * @param {number} ty
-     */
-    onTouchMove(tx, ty) {
+    onTouchMove(tx: number, ty: number): boolean {
         super.onTouchMove(tx, ty);
 
         if (this.state === GenericButton.StateType.DOWN) {
@@ -174,11 +155,7 @@ class GenericButton extends BaseElement {
         return false;
     }
 
-    /**
-     * @param {BaseElement} child
-     * @param {number} id
-     */
-    addChildWithID(child, id) {
+    override addChildWithID(child: BaseElement, id: number): void {
         super.addChildWithID(child, id);
 
         child.parentAnchor = Alignment.TOP | Alignment.LEFT;
@@ -190,10 +167,5 @@ class GenericButton extends BaseElement {
         }
     }
 }
-
-GenericButton.StateType = {
-    UP: 0,
-    DOWN: 1,
-};
 
 export default GenericButton;
