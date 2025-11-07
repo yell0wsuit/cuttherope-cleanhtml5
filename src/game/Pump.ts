@@ -3,6 +3,12 @@ import Vector from "@/core/Vector";
 import Radians from "@/utils/Radians";
 
 class Pump extends GameObject {
+    angle: number;
+    t1: Vector;
+    t2: Vector;
+    touchTimer: number;
+    touch: number;
+
     constructor() {
         super();
         this.angle = 0;
