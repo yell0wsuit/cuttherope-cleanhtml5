@@ -12,7 +12,7 @@ import BoxType from "@/ui/BoxType";
 import { IS_XMAS } from "@/resources/ResData";
 
 // Helper to add prefix for Holiday Gift box
-const getBoxPrefix = function (/** @type {number} */ box) {
+const getBoxPrefix = (box: number) => {
     const boxType = edition.boxTypes?.[box];
     if (boxType === BoxType.HOLIDAY) {
         return "holidaygiftbox_";
@@ -29,16 +29,18 @@ const STARS_PREFIX = String.fromCharCode(98, 115); // 'bs' (short for box-stars)
 // our XOR value is a random number that is stored in an entry that is
 // intended to look similar to the score record for a box
 const XOR_KEY = SCORE_PREFIX + String.fromCharCode(50, 51, 57, 48);
-let XOR_VALUE = SettingStorage.getIntOrDefault(XOR_KEY, null);
+let XOR_VALUE_TEMP = SettingStorage.getIntOrDefault(XOR_KEY, null);
 
 // create the random value if it doesn't exist
-if (XOR_VALUE == null) {
-    XOR_VALUE = MathHelper.randomRange(1000, 10000);
-    SettingStorage.set(XOR_KEY, XOR_VALUE);
+if (XOR_VALUE_TEMP == null) {
+    XOR_VALUE_TEMP = MathHelper.randomRange(1000, 10000);
+    SettingStorage.set(XOR_KEY, XOR_VALUE_TEMP);
 }
 
+const XOR_VALUE: number = XOR_VALUE_TEMP;
+
 // helper functions to get/set score
-const getScoreKey = function (/** @type {number} */ box, /** @type {number} */ level) {
+const getScoreKey = (box: number, level: number) => {
     const val = (box * 1000 + level) ^ XOR_VALUE;
     const key = getBoxPrefix(box) + SCORE_PREFIX + val;
 
@@ -50,11 +52,7 @@ const getScoreKey = function (/** @type {number} */ box, /** @type {number} */ l
     return key;
 };
 
-const setScore = function (
-    /** @type {number} */ box,
-    /** @type {number} */ level,
-    /** @type {number} */ points
-) {
+const setScore = (box: number, level: number, points: number) => {
     SettingStorage.set(
         getScoreKey(box, level),
         // NOTE: we intentionally swap multiplier to level (key uses box)
@@ -64,7 +62,7 @@ const setScore = function (
     RoamSettings.setScore(box, level, points);
 };
 
-const getScore = function (/** @type {number} */ box, /** @type {number} */ level) {
+const getScore = (box: number, level: number) => {
     // fetch both roaming and local scores
     const roamScore = RoamSettings.getScore(box, level) || 0;
     const localKey = getScoreKey(box, level);
@@ -76,16 +74,12 @@ const getScore = function (/** @type {number} */ box, /** @type {number} */ leve
 
 // helper functions to get/set stars
 const STARS_UNKNOWN = -1; // needs to be a number but can't be null
-const getStarsKey = function (/** @type {number} */ box, /** @type {number} */ level) {
+const getStarsKey = (box: number, level: number) => {
     // NOTE: we intentionally swap multiplier from whats used for points
     const key = (level * 1000 + box) ^ XOR_VALUE;
     return getBoxPrefix(box) + STARS_PREFIX + key;
 };
-const setStars = function (
-    /** @type {number} */ box,
-    /** @type {number} */ level,
-    /** @type {number | null} */ stars
-) {
+const setStars = (box: number, level: number, stars: number | null) => {
     const localStars = stars == null ? STARS_UNKNOWN : stars;
     SettingStorage.set(
         getStarsKey(box, level),
@@ -97,12 +91,8 @@ const setStars = function (
         RoamSettings.setStars(box, level, stars);
     }
 };
-/**
- * @param {number} box
- * @param {number} level
- * @returns {number | null}
- */
-const getStars = function (box, level) {
+
+const getStars = (box: number, level: number): number | null => {
     const roamStars = RoamSettings.getStars(box, level);
     const localKey = getStarsKey(box, level);
     const localVal = SettingStorage.getIntOrDefault(localKey, null);
@@ -117,7 +107,7 @@ const getStars = function (box, level) {
     return Math.max(roamStars, localStars);
 };
 
-const resetLevel = function (/** @type {number} */ boxIndex, /** @type {number} */ levelIndex) {
+const resetLevel = (boxIndex: number, levelIndex: number) => {
     // first level gets 0 stars, otherwise null
     const stars = levelIndex === 0 ? 0 : null;
 
@@ -126,13 +116,17 @@ const resetLevel = function (/** @type {number} */ boxIndex, /** @type {number} 
 };
 
 class ScoreBox {
-    /**
-     * @param {number} levelCount
-     * @param {number} requiredStars
-     * @param {number[]} scores
-     * @param {(number | null)[]} stars
-     */
-    constructor(levelCount, requiredStars, scores, stars) {
+    levelCount: number;
+    requiredStars: number;
+    scores: number[];
+    stars: (number | null)[];
+
+    constructor(
+        levelCount: number,
+        requiredStars: number,
+        scores: number[],
+        stars: (number | null)[]
+    ) {
         this.levelCount = levelCount;
         this.requiredStars = requiredStars;
         this.scores = scores || [];
@@ -141,10 +135,9 @@ class ScoreBox {
 }
 
 class ScoreManager {
+    boxes: ScoreBox[];
+    appReady: boolean;
     constructor() {
-        /**
-         * @type {ScoreBox[]}
-         */
         this.boxes = [];
         this.appReady = false;
 
@@ -163,11 +156,11 @@ class ScoreManager {
      * @param {number} boxIndex
      * @returns {ScoreBox}
      */
-    loadBox(boxIndex) {
+    loadBox(boxIndex: number): ScoreBox {
         // see if the box exists by checking for a level 1 star record
         const boxExists = getStars(boxIndex, 0) !== null;
-        const levelCount = edition.boxes[boxIndex].levels.length;
-        const requiredStars = edition.unlockStars[boxIndex];
+        const levelCount = edition.boxes[boxIndex]?.levels.length ?? 0;
+        const requiredStars = edition.unlockStars[boxIndex] ?? 0;
         const scores = [];
         const stars = [];
 
@@ -189,12 +182,7 @@ class ScoreManager {
             }
         }
 
-        return new ScoreBox(
-            levelCount,
-            requiredStars,
-            scores,
-            stars.map((s) => (s === undefined ? null : s))
-        );
+        return new ScoreBox(levelCount, requiredStars, scores, stars);
     }
 
     load() {
@@ -213,48 +201,38 @@ class ScoreManager {
     }
 
     updateTotalScoreText() {
-        const text = Lang.menuText(MenuStringId.TOTAL_STARS).replace("%d", this.totalStars());
+        const text = Lang.menuText(MenuStringId.TOTAL_STARS).replace(
+            "%d",
+            String(this.totalStars())
+        );
         Text.drawBig({ text: text, imgSel: "#boxScore img", scaleToUI: true });
     }
 
     /**
      * Retrieve the obfuscation value used for score persistence.
-     * @returns {number}
      */
-    getXorValue() {
+    getXorValue(): number {
         return XOR_VALUE;
     }
 
-    boxCount() {
+    boxCount(): number | null {
         if (this.boxes != null) return this.boxes.length;
         return null;
     }
 
-    /**
-     * @param {number} boxIndex
-     * @returns {number | null}
-     */
-    levelCount(boxIndex) {
+    levelCount(boxIndex: number): number | null {
         const box = this.boxes[boxIndex];
         if (box != null) return box.levelCount;
         return null;
     }
 
-    /**
-     * @param {number} boxIndex
-     * @returns {number}
-     */
-    requiredStars(boxIndex) {
+    requiredStars(boxIndex: number): number {
         const box = this.boxes[boxIndex];
         if (box != null) return box.requiredStars;
         return 0;
     }
 
-    /**
-     * @param {number} boxIndex
-     * @returns {number}
-     */
-    achievedStars(boxIndex) {
+    achievedStars(boxIndex: number): number {
         const box = this.boxes[boxIndex];
         if (box != null) {
             let count = 0;
@@ -267,10 +245,7 @@ class ScoreManager {
         return 0;
     }
 
-    /**
-     * @returns {number}
-     */
-    totalStars() {
+    totalStars(): number {
         let total = 0;
         for (let i = 0; i < this.boxes.length; i++) {
             total += this.achievedStars(i);
@@ -278,11 +253,7 @@ class ScoreManager {
         return total;
     }
 
-    /**
-     * @param {number} boxIndex
-     * @returns {number}
-     */
-    possibleStarsForBox(boxIndex) {
+    possibleStarsForBox(boxIndex: number): number {
         const box = this.boxes[boxIndex];
         if (box != null) {
             return box.levelCount * 3;
@@ -290,11 +261,7 @@ class ScoreManager {
         return 0;
     }
 
-    /**
-     * @param {number} boxIndex
-     * @returns {boolean}
-     */
-    isBoxLocked(boxIndex) {
+    isBoxLocked(boxIndex: number): boolean {
         if (QueryStrings.unlockAllBoxes) return false;
 
         const isHolidayBox = edition.boxTypes?.[boxIndex] === BoxType.HOLIDAY;
@@ -310,12 +277,7 @@ class ScoreManager {
         return true;
     }
 
-    /**
-     * @param {number} boxIndex
-     * @param {number} levelindex
-     * @returns {boolean}
-     */
-    isLevelUnlocked(boxIndex, levelindex) {
+    isLevelUnlocked(boxIndex: number, levelindex: number): boolean {
         const box = this.boxes[boxIndex];
         if (QueryStrings.unlockAllBoxes) return true;
         if (box != null) {
@@ -324,13 +286,7 @@ class ScoreManager {
         return false;
     }
 
-    /**
-     * @param {number} boxIndex
-     * @param {number} levelIndex
-     * @param {number} levelScore
-     * @param {boolean} [overridePrevious]
-     */
-    setScore(boxIndex, levelIndex, levelScore, overridePrevious) {
+    setScore(boxIndex: number, levelIndex: number, levelScore: number, overridePrevious: boolean) {
         const box = this.boxes[boxIndex];
         if (box != null) {
             if (overridePrevious) {
@@ -346,7 +302,7 @@ class ScoreManager {
             const numLevels = box.scores.length;
             let boxScore = 0;
             for (let i = 0; i < numLevels; i++) {
-                boxScore += box.scores[i];
+                boxScore += box.scores[i] ?? 0;
             }
 
             // always report scores since we may have been offline when the
@@ -355,24 +311,13 @@ class ScoreManager {
         }
     }
 
-    /**
-     * @param {number} boxIndex
-     * @param {number} levelIndex
-     * @returns {number | null}
-     */
-    getScore(boxIndex, levelIndex) {
+    getScore(boxIndex: number, levelIndex: number): number | null {
         const box = this.boxes[boxIndex];
-        if (box != null) return box.scores[levelIndex];
+        if (box != null) return box.scores[levelIndex] ?? null;
         return null;
     }
 
-    /**
-     * @param {number} boxIndex
-     * @param {number} levelIndex
-     * @param {number} score
-     * @param {boolean} [overridePrevious]
-     */
-    setStars(boxIndex, levelIndex, score, overridePrevious) {
+    setStars(boxIndex: number, levelIndex: number, score: number, overridePrevious: boolean) {
         const previousStars = this.totalStars();
         const box = this.boxes[boxIndex];
         if (box != null) {
@@ -392,14 +337,9 @@ class ScoreManager {
         }
     }
 
-    /**
-     * @param {number} boxIndex
-     * @param {number} levelIndex
-     * @returns {number | null}
-     */
-    getStars(boxIndex, levelIndex) {
+    getStars(boxIndex: number, levelIndex: number): number | null {
         const box = this.boxes[boxIndex];
-        if (box != null) return box.stars[levelIndex];
+        if (box != null) return box.stars[levelIndex] ?? null;
         return null;
     }
 
@@ -408,11 +348,12 @@ class ScoreManager {
 
         for (let boxIndex = 0; boxIndex < boxCount; boxIndex++) {
             const box = this.boxes[boxIndex];
+            if (!box) continue;
             const levelCount = box.levelCount;
             for (let levelIndex = 0; levelIndex < levelCount; levelIndex++) {
                 resetLevel(boxIndex, levelIndex);
                 box.stars[levelIndex] = getStars(boxIndex, levelIndex);
-                box.scores[levelIndex] = getScore(boxIndex, levelIndex);
+                box.scores[levelIndex] = getScore(boxIndex, levelIndex) ?? 0;
             }
         }
 
