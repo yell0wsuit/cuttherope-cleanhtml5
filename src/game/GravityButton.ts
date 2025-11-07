@@ -6,6 +6,8 @@ const IMG_OBJ_STAR_IDLE_gravity_down = 56;
 const IMG_OBJ_STAR_IDLE_gravity_up = 57;
 
 class GravityButton extends ToggleButton {
+    static readonly DefaultId = 0;
+
     constructor() {
         const itn = ImageElement.create(
             ResourceId.IMG_OBJ_STAR_IDLE,
@@ -29,7 +31,5 @@ class GravityButton extends ToggleButton {
         this.setTouchIncrease(10, 10, 10, 10);
     }
 }
-
-GravityButton.DefaultId = 0;
 
 export default GravityButton;
