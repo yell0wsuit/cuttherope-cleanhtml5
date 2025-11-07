@@ -16,23 +16,11 @@ const locEntries = {
 };
 
 class WebPlatform {
-    /**
-     * @const
-     * @type {boolean}
-     */
-    static ENABLE_ANALYTICS = false;
+    static ENABLE_ANALYTICS: boolean = false;
 
-    /**
-     * @const
-     * @type {boolean}
-     */
-    static ENABLE_ZOOM = false;
+    static ENABLE_ZOOM: boolean = false;
 
-    /**
-     * @const
-     * @type {boolean}
-     */
-    static ZOOM_BOX_CANVAS = false;
+    static ZOOM_BOX_CANVAS: boolean = false;
 
     static imageBaseUrl = "images/";
     static resolutionBaseUrl = `images/${resolution.UI_WIDTH}/`;
@@ -63,52 +51,30 @@ class WebPlatform {
         return `${baseUrl}/images/scores/`;
     }
 
-    /**
-     * @param {HTMLElement | null} button
-     * @param {() => void} callback
-     */
-    static setSoundButtonChange(button, callback) {
+    static setSoundButtonChange(button: HTMLElement | null, callback: () => void) {
         button?.addEventListener("click", callback);
     }
 
-    /**
-     * @param {HTMLElement | null} button
-     * @param {() => void} callback
-     */
-    static setMusicButtonChange(button, callback) {
+    static setMusicButtonChange(button: HTMLElement | null, callback: () => void) {
         button?.addEventListener("click", callback);
     }
 
-    /**
-     * @param {Element | null} el
-     * @param {boolean} isSoundOn
-     */
-    static updateSoundOption(el, isSoundOn) {
+    static updateSoundOption(el: Element | null, isSoundOn: boolean) {
         el?.classList.toggle("disabled", !isSoundOn);
     }
 
-    /**
-     * @param {Element | null} el
-     * @param {boolean} isMusicOn
-     */
-    static updateMusicOption(el, isMusicOn) {
+    static updateMusicOption(el: Element | null, isMusicOn: boolean) {
         el?.classList.toggle("disabled", !isMusicOn);
     }
 
-    /**
-     * @param {boolean} show
-     */
-    static toggleLangUI(show) {
+    static toggleLangUI(show: boolean) {
         const langBtn = document.getElementById("langBtn");
         if (langBtn) {
             langBtn.style.display = show ? "" : "none";
         }
     }
 
-    /**
-     * @param {(langId: null) => void} callback
-     */
-    static setLangOptionClick(callback) {
+    static setLangOptionClick(callback: (langId: null) => void) {
         const langBtn = document.getElementById("langBtn");
         if (langBtn) {
             langBtn.addEventListener("click", () => {
@@ -135,20 +101,14 @@ class WebPlatform {
         }
     }
 
-    /**
-     * @param {() => void} callback
-     */
-    static setCutOptionClick(callback) {
+    static setCutOptionClick(callback: () => void) {
         const cutBtn = document.getElementById("cutBtn");
         if (cutBtn) {
             cutBtn.addEventListener("click", callback);
         }
     }
 
-    /**
-     * @param {boolean} isClickToCut
-     */
-    static updateCutSetting(isClickToCut) {
+    static updateCutSetting(isClickToCut: boolean) {
         const cutBtn = document.getElementById("cutBtn");
 
         // fonts use game sized assets based on canvas size
@@ -180,19 +140,11 @@ class WebPlatform {
         }
     }
 
-    /**
-     * @param {HTMLElement | null} el
-     * @param {string} text
-     */
-    static setResetText(el, text) {
+    static setResetText(el: HTMLElement | null, text: string) {
         WebPlatform.setOptionText(el, text);
     }
 
-    /**
-     * @param {HTMLElement | null} button
-     * @param {string} text
-     */
-    static setOptionText(button, text) {
+    static setOptionText(button: HTMLElement | null, text: string) {
         const img = button?.querySelector("img");
         if (img) {
             Text.drawBig({
@@ -203,16 +155,12 @@ class WebPlatform {
         }
     }
 
-    /**
-     * @param {number} totalStars
-     * @param {number} possibleStars
-     */
-    static getGameCompleteShareText(totalStars, possibleStars) {
+    /*static getGameCompleteShareText(totalStars: number, possibleStars: number) {
         const text = Lang.getText(locEntries.GAME_COMPLETE)
             .replace("%d", totalStars)
             .replace("%d", possibleStars);
         return text;
-    }
+    }*/
 
     static meetsRequirements() {
         // does the browser have the HTML5 features we need?
