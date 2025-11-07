@@ -1,25 +1,33 @@
 class MapItemDefinition {
-    /**
-     * @param {{ id: number; key: string; loader?: string | null; priority?: number }} config
-     */
-    constructor({ id, key, loader = null, priority = 1 }) {
-        /** @type {number} */
+    id: number;
+    key: string;
+    loader: string | null;
+    priority: number;
+
+    constructor({
+        id,
+        key,
+        loader = null,
+        priority = 1,
+    }: {
+        id: number;
+        key: string;
+        loader?: string | null;
+        priority?: number;
+    }) {
         this.id = id;
-        /** @type {string} */
         this.key = key;
-        /** @type {string | null} */
         this.loader = loader;
-        /** @type {number} */
         this.priority = priority;
     }
 }
 
 /**
  * Helper to create an immutable map item definition.
- * @param {ConstructorParameters<typeof MapItemDefinition>[0]} config
- * @returns {MapItemDefinition}
  */
-const createMapItem = (config) => Object.freeze(new MapItemDefinition(config));
+const createMapItem = (
+    config: ConstructorParameters<typeof MapItemDefinition>[0]
+): MapItemDefinition => Object.freeze(new MapItemDefinition(config));
 
 /**
  * Registry of available map items and the loaders that handle them.
@@ -84,29 +92,24 @@ const mapItemsByKey = new Map(mapItems.map((definition) => [definition.key, defi
 
 /**
  * Resolves a map item definition by its numeric identifier.
- * @param {number} id
- * @returns {MapItemDefinition | null}
  */
-const getMapItemDefinitionById = (id) => mapItemsById.get(id) ?? null;
+const getMapItemDefinitionById = (id: number): MapItemDefinition | null =>
+    mapItemsById.get(id) ?? null;
 
 /**
  * Resolves a map item definition by its string key.
- * @param {string} key
- * @returns {MapItemDefinition | null}
  */
-const getMapItemDefinitionByKey = (key) => mapItemsByKey.get(key) ?? null;
+const getMapItemDefinitionByKey = (key: string): MapItemDefinition | null =>
+    mapItemsByKey.get(key) ?? null;
 
-/**
- * @param {string} name
- */
-function getMapItem(name) {
+const getMapItem = (name: string) => {
     const definition = getMapItemDefinitionByKey(name);
     if (!definition) {
         alert(`Unknown map item: ${name}`);
         return null;
     }
     return definition.id;
-}
+};
 
 const MapItem = Object.freeze({
     ...mapItemDefinitions,
