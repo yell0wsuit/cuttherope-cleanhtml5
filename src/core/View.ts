@@ -1,16 +1,9 @@
 import BaseElement from "@/visual/BaseElement";
 import resolution from "@/resolution";
 
-/**
- * @class
- * @extends {BaseElement}
- */
 class View extends BaseElement {
-    /** @type {number} */
-    width;
-
-    /** @type {number} */
-    height;
+    width: number;
+    height: number;
 
     constructor() {
         super();
