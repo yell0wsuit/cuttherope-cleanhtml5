@@ -79,7 +79,7 @@ class Lang {
         return getLocalizedText(locEntry);
     }
 
-    getCurrentId(): LangId {
+    getCurrentId(): number {
         return settings.getLangId();
     }
 }
