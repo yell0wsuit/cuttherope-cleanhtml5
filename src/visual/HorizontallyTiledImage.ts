@@ -1,36 +1,25 @@
 import ImageElement from "@/visual/ImageElement";
 import Canvas from "@/utils/Canvas";
 import Alignment from "@/core/Alignment";
+import type Texture2D from "@/core/Texture2D";
 
 class HorizontallyTiledImage extends ImageElement {
+    tiles!: number[];
+    offsets!: number[];
+    align!: Alignment;
+
     constructor() {
         super();
     }
 
-    /**
-     * Set the texture for this image element
-     * @param {Texture2D} texture
-     */
-    initTexture(texture) {
+    initTexture(texture: Texture2D) {
         super.initTexture(texture);
-
-        /**
-         * @type {number[]}
-         */
         this.tiles = [0, 0, 0];
-        /**
-         * @type {number[]}
-         */
         this.offsets = [0, 0, 0];
         this.align = Alignment.CENTER;
     }
 
-    /**
-     * @param {number} left
-     * @param {number} center
-     * @param {number} right
-     */
-    setTileHorizontally(left, center, right) {
+    setTileHorizontally(left: number, center: number, right: number) {
         if (!this.tiles || this.tiles.length === 0) {
             return;
         }
@@ -39,9 +28,14 @@ class HorizontallyTiledImage extends ImageElement {
         this.tiles[1] = center;
         this.tiles[2] = right;
 
-        const h1 = this.texture.rects[left].h;
-        const h2 = this.texture.rects[center].h;
-        const h3 = this.texture.rects[right].h;
+        const rect1 = this.texture.rects[left];
+        const rect2 = this.texture.rects[center];
+        const rect3 = this.texture.rects[right];
+        if (!rect1 || !rect2 || !rect3) return;
+
+        const h1 = rect1.h;
+        const h2 = rect2.h;
+        const h3 = rect3.h;
 
         if (h1 >= h2 && h1 >= h3) {
             this.height = h1;
@@ -55,9 +49,9 @@ class HorizontallyTiledImage extends ImageElement {
             return;
         }
 
-        this.offsets[0] = ~~((this.height - h1) / 2.0);
-        this.offsets[1] = ~~((this.height - h2) / 2.0);
-        this.offsets[2] = ~~((this.height - h3) / 2.0);
+        this.offsets[0] = Math.trunc((this.height - h1) / 2.0);
+        this.offsets[1] = Math.trunc((this.height - h2) / 2.0);
+        this.offsets[2] = Math.trunc((this.height - h3) / 2.0);
     }
 
     draw() {
@@ -67,10 +61,20 @@ class HorizontallyTiledImage extends ImageElement {
             return;
         }
 
-        const left = this.texture.rects[this.tiles[0]];
-        const center = this.texture.rects[this.tiles[1]];
-        const right = this.texture.rects[this.tiles[2]];
-        const tileWidth = this.width - (~~left.w + ~~right.w);
+        const leftIndex = this.tiles[0];
+        const centerIndex = this.tiles[1];
+        const rightIndex = this.tiles[2];
+        if (leftIndex === undefined || centerIndex === undefined || rightIndex === undefined) {
+            return;
+        }
+
+        const left = this.texture.rects[leftIndex];
+        const center = this.texture.rects[centerIndex];
+        const right = this.texture.rects[rightIndex];
+        if (!left || !center || !right) {
+            return;
+        }
+        const tileWidth = this.width - (Math.trunc(left.w) + Math.trunc(right.w));
         const ctx = Canvas.context;
         const dx = Math.round(this.drawX);
         const dy = Math.round(this.drawY);
@@ -87,65 +91,51 @@ class HorizontallyTiledImage extends ImageElement {
             return;
         }
 
+        const image = this.texture.image;
+        if (!image) {
+            return;
+        }
+
+        const offset0 = this.offsets[0];
+        const offset1 = this.offsets[1];
+        const offset2 = this.offsets[2];
+        if (offset0 === undefined || offset1 === undefined || offset2 === undefined) {
+            return;
+        }
+
         if (tileWidth >= 0) {
             ctx.drawImage(
-                this.texture.image,
+                image,
                 left.x,
                 left.y,
                 leftCeilW,
                 leftCeilH,
                 dx,
-                dy + this.offsets[0],
+                dy + offset0,
                 leftCeilW,
                 leftCeilH
             );
-            this.drawTiled(
-                this.tiles[1],
-                dx + leftCeilW,
-                dy + this.offsets[1],
-                tileWidth,
-                center.h
-            );
+            this.drawTiled(centerIndex, dx + leftCeilW, dy + offset1, tileWidth, center.h);
             ctx.drawImage(
-                this.texture.image,
+                image,
                 right.x,
                 right.y,
                 rightCeilW,
                 rightCeilH,
                 dx + leftCeilW + tileWidth,
-                dy + this.offsets[2],
+                dy + offset2,
                 rightCeilW,
                 rightCeilH
             );
         } else {
-            const p1 = left.copy(),
-                p2 = right.copy();
+            const p1 = { ...left };
+            const p2 = { ...right };
             p1.w = Math.min(p1.w, this.width / 2);
             p2.w = Math.min(p2.w, this.width - p1.w);
             p2.x += right.w - p2.w;
 
-            ctx.drawImage(
-                this.texture.image,
-                p1.x,
-                p1.y,
-                p1.w,
-                p1.h,
-                dx,
-                dy + this.offsets[0],
-                p1.w,
-                p1.h
-            );
-            ctx.drawImage(
-                this.texture.image,
-                p2.x,
-                p2.y,
-                p2.w,
-                p2.h,
-                dx + p1.w,
-                dy + this.offsets[2],
-                p2.w,
-                p2.h
-            );
+            ctx.drawImage(image, p1.x, p1.y, p1.w, p1.h, dx, dy + offset0, p1.w, p1.h);
+            ctx.drawImage(image, p2.x, p2.y, p2.w, p2.h, dx + p1.w, dy + offset2, p2.w, p2.h);
         }
 
         this.postDraw();
@@ -153,9 +143,8 @@ class HorizontallyTiledImage extends ImageElement {
 
     /**
      * Draw the tile image to an offscreen canvas and return an Image
-     * @return {HTMLImageElement | undefined}
      */
-    getImage() {
+    getImage(): HTMLImageElement | undefined {
         // save the existing canvas id and switch to the hidden canvas
         const existingCanvas = Canvas.element;
 
