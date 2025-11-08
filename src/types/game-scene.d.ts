@@ -25,6 +25,7 @@ import CTRGameObject from "@/game/CTRGameObject";
 import RGBAColor from "@/core/RGBAColor";
 import type Camera2D from "@/visual/Camera2D";
 import type Drawing from "@/game/Drawing";
+import type TutorialText from "@/game/TutorialText";
 
 export type FingerCutTrail = FingerCut[];
 
@@ -78,8 +79,8 @@ export interface GameScene extends Record<string, unknown> {
     gravityNormal: boolean;
     support: ImageElement;
     target: GameObject;
-    tutorials: Drawable[];
-    tutorialImages: Array<Drawable & { special?: number }>;
+    tutorials: TutorialText[];
+    tutorialImages: Array<TutorialText & { special?: number }>;
     razors: Drawable[];
     rotatedCircles: Array<RotatedCircle & Drawable>;
     bubbles: Bubble[];
