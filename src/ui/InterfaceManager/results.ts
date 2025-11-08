@@ -11,43 +11,49 @@ import { IS_MSIE_BROWSER } from "@/ui/InterfaceManager/constants";
 import ConfettiManager from "@/ui/ConfettiManager";
 
 // result elements
-const valdiv = /** @type {HTMLCanvasElement | null} */ (
-    document.getElementById("resultTickerValue")
-);
-const lbldiv = /** @type {HTMLCanvasElement | null} */ (
-    document.getElementById("resultTickerLabel")
-);
-/** @type {HTMLElement | null} */
+const valdiv = document.getElementById("resultTickerValue") as HTMLCanvasElement | null;
+const lbldiv = document.getElementById("resultTickerLabel") as HTMLCanvasElement | null;
 const resdiv = document.getElementById("resultScore");
-/** @type {HTMLElement | null} */
 const stamp = document.getElementById("resultImproved");
-/** @type {HTMLElement | null} */
 const msgdiv = document.getElementById("resultTickerMessage");
-/** @type {HTMLElement | null} */
 const levelPanel = document.getElementById("levelPanel");
+
+interface LevelWonInfo {
+    stars: number;
+    score: number;
+    time: number;
+    fps: number;
+}
+
+interface ResultsManager {
+    isInLevelSelectMode: boolean;
+    gameFlow: {
+        closeBox: () => void;
+    };
+    _MIN_FPS: number;
+}
 
 /**
  * Base class for handling level results
  */
 export default class ResultsHandler {
-    /**
-     * @param {import("@/ui/InterfaceManagerClass").default} manager
-     */
-    constructor(manager) {
+    private manager: ResultsManager;
+
+    constructor(manager: ResultsManager) {
         this.manager = manager;
     }
 
     /**
      * Handles level won event
-     * @param {{ stars: number; score: number; time: number; fps: number; }} info - Level completion info
+     * @param info - Level completion info
      */
-    onLevelWon(info) {
+    onLevelWon(info: LevelWonInfo): void {
         const stars = info.stars;
         const score = info.score;
         const levelTime = info.time;
 
         // show level results
-        let resultStatusText;
+        let resultStatusText: string;
         let currentPoints = 0;
         const totalStarPoints = stars * 1000;
 
@@ -108,16 +114,13 @@ export default class ResultsHandler {
 
         // Helper functions
 
-        const secondsToMin = (/** @type {number} */ sec) => {
+        const secondsToMin = (sec: number) => {
             const minutes = (sec / 60) | 0;
             const seconds = Math.round(sec % 60);
             return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
         };
 
-        const doStarCountdown = (
-            /** @type {number} */ from,
-            /** @type {(() => void) | null | undefined} */ callback
-        ) => {
+        const doStarCountdown = (from: number, callback?: (() => void) | null) => {
             let countDownPoints = from;
             const duration = 1000;
             let lastRender = Date.now();
@@ -138,21 +141,23 @@ export default class ResultsHandler {
                     countDownPoints = 0;
                     currentPoints = from;
                     fadeOut(lbldiv, 400);
-                    fadeOut(valdiv, 400).then(callback);
+                    fadeOut(valdiv, 400).then(() => {
+                        callback?.();
+                    });
                 } else if (raf) {
                     raf(renderCount);
                 }
 
                 if (valdiv) {
                     Text.drawSmall({
-                        text: countDownPoints,
+                        text: String(countDownPoints),
                         img: valdiv,
                         scaleToUI: true,
                         canvas: true,
                     });
                 }
                 Text.drawBigNumbers({
-                    text: currentPoints,
+                    text: String(currentPoints),
                     imgParentId: "resultScore",
                     scaleToUI: true,
                     canvas: true,
@@ -162,9 +167,9 @@ export default class ResultsHandler {
         };
 
         const doTimeCountdown = (
-            /** @type {number} */ fromsec,
-            /** @type {number} */ frompoints,
-            /** @type {(() => void) | null | undefined} */ callback
+            fromsec: number,
+            frompoints: number,
+            callback?: (() => void) | null
         ) => {
             const finalPoints = currentPoints + frompoints;
             let countDownSecs = fromsec;
@@ -184,7 +189,9 @@ export default class ResultsHandler {
                     countDownSecs = 0;
                     currentPoints = finalPoints;
                     fadeOut(lbldiv, 400);
-                    fadeOut(valdiv, 400).then(callback);
+                    fadeOut(valdiv, 400).then(() => {
+                        callback?.();
+                    });
                 } else if (raf) {
                     raf(renderScore);
                 }
@@ -198,7 +205,7 @@ export default class ResultsHandler {
                     });
                 }
                 Text.drawBigNumbers({
-                    text: currentPoints,
+                    text: String(currentPoints),
                     imgParentId: "resultScore",
                     scaleToUI: true,
                     canvas: true,
@@ -220,30 +227,30 @@ export default class ResultsHandler {
         }
         if (valdiv) {
             Text.drawSmall({
-                text: totalStarPoints,
+                text: String(totalStarPoints),
                 img: valdiv,
                 scaleToUI: true,
                 canvas: true,
             });
         }
         if (resdiv) {
-            resdiv
-                .querySelectorAll("img")
-                .forEach((/** @type {{ remove: () => void; }} */ node) => {
-                    node.remove();
-                });
-            resdiv
-                .querySelectorAll("canvas")
-                .forEach((/** @type {{ remove: () => void; }} */ node) => {
-                    node.remove();
-                });
+            resdiv.querySelectorAll("img").forEach((node) => {
+                node.remove();
+            });
+            resdiv.querySelectorAll("canvas").forEach((node) => {
+                node.remove();
+            });
         }
 
         // Trigger confetti for 3-star completion
-        let confettiManager = null;
-        if (stars === 3) {
-            confettiManager = new ConfettiManager();
-        }
+        const confettiManager = stars === 3 ? new ConfettiManager() : null;
+
+        // TODO: right now boxIndex is zero based and levelIndex starts at 1?
+        const boxIndex = BoxManager.currentBoxIndex;
+        const levelIndex = BoxManager.currentLevelIndex;
+
+        // save the prev score
+        const prevScore = ScoreManager.getScore(boxIndex, levelIndex - 1);
 
         // run the animation sequence
         setTimeout(() => {
@@ -303,21 +310,14 @@ export default class ResultsHandler {
             });
         }, 1000);
 
-        // TODO: right now boxIndex is zero based and levelIndex starts at 1?
-        const boxIndex = BoxManager.currentBoxIndex;
-        const levelIndex = BoxManager.currentLevelIndex;
-
-        // save the prev score
-        const prevScore = ScoreManager.getScore(boxIndex, levelIndex - 1);
-
         // Update score of the current level if there is a best result
-        ScoreManager.setScore(boxIndex, levelIndex - 1, score);
-        ScoreManager.setStars(boxIndex, levelIndex - 1, stars);
+        ScoreManager.setScore(boxIndex, levelIndex - 1, score, false);
+        ScoreManager.setStars(boxIndex, levelIndex - 1, stars, false);
 
         // unlock next level
         const levelCount = ScoreManager.levelCount(boxIndex);
         if (levelCount != null && levelCount > levelIndex && BoxManager.isNextLevelPlayable()) {
-            ScoreManager.setStars(boxIndex, levelIndex, 0);
+            ScoreManager.setStars(boxIndex, levelIndex, 0, false);
         }
 
         this.manager.isInLevelSelectMode = false;
