@@ -2,19 +2,11 @@ import ResourceId from "@/resources/ResourceId";
 import SoundMgr from "@/game/CTRSoundMgr";
 import Vector from "@/core/Vector";
 import resolution from "@/resolution";
+import type Bouncer from "@/game/Bouncer";
+import type ConstrainedPoint from "@/physics/ConstrainedPoint";
+import type { GameScene } from "@/types/game-scene";
 
-/**
- * @typedef {import("@/game/Bouncer").default} Bouncer
- * @typedef {import("@/physics/ConstrainedPoint").default} ConstrainedPoint
- * @typedef {import("@/types/game-scene").GameScene} GameScene
- */
-
-/**
- * @param {Bouncer} bouncer
- * @param {ConstrainedPoint} star
- * @param {number} delta
- */
-function handleBounce(bouncer, star, delta) {
+function handleBounce(bouncer: Bouncer, star: ConstrainedPoint, delta: number): void {
     if (bouncer.skip) {
         return;
     }
@@ -23,8 +15,7 @@ function handleBounce(bouncer, star, delta) {
     const spos = star.prevPos.copy();
 
     const angle = bouncer.angle;
-    const x = bouncer.x;
-    const y = bouncer.y;
+    const { x, y } = bouncer;
 
     spos.rotateAround(-angle, x, y);
 
@@ -51,21 +42,14 @@ function handleBounce(bouncer, star, delta) {
 }
 
 class GameSceneBounceUtilsDelegate {
-    /**
-     * @param {GameScene} scene
-     */
-    constructor(scene) {
-        /** @type {GameScene} */
+    private readonly scene: GameScene;
+
+    constructor(scene: GameScene) {
         this.scene = scene;
     }
 
-    /**
-     * @param {Bouncer} bouncer
-     * @param {ConstrainedPoint} star
-     * @param {number} delta
-     */
-    handleBounce(bouncer, star, delta) {
-        return handleBounce(bouncer, star, delta);
+    handleBounce(bouncer: Bouncer, star: ConstrainedPoint, delta: number): void {
+        handleBounce(bouncer, star, delta);
     }
 }
 

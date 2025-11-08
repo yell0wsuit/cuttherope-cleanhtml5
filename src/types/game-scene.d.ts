@@ -21,11 +21,23 @@ import Star from "@/game/Star";
 import DelayedDispatcher from "@/utils/DelayedDispatcher";
 import GameController from "@/game/GameController";
 import ConstrainedPoint from "@/physics/ConstrainedPoint";
+import CTRGameObject from "@/game/CTRGameObject";
+import RGBAColor from "@/core/RGBAColor";
+import type Camera2D from "@/visual/Camera2D";
 
-export type FingerCutTrail = FingerCut[];
+export interface FingerCutSegment {
+    start: Vector;
+    end: Vector;
+    startSize: number;
+    endSize: number;
+    color: RGBAColor;
+}
+
+export type FingerCutTrail = FingerCutSegment[];
 
 export interface GameSceneCamera {
     pos: Vector;
+    type: Camera2D["type"];
     applyCameraTransformation(): void;
     cancelCameraTransformation(): void;
 }
@@ -70,6 +82,7 @@ export interface SceneStar extends ConstrainedPoint, StarLike {}
 
 export interface SceneCandy extends CTRGameObject, StarLike {}
 
+export type UpdatableDrawable = Drawable & { update(delta: number): void };
 
 export interface GameScene extends Record<string, unknown> {
     preDraw(): void;
@@ -93,10 +106,10 @@ export interface GameScene extends Record<string, unknown> {
     overlayTexture: GameSceneTextureAtlas;
     mapHeight: number;
     mapWidth: number;
-    drawings: Drawable[];
-    earthAnims: EarthImage[];
-    pollenDrawer: PollenDrawer | null;
-    gravityButton: GravityButton | null;
+    drawings: UpdatableDrawable[];
+    earthAnims: UpdatableDrawable[];
+    pollenDrawer: UpdatableDrawable | null;
+    gravityButton: (Drawable & { isOn?: boolean; isInTouchZone?: () => boolean }) | null;
     gravityNormal: boolean;
     support: Drawable;
     target: BaseElement & Drawable;
@@ -154,5 +167,12 @@ export interface GameScene extends Record<string, unknown> {
     score: number;
     attachCount: number;
     juggleTimer: number;
+    ropePhysicsSpeed: number;
+    ignoreTouches: boolean;
+    lastCandyRotateDelta: number;
+    lastCandyRotateDeltaL: number;
+    lastCandyRotateDeltaR: number;
+    ropesAtOnceTimer: number;
     spiderTookCandy: boolean;
+    spiderWon(grab: Grab): void;
 }

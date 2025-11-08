@@ -7,15 +7,11 @@ import SoundMgr from "@/game/CTRSoundMgr";
 import Vector from "@/core/Vector";
 import Constants from "@/utils/Constants";
 import resolution from "@/resolution";
+import type { GameScene, SceneStar } from "@/types/game-scene";
 
-/** @typedef {import("@/types/game-scene").GameScene} GameScene */
+type SceneGrab = GameScene["bungees"][number];
 
-/**
- * @param {GameScene} this
- * @param {number} delta
- * @returns {number}
- */
-export function updateBungees(delta) {
+export function updateBungees(this: GameScene, delta: number): number {
     const numGrabs = this.bungees.length;
     if (numGrabs > 0) {
         let handledRotation = false;
@@ -23,62 +19,63 @@ export function updateBungees(delta) {
         let handledRotationR = false;
 
         for (let i = 0; i < numGrabs; i++) {
-            // yes, it's a little confusing that the bungees array
-            // actually holds grabs
-            const g = this.bungees[i];
-            g.update(delta);
-
-            const b = g.rope;
-
-            if (g.mover && b) {
-                b.bungeeAnchor.pos.x = g.x;
-                b.bungeeAnchor.pos.y = g.y;
-                b.bungeeAnchor.pin.copyFrom(b.bungeeAnchor.pos);
+            const grab: SceneGrab | undefined = this.bungees[i];
+            if (!grab) {
+                continue;
             }
 
-            if (b) {
-                if (b.cut !== Constants.UNDEFINED && b.cutTime === 0) {
-                    g.destroyRope();
+            grab.update(delta);
+
+            const rope = grab.rope;
+
+            if (grab.mover && rope) {
+                rope.bungeeAnchor.pos.x = grab.x;
+                rope.bungeeAnchor.pos.y = grab.y;
+                rope.bungeeAnchor.pin.copyFrom(rope.bungeeAnchor.pos);
+            }
+
+            if (rope) {
+                if (rope.cut !== Constants.UNDEFINED && rope.cutTime === 0) {
+                    grab.destroyRope();
                     continue;
                 }
 
-                b.update(delta * this.ropePhysicsSpeed);
+                rope.update(delta * this.ropePhysicsSpeed);
 
-                if (g.hasSpider) {
-                    if (this.camera.type != Camera2D.SpeedType.PIXELS || !this.ignoreTouches) {
-                        g.updateSpider(delta);
+                if (grab.hasSpider) {
+                    if (this.camera.type !== Camera2D.SpeedType.PIXELS || !this.ignoreTouches) {
+                        grab.updateSpider(delta);
                     }
 
-                    if (g.spiderPos === Constants.UNDEFINED) {
-                        this.spiderWon(g);
+                    if (grab.spiderPos === Constants.UNDEFINED) {
+                        this.spiderWon(grab);
                         break;
                     }
                 }
             }
 
-            if (g.radius !== Constants.UNDEFINED && !g.rope) {
-                // shared code for creating a rope with a star
+            if (grab.radius !== Constants.UNDEFINED && !grab.rope) {
                 const STAR_RADIUS = resolution.STAR_RADIUS;
-                const createRope = (star) => {
-                    const l = new Vector(g.x, g.y).distance(star.pos);
-                    if (l <= g.radius + STAR_RADIUS) {
-                        const rope = new Bungee(
+                const createRope = (star: SceneStar): void => {
+                    const l = new Vector(grab.x, grab.y).distance(star.pos);
+                    if (l <= grab.radius + STAR_RADIUS) {
+                        const newRope = new Bungee(
                             null,
-                            g.x,
-                            g.y, // head
+                            grab.x,
+                            grab.y,
                             star,
                             star.pos.x,
-                            star.pos.y, // tail
-                            g.radius + STAR_RADIUS
+                            star.pos.y,
+                            grab.radius + STAR_RADIUS
                         );
-                        rope.bungeeAnchor.pin.copyFrom(rope.bungeeAnchor.pos);
-                        g.hideRadius = true;
-                        g.setRope(rope);
+                        newRope.bungeeAnchor.pin.copyFrom(newRope.bungeeAnchor.pos);
+                        grab.hideRadius = true;
+                        grab.setRope(newRope);
 
                         this.attachCandy();
 
                         SoundMgr.playSound(ResourceId.SND_ROPE_GET);
-                        if (g.mover) {
+                        if (grab.mover) {
                             SoundMgr.playSound(ResourceId.SND_BUZZ);
                         }
                     }
@@ -88,7 +85,7 @@ export function updateBungees(delta) {
                     if (!this.noCandyL) {
                         createRope(this.starL);
                     }
-                    if (!this.noCandyR && g.rope == null) {
+                    if (!this.noCandyR && grab.rope == null) {
                         createRope(this.starR);
                     }
                 } else {
@@ -96,9 +93,13 @@ export function updateBungees(delta) {
                 }
             }
 
-            if (b) {
-                const prev = b.bungeeAnchor;
-                const tail = b.parts[b.parts.length - 1];
+            if (rope) {
+                const prev = rope.bungeeAnchor;
+                const tail = rope.parts[rope.parts.length - 1];
+                if (!tail) {
+                    continue;
+                }
+
                 const v = Vector.subtract(prev.pos, tail.pos);
                 let hasCandy = false;
 
@@ -114,37 +115,37 @@ export function updateBungees(delta) {
                     }
                 }
 
-                if (b.relaxed !== 0 && b.cut === Constants.UNDEFINED && hasCandy) {
-                    const a = Radians.toDegrees(v.normalizedAngle());
+                if (rope.relaxed !== 0 && rope.cut === Constants.UNDEFINED && hasCandy) {
+                    const angle = Radians.toDegrees(v.normalizedAngle());
                     if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
                         const candyPart = tail === this.starL ? this.candyL : this.candyR;
-                        if (!b.chosenOne) {
-                            b.initialCandleAngle = candyPart.rotation - a;
+                        if (!rope.chosenOne) {
+                            rope.initialCandleAngle = candyPart.rotation - angle;
                         }
 
                         if (tail === this.starL) {
                             this.lastCandyRotateDeltaL =
-                                a + b.initialCandleAngle - candyPart.rotation;
+                                angle + rope.initialCandleAngle - candyPart.rotation;
                             handledRotationL = true;
                         } else {
                             this.lastCandyRotateDeltaR =
-                                a + b.initialCandleAngle - candyPart.rotation;
+                                angle + rope.initialCandleAngle - candyPart.rotation;
                             handledRotationR = true;
                         }
-                        candyPart.rotation = a + b.initialCandleAngle;
+                        candyPart.rotation = angle + rope.initialCandleAngle;
                     } else {
-                        if (!b.chosenOne) {
-                            b.initialCandleAngle = this.candyMain.rotation - a;
+                        if (!rope.chosenOne) {
+                            rope.initialCandleAngle = this.candyMain.rotation - angle;
                         }
                         this.lastCandyRotateDelta =
-                            a + b.initialCandleAngle - this.candyMain.rotation;
-                        this.candyMain.rotation = a + b.initialCandleAngle;
+                            angle + rope.initialCandleAngle - this.candyMain.rotation;
+                        this.candyMain.rotation = angle + rope.initialCandleAngle;
                         handledRotation = true;
                     }
 
-                    b.chosenOne = true;
+                    rope.chosenOne = true;
                 } else {
-                    b.chosenOne = false;
+                    rope.chosenOne = false;
                 }
             }
         }
