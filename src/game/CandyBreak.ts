@@ -160,10 +160,12 @@ class CandyBreak extends RotateableMultiParticles {
 
     private _lookupFrameIndices(resourceId: number, frameNames: string[]): number[] {
         const resource: ResEntry | undefined = RES_DATA[resourceId];
-        const frameIndexByName = resource?.info?.frameIndexByName as
-            | Record<string, number>
-            | undefined;
+        const info = resource?.info;
+        if (!info || !("frameIndexByName" in info)) {
+            return [];
+        }
 
+        const frameIndexByName = info.frameIndexByName;
         if (!frameIndexByName) {
             return [];
         }

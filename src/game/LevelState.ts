@@ -18,7 +18,7 @@ class LevelState {
         if (!box) {
             throw new Error(`Box not found for pack index ${LevelState.pack}`);
         }
-        LevelState.loadedMap = box.levels[LevelState.level];
+        LevelState.loadedMap = box.levels[LevelState.level] ?? null;
     }
 }
 

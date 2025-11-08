@@ -7,6 +7,7 @@ import JsonLoader from "@/resources/JsonLoader";
 import ResourceMgr, { initializeResources } from "@/resources/ResourceMgr";
 import ResourcePacks from "@/resources/ResourcePacks";
 import PubSub from "@/utils/PubSub";
+import type { TexturePackerAtlas } from "@/resources/TextureAtlasParser";
 
 type UrlFacade = Pick<typeof URL, "createObjectURL" | "revokeObjectURL">;
 
@@ -229,7 +230,7 @@ class PreLoader {
                 if (!res) continue;
                 add(gameBaseUrl + res.path, tag, id);
                 if (res.atlasPath) {
-                    this.loadJson<Record<string, unknown>>(gameBaseUrl + res.atlasPath)
+                    this.loadJson<TexturePackerAtlas>(gameBaseUrl + res.atlasPath)
                         .then((atlas) => ResourceMgr.onAtlasLoaded(id, atlas))
                         .catch((error) => ResourceMgr.onAtlasError(id, error as Error));
                 }

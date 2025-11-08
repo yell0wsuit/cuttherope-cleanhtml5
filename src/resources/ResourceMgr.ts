@@ -60,20 +60,23 @@ class ResourceMgr {
      * Parses atlas data for a resource
      * @private
      */
-    static _parseAtlasForResource(resource: ResEntry, atlasData: TexturePackerAtlas): ParsedAtlasInfo {
+    static _parseAtlasForResource(
+        resource: ResEntry,
+        atlasData: TexturePackerAtlas
+    ): ParsedAtlasInfo {
         const format = resource.atlasFormat || "texture-packer";
-        const existingInfo = resource.info || {};
+        const existingInfo = resource.info;
 
         switch (format) {
             case "texture-packer":
                 return parseTexturePackerAtlas(atlasData, {
-                    existingInfo,
+                    existingInfo: existingInfo as Partial<ParsedAtlasInfo> | undefined,
                     frameOrder: resource.frameOrder,
                     offsetNormalization: resource.offsetNormalization,
                 });
             default:
                 globalThis.console?.warn?.("Unsupported atlas format", format);
-                return existingInfo as ParsedAtlasInfo;
+                return (existingInfo || {}) as ParsedAtlasInfo;
         }
     }
 
@@ -102,12 +105,23 @@ class ResourceMgr {
             case ResourceType.FONT:
                 resource.texture = new Texture2D(img);
                 this.setQuads(resource);
-                if (resource.info) {
-                    const font = new Font();
+                if (resource.info && "chars" in resource.info) {
                     const info = resource.info;
-                    font.initWithVariableSizeChars(info.chars, resource.texture, info.kerning);
-                    font.setOffsets(info.charOffset, info.lineOffset, info.spaceWidth);
-                    resource.font = font;
+                    if (
+                        typeof info.chars === "string" &&
+                        typeof info.charOffset === "number" &&
+                        typeof info.lineOffset === "number" &&
+                        typeof info.spaceWidth === "number"
+                    ) {
+                        const font = new Font();
+                        font.initWithVariableSizeChars(
+                            info.chars,
+                            resource.texture,
+                            info.kerning ?? null
+                        );
+                        font.setOffsets(info.charOffset, info.lineOffset, info.spaceWidth);
+                        resource.font = font;
+                    }
                 }
                 break;
         }
@@ -144,8 +158,10 @@ class ResourceMgr {
 
         for (let i = 0, len = rects.length; i < len; i++) {
             // convert it to a Rectangle object
-            const rawRect = rects[i],
-                rect = new Rectangle(rawRect.x, rawRect.y, rawRect.w, rawRect.h);
+            const rawRect = rects[i];
+            if (!rawRect || typeof rawRect === "number") continue;
+
+            const rect = new Rectangle(rawRect.x, rawRect.y, rawRect.w, rawRect.h);
 
             if (rect.w + t.adjustmentMaxX > imageWidth) {
                 rect.w = imageWidth - t.adjustmentMaxX;
@@ -163,7 +179,10 @@ class ResourceMgr {
             let i;
             for (i = 0; i < oCount; i++) {
                 const offset = offsets[i];
-                t.setOffset(i, offset.x, offset.y);
+                if (!offset || typeof offset === "number") continue;
+                if ("x" in offset && "y" in offset) {
+                    t.setOffset(i, offset.x, offset.y);
+                }
             }
         }
 

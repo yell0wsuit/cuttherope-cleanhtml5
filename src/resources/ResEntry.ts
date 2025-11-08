@@ -5,6 +5,7 @@
 import type Texture2D from "@/core/Texture2D";
 import type Font from "@/visual/Font";
 import type { ParsedAtlasInfo } from "@/resources/TextureAtlasParser";
+import type { ResourceInfo } from "@/resources/ResScale";
 
 interface ResEntryOptions {
     atlasPath: string;
@@ -15,8 +16,8 @@ interface ResEntryOptions {
 
 // Extended atlas info for font resources
 export interface ExtendedAtlasInfo extends Partial<ParsedAtlasInfo> {
-    chars?: unknown;
-    kerning?: unknown;
+    chars?: string;
+    kerning?: { [s: string]: number } | null;
     charOffset?: number;
     lineOffset?: number;
     spaceWidth?: number;
@@ -31,7 +32,7 @@ class ResEntry {
     offsetNormalization?: "center";
     texture?: Texture2D; // Added at runtime by ResourceMgr
     font?: Font; // Added at runtime by ResourceMgr
-    info?: ParsedAtlasInfo | ExtendedAtlasInfo; // Added at runtime by ResourceMgr
+    info?: ParsedAtlasInfo | ExtendedAtlasInfo | ResourceInfo; // Added at runtime by ResourceMgr
     pendingImage?: HTMLImageElement; // Added at runtime by ResourceMgr
     _atlasFailed?: boolean; // Added at runtime by ResourceMgr
 
