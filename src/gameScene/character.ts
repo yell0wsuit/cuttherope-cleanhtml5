@@ -32,11 +32,7 @@ class GameSceneCharacter extends GameSceneLoaders {
         }
     }
 
-    onPaddingtonIdleKeyFrame(
-        _timeline: Timeline,
-        _trackType: number,
-        keyFrameIndex: number
-    ): void {
+    onPaddingtonIdleKeyFrame(_timeline: Timeline, _trackType: number, keyFrameIndex: number): void {
         if (!IS_JANUARY) {
             return;
         }

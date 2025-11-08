@@ -36,11 +36,7 @@ class GameSceneTouch extends GameSceneUpdate {
     overOmNom = false;
 
     declare handleBubbleTouch: (star: ConstrainedPoint, x: number, y: number) => boolean;
-    declare getNearestBungeeGrabByBezierPoints: (
-        out: Vector,
-        x: number,
-        y: number
-    ) => Grab | null;
+    declare getNearestBungeeGrabByBezierPoints: (out: Vector, x: number, y: number) => Grab | null;
     declare getNearestBungeeSegmentByConstraints: (cutPos: Vector, grab: Grab) => boolean;
     declare cut: (target: unknown, start: Vector, end: Vector, shouldPlaySound: boolean) => number;
     touchDown(x: number, y: number, touchIndex: number): boolean {
@@ -60,9 +56,7 @@ class GameSceneTouch extends GameSceneUpdate {
         if (this.gravityButton) {
             const childIndex = this.gravityButton.isOn() ? 1 : 0;
             const child = this.gravityButton.getChild(childIndex) as GenericButton | undefined;
-            if (
-                child?.isInTouchZone(x + this.camera.pos.x, y + this.camera.pos.y, true)
-            ) {
+            if (child?.isInTouchZone(x + this.camera.pos.x, y + this.camera.pos.y, true)) {
                 this.gravityTouchDown = touchIndex;
                 return true;
             }
