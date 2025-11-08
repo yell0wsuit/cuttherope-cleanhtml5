@@ -1,10 +1,7 @@
 import TextImage from "@/visual/TextImage";
 
 class TutorialText extends TextImage {
-    /**
-     * @type {number}
-     */
-    special;
+    special: number;
 
     constructor() {
         super();
