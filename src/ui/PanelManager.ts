@@ -1,8 +1,6 @@
 import PanelId from "@/ui/PanelId";
 import Panel from "@/ui/Panel";
-// @ts-ignore - migrate BoxPanel later
 import BoxPanel from "@/ui/BoxPanel";
-// @ts-ignore - migrate LevelPanel laters
 import LevelPanel from "@/ui/LevelPanel";
 import resolution from "@/resolution";
 import platform from "@/config/platforms/platform-web";

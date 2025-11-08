@@ -1,18 +1,13 @@
 import PanelId from "@/ui/PanelId";
 import Panel from "@/ui/Panel";
 import resolution from "@/resolution";
-import platform from "@/config/platforms/platform-web";
 import ScoreManager from "@/ui/ScoreManager";
 import BoxManager from "@/ui/BoxManager";
 import PubSub from "@/utils/PubSub";
 import SoundMgr from "@/game/CTRSoundMgr";
 import ResourceId from "@/resources/ResourceId";
-import Lang from "@/resources/Lang";
 import Text from "@/visual/Text";
-import MenuStringId from "@/resources/MenuStringId";
 import edition from "@/config/editions/net-edition";
-import Alignment from "@/core/Alignment";
-import Dialogs from "@/ui/Dialogs";
 import {
     getElement,
     addClass,
@@ -25,92 +20,65 @@ import {
     fadeOut,
     delay,
 } from "@/utils/domHelpers";
+import type InterfaceManager from "@/ui/InterfaceManagerClass";
 
-const backgroundId = edition.levelBackgroundId || "levelBackground";
+const backgroundId =
+    (edition as { levelBackgroundId?: string | null }).levelBackgroundId ?? "levelBackground";
 const MAX_LEVELS_PER_PAGE = 25;
 
-/**
- * Calculate total pages needed with smart pagination
- * @param {number} totalLevels - Total number of levels in the box
- * @returns {number} Total number of pages
- */
-const calculateTotalPages = (totalLevels) => {
+const calculateTotalPages = (totalLevels: number): number => {
     if (totalLevels <= MAX_LEVELS_PER_PAGE) {
         return 1;
     }
 
-    // If going over 25, check if we should split differently
-    // Avoid having < 10 levels on the last page (looks odd)
     const standardPages = Math.ceil(totalLevels / MAX_LEVELS_PER_PAGE);
     const remainder = totalLevels % MAX_LEVELS_PER_PAGE;
 
-    // If remainder is small (< 10), redistribute for better aesthetics
     if (remainder > 0 && remainder < 10) {
-        // Split more evenly: first page gets 16, rest distributed
         return 2;
     }
 
     return standardPages;
 };
 
-/**
- * Calculate the optimal levels per page for better visual layout
- * Grid layouts: <=9: 3 cols, >9 and <=12: 4 cols, >12: 5 cols
- * @param {number} totalLevels - Total number of levels in the box
- * @param {number} pageIndex - Current page index (0-based)
- * @returns {number} Number of levels to show on this page
- */
-const getLevelsPerPage = (totalLevels, pageIndex = 0) => {
+const getLevelsPerPage = (totalLevels: number, pageIndex = 0): number => {
     if (totalLevels <= MAX_LEVELS_PER_PAGE) {
         return totalLevels;
     }
 
     const remainder = totalLevels % MAX_LEVELS_PER_PAGE;
 
-    // If we have a small remainder (< 10), redistribute for better balance
     if (remainder > 0 && remainder < 10) {
-        // For page 0, try to find a good split that works with grid layouts
         if (pageIndex === 0) {
-            const remaining = totalLevels - MAX_LEVELS_PER_PAGE + remainder;
-
-            // Try to balance so both pages use 5x5 layout (>12 levels each)
-            // Ideal splits for common cases:
-            // 26 levels: 13 (page 1, 5x3) + 13 (page 2, 5x3)
-            // 27 levels: 14 (page 1, 5x3) + 13 (page 2, 5x3)
-            // 28 levels: 14 (page 1, 5x3) + 14 (page 2, 5x3)
             const halfSplit = Math.ceil(totalLevels / 2);
 
-            // If both halves would be >12 (use 5-col layout), split evenly
             if (halfSplit > 12 && totalLevels - halfSplit > 12) {
                 return halfSplit;
             }
 
-            // Otherwise, put more on page 1 and remainder on page 2
-            // Aim for page 1 to have a multiple of 5 (for 5x5 grid)
             const page1Count = Math.floor((totalLevels - remainder) / 5) * 5;
             if (page1Count >= 15 && page1Count <= MAX_LEVELS_PER_PAGE) {
                 return page1Count;
             }
 
-            // Fallback: use slightly less than max
             return MAX_LEVELS_PER_PAGE - remainder;
-        } else {
-            // Page 1 already calculated, return the remainder
-            const page0Count = getLevelsPerPage(totalLevels, 0);
-            return totalLevels - page0Count;
         }
+
+        const page0Count = getLevelsPerPage(totalLevels, 0);
+        return totalLevels - page0Count;
     }
 
-    // Standard pagination: 25 per page
     return MAX_LEVELS_PER_PAGE;
 };
 
-/**
- * Get layout configuration based on number of visible levels
- * @param {number} count - Number of visible levels
- * @returns {{ columns: number, leftOffset: number, topOffset: number, inc: number }}
- */
-const getLayoutConfig = (count) => {
+type LayoutConfig = {
+    columns: number;
+    leftOffset: number;
+    topOffset: number;
+    inc: number;
+};
+
+const getLayoutConfig = (count: number): LayoutConfig => {
     if (count > 12) {
         return {
             columns: 5,
@@ -137,14 +105,12 @@ const getLayoutConfig = (count) => {
     };
 };
 
-/**
- * Positions a level button within the level grid, including horizontal and vertical centering.
- * @param {HTMLDivElement} levelElement - The DOM element representing the level button.
- * @param {number} index - The index of this button within the visible levels.
- * @param {number} visibleCount - The total number of visible levels on this page.
- * @param {{ columns: number, leftOffset: number, topOffset: number, inc: number }} layout - Grid layout configuration.
- */
-const positionLevelButton = (levelElement, index, visibleCount, layout) => {
+const positionLevelButton = (
+    levelElement: HTMLDivElement,
+    index: number,
+    visibleCount: number,
+    layout: LayoutConfig
+): void => {
     const { columns, leftOffset, topOffset, inc } = layout;
     const row = Math.floor(index / columns);
     const column = index % columns;
@@ -153,14 +119,8 @@ const positionLevelButton = (levelElement, index, visibleCount, layout) => {
     const rowOffset = isLastRow ? ((columns - lastRowCount) * inc) / 2 : 0;
 
     const totalRows = Math.ceil(visibleCount / columns);
-
-    // height of one full cell (using your increment)
     const totalHeight = totalRows * inc;
-
-    // reference height of a "full" grid (5 rows × inc)
     const fullHeight = 5 * inc;
-
-    // center vertically: shift down if fewer rows
     const verticalOffset = (fullHeight - totalHeight) / 2;
 
     levelElement.style.left = `${leftOffset + column * inc + rowOffset}px`;
@@ -169,53 +129,45 @@ const positionLevelButton = (levelElement, index, visibleCount, layout) => {
     levelElement.classList.toggle("option-small", columns === 5);
 };
 
-/**
- * LevelPanel class - manages the level selection panel
- * @extends Panel
- */
 class LevelPanel extends Panel {
+    private im: InterfaceManager | null = null;
+    private currentPage = 0;
+    private lastBoxIndex: number | null = null;
+    private levelNavBack: HTMLElement | null = null;
+    private levelNavForward: HTMLElement | null = null;
+    private readonly levelButtons: HTMLDivElement[] = [];
+    private isLevelNavigationActive = true;
+    private lastTotalPages = 0;
+
+    private readonly onLevelClick = (event: MouseEvent): void => {
+        const target = event.currentTarget as HTMLElement | null;
+        if (!target) return;
+
+        const levelIndex = parseInt(target.dataset.level ?? "0", 10);
+        if (ScoreManager.isLevelUnlocked(BoxManager.currentBoxIndex, levelIndex)) {
+            SoundMgr.selectRandomGameMusic();
+            this.im?.gameFlow.openLevel(levelIndex + 1, false, false);
+        } else {
+            return;
+        }
+
+        SoundMgr.playSound(ResourceId.SND_TAP);
+    };
+
     constructor() {
         super(PanelId.LEVELS, "levelPanel", backgroundId, true);
 
-        // Instance properties
-        /** @type {import("@/ui/InterfaceManagerClass").default|null} */
-        this.im = null;
-        /** @type {number} */
-        this.currentPage = 0;
-        /** @type {number|null} */
-        this.lastBoxIndex = null;
-        /** @type {HTMLElement|null} */
-        this.levelNavBack = null;
-        /** @type {HTMLElement|null} */
-        this.levelNavForward = null;
-        /** @type {HTMLElement[]} */
-        this.levelButtons = [];
-        /** @type {boolean} */
-        this.isLevelNavigationActive = true;
-        /** @type {number} */
-        this.lastTotalPages = 0;
-
-        // Bind methods
-        this.onLevelClick = this.onLevelClick.bind(this);
-        this.updateLevelOptions = this.updateLevelOptions.bind(this);
-        this.updateLevelNavigation = this.updateLevelNavigation.bind(this);
-
-        // Subscribe to PubSub events
         PubSub.subscribe(PubSub.ChannelId.UpdateVisibleBoxes, () => {
             this.updateLevelOptions();
         });
     }
 
-    /**
-     * Initialize the level panel
-     * @param {import("@/ui/InterfaceManagerClass").default} interfaceManager - The interface manager instance (not the module)
-     */
-    init(interfaceManager) {
+    init(interfaceManager: InterfaceManager): void {
         this.im = interfaceManager;
 
         const levelOptions = getElement("#levelOptions");
-        this.levelNavBack = /** @type {HTMLElement} */ (getElement("#levelNavBack"));
-        this.levelNavForward = /** @type {HTMLElement} */ (getElement("#levelNavForward"));
+        this.levelNavBack = getElement("#levelNavBack") as HTMLElement | null;
+        this.levelNavForward = getElement("#levelNavForward") as HTMLElement | null;
 
         if (!this.isLevelNavigationActive) {
             if (this.levelNavBack) hide(this.levelNavBack);
@@ -231,7 +183,7 @@ class LevelPanel extends Panel {
 
         this.levelNavForward?.addEventListener("click", () => {
             const boxIndex = BoxManager.currentBoxIndex;
-            const levelCount = ScoreManager.levelCount(boxIndex) || 0;
+            const levelCount = ScoreManager.levelCount(boxIndex) ?? 0;
             const totalPages = calculateTotalPages(levelCount);
             if (this.currentPage >= totalPages - 1) return;
             this.currentPage += 1;
@@ -251,11 +203,7 @@ class LevelPanel extends Panel {
         }
     }
 
-    /**
-     * Set whether level navigation is active
-     * @param {boolean} isActive
-     */
-    setNavigationActive(isActive) {
+    setNavigationActive(isActive: boolean): void {
         this.isLevelNavigationActive = isActive;
 
         if (!this.levelNavBack || !this.levelNavForward) {
@@ -271,10 +219,7 @@ class LevelPanel extends Panel {
         this.updateLevelNavigation(this.lastTotalPages);
     }
 
-    /**
-     * Called when the panel is shown
-     */
-    onShow() {
+    onShow(): void {
         this.setNavigationActive(false);
         this.updateLevelOptions();
         const levelScore = getElement("#levelScore");
@@ -301,7 +246,6 @@ class LevelPanel extends Panel {
                     this.setNavigationActive(true);
                 });
 
-            // Show navigation buttons immediately with level options
             this.setNavigationActive(true);
             if (this.lastTotalPages > 1 && this.levelNavBack && this.levelNavForward) {
                 show(this.levelNavBack);
@@ -319,35 +263,9 @@ class LevelPanel extends Panel {
         }
     }
 
-    /**
-     * Handle level button click
-     * @param {MouseEvent} event
-     */
-    onLevelClick(event) {
-        const target = /** @type {HTMLElement} */ (event.currentTarget);
-        if (!target) return;
-        const levelIndex = parseInt(target.dataset.level || "0", 10);
-        if (ScoreManager.isLevelUnlocked(BoxManager.currentBoxIndex, levelIndex)) {
-            SoundMgr.selectRandomGameMusic();
-            if (this.im) {
-                this.im.gameFlow.openLevel(levelIndex + 1, false, false);
-            }
-        } /*else if (requiresPurchase(levelIndex)) {
-            Dialogs.showPayDialog();
-        }*/ else {
-            // no action
-            return;
-        }
-
-        SoundMgr.playSound(ResourceId.SND_TAP);
-    }
-
-    /**
-     * Update level options based on current scores and stars
-     */
-    updateLevelOptions() {
+    private updateLevelOptions(): void {
         const boxIndex = BoxManager.currentBoxIndex;
-        const levelCount = ScoreManager.levelCount(boxIndex) || 0;
+        const levelCount = ScoreManager.levelCount(boxIndex) ?? 0;
 
         if (this.lastBoxIndex !== boxIndex) {
             this.currentPage = 0;
@@ -359,7 +277,6 @@ class LevelPanel extends Panel {
             this.currentPage = totalPages - 1;
         }
 
-        // Calculate start index based on actual levels per page
         let startIndex = 0;
         for (let page = 0; page < this.currentPage; page++) {
             startIndex += getLevelsPerPage(levelCount, page);
@@ -373,9 +290,10 @@ class LevelPanel extends Panel {
         const layout = getLayoutConfig(visibleCount);
 
         for (let i = 0; i < this.levelButtons.length; i++) {
-            const levelElement = /** @type {HTMLDivElement} */ (this.levelButtons[i]);
-            if (!levelElement) continue;
-
+            const levelElement = this.levelButtons[i];
+            if (!levelElement) {
+                continue;
+            }
             const levelIndex = startIndex + i;
             if (i < visibleCount && levelIndex < levelCount) {
                 positionLevelButton(levelElement, i, visibleCount, layout);
@@ -386,7 +304,10 @@ class LevelPanel extends Panel {
                 if (stars != null) {
                     const levelInfo = document.createElement("div");
                     levelInfo.className = "txt";
-                    append(levelInfo, Text.drawBig({ text: levelIndex + 1, scaleToUI: true }));
+                    append(
+                        levelInfo,
+                        Text.drawBig({ text: String(levelIndex + 1), scaleToUI: true })
+                    );
                     const starsElement = document.createElement("div");
                     addClass(starsElement, `stars${stars}`);
                     levelInfo.appendChild(starsElement);
@@ -407,21 +328,15 @@ class LevelPanel extends Panel {
             }
         }
 
-        // update the scores
-        // currently assuming each level has three stars
-        const achievedStars = ScoreManager.achievedStars(BoxManager.currentBoxIndex) || 0;
-        const totalStars = (ScoreManager.levelCount(BoxManager.currentBoxIndex) || 0) * 3;
+        const achievedStars = ScoreManager.achievedStars(BoxManager.currentBoxIndex) ?? 0;
+        const totalStars = (ScoreManager.levelCount(BoxManager.currentBoxIndex) ?? 0) * 3;
         const text = `${achievedStars}/${totalStars}`;
-        Text.drawBig({ text: text, imgSel: "#levelScore img", scaleToUI: true });
+        Text.drawBig({ text, imgSel: "#levelScore img", scaleToUI: true });
         BoxManager.updateBoxLocks();
         ScoreManager.updateTotalScoreText();
     }
 
-    /**
-     * Update level navigation buttons state
-     * @param {number} totalPages
-     */
-    updateLevelNavigation(totalPages) {
+    private updateLevelNavigation(totalPages: number): void {
         if (!this.levelNavBack || !this.levelNavForward) {
             return;
         }
@@ -437,8 +352,8 @@ class LevelPanel extends Panel {
         show(this.levelNavBack);
         show(this.levelNavForward);
 
-        const backDiv = this.levelNavBack?.firstElementChild;
-        const forwardDiv = this.levelNavForward?.firstElementChild;
+        const backDiv = this.levelNavBack.firstElementChild;
+        const forwardDiv = this.levelNavForward.firstElementChild;
 
         if (backDiv instanceof HTMLElement) {
             if (this.currentPage === 0) {
@@ -458,5 +373,4 @@ class LevelPanel extends Panel {
     }
 }
 
-// Export singleton instance
 export default new LevelPanel();

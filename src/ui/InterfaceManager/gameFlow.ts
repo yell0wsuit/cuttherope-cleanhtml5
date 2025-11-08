@@ -17,7 +17,6 @@ import SnowfallOverlay from "@/ui/SnowfallOverlay";
 import { IS_XMAS } from "@/resources/ResData";
 import { MENU_MUSIC_ID, startSnow, stopSnow } from "@/ui/InterfaceManager/constants";
 import { fadeIn, fadeOut, delay, show, hide, text, width } from "@/utils/domHelpers";
-// @ts-ignore - migrate LevelPanel to TypeScript
 import LevelPanel from "@/ui/LevelPanel";
 import type InterfaceManager from "@/ui/InterfaceManagerClass";
 
