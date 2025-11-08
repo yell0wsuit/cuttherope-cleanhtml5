@@ -20,6 +20,6 @@ const AchievementId = {
     CANDY_JUGGLER: 16,
     ROMANTIC_SOUL: 17,
     MAGICIAN: 18,
-};
+} as const;
 
 export default AchievementId;
