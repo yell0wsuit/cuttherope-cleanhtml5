@@ -29,7 +29,7 @@ class ViewController {
     activeViewID: number;
     activeChildID: number;
     pausedViewID: number;
-    parent: CTRRootController;
+    parent: ViewController;
     lastTime: number;
     delta: number;
     frames: number;
@@ -39,7 +39,7 @@ class ViewController {
     avgDelta: number;
     pastDeltas: number[];
 
-    constructor(parent: CTRRootController) {
+    constructor(parent: ViewController) {
         this.controllerState = StateType.INACTIVE;
         this.views = [];
         this.children = [];
