@@ -8,23 +8,40 @@ import Lang from "@/resources/Lang";
 import MenuStringId from "@/resources/MenuStringId";
 import { drawOmNom } from "@/ui/EasterEggOmNom";
 
-const canvas = document.querySelector("#e");
-const devCanvas = document.querySelector("#moreCanvas");
-const dShareBtn = document.querySelector("#dshareBtn");
-const drawingElement = document.querySelector("#d");
-const moreLink = document.querySelector("#moreLink");
-const d = document.querySelector("#d");
-const dframe = document.querySelector("#dframe");
-const dmsg = document.querySelector("#dmsg");
-const dshareBtn = document.querySelector("#dshareBtn");
-const dpic = document.querySelector("#dpic");
-const gameBtnTray = document.querySelector("#gameBtnTray");
+const canvas = document.querySelector("#e") as HTMLCanvasElement | null;
+const devCanvas = document.querySelector("#moreCanvas") as HTMLCanvasElement | null;
+const dShareBtn = document.querySelector("#dshareBtn") as HTMLElement | null;
+const drawingElement = document.querySelector("#d") as HTMLElement | null;
+const moreLink = document.querySelector("#moreLink") as HTMLElement | null;
+const d = document.querySelector("#d") as HTMLElement | null;
+const dframe = document.querySelector("#dframe") as HTMLElement | null;
+const dmsg = document.querySelector("#dmsg") as HTMLElement | null;
+const dshareBtn = document.querySelector("#dshareBtn") as HTMLElement | null;
+const dpic = document.querySelector("#dpic") as HTMLElement | null;
+const gameBtnTray = document.querySelector("#gameBtnTray") as HTMLElement | null;
+
+interface FadeOptions {
+    from?: number | null;
+    to?: number;
+    duration?: number;
+    delay?: number;
+    display?: string;
+}
 
 class EasterEggManager {
+    domReady!: () => void;
+    appReady!: () => void;
+    showOmNom!: () => void;
+    showDrawing!: (drawingIndex: number) => void;
+
     constructor() {
         const scaleTo = resolution.uiScaledNumber(2.2);
 
-        const animateElement = (element, keyframes, options = {}) => {
+        const animateElement = (
+            element: HTMLElement | null,
+            keyframes: Keyframe[] | PropertyIndexedKeyframes,
+            options: KeyframeAnimationOptions = {}
+        ) => {
             if (!element) {
                 return Promise.resolve();
             }
@@ -32,8 +49,8 @@ class EasterEggManager {
             return animation.finished.catch(() => {});
         };
         const fadeElementCustom = (
-            element,
-            { from = null, to = 1, duration = 200, delay = 0, display } = {}
+            element: HTMLElement | null,
+            { from = null, to = 1, duration = 200, delay = 0, display }: FadeOptions = {}
         ) => {
             if (!element) {
                 return Promise.resolve();
@@ -64,17 +81,19 @@ class EasterEggManager {
                     }
                 });
         };
-        const toPx = (value) => `${value}px`;
+        const toPx = (value: number) => `${value}px`;
         const easings = {
             easeOutBack: "cubic-bezier(0.175, 0.885, 0.32, 1.275)",
             easeInExpo: "cubic-bezier(0.95, 0.05, 0.795, 0.035)",
         };
-        let dpicBaseClassName = null;
-        let gameBtnTrayDisplay = null;
+        let dpicBaseClassName: string | null = null;
+        let gameBtnTrayDisplay: string | null = null;
 
         this.domReady = () => {
-            canvas.width = resolution.uiScaledNumber(1024);
-            canvas.height = resolution.uiScaledNumber(576);
+            if (canvas) {
+                canvas.width = resolution.uiScaledNumber(1024);
+                canvas.height = resolution.uiScaledNumber(576);
+            }
 
             if (devCanvas) {
                 devCanvas.width = 51;
@@ -136,15 +155,17 @@ class EasterEggManager {
             });
 
             PubSub.subscribe(PubSub.ChannelId.OmNomClicked, this.showOmNom);
-            PubSub.subscribe(PubSub.ChannelId.DrawingClicked, this.showDrawing);
+            PubSub.subscribe(PubSub.ChannelId.DrawingClicked, (...args: unknown[]) => {
+                this.showDrawing(args[0] as number);
+            });
         };
 
         // ------------------------------------------------------------------------
         // Drawings
         // ------------------------------------------------------------------------
         // show a drawing
-        let drawingNum = null;
-        this.showDrawing = (drawingIndex) => {
+        let drawingNum: number | null = null;
+        this.showDrawing = (drawingIndex: number) => {
             drawingNum = drawingIndex + 1;
             RootController.pauseLevel();
 
@@ -290,8 +311,10 @@ class EasterEggManager {
         // mouse over for dev link
         let omNomShowing = false;
 
-        const showDevLinkOmNom = (onComplete) => {
+        const showDevLinkOmNom = (onComplete: () => void) => {
+            if (!devCanvas) return;
             const ctx = devCanvas.getContext("2d");
+            if (!ctx) return;
             const begin = Date.now();
             const sx = 0.1;
             let sy = 0.1;
@@ -391,6 +414,7 @@ class EasterEggManager {
                 return;
             }
             const ctx = canvas.getContext("2d");
+            if (!ctx) return;
 
             RootController.pauseLevel();
 
