@@ -41,31 +41,6 @@ declare module "@/platformLoc" {
     export default platformLoc;
 }
 
-declare module "@/resources/ResourcePacks" {
-    const ResourcePacks: {
-        readonly StandardMenuSounds: readonly number[];
-        readonly StandardGameSounds: readonly number[];
-        readonly FullGameAdditionalSounds: readonly number[];
-        readonly StandardGameImages: readonly number[];
-        readonly FullGameAdditionalGameImages: readonly number[];
-        readonly StandardMenuImageFilenames: readonly string[];
-    };
-
-    export default ResourcePacks;
-}
-
-declare module "@/resources/JsonLoader" {
-    import type { RawBoxMetadataJson, LoadedLevelEntry, MenuStringEntry } from "@/types/json";
-
-    const JsonLoader: {
-        getBoxMetadata(): RawBoxMetadataJson[] | null | undefined;
-        getAllLevels(): Iterable<[string, LoadedLevelEntry[]]>;
-        getMenuStrings(): MenuStringEntry[] | undefined;
-    };
-
-    export default JsonLoader;
-}
-
 declare module "@/game/CTRRootController" {
     export interface CTRRootController {
         activeChildID: number;

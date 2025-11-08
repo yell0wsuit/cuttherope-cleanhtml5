@@ -5,14 +5,9 @@ import Sounds from "@/resources/Sounds";
 import { getAudioContext } from "@/utils/audioContext";
 import { soundRegistry } from "@/utils/soundRegistry";
 
-/**
- * @param {BaseAudioContext} context
- * @param {ArrayBuffer} arrayBuffer
- * @returns {Promise<AudioBuffer>}
- */
-const decodeAudioBuffer = (context, arrayBuffer) => {
-    return new Promise((resolve, reject) => {
-        let decodePromise;
+const decodeAudioBuffer = (context: BaseAudioContext, arrayBuffer: ArrayBuffer) => {
+    return new Promise<AudioBuffer>((resolve, reject) => {
+        let decodePromise: Promise<AudioBuffer> | undefined;
         try {
             decodePromise = context.decodeAudioData(
                 arrayBuffer,
@@ -29,46 +24,43 @@ const decodeAudioBuffer = (context, arrayBuffer) => {
     });
 };
 
+type CompletionListener = () => void;
+type ProgressListener = (completed: number, total: number) => void;
+
 class SoundLoader {
+    private readonly completeListeners: CompletionListener[] = [];
+
+    private readonly progressListeners: ProgressListener[] = [];
+
+    private startRequested = false;
+
+    private soundManagerReady = false;
+
+    private hasStartedLoading = false;
+
+    private currentCompleted = 0;
+
+    private currentFailed = 0;
+
+    private currentTotal = 0;
+
     constructor() {
-        /** @type {(() => void)[]} */
-        this.completeListeners = [];
-        /** @type {((completed: number, total: number) => void)[]} */
-        this.progressListeners = [];
-
-        this.startRequested = false;
-        this.soundManagerReady = false;
-        this.hasStartedLoading = false;
-        this.currentCompleted = 0;
-        this.currentFailed = 0;
-        this.currentTotal = 0;
-
-        // Bind `startIfReady` so it keeps correct `this`
-        this.startIfReady = this.startIfReady.bind(this);
-
-        // Hook into Sounds readiness
         Sounds.onReady(() => {
             this.soundManagerReady = true;
-            this.startIfReady();
+            void this.startIfReady();
         });
     }
 
-    start() {
+    start(): void {
         this.startRequested = true;
-        this.startIfReady();
+        void this.startIfReady();
     }
 
-    /**
-     * @param {{ (): void; (): void; }} callback
-     */
-    onMenuComplete(callback) {
+    onMenuComplete(callback: CompletionListener): void {
         this.completeListeners.push(callback);
     }
 
-    /**
-     * @param {{ (completed: number): void; (completed: number, total: number): void; }} callback
-     */
-    onProgress(callback) {
+    onProgress(callback: ProgressListener): void {
         this.progressListeners.push(callback);
         if (this.currentTotal > 0) {
             try {
@@ -79,11 +71,11 @@ class SoundLoader {
         }
     }
 
-    getSoundCount() {
+    getSoundCount(): number {
         return edition.menuSoundIds.length + edition.gameSoundIds.length;
     }
 
-    async startIfReady() {
+    private startIfReady = async (): Promise<void> => {
         if (!this.startRequested || !this.soundManagerReady || this.hasStartedLoading) {
             return;
         }
@@ -95,12 +87,13 @@ class SoundLoader {
         const context = getAudioContext();
 
         const soundIds = [
-            ...edition.menuSoundIds.map((id) => ({ id, tag: "MENU" })),
-            ...edition.gameSoundIds.map((id) => ({ id, tag: "GAME" })),
+            ...edition.menuSoundIds.map((id) => ({ id, tag: "MENU" as const })),
+            ...edition.gameSoundIds.map((id) => ({ id, tag: "GAME" as const })),
         ];
 
         this.currentTotal = soundIds.length;
         this.currentCompleted = 0;
+        this.currentFailed = 0;
 
         const notifyProgress = () => {
             for (const listener of this.progressListeners) {
@@ -129,10 +122,7 @@ class SoundLoader {
             return;
         }
 
-        /**
-         * @param {{ id: number }} param0
-         */
-        const loadSound = async ({ id }) => {
+        const loadSound = async ({ id }: { id: number }): Promise<void> => {
             const resource = resData[id];
             if (!resource) throw new Error(`Resource not found for sound ID: ${id}`);
 
@@ -153,7 +143,7 @@ class SoundLoader {
             soundRegistry.set(soundKey, {
                 buffer: audioBuffer,
                 gainNode,
-                playingSources: new Set(),
+                playingSources: new Set<AudioBufferSourceNode>(),
                 isPaused: false,
                 volume: 1,
             });
@@ -181,8 +171,7 @@ class SoundLoader {
         }
 
         notifyComplete();
-    }
+    };
 }
 
-// Export a singleton instance
 export default new SoundLoader();

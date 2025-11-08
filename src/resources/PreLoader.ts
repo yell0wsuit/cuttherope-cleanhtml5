@@ -8,45 +8,67 @@ import ResourceMgr, { initializeResources } from "@/resources/ResourceMgr";
 import ResourcePacks from "@/resources/ResourcePacks";
 import PubSub from "@/utils/PubSub";
 
+type UrlFacade = Pick<typeof URL, "createObjectURL" | "revokeObjectURL">;
+
+interface ImageAsset {
+    drawable: ImageBitmap | HTMLImageElement;
+    width: number;
+    height: number;
+    sourceUrl: string;
+}
+
+interface ResourceDescriptor {
+    url: string;
+    tag: string;
+    resId: number | null;
+}
+
 class PreLoader {
-    constructor() {
-        // State tracking
-        this.menuImagesLoadComplete = false;
-        this.menuSoundLoadComplete = false;
-        this.menuJsonLoadComplete = false;
+    private menuImagesLoadComplete = false;
 
-        /**
-         * @type {(() => void) | null}
-         */
-        this.completeCallback = null;
+    private menuSoundLoadComplete = false;
 
-        this.totalResources = 0;
-        this.loadedImages = 0;
-        this.loadedSounds = 0;
-        this.loadedJsonFiles = 0;
-        this.failedImages = 0;
-        this.failedSounds = 0;
+    private menuJsonLoadComplete = false;
 
-        this.MENU_TAG = "MENU";
-        this.FONT_TAG = "FONT";
-        this.GAME_TAG = "GAME";
-        this.supportsImageBitmap = typeof createImageBitmap === "function";
-    }
+    private menuCompleteLocked = false;
 
-    // === Utility helpers ===
-    getUrlFacade() {
-        if (typeof URL !== "undefined" && typeof URL.createObjectURL === "function") return URL;
+    private completeCallback: (() => void) | null = null;
+
+    private totalResources = 0;
+
+    private loadedImages = 0;
+
+    private loadedSounds = 0;
+
+    private loadedJsonFiles = 0;
+
+    private failedImages = 0;
+
+    private failedSounds = 0;
+
+    private readonly MENU_TAG = "MENU" as const;
+
+    private readonly FONT_TAG = "FONT" as const;
+
+    private readonly GAME_TAG = "GAME" as const;
+
+    private readonly supportsImageBitmap = typeof createImageBitmap === "function";
+
+    private getUrlFacade(): UrlFacade | null {
+        if (typeof URL !== "undefined" && typeof URL.createObjectURL === "function") {
+            return URL;
+        }
         if (typeof window !== "undefined") {
-            const legacy = window.URL || window.webkitURL;
-            if (legacy && typeof legacy.createObjectURL === "function") return legacy;
+            const legacyWindow = window as typeof window & { webkitURL?: UrlFacade };
+            const legacy = legacyWindow.webkitURL;
+            if (legacy && typeof legacy.createObjectURL === "function") {
+                return legacy;
+            }
         }
         return null;
     }
 
-    /**
-     * @param {string} url
-     */
-    async loadImageElement(url) {
+    private async loadImageElement(url: string): Promise<HTMLImageElement> {
         return new Promise((resolve, reject) => {
             const img = new Image();
             img.decoding = "async";
@@ -72,35 +94,28 @@ class PreLoader {
         });
     }
 
-    /**
-     * @param {ImageBitmap} drawable
-     * @param {string} sourceUrl
-     */
-    createImageAsset(drawable, sourceUrl) {
-        const naturalWidth = drawable.naturalWidth ?? drawable.videoWidth ?? drawable.width ?? 0;
+    private createImageAsset(
+        drawable: ImageBitmap | HTMLImageElement,
+        sourceUrl: string
+    ): ImageAsset {
+        const naturalWidth =
+            ("naturalWidth" in drawable ? drawable.naturalWidth : drawable.width) ?? 0;
         const naturalHeight =
-            drawable.naturalHeight ?? drawable.videoHeight ?? drawable.height ?? 0;
+            ("naturalHeight" in drawable ? drawable.naturalHeight : drawable.height) ?? 0;
 
         return { drawable, width: naturalWidth, height: naturalHeight, sourceUrl };
     }
 
-    /**
-     * @param {string | URL | Request} url
-     */
-    async fetchImageBlob(url) {
+    private async fetchImageBlob(url: RequestInfo | URL): Promise<Blob> {
         const response = await fetch(url);
         if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
-        return await response.blob();
+        return response.blob();
     }
 
-    /**
-     * @param {Blob} blob
-     * @param {string} fallbackUrl
-     */
-    async loadImageFromBlob(blob, fallbackUrl) {
+    private async loadImageFromBlob(blob: Blob, fallbackUrl: string): Promise<HTMLImageElement> {
         const urlFacade = this.getUrlFacade();
         if (!urlFacade) {
-            if (fallbackUrl) return await this.loadImageElement(fallbackUrl);
+            if (fallbackUrl) return this.loadImageElement(fallbackUrl);
             throw new Error("Object URL API not available");
         }
         const objectUrl = urlFacade.createObjectURL(blob);
@@ -111,10 +126,7 @@ class PreLoader {
         }
     }
 
-    /**
-     * @param {string} url
-     */
-    async loadImageAsset(url) {
+    private async loadImageAsset(url: string): Promise<ImageAsset> {
         if (!url) throw new Error("Image URL must be provided");
 
         if (!this.supportsImageBitmap && !this.getUrlFacade()) {
@@ -128,8 +140,8 @@ class PreLoader {
             try {
                 const bitmap = await createImageBitmap(blob);
                 return this.createImageAsset(bitmap, url);
-            } catch (err) {
-                console.warn("Falling back to HTMLImageElement for", url, err);
+            } catch (error) {
+                window.console?.warn?.("Falling back to HTMLImageElement for", url, error);
             }
         }
 
@@ -137,18 +149,14 @@ class PreLoader {
         return this.createImageAsset(img, url);
     }
 
-    /**
-     * @param {string | URL | Request} url
-     */
-    async loadJson(url) {
+    private async loadJson<T>(url: RequestInfo | URL): Promise<T> {
         const res = await fetch(url);
         if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
         const text = await res.text();
-        return JSON.parse(text);
+        return JSON.parse(text) as T;
     }
 
-    // === Progress handling ===
-    updateProgress() {
+    private updateProgress(): void {
         if (this.totalResources === 0) return;
         const progress =
             ((this.loadedImages + this.loadedSounds + this.loadedJsonFiles) / this.totalResources) *
@@ -157,16 +165,18 @@ class PreLoader {
         /*LoadAnimation?.notifyLoadProgress?.(progress);*/
     }
 
-    checkMenuLoadComplete() {
+    private checkMenuLoadComplete(): void {
         if (
+            this.menuCompleteLocked ||
             !this.menuImagesLoadComplete ||
             !this.menuSoundLoadComplete ||
             !this.menuJsonLoadComplete
-        )
+        ) {
             return;
+        }
 
         if (this.failedImages > 0 || this.failedSounds > 0) {
-            console.warn(
+            window.console?.warn?.(
                 `Loading completed with failures - Images: ${this.failedImages}, Sounds: ${this.failedSounds}`
             );
         }
@@ -176,38 +186,32 @@ class PreLoader {
 
         if (this.completeCallback) setTimeout(this.completeCallback, 0);
 
-        // lock once
-        this.checkMenuLoadComplete = () => {};
+        this.menuCompleteLocked = true;
     }
 
-    // === Resource collection ===
-    /**
-     * @param {string} gameBaseUrl
-     */
-    collectImageResources(gameBaseUrl) {
-        const resources = [];
+    private collectImageResources(gameBaseUrl: string): {
+        resources: ResourceDescriptor[];
+        menuResourceCount: number;
+    } {
+        const resources: ResourceDescriptor[] = [];
         let menuResourceCount = 0;
-        const add = (url, tag, resId = null) => {
+        const add = (url: string | null | undefined, tag: string, resId: number | null = null) => {
             if (!url) return;
             resources.push({ url, tag, resId });
             if (tag === this.MENU_TAG || tag === this.FONT_TAG) menuResourceCount++;
         };
 
-        const queueMenu = (arr, base = platform.uiImageBaseUrl) => {
+        const queueMenu = (
+            arr: readonly (string | null)[] | string | undefined,
+            base = platform.uiImageBaseUrl
+        ) => {
             if (!arr) return;
-            for (const name of arr) name && add(base + name, this.MENU_TAG);
+            const names = Array.isArray(arr) ? arr : [arr];
+            for (const name of names) {
+                if (name) add(base + name, this.MENU_TAG);
+            }
         };
 
-        // Menu UI images
-        //const pwdPath = platform.imageBaseUrl + (editionUI.passwordDirectory || "");
-        //queueMenu(editionUI.passwordImageNames, pwdPath);
-
-        /*const pwdResPath =
-            platform.resolutionBaseUrl + (editionUI.passwordResolutionDirectory || "");*/
-        //queueMenu(editionUI.passwordResolutionImageNames, pwdResPath);
-
-        //queueMenu(editionUI.pageImageNames, `${platform.imageBaseUrl}page/`);
-        //queueMenu(editionUI.pageResolutionImageNames, `${platform.resolutionBaseUrl}page/`);
         queueMenu(edition.menuImageFilenames);
         queueMenu(edition.boxImages, platform.boxImageBaseUrl);
         queueMenu(edition.boxBorders);
@@ -218,16 +222,16 @@ class PreLoader {
             platform.resolutionBaseUrl + (edition.editionImageDirectory || "")
         );
 
-        const queueForResMgr = (ids, tag) => {
+        const queueForResMgr = (ids: readonly number[] | undefined, tag: string) => {
             if (!ids) return;
             for (const id of ids) {
                 const res = resData[id];
                 if (!res) continue;
                 add(gameBaseUrl + res.path, tag, id);
                 if (res.atlasPath) {
-                    this.loadJson(gameBaseUrl + res.atlasPath)
+                    this.loadJson<Record<string, unknown>>(gameBaseUrl + res.atlasPath)
                         .then((atlas) => ResourceMgr.onAtlasLoaded(id, atlas))
-                        .catch((err) => ResourceMgr.onAtlasError(id, err));
+                        .catch((error) => ResourceMgr.onAtlasError(id, error as Error));
                 }
             }
         };
@@ -240,15 +244,14 @@ class PreLoader {
         return { resources, menuResourceCount };
     }
 
-    // === Image loading ===
-    loadImages() {
+    private loadImages(): { trackedResourceCount: number } {
         const gameBaseUrl = `${platform.imageBaseUrl}${resolution.CANVAS_WIDTH}/game/`;
         const { resources, menuResourceCount } = this.collectImageResources(gameBaseUrl);
 
         let menuLoaded = 0;
         let menuFailed = 0;
 
-        const tracked = (tag) => tag === this.MENU_TAG || tag === this.FONT_TAG;
+        const tracked = (tag: string) => tag === this.MENU_TAG || tag === this.FONT_TAG;
         const finalize = () => {
             this.loadedImages = menuLoaded + menuFailed;
             this.failedImages = menuFailed;
@@ -268,12 +271,13 @@ class PreLoader {
         for (const { url, tag, resId } of resources) {
             this.loadImageAsset(url)
                 .then((asset) => {
-                    if ((tag === this.FONT_TAG || tag === this.GAME_TAG) && resId !== null)
-                        ResourceMgr.onResourceLoaded(resId, asset);
+                    if ((tag === this.FONT_TAG || tag === this.GAME_TAG) && resId !== null) {
+                        ResourceMgr.onResourceLoaded(resId, asset as unknown as HTMLImageElement);
+                    }
                     if (tracked(tag)) menuLoaded++;
                 })
-                .catch((err) => {
-                    console.error("Failed to load image:", url, err);
+                .catch((error) => {
+                    window.console?.error?.("Failed to load image:", url, error);
                     if (tracked(tag)) menuFailed++;
                 })
                 .finally(() => {
@@ -284,17 +288,19 @@ class PreLoader {
         return { trackedResourceCount: menuResourceCount };
     }
 
-    // === Lifecycle ===
-    start() {
+    start(): void {
         initializeResources();
         // LoadAnimation?.init?.();
     }
 
-    domReady() {
+    domReady(): void {
         const betterLoader = document.getElementById("betterLoader");
         const start = () => this.startResourceLoading();
 
-        if (!betterLoader) return start();
+        if (!betterLoader) {
+            start();
+            return;
+        }
 
         const bg = window.getComputedStyle(betterLoader).backgroundImage;
         const match = bg.match(/url\(["']?([^"']*)["']?\)/);
@@ -308,18 +314,15 @@ class PreLoader {
         }
     }
 
-    /**
-     * @param {(() => void) | null} onComplete
-     */
-    run(onComplete) {
+    run(onComplete: (() => void) | null): void {
         this.completeCallback = onComplete;
         this.checkMenuLoadComplete();
     }
 
-    startResourceLoading() {
+    private startResourceLoading(): void {
         this.totalResources = JsonLoader.getJsonFileCount();
 
-        JsonLoader.onProgress((completed) => {
+        JsonLoader.onProgress((completed, _total) => {
             this.loadedJsonFiles = completed;
             this.updateProgress();
         });
@@ -331,7 +334,7 @@ class PreLoader {
             this.totalResources =
                 trackedResourceCount + SoundLoader.getSoundCount() + JsonLoader.getJsonFileCount();
 
-            SoundLoader.onProgress((/** @type {number} */ completed) => {
+            SoundLoader.onProgress((completed, _total) => {
                 this.loadedSounds = completed;
                 this.updateProgress();
             });
@@ -344,7 +347,7 @@ class PreLoader {
             SoundLoader.start();
         });
 
-        JsonLoader.start();
+        void JsonLoader.start();
     }
 }
 
