@@ -4,36 +4,36 @@ import Rectangle from "@/core/Rectangle";
 import ResourceId from "@/resources/ResourceId";
 import SoundMgr from "@/game/CTRSoundMgr";
 import resolution from "@/resolution";
+import type BaseElement from "@/visual/BaseElement";
+import type Vector from "@/core/Vector";
+import type { GameScene } from "@/types/game-scene";
 
-/**
- * @typedef {import("@/types/game-scene").GameScene} GameScene
- * @typedef {import("@/visual/BaseElement").default} BaseElement
- * @typedef {import("@/core/Vector").default} Vector
- */
+type SceneGrab = GameScene["bungees"][number];
+type SceneBungee = NonNullable<SceneGrab["rope"]>;
 
-/**
- * @param {GameScene} scene
- * @param {BaseElement | null} razor
- * @param {Vector} v1
- * @param {Vector} v2
- * @param {boolean} immediate
- */
-function cut(scene, razor, v1, v2, immediate) {
+function cut(
+    scene: GameScene,
+    razor: BaseElement | null,
+    v1: Vector,
+    v2: Vector,
+    immediate: boolean
+): number {
     let cutCount = 0;
-    for (let l = 0, len = scene.bungees.length; l < len; l++) {
-        const g = scene.bungees[l];
-        const b = g.rope;
+    const GRAB_WHEEL_RADIUS = resolution.GRAB_WHEEL_RADIUS;
+    const GRAB_WHEEL_DIAMETER = GRAB_WHEEL_RADIUS * 2;
 
-        if (!b || b.cut !== Constants.UNDEFINED) {
+    for (const grab of scene.bungees) {
+        const rope: SceneBungee | null = grab.rope;
+
+        if (!rope || rope.cut !== Constants.UNDEFINED) {
             continue;
         }
 
-        const GRAB_WHEEL_RADIUS = resolution.GRAB_WHEEL_RADIUS;
-        const GRAB_WHEEL_DIAMETER = GRAB_WHEEL_RADIUS * 2;
-        for (let i = 0, iLimit = b.parts.length - 1; i < iLimit; i++) {
-            const p1 = b.parts[i];
-            const p2 = b.parts[i + 1];
-            let cut = false;
+        const parts = rope.parts;
+        for (let i = 0, iLimit = parts.length - 1; i < iLimit; i++) {
+            const p1 = parts[i]!;
+            const p2 = parts[i + 1]!;
+            let shouldCut = false;
 
             if (razor) {
                 if (p1.prevPos.x !== Constants.INT_MAX) {
@@ -62,7 +62,7 @@ function cut(scene, razor, v1, v2, immediate) {
                         p2.prevPos.y
                     );
 
-                    cut = Rectangle.rectInRect(
+                    shouldCut = Rectangle.rectInRect(
                         minX,
                         minY,
                         maxX,
@@ -74,21 +74,21 @@ function cut(scene, razor, v1, v2, immediate) {
                     );
                 }
             } else if (
-                g.wheel &&
+                grab.wheel &&
                 Rectangle.lineInRect(
                     v1.x,
                     v1.y,
                     v2.x,
                     v2.y,
-                    g.x - GRAB_WHEEL_RADIUS,
-                    g.y - GRAB_WHEEL_RADIUS,
+                    grab.x - GRAB_WHEEL_RADIUS,
+                    grab.y - GRAB_WHEEL_RADIUS,
                     GRAB_WHEEL_DIAMETER,
                     GRAB_WHEEL_DIAMETER
                 )
             ) {
-                cut = false;
+                shouldCut = false;
             } else {
-                cut = MathHelper.lineInLine(
+                shouldCut = MathHelper.lineInLine(
                     v1.x,
                     v1.y,
                     v2.x,
@@ -100,25 +100,27 @@ function cut(scene, razor, v1, v2, immediate) {
                 );
             }
 
-            if (cut) {
-                cutCount++;
-
-                if (g.hasSpider && g.spiderActive) {
-                    scene.spiderBusted(g);
-                }
-
-                SoundMgr.playSound(ResourceId.SND_ROPE_BLEAK_1 + b.relaxed);
-
-                b.setCut(i);
-                scene.detachCandy();
-
-                if (immediate) {
-                    b.cutTime = 0;
-                    b.removePart(i);
-                }
-
-                return cutCount;
+            if (!shouldCut) {
+                continue;
             }
+
+            cutCount++;
+
+            if (grab.hasSpider && grab.spiderActive) {
+                scene.spiderBusted(grab);
+            }
+
+            SoundMgr.playSound(ResourceId.SND_ROPE_BLEAK_1 + rope.relaxed);
+
+            rope.setCut(i);
+            scene.detachCandy();
+
+            if (immediate) {
+                rope.cutTime = 0;
+                rope.removePart(i);
+            }
+
+            return cutCount;
         }
     }
 
@@ -126,21 +128,13 @@ function cut(scene, razor, v1, v2, immediate) {
 }
 
 class GameSceneCutDelegate {
-    /**
-     * @param {GameScene} scene
-     */
-    constructor(scene) {
-        /** @type {GameScene} */
+    private readonly scene: GameScene;
+
+    constructor(scene: GameScene) {
         this.scene = scene;
     }
 
-    /**
-     * @param {BaseElement | null} razor
-     * @param {Vector} v1
-     * @param {Vector} v2
-     * @param {boolean} immediate
-     */
-    cut(razor, v1, v2, immediate) {
+    cut(razor: BaseElement | null, v1: Vector, v2: Vector, immediate: boolean): number {
         return cut(this.scene, razor, v1, v2, immediate);
     }
 }

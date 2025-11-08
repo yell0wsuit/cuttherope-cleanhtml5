@@ -10,16 +10,25 @@ import SoundMgr from "@/game/CTRSoundMgr";
 import Timeline from "@/visual/Timeline";
 import Vector from "@/core/Vector";
 import ResourceId from "@/resources/ResourceId";
+import type AnimationPool from "@/visual/AnimationPool";
+import type Bubble from "@/game/Bubble";
+import type { GameScene } from "@/types/game-scene";
 
-/** @typedef {import("@/types/game-scene").GameScene} GameScene */
+type CollectiblesScene = GameScene & {
+    partsDist: number;
+    starDisappearPool: Animation[];
+    hudStars: Animation[];
+    candyResourceId: (typeof ResourceId)[keyof typeof ResourceId];
+    isBubbleCapture(
+        bubble: Bubble,
+        candy: GameObject,
+        candyBubble: Bubble | null,
+        candyBubbleAnimation: Animation | AnimationPool
+    ): boolean;
+};
 
-/**
- * @param {GameScene} this
- * @param {number} delta
- * @returns {boolean}
- */
-export function updateCollectibles(delta) {
-    let moveResult;
+export function updateCollectibles(this: CollectiblesScene, delta: number): boolean {
+    let moveResult: ReturnType<typeof Mover.moveToTargetWithStatus> | undefined;
     if (!this.noCandy) {
         this.candy.update(delta);
         this.star.update(delta * this.ropePhysicsSpeed);
@@ -70,21 +79,20 @@ export function updateCollectibles(delta) {
                 this.star.prevPos.copyFrom(this.star.pos);
                 this.star.prevPos.subtract(sv);
 
-                for (let i = 0, count = this.bungees.length; i < count; i++) {
-                    const g = this.bungees[i];
-                    const b = g.rope;
+                for (const grab of this.bungees) {
+                    const rope = grab.rope;
                     if (
-                        b &&
-                        b.cut !== b.parts.length - 3 &&
-                        (b.tail === this.starL || b.tail === this.starR)
+                        rope &&
+                        rope.cut !== rope.parts.length - 3 &&
+                        (rope.tail === this.starL || rope.tail === this.starR)
                     ) {
-                        const prev = b.parts[b.parts.length - 2];
-                        const heroRestLen = b.tail.restLength(prev);
+                        const prev = rope.parts[rope.parts.length - 2]!;
+                        const heroRestLen = rope.tail.restLength(prev);
                         this.star.addConstraint(prev, heroRestLen, ConstraintType.DISTANCE);
-                        b.tail = this.star;
-                        b.parts[b.parts.length - 1] = this.star;
-                        b.initialCandleAngle = 0;
-                        b.chosenOne = false;
+                        rope.tail = this.star;
+                        rope.parts[rope.parts.length - 1] = this.star;
+                        rope.initialCandleAngle = 0;
+                        rope.chosenOne = false;
                     }
                 }
 
@@ -100,7 +108,10 @@ export function updateCollectibles(delta) {
                     GameSceneConstants.IMG_OBJ_CANDY_01_part_fx_start,
                     GameSceneConstants.IMG_OBJ_CANDY_01_part_fx_end
                 );
-                transform.getTimeline(a).onFinished = this.aniPool.timelineFinishedDelegate();
+                const transformTimeline = transform.getTimeline(a);
+                if (transformTimeline) {
+                    transformTimeline.onFinished = this.aniPool.timelineFinishedDelegate();
+                }
                 transform.playTimeline(0);
                 this.aniPool.addChild(transform);
             } else {
@@ -131,28 +142,31 @@ export function updateCollectibles(delta) {
             s.update(delta);
 
             if (s.timeout > 0 && s.time === 0) {
-                s.getTimeline(1).onFinished = this.aniPool.timelineFinishedDelegate();
+                const starTimeline = s.getTimeline(1);
+                if (starTimeline) {
+                    starTimeline.onFinished = this.aniPool.timelineFinishedDelegate();
+                }
                 this.aniPool.addChild(s);
                 this.stars.splice(i, 1);
-                s.timedAnim.playTimeline(1);
+                s.timedAnim?.playTimeline(1);
                 s.playTimeline(1);
                 break;
             } else {
                 let hits = false;
                 if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
                     hits =
-                        (GameObject.intersect(this.candyL, s) && !this.noCandyL) ||
-                        (GameObject.intersect(this.candyR, s) && !this.noCandyR);
+                        (!!GameObject.intersect(this.candyL, s) && !this.noCandyL) ||
+                        (!!GameObject.intersect(this.candyR, s) && !this.noCandyR);
                 } else {
-                    hits = GameObject.intersect(this.candy, s) && !this.noCandy;
+                    hits = !!GameObject.intersect(this.candy, s) && !this.noCandy;
                 }
 
                 if (hits) {
                     this.candyBlink.playTimeline(GameSceneConstants.CandyBlink.STAR);
                     this.starsCollected++;
-                    this.hudStars[this.starsCollected - 1].playTimeline(0);
+                    this.hudStars[this.starsCollected - 1]!.playTimeline(0);
 
-                    const starDisappear = this.starDisappearPool[i];
+                    const starDisappear = this.starDisappearPool[i]!;
                     starDisappear.x = s.x;
                     starDisappear.y = s.y;
 
@@ -174,53 +188,57 @@ export function updateCollectibles(delta) {
         }
     }
 
-    for (let i = 0, len = this.bubbles.length; i < len; i++) {
-        const b = this.bubbles[i];
-        b.update(delta);
+    for (const bubble of this.bubbles) {
+        bubble.update(delta);
 
-        if (!b.popped) {
+        if (!bubble.popped) {
             if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
                 if (
                     !this.noCandyL &&
                     this.isBubbleCapture(
-                        b,
+                        bubble,
                         this.candyL,
                         this.candyBubbleL,
                         this.candyBubbleAnimationL
                     )
                 ) {
-                    this.candyBubbleL = b;
+                    this.candyBubbleL = bubble;
                     break;
                 }
 
                 if (
                     !this.noCandyR &&
                     this.isBubbleCapture(
-                        b,
+                        bubble,
                         this.candyR,
                         this.candyBubbleR,
                         this.candyBubbleAnimationR
                     )
                 ) {
-                    this.candyBubbleR = b;
+                    this.candyBubbleR = bubble;
                     break;
                 }
             } else if (
                 !this.noCandy &&
-                this.isBubbleCapture(b, this.candy, this.candyBubble, this.candyBubbleAnimation)
+                this.isBubbleCapture(
+                    bubble,
+                    this.candy,
+                    this.candyBubble,
+                    this.candyBubbleAnimation
+                )
             ) {
-                this.candyBubble = b;
+                this.candyBubble = bubble;
                 break;
             }
         }
 
-        if (!b.withoutShadow) {
+        if (!bubble.withoutShadow) {
             const numRotatedCircles = this.rotatedCircles.length;
             for (let j = 0; j < numRotatedCircles; j++) {
-                const rc = this.rotatedCircles[j];
-                const distanceToCircle = Vector.distance(b.x, b.y, rc.x, rc.y);
+                const rc = this.rotatedCircles[j]!;
+                const distanceToCircle = Vector.distance(bubble.x, bubble.y, rc.x, rc.y);
                 if (distanceToCircle < rc.sizeInPixels) {
-                    b.withoutShadow = true;
+                    bubble.withoutShadow = true;
                 }
             }
         }
@@ -228,13 +246,13 @@ export function updateCollectibles(delta) {
 
     // tutorial text
     for (let i = 0, len = this.tutorials.length; i < len; i++) {
-        const t = this.tutorials[i];
+        const t = this.tutorials[i]!;
         t.update(delta);
     }
 
     // tutorial images
     for (let i = 0, len = this.tutorialImages.length; i < len; i++) {
-        const t = this.tutorialImages[i];
+        const t = this.tutorialImages[i]!;
         t.update(delta);
     }
 

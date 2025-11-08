@@ -4,14 +4,21 @@ import resolution from "@/resolution";
 import Constants from "@/utils/Constants";
 import Mover from "@/utils/Mover";
 import * as GameSceneConstants from "@/gameScene/constants";
+import type { GameScene } from "@/types/game-scene";
+import type GenericButton from "@/visual/GenericButton";
 
-/** @typedef {import("@/types/game-scene").GameScene} GameScene */
+type SceneGrab = GameScene["bungees"][number];
+type SceneBungee = NonNullable<SceneGrab["rope"]>;
 
-/**
- * @param {GameScene} this
- * @param {number} delta
- */
-export function updateClickToCut(delta) {
+type ClickToCutScene = Omit<GameScene, "restartState"> & {
+    clickToCut: boolean;
+    slastTouch: Vector;
+    resetBungeeHighlight(): void;
+    getNearestBungeeGrabByBezierPoints(s: Vector, tx: number, ty: number): SceneGrab | null;
+    restartState: number;
+};
+
+export function updateClickToCut(this: ClickToCutScene, delta: number): void {
     if (this.clickToCut && !this.ignoreTouches) {
         this.resetBungeeHighlight();
 
@@ -19,14 +26,15 @@ export function updateClickToCut(delta) {
         const cv = new Vector(0, 0);
         const pos = Vector.add(this.slastTouch, this.camera.pos);
         const grab = this.getNearestBungeeGrabByBezierPoints(cv, pos.x, pos.y);
-        const b = grab ? grab.rope : null;
+        const b: SceneBungee | null = grab ? grab.rope : null;
         if (b) {
             // now see if there is an active element that would override
             // bungee selection
             let activeElement = false;
             if (this.gravityButton) {
-                const c = this.gravityButton.getChild(this.gravityButton.isOn() ? 1 : 0);
-                if (c.isInTouchZone(pos.x, pos.y, true)) {
+                const childIndex = this.gravityButton.isOn() ? 1 : 0;
+                const c = this.gravityButton.getChild(childIndex) as GenericButton | undefined;
+                if (c?.isInTouchZone(pos.x, pos.y, true)) {
                     activeElement = true;
                 }
             }
@@ -36,8 +44,7 @@ export function updateClickToCut(delta) {
                 (this.twoParts != GameSceneConstants.PartsType.NONE &&
                     (this.candyBubbleL || this.candyBubbleR))
             ) {
-                for (let i = 0, len = this.bubbles.length; i < len; i++) {
-                    const s = this.bubbles[i];
+                for (const bubble of this.bubbles) {
                     const BUBBLE_RADIUS = resolution.BUBBLE_RADIUS;
                     const BUBBLE_DIAMETER = BUBBLE_RADIUS * 2;
                     if (this.candyBubble) {
@@ -90,47 +97,43 @@ export function updateClickToCut(delta) {
                 }
             }
 
-            for (let i = 0, len = this.spikes.length; i < len; i++) {
-                const s = this.spikes[i];
-                if (s.rotateButton && s.rotateButton.isInTouchZone(pos.x, pos.y, true)) {
+            for (const spike of this.spikes) {
+                if (spike.rotateButton && spike.rotateButton.isInTouchZone(pos.x, pos.y, true)) {
                     activeElement = true;
                 }
             }
 
-            for (let i = 0, len = this.pumps.length; i < len; i++) {
-                if (this.pumps[i].pointInObject(pos.x, pos.y)) {
+            for (const pump of this.pumps) {
+                if (pump.pointInObject(pos.x, pos.y)) {
                     activeElement = true;
                     break;
                 }
             }
 
-            for (let i = 0, len = this.rotatedCircles.length; i < len; i++) {
-                const rc = this.rotatedCircles[i];
+            for (const rc of this.rotatedCircles) {
                 if (rc.isLeftControllerActive() || rc.isRightControllerActive()) {
                     activeElement = true;
                     break;
                 }
 
-                if (
-                    Vector.distance(pos.x, pos.y, rc.handle2.x, rc.handle2.y) <=
-                        resolution.RC_CONTROLLER_RADIUS ||
-                    Vector.distance(pos.x, pos.y, rc.handle2.x, rc.handle2.y) <=
-                        resolution.RC_CONTROLLER_RADIUS
-                ) {
-                    activeElement = true;
-                    break;
+                const handle = rc.handle2;
+                if (handle) {
+                    const distance = Vector.distance(pos.x, pos.y, handle.x, handle.y);
+                    if (distance <= resolution.RC_CONTROLLER_RADIUS) {
+                        activeElement = true;
+                        break;
+                    }
                 }
             }
 
-            for (let i = 0, len = this.bungees.length; i < len; i++) {
-                const g = this.bungees[i];
-                if (g.wheel) {
+            for (const grab of this.bungees) {
+                if (grab.wheel) {
                     if (
                         Rectangle.pointInRect(
                             pos.x,
                             pos.y,
-                            g.x - resolution.GRAB_WHEEL_RADIUS,
-                            g.y - resolution.GRAB_WHEEL_RADIUS,
+                            grab.x - resolution.GRAB_WHEEL_RADIUS,
+                            grab.y - resolution.GRAB_WHEEL_RADIUS,
                             resolution.GRAB_WHEEL_RADIUS * 2,
                             resolution.GRAB_WHEEL_RADIUS * 2
                         )
@@ -140,17 +143,17 @@ export function updateClickToCut(delta) {
                     }
                 }
 
-                if (g.moveLength > 0) {
+                if (grab.moveLength > 0) {
                     if (
                         Rectangle.pointInRect(
                             pos.x,
                             pos.y,
-                            g.x - resolution.GRAB_MOVE_RADIUS,
-                            g.y - resolution.GRAB_MOVE_RADIUS,
+                            grab.x - resolution.GRAB_MOVE_RADIUS,
+                            grab.y - resolution.GRAB_MOVE_RADIUS,
                             resolution.GRAB_MOVE_RADIUS * 2,
                             resolution.GRAB_MOVE_RADIUS * 2
                         ) ||
-                        g.moverDragging !== Constants.UNDEFINED
+                        grab.moverDragging !== Constants.UNDEFINED
                     ) {
                         activeElement = true;
                         break;
