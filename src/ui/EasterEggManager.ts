@@ -20,7 +20,7 @@ const dshareBtn = document.querySelector("#dshareBtn") as HTMLElement | null;
 const dpic = document.querySelector("#dpic") as HTMLElement | null;
 const gameBtnTray = document.querySelector("#gameBtnTray") as HTMLElement | null;
 
-interface FadeOptions {
+interface EasterEggFadeOptions {
     from?: number | null;
     to?: number;
     duration?: number;
@@ -50,7 +50,7 @@ class EasterEggManager {
         };
         const fadeElementCustom = (
             element: HTMLElement | null,
-            { from = null, to = 1, duration = 200, delay = 0, display }: FadeOptions = {}
+            { from = null, to = 1, duration = 200, delay = 0, display }: EasterEggFadeOptions = {}
         ) => {
             if (!element) {
                 return Promise.resolve();

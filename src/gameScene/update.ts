@@ -26,6 +26,7 @@ interface GameSceneUpdateOptions {
 type DelegateMethod = (...args: unknown[]) => unknown;
 
 function bindDelegate(scene: GameSceneUpdate, delegate: object, methods: readonly string[]): void {
+    // Double assertion needed: dynamically adding delegate methods to scene (mixin pattern)
     const sceneAsRecord = scene as unknown as Record<string, unknown>;
     const delegateAsRecord = delegate as Record<string, DelegateMethod>;
     for (const method of methods) {
@@ -58,6 +59,7 @@ class GameSceneUpdate extends GameSceneCharacter {
     constructor(options: GameSceneUpdateOptions = {}) {
         super();
 
+        // Double assertion: GameSceneUpdate extends chain that becomes GameScene
         const sceneContext = this as unknown as GameScene;
 
         this.drawDelegate = new GameSceneDrawDelegate(sceneContext);
@@ -115,11 +117,13 @@ class GameSceneUpdate extends GameSceneCharacter {
         this.candyService = new GameSceneCandyService(sceneContext);
         this.animationService = new GameSceneAnimationService(sceneContext);
 
+        // Circular dependency: systemContext needs pluginManager, but pluginManager needs systemContext
+        // Initialize with null!, then assign after pluginManager is created
         const systemContext: GameSystemContext = {
             physics: this.physicsService,
             candy: this.candyService,
             animation: this.animationService,
-            pluginManager: null as unknown as GameObjectPluginManager,
+            pluginManager: null!,
         };
 
         this.pluginManager = new GameObjectPluginManager(systemContext);

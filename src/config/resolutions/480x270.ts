@@ -107,8 +107,8 @@ const res480x270: Partial<ResolutionProfile> = {
      * @type {number}
      */
     PHYSICS_SPEED_MULTIPLIER: 0.65,
-};
+} as const;
 
-(window as unknown as { resolution: typeof res480x270 }).resolution = res480x270;
+window.resolution = res480x270 as ResolutionProfile;
 
 export default res480x270;

@@ -33,14 +33,7 @@ import {
     removeClass,
     stopAnimations,
 } from "@/utils/domHelpers";
-
-type PanelIdType = (typeof PanelId)[keyof typeof PanelId];
-
-type PanelWithLifecycle = Panel & {
-    init?: (manager: PanelInitializerManager) => void;
-    onShow?: () => void;
-    onHide?: () => void;
-};
+import type { PanelIdType, PanelWithLifecycle } from "@/ui/types/panelTypes";
 
 interface GameFlowForPanelInit {
     noMenuStartLevel: (boxIndex: number, levelIndex: number) => void;

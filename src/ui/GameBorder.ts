@@ -3,7 +3,7 @@ import edition from "@/config/editions/net-edition";
 
 const GAME_COMPLETE_CLASS = "gameComplete";
 
-interface FadeOptions {
+interface GameBorderFadeOptions {
     fadeIn: boolean;
     duration?: number | undefined;
     delay?: number | undefined;
@@ -19,7 +19,7 @@ class GameBorder {
         return this.borderElement;
     };
 
-    private applyFade = ({ fadeIn, duration = 0, delay = 0 }: FadeOptions): void => {
+    private applyFade = ({ fadeIn, duration = 0, delay = 0 }: GameBorderFadeOptions): void => {
         const element = this.ensureBorderElement();
         if (!element) return;
 

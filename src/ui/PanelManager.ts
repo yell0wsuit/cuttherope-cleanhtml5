@@ -7,8 +7,7 @@ import platform from "@/config/platforms/platform-web";
 import Easing from "@/ui/Easing";
 import PubSub from "@/utils/PubSub";
 import edition from "@/config/editions/net-edition";
-
-type PanelIdType = (typeof PanelId)[keyof typeof PanelId];
+import type { PanelIdType } from "@/ui/types/panelTypes";
 
 class PanelManager {
     // Panel list

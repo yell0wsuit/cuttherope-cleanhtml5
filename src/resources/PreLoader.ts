@@ -273,7 +273,7 @@ class PreLoader {
             this.loadImageAsset(url)
                 .then((asset) => {
                     if ((tag === this.FONT_TAG || tag === this.GAME_TAG) && resId !== null) {
-                        ResourceMgr.onResourceLoaded(resId, asset as unknown as HTMLImageElement);
+                        ResourceMgr.onResourceLoaded(resId, asset.drawable as HTMLImageElement);
                     }
                     if (tracked(tag)) menuLoaded++;
                 })

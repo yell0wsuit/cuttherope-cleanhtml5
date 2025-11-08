@@ -113,3 +113,9 @@ export interface ResolutionProfile {
     // Added by scaleResolution function
     uiScaledNumber?: (n: number) => number;
 }
+
+declare global {
+    interface Window {
+        resolution: ResolutionProfile;
+    }
+}

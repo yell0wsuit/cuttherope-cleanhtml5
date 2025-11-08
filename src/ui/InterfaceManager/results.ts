@@ -18,12 +18,7 @@ const stamp = document.getElementById("resultImproved");
 const msgdiv = document.getElementById("resultTickerMessage");
 const levelPanel = document.getElementById("levelPanel");
 
-interface LevelWonInfo {
-    stars: number;
-    score: number;
-    time: number;
-    fps: number;
-}
+import type { LevelWonInfo } from "@/ui/InterfaceManager/gameFlow";
 
 interface ResultsManager {
     isInLevelSelectMode: boolean;
@@ -330,7 +325,7 @@ export default class ResultsHandler {
             }*/
 
             // tell the user if the fps was low on the first level
-            if (info.fps < this.manager._MIN_FPS && !platform.disableSlowWarning) {
+            if (info.fps != null && info.fps < this.manager._MIN_FPS && !platform.disableSlowWarning) {
                 setTimeout(() => {
                     Dialogs.showSlowComputerPopup();
                 }, 3000);

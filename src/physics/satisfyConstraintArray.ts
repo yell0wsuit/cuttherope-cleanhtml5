@@ -1,6 +1,6 @@
 import type ConstrainedPoint from "./ConstrainedPoint";
 
-function satisfyConstraintArray(arr: ConstrainedPoint[], n: number) {
+function satisfyConstraintArray(arr: ConstrainedPoint[], n: number): void {
     // NOTE: this method is a perf hotspot so be careful with changes
     n = n || 1;
 

@@ -27,7 +27,7 @@ export interface LevelWonInfo {
     stars: number;
     time: number;
     score: number;
-    fps: number;
+    fps?: number;
 }
 
 /**

@@ -14,15 +14,7 @@ import Text from "@/visual/Text";
 import PubSub from "@/utils/PubSub";
 import { MENU_MUSIC_ID } from "@/ui/InterfaceManager/constants";
 import { hide, append, empty } from "@/utils/domHelpers";
-
-type PanelIdType = (typeof PanelId)[keyof typeof PanelId];
-
-type PanelWithLifecycle = Panel & {
-    onShow?: () => void;
-    onHide?: () => void;
-    slideToNextBox?: () => void;
-    bounceCurrentBox?: () => void;
-};
+import type { PanelIdType, PanelWithLifecycle } from "@/ui/types/panelTypes";
 
 interface GameFlowForPanelShow {
     _closeLevelMenu: () => void;
