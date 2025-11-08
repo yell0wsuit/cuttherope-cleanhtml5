@@ -7,6 +7,7 @@ declare module "@/Doors" {
         openBoxAnimation(callback?: (() => void) | null): void;
         showGradient(): void;
         hideGradient(): void;
+        appReady(): void;
     }
     const Doors: DoorsModule;
     export default Doors;

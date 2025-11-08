@@ -221,7 +221,7 @@ export const stopAnimations = (selector: string | Element | null | undefined) =>
  */
 export const fadeIn = (
     selector: string | Element | null | undefined,
-    duration: number,
+    duration?: number,
     displayValue?: string
 ): Promise<void> => {
     const el = getElement(selector);
@@ -258,7 +258,7 @@ export const fadeIn = (
  */
 export const fadeOut = (
     selector: string | Element | null | undefined,
-    duration: number
+    duration?: number
 ): Promise<void> => {
     const el = getElement(selector);
     if (!el || !(el instanceof HTMLElement)) return Promise.resolve();

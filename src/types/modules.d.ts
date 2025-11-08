@@ -90,10 +90,24 @@ declare module "@/game/CTRRootController" {
         onChildDeactivated(childType: number): void;
         pauseLevel(): void;
         resumeLevel(): void;
+        restartLevel(): void;
+        startLevel(boxIndex: number, levelIndex: number): void;
+        stopLevel(): void;
+        isLevelActive(): boolean;
     }
 
     const rootController: CTRRootController;
     export default rootController;
+}
+
+declare module "@/ui/EasterEggManager" {
+    interface EasterEggManager {
+        domReady(): void;
+        appReady(): void;
+    }
+
+    const easterEggManager: EasterEggManager;
+    export default easterEggManager;
 }
 
 declare module "@/game/GameView" {
