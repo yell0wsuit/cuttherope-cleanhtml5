@@ -88,6 +88,8 @@ declare module "@/game/CTRRootController" {
     export interface CTRRootController {
         activeChildID: number;
         onChildDeactivated(childType: number): void;
+        pauseLevel(): void;
+        resumeLevel(): void;
     }
 
     const rootController: CTRRootController;
@@ -146,4 +148,13 @@ declare module "@/config/resolutions/*" {
         TARGET_BB?: Rectangle;
     };
     export default profile;
+}
+declare module "@/ZoomManager" {
+    interface ZoomManager {
+        domReady(): void;
+        getUIZoom(): number;
+    }
+
+    const zoomManager: ZoomManager;
+    export default zoomManager;
 }

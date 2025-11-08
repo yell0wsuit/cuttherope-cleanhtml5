@@ -12,38 +12,29 @@ import { IS_XMAS } from "@/resources/ResData";
  * Manages all game boxes — creation, visibility, locks, and events.
  */
 class BoxManager {
-    /** @type {Box[]} */
-    static boxes = [];
+    static boxes: Box[] = [];
 
-    /** @type {boolean} */
     static isPaid = false;
 
-    /** @type {boolean} */
     static appIsReady = false;
 
-    /** @type {number} */
     static currentBoxIndex = BoxManager.getDefaultBoxIndex();
 
-    /** @type {number} */
-    static currentLevelIndex = 1; // TODO: should be zero-based
-
-    // ---------------------------------------------------------------------
-    // Initialization
-    // ---------------------------------------------------------------------
+    // TODO: should be zero-based
+    static currentLevelIndex = 1;
 
     /**
      * Returns the default box index.
      * Defaults to the Holiday Gift box (index 0) during Christmas season.
-     * @returns {number}
      */
-    static getDefaultBoxIndex() {
+    static getDefaultBoxIndex(): number {
         return IS_XMAS ? 0 : 1;
     }
 
     /**
      * Marks the app as ready and loads all boxes.
      */
-    static appReady() {
+    static appReady(): void {
         this.appIsReady = true;
         this.loadBoxes();
     }
@@ -51,7 +42,7 @@ class BoxManager {
     /**
      * Loads boxes only if the app is ready.
      */
-    static loadBoxes() {
+    static loadBoxes(): void {
         if (!this.appIsReady) return;
 
         this.currentBoxIndex = this.getDefaultBoxIndex();
@@ -60,58 +51,55 @@ class BoxManager {
         this.updateVisibleBoxes();
     }
 
-    // ---------------------------------------------------------------------
-    // Box creation & management
-    // ---------------------------------------------------------------------
-
     /**
      * Creates all boxes according to edition configuration.
      */
-    static createBoxes() {
-        const { boxImages: images, boxTypes: boxtypes } = edition;
+    static createBoxes(): void {
+        const { boxImages: images, boxTypes } = edition;
 
-        // Clean up existing boxes
         while (this.boxes.length) {
             const existingBox = this.boxes.pop();
-            if (existingBox?.destroy) existingBox.destroy();
+            existingBox?.destroy();
         }
 
-        // Create new boxes
-        for (let i = 0; i < boxtypes.length; i++) {
-            const type = boxtypes[i];
+        for (let i = 0; i < boxTypes.length; i++) {
+            const type = boxTypes[i] ?? BoxType.NORMAL;
+            const image = images[i] ?? null;
             const requiredStars = ScoreManager.requiredStars(i);
             const isLocked = ScoreManager.isBoxLocked(i);
-            let box;
+
+            let box: Box;
 
             switch (type) {
                 case BoxType.MORECOMING:
-                    box = new MoreComingBox(i, images[i], requiredStars, isLocked, type);
+                    box = new MoreComingBox(i, image, requiredStars, isLocked, type);
                     break;
                 case BoxType.TIME:
-                    box = new TimeBox(i, images[i], requiredStars, isLocked, type);
+                    box = new TimeBox(i, image, requiredStars, isLocked, type);
                     break;
                 case BoxType.HOLIDAY:
-                    box = new Box(i, images[i], requiredStars, isLocked, type);
+                    box = new Box(i, image, requiredStars, isLocked, type);
                     box.yOffset = -26;
                     break;
                 default:
-                    box = new Box(i, images[i], requiredStars, isLocked, type);
+                    box = new Box(i, image, requiredStars, isLocked, type);
                     break;
             }
 
-            if (box) this.boxes.push(box);
+            this.boxes.push(box);
         }
     }
 
     /**
      * Updates the list of visible boxes and publishes via PubSub.
      */
-    static updateVisibleBoxes() {
-        /** @type {Box[]} */
-        const visibleBoxes = [];
+    static updateVisibleBoxes(): void {
+        const visibleBoxes: Box[] = [];
 
         for (let i = 0; i < this.boxes.length; i++) {
             const box = this.boxes[i];
+            if (!box) continue;
+
             box.index = i;
             if (box.visible) visibleBoxes.push(box);
         }
@@ -119,29 +107,15 @@ class BoxManager {
         PubSub.publish(PubSub.ChannelId.UpdateVisibleBoxes, visibleBoxes);
     }
 
-    // ---------------------------------------------------------------------
-    // Gameplay helpers
-    // ---------------------------------------------------------------------
-
     /**
      * Checks if the next level is playable (i.e., not locked or paid-only).
-     * @returns {boolean}
      */
-    static isNextLevelPlayable() {
+    static isNextLevelPlayable(): boolean {
         const levelCount = ScoreManager.levelCount(this.currentBoxIndex);
 
-        // If box is missing or current level is the last one
         if (levelCount == null || levelCount <= this.currentLevelIndex) {
             return false;
         }
-
-        // If already paid or no purchase required
-        /*if (this.isPaid || !edition.levelRequiresPurchase) {
-            return true;
-        }*/
-
-        // Otherwise, check next level's requirement
-        //return !edition.levelRequiresPurchase(this.currentBoxIndex, this.currentLevelIndex);
 
         // Web edition: all levels are free
         return true;
@@ -149,17 +123,15 @@ class BoxManager {
 
     /**
      * Returns the number of boxes required to win the game.
-     * @returns {number}
      */
-    static requiredCount() {
+    static requiredCount(): number {
         return this.boxes.filter((box) => box.isRequired()).length;
     }
 
     /**
      * Returns total possible stars across all required boxes.
-     * @returns {number}
      */
-    static possibleStars() {
+    static possibleStars(): number {
         return this.boxes.reduce((sum, box, i) => {
             return box.isRequired() ? sum + ScoreManager.possibleStarsForBox(i) : sum;
         }, 0);
@@ -167,22 +139,19 @@ class BoxManager {
 
     /**
      * Returns the count of visible and required game boxes.
-     * @returns {number}
      */
-    static visibleGameBoxes() {
+    static visibleGameBoxes(): number {
         return this.boxes.filter((box) => box.isRequired() && box.purchased !== false).length;
     }
-
-    // ---------------------------------------------------------------------
-    // Lock handling
-    // ---------------------------------------------------------------------
 
     /**
      * Locks all boxes except the first one.
      */
-    static resetLocks() {
+    static resetLocks(): void {
         for (let i = 1; i < this.boxes.length; i++) {
             const box = this.boxes[i];
+            if (!box) continue;
+
             if (box.isGameBox()) {
                 box.islocked = true;
             }
@@ -194,15 +163,17 @@ class BoxManager {
     /**
      * Unlocks boxes based on score and purchase state.
      */
-    static updateBoxLocks() {
+    static updateBoxLocks(): void {
         let shouldRedraw = false;
 
         for (let i = 1; i < this.boxes.length; i++) {
             const box = this.boxes[i];
+            if (!box) continue;
+
             if (!ScoreManager.isBoxLocked(i) && box.purchased && box.islocked) {
                 box.islocked = false;
                 shouldRedraw = true;
-                ScoreManager.setStars(i, 0, 0);
+                ScoreManager.setStars(i, 0, 0, false);
             }
         }
 
@@ -211,24 +182,25 @@ class BoxManager {
         }
     }
 
-    // ---------------------------------------------------------------------
-    // Event bindings
-    // ---------------------------------------------------------------------
-
     /**
      * Initializes event subscriptions for box-related updates.
      */
-    static initializeEventSubscriptions() {
-        PubSub.subscribe(PubSub.ChannelId.SelectedBoxChanged, (/** @type {number} */ boxIndex) => {
-            this.currentBoxIndex = boxIndex;
-            this.currentLevelIndex = 1;
+    static initializeEventSubscriptions(): void {
+        PubSub.subscribe(PubSub.ChannelId.SelectedBoxChanged, (...args: unknown[]) => {
+            const [boxIndex] = args;
+            if (typeof boxIndex === "number") {
+                this.currentBoxIndex = boxIndex;
+                this.currentLevelIndex = 1;
+            }
         });
 
-        PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, (/** @type {boolean} */ paid) => {
-            this.isPaid = paid;
+        PubSub.subscribe(PubSub.ChannelId.SetPaidBoxes, (...args: unknown[]) => {
+            const [paid] = args;
+            if (typeof paid === "boolean") {
+                this.isPaid = paid;
+            }
         });
 
-        // Reload boxes on user state changes
         const reloadChannels = [
             PubSub.ChannelId.SignIn,
             PubSub.ChannelId.SignOut,
@@ -236,8 +208,8 @@ class BoxManager {
             PubSub.ChannelId.BoxesUnlocked,
         ];
 
-        for (const ch of reloadChannels) {
-            PubSub.subscribe(ch, () => this.loadBoxes());
+        for (const channel of reloadChannels) {
+            PubSub.subscribe(channel, () => this.loadBoxes());
         }
     }
 }

@@ -1,8 +1,5 @@
 import RootController from "@/game/CTRRootController";
-import PanelId from "@/ui/PanelId";
 import resolution from "@/resolution";
-import platform from "@/config/platforms/platform-web";
-import ScoreManager from "@/ui/ScoreManager";
 import { UIRegistry } from "@/ui/types";
 import PubSub from "@/utils/PubSub";
 import SoundMgr from "@/game/CTRSoundMgr";
@@ -10,34 +7,34 @@ import ResourceId from "@/resources/ResourceId";
 import Lang from "@/resources/Lang";
 import Text from "@/visual/Text";
 import MenuStringId from "@/resources/MenuStringId";
-import edition from "@/config/editions/net-edition";
 import Alignment from "@/core/Alignment";
 
+interface FadeElementOptions {
+    from?: number;
+    to: number;
+    duration: number;
+    display?: string;
+}
+
 /**
- * @class Dialogs
- * @classdesc Handles all popup dialog logic, including fade animations,
+ * Handles all popup dialog logic, including fade animations,
  * localization updates, and user interaction bindings.
  */
 class Dialogs {
-    /** @type {number} */
     static FADE_DURATION_MS = 200;
 
-    /** @type {{popupOuter: string, popupInner: string, popupWindow: string}} */
     static SELECTORS = {
         popupOuter: ".popupOuterFrame",
         popupInner: ".popupInnerFrame",
         popupWindow: "#popupWindow",
-    };
+    } as const;
 
-    /** @type {WeakMap<HTMLElement, AbortController>} */
-    static activeControllers = new WeakMap();
+    static activeControllers: WeakMap<HTMLElement, AbortController> = new WeakMap();
 
     /**
      * Cancels any ongoing fade animation on an element.
-     * @param {HTMLElement} el
-     * @param {number} [finalOpacity]
      */
-    static cancelAnimation(el, finalOpacity) {
+    static cancelAnimation(el: HTMLElement, finalOpacity?: number): void {
         const controller = Dialogs.activeControllers.get(el);
         if (controller) {
             controller.abort();
@@ -50,11 +47,8 @@ class Dialogs {
 
     /**
      * Smoothly fades an element between two opacity values.
-     * @param {HTMLElement} el
-     * @param {{from?: number, to: number, duration: number, display?: string}} options
-     * @returns {Promise<void>}
      */
-    static async fadeElement(el, { from, to, duration, display }) {
+    static async fadeElement(el: HTMLElement, { from, to, duration, display }: FadeElementOptions): Promise<void> {
         Dialogs.cancelAnimation(el);
         if (display !== undefined) el.style.display = display;
 
@@ -66,14 +60,16 @@ class Dialogs {
         const controller = new AbortController();
         Dialogs.activeControllers.set(el, controller);
 
-        const signal = controller.signal;
-        let startTime;
+        const { signal } = controller;
+        let startTime: number | undefined;
 
-        return new Promise((resolve) => {
-            const step = (timestamp) => {
-                if (signal.aborted) return resolve();
+        await new Promise<void>((resolve) => {
+            const step = (timestamp: number) => {
+                if (signal.aborted) {
+                    return resolve();
+                }
 
-                if (!startTime) startTime = timestamp;
+                if (startTime === undefined) startTime = timestamp;
                 const progress = Math.min((timestamp - startTime) / duration, 1);
                 const current = start + (target - start) * progress;
                 el.style.opacity = String(current);
@@ -92,21 +88,19 @@ class Dialogs {
 
     /**
      * Displays a popup dialog by ID with fade animation.
-     * @param {string} contentId
-     * @returns {Promise<void>}
      */
-    async showPopup(contentId) {
+    async showPopup(contentId: string): Promise<void> {
         RootController.pauseLevel();
 
-        const popupWindow = document.querySelector(Dialogs.SELECTORS.popupWindow);
+        const popupWindow = document.querySelector<HTMLElement>(Dialogs.SELECTORS.popupWindow);
         if (!popupWindow) return;
 
         document
-            .querySelectorAll(Dialogs.SELECTORS.popupOuter)
+            .querySelectorAll<HTMLElement>(Dialogs.SELECTORS.popupOuter)
             .forEach((el) => Dialogs.cancelAnimation(el, 0));
 
         document
-            .querySelectorAll(Dialogs.SELECTORS.popupInner)
+            .querySelectorAll<HTMLElement>(Dialogs.SELECTORS.popupInner)
             .forEach((el) => (el.style.display = "none"));
 
         popupWindow.style.display = "block";
@@ -119,10 +113,10 @@ class Dialogs {
         const content = document.getElementById(contentId);
         if (content) {
             content.style.display = "block";
-            document.querySelectorAll(Dialogs.SELECTORS.popupOuter).forEach((el) => {
+            document.querySelectorAll<HTMLElement>(Dialogs.SELECTORS.popupOuter).forEach((el) => {
                 Dialogs.cancelAnimation(el);
                 el.style.display = "block";
-                Dialogs.fadeElement(el, {
+                void Dialogs.fadeElement(el, {
                     from: 0,
                     to: 1,
                     duration: Dialogs.FADE_DURATION_MS,
@@ -133,12 +127,11 @@ class Dialogs {
 
     /**
      * Closes the currently open popup with fade-out animation.
-     * @returns {Promise<void>}
      */
-    async closePopup() {
+    async closePopup(): Promise<void> {
         SoundMgr.playSound(ResourceId.SND_TAP);
 
-        const popupWindow = document.querySelector(Dialogs.SELECTORS.popupWindow);
+        const popupWindow = document.querySelector<HTMLElement>(Dialogs.SELECTORS.popupWindow);
         if (!popupWindow) return;
 
         Dialogs.cancelAnimation(popupWindow);
@@ -157,15 +150,15 @@ class Dialogs {
     /**
      * Opens the payment dialog popup.
      */
-    showPayDialog() {
+    showPayDialog(): void {
         SoundMgr.playSound(ResourceId.SND_TAP);
-        this.showPopup("payDialog");
+        void this.showPopup("payDialog");
     }
 
     /**
      * Shows a "Slow Computer" popup with localized content.
      */
-    showSlowComputerPopup() {
+    showSlowComputerPopup(): void {
         const slowComputer = document.getElementById("slowComputer");
         if (!slowComputer) return;
 
@@ -193,18 +186,14 @@ class Dialogs {
             scale: 0.8 * resolution.UI_TEXT_SCALE,
         });
 
-        this.showPopup("slowComputer");
+        void this.showPopup("slowComputer");
     }
 
     /**
      * Initializes DOM event listeners for dialog buttons.
      */
-    initEventListeners() {
-        /** @type {[string, () => void][]} */
-        const ids = [
-            // ["payImg", this.onPayClick.bind(this)],
-            // ["payBtn", this.onPayClick.bind(this)],
-            // ["payClose", this.closePopup.bind(this)],
+    initEventListeners(): void {
+        const ids: Array<[string, () => void]> = [
             ["slowComputerBtn", this.closePopup.bind(this)],
             ["missingOkBtn", this.closePopup.bind(this)],
             ["resetNoBtn", this.closePopup.bind(this)],
@@ -219,17 +208,16 @@ class Dialogs {
 
     /**
      * Handles payment confirmation click.
-     * @private
      */
-    onPayClick() {
+    onPayClick(): void {
         PubSub.publish(PubSub.ChannelId.PurchaseBoxesPrompt);
-        this.closePopup();
+        void this.closePopup();
     }
 
     /**
      * Localizes dialog text content on language changes.
      */
-    initLocalization() {
+    initLocalization(): void {
         PubSub.subscribe(PubSub.ChannelId.LanguageChanged, () => {
             Text.drawBig({
                 text: Lang.menuText(MenuStringId.UPGRADE_TO_FULL),
@@ -250,7 +238,7 @@ class Dialogs {
     /**
      * Initializes the Dialogs system (event listeners + localization).
      */
-    init() {
+    init(): void {
         UIRegistry.registerDialogs(this);
 
         if (document.readyState === "loading") {

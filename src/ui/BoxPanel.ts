@@ -4,7 +4,6 @@ import Easing from "@/ui/Easing";
 import PointerCapture from "@/utils/PointerCapture";
 import resolution from "@/resolution";
 import ZoomManager from "@/ZoomManager";
-import platform from "@/config/platforms/platform-web";
 import ScoreManager from "@/ui/ScoreManager";
 import PubSub from "@/utils/PubSub";
 import SoundMgr from "@/game/CTRSoundMgr";
@@ -16,15 +15,51 @@ import { UIRegistry } from "@/ui/types";
 import Alignment from "@/core/Alignment";
 import BoxType from "@/ui/BoxType";
 import { IS_XMAS } from "@/resources/ResData";
+import Box from "@/ui/Box";
+
+interface InterfaceManagerLike {
+    gameFlow: {
+        openLevelMenu: (boxIndex: number) => void;
+    };
+}
+
+type SelectableBox = Box & {
+    onSelected?: () => void;
+    onUnselected?: () => void;
+};
 
 class BoxPanel extends Panel {
+    boxes: Box[];
+    currentBoxIndex: number;
+    currentOffset: number;
+    isBoxCentered: boolean;
+    bounceBox: SelectableBox | null;
+    ctx: CanvasRenderingContext2D | null;
+    canvas: HTMLCanvasElement | null;
+    $navBack: HTMLElement | null;
+    $navForward: HTMLElement | null;
+    pointerCapture: PointerCapture | null;
+    im: InterfaceManagerLike | null;
+
+    slideInProgress: boolean;
+    from: number;
+    to: number;
+    startTime: number;
+
+    spacing: number;
+    centerOffset: number;
+
+    isMouseDown: boolean;
+    downX: number | null;
+    downY: number | null;
+    delta: number;
+    downOffset: number;
+
     constructor() {
         super(PanelId.BOXES, "boxPanel", "menuBackground", true);
 
-        // Register this panel in the UI registry
         UIRegistry.registerBoxPanel(this);
 
-        // State
         this.boxes = [];
         this.currentBoxIndex = this.getDefaultBoxIndex();
         this.currentOffset = 0;
@@ -37,17 +72,14 @@ class BoxPanel extends Panel {
         this.pointerCapture = null;
         this.im = null;
 
-        // Slide animation
         this.slideInProgress = false;
         this.from = 0;
         this.to = 0;
         this.startTime = 0;
 
-        // Constants
         this.spacing = resolution.uiScaledNumber(600);
         this.centerOffset = resolution.uiScaledNumber(312);
 
-        // Pointer
         this.isMouseDown = false;
         this.downX = null;
         this.downY = null;
@@ -55,20 +87,24 @@ class BoxPanel extends Panel {
         this.downOffset = 0;
 
         this.initializeDOM();
-        PubSub.subscribe(PubSub.ChannelId.UpdateVisibleBoxes, (visibleBoxes) => {
-            this.boxes = visibleBoxes;
-            this.redraw();
+        PubSub.subscribe(PubSub.ChannelId.UpdateVisibleBoxes, (...args: unknown[]) => {
+            const [visibleBoxes] = args;
+            if (Array.isArray(visibleBoxes)) {
+                this.boxes = visibleBoxes as Box[];
+                this.redraw();
+            }
         });
     }
 
-    getDefaultBoxIndex() {
+    getDefaultBoxIndex(): number {
         return IS_XMAS ? 0 : 1;
     }
 
-    initializeDOM() {
+    initializeDOM(): void {
         const start = () => {
-            this.canvas = document.getElementById("boxCanvas");
-            this.ctx = this.canvas?.getContext("2d");
+            const canvas = document.getElementById("boxCanvas") as HTMLCanvasElement | null;
+            this.canvas = canvas;
+            this.ctx = canvas ? canvas.getContext("2d") : null;
 
             if (!this.canvas || !this.ctx) return;
 
@@ -99,45 +135,49 @@ class BoxPanel extends Panel {
         };
 
         if (document.readyState === "loading") {
-            document.addEventListener("DOMContentLoaded", init);
+            document.addEventListener("DOMContentLoaded", start);
         } else {
             start();
         }
     }
 
-    init(interfaceManager) {
+    init(interfaceManager: InterfaceManagerLike): void {
         this.im = interfaceManager;
     }
 
-    onShow() {
+    onShow(): void {
         this.activate();
     }
 
-    onHide() {
+    onHide(): void {
         this.deactivate();
     }
 
-    slideToNextBox() {
+    slideToNextBox(): void {
         this.slideToBox(this.currentBoxIndex + 1);
     }
 
-    bounceCurrentBox() {
-        this.doBounceCurrentBox();
+    bounceCurrentBox(): void {
+        const bounceBox = this.bounceBox;
+        const ctx = this.ctx;
+        if (bounceBox && ctx) {
+            bounceBox.cancelBounce();
+            bounceBox.bounce(ctx);
+        }
     }
 
-    boxClicked(visibleBoxIndex) {
+    boxClicked(visibleBoxIndex: number): void {
         if (visibleBoxIndex !== this.currentBoxIndex) return;
 
         const box = this.boxes[visibleBoxIndex];
+        if (!box) return;
+
         const editionBoxIndex = box.index;
 
         if (!box.isClickable()) return;
 
         SoundMgr.playSound(ResourceId.SND_TAP);
 
-        /*if (box.purchased === false) {
-            PubSub.publish(PubSub.ChannelId.PurchaseBoxesPrompt);
-        } else*/
         if (ScoreManager.isBoxLocked(editionBoxIndex)) {
             const isHolidayBox = box.type === BoxType.HOLIDAY;
             if (isHolidayBox && !IS_XMAS) {
@@ -150,14 +190,14 @@ class BoxPanel extends Panel {
         }
     }
 
-    showLockDialog(boxIndex) {
+    showLockDialog(boxIndex: number): void {
         Text.drawBig({
             text: Lang.menuText(MenuStringId.CANT_UNLOCK_TEXT1),
             imgParentId: "missingLine1",
             scaleToUI: true,
         });
         Text.drawBig({
-            text: ScoreManager.requiredStars(boxIndex) - ScoreManager.totalStars(),
+            text: String(ScoreManager.requiredStars(boxIndex) - ScoreManager.totalStars()),
             imgParentId: "missingCount",
             scaleToUI: true,
         });
@@ -180,7 +220,7 @@ class BoxPanel extends Panel {
         UIRegistry.getDialogs()?.showPopup("missingStars");
     }
 
-    showHolidayUnavailableDialog() {
+    showHolidayUnavailableDialog(): void {
         const titleImg = Text.drawBig({
             text: Lang.menuText(MenuStringId.HOLIDAY_LEVELS_UNAVAILABLE_TITLE),
             imgParentId: "holidayLine1",
@@ -223,7 +263,7 @@ class BoxPanel extends Panel {
             });
             const img = okBtn.querySelector("img");
             if (img) {
-                Object.assign(img.style, {
+                Object.assign((img as HTMLImageElement).style, {
                     display: "block",
                     margin: "0 auto",
                 });
@@ -234,91 +274,113 @@ class BoxPanel extends Panel {
         UIRegistry.getDialogs()?.showPopup("holidayUnavailable");
     }
 
-    doBounceCurrentBox() {
-        if (this.bounceBox && this.ctx) {
-            this.bounceBox.cancelBounce();
-            this.bounceBox.bounce(this.ctx);
+    doBounceCurrentBox(): void {
+        const bounceBox = this.bounceBox;
+        const ctx = this.ctx;
+        if (bounceBox && ctx) {
+            bounceBox.cancelBounce();
+            bounceBox.bounce(ctx);
         }
     }
 
-    render(offset) {
-        if (!this.ctx || !this.canvas) return;
+    render(offset: number): void {
+        const ctx = this.ctx;
+        const canvas = this.canvas;
+        if (!ctx || !canvas) return;
+
         this.currentOffset = offset;
 
-        const { ctx, canvas, boxes, spacing, centerOffset } = this;
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        const offsetX = centerOffset + offset;
+        const offsetX = this.centerOffset + offset;
         const offsetY = resolution.uiScaledNumber(130);
         ctx.translate(offsetX, offsetY);
 
         let boxOffset = 0;
 
-        for (const box of boxes) {
-            let omnomOffset = null;
+        for (const box of this.boxes) {
+            if (!box.visible) {
+                continue;
+            }
+
+            let omnomOffset: number | null = null;
             const relBoxOffset = offset + boxOffset;
 
-            if (box.visible) {
-                if (
-                    relBoxOffset > resolution.uiScaledNumber(-100) &&
-                    relBoxOffset < resolution.uiScaledNumber(100)
-                ) {
-                    omnomOffset =
-                        (centerOffset + offset) * -1 - boxOffset + resolution.uiScaledNumber(452);
-                }
-
-                ctx.translate(boxOffset, 0);
-                box.draw(ctx, omnomOffset);
-                ctx.translate(-boxOffset, 0);
-
-                boxOffset += spacing;
+            if (
+                relBoxOffset > resolution.uiScaledNumber(-100) &&
+                relBoxOffset < resolution.uiScaledNumber(100)
+            ) {
+                omnomOffset =
+                    (this.centerOffset + offset) * -1 - boxOffset + resolution.uiScaledNumber(452);
             }
+
+            ctx.translate(boxOffset, 0);
+            box.draw(ctx, omnomOffset);
+            ctx.translate(-boxOffset, 0);
+
+            boxOffset += this.spacing;
         }
 
         ctx.translate(-offsetX, -offsetY);
     }
 
-    slideToBox(index) {
-        if (!this.ctx) return;
+    slideToBox(index: number): void {
+        const ctx = this.ctx;
+        if (!ctx) return;
 
-        index = Math.max(0, Math.min(index, this.boxes.length - 1));
-        const duration = index === this.currentBoxIndex ? 0 : 550;
+        if (this.boxes.length === 0) {
+            return;
+        }
 
-        if (this.bounceBox && this.bounceBox !== this.boxes[index] && this.bounceBox.onUnselected) {
+        const clampedIndex = Math.max(0, Math.min(index, this.boxes.length - 1));
+        const targetBox = this.boxes[clampedIndex];
+        if (!targetBox) return;
+
+        const duration = clampedIndex === this.currentBoxIndex ? 0 : 550;
+
+        if (this.bounceBox && this.bounceBox !== targetBox && this.bounceBox.onUnselected) {
             this.bounceBox.onUnselected();
         }
 
-        this.currentBoxIndex = index;
-        PubSub.publish(PubSub.ChannelId.SelectedBoxChanged, this.boxes[index].index);
+        this.currentBoxIndex = clampedIndex;
+        PubSub.publish(PubSub.ChannelId.SelectedBoxChanged, targetBox.index);
 
         this.from = this.currentOffset;
-        this.to = -1.0 * this.spacing * index;
+        this.to = -1.0 * this.spacing * clampedIndex;
         this.startTime = Date.now();
         this.slideInProgress = true;
+
+        if (duration <= 0) {
+            this.currentOffset = this.to;
+            this.render(this.currentOffset);
+            this.isBoxCentered = true;
+            this.bounceBox = targetBox as SelectableBox;
+            this.bounceBox.bounce(ctx);
+            this.bounceBox.onSelected?.();
+            this.slideInProgress = false;
+            this.updateNavButtons();
+            return;
+        }
 
         const renderSlide = () => {
             if (!this.slideInProgress) return;
             const elapsed = Date.now() - this.startTime;
             this.currentOffset = Easing.easeOutExpo(
-                elapsed,
+                Math.min(elapsed, duration),
                 this.from,
                 this.to - this.from,
                 duration
             );
             this.render(this.currentOffset);
 
-            const d = Math.abs(this.currentOffset - this.to);
-            if (d < 5) this.isBoxCentered = true;
+            const distance = Math.abs(this.currentOffset - this.to);
+            if (distance < 5) this.isBoxCentered = true;
 
             if (elapsed >= duration) {
-                if (this.bounceBox !== this.boxes[this.currentBoxIndex]) {
-                    this.bounceBox = this.boxes[this.currentBoxIndex];
-                    this.bounceBox.bounce(this.ctx);
-                }
-                if (this.bounceBox?.onSelected) {
-                    this.bounceBox.onSelected();
-                }
+                this.bounceBox = targetBox as SelectableBox;
+                this.bounceBox.bounce(ctx);
+                this.bounceBox.onSelected?.();
                 this.slideInProgress = false;
             } else {
                 window.requestAnimationFrame(renderSlide);
@@ -329,11 +391,13 @@ class BoxPanel extends Panel {
         this.updateNavButtons();
     }
 
-    updateNavButtons() {
+    updateNavButtons(): void {
         if (!this.$navBack || !this.$navForward) return;
 
-        const backDiv = this.$navBack.querySelector("div");
-        const forwardDiv = this.$navForward.querySelector("div");
+        const backDiv = this.$navBack.querySelector<HTMLDivElement>("div");
+        const forwardDiv = this.$navForward.querySelector<HTMLDivElement>("div");
+
+        if (!backDiv || !forwardDiv) return;
 
         if (this.currentBoxIndex <= 0) {
             backDiv.classList.add("boxNavDisabled");
@@ -348,16 +412,17 @@ class BoxPanel extends Panel {
         }
     }
 
-    cancelSlideToBox() {
+    cancelSlideToBox(): void {
         this.slideInProgress = false;
         this.bounceBox?.cancelBounce();
     }
 
-    isMouseOverBox(x, y) {
+    isMouseOverBox(x: number, y: number): boolean {
+        const bounceBox = this.bounceBox;
         if (
             this.isBoxCentered &&
-            this.bounceBox &&
-            this.bounceBox.isClickable() &&
+            bounceBox &&
+            bounceBox.isClickable() &&
             x > resolution.uiScaledNumber(340) &&
             x < resolution.uiScaledNumber(680) &&
             y > resolution.uiScaledNumber(140) &&
@@ -368,7 +433,7 @@ class BoxPanel extends Panel {
         return false;
     }
 
-    pointerDown(x, y) {
+    pointerDown(x: number, y: number): void {
         if (this.isMouseDown) return;
         this.cancelSlideToBox();
         this.downX = x;
@@ -377,9 +442,10 @@ class BoxPanel extends Panel {
         this.isMouseDown = true;
     }
 
-    pointerMove(x, y) {
+    pointerMove(x: number, y: number): void {
         if (!this.canvas) return;
         if (this.isMouseDown) {
+            if (this.downX == null) return;
             this.cancelSlideToBox();
             this.delta = x - this.downX;
             if (Math.abs(this.delta) > 5) {
@@ -395,8 +461,11 @@ class BoxPanel extends Panel {
         }
     }
 
-    pointerUp(x, y) {
-        if (!this.isMouseDown) return;
+    pointerUp(x: number, y: number): void {
+        if (!this.isMouseDown || this.downX == null || this.downY == null) {
+            this.isMouseDown = false;
+            return;
+        }
 
         this.cancelSlideToBox();
         this.delta = x - this.downX;
@@ -419,13 +488,17 @@ class BoxPanel extends Panel {
         }
 
         this.isMouseDown = false;
+        this.downX = null;
+        this.downY = null;
     }
 
-    pointerOut(x, y) {
+    pointerOut(x: number, y: number): void {
         this.pointerUp(x, y);
     }
 
-    activate() {
+    activate(): void {
+        if (!this.canvas) return;
+
         if (!this.pointerCapture) {
             this.pointerCapture = new PointerCapture({
                 element: this.canvas,
@@ -436,14 +509,14 @@ class BoxPanel extends Panel {
                 getZoom: () => ZoomManager.getUIZoom(),
             });
         }
-        this.pointerCapture.activate();
+        this.pointerCapture?.activate();
     }
 
-    deactivate() {
+    deactivate(): void {
         this.pointerCapture?.deactivate();
     }
 
-    redraw() {
+    redraw(): void {
         this.slideToBox(this.currentBoxIndex);
     }
 }
