@@ -135,11 +135,11 @@ class ImageMultiDrawer extends BaseElement {
             // }
             // else {
             // otherwise by default we snap to pixel boundaries for perf
-            const qx = Math.floor(dest.x);
-            const qy = Math.floor(dest.y);
+            const qx = Math.trunc(dest.x);
+            const qy = Math.trunc(dest.y);
             // use ceil so that we match the source when scale is equal
-            const qw = 1 + Math.floor(dest.w);
-            const qh = 1 + Math.floor(dest.h);
+            const qw = 1 + Math.trunc(dest.w);
+            const qh = 1 + Math.trunc(dest.h);
             //}
 
             const image = this.texture.image;
