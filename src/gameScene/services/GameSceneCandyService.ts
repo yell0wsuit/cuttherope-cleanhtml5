@@ -5,59 +5,45 @@ import { updateTargetState as runUpdateTargetState } from "../sceneUpdate/target
 import { updateSpecial as runUpdateSpecial } from "../sceneUpdate/special";
 import * as GameSceneConstants from "../constants";
 
-/** @typedef {import("../update").default} GameSceneUpdate */
+import type { GameScene } from "@/types/game-scene";
+import type { CandyService, TargetUpdateResult } from "./types";
 
-class GameSceneCandyService {
-    /**
-     * @param {GameSceneUpdate} scene
-     */
-    constructor(scene) {
-        this.scene = scene;
+type CandySceneContext = ThisParameterType<typeof runUpdateBungees> &
+    ThisParameterType<typeof runUpdateCollectibles> &
+    ThisParameterType<typeof runUpdateHazards> &
+    ThisParameterType<typeof runUpdateTargetState> &
+    ThisParameterType<typeof runUpdateSpecial>;
+
+class GameSceneCandyService implements CandyService {
+    private readonly scene: CandySceneContext;
+
+    constructor(scene: GameScene) {
+        this.scene = scene as CandySceneContext;
     }
 
-    /**
-     * @param {number} delta
-     * @returns {number}
-     */
-    updateBungees(delta) {
+    updateBungees(delta: number): number {
         return runUpdateBungees.call(this.scene, delta);
     }
 
-    /**
-     * @param {number} delta
-     */
-    updateCollectibles(delta) {
+    updateCollectibles(delta: number): void {
         runUpdateCollectibles.call(this.scene, delta);
     }
 
-    /**
-     * @param {number} delta
-     * @param {number} numGrabs
-     * @returns {boolean}
-     */
-    updateHazards(delta, numGrabs) {
+    updateHazards(delta: number, numGrabs: number): boolean {
         return runUpdateHazards.call(this.scene, delta, numGrabs);
     }
 
-    /**
-     * @param {number} delta
-     * @returns {import("./types").TargetUpdateResult}
-     */
-    updateTargetState(delta) {
+    updateTargetState(delta: number): TargetUpdateResult {
         const shouldContinue = runUpdateTargetState.call(this.scene, delta);
         if (shouldContinue) {
             return { continue: true };
         }
 
-        const won =
-            this.scene.target.currentTimelineIndex === GameSceneConstants.CharAnimation.WIN;
+        const won = this.scene.target.currentTimelineIndex === GameSceneConstants.CharAnimation.WIN;
         return { continue: false, reason: won ? "game_won" : "game_lost" };
     }
 
-    /**
-     * @param {number} delta
-     */
-    updateSpecial(delta) {
+    updateSpecial(delta: number): void {
         runUpdateSpecial.call(this.scene, delta);
     }
 }

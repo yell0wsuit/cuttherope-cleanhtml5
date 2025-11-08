@@ -9,46 +9,61 @@ import GameSceneCutDelegate from "./sceneUpdate/cut";
 import GameSceneSpiderHandlersDelegate from "./sceneUpdate/spiderHandlers";
 import GameSceneSelectionDelegate from "./sceneUpdate/selection";
 import GameObjectPluginManager from "./plugins/GameObjectPluginManager";
-import { createCoreSystems } from "./systems";
+import { createCoreSystems } from "./systems/index.ts";
 import GameSceneCharacter from "./character";
 import GameScenePhysicsService from "./services/GameScenePhysicsService";
 import GameSceneCandyService from "./services/GameSceneCandyService";
 import GameSceneAnimationService from "./services/GameSceneAnimationService";
+import type { GameSystem, GameSystemContext, GameSystemSharedState } from "./systems/types";
+import type { GameObjectPlugin } from "./plugins/types";
+import type { GameScene } from "@/types/game-scene";
 
-/**
- * @template {Record<string, (...args: any[]) => any>} T
- * @param {GameSceneUpdate} scene
- * @param {T} delegate
- * @param {(keyof T & string)[]} methods
- */
-const bindDelegate = (scene, delegate, methods) => {
+interface GameSceneUpdateOptions {
+    plugins?: GameObjectPlugin[];
+    systems?: GameSystem[];
+}
+
+type DelegateMethod = (...args: unknown[]) => unknown;
+
+function bindDelegate(scene: GameSceneUpdate, delegate: object, methods: readonly string[]): void {
+    const sceneAsRecord = scene as unknown as Record<string, unknown>;
+    const delegateAsRecord = delegate as Record<string, DelegateMethod>;
     for (const method of methods) {
-        scene[method] = /** @type {any} */ (delegate[method]).bind(delegate);
+        const delegateMethod = delegateAsRecord[method];
+        if (typeof delegateMethod === "function") {
+            sceneAsRecord[method] = delegateMethod.bind(delegate);
+        }
     }
-};
-
-/** @typedef {import("./plugins/types").GameObjectPlugin} GameObjectPlugin */
-/** @typedef {import("./systems/types").GameSystem} GameSystem */
-/** @typedef {import("./systems/types").GameSystemContext} GameSystemContext */
-/** @typedef {import("./systems/types").GameSystemSharedState} GameSystemSharedState */
-
-/**
- * @typedef {object} GameSceneUpdateOptions
- * @property {GameObjectPlugin[]} [plugins]
- * @property {GameSystem[]} [systems]
- */
+}
 
 class GameSceneUpdate extends GameSceneCharacter {
-    /**
-     * @param {GameSceneUpdateOptions} [options]
-     */
-    constructor(options = {}) {
+    private readonly drawDelegate: GameSceneDrawDelegate;
+    private readonly bubblesDelegate: GameSceneBubblesDelegate;
+    private readonly teleportDelegate: GameSceneTeleportDelegate;
+    private readonly lifecycleDelegate: GameSceneLifecycleDelegate;
+    private readonly ropeManagementDelegate: GameSceneRopeManagementDelegate;
+    private readonly pumpUtilsDelegate: GameScenePumpUtilsDelegate;
+    private readonly bounceUtilsDelegate: GameSceneBounceUtilsDelegate;
+    private readonly cutDelegate: GameSceneCutDelegate;
+    private readonly spiderHandlersDelegate: GameSceneSpiderHandlersDelegate;
+    private readonly selectionDelegate: GameSceneSelectionDelegate;
+
+    readonly physicsService: GameScenePhysicsService;
+    readonly candyService: GameSceneCandyService;
+    readonly animationService: GameSceneAnimationService;
+    readonly pluginManager: GameObjectPluginManager;
+    readonly systemContext: GameSystemContext;
+    readonly systems: GameSystem[];
+
+    constructor(options: GameSceneUpdateOptions = {}) {
         super();
 
-        this.drawDelegate = new GameSceneDrawDelegate(this);
+        const sceneContext = this as unknown as GameScene;
+
+        this.drawDelegate = new GameSceneDrawDelegate(sceneContext);
         bindDelegate(this, this.drawDelegate, ["draw"]);
 
-        this.bubblesDelegate = new GameSceneBubblesDelegate(this);
+        this.bubblesDelegate = new GameSceneBubblesDelegate(sceneContext);
         bindDelegate(this, this.bubblesDelegate, [
             "isBubbleCapture",
             "popCandyBubble",
@@ -56,10 +71,10 @@ class GameSceneUpdate extends GameSceneCharacter {
             "handleBubbleTouch",
         ]);
 
-        this.teleportDelegate = new GameSceneTeleportDelegate(this);
+        this.teleportDelegate = new GameSceneTeleportDelegate(sceneContext);
         bindDelegate(this, this.teleportDelegate, ["teleport"]);
 
-        this.lifecycleDelegate = new GameSceneLifecycleDelegate(this);
+        this.lifecycleDelegate = new GameSceneLifecycleDelegate(sceneContext);
         bindDelegate(this, this.lifecycleDelegate, [
             "animateLevelRestart",
             "isFadingIn",
@@ -68,26 +83,26 @@ class GameSceneUpdate extends GameSceneCharacter {
             "gameLost",
         ]);
 
-        this.ropeManagementDelegate = new GameSceneRopeManagementDelegate(this);
+        this.ropeManagementDelegate = new GameSceneRopeManagementDelegate(sceneContext);
         bindDelegate(this, this.ropeManagementDelegate, [
             "releaseAllRopes",
             "attachCandy",
             "detachCandy",
         ]);
 
-        this.pumpUtilsDelegate = new GameScenePumpUtilsDelegate(this);
+        this.pumpUtilsDelegate = new GameScenePumpUtilsDelegate(sceneContext);
         bindDelegate(this, this.pumpUtilsDelegate, ["handlePumpFlow", "operatePump"]);
 
-        this.bounceUtilsDelegate = new GameSceneBounceUtilsDelegate(this);
+        this.bounceUtilsDelegate = new GameSceneBounceUtilsDelegate(sceneContext);
         bindDelegate(this, this.bounceUtilsDelegate, ["handleBounce"]);
 
-        this.cutDelegate = new GameSceneCutDelegate(this);
+        this.cutDelegate = new GameSceneCutDelegate(sceneContext);
         bindDelegate(this, this.cutDelegate, ["cut"]);
 
-        this.spiderHandlersDelegate = new GameSceneSpiderHandlersDelegate(this);
+        this.spiderHandlersDelegate = new GameSceneSpiderHandlersDelegate(sceneContext);
         bindDelegate(this, this.spiderHandlersDelegate, ["spiderBusted", "spiderWon"]);
 
-        this.selectionDelegate = new GameSceneSelectionDelegate(this);
+        this.selectionDelegate = new GameSceneSelectionDelegate(sceneContext);
         bindDelegate(this, this.selectionDelegate, [
             "resetBungeeHighlight",
             "getNearestBungeeGrabByBezierPoints",
@@ -96,36 +111,21 @@ class GameSceneUpdate extends GameSceneCharacter {
 
         const { plugins = [], systems } = options;
 
-        this.physicsService = new GameScenePhysicsService(this);
-        this.candyService = new GameSceneCandyService(this);
-        this.animationService = new GameSceneAnimationService(this);
+        this.physicsService = new GameScenePhysicsService(sceneContext);
+        this.candyService = new GameSceneCandyService(sceneContext);
+        this.animationService = new GameSceneAnimationService(sceneContext);
 
-        /** @type {GameSystemContext} */
-        const systemContext = {
+        const systemContext: GameSystemContext = {
             physics: this.physicsService,
             candy: this.candyService,
             animation: this.animationService,
-            // Placeholder, assigned after plugin manager instantiation
-            pluginManager: /** @type {any} */ (null),
+            pluginManager: null as unknown as GameObjectPluginManager,
         };
 
-        /**
-         * Coordinates lifecycle hooks for scene plugins.
-         * @type {GameObjectPluginManager}
-         */
         this.pluginManager = new GameObjectPluginManager(systemContext);
         systemContext.pluginManager = this.pluginManager;
 
-        /**
-         * Shared context for core and plugin systems.
-         * @type {GameSystemContext}
-         */
         this.systemContext = systemContext;
-
-        /**
-         * Ordered list of systems executed every frame.
-         * @type {GameSystem[]}
-         */
         this.systems = systems ? [...systems] : createCoreSystems(this.systemContext);
 
         for (const plugin of plugins) {
@@ -133,24 +133,15 @@ class GameSceneUpdate extends GameSceneCharacter {
         }
     }
 
-    /**
-     * Registers a plugin and appends any systems it exposes.
-     *
-     * @param {GameObjectPlugin} plugin
-     */
-    registerPlugin(plugin) {
+    registerPlugin(plugin: GameObjectPlugin): void {
         const newSystems = this.pluginManager.register(plugin);
         if (newSystems.length > 0) {
             this.systems.push(...newSystems);
         }
     }
 
-    /**
-     * @param {number} delta
-     */
-    update(delta) {
-        /** @type {GameSystemSharedState} */
-        const sharedState = {};
+    update(delta: number): void {
+        const sharedState: GameSystemSharedState = {};
 
         this.pluginManager.beforeUpdate(delta, sharedState);
 
@@ -159,7 +150,6 @@ class GameSceneUpdate extends GameSceneCharacter {
             this.pluginManager.afterSystem(system, result.continue, delta, sharedState);
 
             if (!result.continue) {
-                // System halted execution due to game state change (won/lost)
                 if (import.meta.env.DEV) {
                     console.log(`[GameScene] System "${system.id}" halted: ${result.reason}`);
                 }

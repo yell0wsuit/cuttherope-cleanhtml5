@@ -53,6 +53,7 @@ export interface GameScene extends BaseElement {
     calculateScore(): void;
     releaseAllRopes(left: boolean): void;
     gameLost(): void;
+    gameWon(): void;
     popBubble(x: number, y: number): void;
     attachCandy(): void;
     detachCandy(): void;
@@ -63,6 +64,7 @@ export interface GameScene extends BaseElement {
     teleport(): void;
     operatePump(pump: Pump, delta: number): void;
     handleBounce(bouncer: Bouncer, star: SceneStar, delta: number): void;
+    pointOutOfScreen(point: SceneStar): boolean;
     cut(razor: BaseElement | null, v1: Vector, v2: Vector, immediate: boolean): number;
     camera: GameSceneCamera;
     back: BackgroundTileMap;
@@ -97,6 +99,8 @@ export interface GameScene extends BaseElement {
     star: SceneStar;
     starL: SceneStar;
     starR: SceneStar;
+    mouthOpen: boolean;
+    mouthCloseTimer: number;
     twoParts: PartsTypeValue;
     noCandy: boolean;
     noCandyL: boolean;

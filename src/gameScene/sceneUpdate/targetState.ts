@@ -5,21 +5,15 @@ import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 import * as GameSceneConstants from "@/gameScene/constants";
 import ResourceId from "@/resources/ResourceId";
+import type { GameScene } from "@/types/game-scene";
 
-/** @typedef {import("@/types/game-scene").GameScene} GameScene */
-
-/**
- * @param {GameScene} this
- * @param {number} delta
- * @returns {boolean}
- */
-export function updateTargetState(delta) {
-    let targetVector;
+export function updateTargetState(this: GameScene, delta: number): boolean {
+    let targetVector: Vector | undefined;
     if (!this.noCandy) {
-        const MOUTH_OPEN_RADIUS = resolution.MOUTH_OPEN_RADIUS;
+        const mouthOpenRadius = resolution.MOUTH_OPEN_RADIUS;
         if (!this.mouthOpen) {
             targetVector = new Vector(this.target.x, this.target.y);
-            if (this.star.pos.distance(targetVector) < MOUTH_OPEN_RADIUS) {
+            if (this.star.pos.distance(targetVector) < mouthOpenRadius) {
                 this.mouthOpen = true;
                 this.target.playTimeline(GameSceneConstants.CharAnimation.MOUTH_OPEN);
                 SoundMgr.playSound(ResourceId.SND_MONSTER_OPEN);
@@ -30,15 +24,10 @@ export function updateTargetState(delta) {
 
             if (this.mouthCloseTimer <= 0) {
                 targetVector = new Vector(this.target.x, this.target.y);
-                if (this.star.pos.distance(targetVector) > MOUTH_OPEN_RADIUS) {
+                if (this.star.pos.distance(targetVector) > mouthOpenRadius) {
                     this.mouthOpen = false;
                     this.target.playTimeline(GameSceneConstants.CharAnimation.MOUTH_CLOSE);
                     SoundMgr.playSound(ResourceId.SND_MONSTER_CLOSE);
-
-                    // this.tummyTeasers++;
-                    // if (this.tummyTeasers === 10) {
-                    //     Achievements.increment(AchievementId.TUMMY_TEASER);
-                    // }
                 } else {
                     this.mouthCloseTimer = GameSceneConstants.MOUTH_OPEN_TIME;
                 }
@@ -46,7 +35,8 @@ export function updateTargetState(delta) {
         }
 
         if (this.restartState !== GameSceneConstants.RestartState.FADE_IN) {
-            if (GameObject.intersect(this.candy, this.target)) {
+            const candyIntersectingTarget = GameObject.intersect(this.candy, this.target) ?? false;
+            if (candyIntersectingTarget) {
                 this.gameWon();
                 return false;
             }
@@ -78,10 +68,6 @@ export function updateTargetState(delta) {
         }
 
         if (this.restartState !== GameSceneConstants.RestartState.FADE_IN) {
-            // lost candy achievements
-            // Achievements.increment(AchievementId.WEIGHT_LOSER);
-            // Achievements.increment(AchievementId.CALORIE_MINIMIZER);
-
             if (
                 this.twoParts !== GameSceneConstants.PartsType.NONE &&
                 this.noCandyL &&

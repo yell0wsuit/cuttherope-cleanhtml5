@@ -7,16 +7,9 @@ import TargetSystem from "./TargetSystem";
 import SpecialSystem from "./SpecialSystem";
 import InteractionSystem from "./InteractionSystem";
 
-/** @typedef {import("./types").GameSystemContext} GameSystemContext */
-/** @typedef {import("./types").GameSystem} GameSystem */
+import type { GameSystem, GameSystemContext } from "./types";
 
-/**
- * Creates the default ordered list of core systems that drive the scene update loop.
- *
- * @param {GameSystemContext} context
- * @returns {GameSystem[]}
- */
-export const createCoreSystems = (context) => [
+export const createCoreSystems = (context: GameSystemContext): GameSystem[] => [
     new PhysicsSystem(context),
     new CameraSystem(context),
     new BungeeSystem(context),
