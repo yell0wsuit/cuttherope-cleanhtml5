@@ -4,13 +4,23 @@ import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 import * as GameSceneConstants from "@/gameScene/constants";
 
-/** @typedef {import("@/types/game-scene").GameScene} GameScene */
+import type { GameScene } from "@/types/game-scene";
 
-/**
- * @param {GameScene} this
- * @param {number} delta
- */
-export function updateCamera(delta) {
+type CameraScene = GameScene & {
+    camera: Camera2D & {
+        type: number;
+        speed: number;
+        moveTo(x: number, y: number, immediate: boolean): void;
+        update(delta: number): void;
+    };
+    freezeCamera: boolean;
+    fastenCamera: boolean;
+    initialCameraToStarDistance: number;
+    ignoreTouches: boolean;
+    time: number;
+};
+
+export function updateCamera(this: CameraScene, delta: number): void {
     const SCREEN_WIDTH = resolution.CANVAS_WIDTH;
     const SCREEN_HEIGHT = resolution.CANVAS_HEIGHT;
     const cameraTarget =
