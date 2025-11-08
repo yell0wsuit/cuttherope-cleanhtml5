@@ -98,7 +98,7 @@ class WebPlatform {
         // forces the browser to query location which fixes layout.
 
         if (flag) {
-            flag.offsetTop; // Force layout recalculation
+            void flag.offsetTop; // Force layout recalculation
         }
     }
 

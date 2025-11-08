@@ -9,21 +9,19 @@ enum Alignment {
     CENTER = 18, // 2 | 16
 }
 
-namespace Alignment {
-    export function parse(s: string): Alignment {
-        const upper = s.trim().toUpperCase();
-        let a = Alignment.UNDEFINED;
+export function parseAlignment(s: string): Alignment {
+    const upper = s.trim().toUpperCase();
+    let a = Alignment.UNDEFINED;
 
-        if (upper.includes("LEFT")) a = Alignment.LEFT;
-        else if (upper.includes("HCENTER") || upper === "CENTER") a = Alignment.HCENTER;
-        else if (upper.includes("RIGHT")) a = Alignment.RIGHT;
+    if (upper.includes("LEFT")) a = Alignment.LEFT;
+    else if (upper.includes("HCENTER") || upper === "CENTER") a = Alignment.HCENTER;
+    else if (upper.includes("RIGHT")) a = Alignment.RIGHT;
 
-        if (upper.includes("TOP")) a |= Alignment.TOP;
-        else if (upper.includes("VCENTER") || upper === "CENTER") a |= Alignment.VCENTER;
-        else if (upper.includes("BOTTOM")) a |= Alignment.BOTTOM;
+    if (upper.includes("TOP")) a |= Alignment.TOP;
+    else if (upper.includes("VCENTER") || upper === "CENTER") a |= Alignment.VCENTER;
+    else if (upper.includes("BOTTOM")) a |= Alignment.BOTTOM;
 
-        return a;
-    }
+    return a;
 }
 
 export default Alignment;

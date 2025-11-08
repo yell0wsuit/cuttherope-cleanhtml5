@@ -115,6 +115,6 @@ const res1920x1080: Partial<ResolutionProfile> = {
     PHYSICS_SPEED_MULTIPLIER: 1.05,
 };
 
-(window as any).resolution = res1920x1080;
+(window as unknown as { resolution: typeof res1920x1080 }).resolution = res1920x1080;
 
 export default res1920x1080;

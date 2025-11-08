@@ -1,6 +1,6 @@
 import BaseElement from "@/visual/BaseElement";
 import Constants from "@/utils/Constants";
-import Alignment from "@/core/Alignment";
+import Alignment, { parseAlignment } from "@/core/Alignment";
 import ImageMultiDrawer from "@/visual/ImageMultiDrawer";
 import Canvas from "@/utils/Canvas";
 import ResourceId from "@/resources/ResourceId";
@@ -302,7 +302,7 @@ class Text extends BaseElement {
         const element = new Text(font);
 
         if (xml.hasAttribute("align")) {
-            element.align = Alignment.parse(xml.attr("align"));
+            element.align = parseAlignment(xml.attr("align"));
         }
 
         if (xml.hasAttribute("string")) {

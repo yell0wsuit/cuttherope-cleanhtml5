@@ -262,7 +262,11 @@ class PanelManager {
         if (!panel) return;
 
         // shadow toggle
-        panel.showShadow ? this.showShadow() : this.hideShadow();
+        if (panel.showShadow) {
+            this.showShadow();
+        } else {
+            this.hideShadow();
+        }
 
         const timeout = skipFade ? 0 : this.fadeInDur + this.fadePause;
         setTimeout(() => {

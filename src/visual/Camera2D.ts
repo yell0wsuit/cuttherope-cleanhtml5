@@ -62,14 +62,14 @@ class Camera2D {
     }
 
     applyCameraTransformation(): void {
-        if (this.pos.x !== 0 || this.pos.y !== 0) {
-            Canvas.context && Canvas.context.translate(-this.pos.x, -this.pos.y);
+        if ((this.pos.x !== 0 || this.pos.y !== 0) && Canvas.context) {
+            Canvas.context.translate(-this.pos.x, -this.pos.y);
         }
     }
 
     cancelCameraTransformation(): void {
-        if (this.pos.x !== 0 || this.pos.y !== 0) {
-            Canvas.context && Canvas.context.translate(this.pos.x, this.pos.y);
+        if ((this.pos.x !== 0 || this.pos.y !== 0) && Canvas.context) {
+            Canvas.context.translate(this.pos.x, this.pos.y);
         }
     }
 }

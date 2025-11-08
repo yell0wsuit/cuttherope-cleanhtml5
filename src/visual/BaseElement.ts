@@ -225,13 +225,13 @@ class BaseElement {
 
             if (this.passColorToChilds) {
                 // canvas state includes alpha so we have to set it again
-                if (alphaChanged) {
-                    Canvas.context && (Canvas.context.globalAlpha = this.color.a);
+                if (alphaChanged && Canvas.context) {
+                    Canvas.context.globalAlpha = this.color.a;
                 }
             }
         } else if (!this.passColorToChilds) {
-            if (alphaChanged) {
-                Canvas.context && (Canvas.context.globalAlpha = this.previousAlpha);
+            if (alphaChanged && Canvas.context) {
+                Canvas.context.globalAlpha = this.previousAlpha;
             }
         }
 
@@ -252,8 +252,8 @@ class BaseElement {
                 ctx.restore();
             }
         } else if (this.passColorToChilds) {
-            if (alphaChanged) {
-                Canvas.context && (Canvas.context.globalAlpha = this.previousAlpha);
+            if (alphaChanged && Canvas.context) {
+                Canvas.context.globalAlpha = this.previousAlpha;
             }
         }
     }
