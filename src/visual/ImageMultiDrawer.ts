@@ -89,7 +89,6 @@ class ImageMultiDrawer extends BaseElement {
             const dest = this.vertices[i];
             if (!source || !dest) continue;
 
-            const previousAlpha = ctx.globalAlpha;
             const sourceW = Math.ceil(source.w);
             const sourceH = Math.ceil(source.h);
             let alpha = this.alphas[i];
@@ -100,11 +99,24 @@ class ImageMultiDrawer extends BaseElement {
             }
 
             // change the alpha if necessary
+            const angle = this.rotationAngles[i];
+            const pivot = this.rotationPositions[i];
+            const hasRotation = Boolean(pivot && angle != null && angle !== 0);
+            let saved = false;
+            if (hasRotation) {
+                ctx.save();
+                saved = true;
+            }
+
+            const previousAlpha = ctx.globalAlpha;
             if (alpha == null) {
                 // if alpha was not specified, we assume full opacity
                 alpha = 1;
             } else if (alpha <= 0) {
                 // no need to draw invisible images
+                if (saved) {
+                    ctx.restore();
+                }
                 continue;
             } else if (alpha < 1) {
                 ctx.globalAlpha = alpha;
@@ -131,7 +143,20 @@ class ImageMultiDrawer extends BaseElement {
             //}
 
             const image = this.texture.image;
-            if (!image) continue;
+            if (!image) {
+                if (saved) {
+                    ctx.restore();
+                } else if (alpha !== 1) {
+                    ctx.globalAlpha = previousAlpha;
+                }
+                continue;
+            }
+
+            if (saved && pivot && angle != null) {
+                ctx.translate(pivot.x, pivot.y);
+                ctx.rotate(angle);
+                ctx.translate(-pivot.x, -pivot.y);
+            }
 
             ctx.drawImage(
                 image,
@@ -146,7 +171,9 @@ class ImageMultiDrawer extends BaseElement {
             ); // destination coordinates
 
             // undo alpha changes
-            if (alpha !== 1) {
+            if (saved) {
+                ctx.restore();
+            } else if (alpha !== 1) {
                 ctx.globalAlpha = previousAlpha;
             }
         }
