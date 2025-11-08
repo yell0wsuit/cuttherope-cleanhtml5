@@ -16,26 +16,34 @@ import EarthImage from "@/game/EarthImage";
 import Timeline from "@/visual/Timeline";
 import KeyFrame from "@/visual/KeyFrame";
 import Radians from "@/utils/Radians";
+import type RotatedCircle from "@/game/RotatedCircle";
+import type Grab from "@/game/Grab";
+import type ConstrainedPoint from "@/physics/ConstrainedPoint";
+import type GenericButton from "@/visual/GenericButton";
 import GameSceneUpdate from "./update";
 
 class GameSceneTouch extends GameSceneUpdate {
     /**
      * Number of ropes cut in quick succession (initialized in parent class)
-     * @type {number}
      */
-    ropesCutAtOnce = 0;
+    ropesCutAtOnce: number = 0;
 
     /**
      * Timer for tracking concurrent rope cuts (initialized in parent class)
-     * @type {number}
      */
-    ropesAtOnceTimer = 0;
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @param {number} touchIndex
-     */
-    touchDown(x, y, touchIndex) {
+    ropesAtOnceTimer: number = 0;
+
+    overOmNom = false;
+
+    declare handleBubbleTouch: (star: ConstrainedPoint, x: number, y: number) => boolean;
+    declare getNearestBungeeGrabByBezierPoints: (
+        out: Vector,
+        x: number,
+        y: number
+    ) => Grab | null;
+    declare getNearestBungeeSegmentByConstraints: (cutPos: Vector, grab: Grab) => boolean;
+    declare cut: (target: unknown, start: Vector, end: Vector, shouldPlaySound: boolean) => number;
+    touchDown(x: number, y: number, touchIndex: number): boolean {
         if (this.ignoreTouches) {
             if (this.camera.type === Camera2D.SpeedType.PIXELS) {
                 this.fastenCamera = true;
@@ -50,9 +58,11 @@ class GameSceneTouch extends GameSceneUpdate {
         this.overOmNom = false;
 
         if (this.gravityButton) {
-            const childIndex = this.gravityButton.isOn() ? 1 : 0,
-                child = this.gravityButton.getChild(childIndex);
-            if (child.isInTouchZone(x + this.camera.pos.x, y + this.camera.pos.y, true)) {
+            const childIndex = this.gravityButton.isOn() ? 1 : 0;
+            const child = this.gravityButton.getChild(childIndex) as GenericButton | undefined;
+            if (
+                child?.isInTouchZone(x + this.camera.pos.x, y + this.camera.pos.y, true)
+            ) {
                 this.gravityTouchDown = touchIndex;
                 return true;
             }
@@ -80,20 +90,25 @@ class GameSceneTouch extends GameSceneUpdate {
         const touch = new Vector(x, y);
         if (!this.dragging[touchIndex]) {
             this.dragging[touchIndex] = true;
-            this.startPos[touchIndex].copyFrom(touch);
-            this.prevStartPos[touchIndex].copyFrom(touch);
+            const startPos =
+                this.startPos[touchIndex] ?? (this.startPos[touchIndex] = Vector.newZero());
+            const prevStartPos =
+                this.prevStartPos[touchIndex] ?? (this.prevStartPos[touchIndex] = Vector.newZero());
+            startPos.copyFrom(touch);
+            prevStartPos.copyFrom(touch);
         }
 
-        let i, len;
-        const cameraPos = this.camera.pos,
-            cameraAdjustedX = x + cameraPos.x,
-            cameraAdjustedY = y + cameraPos.y;
+        const cameraPos = this.camera.pos;
+        const cameraAdjustedX = x + cameraPos.x;
+        const cameraAdjustedY = y + cameraPos.y;
 
         // handle rotating spikes
-        for (i = 0, len = this.spikes.length; i < len; i++) {
+        for (let i = 0; i < this.spikes.length; i++) {
             const spike = this.spikes[i];
+            if (!spike?.rotateButton) {
+                continue;
+            }
             if (
-                spike.rotateButton &&
                 spike.touchIndex === Constants.UNDEFINED &&
                 spike.rotateButton.onTouchDown(cameraAdjustedX, cameraAdjustedY)
             ) {
@@ -103,8 +118,11 @@ class GameSceneTouch extends GameSceneUpdate {
         }
 
         // handle pump touches
-        for (i = 0, len = this.pumps.length; i < len; i++) {
+        for (let i = 0; i < this.pumps.length; i++) {
             const pump = this.pumps[i];
+            if (!pump) {
+                continue;
+            }
             if (pump.pointInObject(cameraAdjustedX, cameraAdjustedY)) {
                 pump.touchTimer = GameSceneConstants.PUMP_TIMEOUT;
                 pump.touch = touchIndex;
@@ -112,21 +130,29 @@ class GameSceneTouch extends GameSceneUpdate {
             }
         }
 
-        let activeCircle = null,
-            hasCircleInside = false,
-            intersectsAnotherCircle = false;
-        for (i = 0, len = this.rotatedCircles.length; i < len; i++) {
-            const r = this.rotatedCircles[i],
-                d1 = Vector.distance(cameraAdjustedX, cameraAdjustedY, r.handle1.x, r.handle1.y),
-                d2 = Vector.distance(cameraAdjustedX, cameraAdjustedY, r.handle2.x, r.handle2.y);
+        let activeCircle: RotatedCircle | null = null;
+        let hasCircleInside = false;
+        let intersectsAnotherCircle = false;
+        for (let i = 0; i < this.rotatedCircles.length; i++) {
+            const r = this.rotatedCircles[i];
+            const handle1 = r?.handle1;
+            const handle2 = r?.handle2;
+            if (!r || !handle1 || !handle2) {
+                continue;
+            }
+            const d1 = Vector.distance(cameraAdjustedX, cameraAdjustedY, handle1.x, handle1.y);
+            const d2 = Vector.distance(cameraAdjustedX, cameraAdjustedY, handle2.x, handle2.y);
             if (
                 (d1 < resolution.RC_CONTROLLER_RADIUS && !r.hasOneHandle()) ||
                 d2 < resolution.RC_CONTROLLER_RADIUS
             ) {
                 //check for overlapping
-                for (let j = i + 1; j < len; j++) {
-                    const r2 = this.rotatedCircles[j],
-                        d3 = Vector.distance(r2.x, r2.y, r.x, r.y);
+                for (let j = i + 1; j < this.rotatedCircles.length; j++) {
+                    const r2 = this.rotatedCircles[j];
+                    if (!r2) {
+                        continue;
+                    }
+                    const d3 = Vector.distance(r2.x, r2.y, r.x, r.y);
 
                     if (d3 + r2.sizeInPixels <= r.sizeInPixels) {
                         hasCircleInside = true;
@@ -153,9 +179,10 @@ class GameSceneTouch extends GameSceneUpdate {
         }
 
         // circle fading
-        const activeCircleIndex = this.rotatedCircles.indexOf(activeCircle);
+        const activeCircleIndex = activeCircle ? this.rotatedCircles.indexOf(activeCircle) : -1;
         if (
-            activeCircleIndex != this.rotatedCircles.length - 1 &&
+            activeCircle &&
+            activeCircleIndex !== this.rotatedCircles.length - 1 &&
             intersectsAnotherCircle &&
             !hasCircleInside
         ) {
@@ -182,14 +209,18 @@ class GameSceneTouch extends GameSceneUpdate {
             fadeOut.onFinished = this.onRotatedCircleTimelineFinished.bind(this);
 
             const fadingOutCircle = activeCircle.copy();
-            fadingOutCircle.addTimeline(fadeOut);
-            fadingOutCircle.playTimeline(0);
+            if (fadingOutCircle) {
+                fadingOutCircle.addTimeline(fadeOut);
+                fadingOutCircle.playTimeline(0);
 
-            activeCircle.addTimeline(fadeIn);
-            activeCircle.playTimeline(0);
+                activeCircle.addTimeline(fadeIn);
+                activeCircle.playTimeline(0);
 
-            this.rotatedCircles[activeCircleIndex] = fadingOutCircle;
-            this.rotatedCircles.push(activeCircle);
+                if (activeCircleIndex >= 0) {
+                    this.rotatedCircles[activeCircleIndex] = fadingOutCircle;
+                }
+                this.rotatedCircles.push(activeCircle);
+            }
             activeCircle = null;
         }
 
@@ -197,8 +228,11 @@ class GameSceneTouch extends GameSceneUpdate {
         const GRAB_WHEEL_DIAMETER = GRAB_WHEEL_RADIUS * 2;
         const GRAB_MOVE_RADIUS = resolution.GRAB_MOVE_RADIUS;
         const GRAB_MOVE_DIAMETER = GRAB_MOVE_RADIUS * 2;
-        for (i = 0, len = this.bungees.length; i < len; i++) {
+        for (let i = 0; i < this.bungees.length; i++) {
             const grab = this.bungees[i];
+            if (!grab) {
+                continue;
+            }
             if (grab.wheel) {
                 if (
                     Rectangle.pointInRect(
@@ -233,14 +267,14 @@ class GameSceneTouch extends GameSceneUpdate {
         }
 
         if (this.clickToCut) {
-            const cutPos = Vector.newZero(),
-                grab = this.getNearestBungeeGrabByBezierPoints(
-                    cutPos,
-                    cameraAdjustedX,
-                    cameraAdjustedY
-                ),
-                bungee = grab ? grab.rope : null;
-            if (bungee && bungee.highlighted) {
+            const cutPos = Vector.newZero();
+            const grab = this.getNearestBungeeGrabByBezierPoints(
+                cutPos,
+                cameraAdjustedX,
+                cameraAdjustedY
+            ) as Grab | null;
+            const bungee = grab?.rope ?? null;
+            if (bungee?.highlighted && grab) {
                 if (this.getNearestBungeeSegmentByConstraints(cutPos, grab)) {
                     this.cut(null, cutPos, cutPos, false);
                 }
@@ -254,24 +288,14 @@ class GameSceneTouch extends GameSceneUpdate {
 
         return true;
     }
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @param {number} touchIndex
-     */
-    doubleClick(x, y, touchIndex) {
+    doubleClick(x: number, y: number, touchIndex: number): boolean {
         if (this.ignoreTouches) {
             return true;
         }
 
         return true;
     }
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @param {number} touchIndex
-     */
-    touchUp(x, y, touchIndex) {
+    touchUp(x: number, y: number, touchIndex: number): boolean {
         if (this.ignoreTouches) {
             return true;
         }
@@ -282,19 +306,21 @@ class GameSceneTouch extends GameSceneUpdate {
         if (this.overOmNom && this.target.pointInDrawQuad(x, y)) {
             this.overOmNom = false;
             PubSub.publish(PubSub.ChannelId.OmNomClicked);
-            return;
+            return true;
         } else {
             this.overOmNom = false;
         }
 
-        let i, len;
-        const cameraPos = this.camera.pos,
-            cameraAdjustedX = x + cameraPos.x,
-            cameraAdjustedY = y + cameraPos.y;
+        const cameraPos = this.camera.pos;
+        const cameraAdjustedX = x + cameraPos.x;
+        const cameraAdjustedY = y + cameraPos.y;
 
         // drawings
-        for (i = 0, len = this.drawings.length; i < len; i++) {
+        for (let i = 0; i < this.drawings.length; i++) {
             const drawing = this.drawings[i];
+            if (!drawing) {
+                continue;
+            }
             if (drawing.pointInObject(cameraAdjustedX, cameraAdjustedY)) {
                 drawing.showDrawing();
 
@@ -305,18 +331,21 @@ class GameSceneTouch extends GameSceneUpdate {
         }
 
         if (this.gravityButton && this.gravityTouchDown === touchIndex) {
-            const childIndex = this.gravityButton.isOn() ? 1 : 0,
-                child = this.gravityButton.getChild(childIndex);
-            if (child.isInTouchZone(x + this.camera.pos.x, y + this.camera.pos.y, true)) {
+            const childIndex = this.gravityButton.isOn() ? 1 : 0;
+            const child = this.gravityButton.getChild(childIndex) as GenericButton | undefined;
+            if (child?.isInTouchZone(x + this.camera.pos.x, y + this.camera.pos.y, true)) {
                 this.gravityButton.toggle();
                 this.onButtonPressed(GravityButton.DefaultId);
             }
             this.gravityTouchDown = Constants.UNDEFINED;
         }
 
-        for (i = 0, len = this.spikes.length; i < len; i++) {
+        for (let i = 0; i < this.spikes.length; i++) {
             const spike = this.spikes[i];
-            if (spike.rotateButton && spike.touchIndex === touchIndex) {
+            if (!spike?.rotateButton) {
+                continue;
+            }
+            if (spike.touchIndex === touchIndex) {
                 spike.touchIndex = Constants.UNDEFINED;
                 if (spike.rotateButton.onTouchUp(x + this.camera.pos.x, y + this.camera.pos.y)) {
                     return true;
@@ -324,8 +353,11 @@ class GameSceneTouch extends GameSceneUpdate {
             }
         }
 
-        for (i = 0, len = this.rotatedCircles.length; i < len; i++) {
+        for (let i = 0; i < this.rotatedCircles.length; i++) {
             const r = this.rotatedCircles[i];
+            if (!r) {
+                continue;
+            }
             if (r.operating === touchIndex) {
                 r.operating = Constants.UNDEFINED;
                 r.soundPlaying = Constants.UNDEFINED;
@@ -334,8 +366,11 @@ class GameSceneTouch extends GameSceneUpdate {
             }
         }
 
-        for (i = 0, len = this.bungees.length; i < len; i++) {
+        for (let i = 0; i < this.bungees.length; i++) {
             const grab = this.bungees[i];
+            if (!grab) {
+                continue;
+            }
             if (grab.wheel && grab.wheelOperating === touchIndex) {
                 grab.wheelOperating = Constants.UNDEFINED;
             }
@@ -347,12 +382,7 @@ class GameSceneTouch extends GameSceneUpdate {
 
         return true;
     }
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @param {number} touchIndex
-     */
-    touchMove(x, y, touchIndex) {
+    touchMove(x: number, y: number, touchIndex: number): boolean {
         if (this.ignoreTouches) {
             return true;
         }
@@ -362,10 +392,13 @@ class GameSceneTouch extends GameSceneUpdate {
         }
 
         const touch = new Vector(x, y);
-        let i, len;
-        if (this.startPos[touchIndex].distance(touch) > 10) {
-            for (i = 0, len = this.pumps.length; i < len; i++) {
+        const startPos = this.startPos[touchIndex];
+        if (startPos && startPos.distance(touch) > 10) {
+            for (let i = 0; i < this.pumps.length; i++) {
                 const pump = this.pumps[i];
+                if (!pump) {
+                    continue;
+                }
 
                 // cancel pump touch if we moved
                 if (pump.touch === touchIndex && pump.touchTimer !== 0) {
@@ -378,8 +411,11 @@ class GameSceneTouch extends GameSceneUpdate {
 
         const cameraAdjustedTouch = new Vector(x + this.camera.pos.x, y + this.camera.pos.y);
 
-        for (i = 0, len = this.rotatedCircles.length; i < len; i++) {
+        for (let i = 0; i < this.rotatedCircles.length; i++) {
             const r = this.rotatedCircles[i];
+            if (!r || !r.handle1 || !r.handle2) {
+                continue;
+            }
             if (r.operating === touchIndex) {
                 const c = new Vector(r.x, r.y);
                 if (c.distance(cameraAdjustedTouch) < r.sizeInPixels / 10) {
@@ -400,7 +436,8 @@ class GameSceneTouch extends GameSceneUpdate {
                 r.handle2.rotateAround(a, r.x, r.y);
                 r.rotation += Radians.toDegrees(a);
 
-                let soundToPlay = a > 0 ? ResourceId.SND_SCRATCH_IN : ResourceId.SND_SCRATCH_OUT;
+                let soundToPlay: number =
+                    a > 0 ? ResourceId.SND_SCRATCH_IN : ResourceId.SND_SCRATCH_OUT;
 
                 if (Math.abs(a) < 0.07) soundToPlay = Constants.UNDEFINED;
 
@@ -409,9 +446,12 @@ class GameSceneTouch extends GameSceneUpdate {
                     r.soundPlaying = soundToPlay;
                 }
 
-                for (i = 0, len = this.bungees.length; i < len; i++) {
-                    const g = this.bungees[i],
-                        gn = new Vector(g.x, g.y);
+                for (let i = 0; i < this.bungees.length; i++) {
+                    const g = this.bungees[i];
+                    if (!g) {
+                        continue;
+                    }
+                    const gn = new Vector(g.x, g.y);
                     if (gn.distance(c) <= r.sizeInPixels + 5 * this.PM) {
                         gn.rotateAround(a, r.x, r.y);
                         g.x = gn.x;
@@ -423,9 +463,12 @@ class GameSceneTouch extends GameSceneUpdate {
                     }
                 }
 
-                for (i = 0, len = this.pumps.length; i < len; i++) {
-                    const g = this.pumps[i],
-                        gn = new Vector(g.x, g.y);
+                for (let i = 0; i < this.pumps.length; i++) {
+                    const g = this.pumps[i];
+                    if (!g) {
+                        continue;
+                    }
+                    const gn = new Vector(g.x, g.y);
                     if (gn.distance(c) <= r.sizeInPixels + 5 * this.PM) {
                         gn.rotateAround(a, r.x, r.y);
                         g.x = gn.x;
@@ -435,9 +478,12 @@ class GameSceneTouch extends GameSceneUpdate {
                     }
                 }
 
-                for (i = 0, len = this.bubbles.length; i < len; i++) {
-                    const g = this.bubbles[i],
-                        gn = new Vector(g.x, g.y);
+                for (let i = 0; i < this.bubbles.length; i++) {
+                    const g = this.bubbles[i];
+                    if (!g) {
+                        continue;
+                    }
+                    const gn = new Vector(g.x, g.y);
                     if (
                         gn.distance(c) <= r.sizeInPixels + 10 * this.PM &&
                         g !== this.candyBubble &&
@@ -472,7 +518,7 @@ class GameSceneTouch extends GameSceneUpdate {
             }
         }
 
-        for (i = 0, len = this.bungees.length; i < len; i++) {
+        for (let i = 0; i < this.bungees.length; i++) {
             const grab = this.bungees[i];
             if (!grab) {
                 continue;
@@ -509,19 +555,29 @@ class GameSceneTouch extends GameSceneUpdate {
         }
 
         if (this.dragging[touchIndex]) {
+            const startPosForCut = this.startPos[touchIndex];
+            const prevStartPos = this.prevStartPos[touchIndex];
+            const currentCuts = this.fingerCuts[touchIndex] ?? (this.fingerCuts[touchIndex] = []);
+
+            if (!startPosForCut || !prevStartPos) {
+                return true;
+            }
+
             const fc = new FingerCut(
-                Vector.add(this.startPos[touchIndex], this.camera.pos),
+                Vector.add(startPosForCut, this.camera.pos),
                 Vector.add(touch, this.camera.pos),
                 5, // start size
                 5, // end size
                 RGBAColor.white.copy()
             );
-            const currentCuts = this.fingerCuts[touchIndex];
             let ropeCuts = 0;
 
             currentCuts.push(fc);
-            for (i = 0, len = currentCuts.length; i < len; i++) {
+            for (let i = 0; i < currentCuts.length; i++) {
                 const fcc = currentCuts[i];
+                if (!fcc) {
+                    continue;
+                }
                 ropeCuts += this.cut(null, fcc.start, fcc.end, false);
             }
 
@@ -548,18 +604,13 @@ class GameSceneTouch extends GameSceneUpdate {
                 // }
             }
 
-            this.prevStartPos[touchIndex].copyFrom(this.startPos[touchIndex]);
-            this.startPos[touchIndex].copyFrom(touch);
+            prevStartPos.copyFrom(startPosForCut);
+            startPosForCut.copyFrom(touch);
         }
 
         return true;
     }
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @param {number} touchIndex
-     */
-    touchDragged(x, y, touchIndex) {
+    touchDragged(x: number, y: number, touchIndex: number): boolean {
         if (touchIndex > Constants.MAX_TOUCHES) {
             return false;
         }
@@ -568,35 +619,37 @@ class GameSceneTouch extends GameSceneUpdate {
         this.slastTouch.y = y;
         return true;
     }
-    /**
-     * @param {number} n
-     */
-    onButtonPressed(n) {
+    onButtonPressed = (_id: number): void => {
         Gravity.toggle();
         this.gravityNormal = Gravity.isNormal();
         SoundMgr.playSound(
             this.gravityNormal ? ResourceId.SND_GRAVITY_OFF : ResourceId.SND_GRAVITY_ON
         );
 
-        for (let i = 0, len = this.earthAnims.length; i < len; i++) {
+        for (let i = 0; i < this.earthAnims.length; i++) {
             const earthImage = this.earthAnims[i];
+            if (!earthImage) {
+                continue;
+            }
             if (Gravity.isNormal()) {
                 earthImage.playTimeline(EarthImage.TimelineId.NORMAL);
             } else {
                 earthImage.playTimeline(EarthImage.TimelineId.UPSIDE_DOWN);
             }
         }
-    }
-    /**
-     * @param {number} sid - The toggle ID to match against spikes
-     */
-    rotateAllSpikesWithId(sid) {
-        for (let i = 0, len = this.spikes.length; i < len; i++) {
-            if (this.spikes[i].getToggled() === sid) {
-                this.spikes[i].rotateSpikes();
+    };
+
+    rotateAllSpikesWithId = (sid: number): void => {
+        for (let i = 0; i < this.spikes.length; i++) {
+            const spike = this.spikes[i];
+            if (!spike) {
+                continue;
+            }
+            if (spike.getToggled() === sid) {
+                spike.rotateSpikes();
             }
         }
-    }
+    };
 }
 
 export default GameSceneTouch;

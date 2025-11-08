@@ -391,9 +391,13 @@ class RotatedCircle extends BaseElement {
         return false;
     }
 
-    copy(zone: RotatedCircle) {
+    copy(zone?: RotatedCircle): RotatedCircle | undefined {
         const copiedCircle = new RotatedCircle();
-        copiedCircle.zone = zone;
+        if (zone) {
+            copiedCircle.zone = zone;
+        } else {
+            delete copiedCircle.zone;
+        }
         copiedCircle.x = this.x;
         copiedCircle.y = this.y;
         copiedCircle.rotation = this.rotation;
@@ -402,7 +406,7 @@ class RotatedCircle extends BaseElement {
         copiedCircle.operating = Constants.UNDEFINED;
 
         if (!this.size) {
-            return;
+            return undefined;
         }
 
         const copiedSize = this.size * resolution.PM;

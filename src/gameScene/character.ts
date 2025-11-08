@@ -1,16 +1,12 @@
 import MathHelper from "@/utils/MathHelper";
 import * as GameSceneConstants from "@/gameScene/constants";
 import { IS_XMAS, IS_JANUARY } from "@/resources/ResData";
+import type Timeline from "@/visual/Timeline";
 import GameSceneLoaders from "./loaders";
 
 class GameSceneCharacter extends GameSceneLoaders {
-    /**
-     * @param {Timeline} timeline
-     * @param {KeyFrame} keyFrame
-     * @param {number} index
-     */
-    onIdleOmNomKeyFrame(timeline, keyFrame, index) {
-        if (index === 1) {
+    onIdleOmNomKeyFrame(_timeline: Timeline, _trackType: number, keyFrameIndex: number): void {
+        if (keyFrameIndex === 1) {
             // om-nom blink
             this.blinkTimer--;
             if (this.blinkTimer === 0) {
@@ -36,12 +32,11 @@ class GameSceneCharacter extends GameSceneLoaders {
         }
     }
 
-    /**
-     * @param {Timeline} timeline
-     * @param {KeyFrame} keyFrame
-     * @param {number} index
-     */
-    onPaddingtonIdleKeyFrame(timeline, keyFrame, index) {
+    onPaddingtonIdleKeyFrame(
+        _timeline: Timeline,
+        _trackType: number,
+        keyFrameIndex: number
+    ): void {
         if (!IS_JANUARY) {
             return;
         }
@@ -50,12 +45,12 @@ class GameSceneCharacter extends GameSceneLoaders {
             GameSceneConstants.IMG_CHAR_ANIMATION_PADDINGTON_end -
             GameSceneConstants.IMG_CHAR_ANIMATION_PADDINGTON_start;
 
-        if (index !== lastIndex) {
+        if (keyFrameIndex !== lastIndex) {
             this.hidePaddingtonFinalFrame();
             return;
         }
 
-        if (index === lastIndex) {
+        if (keyFrameIndex === lastIndex) {
             this.showPaddingtonFinalFrame();
             if (!this.pendingPaddingtonIdleTransition) {
                 this.pendingPaddingtonIdleTransition = true;
@@ -64,19 +59,18 @@ class GameSceneCharacter extends GameSceneLoaders {
         }
     }
 
-    playRegularIdleAfterPaddington() {
+    playRegularIdleAfterPaddington(): void {
         if (this.target) {
             this.target.playTimeline(GameSceneConstants.CharAnimation.IDLE);
         }
         this.pendingPaddingtonIdleTransition = false;
     }
 
-    /**
-     * @param {Timeline} t
-     */
-    onRotatedCircleTimelineFinished(t) {
-        const circleToRemove = t.element;
-        circleToRemove.removeOnNextUpdate = true;
+    onRotatedCircleTimelineFinished(t: Timeline): void {
+        const circleToRemove = t.element as { removeOnNextUpdate?: boolean } | null;
+        if (circleToRemove) {
+            circleToRemove.removeOnNextUpdate = true;
+        }
     }
 }
 
