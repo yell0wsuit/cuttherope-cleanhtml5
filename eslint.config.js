@@ -5,7 +5,7 @@ export default [
     {
         ignores: ["node_modules/**", "dist/**", "public/**"],
     },
-    ...tseslint.configs.recommended.map(config => ({
+    ...tseslint.configs.strict.map((config) => ({
         ...config,
         files: ["**/*.ts"],
     })),
@@ -15,5 +15,5 @@ export default [
         rules: {
             "@typescript-eslint/no-unused-vars": "warn",
         },
-    }
+    },
 ];
