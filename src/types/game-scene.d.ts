@@ -24,6 +24,7 @@ import ConstrainedPoint from "@/physics/ConstrainedPoint";
 import CTRGameObject from "@/game/CTRGameObject";
 import RGBAColor from "@/core/RGBAColor";
 import type Camera2D from "@/visual/Camera2D";
+import type Drawing from "@/game/Drawing";
 
 export type FingerCutTrail = FingerCut[];
 
@@ -70,7 +71,7 @@ export interface GameScene extends Record<string, unknown> {
     overlayTexture: GameSceneTextureAtlas;
     mapHeight: number;
     mapWidth: number;
-    drawings: Drawable[];
+    drawings: Drawing[];
     earthAnims: EarthImage[];
     pollenDrawer: PollenDrawer | null;
     gravityButton: GravityButton | null;
