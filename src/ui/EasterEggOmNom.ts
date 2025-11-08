@@ -1,11 +1,11 @@
 export const drawOmNom = (
-    ctx,
-    scaleX,
-    scaleY,
-    translateX,
-    translateY,
-    leftEyeOffset,
-    rightEyeOffset
+    ctx: CanvasRenderingContext2D,
+    scaleX: number,
+    scaleY: number,
+    translateX: number,
+    translateY: number,
+    leftEyeOffset: number,
+    rightEyeOffset: number
 ) => {
     // clear the canvas
     ctx.save();
