@@ -11,9 +11,11 @@ import GravityButton from "@/game/GravityButton";
 import ImageElement from "@/visual/ImageElement";
 import Log from "@/utils/Log";
 import MapItem, { getMapItemDefinitionById } from "@/utils/MapItem";
+import type { MapItemDefinition } from "@/utils/MapItem";
 import MathHelper from "@/utils/MathHelper";
 import Pump from "@/game/Pump";
 import Rectangle from "@/core/Rectangle";
+import Quad2D from "@/core/Quad2D";
 import ResourceId from "@/resources/ResourceId";
 import Radians from "@/utils/Radians";
 import RotatedCircle from "@/game/RotatedCircle";
@@ -37,25 +39,35 @@ import KeyFrame from "@/visual/KeyFrame";
 import ActionType from "@/visual/ActionType";
 import BoxType from "@/ui/BoxType";
 import GameSceneInit from "./init";
+import type { TimelineKeyFrameListener } from "@/visual/TimelineTypes";
+
+type MapLayerItem = Record<string, any>;
+type MapData = Record<string, MapLayerItem[]>;
 
 class GameSceneLoaders extends GameSceneInit {
-    loadMap(map) {
-        const layers = [];
+    protected onIdleOmNomKeyFrame(..._args: Parameters<TimelineKeyFrameListener>): void {}
 
-        for (const layerName in map) {
-            if (Object.prototype.hasOwnProperty.call(map, layerName)) {
-                layers.push(map[layerName]);
+    protected onPaddingtonIdleKeyFrame(..._args: Parameters<TimelineKeyFrameListener>): void {}
+
+    loadMap(map: MapData | null | undefined): void {
+        if (!map) {
+            return;
+        }
+
+        const layers: MapLayerItem[][] = [];
+
+        for (const layerName of Object.keys(map)) {
+            const layer = map[layerName];
+            if (Array.isArray(layer)) {
+                layers.push(layer as MapLayerItem[]);
             }
         }
 
-        /** @type {{ item: any; definition: import("@/utils/MapItem").MapItemDefinition; order: number }[]} */
-        const queue = [];
+        const queue: Array<{ item: MapLayerItem; definition: MapItemDefinition; order: number }> = [];
         let order = 0;
 
-        for (let i = 0, numLayers = layers.length; i < numLayers; i++) {
-            const children = layers[i];
-            for (let j = 0, numChildren = children.length; j < numChildren; j++) {
-                const child = children[j];
+        for (const children of layers) {
+            for (const child of children) {
                 const resolvedId = typeof child.name === "number" ? child.name : Number(child.name);
                 const definition = getMapItemDefinitionById(resolvedId);
 
@@ -86,29 +98,29 @@ class GameSceneLoaders extends GameSceneInit {
             .forEach(({ item, definition }) => {
                 const loaderRef = definition.loader;
 
-                if (!loaderRef) {
+                if (typeof loaderRef !== "string") {
+                    Log.alert(`Loader not implemented for map item: ${definition.key}`);
                     return;
                 }
 
-                const loadFn = typeof loaderRef === "string" ? this[loaderRef] : loaderRef;
+                const loadFn = (this as Record<string, unknown>)[loaderRef];
 
                 if (typeof loadFn !== "function") {
                     Log.alert(`Loader not implemented for map item: ${definition.key}`);
                     return;
                 }
 
-                if (typeof loaderRef === "string") {
-                    loadFn.call(this, item, definition);
-                } else {
-                    loadFn(this, item, definition);
-                }
+                (loadFn as (item: MapLayerItem, definition: MapItemDefinition) => void).call(
+                    this,
+                    item,
+                    definition
+                );
             });
     }
     /**
      * Loads the map settings for the map node (inside settings layer)
-     * @param item
      */
-    loadMapSettings(item) {
+    loadMapSettings(item: MapLayerItem): void {
         this.mapWidth = item.width;
         this.mapHeight = item.height;
         this.PMX = (resolution.CANVAS_WIDTH - this.mapWidth * this.PM) / 2;
@@ -125,7 +137,7 @@ class GameSceneLoaders extends GameSceneInit {
             this.earthAnims.push(new EarthImage(0, 0));
         }
     }
-    loadGameDesign(item) {
+    loadGameDesign(item: MapLayerItem): void {
         this.special = item.special || 0;
         this.ropePhysicsSpeed = item.ropePhysicsSpeed;
         this.nightLevel = item.nightLevel;
@@ -134,7 +146,7 @@ class GameSceneLoaders extends GameSceneInit {
             : GameSceneConstants.PartsType.NONE;
         this.ropePhysicsSpeed *= resolution.PHYSICS_SPEED_MULTIPLIER;
     }
-    loadGrab(item) {
+    loadGrab(item: MapLayerItem): void {
         const gx = item.x * this.PM + this.PMX;
         const gy = item.y * this.PM + this.PMY;
         const l = item.length * this.PM;
@@ -158,7 +170,7 @@ class GameSceneLoaders extends GameSceneInit {
         g.kickable = kickable;
         g.invisible = invisible;
         g.setSpider(spider);
-        g.parseMover(item);
+        g.parseMover(item as Parameters<typeof g.parseMover>[0]);
 
         if (g.mover) {
             g.setBee();
@@ -174,12 +186,20 @@ class GameSceneLoaders extends GameSceneInit {
 
                 for (let i = 0, len = g.mover.path.length - 1; i < len; i++) {
                     if (!isCircle || i % d === 0) {
-                        this.pollenDrawer.fillWithPollenFromPath(i, i + 1, g);
+                        this.pollenDrawer.fillWithPollenFromPath(
+                            i,
+                            i + 1,
+                            g as Grab & { mover: { path: Vector[] } }
+                        );
                     }
                 }
 
                 if (g.mover.path.length > 2) {
-                    this.pollenDrawer.fillWithPollenFromPath(0, g.mover.path.length - 1, g);
+                    this.pollenDrawer.fillWithPollenFromPath(
+                        0,
+                        g.mover.path.length - 1,
+                        g as Grab & { mover: { path: Vector[] } }
+                    );
                 }
             }
         }
@@ -203,7 +223,7 @@ class GameSceneLoaders extends GameSceneInit {
 
         this.bungees.push(g);
     }
-    loadCandyL(item) {
+    loadCandyL(item: MapLayerItem): void {
         this.starL.pos.x = item.x * this.PM + this.PMX;
         this.starL.pos.y = item.y * this.PM + this.PMY;
 
@@ -218,7 +238,7 @@ class GameSceneLoaders extends GameSceneInit {
         this.candyL.y = this.starL.pos.y;
         this.candyL.bb = Rectangle.copy(resolution.CANDY_LR_BB);
     }
-    loadCandyR(item) {
+    loadCandyR(item: MapLayerItem): void {
         this.starR.pos.x = item.x * this.PM + this.PMX;
         this.starR.pos.y = item.y * this.PM + this.PMY;
 
@@ -233,11 +253,11 @@ class GameSceneLoaders extends GameSceneInit {
         this.candyR.y = this.starR.pos.y;
         this.candyR.bb = Rectangle.copy(resolution.CANDY_LR_BB);
     }
-    loadCandy(item) {
+    loadCandy(item: MapLayerItem): void {
         this.star.pos.x = item.x * this.PM + this.PMX;
         this.star.pos.y = item.y * this.PM + this.PMY;
     }
-    loadGravitySwitch(item) {
+    loadGravitySwitch(item: MapLayerItem): void {
         this.gravityButton = new GravityButton();
         this.gravityButton.onButtonPressed = this.onButtonPressed.bind(this);
         this.gravityButton.visible = false;
@@ -247,7 +267,7 @@ class GameSceneLoaders extends GameSceneInit {
         this.gravityButton.y = item.y * this.PM + this.PMY;
         this.gravityButton.anchor = Alignment.CENTER;
     }
-    loadStar(item) {
+    loadStar(item: MapLayerItem): void {
         const s = new Star();
         s.initTextureWithId(ResourceId.IMG_OBJ_STAR_IDLE);
         s.x = item.x * this.PM + this.PMX;
@@ -256,7 +276,7 @@ class GameSceneLoaders extends GameSceneInit {
         s.createAnimations();
 
         s.bb = Rectangle.copy(resolution.STAR_BB);
-        s.parseMover(item);
+        s.parseMover(item as Parameters<typeof s.parseMover>[0]);
 
         // let stars move the starting position of mover
         s.update(0);
@@ -276,8 +296,8 @@ class GameSceneLoaders extends GameSceneInit {
             GameSceneConstants.IMG_OBJ_STAR_DISAPPEAR_Frame_13
         );
     }
-    loadTutorialText(item) {
-        if (this.shouldSkipTutorialElement(item)) {
+    loadTutorialText(item: MapLayerItem): void {
+        if (this.shouldSkipTutorialElement(item as { locale: string })) {
             return;
         }
 
@@ -290,7 +310,7 @@ class GameSceneLoaders extends GameSceneInit {
         t.x = item.x * this.PM + this.PMX;
         t.y = item.y * this.PM + this.PMY;
         t.special = item.special || 0;
-        t.align = Alignment.HCENTER;
+        (t as TutorialText & { align?: Alignment }).align = Alignment.HCENTER;
         //t.scaleX = 1.3;
         //t.scaleY = 1.3;
 
@@ -325,13 +345,13 @@ class GameSceneLoaders extends GameSceneInit {
 
         this.tutorials.push(t);
     }
-    loadTutorialImage(item) {
-        if (this.shouldSkipTutorialElement(item)) {
+    loadTutorialImage(item: MapLayerItem): void {
+        if (this.shouldSkipTutorialElement(item as { locale: string })) {
             return;
         }
 
         const v = item.name - MapItem.TUTORIAL_01.id, // gets the tutorial number
-            s = new CTRGameObject();
+            s = new CTRGameObject() as CTRGameObject & { special: number };
 
         s.initTextureWithId(ResourceId.IMG_TUTORIAL_SIGNS);
         s.setTextureQuad(v);
@@ -340,7 +360,7 @@ class GameSceneLoaders extends GameSceneInit {
         s.y = item.y * this.PM + this.PMY;
         s.rotation = item.angle || 0;
         s.special = item.special || 0;
-        s.parseMover(item);
+        s.parseMover(item as Parameters<typeof s.parseMover>[0]);
 
         const tl = new Timeline();
         tl.addKeyFrame(
@@ -430,7 +450,7 @@ class GameSceneLoaders extends GameSceneInit {
 
         this.tutorialImages.push(s);
     }
-    loadHidden(item) {
+    loadHidden(item: MapLayerItem): void {
         // get the hidden image index
         const v = item.name - MapItem.HIDDEN_01.id,
             drawingId = item.drawing - 1;
@@ -444,7 +464,7 @@ class GameSceneLoaders extends GameSceneInit {
             this.drawings.push(s);
         }
     }
-    loadBubble(item) {
+    loadBubble(item: MapLayerItem): void {
         const at = MathHelper.randomRange(
                 GameSceneConstants.IMG_OBJ_BUBBLE_ATTACHED_stain_01,
                 GameSceneConstants.IMG_OBJ_BUBBLE_ATTACHED_stain_03
@@ -468,7 +488,7 @@ class GameSceneLoaders extends GameSceneInit {
         s.addChild(bubble);
         this.bubbles.push(s);
     }
-    loadPump(item) {
+    loadPump(item: MapLayerItem): void {
         const s = new Pump();
         s.initTextureWithId(ResourceId.IMG_OBJ_PUMP);
         s.doRestoreCutTransparency();
@@ -482,9 +502,9 @@ class GameSceneLoaders extends GameSceneInit {
         s.anchor = Alignment.CENTER;
         this.pumps.push(s);
     }
-    loadSock(item) {
+    loadSock(item: MapLayerItem): void {
         const hatOrSock = IS_XMAS ? ResourceId.IMG_OBJ_SOCKS_XMAS : ResourceId.IMG_OBJ_SOCKS;
-        const s = new Sock();
+        const s = new Sock() as Sock & { state: number };
         s.initTextureWithId(hatOrSock);
         s.scaleX = s.scaleY = 0.7;
         s.createAnimations();
@@ -502,7 +522,7 @@ class GameSceneLoaders extends GameSceneInit {
         );
 
         s.state = Sock.StateType.IDLE;
-        s.parseMover(item);
+        s.parseMover(item as Parameters<typeof s.parseMover>[0]);
         s.rotation += 90;
         if (s.mover) {
             s.mover.angle += 90;
@@ -511,14 +531,14 @@ class GameSceneLoaders extends GameSceneInit {
         s.updateRotation();
         this.socks.push(s);
     }
-    loadSpike(item) {
+    loadSpike(item: MapLayerItem): void {
         const px = item.x * this.PM + this.PMX,
             py = item.y * this.PM + this.PMY,
             w = item.size,
             a = parseFloat(item.angle) || 0,
             tg = item.toggled === false ? Constants.UNDEFINED : item.toggled || Constants.UNDEFINED,
             s = new Spikes(px, py, w, a, tg);
-        s.parseMover(item);
+        s.parseMover(item as Parameters<typeof s.parseMover>[0]);
 
         if (tg) {
             s.onButtonPressed = this.rotateAllSpikesWithId.bind(this);
@@ -539,7 +559,7 @@ class GameSceneLoaders extends GameSceneInit {
         }
         this.spikes.push(s);
     }
-    loadRotatedCircle(item) {
+    loadRotatedCircle(item: MapLayerItem): void {
         const px = item.x * this.PM + this.PMX,
             py = item.y * this.PM + this.PMY,
             size = item.size,
@@ -563,17 +583,21 @@ class GameSceneLoaders extends GameSceneInit {
 
         this.rotatedCircles.push(l);
     }
-    loadBouncer(item) {
+    loadBouncer(item: MapLayerItem): void {
         const px = item.x * this.PM + this.PMX,
             py = item.y * this.PM + this.PMY,
             w = item.size,
             a = item.angle,
             bouncer = new Bouncer(px, py, w, a);
-        bouncer.parseMover(item);
+        bouncer.parseMover(item as Parameters<typeof bouncer.parseMover>[0]);
         this.bouncers.push(bouncer);
     }
-    loadTarget(item) {
+    loadTarget(item: MapLayerItem): void {
         const target = new GameObject();
+        const targetWithOverride = target as GameObject & {
+            bbOverride?: Rectangle;
+            rbb?: { constructor: new (x: number, y: number, w: number, h: number) => typeof target.rbb };
+        };
         this.target = target;
 
         const boxType = edition.boxTypes?.[LevelState.pack];
@@ -595,23 +619,24 @@ class GameSceneLoaders extends GameSceneInit {
             target.initTextureWithId(ResourceId.IMG_CHAR_IDLE_XMAS);
         }
 
-        target.doRestoreCutTransparency();
+        targetWithOverride.doRestoreCutTransparency();
 
-        target.bb = Rectangle.copy(resolution.TARGET_BB);
-        target.bbOverride = Rectangle.copy(resolution.TARGET_BB);
-        const originalPlayTimeline = target.playTimeline;
-        target.playTimeline = function (index) {
+        targetWithOverride.bb = Rectangle.copy(resolution.TARGET_BB);
+        targetWithOverride.bbOverride = Rectangle.copy(resolution.TARGET_BB);
+        const originalPlayTimeline = targetWithOverride.playTimeline;
+        targetWithOverride.playTimeline = function (index: number) {
             originalPlayTimeline.call(this, index);
-            if (this.bbOverride) {
-                this.bb = Rectangle.copy(this.bbOverride);
-                if (this.rbb) {
-                    this.rbb = new this.rbb.constructor(this.bb.x, this.bb.y, this.bb.w, this.bb.h);
+            const element = this as GameObject & { bbOverride?: Rectangle; rbb?: Quad2D | undefined };
+            if (element.bbOverride) {
+                element.bb = Rectangle.copy(element.bbOverride);
+                if (element.rbb) {
+                    element.rbb = new Quad2D(element.bb.x, element.bb.y, element.bb.w, element.bb.h);
                 }
             }
         };
-        target.drawPosIncrement = 0.0001;
+        targetWithOverride.drawPosIncrement = 0.0001;
 
-        target.addAnimationEndpoints(
+        targetWithOverride.addAnimationEndpoints(
             GameSceneConstants.CharAnimation.GREETING,
             0.05,
             Timeline.LoopType.NO_LOOP,
@@ -621,7 +646,7 @@ class GameSceneLoaders extends GameSceneInit {
             ResourceId.IMG_CHAR_ANIMATIONS2
         );
 
-        target.addAnimationEndpoints(
+        targetWithOverride.addAnimationEndpoints(
             GameSceneConstants.CharAnimation.GREETINGXMAS,
             0.05,
             Timeline.LoopType.NO_LOOP,
@@ -631,7 +656,7 @@ class GameSceneLoaders extends GameSceneInit {
             ResourceId.IMG_CHAR_GREETINGS_XMAS
         );
 
-        target.addAnimationEndpoints(
+        targetWithOverride.addAnimationEndpoints(
             GameSceneConstants.CharAnimation.IDLE,
             0.05,
             Timeline.LoopType.REPLAY,
@@ -641,7 +666,7 @@ class GameSceneLoaders extends GameSceneInit {
             ResourceId.IMG_CHAR_ANIMATIONS
         );
 
-        target.addAnimationEndpoints(
+        targetWithOverride.addAnimationEndpoints(
             GameSceneConstants.CharAnimation.IDLE2,
             0.05,
             Timeline.LoopType.NO_LOOP,
@@ -651,7 +676,7 @@ class GameSceneLoaders extends GameSceneInit {
             ResourceId.IMG_CHAR_ANIMATIONS
         );
 
-        target.addAnimationEndpoints(
+        targetWithOverride.addAnimationEndpoints(
             GameSceneConstants.CharAnimation.IDLEXMAS,
             0.05,
             Timeline.LoopType.NO_LOOP,
@@ -661,7 +686,7 @@ class GameSceneLoaders extends GameSceneInit {
             ResourceId.IMG_CHAR_IDLE_XMAS
         );
 
-        target.addAnimationEndpoints(
+        targetWithOverride.addAnimationEndpoints(
             GameSceneConstants.CharAnimation.IDLE2XMAS,
             0.05,
             Timeline.LoopType.NO_LOOP,
@@ -711,7 +736,9 @@ class GameSceneLoaders extends GameSceneInit {
             const paddingtonTimeline = target.getTimeline(
                 GameSceneConstants.CharAnimation.IDLEPADDINGTON
             );
-            paddingtonTimeline.onKeyFrame = this.onPaddingtonIdleKeyFrame.bind(this);
+            if (paddingtonTimeline) {
+                paddingtonTimeline.onKeyFrame = this.onPaddingtonIdleKeyFrame.bind(this);
+            }
             target.setDelay(0.75, 1, GameSceneConstants.CharAnimation.IDLEPADDINGTON);
             target.setDelay(0.75, 2, GameSceneConstants.CharAnimation.IDLEPADDINGTON);
 
@@ -857,7 +884,9 @@ class GameSceneLoaders extends GameSceneInit {
         }
 
         const idle = target.getTimeline(GameSceneConstants.CharAnimation.IDLE);
-        idle.onKeyFrame = this.onIdleOmNomKeyFrame.bind(this);
+        if (idle) {
+            idle.onKeyFrame = this.onIdleOmNomKeyFrame.bind(this);
+        }
 
         target.setPause(
             GameSceneConstants.IMG_CHAR_ANIMATIONS_mouth_open_end -
@@ -881,7 +910,7 @@ class GameSceneLoaders extends GameSceneInit {
         this.blink.doRestoreCutTransparency();
         target.addChild(this.blink);
 
-        const supportQuadIndex = edition.supports?.[LevelState.pack];
+        const supportQuadIndex = edition.supports?.[LevelState.pack] ?? null;
         const supportResourceId = isHolidayBox
             ? ResourceId.IMG_CHAR_SUPPORTS_XMAS
             : ResourceId.IMG_CHAR_SUPPORTS;
