@@ -1,6 +1,7 @@
 import resolution from "@/resolution";
 import PanelId from "@/ui/PanelId";
 import panelManager from "@/ui/PanelManager";
+import type Panel from "@/ui/Panel";
 import GameBorder from "@/ui/GameBorder";
 import SoundMgr from "@/game/CTRSoundMgr";
 import BoxManager from "@/ui/BoxManager";
@@ -14,25 +15,44 @@ import PubSub from "@/utils/PubSub";
 import { MENU_MUSIC_ID } from "@/ui/InterfaceManager/constants";
 import { hide, append, empty } from "@/utils/domHelpers";
 
+type PanelIdType = (typeof PanelId)[keyof typeof PanelId];
+
+type PanelWithLifecycle = Panel & {
+    onShow?: () => void;
+    onHide?: () => void;
+    slideToNextBox?: () => void;
+    bounceCurrentBox?: () => void;
+};
+
+interface GameFlowForPanelShow {
+    _closeLevelMenu: () => void;
+}
+
+interface PanelShowManager {
+    gameFlow: GameFlowForPanelShow;
+    isInAdvanceBoxMode: boolean;
+    _bounceTimeOut: ReturnType<typeof setTimeout> | null;
+    _updateMiniSoundButton: (doToggle: boolean, buttonId: string, msgId: string) => void;
+}
+
 const congratsElement = document.getElementById("congrats");
 
 /**
  * Base class for handling panel show events
  */
 export default class PanelShowHandler {
-    /**
-     * @param {import("@/ui/InterfaceManagerClass").default} manager
-     */
-    constructor(manager) {
+    private readonly manager: PanelShowManager;
+
+    constructor(manager: PanelShowManager) {
         this.manager = manager;
     }
 
     /**
      * Handles showing a panel
-     * @param {number} panelId - The ID of the panel to show
+     * @param panelId - The ID of the panel to show
      */
-    onShowPanel(panelId) {
-        const panel = panelManager.getPanelById(panelId);
+    onShowPanel(panelId: PanelIdType): void {
+        const panel = panelManager.getPanelById(panelId) as PanelWithLifecycle | null;
 
         switch (panelId) {
             case PanelId.MENU:
@@ -56,17 +76,17 @@ export default class PanelShowHandler {
             SoundMgr.playMusic(MENU_MUSIC_ID);
         }
 
-        const boxPanel = panelManager.getPanelById(PanelId.BOXES);
+        const boxPanel = panelManager.getPanelById(PanelId.BOXES) as PanelWithLifecycle | null;
         if (panelId === PanelId.BOXES) {
             BoxManager.updateBoxLocks();
             ScoreManager.updateTotalScoreText();
-            boxPanel.onShow();
+            boxPanel?.onShow?.();
 
             if (this.manager.isInAdvanceBoxMode) {
                 this.manager.isInAdvanceBoxMode = false;
-                setTimeout(() => {
+                window.setTimeout(() => {
                     hide("#levelResults");
-                    boxPanel.slideToNextBox();
+                    boxPanel?.slideToNextBox?.();
 
                     // if next level is not playable, show the purchase prompt
                     if (!BoxManager.isNextLevelPlayable()) {
@@ -74,28 +94,30 @@ export default class PanelShowHandler {
                     }
                 }, 800);
             } else {
-                clearTimeout(this.manager._bounceTimeOut);
-                this.manager._bounceTimeOut = setTimeout(() => {
-                    boxPanel.bounceCurrentBox();
+                if (this.manager._bounceTimeOut) {
+                    clearTimeout(this.manager._bounceTimeOut);
+                }
+                this.manager._bounceTimeOut = window.setTimeout(() => {
+                    boxPanel?.bounceCurrentBox?.();
                 }, 300);
             }
         } else {
-            boxPanel.onHide();
+            boxPanel?.onHide?.();
         }
 
-        const codePanel = panelManager.getPanelById(PanelId.PASSWORD);
+        const codePanel = panelManager.getPanelById(PanelId.PASSWORD) as PanelWithLifecycle | null;
         if (codePanel) {
             if (panelId === PanelId.PASSWORD) {
-                codePanel.onShow();
+                codePanel.onShow?.();
             } else {
-                codePanel.onHide();
+                codePanel.onHide?.();
             }
         }
 
         switch (panelId) {
             case PanelId.LEVELS:
                 Doors.renderDoors(true, 0);
-                panel.onShow();
+                panel?.onShow?.();
                 break;
 
             case PanelId.GAME:
@@ -109,7 +131,7 @@ export default class PanelShowHandler {
 
                 const gameWonText = Lang.menuText(MenuStringId.GAME_FINISHED_TEXT).replace(
                     "%d",
-                    ScoreManager.totalStars()
+                    String(ScoreManager.totalStars())
                 );
                 Text.drawBig({
                     text: gameWonText,
@@ -120,13 +142,11 @@ export default class PanelShowHandler {
 
                 if (congratsElement) {
                     empty(congratsElement);
-                    append(
-                        congratsElement,
-                        Text.drawBig({
-                            text: Lang.menuText(MenuStringId.CONGRATULATIONS),
-                            scale: 1.2 * resolution.UI_TEXT_SCALE,
-                        })
-                    );
+                    const congratsImage = Text.drawBig({
+                        text: Lang.menuText(MenuStringId.CONGRATULATIONS),
+                        scale: 1.2 * resolution.UI_TEXT_SCALE,
+                    });
+                    append(congratsElement, congratsImage);
                 }
                 Text.drawBig({
                     text: Lang.menuText(MenuStringId.SHARE_ELLIPSIS),

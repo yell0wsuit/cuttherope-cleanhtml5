@@ -5,6 +5,7 @@ import ScoreManager from "@/ui/ScoreManager";
 import BoxManager from "@/ui/BoxManager";
 import PanelId from "@/ui/PanelId";
 import panelManager from "@/ui/PanelManager";
+import type Panel from "@/ui/Panel";
 import Text from "@/visual/Text";
 import PointerCapture from "@/utils/PointerCapture";
 import settings from "@/game/CTRSettings";
@@ -25,7 +26,6 @@ import {
     addClass,
     append,
     empty,
-    fadeIn,
     fadeOut,
     hide,
     hover,
@@ -34,25 +34,57 @@ import {
     stopAnimations,
 } from "@/utils/domHelpers";
 
+type PanelIdType = (typeof PanelId)[keyof typeof PanelId];
+
+type PanelWithLifecycle = Panel & {
+    init?: (manager: PanelInitializerManager) => void;
+    onShow?: () => void;
+    onHide?: () => void;
+};
+
+interface GameFlowForPanelInit {
+    noMenuStartLevel: (boxIndex: number, levelIndex: number) => void;
+    _openLevel: (levelIndex: number, restart?: boolean, skipLocked?: boolean) => void;
+    _openLevelMenu: () => void;
+    _closeLevelMenu: () => void;
+    _closeLevel: () => void;
+    _notifyBeginTransition: (duration: number, reason: string) => void;
+    _completeBox: () => void;
+    closeBox: () => void;
+    tapeBox: () => void;
+}
+
+interface PanelInitializerManager {
+    gameFlow: GameFlowForPanelInit;
+    useHDVersion: boolean;
+    isInLevelSelectMode: boolean;
+    isInMenuSelectMode: boolean;
+    isTransitionActive: boolean;
+    _signedIn: boolean;
+    _updateSignInControls: () => void;
+    _updateMiniSoundButton: (doToggle: boolean, buttonId: string, msgId: string) => void;
+    _showMiniOptionMessage: (msgId: string, messageText: string, delayDuration: number) => void;
+    _setImageBigText: (selector: string, menuStringId: number) => void;
+}
+
 /**
  * Base class for panel initialization
  */
 export default class PanelInitializer {
-    /**
-     * @param {import("@/ui/InterfaceManagerClass").default} manager
-     */
-    constructor(manager) {
+    private readonly manager: PanelInitializerManager;
+
+    constructor(manager: PanelInitializerManager) {
         this.manager = manager;
     }
 
     /**
      * Initializes a panel
-     * @param {number} panelId - The ID of the panel to initialize
+     * @param panelId - The ID of the panel to initialize
      */
-    onInitializePanel(panelId) {
+    onInitializePanel(panelId: PanelIdType): void {
         const manager = this.manager;
         const { gameFlow } = manager;
-        const panel = panelManager.getPanelById(panelId);
+        const panel = panelManager.getPanelById(panelId) as PanelWithLifecycle | null;
         const soundBtn = document.getElementById("soundBtn");
         const musicBtn = document.getElementById("musicBtn");
         const resetBtn = document.getElementById("resetBtn");
@@ -115,13 +147,10 @@ export default class PanelInitializer {
                 manager._updateSignInControls();
 
                 // reset popup buttons
-                /**
-                 * @type {ReturnType<typeof setTimeout> | null}
-                 */
-                let resetTimer = null;
+                let resetTimer: ReturnType<typeof setTimeout> | null = null;
                 on("#resetYesBtn", PointerCapture.startEventName, () => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
-                    resetTimer = setTimeout(() => {
+                    resetTimer = window.setTimeout(() => {
                         Dialogs.closePopup();
                         resetTimer = null;
                         settings.clear();
@@ -148,7 +177,7 @@ export default class PanelInitializer {
                     manager._updateMiniSoundButton(true, "optionSound", "optionMsg");
                 });
 
-                let hdtoggle;
+                let hdtoggle: "optionSd" | "optionHd";
                 if (manager.useHDVersion) {
                     addClass("#optionHd", "activeResolution");
                     addClass("#optionSd", "inActiveResolution");
@@ -229,7 +258,7 @@ export default class PanelInitializer {
                     panelManager.showPanel(PanelId.MENU);
                 });
 
-                panel.init(manager);
+                panel?.init?.(manager);
 
                 break;
             }
@@ -245,7 +274,7 @@ export default class PanelInitializer {
                     panelManager.showPanel(PanelId.BOXES);
                 });
 
-                panel.init(manager);
+                panel?.init?.(manager);
 
                 break;
             }
@@ -260,7 +289,7 @@ export default class PanelInitializer {
 
                 // render the canvas all the way closed
                 Doors.renderDoors(true, 0.0);
-                panel.init(manager);
+                panel?.init?.(manager);
 
                 break;
             }
@@ -297,7 +326,8 @@ export default class PanelInitializer {
                         ScoreManager.setStars(
                             BoxManager.currentBoxIndex,
                             BoxManager.currentLevelIndex,
-                            0
+                            0,
+                            true
                         );
                         gameFlow._openLevel(BoxManager.currentLevelIndex + 1, false, true);
                     } else {
@@ -435,16 +465,25 @@ export default class PanelInitializer {
 
                 // change language
                 const updateLangOption = platform.updateLangSetting;
-                platform.setLangOptionClick((/** @type {number | null} */ langParam) => {
+                platform.setLangOptionClick((langParam: number | null) => {
                     SoundMgr.playSound(ResourceId.SND_TAP);
 
                     // if not specified we'll assume that we should advance to
                     // the next language (so we cycle through as user clicks)
-                    let newLangId;
+                    let newLangId: number;
                     if (langParam == null) {
-                        const currentIndex = edition.languages.indexOf(settings.getLangId());
-                        newLangId =
-                            edition.languages[(currentIndex + 1) % edition.languages.length];
+                        const languages = edition.languages;
+                        if (languages.length === 0) {
+                            return;
+                        }
+                        const currentIndex = languages.indexOf(settings.getLangId());
+                        const nextIndex = (currentIndex + 1) % languages.length;
+                        const resolvedIndex = nextIndex < 0 ? 0 : nextIndex;
+                        const fallbackLang = languages[resolvedIndex] ?? languages[0];
+                        if (fallbackLang == null) {
+                            return;
+                        }
+                        newLangId = fallbackLang;
                     } else {
                         newLangId = langParam;
                     }

@@ -310,7 +310,7 @@ export const on = (
     selector: string | Element | Window | Document,
     event: string,
     handler: EventListener,
-    options: AddEventListenerOptions | boolean
+    options: AddEventListenerOptions | boolean = false
 ): Function => {
     const el = getElement(selector);
     if (!el) return () => {};

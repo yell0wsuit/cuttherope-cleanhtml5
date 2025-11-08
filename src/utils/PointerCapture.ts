@@ -11,6 +11,9 @@ interface PointerCaptureSettings {
  * Captures and normalizes pointer events using the modern Pointer Events API
  */
 class PointerCapture {
+    static readonly startEventName = "pointerdown";
+    static readonly endEventName = "pointerup";
+
     el: HTMLElement;
     getZoom: (() => number) | undefined;
     activePointerId: number | null;

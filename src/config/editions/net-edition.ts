@@ -52,6 +52,7 @@ class NetEdition {
     menuMusicId?: string;
     siteUrl = "http://www.cuttherope.net";
     disableHiddenDrawings = true;
+    disableLanguageOption = false;
     languages: number[] = [
         LangId.EN,
         LangId.FR,

@@ -16,6 +16,7 @@ const locEntries = {
 };
 
 class WebPlatform {
+    static customOptions = false;
     static ENABLE_ANALYTICS: boolean = false;
 
     static ENABLE_ZOOM: boolean = false;
@@ -74,7 +75,7 @@ class WebPlatform {
         }
     }
 
-    static setLangOptionClick(callback: (langId: null) => void) {
+    static setLangOptionClick(callback: (langId: number | null) => void) {
         const langBtn = document.getElementById("langBtn");
         if (langBtn) {
             langBtn.addEventListener("click", () => {
