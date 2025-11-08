@@ -3,9 +3,8 @@ import LangId from "@/resources/LangId";
 class DefaultLoc {
     /**
      * Returns the default language ID.
-     * @returns {LangId}
      */
-    getDefaultLangId() {
+    getDefaultLangId(): number {
         return LangId.EN;
     }
 }

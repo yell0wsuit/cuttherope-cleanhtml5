@@ -1,26 +1,20 @@
 import JsonLoader from "@/resources/JsonLoader";
-
-/** @typedef {import("@/types/json").LevelJson} LevelJson */
-/** @typedef {import("@/types/json").LoadedLevelEntry} LoadedLevelEntry */
+import type { LevelJson, LoadedLevelEntry } from "@/types/json";
 
 // Cached boxes data
-/**
- * @type {Array<{ levels: LevelJson[] }> | null}
- */
-let cachedBoxes = null;
+let cachedBoxes: Array<{ levels: LevelJson[] }> | null = null;
 
 // Get levels from JsonLoader which loads them at runtime from public folder
 /**
  * Resolve and memoize level JSON grouped by box.
  * @returns {Array<{ levels: LevelJson[] }>}
  */
-const getLevels = () => {
+const getLevels = (): Array<{ levels: LevelJson[] }> => {
     if (cachedBoxes) {
         return cachedBoxes;
     }
 
-    /** @type {[string, LoadedLevelEntry[]][]} */
-    const groupedLevels = Array.from(JsonLoader.getAllLevels());
+    const groupedLevels: [string, LoadedLevelEntry[]][] = Array.from(JsonLoader.getAllLevels());
 
     if (groupedLevels.length === 0) {
         // Return empty array if data not loaded yet
@@ -40,7 +34,7 @@ const getLevels = () => {
 
 // Export a Proxy that returns the boxes loaded from JSON
 // This ensures the data is available when accessed, even if loaded async
-export default new Proxy([], {
+export default new Proxy([] as Array<{ levels: LevelJson[] }>, {
     get(target, prop) {
         const boxes = getLevels();
         return Reflect.get(boxes, prop);
