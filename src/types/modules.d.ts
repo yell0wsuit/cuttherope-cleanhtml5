@@ -84,6 +84,38 @@ declare module "@/resources/JsonLoader" {
     export default JsonLoader;
 }
 
+declare module "@/game/CTRRootController" {
+    export interface CTRRootController {
+        activeChildID: number;
+        onChildDeactivated(childType: number): void;
+    }
+
+    const rootController: CTRRootController;
+    export default rootController;
+}
+
+declare module "@/game/GameView" {
+    import View from "@/core/View";
+
+    interface GameViewElementType {
+        readonly GAME_SCENE: number;
+        readonly PAUSE_BUTTON: number;
+        readonly RESTART_BUTTON: number;
+        readonly NEXT_BUTTON: number;
+        readonly PAUSE_MENU: number;
+        readonly RESULTS: number;
+    }
+
+    class GameView extends View {
+        static readonly ElementType: GameViewElementType;
+
+        draw(): void;
+        show(): void;
+    }
+
+    export default GameView;
+}
+
 declare module "@/boxes" {
     import type { LevelJson } from "@/types/json";
 

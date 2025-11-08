@@ -1,6 +1,6 @@
 import Constants from "@/utils/Constants";
 import PubSub from "@/utils/PubSub";
-import type CTRRootController from "@/game/CTRRootController";
+import type { CTRRootController } from "@/game/CTRRootController";
 import type GameView from "@/game/GameView";
 
 // COMMENTS from iOS sources:
@@ -116,6 +116,9 @@ class ViewController {
         }
 
         const v = this.activeView();
+        if (!v) {
+            return;
+        }
 
         // the physics engine needs to be updated at 60fps. we
         // will do up to 3 updates for each frame that is
@@ -269,21 +272,33 @@ class ViewController {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
-        return this.views[this.activeViewID].onTouchDown(x, y);
+        const view = this.views[this.activeViewID];
+        if (!view) {
+            return false;
+        }
+        return view.onTouchDown(x, y);
     }
 
     mouseUp(x: number, y: number): boolean {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
-        return this.views[this.activeViewID].onTouchUp(x, y);
+        const view = this.views[this.activeViewID];
+        if (!view) {
+            return false;
+        }
+        return view.onTouchUp(x, y);
     }
 
     mouseDragged(x: number, y: number): boolean {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
-        return this.views[this.activeViewID].onTouchMove(x, y);
+        const view = this.views[this.activeViewID];
+        if (!view) {
+            return false;
+        }
+        return view.onTouchMove(x, y);
     }
 
     mouseMoved(x: number, y: number): boolean {
@@ -295,7 +310,11 @@ class ViewController {
         if (this.activeViewID === Constants.UNDEFINED) {
             return false;
         }
-        return this.views[this.activeViewID].onDoubleClick(x, y);
+        const view = this.views[this.activeViewID];
+        if (!view) {
+            return false;
+        }
+        return view.onDoubleClick(x, y);
     }
 }
 

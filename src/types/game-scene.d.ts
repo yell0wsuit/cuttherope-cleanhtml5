@@ -45,6 +45,32 @@ export interface PositionedDrawable extends Drawable {
     y: number;
 }
 
+export interface TutorialElement extends Drawable {
+    special?: number;
+    update(delta: number): void;
+    playTimeline(start: number): void;
+}
+
+export interface StarLike extends PositionedDrawable {
+    pos: Vector;
+    prevPos: Vector;
+    v: Vector;
+    posDelta: Vector;
+    addTimelineWithID(timeline: Timeline, id: number): void;
+    playTimeline(id: number): void;
+    addChild(child: Drawable): void;
+    removeChild(child: Drawable): void;
+    anchor: unknown;
+    parentAnchor: unknown;
+    passTransformationsToChilds?: boolean;
+    visible: boolean;
+}
+
+export interface SceneStar extends ConstrainedPoint, StarLike {}
+
+export interface SceneCandy extends CTRGameObject, StarLike {}
+
+
 export interface GameScene extends Record<string, unknown> {
     preDraw(): void;
     postDraw(): void;
@@ -72,10 +98,10 @@ export interface GameScene extends Record<string, unknown> {
     pollenDrawer: PollenDrawer | null;
     gravityButton: GravityButton | null;
     gravityNormal: boolean;
-    support: ImageElement;
-    target: GameObject;
-    tutorials: Drawable[];
-    tutorialImages: Array<Drawable & { special?: number }>;
+    support: Drawable;
+    target: BaseElement & Drawable;
+    tutorials: TutorialElement[];
+    tutorialImages: TutorialElement[];
     razors: Drawable[];
     rotatedCircles: Array<RotatedCircle & Drawable>;
     bubbles: Bubble[];
@@ -98,6 +124,7 @@ export interface GameScene extends Record<string, unknown> {
     noCandyL: boolean;
     noCandyR: boolean;
     targetSock: Sock | null;
+    special: number;
     savedSockSpeed: number;
     fingerCuts: FingerCut[][];
     aniPool: AnimationPool & {
