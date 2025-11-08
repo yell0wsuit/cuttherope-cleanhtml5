@@ -122,16 +122,6 @@ declare module "@/boxes" {
     export default boxes;
 }
 
-declare module "@/config/resolutions/scale" {
-    import type { ResolutionProfile } from "@/types/resolution";
-
-    export default function scaleResolution<T extends ResolutionProfile>(
-        target: T
-    ): T & {
-        uiScaledNumber(n: number): number;
-    };
-}
-
 declare module "@/config/resolutions/*" {
     import type Rectangle from "@/core/Rectangle";
     import type { ResolutionProfile } from "@/types/resolution";
@@ -144,14 +134,4 @@ declare module "@/config/resolutions/*" {
         TARGET_BB?: Rectangle;
     };
     export default profile;
-}
-declare module "@/ZoomManager" {
-    interface ZoomManager {
-        domReady(): void;
-        getCanvasZoom(): number;
-        getUIZoom(): number;
-    }
-
-    const zoomManager: ZoomManager;
-    export default zoomManager;
 }
