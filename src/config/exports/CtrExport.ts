@@ -1,15 +1,22 @@
-const ctrExport = (key: string, value: any): void => {
+interface ZeptoLabWindow extends Window {
+    ZeptoLab?: {
+        ctr?: Record<string, unknown>;
+    };
+}
+
+declare const window: ZeptoLabWindow;
+
+const ctrExport = (key: string, value: unknown): void => {
     // MUST use string literals for exported properties
-    let zeptoLab = (window as any)["ZeptoLab"];
-    if (zeptoLab == null) {
-        zeptoLab = (window as any)["ZeptoLab"] = {};
+    if (!window.ZeptoLab) {
+        window.ZeptoLab = {};
     }
 
-    let ctr = zeptoLab["ctr"];
-    if (ctr == null) {
-        ctr = zeptoLab["ctr"] = {};
+    if (!window.ZeptoLab.ctr) {
+        window.ZeptoLab.ctr = {};
     }
-    ctr[key] = value;
+
+    window.ZeptoLab.ctr[key] = value;
 };
 
 export default ctrExport;

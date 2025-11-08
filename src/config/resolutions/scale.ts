@@ -2,9 +2,18 @@ import Rectangle from "@/core/Rectangle";
 import res2560x1440 from "@/config/resolutions/2560x1440";
 import type { ResolutionProfile } from "@/types/resolution";
 
-type ScaleTarget = ResolutionProfile & { uiScaledNumber?: (n: number) => number };
+const initProfile = (
+    base: ResolutionProfile,
+    partial: Partial<ResolutionProfile>
+): ResolutionProfile & { uiScaledNumber(n: number): number } => {
+    /**
+     * This function mutates a partial profile by filling in all missing properties
+     * from the base profile, scaled appropriately. The cast is necessary because
+     * TypeScript can't track that we're filling in all required properties.
+     * After this function runs, the partial becomes a complete ResolutionProfile.
+     */
+    const target = partial as ResolutionProfile & { uiScaledNumber?: (n: number) => number };
 
-const initProfile = (base: ResolutionProfile, target: ScaleTarget): void => {
     const scale = target.CANVAS_SCALE;
 
     target.BUNGEE_REST_LEN = base.BUNGEE_REST_LEN * scale;
@@ -78,13 +87,14 @@ const initProfile = (base: ResolutionProfile, target: ScaleTarget): void => {
     target.CUT_MAX_SIZE = base.CUT_MAX_SIZE * scale;
 
     target.uiScaledNumber = (n: number): number => Math.round(n * target.UI_IMAGES_SCALE);
+
+    return target as ResolutionProfile & { uiScaledNumber(n: number): number };
 };
 
 const initProfileFromMac = (
-    target: Partial<ResolutionProfile>
+    partial: Partial<ResolutionProfile>
 ): ResolutionProfile & { uiScaledNumber(n: number): number } => {
-    initProfile(res2560x1440, target as ScaleTarget);
-    return target as ResolutionProfile & { uiScaledNumber(n: number): number };
+    return initProfile(res2560x1440, partial);
 };
 
 export default initProfileFromMac;
