@@ -6,6 +6,7 @@ import type BaseElement from "@/visual/BaseElement";
 import type Camera2D from "@/visual/Camera2D";
 import type BackgroundTileMap from "@/visual/BackgroundTileMap";
 import type Texture2D from "@/core/Texture2D";
+import type Vector from "@/core/Vector";
 import type Sock from "@/game/Sock";
 import type RotatedCircle from "@/game/RotatedCircle";
 import type Bubble from "@/game/Bubble";
@@ -24,11 +25,15 @@ import type TutorialText from "@/game/TutorialText";
 import type ConstrainedPoint from "@/physics/ConstrainedPoint";
 import type Drawing from "@/game/Drawing";
 import type * as GameSceneConstants from "@/gameScene/constants";
+import type ResourceIdValues from "@/resources/ResourceId";
 
 type PartsTypeValue =
     (typeof GameSceneConstants.PartsType)[keyof typeof GameSceneConstants.PartsType];
 type RestartStateValue =
     (typeof GameSceneConstants.RestartState)[keyof typeof GameSceneConstants.RestartState];
+type SockStateValue = (typeof Sock.StateType)[keyof typeof Sock.StateType];
+type Rocket = { update(delta: number): void };
+type ResourceIdValue = (typeof ResourceIdValues)[keyof typeof ResourceIdValues];
 
 interface GameSceneController {
     avgDelta: number;
@@ -55,6 +60,10 @@ export interface GameScene extends BaseElement {
     spiderBusted(grab: Grab): void;
     handlePumpFlow(pump: Pump, star: SceneStar, candy: GameObject, delta: number): void;
     spiderWon(grab: Grab): void;
+    teleport(): void;
+    operatePump(pump: Pump, delta: number): void;
+    handleBounce(bouncer: Bouncer, star: SceneStar, delta: number): void;
+    cut(razor: BaseElement | null, v1: Vector, v2: Vector, immediate: boolean): number;
     camera: GameSceneCamera;
     back: BackgroundTileMap;
     overlayTexture: Texture2D | null;
@@ -79,7 +88,7 @@ export interface GameScene extends BaseElement {
     pumps: Pump[];
     spikes: Spikes[];
     bouncers: Bouncer[];
-    socks: Sock[];
+    socks: Array<Sock & { state: SockStateValue }>;
     bungees: Grab[];
     stars: Array<Star | null>;
     candy: GameObject;
@@ -125,4 +134,9 @@ export interface GameScene extends BaseElement {
     ropesAtOnceTimer: number;
     special: number;
     spiderTookCandy: boolean;
+    PM: number;
+    PMX: number;
+    PMY: number;
+    rockets: Rocket[];
+    candyResourceId: ResourceIdValue;
 }

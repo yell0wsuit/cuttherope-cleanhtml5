@@ -11,46 +11,71 @@ import resolution from "@/resolution";
 import * as GameSceneConstants from "@/gameScene/constants";
 import { IS_XMAS } from "@/resources/ResData";
 import { applyStarImpulse, isCandyHit } from "./collisionHelpers";
+import type BaseElement from "@/visual/BaseElement";
+import type Bubble from "@/game/Bubble";
+import type Bouncer from "@/game/Bouncer";
+import type Grab from "@/game/Grab";
+import type Pump from "@/game/Pump";
+import type RotatedCircle from "@/game/RotatedCircle";
+import type Spikes from "@/game/Spikes";
+import type { GameScene, SceneStar } from "@/types/game-scene";
 
-/** @typedef {import("@/types/game-scene").GameScene} GameScene */
+type SockState = (typeof Sock.StateType)[keyof typeof Sock.StateType];
 
-/**
- * @param {GameScene} this
- * @param {number} delta
- * @param {number} numGrabs
- * @returns {boolean}
- */
-export function updateHazards(delta, numGrabs) {
+type SceneSock = Sock & { state: SockState };
+
+type Rocket = { update(delta: number): void };
+
+type RotatedCircleWithContents = RotatedCircle & {
+    containedObjects: Array<Grab | Bubble>;
+    removeOnNextUpdate?: boolean;
+};
+
+type HazardScene = GameScene & {
+    PM: number;
+    rockets: Rocket[];
+    teleport(): void;
+    operatePump(pump: Pump, delta: number): void;
+    handleBounce(bouncer: Bouncer, star: SceneStar, delta: number): void;
+    cut(razor: BaseElement | null, v1: Vector, v2: Vector, immediate: boolean): number;
+    candyResourceId: (typeof ResourceId)[keyof typeof ResourceId];
+    socks: SceneSock[];
+    rotatedCircles: RotatedCircleWithContents[];
+    spikes: Spikes[];
+};
+
+export function updateHazards(this: HazardScene, delta: number, numGrabs: number): boolean {
     let removeCircleIndex = -1;
     for (let i = 0, len = this.rotatedCircles.length; i < len; i++) {
-        const rc = this.rotatedCircles[i];
+        const rc = this.rotatedCircles[i]!;
+        const containedObjects = rc.containedObjects;
 
         for (let j = 0; j < numGrabs; j++) {
-            const g = this.bungees[j];
-            const gIndex = rc.containedObjects.indexOf(g);
+            const g = this.bungees[j]!;
+            const gIndex = containedObjects.indexOf(g);
             const distance = Vector.distance(g.x, g.y, rc.x, rc.y);
 
             if (distance <= rc.sizeInPixels + 5 * this.PM) {
                 if (gIndex < 0) {
-                    rc.containedObjects.push(g);
+                    containedObjects.push(g);
                 }
             } else if (gIndex >= 0) {
-                rc.containedObjects.splice(g, 1);
+                containedObjects.splice(gIndex, 1);
             }
         }
 
         const numBubbles = this.bubbles.length;
         for (let j = 0; j < numBubbles; j++) {
-            const b = this.bubbles[j];
+            const b = this.bubbles[j]!;
             const distance = Vector.distance(b.x, b.y, rc.x, rc.y);
-            const bIndex = rc.containedObjects.indexOf(b);
+            const bIndex = containedObjects.indexOf(b);
 
             if (distance <= rc.sizeInPixels + 10 * this.PM) {
                 if (bIndex < 0) {
-                    rc.containedObjects.push(b);
+                    containedObjects.push(b);
                 }
             } else if (bIndex >= 0) {
-                rc.containedObjects.splice(b, 1);
+                containedObjects.splice(bIndex, 1);
             }
         }
 
@@ -67,7 +92,7 @@ export function updateHazards(delta, numGrabs) {
 
     // rockets
     for (let i = 0, len = this.rockets.length; i < len; i++) {
-        const r = this.rockets[i];
+        const r = this.rockets[i]!;
         r.update(delta);
 
         // TODO: finish
@@ -75,7 +100,7 @@ export function updateHazards(delta, numGrabs) {
 
     // socks / magic hats
     for (let i = 0, len = this.socks.length; i < len; i++) {
-        const s = this.socks[i];
+        const s = this.socks[i]!;
         s.update(delta);
         const moveStatus = Mover.moveToTargetWithStatus(s.idleTimeout, 0, 1, delta);
         s.idleTimeout = moveStatus.value;
@@ -96,14 +121,6 @@ export function updateHazards(delta, numGrabs) {
         const bbW = resolution.STAR_SOCK_RADIUS * 2;
         const bbH = bbW;
 
-        /*
-            // DEBUG: draw the star bounding box
-            let ctx = Canvas.context;
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = 'red';
-            ctx.strokeRect(bbX, bbY, bbW, bbH);
-        */
-
         if (
             rs.y >= 0 &&
             (Rectangle.lineInRect(s.t1.x, s.t1.y, s.t2.x, s.t2.y, bbX, bbY, bbW, bbH) ||
@@ -112,7 +129,7 @@ export function updateHazards(delta, numGrabs) {
             if (s.state === Sock.StateType.IDLE) {
                 // look for a receiving sock
                 for (let j = 0; j < len; j++) {
-                    const n = this.socks[j];
+                    const n = this.socks[j]!;
                     if (n !== s && n.group === s.group) {
                         s.state = Sock.StateType.RECEIVING;
                         n.state = Sock.StateType.THROWING;
@@ -124,8 +141,11 @@ export function updateHazards(delta, numGrabs) {
                             resolution.PHYSICS_SPEED_MULTIPLIER;
                         this.targetSock = n;
 
-                        s.light.playTimeline(0);
-                        s.light.visible = true;
+                        const { light } = s;
+                        light?.playTimeline(0);
+                        if (light) {
+                            light.visible = true;
+                        }
                         IS_XMAS
                             ? SoundMgr.playSound(ResourceId.SND_TELEPORT_XMAS)
                             : SoundMgr.playSound(ResourceId.SND_TELEPORT);
@@ -142,7 +162,7 @@ export function updateHazards(delta, numGrabs) {
 
     // pumps
     for (let i = 0, len = this.pumps.length; i < len; i++) {
-        const p = this.pumps[i];
+        const p = this.pumps[i]!;
         p.update(delta);
 
         const moveStatus = Mover.moveToTargetWithStatus(p.touchTimer, 0, 1, delta);
@@ -154,30 +174,16 @@ export function updateHazards(delta, numGrabs) {
 
     // razors
     for (let i = 0, len = this.razors.length; i < len; i++) {
-        const r = this.razors[i];
+        const r = this.razors[i]!;
         r.update(delta);
-        this.cut(r, null, null, false);
+        this.cut(r, Vector.zero, Vector.zero, false);
     }
 
     // spikes
     const starSpikeRadius = resolution.STAR_SPIKE_RADIUS;
-    const star_spike_radius_double = starSpikeRadius * 2;
-    // isCandyHit = function (spike, star) {
-    //     return (
-    //         Rectangle.lineInRect(
-    //             spike.t1.x, spike.t1.y,
-    //             spike.t2.x, spike.t2.y,
-    //             star.pos.x - star_spike_radius, star.pos.y - star_spike_radius,
-    //             star_spike_radius_double, star_spike_radius_double) ||
-    //             Rectangle.lineInRect(
-    //                 spike.b1.x, spike.b1.y,
-    //                 spike.b2.x, spike.b2.y,
-    //                 star.pos.x - star_spike_radius, star.pos.y - star_spike_radius,
-    //                 star_spike_radius_double, star_spike_radius_double));
-    // };
 
     for (let i = 0, len = this.spikes.length; i < len; i++) {
-        const s = this.spikes[i];
+        const s = this.spikes[i]!;
 
         // only update if something happens
         if (s.mover || s.shouldUpdateRotation || s.electro) {
@@ -212,34 +218,43 @@ export function updateHazards(delta, numGrabs) {
                 }
 
                 const candyTexture = ResourceMgr.getTexture(this.candyResourceId);
-                const breakEffect = new CandyBreak(5, candyTexture, {
-                    resourceId: this.candyResourceId,
-                });
-                if (this.gravityButton && !this.gravityNormal) {
-                    breakEffect.gravity.y = -500;
-                    breakEffect.angle = 90;
-                }
+                if (candyTexture) {
+                    const breakEffect = new CandyBreak(5, candyTexture, {
+                        resourceId: this.candyResourceId,
+                    });
+                    if (this.gravityButton && !this.gravityNormal) {
+                        breakEffect.gravity.y = -500;
+                        breakEffect.angle = 90;
+                    }
 
-                breakEffect.onFinished = this.aniPool.particlesFinishedDelegate();
+                    breakEffect.onFinished = this.aniPool.particlesFinishedDelegate();
+
+                    if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
+                        if (left) {
+                            breakEffect.x = this.candyL.x;
+                            breakEffect.y = this.candyL.y;
+                        } else {
+                            breakEffect.x = this.candyR.x;
+                            breakEffect.y = this.candyR.y;
+                        }
+                    } else {
+                        breakEffect.x = this.candy.x;
+                        breakEffect.y = this.candy.y;
+                    }
+
+                    breakEffect.startSystem(5);
+                    this.aniPool.addChild(breakEffect);
+                }
 
                 if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
                     if (left) {
-                        breakEffect.x = this.candyL.x;
-                        breakEffect.y = this.candyL.y;
                         this.noCandyL = true;
                     } else {
-                        breakEffect.x = this.candyR.x;
-                        breakEffect.y = this.candyR.y;
                         this.noCandyR = true;
                     }
                 } else {
-                    breakEffect.x = this.candy.x;
-                    breakEffect.y = this.candy.y;
                     this.noCandy = true;
                 }
-
-                breakEffect.startSystem(5);
-                this.aniPool.addChild(breakEffect);
                 SoundMgr.playSound(ResourceId.SND_CANDY_BREAK);
                 this.releaseAllRopes(left);
 
@@ -254,13 +269,10 @@ export function updateHazards(delta, numGrabs) {
 
     // bouncers
     const bouncerRadius = resolution.BOUNCER_RADIUS;
-    const bouncer_radius_double = bouncerRadius * 2;
 
     for (let i = 0, len = this.bouncers.length; i < len; i++) {
-        const bouncer = this.bouncers[i];
-        //if (bouncer.mover) {
+        const bouncer = this.bouncers[i]!;
         bouncer.update(delta);
-        //}
 
         let candyHits = false;
         let left = false;
@@ -288,7 +300,7 @@ export function updateHazards(delta, numGrabs) {
 
             break; // stop after hit
         } else {
-            bouncer.skip = false;
+            bouncer.skip = 0;
         }
     }
 

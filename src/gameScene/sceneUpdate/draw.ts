@@ -4,17 +4,12 @@ import * as GameSceneConstants from "@/gameScene/constants";
 import RGBAColor from "@/core/RGBAColor";
 import Vector from "@/core/Vector";
 import resolution from "@/resolution";
-
-/**
- * @typedef {import("@/types/game-scene").GameScene} GameScene
- * @typedef {import("@/types/game-scene").FingerCutTrail} FingerCutTrail
- */
+import type { FingerCutTrail, GameScene } from "@/types/game-scene";
 
 /**
  * Draws every animated element that belongs to the game scene.
- * @param {GameScene} scene
  */
-const drawImpl = function drawImpl(scene) {
+const drawImpl = function drawImpl(scene: GameScene): void {
     // reset any canvas transformations and clear everything
     const ctx = Canvas.context;
     if (!ctx) return;
@@ -28,33 +23,35 @@ const drawImpl = function drawImpl(scene) {
 
     // Scale overlayCut based on resolution to prevent visible seams at HD resolutions
     const overlayCut = Math.ceil((2 * resolution.CANVAS_SCALE) / 0.1875);
-    let q;
-    let overlayRect;
-    let off;
     if (scene.mapHeight > resolution.CANVAS_HEIGHT) {
-        q = GameSceneConstants.IMG_BGR_01_P2_vert_transition;
-        off = scene.overlayTexture.offsets[q].y;
-        overlayRect = scene.overlayTexture.rects[q];
+        const overlayTexture = scene.overlayTexture;
+        if (overlayTexture) {
+            const q = GameSceneConstants.IMG_BGR_01_P2_vert_transition;
+            const off = overlayTexture.offsets[q]?.y ?? 0;
+            const overlayRect = overlayTexture.rects[q];
 
-        ctx.drawImage(
-            scene.overlayTexture.image,
-            overlayRect.x,
-            overlayRect.y + overlayCut,
-            overlayRect.w,
-            overlayRect.h - overlayCut * 2,
-            0,
-            off + overlayCut,
-            overlayRect.w,
-            overlayRect.h - overlayCut * 2
-        );
+            if (overlayRect && overlayTexture.image) {
+                ctx.drawImage(
+                    overlayTexture.image,
+                    overlayRect.x,
+                    overlayRect.y + overlayCut,
+                    overlayRect.w,
+                    overlayRect.h - overlayCut * 2,
+                    0,
+                    off + overlayCut,
+                    overlayRect.w,
+                    overlayRect.h - overlayCut * 2
+                );
+            }
+        }
     }
 
     for (let i = 0, len = scene.drawings.length; i < len; i++) {
-        scene.drawings[i].draw();
+        scene.drawings[i]?.draw();
     }
 
     for (let i = 0, len = scene.earthAnims.length; i < len; i++) {
-        scene.earthAnims[i].draw();
+        scene.earthAnims[i]?.draw();
     }
 
     if (scene.pollenDrawer) {
@@ -69,12 +66,15 @@ const drawImpl = function drawImpl(scene) {
 
     // tutorial text
     for (let i = 0, len = scene.tutorials.length; i < len; i++) {
-        scene.tutorials[i].draw();
+        scene.tutorials[i]?.draw();
     }
 
     // tutorial images
     for (let i = 0, len = scene.tutorialImages.length; i < len; i++) {
         const ti = scene.tutorialImages[i];
+        if (!ti) {
+            continue;
+        }
 
         // don't draw the level1 arrow now - it needs to be on top
         if (ti.special !== GameSceneConstants.LEVEL1_ARROW_SPECIAL_ID) {
@@ -83,31 +83,34 @@ const drawImpl = function drawImpl(scene) {
     }
 
     for (let i = 0, len = scene.razors.length; i < len; i++) {
-        scene.razors[i].draw();
+        scene.razors[i]?.draw();
     }
 
     for (let i = 0, len = scene.rotatedCircles.length; i < len; i++) {
-        scene.rotatedCircles[i].draw();
+        scene.rotatedCircles[i]?.draw();
     }
 
     for (let i = 0, len = scene.bubbles.length; i < len; i++) {
-        scene.bubbles[i].draw();
+        scene.bubbles[i]?.draw();
     }
 
     for (let i = 0, len = scene.pumps.length; i < len; i++) {
-        scene.pumps[i].draw();
+        scene.pumps[i]?.draw();
     }
 
     for (let i = 0, len = scene.spikes.length; i < len; i++) {
-        scene.spikes[i].draw();
+        scene.spikes[i]?.draw();
     }
 
     for (let i = 0, len = scene.bouncers.length; i < len; i++) {
-        scene.bouncers[i].draw();
+        scene.bouncers[i]?.draw();
     }
 
     for (let i = 0, len = scene.socks.length; i < len; i++) {
         const sock = scene.socks[i];
+        if (!sock) {
+            continue;
+        }
         sock.y -= GameSceneConstants.SOCK_COLLISION_Y_OFFSET;
         sock.draw();
         sock.y += GameSceneConstants.SOCK_COLLISION_Y_OFFSET;
@@ -115,14 +118,17 @@ const drawImpl = function drawImpl(scene) {
 
     const bungees = scene.bungees;
     for (let i = 0, len = bungees.length; i < len; i++) {
-        bungees[i].drawBack();
+        const bungee = bungees[i];
+        bungee?.drawBack();
     }
     for (let i = 0, len = bungees.length; i < len; i++) {
-        bungees[i].draw();
+        const bungee = bungees[i];
+        bungee?.draw();
     }
 
     for (let i = 0, len = scene.stars.length; i < len; i++) {
-        scene.stars[i] && scene.stars[i].draw();
+        const star = scene.stars[i];
+        star?.draw();
     }
 
     if (!scene.noCandy && !scene.targetSock) {
@@ -151,7 +157,7 @@ const drawImpl = function drawImpl(scene) {
 
     for (let i = 0, len = bungees.length; i < len; i++) {
         const g = bungees[i];
-        if (g.hasSpider) {
+        if (g?.hasSpider) {
             g.drawSpider();
         }
     }
@@ -164,7 +170,7 @@ const drawImpl = function drawImpl(scene) {
     // draw the level1 arrow last so it's on top
     for (let i = 0, len = scene.tutorialImages.length; i < len; i++) {
         const ti = scene.tutorialImages[i];
-        if (ti.special === GameSceneConstants.LEVEL1_ARROW_SPECIAL_ID) {
+        if (ti && ti.special === GameSceneConstants.LEVEL1_ARROW_SPECIAL_ID) {
             ti.draw();
         }
     }
@@ -174,33 +180,34 @@ const drawImpl = function drawImpl(scene) {
 
 /**
  * Renders the finger cut trails currently tracked by the scene.
- * @param {GameScene} scene
  */
-const drawCuts = function drawCuts(scene) {
+const drawCuts = function drawCuts(scene: GameScene): void {
     const maxSize = resolution.CUT_MAX_SIZE;
     for (let i = 0; i < Constants.MAX_TOUCHES; i++) {
-        const cuts = scene.fingerCuts[i];
-        const count = cuts.length;
-        if (count > 0) {
+        const cuts: FingerCutTrail = scene.fingerCuts[i] ?? [];
+        if (cuts.length > 0) {
             let perpSize = 1;
-            /** @type {FingerCutTrail[number] | null} */
-            let fc = null;
-            let pc = 0;
             const v = 0;
-            const pts = [];
+            const pts: Vector[] = [];
 
-            for (let k = 0; k < count; k++) {
-                fc = cuts[k];
-                if (k === 0) {
-                    pts[pc++] = fc.start;
+            for (const cut of cuts) {
+                if (!cut) {
+                    continue;
                 }
-                pts[pc++] = fc.end;
+                if (pts.length === 0) {
+                    pts.push(cut.start);
+                }
+                pts.push(cut.end);
             }
 
-            let p = null;
-            const points = 2;
-            const numVertices = count * points;
-            const vertices = [];
+            const numSegments = Math.max(pts.length - 1, 0);
+            if (numSegments === 0) {
+                continue;
+            }
+
+            const vertices: Vector[] = [];
+            const pointsPerCutSegment = 2;
+            const numVertices = numSegments * pointsPerCutSegment;
             const bstep = 1 / numVertices;
             let a = 0;
 
@@ -209,8 +216,8 @@ const drawCuts = function drawCuts(scene) {
                     a = 1;
                 }
 
-                p = Vector.calcPathBezier(pts, a);
-                vertices.push(p);
+                const pointOnCurve = Vector.calcPathBezier(pts, a);
+                vertices.push(pointOnCurve);
 
                 if (a === 1) {
                     break;
@@ -220,12 +227,12 @@ const drawCuts = function drawCuts(scene) {
             }
 
             const step = maxSize / numVertices;
-            const verts = [];
+            const verts: Vector[] = [];
             for (let k = 0, lenMinusOne = numVertices - 1; k < lenMinusOne; k++) {
                 const startSize = perpSize;
                 const endSize = k === numVertices - 1 ? 1 : perpSize + step;
-                const start = vertices[k];
-                const end = vertices[k + 1];
+                const start = vertices[k]!;
+                const end = vertices[k + 1]!;
 
                 // n is the normalized arrow
                 const n = Vector.subtract(end, start);
@@ -258,15 +265,13 @@ const drawCuts = function drawCuts(scene) {
 };
 
 class GameSceneDrawDelegate {
-    /**
-     * @param {GameScene} scene
-     */
-    constructor(scene) {
-        /** @type {GameScene} */
+    private readonly scene: GameScene;
+
+    constructor(scene: GameScene) {
         this.scene = scene;
     }
 
-    draw() {
+    draw(): void {
         drawImpl(this.scene);
     }
 }

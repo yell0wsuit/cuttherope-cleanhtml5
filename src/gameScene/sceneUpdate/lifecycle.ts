@@ -7,30 +7,18 @@ import ResourceId from "@/resources/ResourceId";
 import SoundMgr from "@/game/CTRSoundMgr";
 import Timeline from "@/visual/Timeline";
 import settings from "@/game/CTRSettings";
+import type { GameScene } from "@/types/game-scene";
 
-/**
- * @typedef {import("@/types/game-scene").GameScene} GameScene
- */
-
-/**
- * @param {GameScene} scene
- */
-function animateLevelRestart(scene) {
+function animateLevelRestart(scene: GameScene): void {
     scene.restartState = GameSceneConstants.RestartState.FADE_IN;
     scene.dimTime = Constants.DIM_TIMEOUT;
 }
 
-/**
- * @param {GameScene} scene
- */
-function isFadingIn(scene) {
+function isFadingIn(scene: GameScene): boolean {
     return scene.restartState === GameSceneConstants.RestartState.FADE_IN;
 }
 
-/**
- * @param {GameScene} scene
- */
-function calculateScore(scene) {
+function calculateScore(scene: GameScene): void {
     scene.timeBonus = Math.max(0, 30 - scene.time) * 100;
     scene.timeBonus /= 10;
     scene.timeBonus *= 10;
@@ -38,10 +26,7 @@ function calculateScore(scene) {
     scene.score = Math.ceil(scene.timeBonus + scene.starBonus);
 }
 
-/**
- * @param {GameScene} scene
- */
-function gameWon(scene) {
+function gameWon(scene: GameScene): void {
     scene.dd.cancelAllDispatches();
 
     scene.target.playTimeline(GameSceneConstants.CharAnimation.WIN);
@@ -54,20 +39,17 @@ function gameWon(scene) {
     scene.noCandy = true;
 
     scene.candy.passTransformationsToChilds = true;
-    scene.candyMain.scaleX = scene.candyMain.scaleY = 1;
-    scene.candyTop.scaleX = scene.candyTop.scaleY = 1;
+    scene.candyMain.scaleX = 1;
+    scene.candyMain.scaleY = 1;
+    scene.candyTop.scaleX = 1;
+    scene.candyTop.scaleY = 1;
 
     const tl = new Timeline();
     tl.addKeyFrame(
         KeyFrame.makePos(scene.candy.x, scene.candy.y, KeyFrame.TransitionType.LINEAR, 0)
     );
     tl.addKeyFrame(
-        KeyFrame.makePos(
-            scene.target.x,
-            scene.target.y + 10,
-            KeyFrame.TransitionType.LINEAR,
-            0.1
-        )
+        KeyFrame.makePos(scene.target.x, scene.target.y + 10, KeyFrame.TransitionType.LINEAR, 0.1)
     );
     tl.addKeyFrame(KeyFrame.makeScale(0.71, 0.71, KeyFrame.TransitionType.LINEAR, 0));
     tl.addKeyFrame(KeyFrame.makeScale(0, 0, KeyFrame.TransitionType.LINEAR, 0.1));
@@ -75,11 +57,7 @@ function gameWon(scene) {
         KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0)
     );
     tl.addKeyFrame(
-        KeyFrame.makeColor(
-            RGBAColor.transparent.copy(),
-            KeyFrame.TransitionType.LINEAR,
-            0.1
-        )
+        KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.1)
     );
     scene.candy.addTimelineWithID(tl, 0);
     scene.candy.playTimeline(0);
@@ -107,7 +85,7 @@ function gameWon(scene) {
     // stop the electro after 1.5 seconds
     scene.dd.callObject(
         scene,
-        function () {
+        () => {
             // stop the electro spikes sound from looping
             SoundMgr.stopSound(ResourceId.SND_ELECTRIC);
         },
@@ -116,22 +94,19 @@ function gameWon(scene) {
     );
 
     // fire level won callback after 2 secs
-    const onLevelWon = function () {
+    const onLevelWon = () => {
         scene.gameController.onLevelWon.call(scene.gameController);
     };
     scene.dd.callObject(scene, onLevelWon, null, 1.8);
 }
 
-/**
- * @param {GameScene} scene
- */
-function gameLost(scene) {
+function gameLost(scene: GameScene): void {
     scene.dd.cancelAllDispatches();
     scene.target.playTimeline(GameSceneConstants.CharAnimation.FAIL);
     SoundMgr.playSound(ResourceId.SND_MONSTER_SAD);
 
     // fire level lost callback after 1 sec
-    const onLevelLost = function () {
+    const onLevelLost = () => {
         scene.gameController.onLevelLost.call(scene.gameController);
         PubSub.publish(PubSub.ChannelId.LevelLost, { time: scene.time });
     };
@@ -139,31 +114,29 @@ function gameLost(scene) {
 }
 
 class GameSceneLifecycleDelegate {
-    /**
-     * @param {GameScene} scene
-     */
-    constructor(scene) {
-        /** @type {GameScene} */
+    private readonly scene: GameScene;
+
+    constructor(scene: GameScene) {
         this.scene = scene;
     }
 
-    animateLevelRestart() {
+    animateLevelRestart(): void {
         return animateLevelRestart(this.scene);
     }
 
-    isFadingIn() {
+    isFadingIn(): boolean {
         return isFadingIn(this.scene);
     }
 
-    calculateScore() {
+    calculateScore(): void {
         return calculateScore(this.scene);
     }
 
-    gameWon() {
+    gameWon(): void {
         return gameWon(this.scene);
     }
 
-    gameLost() {
+    gameLost(): void {
         return gameLost(this.scene);
     }
 }
