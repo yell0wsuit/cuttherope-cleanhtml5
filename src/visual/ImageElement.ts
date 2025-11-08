@@ -1,6 +1,5 @@
 import BaseElement from "@/visual/BaseElement";
 import Rectangle from "@/core/Rectangle";
-// @ts-ignore - ResData is a JS module
 import RES_DATA from "@/resources/ResData";
 import Canvas from "@/utils/Canvas";
 import Constants from "@/utils/Constants";
