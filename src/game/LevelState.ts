@@ -1,7 +1,8 @@
 import edition from "@/config/editions/net-edition";
+import type { LevelJson } from "@/types/json";
 
 class LevelState {
-    static loadedMap: any | null = null;
+    static loadedMap: LevelJson | null = null;
 
     static pack: number = 0;
 

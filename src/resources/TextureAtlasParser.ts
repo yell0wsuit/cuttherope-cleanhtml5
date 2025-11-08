@@ -38,24 +38,15 @@ interface TexturePackerMeta {
 /**
  * Complete TexturePacker JSON structure.
  */
-interface TexturePackerAtlas {
+export interface TexturePackerAtlas {
     frames: Record<string, FrameData> | FrameData[];
     meta?: TexturePackerMeta;
 }
 
 /**
- * Extra options for parseTexturePackerAtlas.
- */
-interface ParseAtlasOptions {
-    existingInfo?: object | undefined;
-    offsetNormalization?: "center" | undefined;
-    frameOrder?: string[] | undefined;
-}
-
-/**
  * Parsed result info.
  */
-interface ParsedAtlasInfo {
+export interface ParsedAtlasInfo {
     rects: Rectangle[];
     offsets?: { x: number; y: number }[];
     preCutWidth?: number;
@@ -66,6 +57,16 @@ interface ParsedAtlasInfo {
     adjustmentMaxY?: number;
     atlasMeta?: TexturePackerMeta | null;
 }
+
+/**
+ * Extra options for parseTexturePackerAtlas.
+ */
+interface ParseAtlasOptions {
+    existingInfo?: ParsedAtlasInfo | Partial<ParsedAtlasInfo> | undefined;
+    offsetNormalization?: "center" | undefined;
+    frameOrder?: string[] | undefined;
+}
+
 
 /**
  * Builds frame entries from the TexturePacker frames block.

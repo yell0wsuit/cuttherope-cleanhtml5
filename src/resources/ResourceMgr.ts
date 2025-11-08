@@ -8,7 +8,7 @@ import Texture2D from "@/core/Texture2D";
 import Vector from "@/core/Vector";
 import Rectangle from "@/core/Rectangle";
 import Log from "@/utils/Log";
-import { parseTexturePackerAtlas } from "@/resources/TextureAtlasParser";
+import { parseTexturePackerAtlas, type TexturePackerAtlas, type ParsedAtlasInfo } from "@/resources/TextureAtlasParser";
 import type ResEntry from "./ResEntry";
 
 /**
@@ -31,7 +31,7 @@ class ResourceMgr {
     /**
      * Handles loaded atlas data
      */
-    static onAtlasLoaded(resId: number, atlasData: any) {
+    static onAtlasLoaded(resId: number, atlasData: TexturePackerAtlas) {
         const resource = RES_DATA[resId];
         if (!resource) {
             return;
@@ -60,7 +60,7 @@ class ResourceMgr {
      * Parses atlas data for a resource
      * @private
      */
-    static _parseAtlasForResource(resource: ResEntry, atlasData: any): any {
+    static _parseAtlasForResource(resource: ResEntry, atlasData: TexturePackerAtlas): ParsedAtlasInfo {
         const format = resource.atlasFormat || "texture-packer";
         const existingInfo = resource.info || {};
 
@@ -73,7 +73,7 @@ class ResourceMgr {
                 });
             default:
                 globalThis.console?.warn?.("Unsupported atlas format", format);
-                return existingInfo;
+                return existingInfo as ParsedAtlasInfo;
         }
     }
 

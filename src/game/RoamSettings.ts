@@ -15,11 +15,11 @@ let roamingProvider: RoamingProvider | null = null;
 PubSub.subscribe(PubSub.ChannelId.RoamingSettingProvider, (provider: unknown) => {
     // copy methods (which will be minified)
     if (provider && typeof provider === "object") {
-        const providerObj = provider as { [key: string]: any };
+        const providerObj = provider as Record<string, unknown>;
         roamingProvider = {
-            set: providerObj["set"],
-            get: providerObj["get"],
-            remove: providerObj["remove"],
+            set: providerObj["set"] as RoamingProvider["set"],
+            get: providerObj["get"] as RoamingProvider["get"],
+            remove: providerObj["remove"] as RoamingProvider["remove"],
         };
     } else {
         roamingProvider = null;
