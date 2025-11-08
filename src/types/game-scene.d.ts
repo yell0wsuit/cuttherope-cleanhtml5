@@ -25,19 +25,10 @@ import CTRGameObject from "@/game/CTRGameObject";
 import RGBAColor from "@/core/RGBAColor";
 import type Camera2D from "@/visual/Camera2D";
 
-export interface FingerCutSegment {
-    start: Vector;
-    end: Vector;
-    startSize: number;
-    endSize: number;
-    color: RGBAColor;
-}
-
-export type FingerCutTrail = FingerCutSegment[];
+export type FingerCutTrail = FingerCut[];
 
 export interface GameSceneCamera {
     pos: Vector;
-    type: Camera2D["type"];
     applyCameraTransformation(): void;
     cancelCameraTransformation(): void;
 }
@@ -56,33 +47,6 @@ export interface PositionedDrawable extends Drawable {
     x: number;
     y: number;
 }
-
-export interface TutorialElement extends Drawable {
-    special?: number;
-    update(delta: number): void;
-    playTimeline(start: number): void;
-}
-
-export interface StarLike extends PositionedDrawable {
-    pos: Vector;
-    prevPos: Vector;
-    v: Vector;
-    posDelta: Vector;
-    addTimelineWithID(timeline: Timeline, id: number): void;
-    playTimeline(id: number): void;
-    addChild(child: Drawable): void;
-    removeChild(child: Drawable): void;
-    anchor: unknown;
-    parentAnchor: unknown;
-    passTransformationsToChilds?: boolean;
-    visible: boolean;
-}
-
-export interface SceneStar extends ConstrainedPoint, StarLike {}
-
-export interface SceneCandy extends CTRGameObject, StarLike {}
-
-export type UpdatableDrawable = Drawable & { update(delta: number): void };
 
 export interface GameScene extends Record<string, unknown> {
     preDraw(): void;
@@ -106,15 +70,15 @@ export interface GameScene extends Record<string, unknown> {
     overlayTexture: GameSceneTextureAtlas;
     mapHeight: number;
     mapWidth: number;
-    drawings: UpdatableDrawable[];
-    earthAnims: UpdatableDrawable[];
-    pollenDrawer: UpdatableDrawable | null;
-    gravityButton: (Drawable & { isOn?: boolean; isInTouchZone?: () => boolean }) | null;
+    drawings: Drawable[];
+    earthAnims: EarthImage[];
+    pollenDrawer: PollenDrawer | null;
+    gravityButton: GravityButton | null;
     gravityNormal: boolean;
-    support: Drawable;
-    target: BaseElement & Drawable;
-    tutorials: TutorialElement[];
-    tutorialImages: TutorialElement[];
+    support: ImageElement;
+    target: GameObject;
+    tutorials: Drawable[];
+    tutorialImages: Array<Drawable & { special?: number }>;
     razors: Drawable[];
     rotatedCircles: Array<RotatedCircle & Drawable>;
     bubbles: Bubble[];
@@ -137,7 +101,6 @@ export interface GameScene extends Record<string, unknown> {
     noCandyL: boolean;
     noCandyR: boolean;
     targetSock: Sock | null;
-    special: number;
     savedSockSpeed: number;
     fingerCuts: FingerCut[][];
     aniPool: AnimationPool & {
@@ -167,12 +130,5 @@ export interface GameScene extends Record<string, unknown> {
     score: number;
     attachCount: number;
     juggleTimer: number;
-    ropePhysicsSpeed: number;
-    ignoreTouches: boolean;
-    lastCandyRotateDelta: number;
-    lastCandyRotateDeltaL: number;
-    lastCandyRotateDeltaR: number;
-    ropesAtOnceTimer: number;
     spiderTookCandy: boolean;
-    spiderWon(grab: Grab): void;
 }
