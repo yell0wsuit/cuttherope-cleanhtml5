@@ -6,44 +6,38 @@ import Canvas from "@/utils/Canvas";
 import settings from "@/game/CTRSettings";
 import ZoomManager from "@/ZoomManager";
 import PubSub from "@/utils/PubSub";
-import editionUI from "@/editionUI";
+import "@/editionUI";
+
+type ProgressPayload = {
+    progress: number;
+};
+
+const clamp = (value: number, min: number, max: number): number => {
+    return Math.min(max, Math.max(min, value));
+};
 
 class App {
-    constructor() {
-        /**
-         * @type {HTMLElement | null}
-         */
-        this.progressBar = null;
-        /**
-         * @type {HTMLElement | null}
-         */
-        this.betterLoader = null;
-        /**
-         * @type {HTMLElement | null}
-         */
-        this.gameFooterSocial = null;
+    private progressBar: HTMLElement | null = null;
+    private betterLoader: HTMLElement | null = null;
+    private gameFooterSocial: HTMLElement | null = null;
 
-        // Gives the app a chance to begin working before the DOM is ready
+    constructor() {
         PreLoader.start();
         PubSub.publish(PubSub.ChannelId.AppInit);
     }
 
-    // Called by the loader when the DOM is loaded
-    domReady() {
+    domReady(): void {
         this.progressBar = document.getElementById("progress");
         this.betterLoader = document.getElementById("betterLoader");
         this.gameFooterSocial = document.getElementById("gameFooterSocial");
 
-        // disable text selection mode in IE9
         if (settings.disableTextSelection) {
-            if (typeof document.body["onselectstart"] != "undefined") {
-                document.body["onselectstart"] = () => {
-                    return false;
-                };
-            }
+            const preventSelection = (event: Event) => {
+                event.preventDefault();
+            };
+            document.body.addEventListener("selectstart", preventSelection);
         }
 
-        // toggle the active css class when the user clicks
         const ctrCursors = document.querySelectorAll(".ctrCursor");
         ctrCursors.forEach((cursor) => {
             if (cursor instanceof HTMLElement) {
@@ -67,15 +61,13 @@ class App {
             throw new Error("Canvas element not found");
         }
 
-        // set the canvas drawing dimensions
         Canvas.element.width = resolution.CANVAS_WIDTH;
         Canvas.element.height = resolution.CANVAS_HEIGHT;
 
-        // set the screen (css) dimensions
         Canvas.element.style.width = `${resolution.CANVAS_WIDTH}px`;
         Canvas.element.style.height = `${resolution.CANVAS_HEIGHT}px`;
 
-        if (ZoomManager.domReady) {
+        if (typeof ZoomManager.domReady === "function") {
             ZoomManager.domReady();
         }
 
@@ -84,15 +76,18 @@ class App {
         PubSub.publish(PubSub.ChannelId.AppDomReady);
     }
 
-    run() {
-        // Called by the loader when the app is ready to run
-
-        // Subscribe to preloader progress updates
+    run(): void {
         const progressSubscription = PubSub.subscribe(
             PubSub.ChannelId.PreloaderProgress,
-            (/** @type {{ progress: number; }} */ data) => {
-                if (this.progressBar && data && typeof data.progress === "number") {
-                    const progress = Math.min(100, Math.max(0, data.progress));
+            (...args: unknown[]) => {
+                const [payload] = args;
+                if (!payload || typeof payload !== "object") {
+                    return;
+                }
+
+                const progressValue = (payload as Partial<ProgressPayload>).progress;
+                if (this.progressBar && typeof progressValue === "number") {
+                    const progress = clamp(progressValue, 0, 100);
                     this.progressBar.style.transition = "width 0.3s ease-out";
                     this.progressBar.style.width = `${progress}%`;
                 }
@@ -100,21 +95,20 @@ class App {
         );
 
         PreLoader.run(() => {
-            // Unsubscribe from progress updates
             PubSub.unsubscribe(progressSubscription);
 
-            // Ensure progress bar is at 100%
             if (this.progressBar) {
                 this.progressBar.style.width = "100%";
             }
 
-            // Hide the loader after a brief delay
-            setTimeout(() => {
+            window.setTimeout(() => {
                 if (this.betterLoader) {
                     this.betterLoader.style.transition = "opacity 0.5s";
                     this.betterLoader.style.opacity = "0";
-                    setTimeout(() => {
-                        this.betterLoader && (this.betterLoader.style.display = "none");
+                    window.setTimeout(() => {
+                        if (this.betterLoader) {
+                            this.betterLoader.style.display = "none";
+                        }
                     }, 500);
                 }
             }, 200);
@@ -122,35 +116,29 @@ class App {
             im.gameFlow.appReady();
             PubSub.publish(PubSub.ChannelId.AppRun);
 
-            // fade in the game
             const hideAfterLoad = document.querySelectorAll(".hideAfterLoad");
-            hideAfterLoad.forEach((el) => {
-                if (el instanceof HTMLElement) {
-                    el.style.transition = "opacity 0.5s";
-                    el.style.opacity = "0";
-                    setTimeout(() => {
-                        el.style.display = "none";
+            hideAfterLoad.forEach((element) => {
+                if (element instanceof HTMLElement) {
+                    element.style.transition = "opacity 0.5s";
+                    element.style.opacity = "0";
+                    window.setTimeout(() => {
+                        element.style.display = "none";
                     }, 500);
                 }
             });
 
             const hideBeforeLoad = document.querySelectorAll(".hideBeforeLoad");
-            hideBeforeLoad.forEach((el) => {
-                if (el instanceof HTMLElement) {
-                    // Make sure element is visible first
-                    el.style.display = el.style.display || "block";
-                    el.style.opacity = "0";
-                    el.style.transition = "opacity 0.5s";
-                    // Trigger reflow before starting fade
-                    el.offsetHeight;
-                    el.style.opacity = "1";
+            hideBeforeLoad.forEach((element) => {
+                if (element instanceof HTMLElement) {
+                    element.style.display = element.style.display || "block";
+                    element.style.opacity = "0";
+                    element.style.transition = "opacity 0.5s";
+                    void element.offsetHeight;
+                    element.style.opacity = "1";
                 }
             });
 
-            // show hide behind the scenes when we first load
             im.gameFlow.updateDevLink();
-
-            // put the social links back into the footer (need to be offscreen instead of hidden during load)
 
             if (this.gameFooterSocial) {
                 this.gameFooterSocial.style.top = "0";

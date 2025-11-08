@@ -1,15 +1,18 @@
-import App from "@/app.js";
+import App from "@/app";
 import platform from "@/config/platforms/platform-web";
-import RootController from "@/game/CTRRootController";
-import SoundMgr from "@/game/CTRSoundMgr";
+import "@/game/CTRRootController";
+import "@/game/CTRSoundMgr";
 
 window.addEventListener("contextmenu", (event) => {
     event.preventDefault();
     event.stopPropagation();
 });
 
-const boot = () => {
-    if (!platform.meetsRequirements()) return;
+const boot = (): void => {
+    if (!platform.meetsRequirements()) {
+        return;
+    }
+
     App.domReady();
     App.run();
 };
