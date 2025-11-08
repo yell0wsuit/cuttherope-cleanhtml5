@@ -17,7 +17,7 @@ class SoundManager {
             active: boolean;
             soundId: number;
             timeoutId: ReturnType<typeof setTimeout> | null;
-            loopFn: Function;
+            loopFn: () => void;
         }
     >;
 
@@ -58,7 +58,7 @@ class SoundManager {
             active: boolean;
             soundId: number;
             timeoutId: ReturnType<typeof setTimeout> | null;
-            loopFn: Function;
+            loopFn: () => void;
         }
     ) {
         if (!entry) {
@@ -124,7 +124,7 @@ class SoundManager {
             active: boolean;
             soundId: number;
             timeoutId: ReturnType<typeof setTimeout> | null;
-            loopFn: Function;
+            loopFn: () => void;
         } = { active: true, loopFn: loop, soundId, timeoutId: null };
         this.loopingSounds.set(instanceId, entry);
 

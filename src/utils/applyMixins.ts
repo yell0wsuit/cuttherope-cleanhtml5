@@ -2,7 +2,9 @@
  * Helper function to copy all methods from source classes to target class
  */
 
-const applyMixins = (targetClass: Function, sourceClasses: Function[]) => {
+type Constructor = new (...args: unknown[]) => object;
+
+const applyMixins = (targetClass: Constructor, sourceClasses: Constructor[]) => {
     sourceClasses.forEach((sourceClass) => {
         Object.getOwnPropertyNames(sourceClass.prototype).forEach((name) => {
             if (name !== "constructor") {

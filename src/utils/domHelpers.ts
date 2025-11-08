@@ -311,7 +311,7 @@ export const on = (
     event: string,
     handler: EventListener,
     options: AddEventListenerOptions | boolean = false
-): Function => {
+): (() => void) => {
     const el = getElement(selector);
     if (!el) return () => {};
     el.addEventListener(event, handler, options);
@@ -327,7 +327,7 @@ export const hover = (
     selector: string | Element,
     enter: EventListener,
     leave: EventListener
-): Function => {
+): (() => void) => {
     const el = getElement(selector);
     if (!el) return () => {};
     const enterHandler = typeof enter === "function" ? enter : () => {};
