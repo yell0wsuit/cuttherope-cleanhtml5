@@ -1,31 +1,33 @@
-const res1024x576 = {
+import type { ResolutionProfile } from "@/types/resolution";
+
+const res768x432: Partial<ResolutionProfile> = {
     /**
      * @const
      * @type {number}
      */
-    VIDEO_WIDTH: 1024,
+    VIDEO_WIDTH: 768,
 
     /**
      * @const
      * @type {number}
      */
-    CANVAS_WIDTH: 1024,
+    CANVAS_WIDTH: 768,
     /**
      * @const
      * @type {number}
      */
-    CANVAS_HEIGHT: 576,
+    CANVAS_HEIGHT: 432,
     /**
      * @const
      * @type {number}
      */
-    CANVAS_SCALE: 0.4,
+    CANVAS_SCALE: 0.3,
 
     /**
      * @const
      * @type {number}
      */
-    UI_IMAGES_SCALE: 1,
+    UI_IMAGES_SCALE: 0.75,
     /**
      * @const
      * @type {number}
@@ -35,24 +37,24 @@ const res1024x576 = {
      * @const
      * @type {number}
      */
-    UI_WIDTH: 1024,
+    UI_WIDTH: 768,
     /**
      * @const
      * @type {number}
      */
-    UI_HEIGHT: 576,
+    UI_HEIGHT: 432,
 
     /**
      * @const
      * @type {number}
      */
-    BUNGEE_BEZIER_POINTS: 3,
+    BUNGEE_BEZIER_POINTS: 2,
 
     /**
      * @const
      * @type {number}
      */
-    DEFAULT_BUNGEE_LINE_WIDTH: 3.5,
+    DEFAULT_BUNGEE_LINE_WIDTH: 3,
 
     /**
      * @const
@@ -62,11 +64,11 @@ const res1024x576 = {
 
     /**
      * Platform multiplier (maps the height of the level to the height of the canvas).
-     * Map height is 480 and canvas height is 576.
+     * Map height is 480 and canvas height is 432.
      * @const
      * @type {number}
      */
-    PM: 1.2,
+    PM: 0.9,
 
     /**
      * Adjusts the y offset for the level
@@ -86,27 +88,25 @@ const res1024x576 = {
      * @const
      * @type {number}
      */
-    BUBBLE_IMPULSE_Y: -17,
+    BUBBLE_IMPULSE_Y: -14,
     /**
      * Controls descent speed of bubble
      * @const
      * @type {number}
      */
-    BUBBLE_IMPULSE_RD: 20,
+    BUBBLE_IMPULSE_RD: 24,
 
     /**
      * @const
      * @type {number}
      */
-    BOUNCER_MAX_MOVEMENT: 336,
+    BOUNCER_MAX_MOVEMENT: 255,
 
     /**
      * @const
      * @type {number}
      */
-    PHYSICS_SPEED_MULTIPLIER: 0.925,
+    PHYSICS_SPEED_MULTIPLIER: 0.8,
 };
 
-window.resolution = res1024x576;
-
-export default res1024x576;
+export default res768x432;

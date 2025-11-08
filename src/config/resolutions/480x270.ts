@@ -1,4 +1,6 @@
-const res768x432 = {
+import type { ResolutionProfile } from "@/types/resolution";
+
+const res480x270: Partial<ResolutionProfile> = {
     /**
      * @const
      * @type {number}
@@ -9,23 +11,23 @@ const res768x432 = {
      * @const
      * @type {number}
      */
-    CANVAS_WIDTH: 768,
+    CANVAS_WIDTH: 480,
     /**
      * @const
      * @type {number}
      */
-    CANVAS_HEIGHT: 432,
+    CANVAS_HEIGHT: 320,
     /**
      * @const
      * @type {number}
      */
-    CANVAS_SCALE: 0.3,
+    CANVAS_SCALE: 0.1875,
 
     /**
      * @const
      * @type {number}
      */
-    UI_IMAGES_SCALE: 0.75,
+    UI_IMAGES_SCALE: 0.46875,
     /**
      * @const
      * @type {number}
@@ -35,12 +37,12 @@ const res768x432 = {
      * @const
      * @type {number}
      */
-    UI_WIDTH: 768,
+    UI_WIDTH: 480,
     /**
      * @const
      * @type {number}
      */
-    UI_HEIGHT: 432,
+    UI_HEIGHT: 320,
 
     /**
      * @const
@@ -52,7 +54,7 @@ const res768x432 = {
      * @const
      * @type {number}
      */
-    DEFAULT_BUNGEE_LINE_WIDTH: 3,
+    DEFAULT_BUNGEE_LINE_WIDTH: 2,
 
     /**
      * @const
@@ -62,11 +64,11 @@ const res768x432 = {
 
     /**
      * Platform multiplier (maps the height of the level to the height of the canvas).
-     * Map height is 480 and canvas height is 432.
+     * Map height is 480 and canvas height is 576.
      * @const
      * @type {number}
      */
-    PM: 0.9,
+    PM: 0.5625,
 
     /**
      * Adjusts the y offset for the level
@@ -86,25 +88,27 @@ const res768x432 = {
      * @const
      * @type {number}
      */
-    BUBBLE_IMPULSE_Y: -14,
+    BUBBLE_IMPULSE_Y: -9,
     /**
      * Controls descent speed of bubble
      * @const
      * @type {number}
      */
-    BUBBLE_IMPULSE_RD: 24,
+    BUBBLE_IMPULSE_RD: 22,
 
     /**
      * @const
      * @type {number}
      */
-    BOUNCER_MAX_MOVEMENT: 255,
+    BOUNCER_MAX_MOVEMENT: 158,
 
     /**
      * @const
      * @type {number}
      */
-    PHYSICS_SPEED_MULTIPLIER: 0.8,
+    PHYSICS_SPEED_MULTIPLIER: 0.65,
 };
 
-export default res768x432;
+(window as any).resolution = res480x270;
+
+export default res480x270;

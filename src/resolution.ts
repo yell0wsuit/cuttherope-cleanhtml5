@@ -9,7 +9,7 @@ import res2560 from "@/config/resolutions/2560x1440";
 import type { ResolutionProfile } from "@/types/resolution";
 
 interface ResolutionCandidate {
-    profile: ResolutionProfile;
+    profile: Partial<ResolutionProfile>;
     isHd: boolean;
     minWidth: number;
     minHeight: number;

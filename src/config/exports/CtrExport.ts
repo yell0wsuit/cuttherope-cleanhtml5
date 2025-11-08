@@ -1,8 +1,8 @@
-const ctrExport = (key, value) => {
+const ctrExport = (key: string, value: any): void => {
     // MUST use string literals for exported properties
-    let zeptoLab = window["ZeptoLab"];
+    let zeptoLab = (window as any)["ZeptoLab"];
     if (zeptoLab == null) {
-        zeptoLab = window["ZeptoLab"] = {};
+        zeptoLab = (window as any)["ZeptoLab"] = {};
     }
 
     let ctr = zeptoLab["ctr"];

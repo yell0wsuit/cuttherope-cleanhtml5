@@ -1,5 +1,13 @@
 import Rectangle from "@/core/Rectangle";
-const res2560x1440 = {
+import type { ResolutionProfile } from "@/types/resolution";
+
+const res2560x1440: ResolutionProfile = {
+    /**
+     * @const
+     * @type {number}
+     */
+    VIDEO_WIDTH: 1280,
+
     /**
      * @const
      * @type {number}
@@ -16,6 +24,33 @@ const res2560x1440 = {
      * @type {number}
      */
     CANVAS_SCALE: 1,
+
+    /**
+     * @const
+     * @type {number}
+     */
+    UI_IMAGES_SCALE: 2.5,
+    /**
+     * @const
+     * @type {number}
+     */
+    UI_TEXT_SCALE: 1,
+    /**
+     * @const
+     * @type {number}
+     */
+    UI_WIDTH: 2560,
+    /**
+     * @const
+     * @type {number}
+     */
+    UI_HEIGHT: 1440,
+
+    /**
+     * @const
+     * @type {number}
+     */
+    BUNGEE_BEZIER_POINTS: 3,
 
     /**
      * Platform multiplier (maps the height of the level to the height of the canvas).
@@ -165,6 +200,12 @@ const res2560x1440 = {
      * @type {number}
      */
     BOUNCER_RADIUS: 40,
+
+    /**
+     * @const
+     * @type {number}
+     */
+    BOUNCER_MAX_MOVEMENT: 680,
 
     /**
      * @const

@@ -1,31 +1,33 @@
-const res480x270 = {
+import type { ResolutionProfile } from "@/types/resolution";
+
+const res1024x576: Partial<ResolutionProfile> = {
     /**
      * @const
      * @type {number}
      */
-    VIDEO_WIDTH: 768,
+    VIDEO_WIDTH: 1024,
 
     /**
      * @const
      * @type {number}
      */
-    CANVAS_WIDTH: 480,
+    CANVAS_WIDTH: 1024,
     /**
      * @const
      * @type {number}
      */
-    CANVAS_HEIGHT: 320,
+    CANVAS_HEIGHT: 576,
     /**
      * @const
      * @type {number}
      */
-    CANVAS_SCALE: 0.1875,
+    CANVAS_SCALE: 0.4,
 
     /**
      * @const
      * @type {number}
      */
-    UI_IMAGES_SCALE: 0.46875,
+    UI_IMAGES_SCALE: 1,
     /**
      * @const
      * @type {number}
@@ -35,24 +37,24 @@ const res480x270 = {
      * @const
      * @type {number}
      */
-    UI_WIDTH: 480,
+    UI_WIDTH: 1024,
     /**
      * @const
      * @type {number}
      */
-    UI_HEIGHT: 320,
+    UI_HEIGHT: 576,
 
     /**
      * @const
      * @type {number}
      */
-    BUNGEE_BEZIER_POINTS: 2,
+    BUNGEE_BEZIER_POINTS: 3,
 
     /**
      * @const
      * @type {number}
      */
-    DEFAULT_BUNGEE_LINE_WIDTH: 2,
+    DEFAULT_BUNGEE_LINE_WIDTH: 3.5,
 
     /**
      * @const
@@ -66,7 +68,7 @@ const res480x270 = {
      * @const
      * @type {number}
      */
-    PM: 0.5625,
+    PM: 1.2,
 
     /**
      * Adjusts the y offset for the level
@@ -86,27 +88,27 @@ const res480x270 = {
      * @const
      * @type {number}
      */
-    BUBBLE_IMPULSE_Y: -9,
+    BUBBLE_IMPULSE_Y: -17,
     /**
      * Controls descent speed of bubble
      * @const
      * @type {number}
      */
-    BUBBLE_IMPULSE_RD: 22,
+    BUBBLE_IMPULSE_RD: 20,
 
     /**
      * @const
      * @type {number}
      */
-    BOUNCER_MAX_MOVEMENT: 158,
+    BOUNCER_MAX_MOVEMENT: 336,
 
     /**
      * @const
      * @type {number}
      */
-    PHYSICS_SPEED_MULTIPLIER: 0.65,
+    PHYSICS_SPEED_MULTIPLIER: 0.925,
 };
 
-window.resolution = res480x270;
+(window as any).resolution = res1024x576;
 
-export default res480x270;
+export default res1024x576;

@@ -1,4 +1,6 @@
-const res1920x1080 = {
+import type { ResolutionProfile } from "@/types/resolution";
+
+const res1920x1080: Partial<ResolutionProfile> = {
     /**
      * @const
      * @type {number}
@@ -113,6 +115,6 @@ const res1920x1080 = {
     PHYSICS_SPEED_MULTIPLIER: 1.05,
 };
 
-window.resolution = res1920x1080;
+(window as any).resolution = res1920x1080;
 
 export default res1920x1080;

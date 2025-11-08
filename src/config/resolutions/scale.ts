@@ -80,11 +80,11 @@ const initProfile = (base: ResolutionProfile, target: ScaleTarget): void => {
     target.uiScaledNumber = (n: number): number => Math.round(n * target.UI_IMAGES_SCALE);
 };
 
-const initProfileFromMac = <T extends ScaleTarget>(
-    target: T
-): T & { uiScaledNumber(n: number): number } => {
-    initProfile(res2560x1440, target);
-    return target as T & { uiScaledNumber(n: number): number };
+const initProfileFromMac = (
+    target: Partial<ResolutionProfile>
+): ResolutionProfile & { uiScaledNumber(n: number): number } => {
+    initProfile(res2560x1440, target as ScaleTarget);
+    return target as ResolutionProfile & { uiScaledNumber(n: number): number };
 };
 
 export default initProfileFromMac;
