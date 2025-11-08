@@ -1,22 +1,17 @@
+import type { CTRRootController } from "@/game/CTRRootController";
+import type GameView from "@/game/GameView";
 import ViewController from "@/core/ViewController";
 import PointerCapture from "@/utils/PointerCapture";
 import ZoomManager from "@/ZoomManager";
 import Constants from "@/utils/Constants";
 import settings from "@/game/CTRSettings";
 import resolution from "@/resolution";
-import PubSub from "@/utils/PubSub";
+import PubSub, { type SubscriptionHandle } from "@/utils/PubSub";
 import Canvas from "@/utils/Canvas";
 import RGBAColor from "@/core/RGBAColor";
 
-/**
- * @const
- * @type {number}
- */
 const TRANSITION_DEFAULT_DELAY = 0.3;
 
-/**
- * @enum {number}
- */
 const ViewTransition = {
     SLIDE_HORIZONTAL_RIGHT: 0,
     SLIDE_HORIZONTAL_LEFT: 1,
@@ -26,15 +21,28 @@ const ViewTransition = {
     FADE_OUT_WHITE: 5,
     REVEAL: 6,
     COUNT: 7,
-};
+} as const;
 
-class RootController extends ViewController {
-    /**
-     * @param {undefined} parent
-     */
+type ViewTransitionValue = (typeof ViewTransition)[keyof typeof ViewTransition];
 
-    constructor(parent) {
-        super(parent);
+class RootControllerBase extends ViewController {
+    static readonly ViewTransition = ViewTransition;
+
+    protected suspended: boolean;
+    protected currentController: ViewController | null;
+    protected viewTransition: ViewTransitionValue | number;
+    protected transitionTime: number;
+    protected previousView: GameView | null;
+    protected transitionDelay: number;
+    protected deactivateCurrentController: boolean;
+    protected dragMode: boolean;
+    protected controllerSubscriptions: SubscriptionHandle[];
+    protected pointerCapture: PointerCapture | null;
+    protected stopAnimation: boolean;
+    idealDelta: number | undefined;
+
+    constructor(parent?: CTRRootController) {
+        super(parent as CTRRootController);
         this.suspended = false;
         this.currentController = null;
         this.viewTransition = Constants.UNDEFINED;
@@ -43,61 +51,45 @@ class RootController extends ViewController {
         this.transitionDelay = TRANSITION_DEFAULT_DELAY;
         this.deactivateCurrentController = false;
         this.dragMode = false;
-        /**
-         * @type {Array<{name: number, callback: Function}>} controllerSubscriptions
-         */
         this.controllerSubscriptions = [];
+        this.pointerCapture = null;
+        this.stopAnimation = false;
+        this.idealDelta = undefined;
 
         this.subscribeToControllerEvents();
-        /**
-         * @type {number | undefined}
-         */
-        this.idealDelta = undefined;
     }
 
-    subscribeToControllerEvents() {
-        if (!this.controllerSubscriptions) {
-            this.controllerSubscriptions = [];
-        }
-
+    subscribeToControllerEvents(): void {
         if (this.controllerSubscriptions.length > 0) {
             return;
         }
 
         this.controllerSubscriptions.push(
-            PubSub.subscribe(
-                PubSub.ChannelId.ControllerActivated,
-                this.onControllerActivated.bind(this)
+            PubSub.subscribe(PubSub.ChannelId.ControllerActivated, (controller) =>
+                this.onControllerActivated(controller as ViewController)
             ),
-            PubSub.subscribe(
-                PubSub.ChannelId.ControllerDeactivateRequested,
-                this.onControllerDeactivationRequest.bind(this)
+            PubSub.subscribe(PubSub.ChannelId.ControllerDeactivateRequested, (controller) =>
+                this.onControllerDeactivationRequest(controller as ViewController)
             ),
-            PubSub.subscribe(
-                PubSub.ChannelId.ControllerDeactivated,
-                this.onControllerDeactivated.bind(this)
+            PubSub.subscribe(PubSub.ChannelId.ControllerDeactivated, (controller) =>
+                this.onControllerDeactivated(controller as ViewController)
             ),
-            PubSub.subscribe(PubSub.ChannelId.ControllerPaused, this.onControllerPaused.bind(this)),
-            PubSub.subscribe(
-                PubSub.ChannelId.ControllerUnpaused,
-                this.onControllerUnpaused.bind(this)
+            PubSub.subscribe(PubSub.ChannelId.ControllerPaused, (controller) =>
+                this.onControllerPaused(controller as ViewController)
             ),
-            PubSub.subscribe(
-                PubSub.ChannelId.ControllerViewHidden,
-                this.onControllerViewHide.bind(this)
+            PubSub.subscribe(PubSub.ChannelId.ControllerUnpaused, (controller) =>
+                this.onControllerUnpaused(controller as ViewController)
             ),
-            PubSub.subscribe(
-                PubSub.ChannelId.ControllerViewShow,
-                this.onControllerViewShow.bind(this)
+            PubSub.subscribe(PubSub.ChannelId.ControllerViewHidden, (view) =>
+                this.onControllerViewHide(view as GameView)
+            ),
+            PubSub.subscribe(PubSub.ChannelId.ControllerViewShow, (view) =>
+                this.onControllerViewShow(view as GameView)
             )
         );
     }
 
-    unsubscribeFromControllerEvents() {
-        if (!this.controllerSubscriptions) {
-            return;
-        }
-
+    unsubscribeFromControllerEvents(): void {
         while (this.controllerSubscriptions.length) {
             const subscription = this.controllerSubscriptions.pop();
             if (subscription) {
@@ -106,15 +98,11 @@ class RootController extends ViewController {
         }
     }
 
-    /**
-     * @param {number} time
-     */
-    operateCurrentMVC(time) {
+    operateCurrentMVC(time?: number): void {
         if (this.suspended || this.currentController === null) {
             return;
         }
 
-        // pass control to the active controller
         this.currentController.calculateTimeDelta(time);
         if (this.transitionTime === Constants.UNDEFINED) {
             this.currentController.update();
@@ -125,22 +113,15 @@ class RootController extends ViewController {
             this.currentController.deactivateImmediately();
         }
 
-        // draw the active view
         if (this.currentController.activeViewID !== Constants.UNDEFINED) {
             const activeView = this.currentController.activeView();
-            if (activeView) {
-                activeView.draw();
-            }
+            activeView?.draw();
 
-            // always calc fps because we use the avg to adjust delta at runtime
             this.currentController.calculateFPS();
 
-            // draw the fps meter
             if (settings.fpsEnabled) {
-                // make sure we have one cycle of measurements
                 const frameRate = this.currentController.frameRate.toFixed(0);
                 if (Number(frameRate) > 0) {
-                    // draw the fps frame rate
                     const ctx = Canvas.context;
                     if (ctx) {
                         ctx.font = "30px system-ui, sans-serif";
@@ -152,11 +133,15 @@ class RootController extends ViewController {
         }
     }
 
-    activateMouseEvents() {
-        // ensure the pointer capture helper has been created
+    activateMouseEvents(): void {
         if (!this.pointerCapture) {
+            const element = Canvas.element;
+            if (!element) {
+                return;
+            }
+
             this.pointerCapture = new PointerCapture({
-                element: Canvas.element,
+                element,
                 onStart: this.mouseDown.bind(this),
                 onMove: this.mouseMove.bind(this),
                 onEnd: this.mouseUp.bind(this),
@@ -167,36 +152,32 @@ class RootController extends ViewController {
             });
         }
 
-        this.pointerCapture.activate();
+        this.pointerCapture?.activate();
     }
 
-    deactivateMouseEvents() {
-        if (this.pointerCapture) {
-            this.pointerCapture.deactivate();
-        }
+    deactivateMouseEvents(): void {
+        this.pointerCapture?.deactivate();
     }
 
-    activate() {
+    override activate(): void {
         super.activate();
         this.subscribeToControllerEvents();
         this.activateMouseEvents();
 
-        // called to render a frame
-        const requestAnimationFrame = window["requestAnimationFrame"],
-            animationLoop = () => {
-                const now = Date.now();
-                this.operateCurrentMVC(now);
-                if (!this.stopAnimation) {
-                    requestAnimationFrame(animationLoop);
-                }
-            };
+        const requestAnimationFrame = window.requestAnimationFrame.bind(window);
+        const animationLoop = (): void => {
+            const now = Date.now();
+            this.operateCurrentMVC(now);
+            if (!this.stopAnimation) {
+                requestAnimationFrame(animationLoop);
+            }
+        };
 
-        // start the animation loop
         this.stopAnimation = false;
         animationLoop();
     }
 
-    deactivate() {
+    override deactivate(): void {
         super.deactivate();
 
         // set flag to stop animation
@@ -207,133 +188,94 @@ class RootController extends ViewController {
         this.unsubscribeFromControllerEvents();
     }
 
-    /**
-     * @param {RootController} controller
-     */
-    setCurrentController(controller) {
+    setCurrentController(controller: ViewController | null): void {
         this.currentController = controller;
-        this.currentController.idealDelta = 1 / 60;
+        if (!controller) {
+            return;
+        }
+
+        const controllerWithIdealDelta = controller as ViewController & { idealDelta?: number };
+        controllerWithIdealDelta.idealDelta = 1 / 60;
     }
 
-    getCurrentController() {
+    getCurrentController(): ViewController | null {
         return this.currentController;
     }
 
-    /**
-     * @param {RootController} controller
-     */
-    onControllerActivated(controller) {
+    onControllerActivated(controller: ViewController): void {
         this.setCurrentController(controller);
     }
 
-    /**
-     * @param {RootController} controller
-     */
-    onControllerDeactivated(controller) {
+    onControllerDeactivated(_: ViewController): void {
         this.currentController = null;
     }
 
-    /**
-     * @param {RootController} controller
-     */
-    onControllerPaused(controller) {
+    onControllerPaused(_: ViewController): void {
         this.currentController = null;
     }
 
-    /**
-     * @param {RootController} controller
-     */
-    onControllerUnpaused(controller) {
+    onControllerUnpaused(controller: ViewController): void {
         this.setCurrentController(controller);
     }
 
-    /**
-     * @param {RootController} controller
-     */
-    onControllerDeactivationRequest(controller) {
+    onControllerDeactivationRequest(_: ViewController): void {
         this.deactivateCurrentController = true;
     }
 
-    /**
-     * @param {GameView} view
-     */
-    onControllerViewShow(view) {
+    onControllerViewShow(view: GameView): void {
         if (this.viewTransition !== Constants.UNDEFINED && this.previousView != null) {
             const currentControllerConst = this.currentController;
             if (currentControllerConst) {
-                currentControllerConst.calculateTimeDelta();
+                currentControllerConst.calculateTimeDelta(undefined);
                 this.transitionTime = currentControllerConst.lastTime + this.transitionDelay;
-                const activeView = currentControllerConst.activeView();
-                if (activeView) {
-                    activeView.draw();
-                }
+                currentControllerConst.activeView()?.draw();
             }
         }
     }
 
-    /**
-     * @param {GameView} view
-     */
-    onControllerViewHide(view) {
+    onControllerViewHide(view: GameView): void {
         this.previousView = view;
         if (this.viewTransition !== Constants.UNDEFINED && this.previousView != null) {
             this.previousView.draw();
         }
     }
 
-    isSuspended() {
+    isSuspended(): boolean {
         return this.suspended;
     }
 
-    suspend() {
+    suspend(): void {
         this.suspended = true;
     }
 
-    resume() {
+    resume(): void {
         if (this.currentController) {
             this.currentController.resetLastTime();
         }
         this.suspended = false;
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @returns {boolean}
-     */
-    mouseDown(x, y) {
-        if (this.currentController && this.currentController != this) {
-            //Log.debug('mouse down at:' + x + ',' + y + ' drag mode was:' + this.dragMode);
+    mouseDown(x: number, y: number): boolean {
+        if (this.currentController && this.currentController !== this) {
             this.dragMode = true;
             return this.currentController.mouseDown(x, y);
         }
         return false;
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     */
-    mouseMove(x, y) {
-        if (this.currentController && this.currentController != this) {
+    mouseMove(x: number, y: number): boolean {
+        if (this.currentController && this.currentController !== this) {
             if (this.dragMode) {
                 this.currentController.mouseDragged(x, y);
             }
 
-            // fire moved event even if drag event was also fired
             return this.currentController.mouseMoved(x, y);
         }
         return false;
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @returns {boolean}
-     */
-    mouseUp(x, y) {
-        if (this.currentController && this.currentController != this) {
-            //Log.debug('mouse up at:' + x + ',' + y + ' drag mode was:' + this.dragMode);
+    mouseUp(x: number, y: number): boolean {
+        if (this.currentController && this.currentController !== this) {
             const handled = this.currentController.mouseUp(x, y);
             this.dragMode = false;
             return handled;
@@ -341,16 +283,9 @@ class RootController extends ViewController {
         return false;
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     */
-    mouseOut(x, y) {
-        if (this.currentController && this.currentController != this) {
-            // if the mouse leaves the canvas while down, trigger the mouseup
-            // event because we won't get it if the user lets go outside
+    mouseOut(x: number, y: number): boolean {
+        if (this.currentController && this.currentController !== this) {
             if (this.dragMode) {
-                //Log.debug('mouse out at:' + x + ',' + y);
                 const handled = this.currentController.mouseUp(x, y);
                 this.dragMode = false;
                 return handled;
@@ -359,14 +294,8 @@ class RootController extends ViewController {
         return false;
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @returns {boolean}
-     */
-    doubleClick(x, y) {
-        if (this.currentController && this.currentController != this) {
-            //Log.debug('double click at:' + x + ',' + y + ' drag mode was:' + this.dragMode);
+    doubleClick(x: number, y: number): boolean {
+        if (this.currentController && this.currentController !== this) {
             this.currentController.mouseUp(x, y);
             this.dragMode = false;
             return this.currentController.doubleClick(x, y);
@@ -375,4 +304,4 @@ class RootController extends ViewController {
     }
 }
 
-export default RootController;
+export default RootControllerBase;

@@ -10,24 +10,6 @@ declare module "@/core/SettingStorage" {
     export default settingStorage;
 }
 
-declare module "@/ui/QueryStrings" {
-    interface QueryStringsType {
-        lang?: string;
-        showBoxBackgrounds: boolean;
-        showFrameRate: boolean;
-        forceHtml5Audio: boolean;
-        unlockAllBoxes?: true;
-        forcePinnedBox: boolean;
-        createScoresForBox?: number;
-        minFps: number | null;
-        box: number | null;
-        level: number | null;
-    }
-
-    const QueryStrings: QueryStringsType;
-    export default QueryStrings;
-}
-
 declare module "@/resources/LangId" {
     class LangId {
         static readonly EN: number;
@@ -166,6 +148,7 @@ declare module "@/config/resolutions/*" {
 declare module "@/ZoomManager" {
     interface ZoomManager {
         domReady(): void;
+        getCanvasZoom(): number;
         getUIZoom(): number;
     }
 

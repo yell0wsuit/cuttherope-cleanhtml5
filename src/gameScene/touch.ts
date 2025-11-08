@@ -39,6 +39,8 @@ class GameSceneTouch extends GameSceneUpdate {
     declare getNearestBungeeGrabByBezierPoints: (out: Vector, x: number, y: number) => Grab | null;
     declare getNearestBungeeSegmentByConstraints: (cutPos: Vector, grab: Grab) => boolean;
     declare cut: (target: unknown, start: Vector, end: Vector, shouldPlaySound: boolean) => number;
+    declare animateLevelRestart: () => void;
+    declare isFadingIn: () => boolean;
     touchDown(x: number, y: number, touchIndex: number): boolean {
         if (this.ignoreTouches) {
             if (this.camera.type === Camera2D.SpeedType.PIXELS) {
