@@ -21,11 +21,13 @@ You can play the game online at: <https://yell0wsuit.github.io/cuttherope-h5dx/>
 
 ## Features
 
+- Written in [TypeScript](https://www.typescriptlang.org/), fully typed ([PR #32](https://github.com/yell0wsuit/cuttherope-h5dx/pull/32))
 - New loading system
 - Ported *Holiday Gift* levels, assets and animations, and Paddington-themed assets
 - More in-game music, randomized
 - Resolution up to HD 1080p, adapt to current screen's resolution
 - Support more than 25 levels per box
+  - Added 25 levels from the Round 5 promotion in the Buzz Box ([PR #33](https://github.com/yell0wsuit/cuttherope-h5dx/pull/33))
 - Fixed some audio/music bugs -- see [PR #9](https://github.com/yell0wsuit/cuttherope-h5dx/pull/9) for more information
 - Support loading custom sprites and animations from [TexturePacker](https://www.codeandweb.com/texturepacker) in JSON array format. This allows easier modding and adding new assets.
 

@@ -5,26 +5,21 @@ Thank you for your interest in contributing! Please take a moment to review this
 > [!NOTE]
 > This guide is not exhaustive. Project practices may evolve, and new situations may arise. When in doubt, feel free to ask questions or open an issue for clarification.
 
-## 📬 Submitting issues, feature requests, or translations
+## 📬 Submitting issues, feature requests, and translations
 
 To report bugs or request features, please [open an issue](https://github.com/yell0wsuit/cuttherope-h5dx/issues/new/choose) and choose the appropriate category.
 
 ## 🔀 Submitting pull requests
 
-### 📌 Project note
-
-- This project **does not use TypeScript** or any kind of static type checking yet.
-  - In the meantime, use JSDoc comments to indicate types where applicable.
-
 ### ✅ What you should do
 
-- **Use a code editor** (e.g., Visual Studio Code) to write and format code efficiently.
+- **Use a modern code editor** (e.g., Visual Studio Code) with Prettier and ESLint extensions enabled for consistent formatting and linting.
 
 - **Format your code** before committing and pushing. You must use **Prettier with our configuration** to ensure consistent formatting.
 
 - **Test your code thoroughly** before pushing. Resolve any ESLint errors if possible.
 
-- **Use clear, concise variable names** written in `camelCase`. Names should be self-explanatory and reflect their purpose.
+- **Use clear, concise variable names** written in `camelCase`. Names should be self-explanatory, avoid abbreviations, and reflect the variable’s intent or data type.
 
 - **Use a clear, concise pull request title**. If possible, we recommend following [semantic commit message conventions](https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716). Examples:
   - `fix: handle audio timeout error on older devices`
@@ -38,17 +33,30 @@ To report bugs or request features, please [open an issue](https://github.com/ye
 
 - Before submitting a **large pull request** or major change, open an issue first and select the appropriate category. After a review by our team, you can start your work.
 
+- After completing your changes, run the following commands to ensure code quality and consistency:
+
+  ```bash
+  # Format code using Prettier (most important)
+  npm run format
+
+  # Check for TypeScript errors
+  npm run typecheck
+
+  # Lint for code style issues
+  npm run lint
+  ```
+
 ### 🧪 Review process
 
 - All PRs are reviewed before merging. Please be responsive to feedback.  
-  When resolving comments, **make a new commit with**:  
+  When addressing comments, make a new commit with a message like:  
   `address feedback by @<username>`
 
 ### 🤔 What you should NOT do
 
-- Submit pull requests that only include **cosmetic changes** like whitespace tweaks or code reformatting without any functional impact.  
+- Avoid submitting pull requests with **only cosmetic changes** (e.g., whitespace tweaks or code reformatting without functional impact).  
   - These changes clutter diffs and make code reviews harder. [See this comment by the Rails team](https://github.com/rails/rails/pull/13771#issuecomment-32746700).
-  - To avoid this, you should always use Prettier with our configuration before committing.
+  - Always run Prettier before committing to avoid unnecessary diffs.
 
 - Submit a pull request with **one or several giant commit(s)**. This makes it difficult to review.
 
@@ -64,7 +72,7 @@ To report bugs or request features, please [open an issue](https://github.com/ye
   - **Executes scripts from external sources** associated with malicious, unsafe, or illegal behavior  
   - Attempts to introduce **backdoors** or hidden functionality
 
-  If we find any code that violates these rules, you will be blocked from further contributions and reported to GitHub for Terms of Service violations.
+  Any code violating these rules will result in the contributor being blocked and reported to GitHub for Terms of Service violations.
 
 - Use expletives or offensive language. This project is intended for everyone, and we strive to maintain a respectful environment for all contributors and users.
 
