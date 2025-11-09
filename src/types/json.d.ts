@@ -14,6 +14,22 @@ export type BoxLocale =
 
 export type BoxTextJson = { en: string } & Partial<Record<Exclude<BoxLocale, "en">, string>>;
 
+export interface MenuStringEntry {
+    id: number;
+    en: string;
+    zh?: string;
+    ja?: string;
+    ko?: string;
+    nl?: string;
+    it?: string;
+    ca?: string;
+    br?: string;
+    es?: string;
+    fr?: string;
+    de?: string;
+    ru?: string;
+}
+
 export interface RawBoxMetadataJson {
     id: string;
     boxText: BoxTextJson;
@@ -30,19 +46,16 @@ export interface RawBoxMetadataJson {
 
 export type LevelScalar = number | string | boolean | null | undefined;
 
-export interface LevelEntity {
+export type LevelEntity = {
     name: number | string;
-    [key: string]: LevelScalar;
-}
+} & Record<string, LevelScalar>;
 
 export interface LevelJsonCore {
     settings: LevelEntity[];
     objects: LevelEntity[];
 }
 
-export interface LevelJson extends LevelJsonCore {
-    [locale: string]: LevelEntity[] | LevelScalar | undefined;
-}
+export type LevelJson = LevelJsonCore & Record<string, LevelEntity[] | LevelScalar | undefined>;
 
 export interface LoadedLevelEntry {
     levelNumber: string;

@@ -1,0 +1,13 @@
+const TrackType = {
+    POSITION: 0,
+    SCALE: 1,
+    ROTATION: 2,
+    COLOR: 3,
+    ACTION: 4,
+    COUNT: 5,
+} as const;
+
+type TrackTypeValue = (typeof TrackType)[keyof typeof TrackType];
+
+export type { TrackTypeValue };
+export default TrackType;

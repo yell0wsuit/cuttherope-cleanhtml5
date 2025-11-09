@@ -1,110 +1,114 @@
-import Vector from "@/core/Vector";
-import Rectangle from "@/core/Rectangle";
-import AnimationPool from "@/visual/AnimationPool";
-import Animation from "@/visual/Animation";
-import ImageElement from "@/visual/ImageElement";
-import GameObject from "@/visual/GameObject";
-import BaseElement from "@/visual/BaseElement";
-import Rope from "@/game/Bungee";
-import Sock from "@/game/Sock";
-import RotatedCircle from "@/game/RotatedCircle";
-import Bubble from "@/game/Bubble";
-import Grab from "@/game/Grab";
-import Bouncer from "@/game/Bouncer";
-import EarthImage from "@/game/EarthImage";
-import FingerCut from "@/game/FingerCut";
-import GravityButton from "@/game/GravityButton";
-import PollenDrawer from "@/game/PollenDrawer";
-import Pump from "@/game/Pump";
-import Spikes from "@/game/Spikes";
-import Star from "@/game/Star";
-import DelayedDispatcher from "@/utils/DelayedDispatcher";
-import GameController from "@/game/GameController";
-import ConstrainedPoint from "@/physics/ConstrainedPoint";
+import type AnimationPool from "@/visual/AnimationPool";
+import type Animation from "@/visual/Animation";
+import type ImageElement from "@/visual/ImageElement";
+import type GameObject from "@/visual/GameObject";
+import type BaseElement from "@/visual/BaseElement";
+import type Camera2D from "@/visual/Camera2D";
+import type BackgroundTileMap from "@/visual/BackgroundTileMap";
+import type Texture2D from "@/core/Texture2D";
+import type Vector from "@/core/Vector";
+import type Sock from "@/game/Sock";
+import type RotatedCircle from "@/game/RotatedCircle";
+import type Bubble from "@/game/Bubble";
+import type Grab from "@/game/Grab";
+import type Bouncer from "@/game/Bouncer";
+import type EarthImage from "@/game/EarthImage";
+import type FingerCut from "@/game/FingerCut";
+import type GravityButton from "@/game/GravityButton";
+import type PollenDrawer from "@/game/PollenDrawer";
+import type Pump from "@/game/Pump";
+import type Spikes from "@/game/Spikes";
+import type Star from "@/game/Star";
+import type DelayedDispatcher from "@/utils/DelayedDispatcher";
+import type CTRGameObject from "@/game/CTRGameObject";
+import type TutorialText from "@/game/TutorialText";
+import type ConstrainedPoint from "@/physics/ConstrainedPoint";
+import type Drawing from "@/game/Drawing";
+import type * as GameSceneConstants from "@/gameScene/constants";
+import type ResourceIdValues from "@/resources/ResourceId";
+
+type PartsTypeValue =
+    (typeof GameSceneConstants.PartsType)[keyof typeof GameSceneConstants.PartsType];
+type RestartStateValue =
+    (typeof GameSceneConstants.RestartState)[keyof typeof GameSceneConstants.RestartState];
+type SockStateValue = (typeof Sock.StateType)[keyof typeof Sock.StateType];
+interface Rocket { update(delta: number): void }
+type ResourceIdValue = (typeof ResourceIdValues)[keyof typeof ResourceIdValues];
+
+interface GameSceneController {
+    avgDelta: number;
+    onLevelWon(): void;
+    onLevelLost(): void;
+}
 
 export type FingerCutTrail = FingerCut[];
 
-export interface GameSceneCamera {
-    pos: Vector;
-    applyCameraTransformation(): void;
-    cancelCameraTransformation(): void;
-}
+export type GameSceneCamera = Camera2D;
 
-export interface GameSceneTextureAtlas {
-    image: CanvasImageSource;
-    offsets: Record<string, { x: number; y: number }>;
-    rects: Rectangle[];
-}
+export type SceneStar = ConstrainedPoint;
 
-export interface Drawable {
-    draw(): void;
-}
-
-export interface PositionedDrawable extends Drawable {
-    x: number;
-    y: number;
-}
-
-export interface GameScene extends Record<string, unknown> {
+export interface GameScene extends BaseElement {
     preDraw(): void;
     postDraw(): void;
     calculateScore(): void;
     releaseAllRopes(left: boolean): void;
     gameLost(): void;
+    gameWon(): void;
     popBubble(x: number, y: number): void;
     attachCandy(): void;
     detachCandy(): void;
     popCandyBubble(isLeft: boolean): void;
     spiderBusted(grab: Grab): void;
-    handlePumpFlow(
-        pump: BaseElement,
-        star: ConstrainedPoint,
-        candy: GameObject,
-        delta: number
-    ): void;
+    handlePumpFlow(pump: Pump, star: SceneStar, candy: GameObject, delta: number): void;
+    spiderWon(grab: Grab): void;
+    teleport(): void;
+    operatePump(pump: Pump, delta: number): void;
+    handleBounce(bouncer: Bouncer, star: SceneStar, delta: number): void;
+    pointOutOfScreen(point: SceneStar): boolean;
+    cut(razor: BaseElement | null, v1: Vector, v2: Vector, immediate: boolean): number;
     camera: GameSceneCamera;
-    back: { updateWithCameraPos(pos: Vector): void; draw(): void };
-    overlayTexture: GameSceneTextureAtlas;
+    back: BackgroundTileMap;
+    overlayTexture: Texture2D | null;
     mapHeight: number;
     mapWidth: number;
-    drawings: Drawable[];
+    drawings: Drawing[];
     earthAnims: EarthImage[];
     pollenDrawer: PollenDrawer | null;
     gravityButton: GravityButton | null;
     gravityNormal: boolean;
+    freezeCamera: boolean;
+    fastenCamera: boolean;
+    ignoreTouches: boolean;
+    initialCameraToStarDistance: number;
     support: ImageElement;
     target: GameObject;
-    tutorials: Drawable[];
-    tutorialImages: Array<Drawable & { special?: number }>;
-    razors: Drawable[];
-    rotatedCircles: Array<RotatedCircle & Drawable>;
+    tutorials: TutorialText[];
+    tutorialImages: (CTRGameObject & { special: number })[];
+    razors: BaseElement[];
+    rotatedCircles: RotatedCircle[];
     bubbles: Bubble[];
     pumps: Pump[];
     spikes: Spikes[];
     bouncers: Bouncer[];
-    socks: Sock[];
-    bungees: Array<
-        Grab & { rope: Rope | null; spider?: Drawable; hasSpider?: boolean; spiderActive?: boolean }
-    >;
-    stars: Array<Star | null>;
+    socks: (Sock & { state: SockStateValue })[];
+    bungees: Grab[];
+    stars: (Star | null)[];
     candy: GameObject;
     candyL: GameObject;
     candyR: GameObject;
-    star: ConstrainedPoint;
-    starL: ConstrainedPoint;
-    starR: ConstrainedPoint;
-    twoParts: number;
+    star: SceneStar;
+    starL: SceneStar;
+    starR: SceneStar;
+    mouthOpen: boolean;
+    mouthCloseTimer: number;
+    twoParts: PartsTypeValue;
     noCandy: boolean;
     noCandyL: boolean;
     noCandyR: boolean;
     targetSock: Sock | null;
     savedSockSpeed: number;
     fingerCuts: FingerCut[][];
-    aniPool: AnimationPool & {
-        addChild(child: Drawable): void;
-        timelineFinishedDelegate(): () => void;
-        particlesFinishedDelegate(): () => void;
-    };
+    aniPool: AnimationPool;
     staticAniPool: AnimationPool;
     candyBlink: Animation;
     candyBubble: Bubble | null;
@@ -114,11 +118,14 @@ export interface GameScene extends Record<string, unknown> {
     candyBubbleAnimationL: Animation;
     candyBubbleAnimationR: Animation;
     bubbleDisappear: Animation;
-    candyMain: ImageElement;
-    candyTop: ImageElement;
+    candyMain: GameObject;
+    candyTop: GameObject;
+    lastCandyRotateDelta: number;
+    lastCandyRotateDeltaL: number;
+    lastCandyRotateDeltaR: number;
     dd: DelayedDispatcher;
-    gameController: GameController & { avgDelta: number; onLevelWon(): void; onLevelLost(): void };
-    restartState: number;
+    gameController: GameSceneController;
+    restartState: RestartStateValue;
     dimTime: number;
     timeBonus: number;
     time: number;
@@ -127,5 +134,13 @@ export interface GameScene extends Record<string, unknown> {
     score: number;
     attachCount: number;
     juggleTimer: number;
+    ropePhysicsSpeed: number;
+    ropesAtOnceTimer: number;
+    special: number;
     spiderTookCandy: boolean;
+    PM: number;
+    PMX: number;
+    PMY: number;
+    rockets: Rocket[];
+    candyResourceId: ResourceIdValue;
 }

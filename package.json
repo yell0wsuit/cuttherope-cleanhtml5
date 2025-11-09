@@ -6,12 +6,20 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build && node scripts/compressJson.js",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "typecheck": "tsc --noEmit",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "lint": "eslint . --ext .ts",
+        "lint:fix": "eslint . --ext .ts --fix"
     },
     "devDependencies": {
-        "@eslint/js": "^9.38.0",
-        "eslint": "^9.38.0",
+        "@eslint/js": "^9.39.1",
+        "@types/node": "^24.10.0",
+        "eslint": "^9.39.1",
         "globals": "^16.4.0",
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.46.3",
         "vite": "npm:rolldown-vite@7.1.19",
         "vite-plugin-pwa": "^1.1.0"
     },
