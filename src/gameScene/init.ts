@@ -1,7 +1,6 @@
 import BaseElement from "@/visual/BaseElement";
 import Animation from "@/visual/Animation";
 import AnimationPool from "@/visual/AnimationPool";
-import Alignment from "@/core/Alignment";
 import BackgroundTileMap from "@/visual/BackgroundTileMap";
 import Camera2D from "@/visual/Camera2D";
 import ConstrainedPoint from "@/physics/ConstrainedPoint";
@@ -10,27 +9,13 @@ import GameObject from "@/visual/GameObject";
 import * as GameSceneConstants from "@/gameScene/constants";
 import LevelState from "@/game/LevelState";
 import ResourceId from "@/resources/ResourceId";
-import ResourceMgr from "@/resources/ResourceMgr";
-import Log from "@/utils/Log";
-import SoundMgr from "@/game/CTRSoundMgr";
-import Timeline from "@/visual/Timeline";
-import Vector from "@/core/Vector";
-import Rectangle from "@/core/Rectangle";
 import DelayedDispatcher from "@/utils/DelayedDispatcher";
 import settings from "@/game/CTRSettings";
 import edition from "@/config/editions/net-edition";
 import BoxType from "@/ui/BoxType";
 import { IS_XMAS, IS_JANUARY } from "@/resources/ResData";
 import resolution from "@/resolution";
-import MathHelper from "@/utils/MathHelper";
-import TileMap from "@/visual/TileMap";
 import LangId from "@/resources/LangId";
-import Lang from "@/resources/Lang";
-import MenuStringId from "@/resources/MenuStringId";
-import TextImage from "@/visual/TextImage";
-import KeyFrame from "@/visual/KeyFrame";
-import RGBAColor from "@/core/RGBAColor";
-import Gravity from "@/physics/Gravity";
 import type Texture2D from "@/core/Texture2D";
 import type FingerCut from "@/game/FingerCut";
 import type EarthImage from "@/game/EarthImage";
@@ -48,6 +33,22 @@ import type GravityButton from "@/game/GravityButton";
 import type ImageElement from "@/visual/ImageElement";
 import type Star from "@/game/Star";
 import type Spikes from "@/game/Spikes";
+import { initAnimations } from "./initGameScene/initAnimations";
+import { initBackground } from "./initGameScene/initBackground";
+import { resetGameState } from "./initGameScene/resetGameState";
+import { initCandy } from "./initGameScene/initCandy";
+import { initCandyBubbles } from "./initGameScene/initCandyBubbles";
+import { initPostLoad } from "./initGameScene/initPostLoad";
+import { initLevelLabel } from "./initGameScene/initLevelLabel";
+import { resetHudStars } from "./initGameScene/resetHudStars";
+import Alignment from "@/core/Alignment";
+import Rectangle from "@/core/Rectangle";
+import RGBAColor from "@/core/RGBAColor";
+import Vector from "@/core/Vector";
+import SoundMgr from "@/game/CTRSoundMgr";
+import MathHelper from "@/utils/MathHelper";
+import KeyFrame from "@/visual/KeyFrame";
+import Timeline from "@/visual/Timeline";
 
 type PartsTypeValue =
     (typeof GameSceneConstants.PartsType)[keyof typeof GameSceneConstants.PartsType];
@@ -56,9 +57,17 @@ type RestartStateValue =
 type CameraMoveValue =
     (typeof GameSceneConstants.CameraMove)[keyof typeof GameSceneConstants.CameraMove];
 
-let currentPack = -1;
-
 class GameSceneInit extends BaseElement {
+    // Init methods imported from initGameScene folder
+    initAnimations = initAnimations;
+    initBackground = initBackground;
+    resetGameState = resetGameState;
+    initCandy = initCandy;
+    initCandyBubbles = initCandyBubbles;
+    initPostLoad = initPostLoad;
+    initLevelLabel = initLevelLabel;
+    resetHudStars = resetHudStars;
+
     dd: typeof DelayedDispatcher;
     initialCameraToStarDistance: number;
     restartState: RestartStateValue | number;
@@ -449,210 +458,15 @@ class GameSceneInit extends BaseElement {
         return false;
     }
     show(): void {
-        this.starDisappearPool = [];
+        this.initAnimations();
 
-        //create bubble animation
-        this.bubbleDisappear = new Animation();
-        this.bubbleDisappear.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_POP);
-        this.bubbleDisappear.doRestoreCutTransparency();
-        this.bubbleDisappear.anchor = Alignment.CENTER;
-
-        const a = this.bubbleDisappear.addAnimationDelay(
-            0.05,
-            Timeline.LoopType.NO_LOOP,
-            GameSceneConstants.IMG_OBJ_BUBBLE_POP_Frame_1,
-            GameSceneConstants.IMG_OBJ_BUBBLE_POP_Frame_12
-        );
-        const bubbleTimeline = this.bubbleDisappear.getTimeline(a);
-        if (bubbleTimeline) {
-            bubbleTimeline.onFinished = this.aniPool.timelineFinishedDelegate();
-        }
-
-        this.aniPool.removeAllChildren();
-        this.staticAniPool.removeAllChildren();
-        this.dd.cancelAllDispatches();
-
-        this.attachCount = 0;
-        this.juggleTimer = 0;
-
-        // load the background image and overlay
-        const bgrID = edition.levelBackgroundIds[LevelState.pack];
-        const overlayId = edition.levelOverlayIds[LevelState.pack];
-        if (bgrID == null) {
+        if (!this.initBackground()) {
             return;
         }
 
-        if (currentPack != LevelState.pack) {
-            this.bgTexture = ResourceMgr.getTexture(bgrID) ?? null;
-            const canvasBackground = document.getElementById("c");
-            const image = this.bgTexture?.image;
-            const imageSrc = this.bgTexture?.imageSrc;
-            const backgroundSource =
-                typeof imageSrc === "string"
-                    ? imageSrc
-                    : image instanceof HTMLImageElement
-                      ? image.src
-                      : "";
-            if (!canvasBackground) {
-                return;
-            }
-            canvasBackground.style.background = backgroundSource
-                ? `url('${backgroundSource}')`
-                : "";
-            canvasBackground.style.display = "block";
-
-            currentPack = LevelState.pack;
-        } else if (!this.bgTexture) {
-            // Make sure bgTexture is initialized even if pack hasn't changed
-            this.bgTexture = ResourceMgr.getTexture(bgrID) ?? null;
-        }
-
-        this.overlayTexture = overlayId
-            ? (ResourceMgr.getTexture(overlayId) ?? null)
-            : this.bgTexture;
-
-        this.back = new BackgroundTileMap(1, 1);
-        this.back.setRepeatHorizontally(TileMap.RepeatType.NONE);
-        this.back.setRepeatVertically(TileMap.RepeatType.ALL);
-        const bgTexture = this.bgTexture;
-        if (!bgTexture) {
-            Log.alert(`Background texture ${bgrID} failed to load`);
-            return;
-        }
-        this.back.addTile(bgTexture, GameSceneConstants.IMG_BGR_01_bgr);
-        this.back.fill(0, 0, 1, 1, 0);
-
-        this.gravityButton = null;
-        this.gravityTouchDown = Constants.UNDEFINED;
-
-        this.twoParts = GameSceneConstants.PartsType.NONE;
-        this.partsDist = 0;
-
-        this.targetSock = null;
-
-        SoundMgr.stopSound(ResourceId.SND_ELECTRIC);
-
-        this.bungees = [];
-        this.razors = [];
-        this.spikes = [];
-        this.stars = [];
-        this.bubbles = [];
-        this.pumps = [];
-        this.rockets = [];
-        this.socks = [];
-        this.tutorialImages = [];
-        this.tutorials = [];
-        this.drawings = [];
-        this.bouncers = [];
-        this.rotatedCircles = [];
-        this.pollenDrawer = null;
-
-        this.star = new ConstrainedPoint();
-        this.star.setWeight(1);
-        this.starL = new ConstrainedPoint();
-        this.starL.setWeight(1);
-        this.starR = new ConstrainedPoint();
-        this.starR.setWeight(1);
-
-        // candy
-        const candyResourceId = this.getCandyResourceId();
-        this.candyResourceId = candyResourceId;
-        this.candy = new GameObject();
-        this.candy.initTextureWithId(candyResourceId);
-        this.candy.setTextureQuad(GameSceneConstants.IMG_OBJ_CANDY_01_candy_bottom);
-        this.candy.doRestoreCutTransparency();
-        this.candy.anchor = Alignment.CENTER;
-        this.candy.bb = Rectangle.copy(resolution.CANDY_BB);
-        this.candy.passTransformationsToChilds = false;
-        this.candy.scaleX = this.candy.scaleY = 0.71;
-        this.candy.drawPosIncrement = 0.0001;
-
-        // candy main
-        this.candyMain = new GameObject();
-        this.candyMain.initTextureWithId(candyResourceId);
-        this.candyMain.setTextureQuad(GameSceneConstants.IMG_OBJ_CANDY_01_candy_main);
-        this.candyMain.doRestoreCutTransparency();
-        this.candyMain.anchor = this.candyMain.parentAnchor = Alignment.CENTER;
-        this.candy.addChild(this.candyMain);
-        this.candyMain.scaleX = this.candyMain.scaleY = 0.71;
-        this.candyMain.drawPosIncrement = 0.0001;
-
-        // candy top
-        this.candyTop = new GameObject();
-        this.candyTop.initTextureWithId(candyResourceId);
-        this.candyTop.setTextureQuad(GameSceneConstants.IMG_OBJ_CANDY_01_candy_top);
-        this.candyTop.doRestoreCutTransparency();
-        this.candyTop.anchor = this.candyTop.parentAnchor = Alignment.CENTER;
-        this.candy.addChild(this.candyTop);
-        this.candyTop.scaleX = this.candyTop.scaleY = 0.71;
-        this.candyTop.drawPosIncrement = 0.0001;
-
-        // candy blink
-        this.candyBlink = new Animation();
-        this.candyBlink.initTextureWithId(ResourceId.IMG_OBJ_CANDY_01);
-        this.candyBlink.doRestoreCutTransparency();
-        this.candyBlink.addAnimationEndpoints(
-            GameSceneConstants.CandyBlink.INITIAL,
-            0.07,
-            Timeline.LoopType.NO_LOOP,
-            GameSceneConstants.IMG_OBJ_CANDY_01_highlight_start,
-            GameSceneConstants.IMG_OBJ_CANDY_01_highlight_end
-        );
-        this.candyBlink.addAnimationSequence(
-            GameSceneConstants.CandyBlink.STAR,
-            0.3, // delay
-            Timeline.LoopType.NO_LOOP,
-            2, // count
-            [GameSceneConstants.IMG_OBJ_CANDY_01_glow, GameSceneConstants.IMG_OBJ_CANDY_01_glow]
-        );
-        const gt = this.candyBlink.getTimeline(GameSceneConstants.CandyBlink.STAR);
-        if (gt) {
-            gt.addKeyFrame(
-                KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0)
-            );
-            gt.addKeyFrame(
-                KeyFrame.makeColor(
-                    RGBAColor.transparent.copy(),
-                    KeyFrame.TransitionType.LINEAR,
-                    0.2
-                )
-            );
-        }
-        this.candyBlink.visible = false;
-        this.candyBlink.anchor = this.candyBlink.parentAnchor = Alignment.CENTER;
-        this.candyBlink.scaleX = this.candyBlink.scaleY = 0.71;
-        this.candy.addChild(this.candyBlink);
-        (this.candyBlink as Animation & { drawPosIncrement?: number }).drawPosIncrement = 0.0001;
-
-        // candy bubble
-        this.candyBubbleAnimation = new Animation();
-        this.candyBubbleAnimation.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
-        this.candyBubbleAnimation.x = this.candy.x;
-        this.candyBubbleAnimation.y = this.candy.y;
-        this.candyBubbleAnimation.parentAnchor = this.candyBubbleAnimation.anchor =
-            Alignment.CENTER;
-        this.candyBubbleAnimation.addAnimationDelay(
-            0.05,
-            Timeline.LoopType.REPLAY,
-            GameSceneConstants.IMG_OBJ_BUBBLE_FLIGHT_Frame_1,
-            GameSceneConstants.IMG_OBJ_BUBBLE_FLIGHT_Frame_13
-        );
-        this.candyBubbleAnimation.playTimeline(0);
-        this.candy.addChild(this.candyBubbleAnimation);
-        this.candyBubbleAnimation.visible = false;
-        (this.candyBubbleAnimation as Animation & { drawPosIncrement?: number }).drawPosIncrement =
-            0.0001;
-
-        for (let i = 0; i < GameSceneConstants.HUD_STARS_COUNT; i++) {
-            const hs = this.hudStars[i];
-            if (!hs) {
-                continue;
-            }
-            if (hs.currentTimeline) {
-                hs.currentTimeline.stop();
-            }
-            hs.setTextureQuad(GameSceneConstants.IMG_HUD_STAR_Frame_1);
-        }
+        this.resetGameState();
+        this.initCandy();
+        this.resetHudStars();
 
         const map = LevelState.loadedMap;
         if (!map) {
@@ -660,117 +474,9 @@ class GameSceneInit extends BaseElement {
         }
         this.loadMap(map);
 
-        // add the animations for the bubbles
-        if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
-            this.candyBubbleAnimationL = new Animation();
-            this.candyBubbleAnimationL.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
-            this.candyBubbleAnimationL.parentAnchor = this.candyBubbleAnimationL.anchor =
-                Alignment.CENTER;
-            this.candyBubbleAnimationL.addAnimationDelay(
-                0.05,
-                Timeline.LoopType.REPLAY,
-                GameSceneConstants.IMG_OBJ_BUBBLE_FLIGHT_Frame_1,
-                GameSceneConstants.IMG_OBJ_BUBBLE_FLIGHT_Frame_13
-            );
-            this.candyBubbleAnimationL.playTimeline(0);
-            this.candyL.addChild(this.candyBubbleAnimationL);
-            this.candyBubbleAnimationL.visible = false;
-            (
-                this.candyBubbleAnimationL as Animation & { drawPosIncrement?: number }
-            ).drawPosIncrement = 0.0001;
-
-            this.candyBubbleAnimationR = new Animation();
-            this.candyBubbleAnimationR.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
-            this.candyBubbleAnimationR.parentAnchor = this.candyBubbleAnimationR.anchor =
-                Alignment.CENTER;
-            this.candyBubbleAnimationR.addAnimationDelay(
-                0.05,
-                Timeline.LoopType.REPLAY,
-                GameSceneConstants.IMG_OBJ_BUBBLE_FLIGHT_Frame_1,
-                GameSceneConstants.IMG_OBJ_BUBBLE_FLIGHT_Frame_13
-            );
-            this.candyBubbleAnimationR.playTimeline(0);
-            this.candyR.addChild(this.candyBubbleAnimationR);
-            this.candyBubbleAnimationR.visible = false;
-            (
-                this.candyBubbleAnimationR as Animation & { drawPosIncrement?: number }
-            ).drawPosIncrement = 0.0001;
-        }
-
-        for (const circle of this.rotatedCircles) {
-            circle.operating = Constants.UNDEFINED;
-            circle.circles = this.rotatedCircles;
-        }
-
-        this.startCamera();
-
-        this.tummyTeasers = 0;
-
-        this.starsCollected = 0;
-        this.candyBubble = null;
-        this.candyBubbleL = null;
-        this.candyBubbleR = null;
-
-        this.mouthOpen = false;
-        this.noCandy = this.twoParts !== GameSceneConstants.PartsType.NONE;
-        this.noCandyL = false;
-        this.noCandyR = false;
-        this.blink.playTimeline(0);
-        this.spiderTookCandy = false;
-        this.time = 0;
-        this.score = 0;
-
-        this.gravityNormal = true;
-        Gravity.reset();
-
-        this.dimTime = 0;
-
-        this.ropesCutAtOnce = 0;
-        this.ropesAtOnceTimer = 0;
-
-        // delay start candy blink
-        this.dd.callObject(this, this.doCandyBlink, null, 1);
-
-        const levelLabel = new TextImage();
-        const levelText = `${LevelState.pack + 1} - ${LevelState.level + 1}`;
-        levelLabel.setText(ResourceId.FNT_BIG_FONT, levelText);
-        levelLabel.anchor = Alignment.BOTTOM | Alignment.LEFT;
-        levelLabel.x = 37 * resolution.CANVAS_SCALE;
-        levelLabel.y = resolution.CANVAS_HEIGHT - 5 * resolution.CANVAS_SCALE;
-
-        const levelLabelTitle = new TextImage();
-        levelLabelTitle.setText(ResourceId.FNT_BIG_FONT, Lang.menuText(MenuStringId.LEVEL));
-        levelLabelTitle.anchor = Alignment.BOTTOM | Alignment.LEFT;
-        levelLabelTitle.parentAnchor = Alignment.TOP | Alignment.LEFT;
-        levelLabelTitle.y = 60 * resolution.CANVAS_SCALE;
-        levelLabelTitle.rotationCenterX -= levelLabelTitle.width / 2;
-        levelLabelTitle.scaleX = levelLabelTitle.scaleY = 0.7;
-        levelLabel.addChild(levelLabelTitle);
-
-        const tl = new Timeline();
-        tl.addKeyFrame(
-            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0)
-        );
-        tl.addKeyFrame(
-            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5)
-        );
-        tl.addKeyFrame(
-            KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0.5)
-        );
-        tl.addKeyFrame(
-            KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 1)
-        );
-        tl.addKeyFrame(
-            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.5)
-        );
-        levelLabel.addTimelineWithID(tl, 0);
-        levelLabel.playTimeline(0);
-        tl.onFinished = this.staticAniPool.timelineFinishedDelegate();
-        this.staticAniPool.addChild(levelLabel);
-
-        if (this.clickToCut) {
-            this.resetBungeeHighlight();
-        }
+        this.initCandyBubbles();
+        this.initPostLoad();
+        this.initLevelLabel();
     }
     startCamera(): void {
         const SCREEN_WIDTH = resolution.CANVAS_WIDTH;
