@@ -5,7 +5,11 @@ import type Timeline from "@/visual/Timeline";
 import GameSceneLoaders from "./loaders";
 
 class GameSceneCharacter extends GameSceneLoaders {
-    onIdleOmNomKeyFrame(_timeline: Timeline, _trackType: number, keyFrameIndex: number): void {
+    override onIdleOmNomKeyFrame(
+        _timeline: Timeline,
+        _trackType: number,
+        keyFrameIndex: number
+    ): void {
         if (keyFrameIndex === 1) {
             // om-nom blink
             this.blinkTimer--;
@@ -17,22 +21,25 @@ class GameSceneCharacter extends GameSceneLoaders {
 
             // om-nom idle action
             this.idlesTimer--;
+            const animIdle2 = IS_XMAS
+                ? GameSceneConstants.CharAnimation.IDLEXMAS
+                : GameSceneConstants.CharAnimation.IDLE2;
+            const animIdle3 = IS_XMAS
+                ? GameSceneConstants.CharAnimation.IDLEXMAS
+                : GameSceneConstants.CharAnimation.IDLE3;
             if (this.idlesTimer === 0) {
-                if (MathHelper.randomRange(0, 1) === 1) {
-                    IS_XMAS
-                        ? this.target.playTimeline(GameSceneConstants.CharAnimation.IDLEXMAS)
-                        : this.target.playTimeline(GameSceneConstants.CharAnimation.IDLE2);
-                } else {
-                    IS_XMAS
-                        ? this.target.playTimeline(GameSceneConstants.CharAnimation.IDLE2XMAS)
-                        : this.target.playTimeline(GameSceneConstants.CharAnimation.IDLE3);
-                }
+                const anim = MathHelper.randomRange(0, 1) === 1 ? animIdle2 : animIdle3;
+                this.target.playTimeline(anim);
                 this.idlesTimer = MathHelper.randomRange(5, 20);
             }
         }
     }
 
-    onPaddingtonIdleKeyFrame(_timeline: Timeline, _trackType: number, keyFrameIndex: number): void {
+    override onPaddingtonIdleKeyFrame(
+        _timeline: Timeline,
+        _trackType: number,
+        keyFrameIndex: number
+    ): void {
         if (!IS_JANUARY) {
             return;
         }
@@ -55,7 +62,7 @@ class GameSceneCharacter extends GameSceneLoaders {
         }
     }
 
-    playRegularIdleAfterPaddington(): void {
+    override playRegularIdleAfterPaddington(): void {
         if (this.target) {
             this.target.playTimeline(GameSceneConstants.CharAnimation.IDLE);
         }
