@@ -55,6 +55,8 @@ class BoxPanel extends Panel {
     delta: number;
     downOffset: number;
 
+    rafId: number | null = null;
+
     constructor() {
         super(PanelId.BOXES, "boxPanel", "menuBackground", true);
 
@@ -327,22 +329,27 @@ class BoxPanel extends Panel {
 
     slideToBox(index: number): void {
         const ctx = this.ctx;
-        if (!ctx) return;
-
-        if (this.boxes.length === 0) {
-            return;
-        }
+        if (!ctx || this.boxes.length === 0) return;
 
         const clampedIndex = Math.max(0, Math.min(index, this.boxes.length - 1));
         const targetBox = this.boxes[clampedIndex];
         if (!targetBox) return;
 
-        const duration = clampedIndex === this.currentBoxIndex ? 0 : 550;
+        // Cancel any running animation or bounce
+        if (this.rafId) cancelAnimationFrame(this.rafId);
+        this.rafId = null;
+        this.slideInProgress = false;
+        this.bounceBox?.cancelBounce();
 
-        if (this.bounceBox && this.bounceBox !== targetBox && this.bounceBox.onUnselected) {
-            this.bounceBox.onUnselected();
+        const duration = clampedIndex === this.currentBoxIndex ? 0 : 550;
+        const prevBox = this.bounceBox;
+        if (prevBox && prevBox !== targetBox) {
+            prevBox.cancelBounce();
+            prevBox.onUnselected?.();
         }
 
+        const nextBox = targetBox as SelectableBox;
+        this.bounceBox = nextBox;
         this.currentBoxIndex = clampedIndex;
         PubSub.publish(PubSub.ChannelId.SelectedBoxChanged, targetBox.index);
 
@@ -350,40 +357,52 @@ class BoxPanel extends Panel {
         this.to = -1.0 * this.spacing * clampedIndex;
         this.startTime = Date.now();
         this.slideInProgress = true;
+        this.isBoxCentered = duration <= 0;
+
+        const startBounce = () => {
+            if (!ctx) return;
+            if (this.bounceBox !== nextBox) return;
+            nextBox.cancelBounce();
+            nextBox.bounce(ctx);
+            nextBox.onSelected?.();
+        };
+
+        const queueBounce = () => {
+            // delay bounce by 50ms after fully snapped
+            window.setTimeout(() => {
+                if (!this.slideInProgress) startBounce();
+            }, 50);
+        };
 
         if (duration <= 0) {
             this.currentOffset = this.to;
             this.render(this.currentOffset);
             this.isBoxCentered = true;
-            this.bounceBox = targetBox as SelectableBox;
-            this.bounceBox.bounce(ctx);
-            this.bounceBox.onSelected?.();
             this.slideInProgress = false;
             this.updateNavButtons();
+            queueBounce();
             return;
         }
 
         const renderSlide = () => {
             if (!this.slideInProgress) return;
             const elapsed = Date.now() - this.startTime;
-            this.currentOffset = Easing.easeOutExpo(
-                Math.min(elapsed, duration),
-                this.from,
-                this.to - this.from,
-                duration
-            );
+            const t = Math.min(elapsed, duration);
+
+            this.currentOffset = Easing.easeOutExpo(t, this.from, this.to - this.from, duration);
             this.render(this.currentOffset);
 
-            const distance = Math.abs(this.currentOffset - this.to);
-            if (distance < 5) this.isBoxCentered = true;
-
             if (elapsed >= duration) {
-                this.bounceBox = targetBox as SelectableBox;
-                this.bounceBox.bounce(ctx);
-                this.bounceBox.onSelected?.();
+                // snap to final
+                this.currentOffset = this.to;
+                this.render(this.currentOffset);
+                this.isBoxCentered = true;
                 this.slideInProgress = false;
+                this.updateNavButtons();
+                queueBounce();
+                this.rafId = null;
             } else {
-                window.requestAnimationFrame(renderSlide);
+                this.rafId = requestAnimationFrame(renderSlide);
             }
         };
 
@@ -415,6 +434,10 @@ class BoxPanel extends Panel {
     cancelSlideToBox(): void {
         this.slideInProgress = false;
         this.bounceBox?.cancelBounce();
+        if (this.rafId) {
+            cancelAnimationFrame(this.rafId);
+        }
+        this.rafId = null;
     }
 
     isMouseOverBox(x: number, y: number): boolean {
