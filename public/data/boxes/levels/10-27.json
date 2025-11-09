@@ -1,0 +1,164 @@
+{
+  "settings": [
+    {
+      "name": 0,
+      "width": 640,
+      "height": 480,
+      "gridSize": 32
+    },
+    {
+      "name": 1,
+      "ropePhysicsSpeed": 1,
+      "twoParts": false,
+      "special": 1
+    }
+  ],
+  "objects": [
+    {
+      "name": 2,
+      "x": 591,
+      "y": 417
+    },
+    {
+      "name": 52,
+      "x": 58,
+      "y": 139
+    },
+    {
+      "name": 3,
+      "x": 338,
+      "y": 323,
+      "timeout": -1
+    },
+    {
+      "name": 3,
+      "x": 198,
+      "y": 265,
+      "timeout": -1
+    },
+    {
+      "name": 3,
+      "x": 483,
+      "y": 415,
+      "timeout": -1
+    },
+    {
+      "name": 100,
+      "x": 39,
+      "y": 64,
+      "length": 60,
+      "wheel": false,
+      "gun": false,
+      "radius": -1,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L",
+      "path": "160,0",
+      "moveSpeed": 50
+    },
+    {
+      "name": 100,
+      "x": 398,
+      "y": 189,
+      "length": -1,
+      "wheel": false,
+      "gun": false,
+      "radius": 60,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L",
+      "path": "-160,0",
+      "moveSpeed": 50
+    },
+    {
+      "name": 100,
+      "x": 400,
+      "y": 318,
+      "length": -1,
+      "wheel": false,
+      "gun": false,
+      "radius": 50,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L",
+      "path": "160,0",
+      "moveSpeed": 50
+    },
+    {
+      "name": 4,
+      "x": 460,
+      "y": 141,
+      "locale": "en",
+      "text": "Automatic ropes appear when candy gets into their area",
+      "width": 210
+    },
+    {
+      "name": 13,
+      "x": 563,
+      "y": 122,
+      "locale": "en",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    }
+  ],
+  "ru": [
+    {
+      "name": 4,
+      "x": 460,
+      "y": 142,
+      "locale": "ru",
+      "text": "Авто-веревки появляются, когда леденец попадает в их радиус",
+      "width": 220
+    },
+    {
+      "name": 13,
+      "x": 566,
+      "y": 124,
+      "locale": "ru",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    }
+  ],
+  "fr": [
+    {
+      "name": 4,
+      "x": 460,
+      "y": 141,
+      "locale": "fr",
+      "text": "Les cordes automatiques apparaissent lorsqu'un bonbon arrive dans leur zone",
+      "width": 260
+    },
+    {
+      "name": 13,
+      "x": 584,
+      "y": 128,
+      "locale": "fr",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    }
+  ],
+  "de": [
+    {
+      "name": 4,
+      "x": 460,
+      "y": 140,
+      "locale": "de",
+      "text": "Sobald der Bonbon in ihrer Nähe ist, erscheinen automatisch Seile",
+      "width": 200
+    },
+    {
+      "name": 13,
+      "x": 558,
+      "y": 123,
+      "locale": "de",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    }
+  ]
+}

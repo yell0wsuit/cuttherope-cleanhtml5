@@ -1,0 +1,150 @@
+{
+  "settings": [
+    {
+      "name": 0,
+      "width": 640,
+      "height": 480,
+      "gridSize": 32
+    },
+    {
+      "name": 1,
+      "ropePhysicsSpeed": 1,
+      "twoParts": false,
+      "special": 1
+    }
+  ],
+  "objects": [
+    {
+      "name": 2,
+      "x": 321,
+      "y": 414
+    },
+    {
+      "name": 3,
+      "x": 213,
+      "y": 168,
+      "path": "-100,0",
+      "moveSpeed": 50,
+      "timeout": -1
+    },
+    {
+      "name": 3,
+      "x": 321,
+      "y": 60,
+      "timeout": -1
+    },
+    {
+      "name": 3,
+      "x": 434,
+      "y": 169,
+      "path": "100,0",
+      "moveSpeed": 50,
+      "timeout": -1
+    },
+    {
+      "name": 52,
+      "x": 320,
+      "y": 295
+    },
+    {
+      "name": 100,
+      "x": 322,
+      "y": 171,
+      "length": 100,
+      "wheel": false,
+      "gun": false,
+      "radius": -1,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L"
+    },
+    {
+      "name": 55,
+      "x": 228,
+      "y": 310,
+      "angle": 0
+    },
+    {
+      "name": 55,
+      "x": 414,
+      "y": 308,
+      "angle": 180
+    },
+    {
+      "name": 4,
+      "x": -1,
+      "y": 337,
+      "locale": "en",
+      "text": "Click the air cushion to blow object",
+      "width": 180
+    },
+    {
+      "name": 8,
+      "x": 161,
+      "y": 331,
+      "locale": "en",
+      "angle": 180,
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    }
+  ],
+  "ru": [
+    {
+      "name": 8,
+      "x": 161,
+      "y": 331,
+      "locale": "ru",
+      "angle": 180,
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 4,
+      "x": 45,
+      "y": 341,
+      "locale": "ru",
+      "text": "Нажмите на подушку чтобы подуть на леденец",
+      "width": 180
+    }
+  ],
+  "fr": [
+    {
+      "name": 8,
+      "x": 162,
+      "y": 331,
+      "locale": "fr",
+      "angle": 180,
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 4,
+      "x": 41,
+      "y": 341,
+      "locale": "fr",
+      "text": "Clique le coussin d'air pour souffler sur les objets",
+      "width": 180
+    }
+  ],
+  "de": [
+    {
+      "name": 8,
+      "x": 162,
+      "y": 331,
+      "locale": "de",
+      "angle": 180,
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 4,
+      "x": 8,
+      "y": 340,
+      "locale": "de",
+      "text": "Klicke auf das Luftkissen, um auf den Gegenstand zu blasen",
+      "width": 230
+    }
+  ]
+}

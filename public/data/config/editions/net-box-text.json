@@ -283,7 +283,7 @@
         "showEarth": false,
         "levelBackgroundId": "IMG_BGR_10_P1",
         "levelOverlayId": "IMG_BGR_10_P2",
-        "levelCount": 25
+        "levelCount": 50
     },
     {
         "id": "djbox",
