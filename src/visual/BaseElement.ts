@@ -41,6 +41,8 @@ class BaseElement {
     isDrawBB?: boolean;
     restoreCutTransparency?: boolean;
     resId?: number;
+    blendingMode: number;
+    previousCompositeOperation: GlobalCompositeOperation | null;
     initTextureWithId?(resourceId: number): void;
     doRestoreCutTransparency?(): void;
 
@@ -294,7 +296,7 @@ class BaseElement {
         }
 
         // restore blending mode after all drawing is complete
-        if (blendingChanged && ctx) {
+        if (blendingChanged && ctx && this.previousCompositeOperation) {
             ctx.globalCompositeOperation = this.previousCompositeOperation;
         }
     }

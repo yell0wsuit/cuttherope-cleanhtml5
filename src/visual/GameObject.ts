@@ -217,7 +217,10 @@ class GameObject extends Animation {
      * @param {GameObject} axisAligned
      * @return {boolean}
      */
-    static objectsIntersectRotatedWithUnrotated(rotated, axisAligned) {
+    static objectsIntersectRotatedWithUnrotated(
+        rotated: GameObject,
+        axisAligned: GameObject
+    ): boolean {
         if (!rotated || !axisAligned || !rotated.rbb || !axisAligned.bb) {
             return false;
         }

@@ -119,7 +119,7 @@ class MathHelper {
      * @param {number} angle
      * @return {number}
      */
-    static normalizeAngle360(angle) {
+    static normalizeAngle360(angle: number): number {
         let a = angle % 360;
         if (a < 0) {
             a += 360;
@@ -133,19 +133,21 @@ class MathHelper {
      * @param {number} targetAngle
      * @return {number}
      */
-    static nearestAngleTo(currentAngle, targetAngle) {
+    static nearestAngleTo(currentAngle: number, targetAngle: number): number {
         const current = MathHelper.normalizeAngle360(currentAngle);
         const base = MathHelper.normalizeAngle360(targetAngle);
         const candidates = [base, base - 360, base + 360];
 
-        let closest = candidates[0];
-        let minDiff = Math.abs(candidates[0] - current);
+        let closest = candidates[0] ?? 0;
+        let minDiff = Math.abs((candidates[0] ?? 0) - current);
 
         for (let i = 1; i < candidates.length; i++) {
-            const diff = Math.abs(candidates[i] - current);
+            const candidate = candidates[i];
+            if (candidate === undefined) continue;
+            const diff = Math.abs(candidate - current);
             if (diff < minDiff) {
                 minDiff = diff;
-                closest = candidates[i];
+                closest = candidate;
             }
         }
 
@@ -158,7 +160,7 @@ class MathHelper {
      * @param {number} b
      * @return {number}
      */
-    static minAngleBetween(a, b) {
+    static minAngleBetween(a: number, b: number): number {
         let diff = Math.abs(a - b) % 360;
         if (diff > 180) {
             diff = 360 - diff;
@@ -178,7 +180,16 @@ class MathHelper {
      * @param {{x:number,y:number}} bl2
      * @return {boolean}
      */
-    static obbInOBB(tl1, tr1, br1, bl1, tl2, tr2, br2, bl2) {
+    static obbInOBB(
+        tl1: { x: number; y: number },
+        tr1: { x: number; y: number },
+        br1: { x: number; y: number },
+        bl1: { x: number; y: number },
+        tl2: { x: number; y: number },
+        tr2: { x: number; y: number },
+        br2: { x: number; y: number },
+        bl2: { x: number; y: number }
+    ): boolean {
         const poly1 = [tl1, tr1, br1, bl1];
         const poly2 = [tl2, tr2, br2, bl2];
         const axes = [
@@ -189,7 +200,8 @@ class MathHelper {
         ];
 
         for (let i = 0; i < axes.length; i++) {
-            if (!MathHelper._overlapOnAxis(poly1, poly2, axes[i])) {
+            const axis = axes[i];
+            if (!axis || !MathHelper._overlapOnAxis(poly1, poly2, axis)) {
                 return false;
             }
         }
@@ -197,7 +209,10 @@ class MathHelper {
         return true;
     }
 
-    static _edgeNormal(p1, p2) {
+    static _edgeNormal(
+        p1: { x: number; y: number },
+        p2: { x: number; y: number }
+    ): { x: number; y: number } {
         const edgeX = p2.x - p1.x;
         const edgeY = p2.y - p1.y;
         let normalX = -edgeY;
@@ -208,12 +223,20 @@ class MathHelper {
         return { x: normalX, y: normalY };
     }
 
-    static _projectPolygon(points, axis) {
-        let min = points[0].x * axis.x + points[0].y * axis.y;
+    static _projectPolygon(
+        points: { x: number; y: number }[],
+        axis: { x: number; y: number }
+    ): { min: number; max: number } {
+        const firstPoint = points[0];
+        if (!firstPoint) return { min: 0, max: 0 };
+
+        let min = firstPoint.x * axis.x + firstPoint.y * axis.y;
         let max = min;
 
         for (let i = 1; i < points.length; i++) {
-            const projection = points[i].x * axis.x + points[i].y * axis.y;
+            const point = points[i];
+            if (!point) continue;
+            const projection = point.x * axis.x + point.y * axis.y;
             if (projection < min) {
                 min = projection;
             }
@@ -225,7 +248,11 @@ class MathHelper {
         return { min, max };
     }
 
-    static _overlapOnAxis(poly1, poly2, axis) {
+    static _overlapOnAxis(
+        poly1: { x: number; y: number }[],
+        poly2: { x: number; y: number }[],
+        axis: { x: number; y: number }
+    ): boolean {
         const proj1 = MathHelper._projectPolygon(poly1, axis);
         const proj2 = MathHelper._projectPolygon(poly2, axis);
         return proj1.max >= proj2.min && proj2.max >= proj1.min;

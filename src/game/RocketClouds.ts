@@ -1,12 +1,8 @@
 import RocketSparks from "@/game/RocketSparks";
+import type Texture2D from "@/core/Texture2D";
 
 class RocketClouds extends RocketSparks {
-    /**
-     * @param {number} totalParticles
-     * @param {import('@/core/Texture2D').default} texture
-     * @param {number[]} [sparkFrames]
-     */
-    constructor(totalParticles, texture, sparkFrames = null) {
+    constructor(totalParticles: number, texture: Texture2D, sparkFrames: number[] | null = null) {
         super(totalParticles, texture, sparkFrames);
 
         this.angleVar = 15;
@@ -33,7 +29,6 @@ class RocketClouds extends RocketSparks {
         this.endColor.a = 0;
         this.blendAdditive = true;
     }
-
 }
 
 export default RocketClouds;

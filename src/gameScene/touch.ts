@@ -137,7 +137,12 @@ class GameSceneTouch extends GameSceneUpdate {
                 rocket.state === Rocket.State.IDLE &&
                 rocket.isOperating === -1
             ) {
-                const distance = Vector.distance(adjustedTouch.x, adjustedTouch.y, rocket.x, rocket.y);
+                const distance = Vector.distance(
+                    adjustedTouch.x,
+                    adjustedTouch.y,
+                    rocket.x,
+                    rocket.y
+                );
                 if (distance < rocketTouchRadius) {
                     rocket.handleTouch(adjustedTouch);
                     rocket.isOperating = touchIndex;
@@ -212,29 +217,29 @@ class GameSceneTouch extends GameSceneUpdate {
                 )
             );
 
-                const fadeOut = new Timeline();
-                fadeOut.addKeyFrame(
-                    KeyFrame.makeColor(
-                        RGBAColor.solidOpaque.copy(),
-                        KeyFrame.TransitionType.LINEAR,
-                        0.2
-                    )
-                );
-                fadeOut.onFinished = this.onRotatedCircleTimelineFinished.bind(this);
+            const fadeOut = new Timeline();
+            fadeOut.addKeyFrame(
+                KeyFrame.makeColor(
+                    RGBAColor.solidOpaque.copy(),
+                    KeyFrame.TransitionType.LINEAR,
+                    0.2
+                )
+            );
+            fadeOut.onFinished = this.onRotatedCircleTimelineFinished.bind(this);
 
-                const fadingOutCircle = activeCircle.copy();
-                if (fadingOutCircle) {
-                    fadingOutCircle.addTimeline(fadeOut);
-                    fadingOutCircle.playTimeline(0);
+            const fadingOutCircle = activeCircle.copy();
+            if (fadingOutCircle) {
+                fadingOutCircle.addTimeline(fadeOut);
+                fadingOutCircle.playTimeline(0);
 
-                    activeCircle.addTimeline(fadeIn);
-                    activeCircle.playTimeline(0);
+                activeCircle.addTimeline(fadeIn);
+                activeCircle.playTimeline(0);
 
-                    if (activeCircleIndex >= 0) {
-                        this.rotatedCircles[activeCircleIndex] = fadingOutCircle;
-                    }
-                    this.rotatedCircles.push(activeCircle);
+                if (activeCircleIndex >= 0) {
+                    this.rotatedCircles[activeCircleIndex] = fadingOutCircle;
                 }
+                this.rotatedCircles.push(activeCircle);
+            }
             activeCircle = null;
         }
 

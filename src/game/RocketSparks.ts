@@ -1,19 +1,17 @@
 import RotateableMultiParticles from "@/visual/RotateableMultiParticles";
 import MathHelper from "@/utils/MathHelper";
 import Rectangle from "@/core/Rectangle";
+import type Texture2D from "@/core/Texture2D";
+import { Particle } from "@/visual/Particles";
 
 class RocketSparks extends RotateableMultiParticles {
-    /**
-     * @param {number} totalParticles
-     * @param {import('@/core/Texture2D').default} texture
-     * @param {number[]} [sparkFrames]
-     */
-    constructor(totalParticles, texture, sparkFrames = null) {
+    initialAngle: number;
+    sparkFrameIndices: number[] | null;
+
+    constructor(totalParticles: number, texture: Texture2D, sparkFrames: number[] | null = null) {
         super(totalParticles, texture);
 
-        /** @type {number} */
         this.initialAngle = 0;
-        /** @type {number[]} */
         this.sparkFrameIndices = sparkFrames;
 
         this.duration = -1;
@@ -55,18 +53,18 @@ class RocketSparks extends RotateableMultiParticles {
         this.blendAdditive = true;
     }
 
-    /**
-     * @param {any} particle
-     */
-    initParticle(particle) {
+    override initParticle(particle: Particle): void {
         const index = this.particles.length;
         super.initParticle(particle);
 
         const texture = this.imageGrid;
         const frameIndex = this._resolveFrameIndex();
         const textureQuad = texture.rects[frameIndex];
+        if (!textureQuad) {
+            return;
+        }
         const vertexQuad = new Rectangle(0, 0, 0, 0);
-        this.drawer.setTextureQuad(index, textureQuad, vertexQuad);
+        this.drawer.setTextureQuad(index, textureQuad, vertexQuad, undefined);
 
         particle.width = textureQuad.w * this.size;
         particle.height = textureQuad.h * this.size;
@@ -74,12 +72,12 @@ class RocketSparks extends RotateableMultiParticles {
         this.drawer.rotationAngles[index] = this.initialAngle;
     }
 
-    _resolveFrameIndex() {
+    private _resolveFrameIndex(): number {
         if (this.sparkFrameIndices && this.sparkFrameIndices.length) {
             const start = 0;
             const end = this.sparkFrameIndices.length - 1;
             const randomIndex = MathHelper.randomRange(start, end);
-            return this.sparkFrameIndices[randomIndex];
+            return this.sparkFrameIndices[randomIndex] ?? 0;
         }
 
         return MathHelper.randomRange(0, this.imageGrid.rects.length - 1);

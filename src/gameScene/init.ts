@@ -111,7 +111,9 @@ abstract class GameSceneInit extends BaseElement {
     stars: (Star | null)[];
     bubbles: Bubble[];
     pumps: Pump[];
-    rockets: { update(delta: number): void }[];
+    rockets: Rocket[];
+    activeRocket: Rocket | null;
+    rocketLoopCounter: number;
     socks: Sock[];
     tutorialImages: CTRGameObject[];
     tutorials: TutorialText[];
@@ -564,7 +566,7 @@ abstract class GameSceneInit extends BaseElement {
      * Callback triggered when a rocket exhaust animation finishes.
      * @param {import('@/game/Rocket').default} rocket
      */
-    handleRocketExhausted(rocket) {
+    handleRocketExhausted(rocket: Rocket) {
         if (!rocket) {
             return;
         }

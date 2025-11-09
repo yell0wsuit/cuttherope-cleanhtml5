@@ -4,6 +4,7 @@ import Vector from "@/core/Vector";
 import ConstrainedPoint from "@/physics/ConstrainedPoint";
 import CTRGameObject from "@/game/CTRGameObject";
 import BaseElement from "@/visual/BaseElement";
+import ImageElement from "@/visual/ImageElement";
 import Animation from "@/visual/Animation";
 import ResourceId from "@/resources/ResourceId";
 import ResourceMgr from "@/resources/ResourceMgr";
@@ -13,6 +14,8 @@ import TrackType from "@/visual/TrackType";
 import SoundMgr from "@/game/CTRSoundMgr";
 import Radians from "@/utils/Radians";
 import MathHelper from "@/utils/MathHelper";
+import type RocketSparks from "@/game/RocketSparks";
+import type RocketClouds from "@/game/RocketClouds";
 
 export const ROCKET_FRAMES = {
     LAUNCHER: 0,
@@ -37,6 +40,37 @@ const TimelineId = {
 };
 
 class Rocket extends CTRGameObject {
+    override anchor: number;
+    state: number;
+    point: ConstrainedPoint;
+    angle: number;
+    t1: Vector;
+    t2: Vector;
+    lastTouch: Vector;
+    time: number;
+    impulse: number;
+    impulseFactor: number;
+    startCandyRotation: number;
+    startRotation: number;
+    isOperating: number;
+    isRotatable: boolean;
+    rotateHandled: boolean;
+    anglePercent: number;
+    additionalAngle: number;
+    perp: boolean;
+    perpSetted: boolean;
+    activeBungee: null;
+    loopInstanceKey: string | null;
+    onExhausted: ((rocket: Rocket) => void) | null;
+    attachedStar: ConstrainedPoint | null;
+    particles: RocketSparks | null;
+    cloudParticles: RocketClouds | null;
+    container: BaseElement;
+    launcher: ImageElement | null;
+    initialScaleX: number;
+    initialScaleY: number;
+    sparks: Animation;
+
     constructor() {
         super();
 
@@ -64,13 +98,12 @@ class Rocket extends CTRGameObject {
         this.activeBungee = null;
         this.loopInstanceKey = null;
         this.onExhausted = null;
-        /**
-         * @type {import('@/physics/ConstrainedPoint').default | null}
-         */
         this.attachedStar = null;
 
         this.particles = null;
         this.cloudParticles = null;
+
+        this.launcher = null;
 
         this.container = new BaseElement();
         this.container.anchor = Alignment.CENTER;
@@ -100,8 +133,8 @@ class Rocket extends CTRGameObject {
         this.addRotationTimelines();
     }
 
-    addRotationTimelines() {
-        const createRotationTimeline = (delta) => {
+    addRotationTimelines(): void {
+        const createRotationTimeline = (delta: number): Timeline => {
             const tl = new Timeline();
             tl.addKeyFrame(KeyFrame.makeRotation(0, KeyFrame.TransitionType.LINEAR, 0));
             tl.addKeyFrame(KeyFrame.makeRotation(delta, KeyFrame.TransitionType.LINEAR, 0.1));
@@ -130,7 +163,7 @@ class Rocket extends CTRGameObject {
         this.addTimelineWithID(exhaust, TimelineId.EXHAUST);
     }
 
-    finalizeSetup() {
+    finalizeSetup(): void {
         this.container.width = this.width;
         this.container.height = this.height;
         this.container.rotationCenterX = this.rotationCenterX;
@@ -141,11 +174,11 @@ class Rocket extends CTRGameObject {
         this.initialScaleY = this.scaleY || ROCKET_DEFAULT_SCALE;
     }
 
-    syncSparkScale() {
+    syncSparkScale(): void {
         this.sparks.scaleX = this.sparks.scaleY = this.scaleX || ROCKET_DEFAULT_SCALE;
     }
 
-    update(delta) {
+    override update(delta: number): void {
         super.update(delta);
 
         this.point.update(delta);
@@ -193,16 +226,21 @@ class Rocket extends CTRGameObject {
         }
     }
 
-    draw() {
+    override draw(): void {
         if (!this.visible) {
             return;
+        }
+
+        // Draw launcher base (stays in place)
+        if (this.launcher) {
+            this.launcher.draw();
         }
 
         this.container.draw();
         super.draw();
     }
 
-    updateRotation() {
+    updateRotation(): void {
         if (!this.bb) {
             return;
         }
@@ -216,18 +254,18 @@ class Rocket extends CTRGameObject {
         this.t2.rotateAround(this.angle, this.x, this.y);
     }
 
-    getRotateAngleForStartEndCenter(start, end, center) {
+    getRotateAngleForStartEndCenter(start: Vector, end: Vector, center: Vector): number {
         const v1 = Vector.subtract(start, center);
         const v2 = Vector.subtract(end, center);
         const r = v2.normalizedAngle() - v1.normalizedAngle();
         return Radians.toDegrees(r);
     }
 
-    handleTouch(position) {
+    handleTouch(position: Vector): void {
         this.lastTouch.copyFrom(position);
     }
 
-    handleRotate(position) {
+    handleRotate(position: Vector): void {
         const angleDelta = this.getRotateAngleForStartEndCenter(
             this.lastTouch,
             position,
@@ -240,7 +278,7 @@ class Rocket extends CTRGameObject {
         this.rotateWithBB(this.rotation);
     }
 
-    handleRotateFinal(position) {
+    handleRotateFinal(position: Vector): void {
         this.rotation = MathHelper.normalizeAngle360(this.rotation);
         const snapIndex = Math.round(this.rotation / 45);
         const snapTarget = (snapIndex * 45) % 360;
@@ -254,7 +292,7 @@ class Rocket extends CTRGameObject {
         this.playTimeline(TimelineId.ROTATE_NEGATIVE);
     }
 
-    startAnimation(instanceKey) {
+    startAnimation(instanceKey?: string): void {
         if (instanceKey) {
             this.loopInstanceKey = instanceKey;
         }
@@ -271,7 +309,7 @@ class Rocket extends CTRGameObject {
         }
     }
 
-    stopAnimation() {
+    stopAnimation(): void {
         this.playTimeline(TimelineId.EXHAUST);
 
         const current = this.sparks.currentTimeline;
@@ -295,11 +333,11 @@ class Rocket extends CTRGameObject {
         }
     }
 
-    releaseConstraint(target) {
+    releaseConstraint(target: ConstrainedPoint): void {
         this.point.removeConstraint(target);
     }
 
-    timelineFinished(timeline) {
+    timelineFinished(timeline: Timeline): void {
         // Snap rotation to nearest 45 degrees to eliminate floating-point errors
         const snapIndex = Math.round(this.rotation / 45);
         this.rotation = (snapIndex * 45) % 360;
@@ -319,12 +357,15 @@ class Rocket extends CTRGameObject {
         }
     }
 
-    setBoundingBoxFromFrame() {
+    setBoundingBoxFromFrame(): void {
         const texture = this.texture || ResourceMgr.getTexture(ResourceId.IMG_OBJ_ROCKET);
         if (!texture) {
             return;
         }
         const rect = texture.rects[ROCKET_FRAMES.ROCKET];
+        if (!rect) {
+            return;
+        }
         const offset = texture.offsets[ROCKET_FRAMES.ROCKET] || Vector.newZero();
         const width = rect.w * 0.6;
         const height = rect.h * 0.05;
@@ -334,11 +375,13 @@ class Rocket extends CTRGameObject {
     }
 }
 
-Rocket.State = {
-    IDLE: 0,
-    DISTANCE: 1,
-    FLY: 2,
-    EXHAUST: 3,
-};
+namespace Rocket {
+    export const State = {
+        IDLE: 0,
+        DISTANCE: 1,
+        FLY: 2,
+        EXHAUST: 3,
+    };
+}
 
 export default Rocket;

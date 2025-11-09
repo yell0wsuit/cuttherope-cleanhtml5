@@ -10,7 +10,7 @@ import Vector from "@/core/Vector";
 import resolution from "@/resolution";
 import * as GameSceneConstants from "@/gameScene/constants";
 import { IS_XMAS } from "@/resources/ResData";
-import Rocket, { ROCKET_FRAMES } from "@/game/Rocket";
+import RocketClass, { ROCKET_FRAMES } from "@/game/Rocket";
 import RocketSparks from "@/game/RocketSparks";
 import RocketClouds from "@/game/RocketClouds";
 import ConstraintType from "@/physics/ConstraintType";
@@ -31,7 +31,9 @@ type SockState = (typeof Sock.StateType)[keyof typeof Sock.StateType];
 
 type SceneSock = Sock & { state: SockState };
 
-interface Rocket { update(delta: number): void }
+interface Rocket {
+    update(delta: number): void;
+}
 
 type RotatedCircleWithContents = RotatedCircle & {
     containedObjects: (Grab | Bubble)[];
@@ -115,7 +117,7 @@ export function updateHazards(this: HazardScene, delta: number, numGrabs: number
             rocket.point.pos.y
         );
 
-        if (rocket.state === Rocket.State.FLY || rocket.state === Rocket.State.DISTANCE) {
+        if (rocket.state === RocketClass.State.FLY || rocket.state === RocketClass.State.DISTANCE) {
             for (let j = 0; j < 30; j++) {
                 star.satisfyConstraints();
                 rocket.point.satisfyConstraints();
@@ -125,7 +127,7 @@ export function updateHazards(this: HazardScene, delta: number, numGrabs: number
             );
         }
 
-        if (rocket.state === Rocket.State.FLY) {
+        if (rocket.state === RocketClass.State.FLY) {
             this.lastCandyRotateDelta = 0;
 
             // Check for bubble collisions with the rocket
@@ -164,6 +166,7 @@ export function updateHazards(this: HazardScene, delta: number, numGrabs: number
                     hasTension = true;
                     const anchor = rope.bungeeAnchor;
                     const tail = rope.parts[rope.parts.length - 1];
+                    if (!tail) continue;
                     const diff = Vector.subtract(anchor.pos, tail.pos);
                     const perp = Vector.perpendicular(diff);
                     const rperp = Vector.rPerpendicular(diff);
@@ -173,8 +176,8 @@ export function updateHazards(this: HazardScene, delta: number, numGrabs: number
                     let angle2 = Radians.toDegrees(rperp.normalizedAngle() - rocketRad);
 
                     rocket.additionalAngle = MathHelper.normalizeAngle360(rocket.additionalAngle);
-                    angle1 = MathHelper.nearestAngleTo(rocket.additionalAngle, angle1);
-                    angle2 = MathHelper.nearestAngleTo(rocket.additionalAngle, angle2);
+                    angle1 = MathHelper.nearestAngleTo(rocket.additionalAngle, angle1) ?? angle1;
+                    angle2 = MathHelper.nearestAngleTo(rocket.additionalAngle, angle2) ?? angle2;
 
                     const diff1 = MathHelper.minAngleBetween(rocket.additionalAngle, angle1);
                     const diff2 = MathHelper.minAngleBetween(rocket.additionalAngle, angle2);
@@ -225,17 +228,17 @@ export function updateHazards(this: HazardScene, delta: number, numGrabs: number
             }
         }
 
-        if (rocket.state === Rocket.State.DISTANCE) {
+        if (rocket.state === RocketClass.State.DISTANCE) {
             const newRest = Mover.moveToTarget(distance, 0, 200, delta);
             if (newRest === 0) {
-                rocket.state = Rocket.State.FLY;
+                rocket.state = RocketClass.State.FLY;
             } else {
                 rocket.point.changeRestLength(star, newRest);
             }
         }
 
         if (
-            rocket.state === Rocket.State.IDLE &&
+            rocket.state === RocketClass.State.IDLE &&
             !this.noCandy &&
             GameObject.objectsIntersectRotatedWithUnrotated(rocket, this.candy)
         ) {
@@ -246,7 +249,7 @@ export function updateHazards(this: HazardScene, delta: number, numGrabs: number
             rocket.point.removeConstraints();
             rocket.startRotation = rocket.rotation;
             rocket.point.addConstraint(this.star, distance, ConstraintType.NOT_MORE_THAN);
-            rocket.state = Rocket.State.DISTANCE;
+            rocket.state = RocketClass.State.DISTANCE;
             rocket.attachedStar = this.star;
 
             this.lastCandyRotateDelta = 0;
