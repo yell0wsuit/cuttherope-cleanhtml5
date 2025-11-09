@@ -146,9 +146,12 @@ export function updateHazards(this: HazardScene, delta: number, numGrabs: number
                         if (light) {
                             light.visible = true;
                         }
-                        IS_XMAS
-                            ? SoundMgr.playSound(ResourceId.SND_TELEPORT_XMAS)
-                            : SoundMgr.playSound(ResourceId.SND_TELEPORT);
+
+                        const teleportSound = IS_XMAS
+                            ? ResourceId.SND_TELEPORT_XMAS
+                            : ResourceId.SND_TELEPORT;
+                        SoundMgr.playSound(teleportSound);
+
                         this.dd.callObject(this, this.teleport, null, 0.1);
                         break;
                     }
