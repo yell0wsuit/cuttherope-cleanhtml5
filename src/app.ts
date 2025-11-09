@@ -6,7 +6,6 @@ import Canvas from "@/utils/Canvas";
 import settings from "@/game/CTRSettings";
 import ZoomManager from "@/ZoomManager";
 import PubSub from "@/utils/PubSub";
-import "@/editionUI";
 
 interface ProgressPayload {
     progress: number;
