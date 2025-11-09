@@ -29,7 +29,7 @@ class Dialogs {
         popupWindow: "#popupWindow",
     } as const;
 
-    static activeControllers: WeakMap<HTMLElement, AbortController> = new WeakMap();
+    static activeControllers = new WeakMap<HTMLElement, AbortController>();
 
     /**
      * Cancels any ongoing fade animation on an element.
@@ -196,7 +196,7 @@ class Dialogs {
      * Initializes DOM event listeners for dialog buttons.
      */
     initEventListeners(): void {
-        const ids: Array<[string, () => void]> = [
+        const ids: [string, () => void][] = [
             ["slowComputerBtn", this.closePopup.bind(this)],
             ["missingOkBtn", this.closePopup.bind(this)],
             ["resetNoBtn", this.closePopup.bind(this)],

@@ -9,7 +9,7 @@ class Font extends ImageElement {
     charOffset: number;
     lineOffset: number;
     spaceWidth: number;
-    kerning: { [s: string]: number } | null;
+    kerning: Record<string, number> | null;
 
     constructor() {
         super();
@@ -24,7 +24,7 @@ class Font extends ImageElement {
     initWithVariableSizeChars(
         chars: string,
         charTexture: Texture2D,
-        kerningDictionary: { [s: string]: number } | null
+        kerningDictionary: Record<string, number> | null
     ): void {
         this.chars = chars;
         this.initTexture(charTexture);

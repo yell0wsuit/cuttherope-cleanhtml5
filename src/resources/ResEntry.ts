@@ -17,7 +17,7 @@ interface ResEntryOptions {
 // Extended atlas info for font resources
 export interface ExtendedAtlasInfo extends Partial<ParsedAtlasInfo> {
     chars?: string;
-    kerning?: { [s: string]: number } | null;
+    kerning?: Record<string, number> | null;
     charOffset?: number;
     lineOffset?: number;
     spaceWidth?: number;

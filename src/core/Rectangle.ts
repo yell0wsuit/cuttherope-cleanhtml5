@@ -1,11 +1,11 @@
 import Vector from "@/core/Vector";
 
-export type RectangleLike = {
+export interface RectangleLike {
     x: number;
     y: number;
     w: number;
     h: number;
-};
+}
 
 class Rectangle {
     constructor(

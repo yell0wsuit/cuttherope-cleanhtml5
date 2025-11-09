@@ -3,7 +3,7 @@ import resolution from "@/resolution";
 type StyleOverrides = Partial<Record<string, string>>;
 
 class ZoomManager {
-    #bgZoom: number = 1;
+    #bgZoom = 1;
     #element: HTMLElement | null = null;
     #nativeHeight = 0;
     #nativeWidth = 0;

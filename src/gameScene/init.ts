@@ -106,10 +106,10 @@ class GameSceneInit extends BaseElement {
     bungees: Grab[];
     razors: BaseElement[];
     spikes: Spikes[];
-    stars: Array<Star | null>;
+    stars: (Star | null)[];
     bubbles: Bubble[];
     pumps: Pump[];
-    rockets: Array<{ update(delta: number): void }>;
+    rockets: { update(delta: number): void }[];
     socks: Sock[];
     tutorialImages: CTRGameObject[];
     tutorials: TutorialText[];

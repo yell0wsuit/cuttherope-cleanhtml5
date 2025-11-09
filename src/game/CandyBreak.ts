@@ -28,9 +28,9 @@ const PADDINGTON_BREAK_FRAME_NAMES = [
     "frame_0007.png",
 ];
 
-type CandyBreakOptions = {
+interface CandyBreakOptions {
     resourceId?: number;
-};
+}
 
 class CandyBreak extends RotateableMultiParticles {
     pieceFrameIndices: number[];

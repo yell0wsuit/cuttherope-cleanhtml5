@@ -5,7 +5,7 @@ class SettingStorage {
     static STORAGE_KEY = "ctr-js-data";
     editionPrefix: string;
     prefix: string;
-    settingCache: { [key: string]: string };
+    settingCache: Record<string, string>;
 
     constructor() {
         const editionConfig: typeof edition = edition;
@@ -33,7 +33,7 @@ class SettingStorage {
         const existingData = localStorage.getItem(SettingStorage.STORAGE_KEY);
         if (existingData) return; // Already migrated
 
-        const dataToMigrate: { [s: string]: string | null } = {};
+        const dataToMigrate: Record<string, string | null> = {};
         const keysToRemove: string[] = [];
 
         for (let i = 0; i < localStorage.length; i++) {
@@ -56,7 +56,7 @@ class SettingStorage {
     /**
      * Get all data from consolidated storage
      */
-    getAllData(): { [s: string]: string } {
+    getAllData(): Record<string, string> {
         if (!window.localStorage) return {};
         try {
             const data = localStorage.getItem(SettingStorage.STORAGE_KEY);
@@ -70,7 +70,7 @@ class SettingStorage {
     /**
      * Save data to consolidated storage
      */
-    saveAllData(data: { [s: string]: string }): void {
+    saveAllData(data: Record<string, string>): void {
         if (!window.localStorage) return;
         try {
             localStorage.setItem(SettingStorage.STORAGE_KEY, JSON.stringify(data));

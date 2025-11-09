@@ -32,7 +32,7 @@ type PartsTypeValue =
 type RestartStateValue =
     (typeof GameSceneConstants.RestartState)[keyof typeof GameSceneConstants.RestartState];
 type SockStateValue = (typeof Sock.StateType)[keyof typeof Sock.StateType];
-type Rocket = { update(delta: number): void };
+interface Rocket { update(delta: number): void }
 type ResourceIdValue = (typeof ResourceIdValues)[keyof typeof ResourceIdValues];
 
 interface GameSceneController {
@@ -83,16 +83,16 @@ export interface GameScene extends BaseElement {
     support: ImageElement;
     target: GameObject;
     tutorials: TutorialText[];
-    tutorialImages: Array<CTRGameObject & { special: number }>;
+    tutorialImages: (CTRGameObject & { special: number })[];
     razors: BaseElement[];
     rotatedCircles: RotatedCircle[];
     bubbles: Bubble[];
     pumps: Pump[];
     spikes: Spikes[];
     bouncers: Bouncer[];
-    socks: Array<Sock & { state: SockStateValue }>;
+    socks: (Sock & { state: SockStateValue })[];
     bungees: Grab[];
-    stars: Array<Star | null>;
+    stars: (Star | null)[];
     candy: GameObject;
     candyL: GameObject;
     candyR: GameObject;

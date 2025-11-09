@@ -71,12 +71,12 @@ const getLevelsPerPage = (totalLevels: number, pageIndex = 0): number => {
     return MAX_LEVELS_PER_PAGE;
 };
 
-type LayoutConfig = {
+interface LayoutConfig {
     columns: number;
     leftOffset: number;
     topOffset: number;
     inc: number;
-};
+}
 
 const getLayoutConfig = (count: number): LayoutConfig => {
     if (count > 12) {

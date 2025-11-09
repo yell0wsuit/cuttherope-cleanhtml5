@@ -84,7 +84,7 @@ class Texture2D {
     height = 0;
     imageWidth: number;
     imageHeight: number;
-    rects: Array<{ x: number; y: number; w: number; h: number }>;
+    rects: { x: number; y: number; w: number; h: number }[];
     offsets: Vector[];
     adjustmentMaxX: number;
     adjustmentMaxY: number;

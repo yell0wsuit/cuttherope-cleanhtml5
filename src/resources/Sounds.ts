@@ -42,7 +42,7 @@ class SoundManager {
 
     stopSources(
         soundData: SoundData,
-        shouldInvokeCallback: boolean = false,
+        shouldInvokeCallback = false,
         predicate?: (source: AudioBufferSourceNode & SoundSource) => boolean
     ): number {
         if (!soundData) return 0;

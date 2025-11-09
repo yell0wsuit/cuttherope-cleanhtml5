@@ -14,7 +14,7 @@ class ImageMultiDrawer extends BaseElement {
     numberOfQuadsToDraw: number;
     texCoordinates: Rectangle[];
     vertices: Rectangle[];
-    alphas: Array<number | null | undefined>;
+    alphas: (number | null | undefined)[];
     rotationAngles: number[];
     rotationPositions: Vector[];
 

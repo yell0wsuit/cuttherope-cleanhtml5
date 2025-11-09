@@ -9,11 +9,17 @@ export default [
         ...config,
         files: ["**/*.ts"],
     })),
+    // Stylistic rules (indentation, spacing, etc.)
+    ...tseslint.configs.stylistic.map((config) => ({
+        ...config,
+        files: ["**/*.ts"],
+    })),
     {
         files: ["**/*.ts"],
         languageOptions: { globals: globals.browser },
         rules: {
             "@typescript-eslint/no-unused-vars": "warn",
+            "@typescript-eslint/no-useless-constructor": "error",
         },
     },
 ];

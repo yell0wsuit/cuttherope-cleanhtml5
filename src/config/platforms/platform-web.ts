@@ -17,11 +17,11 @@ const locEntries = {
 
 class WebPlatform {
     static customOptions = false;
-    static ENABLE_ANALYTICS: boolean = false;
+    static ENABLE_ANALYTICS = false;
 
-    static ENABLE_ZOOM: boolean = false;
+    static ENABLE_ZOOM = false;
 
-    static ZOOM_BOX_CANVAS: boolean = false;
+    static ZOOM_BOX_CANVAS = false;
 
     static imageBaseUrl = "images/";
     static resolutionBaseUrl = `images/${resolution.UI_WIDTH}/`;

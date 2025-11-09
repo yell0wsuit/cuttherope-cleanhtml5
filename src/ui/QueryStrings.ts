@@ -51,7 +51,7 @@ class QueryStrings {
 
     static showBoxBackgrounds: boolean = QueryStrings.#getFlag("boxBackgrounds");
 
-    static showFrameRate: boolean = Boolean(
+    static showFrameRate = Boolean(
         import.meta.env.DEV || QueryStrings.#getFlag("showFrameRate")
     );
 
@@ -66,7 +66,7 @@ class QueryStrings {
     /**
      * Force the pinned box UI to display.
      */
-    static forcePinnedBox: boolean = Boolean(
+    static forcePinnedBox = Boolean(
         QueryStrings.unlockAllBoxes || QueryStrings.#getFlag("enablePinnedBox")
     );
 

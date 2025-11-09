@@ -3,18 +3,18 @@
  * Provides methods for converting between language codes and internal language IDs.
  */
 class LangId {
-    static EN: number = 0;
-    static FR: number = 1;
-    static DE: number = 2;
-    static RU: number = 3;
-    static KO: number = 4;
-    static ZH: number = 5;
-    static JA: number = 6;
-    static ES: number = 7;
-    static CA: number = 8;
-    static BR: number = 9;
-    static IT: number = 10;
-    static NL: number = 11;
+    static EN = 0;
+    static FR = 1;
+    static DE = 2;
+    static RU = 3;
+    static KO = 4;
+    static ZH = 5;
+    static JA = 6;
+    static ES = 7;
+    static CA = 8;
+    static BR = 9;
+    static IT = 10;
+    static NL = 11;
 
     /**
      * Converts a language code string to a LangId constant.

@@ -25,7 +25,7 @@ class Mover {
     constructor(
         readonly pathCapacity: number,
         moveSpeed: number,
-        public rotateSpeed: number = 0
+        public rotateSpeed = 0
     ) {
         const capacity = pathCapacity > 0 ? pathCapacity : 0;
         this.moveSpeed = new Array<number>(capacity);

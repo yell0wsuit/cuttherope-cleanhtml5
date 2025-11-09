@@ -1,7 +1,7 @@
-export type VectorLike = {
+export interface VectorLike {
     x: number;
     y: number;
-};
+}
 
 class Vector {
     static readonly zero = new Vector(0, 0);

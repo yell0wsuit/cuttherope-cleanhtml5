@@ -8,9 +8,9 @@ import ZoomManager from "@/ZoomManager";
 import PubSub from "@/utils/PubSub";
 import "@/editionUI";
 
-type ProgressPayload = {
+interface ProgressPayload {
     progress: number;
-};
+}
 
 const clamp = (value: number, min: number, max: number): number => {
     return Math.min(max, Math.max(min, value));

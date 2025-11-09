@@ -24,10 +24,10 @@ type SockState = (typeof Sock.StateType)[keyof typeof Sock.StateType];
 
 type SceneSock = Sock & { state: SockState };
 
-type Rocket = { update(delta: number): void };
+interface Rocket { update(delta: number): void }
 
 type RotatedCircleWithContents = RotatedCircle & {
-    containedObjects: Array<Grab | Bubble>;
+    containedObjects: (Grab | Bubble)[];
     removeOnNextUpdate?: boolean;
 };
 

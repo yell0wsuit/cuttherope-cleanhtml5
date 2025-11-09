@@ -78,7 +78,7 @@ export const setStyle = (
 /**
  * Track active timers per element so we can cancel animations when needed.
  */
-const elementTimers: WeakMap<HTMLElement, Set<number>> = new WeakMap();
+const elementTimers = new WeakMap<HTMLElement, Set<number>>();
 
 /**
  * Registers a timeout/interval id with an element for later cleanup.
@@ -123,7 +123,7 @@ const clearAllTimers = (element: HTMLElement) => {
 /**
  * Cache for default display values by tag name.
  */
-const defaultDisplayCache: Map<string, string> = new Map();
+const defaultDisplayCache = new Map<string, string>();
 
 /**
  * Computes the default display value for a given element tag.

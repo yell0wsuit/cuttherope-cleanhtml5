@@ -329,8 +329,8 @@ class Box {
             const t = Date.now() - this.bounceStartTime;
 
             let d: number;
-            let x: number = 1.0;
-            let y: number = 1.0;
+            let x = 1.0;
+            let y = 1.0;
 
             if (t < s1) {
                 d = Easing.easeOutSine(t, 0, 0.05, s1); // to 0.95

@@ -2,14 +2,14 @@ import JsonLoader from "@/resources/JsonLoader";
 import type { LevelJson, LoadedLevelEntry } from "@/types/json";
 
 // Cached boxes data
-let cachedBoxes: Array<{ levels: LevelJson[] }> | null = null;
+let cachedBoxes: { levels: LevelJson[] }[] | null = null;
 
 // Get levels from JsonLoader which loads them at runtime from public folder
 /**
  * Resolve and memoize level JSON grouped by box.
  * @returns {Array<{ levels: LevelJson[] }>}
  */
-const getLevels = (): Array<{ levels: LevelJson[] }> => {
+const getLevels = (): { levels: LevelJson[] }[] => {
     if (cachedBoxes) {
         return cachedBoxes;
     }
@@ -34,7 +34,7 @@ const getLevels = (): Array<{ levels: LevelJson[] }> => {
 
 // Export a Proxy that returns the boxes loaded from JSON
 // This ensures the data is available when accessed, even if loaded async
-export default new Proxy([] as Array<{ levels: LevelJson[] }>, {
+export default new Proxy([] as { levels: LevelJson[] }[], {
     get(target, prop) {
         const boxes = getLevels();
         return Reflect.get(boxes, prop);

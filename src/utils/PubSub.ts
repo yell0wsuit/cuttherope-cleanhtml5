@@ -58,7 +58,7 @@ class PubSub {
      * The value is an array rather than a Set to preserve call ordering for
      * listeners that were registered multiple times.
      */
-    private readonly subscriptions: Map<ChannelId, SubscriptionCallback[]> = new Map();
+    private readonly subscriptions = new Map<ChannelId, SubscriptionCallback[]>();
 
     /**
      * Enumeration of well-known channel identifiers.

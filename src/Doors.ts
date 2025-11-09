@@ -6,10 +6,10 @@ import Easing from "@/ui/Easing";
 
 type AnimationCallback = (() => void) | null | undefined;
 
-type CanvasPair = {
+interface CanvasPair {
     left: HTMLCanvasElement;
     right: HTMLCanvasElement;
-};
+}
 
 const isImageReady = (img: HTMLImageElement): boolean => {
     return img.complete && img.naturalWidth > 0 && img.naturalHeight > 0;
@@ -128,7 +128,7 @@ class BoxDoors {
         }
     }
 
-    static renderDoors(showTape: boolean = true, percentOpen: number = 0): void {
+    static renderDoors(showTape = true, percentOpen = 0): void {
         if (
             BoxDoors.currentIndex !== BoxManager.currentBoxIndex ||
             BoxDoors.showTape !== showTape
@@ -151,9 +151,9 @@ class BoxDoors {
     }
 
     static openDoors(
-        showTape: boolean = true,
+        showTape = true,
         callback?: AnimationCallback,
-        runInReverse: boolean = false
+        runInReverse = false
     ): void {
         const shouldShowTape = showTape;
         const reverse = runInReverse;
@@ -185,7 +185,7 @@ class BoxDoors {
         window.requestAnimationFrame(openBoxDoors);
     }
 
-    static closeDoors(showTape: boolean = true, callback?: AnimationCallback): void {
+    static closeDoors(showTape = true, callback?: AnimationCallback): void {
         BoxDoors.openDoors(showTape, callback, true);
     }
 

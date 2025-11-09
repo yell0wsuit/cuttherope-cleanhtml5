@@ -4,11 +4,11 @@ import type { LevelJson } from "@/types/json";
 class LevelState {
     static loadedMap: LevelJson | null = null;
 
-    static pack: number = 0;
+    static pack = 0;
 
-    static level: number = 0;
+    static level = 0;
 
-    static survival: boolean = false;
+    static survival = false;
 
     static loadLevel(pack: number, level: number) {
         LevelState.pack = pack - 1;

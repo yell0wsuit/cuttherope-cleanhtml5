@@ -61,7 +61,7 @@ class GameSceneLoaders extends GameSceneInit {
             }
         }
 
-        const queue: Array<{ item: MapLayerItem; definition: MapItemDefinition; order: number }> =
+        const queue: { item: MapLayerItem; definition: MapItemDefinition; order: number }[] =
             [];
         let order = 0;
 

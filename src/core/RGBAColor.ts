@@ -1,9 +1,9 @@
-export type RGBAColorLike = {
+export interface RGBAColorLike {
     r: number;
     g: number;
     b: number;
     a: number;
-};
+}
 
 class RGBAColor {
     static readonly transparent = new RGBAColor(0, 0, 0, 0);

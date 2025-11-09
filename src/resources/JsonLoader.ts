@@ -37,7 +37,7 @@ class JsonLoader {
 
     private progressCallback: ProgressCallback | null = null;
 
-    private readonly jsonCache: Map<string, JsonCacheEntry | MenuStringEntry[]> = new Map();
+    private readonly jsonCache = new Map<string, JsonCacheEntry | MenuStringEntry[]>();
 
     getJsonFileCount(): number {
         return this.totalJsonFiles;
@@ -68,7 +68,7 @@ class JsonLoader {
             this.jsonCache.set("boxMetadata", boxMetadata);
             this.jsonCache.set("menuStrings", menuStrings);
 
-            const levelFiles: Array<{ url: string; key: string }> = [];
+            const levelFiles: { url: string; key: string }[] = [];
 
             // Queue level files based on levelCount from metadata
             boxMetadata.forEach((box, index) => {

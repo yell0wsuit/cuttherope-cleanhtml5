@@ -93,7 +93,7 @@ class SoundManager {
         }
     }
 
-    playLoopedSound(soundId: number, instanceKey: string, delayMs: number = 0) {
+    playLoopedSound(soundId: number, instanceKey: string, delayMs = 0) {
         if (!this.soundEnabled || this.audioPaused) {
             return;
         }

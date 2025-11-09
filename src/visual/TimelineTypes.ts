@@ -1,13 +1,13 @@
 type RGBAColor = import("@/core/RGBAColor").default;
 
-type TimelineElement = {
+interface TimelineElement {
     x: number;
     y: number;
     scaleX: number;
     scaleY: number;
     rotation: number;
     color: RGBAColor;
-};
+}
 
 type TimelineKeyFrameListener = (
     timeline: TimelineLike,
@@ -15,11 +15,11 @@ type TimelineKeyFrameListener = (
     keyFrameIndex: number
 ) => void;
 
-type TimelineLike = {
+interface TimelineLike {
     time: number;
     timelineDirReverse: boolean;
     element: TimelineElement | null;
     onKeyFrame: TimelineKeyFrameListener | null;
-};
+}
 
 export type { TimelineElement, TimelineLike, TimelineKeyFrameListener };
