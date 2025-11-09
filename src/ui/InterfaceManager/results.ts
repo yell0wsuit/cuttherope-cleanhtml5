@@ -325,7 +325,11 @@ export default class ResultsHandler {
             }*/
 
             // tell the user if the fps was low on the first level
-            if (info.fps != null && info.fps < this.manager._MIN_FPS && !platform.disableSlowWarning) {
+            if (
+                info.fps != null &&
+                info.fps < this.manager._MIN_FPS &&
+                !platform.disableSlowWarning
+            ) {
                 setTimeout(() => {
                     Dialogs.showSlowComputerPopup();
                 }, 3000);

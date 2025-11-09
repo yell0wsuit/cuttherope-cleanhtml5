@@ -4,13 +4,13 @@
 
 /** Interface for components that can be redrawn */
 export interface Redrawable {
-  redraw(): void;
+    redraw(): void;
 }
 
 /** Interface for dialog-like components */
 export interface DialogController {
-  showPopup(contentId: string): Promise<void>;
-  closePopup(): Promise<void>;
+    showPopup(contentId: string): Promise<void>;
+    closePopup(): Promise<void>;
 }
 
 /**
@@ -18,22 +18,22 @@ export interface DialogController {
  * This breaks circular dependencies between BoxManager, BoxPanel, and Dialogs.
  */
 export class UIRegistry {
-  private static _boxPanel: Redrawable | null = null;
-  private static _dialogs: DialogController | null = null;
+    private static _boxPanel: Redrawable | null = null;
+    private static _dialogs: DialogController | null = null;
 
-  static registerBoxPanel(panel: Redrawable): void {
-    UIRegistry._boxPanel = panel;
-  }
+    static registerBoxPanel(panel: Redrawable): void {
+        UIRegistry._boxPanel = panel;
+    }
 
-  static getBoxPanel(): Redrawable | null {
-    return UIRegistry._boxPanel;
-  }
+    static getBoxPanel(): Redrawable | null {
+        return UIRegistry._boxPanel;
+    }
 
-  static registerDialogs(dialogs: DialogController): void {
-    UIRegistry._dialogs = dialogs;
-  }
+    static registerDialogs(dialogs: DialogController): void {
+        UIRegistry._dialogs = dialogs;
+    }
 
-  static getDialogs(): DialogController | null {
-    return UIRegistry._dialogs;
-  }
+    static getDialogs(): DialogController | null {
+        return UIRegistry._dialogs;
+    }
 }

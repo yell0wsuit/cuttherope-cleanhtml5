@@ -76,12 +76,7 @@ function popBubble(scene: GameScene, x: number, y: number): void {
     scene.aniPool.addChild(scene.bubbleDisappear);
 }
 
-function handleBubbleTouch(
-    scene: GameScene,
-    s: ConstrainedPoint,
-    tx: number,
-    ty: number
-): boolean {
+function handleBubbleTouch(scene: GameScene, s: ConstrainedPoint, tx: number, ty: number): boolean {
     if (
         Rectangle.pointInRect(
             tx + scene.camera.pos.x,

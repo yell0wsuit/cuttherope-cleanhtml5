@@ -303,10 +303,7 @@ class GameSceneInit extends BaseElement {
             0.3,
             Timeline.LoopType.NO_LOOP,
             2,
-            [
-                GameSceneConstants.IMG_OBJ_CANDY_01_glow,
-                GameSceneConstants.IMG_OBJ_CANDY_01_glow,
-            ]
+            [GameSceneConstants.IMG_OBJ_CANDY_01_glow, GameSceneConstants.IMG_OBJ_CANDY_01_glow]
         );
         const glowTimeline = this.candyBlink.getTimeline(GameSceneConstants.CandyBlink.STAR);
         if (glowTimeline) {
@@ -314,7 +311,11 @@ class GameSceneInit extends BaseElement {
                 KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0)
             );
             glowTimeline.addKeyFrame(
-                KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.2)
+                KeyFrame.makeColor(
+                    RGBAColor.transparent.copy(),
+                    KeyFrame.TransitionType.LINEAR,
+                    0.2
+                )
             );
         }
         this.candyBlink.visible = false;
@@ -327,7 +328,8 @@ class GameSceneInit extends BaseElement {
         this.candyBubbleAnimation.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
         this.candyBubbleAnimation.x = this.candy.x;
         this.candyBubbleAnimation.y = this.candy.y;
-        this.candyBubbleAnimation.parentAnchor = this.candyBubbleAnimation.anchor = Alignment.CENTER;
+        this.candyBubbleAnimation.parentAnchor = this.candyBubbleAnimation.anchor =
+            Alignment.CENTER;
         this.candyBubbleAnimation.addAnimationDelay(
             0.05,
             Timeline.LoopType.REPLAY,
@@ -489,8 +491,8 @@ class GameSceneInit extends BaseElement {
                 typeof imageSrc === "string"
                     ? imageSrc
                     : image instanceof HTMLImageElement
-                    ? image.src
-                    : "";
+                      ? image.src
+                      : "";
             if (!canvasBackground) {
                 return;
             }
@@ -505,7 +507,9 @@ class GameSceneInit extends BaseElement {
             this.bgTexture = ResourceMgr.getTexture(bgrID) ?? null;
         }
 
-        this.overlayTexture = overlayId ? ResourceMgr.getTexture(overlayId) ?? null : this.bgTexture;
+        this.overlayTexture = overlayId
+            ? (ResourceMgr.getTexture(overlayId) ?? null)
+            : this.bgTexture;
 
         this.back = new BackgroundTileMap(1, 1);
         this.back.setRepeatHorizontally(TileMap.RepeatType.NONE);
@@ -607,7 +611,11 @@ class GameSceneInit extends BaseElement {
                 KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0)
             );
             gt.addKeyFrame(
-                KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, 0.2)
+                KeyFrame.makeColor(
+                    RGBAColor.transparent.copy(),
+                    KeyFrame.TransitionType.LINEAR,
+                    0.2
+                )
             );
         }
         this.candyBlink.visible = false;
@@ -667,8 +675,9 @@ class GameSceneInit extends BaseElement {
             this.candyBubbleAnimationL.playTimeline(0);
             this.candyL.addChild(this.candyBubbleAnimationL);
             this.candyBubbleAnimationL.visible = false;
-            (this.candyBubbleAnimationL as Animation & { drawPosIncrement?: number }).drawPosIncrement =
-                0.0001;
+            (
+                this.candyBubbleAnimationL as Animation & { drawPosIncrement?: number }
+            ).drawPosIncrement = 0.0001;
 
             this.candyBubbleAnimationR = new Animation();
             this.candyBubbleAnimationR.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
@@ -683,8 +692,9 @@ class GameSceneInit extends BaseElement {
             this.candyBubbleAnimationR.playTimeline(0);
             this.candyR.addChild(this.candyBubbleAnimationR);
             this.candyBubbleAnimationR.visible = false;
-            (this.candyBubbleAnimationR as Animation & { drawPosIncrement?: number }).drawPosIncrement =
-                0.0001;
+            (
+                this.candyBubbleAnimationR as Animation & { drawPosIncrement?: number }
+            ).drawPosIncrement = 0.0001;
         }
 
         for (const circle of this.rotatedCircles) {

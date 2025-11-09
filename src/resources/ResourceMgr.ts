@@ -8,7 +8,11 @@ import Texture2D from "@/core/Texture2D";
 import Vector from "@/core/Vector";
 import Rectangle from "@/core/Rectangle";
 import Log from "@/utils/Log";
-import { parseTexturePackerAtlas, type TexturePackerAtlas, type ParsedAtlasInfo } from "@/resources/TextureAtlasParser";
+import {
+    parseTexturePackerAtlas,
+    type TexturePackerAtlas,
+    type ParsedAtlasInfo,
+} from "@/resources/TextureAtlasParser";
 import type ResEntry from "./ResEntry";
 
 /**

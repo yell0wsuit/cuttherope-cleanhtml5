@@ -36,11 +36,7 @@ class ResEntry {
     pendingImage?: HTMLImageElement; // Added at runtime by ResourceMgr
     _atlasFailed?: boolean; // Added at runtime by ResourceMgr
 
-    constructor(
-        path: string,
-        type: number,
-        options: Partial<ResEntryOptions> = {}
-    ) {
+    constructor(path: string, type: number, options: Partial<ResEntryOptions> = {}) {
         this.path = path;
         this.type = type;
 

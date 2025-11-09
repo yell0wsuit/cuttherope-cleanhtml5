@@ -224,7 +224,10 @@ class ConfettiManager {
 
         if (this.elapsed < this.duration) {
             const emissionInterval = 1 / this.emissionRate;
-            while (this.emissionTimer >= emissionInterval && this.particles.length < this.totalParticles) {
+            while (
+                this.emissionTimer >= emissionInterval &&
+                this.particles.length < this.totalParticles
+            ) {
                 this.createParticle();
                 this.emissionTimer -= emissionInterval;
             }

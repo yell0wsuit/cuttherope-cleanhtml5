@@ -37,30 +37,10 @@ function cut(
 
             if (razor) {
                 if (p1.prevPos.x !== Constants.INT_MAX) {
-                    const minX = MathHelper.minOf4(
-                        p1.pos.x,
-                        p1.prevPos.x,
-                        p2.pos.x,
-                        p2.prevPos.x
-                    );
-                    const minY = MathHelper.minOf4(
-                        p1.pos.y,
-                        p1.prevPos.y,
-                        p2.pos.y,
-                        p2.prevPos.y
-                    );
-                    const maxX = MathHelper.maxOf4(
-                        p1.pos.x,
-                        p1.prevPos.x,
-                        p2.pos.x,
-                        p2.prevPos.x
-                    );
-                    const maxY = MathHelper.maxOf4(
-                        p1.pos.y,
-                        p1.prevPos.y,
-                        p2.pos.y,
-                        p2.prevPos.y
-                    );
+                    const minX = MathHelper.minOf4(p1.pos.x, p1.prevPos.x, p2.pos.x, p2.prevPos.x);
+                    const minY = MathHelper.minOf4(p1.pos.y, p1.prevPos.y, p2.pos.y, p2.prevPos.y);
+                    const maxX = MathHelper.maxOf4(p1.pos.x, p1.prevPos.x, p2.pos.x, p2.prevPos.x);
+                    const maxY = MathHelper.maxOf4(p1.pos.y, p1.prevPos.y, p2.pos.y, p2.prevPos.y);
 
                     shouldCut = Rectangle.rectInRect(
                         minX,

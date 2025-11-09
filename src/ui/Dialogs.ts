@@ -48,7 +48,10 @@ class Dialogs {
     /**
      * Smoothly fades an element between two opacity values.
      */
-    static async fadeElement(el: HTMLElement, { from, to, duration, display }: FadeElementOptions): Promise<void> {
+    static async fadeElement(
+        el: HTMLElement,
+        { from, to, duration, display }: FadeElementOptions
+    ): Promise<void> {
         Dialogs.cancelAnimation(el);
         if (display !== undefined) el.style.display = display;
 

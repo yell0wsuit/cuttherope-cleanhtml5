@@ -67,7 +67,6 @@ interface ParseAtlasOptions {
     frameOrder?: string[] | undefined;
 }
 
-
 /**
  * Builds frame entries from the TexturePacker frames block.
  * @param {Record<string, FrameData> | FrameData[]} frames

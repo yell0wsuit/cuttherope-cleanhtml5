@@ -237,9 +237,7 @@ class TimeBox extends Box {
             }
 
             // prefer css dimensions (scaled) for text
-            const reqImgWidth = this.reqImg
-                ? this.reqImg.offsetWidth || this.reqImg.width || 0
-                : 0;
+            const reqImgWidth = this.reqImg ? this.reqImg.offsetWidth || this.reqImg.width || 0 : 0;
             const reqImgHeight = this.reqImg
                 ? this.reqImg.offsetHeight || this.reqImg.height || 0
                 : 0;
