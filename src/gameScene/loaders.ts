@@ -22,10 +22,14 @@ import { loadTarget } from "./loadObjects/loadTarget";
 
 type MapData = Record<string, MapLayerItem[]>;
 
-class GameSceneLoaders extends GameSceneInit {
-    protected onIdleOmNomKeyFrame(..._args: Parameters<TimelineKeyFrameListener>): void {}
+abstract class GameSceneLoaders extends GameSceneInit {
+    protected abstract onIdleOmNomKeyFrame(
+        ...args: Parameters<TimelineKeyFrameListener>
+    ): void;
 
-    protected onPaddingtonIdleKeyFrame(..._args: Parameters<TimelineKeyFrameListener>): void {}
+    protected abstract onPaddingtonIdleKeyFrame(
+        ...args: Parameters<TimelineKeyFrameListener>
+    ): void;
 
     // Loader methods imported from loadObjects folder
     loadMapSettings = loadMapSettings;
@@ -47,7 +51,7 @@ class GameSceneLoaders extends GameSceneInit {
     loadBouncer = loadBouncer;
     loadTarget = loadTarget;
 
-    override loadMap(map: MapData | null | undefined): void {
+    protected override loadMap(map: MapData | null | undefined): void {
         if (!map) {
             return;
         }

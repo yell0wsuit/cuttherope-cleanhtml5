@@ -313,7 +313,7 @@ export const on = (
     options: AddEventListenerOptions | boolean = false
 ): (() => void) => {
     const el = getElement(selector);
-    if (!el) return () => {};
+    if (!el) return () => undefined;
     el.addEventListener(event, handler, options);
     return () => {
         el.removeEventListener(event, handler, options);
@@ -329,9 +329,9 @@ export const hover = (
     leave: EventListener
 ): (() => void) => {
     const el = getElement(selector);
-    if (!el) return () => {};
-    const enterHandler = typeof enter === "function" ? enter : () => {};
-    const leaveHandler = typeof leave === "function" ? leave : () => {};
+    if (!el) return () => undefined;
+    const enterHandler = typeof enter === "function" ? enter : () => undefined;
+    const leaveHandler = typeof leave === "function" ? leave : () => undefined;
     el.addEventListener("mouseenter", enterHandler);
     el.addEventListener("mouseleave", leaveHandler);
     return () => {

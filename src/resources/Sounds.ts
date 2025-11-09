@@ -28,8 +28,6 @@ interface PlayOptions {
  * Wraps soundRegistry entries with unified lifecycle control (play, pause, stop, etc.)
  */
 class SoundManager {
-    constructor() {}
-
     getSoundData(soundId: number | string): SoundData | null {
         const id = `s${soundId}`;
         const soundData = soundRegistry.get(id);

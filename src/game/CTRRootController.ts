@@ -16,10 +16,6 @@ type ChildControllerValue = (typeof ChildController)[keyof typeof ChildControlle
 class CTRRootController extends RootControllerBase {
     static readonly ChildController = ChildController;
 
-    constructor(parent?: CTRRootController) {
-        super(parent);
-    }
-
     startLevel(pack: number, level: number): void {
         LevelState.loadLevel(pack, level);
 

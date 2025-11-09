@@ -99,8 +99,7 @@ class GameSceneTouch extends GameSceneUpdate {
         const cameraAdjustedY = y + cameraPos.y;
 
         // handle rotating spikes
-        for (let i = 0; i < this.spikes.length; i++) {
-            const spike = this.spikes[i];
+        for (const spike of this.spikes) {
             if (!spike?.rotateButton) {
                 continue;
             }
@@ -114,8 +113,7 @@ class GameSceneTouch extends GameSceneUpdate {
         }
 
         // handle pump touches
-        for (let i = 0; i < this.pumps.length; i++) {
-            const pump = this.pumps[i];
+        for (const pump of this.pumps) {
             if (!pump) {
                 continue;
             }
@@ -129,8 +127,7 @@ class GameSceneTouch extends GameSceneUpdate {
         let activeCircle: RotatedCircle | null = null;
         let hasCircleInside = false;
         let intersectsAnotherCircle = false;
-        for (let i = 0; i < this.rotatedCircles.length; i++) {
-            const r = this.rotatedCircles[i];
+        for (const [index, r] of this.rotatedCircles.entries()) {
             const handle1 = r?.handle1;
             const handle2 = r?.handle2;
             if (!r || !handle1 || !handle2) {
@@ -143,8 +140,7 @@ class GameSceneTouch extends GameSceneUpdate {
                 d2 < resolution.RC_CONTROLLER_RADIUS
             ) {
                 //check for overlapping
-                for (let j = i + 1; j < this.rotatedCircles.length; j++) {
-                    const r2 = this.rotatedCircles[j];
+                for (const r2 of this.rotatedCircles.slice(index + 1)) {
                     if (!r2) {
                         continue;
                     }
@@ -194,29 +190,29 @@ class GameSceneTouch extends GameSceneUpdate {
                 )
             );
 
-            const fadeOut = new Timeline();
-            fadeOut.addKeyFrame(
-                KeyFrame.makeColor(
-                    RGBAColor.solidOpaque.copy(),
-                    KeyFrame.TransitionType.LINEAR,
-                    0.2
-                )
-            );
-            fadeOut.onFinished = this.onRotatedCircleTimelineFinished.bind(this);
+                const fadeOut = new Timeline();
+                fadeOut.addKeyFrame(
+                    KeyFrame.makeColor(
+                        RGBAColor.solidOpaque.copy(),
+                        KeyFrame.TransitionType.LINEAR,
+                        0.2
+                    )
+                );
+                fadeOut.onFinished = this.onRotatedCircleTimelineFinished.bind(this);
 
-            const fadingOutCircle = activeCircle.copy();
-            if (fadingOutCircle) {
-                fadingOutCircle.addTimeline(fadeOut);
-                fadingOutCircle.playTimeline(0);
+                const fadingOutCircle = activeCircle.copy();
+                if (fadingOutCircle) {
+                    fadingOutCircle.addTimeline(fadeOut);
+                    fadingOutCircle.playTimeline(0);
 
-                activeCircle.addTimeline(fadeIn);
-                activeCircle.playTimeline(0);
+                    activeCircle.addTimeline(fadeIn);
+                    activeCircle.playTimeline(0);
 
-                if (activeCircleIndex >= 0) {
-                    this.rotatedCircles[activeCircleIndex] = fadingOutCircle;
+                    if (activeCircleIndex >= 0) {
+                        this.rotatedCircles[activeCircleIndex] = fadingOutCircle;
+                    }
+                    this.rotatedCircles.push(activeCircle);
                 }
-                this.rotatedCircles.push(activeCircle);
-            }
             activeCircle = null;
         }
 
@@ -224,8 +220,7 @@ class GameSceneTouch extends GameSceneUpdate {
         const GRAB_WHEEL_DIAMETER = GRAB_WHEEL_RADIUS * 2;
         const GRAB_MOVE_RADIUS = resolution.GRAB_MOVE_RADIUS;
         const GRAB_MOVE_DIAMETER = GRAB_MOVE_RADIUS * 2;
-        for (let i = 0; i < this.bungees.length; i++) {
-            const grab = this.bungees[i];
+        for (const grab of this.bungees) {
             if (!grab) {
                 continue;
             }
@@ -312,8 +307,7 @@ class GameSceneTouch extends GameSceneUpdate {
         const cameraAdjustedY = y + cameraPos.y;
 
         // drawings
-        for (let i = 0; i < this.drawings.length; i++) {
-            const drawing = this.drawings[i];
+        for (const [index, drawing] of this.drawings.entries()) {
             if (!drawing) {
                 continue;
             }
@@ -321,7 +315,7 @@ class GameSceneTouch extends GameSceneUpdate {
                 drawing.showDrawing();
 
                 // remove the drawing
-                this.drawings.splice(i, 1);
+                this.drawings.splice(index, 1);
                 break;
             }
         }
@@ -336,8 +330,7 @@ class GameSceneTouch extends GameSceneUpdate {
             this.gravityTouchDown = Constants.UNDEFINED;
         }
 
-        for (let i = 0; i < this.spikes.length; i++) {
-            const spike = this.spikes[i];
+        for (const spike of this.spikes) {
             if (!spike?.rotateButton) {
                 continue;
             }
@@ -349,8 +342,7 @@ class GameSceneTouch extends GameSceneUpdate {
             }
         }
 
-        for (let i = 0; i < this.rotatedCircles.length; i++) {
-            const r = this.rotatedCircles[i];
+        for (const r of this.rotatedCircles) {
             if (!r) {
                 continue;
             }
@@ -362,8 +354,7 @@ class GameSceneTouch extends GameSceneUpdate {
             }
         }
 
-        for (let i = 0; i < this.bungees.length; i++) {
-            const grab = this.bungees[i];
+        for (const grab of this.bungees) {
             if (!grab) {
                 continue;
             }
@@ -390,8 +381,7 @@ class GameSceneTouch extends GameSceneUpdate {
         const touch = new Vector(x, y);
         const startPos = this.startPos[touchIndex];
         if (startPos && startPos.distance(touch) > 10) {
-            for (let i = 0; i < this.pumps.length; i++) {
-                const pump = this.pumps[i];
+            for (const pump of this.pumps) {
                 if (!pump) {
                     continue;
                 }
@@ -407,8 +397,7 @@ class GameSceneTouch extends GameSceneUpdate {
 
         const cameraAdjustedTouch = new Vector(x + this.camera.pos.x, y + this.camera.pos.y);
 
-        for (let i = 0; i < this.rotatedCircles.length; i++) {
-            const r = this.rotatedCircles[i];
+        for (const r of this.rotatedCircles) {
             if (!r || !r.handle1 || !r.handle2) {
                 continue;
             }
@@ -442,8 +431,7 @@ class GameSceneTouch extends GameSceneUpdate {
                     r.soundPlaying = soundToPlay;
                 }
 
-                for (let i = 0; i < this.bungees.length; i++) {
-                    const g = this.bungees[i];
+                for (const g of this.bungees) {
                     if (!g) {
                         continue;
                     }
@@ -459,8 +447,7 @@ class GameSceneTouch extends GameSceneUpdate {
                     }
                 }
 
-                for (let i = 0; i < this.pumps.length; i++) {
-                    const g = this.pumps[i];
+                for (const g of this.pumps) {
                     if (!g) {
                         continue;
                     }
@@ -474,8 +461,7 @@ class GameSceneTouch extends GameSceneUpdate {
                     }
                 }
 
-                for (let i = 0; i < this.bubbles.length; i++) {
-                    const g = this.bubbles[i];
+                for (const g of this.bubbles) {
                     if (!g) {
                         continue;
                     }
@@ -514,8 +500,7 @@ class GameSceneTouch extends GameSceneUpdate {
             }
         }
 
-        for (let i = 0; i < this.bungees.length; i++) {
-            const grab = this.bungees[i];
+        for (const grab of this.bungees) {
             if (!grab) {
                 continue;
             }
@@ -569,8 +554,7 @@ class GameSceneTouch extends GameSceneUpdate {
             let ropeCuts = 0;
 
             currentCuts.push(fc);
-            for (let i = 0; i < currentCuts.length; i++) {
-                const fcc = currentCuts[i];
+            for (const fcc of currentCuts) {
                 if (!fcc) {
                     continue;
                 }
@@ -622,8 +606,7 @@ class GameSceneTouch extends GameSceneUpdate {
             this.gravityNormal ? ResourceId.SND_GRAVITY_OFF : ResourceId.SND_GRAVITY_ON
         );
 
-        for (let i = 0; i < this.earthAnims.length; i++) {
-            const earthImage = this.earthAnims[i];
+        for (const earthImage of this.earthAnims) {
             if (!earthImage) {
                 continue;
             }
@@ -636,8 +619,7 @@ class GameSceneTouch extends GameSceneUpdate {
     };
 
     override rotateAllSpikesWithId = (sid: number): void => {
-        for (let i = 0; i < this.spikes.length; i++) {
-            const spike = this.spikes[i];
+        for (const spike of this.spikes) {
             if (!spike) {
                 continue;
             }

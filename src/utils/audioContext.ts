@@ -36,7 +36,9 @@ export function resumeAudioContext() {
     const context = getAudioContext();
 
     if (context && context.state === "suspended" && typeof context.resume === "function") {
-        context.resume().catch(() => {});
+        context.resume().catch((error) => {
+            console.warn("Failed to resume AudioContext", error);
+        });
     }
 
     return context;

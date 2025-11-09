@@ -4,10 +4,6 @@ import resolution from "@/resolution";
 import Mover from "@/utils/Mover";
 
 class CTRGameObject extends GameObject {
-    constructor() {
-        super();
-    }
-
     override parseMover(item: {
         angle: number;
         path: string;

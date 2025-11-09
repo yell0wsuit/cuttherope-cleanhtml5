@@ -10,10 +10,6 @@ interface DrawImgOptions {
 }
 
 class TextImage extends ImageElement {
-    constructor() {
-        super();
-    }
-
     setText(fontId: number, text: string, width?: number, alignment?: number): void {
         const options: DrawImgOptions = {
             fontId,

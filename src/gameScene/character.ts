@@ -5,7 +5,7 @@ import type Timeline from "@/visual/Timeline";
 import GameSceneLoaders from "./loaders";
 
 class GameSceneCharacter extends GameSceneLoaders {
-    override onIdleOmNomKeyFrame(
+    protected override onIdleOmNomKeyFrame(
         _timeline: Timeline,
         _trackType: number,
         keyFrameIndex: number
@@ -35,7 +35,7 @@ class GameSceneCharacter extends GameSceneLoaders {
         }
     }
 
-    override onPaddingtonIdleKeyFrame(
+    protected override onPaddingtonIdleKeyFrame(
         _timeline: Timeline,
         _trackType: number,
         keyFrameIndex: number
@@ -62,7 +62,7 @@ class GameSceneCharacter extends GameSceneLoaders {
         }
     }
 
-    override playRegularIdleAfterPaddington(): void {
+    protected override playRegularIdleAfterPaddington(): void {
         if (this.target) {
             this.target.playTimeline(GameSceneConstants.CharAnimation.IDLE);
         }

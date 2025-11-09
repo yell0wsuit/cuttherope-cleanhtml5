@@ -8,10 +8,6 @@ class HorizontallyTiledImage extends ImageElement {
     offsets!: number[];
     align!: Alignment;
 
-    constructor() {
-        super();
-    }
-
     override initTexture(texture: Texture2D) {
         super.initTexture(texture);
         this.tiles = [0, 0, 0];

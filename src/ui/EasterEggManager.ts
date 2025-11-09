@@ -46,7 +46,9 @@ class EasterEggManager {
                 return Promise.resolve();
             }
             const animation = element.animate(keyframes, { fill: "forwards", ...options });
-            return animation.finished.catch(() => {});
+            return animation.finished.catch((error) => {
+                console.warn("Easter egg animation interrupted", error);
+            });
         };
         const fadeElementCustom = (
             element: HTMLElement | null,
@@ -74,7 +76,9 @@ class EasterEggManager {
                 fill: "forwards",
             });
             return animation.finished
-                .catch(() => {})
+                .catch((error) => {
+                    console.warn("Easter egg fade animation interrupted", error);
+                })
                 .then(() => {
                     if (to === 0 && display === "none") {
                         element.style.display = "none";

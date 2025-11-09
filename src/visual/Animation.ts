@@ -12,10 +12,6 @@ type ActionTypeValue = (typeof ActionType)[keyof typeof ActionType];
  * Animation element based on timeline
  */
 class Animation extends ImageElement {
-    constructor() {
-        super();
-    }
-
     addAnimationDelay(delay: number, loop: TimelineLoopType, start: number, end: number): number {
         const index = this.timelines.length;
         this.addAnimationEndpoints(index, delay, loop, start, end);

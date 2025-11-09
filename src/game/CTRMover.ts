@@ -3,10 +3,6 @@ import Mover from "@/utils/Mover";
 import Vector from "@/core/Vector";
 
 class CTRMover extends Mover {
-    constructor(pathCapacity: number, moveSpeed: number, rotateSpeed: number) {
-        super(pathCapacity, moveSpeed, rotateSpeed);
-    }
-
     setPathAndStart(path: string, startX: number, startY: number): void {
         const MOVER_SCALE = resolution.MOVER_SCALE;
 

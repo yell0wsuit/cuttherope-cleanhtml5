@@ -59,10 +59,9 @@ class DelayedDispatcher {
         callback: (...args: unknown[]) => void,
         param: unknown[] | null
     ): void {
-        for (let i = 0; i < this.dispatchers.length; i++) {
-            const dp = this.dispatchers[i]!;
+        for (const [index, dp] of this.dispatchers.entries()) {
             if (dp.object === object && dp.callback === callback && dp.param === param) {
-                this.dispatchers.splice(i, 1);
+                this.dispatchers.splice(index, 1);
                 return;
             }
         }
@@ -77,8 +76,7 @@ class DelayedDispatcher {
         // Make a shallow copy since dispatchers may be modified during iteration
         const currentDps = this.dispatchers.slice();
 
-        for (let i = 0; i < currentDps.length; i++) {
-            const dp = currentDps[i]!;
+        for (const dp of currentDps) {
             const dpIndex = this.dispatchers.indexOf(dp);
 
             // Skip if already removed

@@ -20,10 +20,6 @@ class ImageElement extends BaseElement {
     quadToDraw: number | undefined;
     override restoreCutTransparency = false;
 
-    constructor() {
-        super();
-    }
-
     initTexture(texture: Texture2D) {
         this.texture = texture;
         this.restoreCutTransparency = false;

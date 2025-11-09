@@ -57,7 +57,7 @@ type RestartStateValue =
 type CameraMoveValue =
     (typeof GameSceneConstants.CameraMove)[keyof typeof GameSceneConstants.CameraMove];
 
-class GameSceneInit extends BaseElement {
+abstract class GameSceneInit extends BaseElement {
     // Init methods imported from initGameScene folder
     initAnimations = initAnimations;
     initBackground = initBackground;
@@ -384,11 +384,9 @@ class GameSceneInit extends BaseElement {
         this.timeBonus = 0;
         this.starBonus = 0;
     }
-    // Placeholder methods implemented in subclasses
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected loadMap(_map: unknown): void {}
+    protected abstract loadMap(map: unknown): void;
 
-    protected playRegularIdleAfterPaddington(): void {}
+    protected abstract playRegularIdleAfterPaddington(): void;
 
     getCandyResourceId(): number {
         const boxType = edition.boxTypes?.[LevelState.pack];
