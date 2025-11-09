@@ -1,0 +1,98 @@
+{
+  "settings": [
+    {
+      "name": 0,
+      "width": 640,
+      "height": 480,
+      "gridSize": 32
+    },
+    {
+      "name": 1,
+      "ropePhysicsSpeed": 1,
+      "twoParts": false,
+      "special": 1
+    }
+  ],
+  "objects": [
+    {
+      "name": 2,
+      "x": 201,
+      "y": 254
+    },
+    {
+      "name": 52,
+      "x": 448,
+      "y": 259
+    },
+    {
+      "name": 100,
+      "x": 323,
+      "y": 256,
+      "length": 70,
+      "wheel": false,
+      "gun": false,
+      "radius": -1,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L"
+    },
+    {
+      "name": 54,
+      "x": 323,
+      "y": 378
+    },
+    {
+      "name": 100,
+      "x": 323,
+      "y": 258,
+      "length": 30,
+      "wheel": false,
+      "gun": false,
+      "radius": -1,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L",
+      "path": "RW190",
+      "hidePath": true,
+      "moveSpeed": 90
+    },
+    {
+      "name": 100,
+      "x": 324,
+      "y": 258,
+      "length": 100,
+      "wheel": false,
+      "gun": false,
+      "radius": 35,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L",
+      "path": "RC190",
+      "moveSpeed": 90
+    },
+    {
+      "name": 3,
+      "x": 324,
+      "y": 256,
+      "timeout": -1
+    },
+    {
+      "name": 3,
+      "x": 229,
+      "y": 345,
+      "timeout": -1
+    },
+    {
+      "name": 3,
+      "x": 413,
+      "y": 344,
+      "timeout": -1
+    }
+  ]
+}

@@ -1,0 +1,378 @@
+{
+  "settings": [
+    {
+      "name": 0,
+      "width": 640,
+      "height": 480,
+      "gridSize": 32
+    },
+    {
+      "name": 1,
+      "ropePhysicsSpeed": 1,
+      "twoParts": false,
+      "special": 1
+    }
+  ],
+  "objects": [
+    {
+      "name": 2,
+      "x": 319,
+      "y": 416
+    },
+    {
+      "name": 100,
+      "x": 221,
+      "y": 95,
+      "length": 100,
+      "wheel": false,
+      "gun": false,
+      "radius": -1,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L",
+      "path": "200,0,",
+      "moveSpeed": 50
+    },
+    {
+      "name": 100,
+      "x": 320,
+      "y": 272,
+      "length": 60,
+      "wheel": false,
+      "gun": false,
+      "radius": -1,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L"
+    },
+    {
+      "name": 52,
+      "x": 271,
+      "y": 224
+    },
+    {
+      "name": 3,
+      "x": 320,
+      "y": 360,
+      "timeout": -1
+    },
+    {
+      "name": 3,
+      "x": 230,
+      "y": 325,
+      "timeout": -1
+    },
+    {
+      "name": 3,
+      "x": 415,
+      "y": 328,
+      "timeout": -1
+    },
+    {
+      "name": 4,
+      "x": 20,
+      "y": 118,
+      "locale": "en",
+      "text": "Slide across to cut the rope",
+      "width": 130
+    },
+    {
+      "name": 4,
+      "x": 392,
+      "y": 372,
+      "locale": "en",
+      "text": "Deliver candy to Om Nom",
+      "width": 130
+    },
+    {
+      "name": 5,
+      "x": 214,
+      "y": 158,
+      "locale": "en",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 8,
+      "x": 387,
+      "y": 423,
+      "locale": "en",
+      "angle": 30,
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 5,
+      "x": 266,
+      "y": 158,
+      "locale": "en",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 5,
+      "x": 318,
+      "y": 158,
+      "locale": "en",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 5,
+      "x": 370,
+      "y": 158,
+      "locale": "en",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 5,
+      "x": 422,
+      "y": 158,
+      "locale": "en",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 14,
+      "x": 250,
+      "y": 188,
+      "locale": "en",
+      "moveSpeed": 100,
+      "rotateSpeed": 100,
+      "special": 2
+    }
+  ],
+  "ru": [
+    {
+      "name": 14,
+      "x": 250,
+      "y": 189,
+      "locale": "ru",
+      "moveSpeed": 100,
+      "rotateSpeed": 100,
+      "special": 2
+    },
+    {
+      "name": 5,
+      "x": 266,
+      "y": 159,
+      "locale": "ru",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 5,
+      "x": 214,
+      "y": 159,
+      "locale": "ru",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 5,
+      "x": 318,
+      "y": 159,
+      "locale": "ru",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 5,
+      "x": 370,
+      "y": 159,
+      "locale": "ru",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 5,
+      "x": 422,
+      "y": 159,
+      "locale": "ru",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 4,
+      "x": 5,
+      "y": 105,
+      "locale": "ru",
+      "text": "Проведите или нажмите курсором, чтобы перерезать веревку",
+      "width": 180
+    },
+    {
+      "name": 8,
+      "x": 387,
+      "y": 424,
+      "locale": "ru",
+      "angle": 30,
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 4,
+      "x": 421,
+      "y": 357,
+      "locale": "ru",
+      "text": "Доставьте леденец Ам Няму",
+      "width": 80
+    }
+  ],
+  "fr": [
+    {
+      "name": 14,
+      "x": 249,
+      "y": 184,
+      "locale": "fr",
+      "moveSpeed": 100,
+      "rotateSpeed": 100,
+      "special": 2
+    },
+    {
+      "name": 5,
+      "x": 266,
+      "y": 159,
+      "locale": "fr",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 5,
+      "x": 214,
+      "y": 159,
+      "locale": "fr",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 5,
+      "x": 318,
+      "y": 159,
+      "locale": "fr",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 5,
+      "x": 370,
+      "y": 159,
+      "locale": "fr",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 5,
+      "x": 422,
+      "y": 159,
+      "locale": "fr",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 4,
+      "x": 52,
+      "y": 108,
+      "locale": "fr",
+      "text": "Clique ou fais glisser pour couper la corde",
+      "width": 130
+    },
+    {
+      "name": 8,
+      "x": 387,
+      "y": 424,
+      "locale": "fr",
+      "angle": 30,
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 4,
+      "x": 411,
+      "y": 367,
+      "locale": "fr",
+      "text": "Donne un bonbon à Om Nom",
+      "width": 120
+    }
+  ],
+  "de": [
+    {
+      "name": 14,
+      "x": 250,
+      "y": 186,
+      "locale": "de",
+      "moveSpeed": 100,
+      "rotateSpeed": 100,
+      "special": 2
+    },
+    {
+      "name": 5,
+      "x": 266,
+      "y": 159,
+      "locale": "de",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 5,
+      "x": 214,
+      "y": 159,
+      "locale": "de",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 5,
+      "x": 318,
+      "y": 159,
+      "locale": "de",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 5,
+      "x": 370,
+      "y": 159,
+      "locale": "de",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 5,
+      "x": 422,
+      "y": 159,
+      "locale": "de",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 4,
+      "x": 26,
+      "y": 105,
+      "locale": "de",
+      "text": "Klicke oder ziehe, um das Seil zu schneiden",
+      "width": 160
+    },
+    {
+      "name": 8,
+      "x": 387,
+      "y": 424,
+      "locale": "de",
+      "angle": 30,
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 4,
+      "x": 410,
+      "y": 360,
+      "locale": "de",
+      "text": "Versorg Om Nom mit Bonbons",
+      "width": 100
+    }
+  ]
+}

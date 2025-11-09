@@ -1,0 +1,153 @@
+{
+  "settings": [
+    {
+      "name": 0,
+      "width": 640,
+      "height": 480,
+      "gridSize": 32
+    },
+    {
+      "name": 1,
+      "ropePhysicsSpeed": 1,
+      "twoParts": false,
+      "special": 1
+    }
+  ],
+  "objects": [
+    {
+      "name": 2,
+      "x": 86,
+      "y": 386
+    },
+    {
+      "name": 52,
+      "x": 319,
+      "y": 216
+    },
+    {
+      "name": 3,
+      "x": 323,
+      "y": 47,
+      "timeout": -1
+    },
+    {
+      "name": 3,
+      "x": 86,
+      "y": 322,
+      "timeout": -1
+    },
+    {
+      "name": 3,
+      "x": 322,
+      "y": 110,
+      "timeout": -1
+    },
+    {
+      "name": 100,
+      "x": 226,
+      "y": 127,
+      "length": 100,
+      "wheel": false,
+      "gun": false,
+      "radius": -1,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L"
+    },
+    {
+      "name": 100,
+      "x": 419,
+      "y": 129,
+      "length": 100,
+      "wheel": false,
+      "gun": false,
+      "radius": -1,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L"
+    },
+    {
+      "name": 53,
+      "x": 434,
+      "y": 362
+    },
+    {
+      "name": 4,
+      "x": 495,
+      "y": 283,
+      "locale": "en",
+      "text": "Toggle the gravity with this button",
+      "width": 140
+    },
+    {
+      "name": 8,
+      "x": 502,
+      "y": 381,
+      "locale": "en",
+      "angle": 35,
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    }
+  ],
+  "ru": [
+    {
+      "name": 8,
+      "x": 502,
+      "y": 381,
+      "locale": "ru",
+      "angle": 40,
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 4,
+      "x": 512,
+      "y": 292,
+      "locale": "ru",
+      "text": "Переключайте гравитацию с помощью этой кнопки",
+      "width": 140
+    }
+  ],
+  "fr": [
+    {
+      "name": 4,
+      "x": 481,
+      "y": 312,
+      "locale": "fr",
+      "text": "Active et désactive la gravité avec ce bouton",
+      "width": 200
+    },
+    {
+      "name": 8,
+      "x": 502,
+      "y": 381,
+      "locale": "fr",
+      "angle": 35,
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    }
+  ],
+  "de": [
+    {
+      "name": 8,
+      "x": 501,
+      "y": 389,
+      "locale": "de",
+      "angle": 55,
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    },
+    {
+      "name": 4,
+      "x": 502,
+      "y": 306,
+      "locale": "de",
+      "text": "Hier kannst Du die Schwerkraft ein oder aus schalten",
+      "width": 140
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "settings": [
+    {
+      "name": 0,
+      "width": 640,
+      "height": 480,
+      "gridSize": 32
+    },
+    {
+      "name": 1,
+      "ropePhysicsSpeed": 1,
+      "twoParts": false,
+      "special": 1
+    }
+  ],
+  "objects": [
+    {
+      "name": 2,
+      "x": 337,
+      "y": 279
+    },
+    {
+      "name": 52,
+      "x": 434,
+      "y": 272
+    },
+    {
+      "name": 100,
+      "x": 495,
+      "y": 142,
+      "length": 100,
+      "wheel": false,
+      "gun": false,
+      "radius": -1,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L",
+      "path": "RC100",
+      "moveSpeed": 50
+    },
+    {
+      "name": 100,
+      "x": 176,
+      "y": 143,
+      "length": 150,
+      "wheel": false,
+      "gun": false,
+      "radius": -1,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L",
+      "path": "RC100",
+      "moveSpeed": 50
+    },
+    {
+      "name": 100,
+      "x": 174,
+      "y": 366,
+      "length": 100,
+      "wheel": false,
+      "gun": false,
+      "radius": -1,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L",
+      "path": "RC100",
+      "moveSpeed": 50
+    },
+    {
+      "name": 100,
+      "x": 496,
+      "y": 366,
+      "length": 150,
+      "wheel": false,
+      "gun": false,
+      "radius": -1,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L",
+      "path": "RC100",
+      "moveSpeed": 50
+    },
+    {
+      "name": 3,
+      "x": 335,
+      "y": 424,
+      "timeout": 3
+    },
+    {
+      "name": 3,
+      "x": 336,
+      "y": 150,
+      "timeout": -1
+    },
+    {
+      "name": 3,
+      "x": 335,
+      "y": 184,
+      "timeout": -1
+    },
+    {
+      "name": 4,
+      "x": 210,
+      "y": 325,
+      "locale": "en",
+      "text": "Some stars require fast actions to be collected",
+      "width": 250
+    },
+    {
+      "name": 13,
+      "x": 200,
+      "y": 365,
+      "locale": "en",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    }
+  ],
+  "ru": [
+    {
+      "name": 4,
+      "x": 210,
+      "y": 325,
+      "locale": "ru",
+      "text": "Некоторые звезды пропадают если вы не достаточно быстры",
+      "width": 260
+    },
+    {
+      "name": 13,
+      "x": 200,
+      "y": 365,
+      "locale": "ru",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    }
+  ],
+  "fr": [
+    {
+      "name": 4,
+      "x": 210,
+      "y": 325,
+      "locale": "fr",
+      "text": "Il est nécessaire d'agir rapidement pour collecter certaines étoiles",
+      "width": 280
+    },
+    {
+      "name": 13,
+      "x": 190,
+      "y": 365,
+      "locale": "fr",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    }
+  ],
+  "de": [
+    {
+      "name": 4,
+      "x": 210,
+      "y": 325,
+      "locale": "de",
+      "text": "Bei einigen Sternchen musst Du beim Einsammeln schnell sein",
+      "width": 250
+    },
+    {
+      "name": 13,
+      "x": 190,
+      "y": 365,
+      "locale": "de",
+      "moveSpeed": 100,
+      "rotateSpeed": 100
+    }
+  ]
+}

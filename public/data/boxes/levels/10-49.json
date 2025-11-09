@@ -1,0 +1,157 @@
+{
+  "settings": [
+    {
+      "name": 0,
+      "gridSize": 32,
+      "width": 640,
+      "height": 480
+    },
+    {
+      "name": 1,
+      "special": 1,
+      "ropePhysicsSpeed": 1,
+      "twoParts": false
+    }
+  ],
+  "objects": [
+    {
+      "name": 2,
+      "x": 287,
+      "y": 421
+    },
+    {
+      "name": 52,
+      "x": 130,
+      "y": 230
+    },
+    {
+      "name": 100,
+      "x": 63,
+      "y": 154,
+      "length": 70,
+      "wheel": false,
+      "gun": false,
+      "radius": -1,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L"
+    },
+    {
+      "name": 59,
+      "x": 540,
+      "y": 237,
+      "angle": 90,
+      "size": 3,
+      "toggled": false
+    },
+    {
+      "name": 59,
+      "x": 484,
+      "y": 133,
+      "angle": 30,
+      "size": 3,
+      "toggled": false
+    },
+    {
+      "name": 59,
+      "x": 483,
+      "y": 342,
+      "angle": -30,
+      "size": 3,
+      "toggled": false
+    },
+    {
+      "name": 100,
+      "x": 426,
+      "y": 234,
+      "length": 40,
+      "wheel": false,
+      "gun": false,
+      "radius": 40,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L",
+      "path": "RC70",
+      "moveSpeed": 35
+    },
+    {
+      "name": 100,
+      "x": 426,
+      "y": 234,
+      "length": 40,
+      "wheel": false,
+      "gun": false,
+      "radius": 40,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L",
+      "path": "RW150",
+      "moveSpeed": 70
+    },
+    {
+      "name": 3,
+      "x": 386,
+      "y": 205,
+      "path": "RW10",
+      "moveSpeed": 23,
+      "timeout": -1
+    },
+    {
+      "name": 3,
+      "x": 426,
+      "y": 280,
+      "path": "RW10",
+      "moveSpeed": 20,
+      "timeout": -1
+    },
+    {
+      "name": 3,
+      "x": 466,
+      "y": 212,
+      "path": "RW10",
+      "moveSpeed": 26,
+      "timeout": -1
+    },
+    {
+      "name": 54,
+      "x": 250,
+      "y": 231
+    },
+    {
+      "name": 100,
+      "x": 197,
+      "y": 154,
+      "length": 70,
+      "wheel": false,
+      "gun": false,
+      "radius": -1,
+      "moveLength": -1,
+      "moveVertical": false,
+      "moveOffset": 0,
+      "spider": false,
+      "part": "L"
+    },
+    {
+      "name": 58,
+      "x": 382,
+      "y": 123,
+      "angle": -30,
+      "size": 2,
+      "toggled": false
+    },
+    {
+      "name": 58,
+      "x": 376,
+      "y": 351,
+      "angle": 30,
+      "size": 2,
+      "toggled": false
+    }
+  ]
+}
