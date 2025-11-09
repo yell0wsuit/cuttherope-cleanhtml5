@@ -9,7 +9,9 @@
         "preview": "vite preview",
         "typecheck": "tsc --noEmit",
         "format": "prettier --write .",
-        "format:check": "prettier --check ."
+        "format:check": "prettier --check .",
+        "lint": "eslint . --ext .ts",
+        "lint:fix": "eslint . --ext .ts --fix"
     },
     "devDependencies": {
         "@eslint/js": "^9.39.1",
