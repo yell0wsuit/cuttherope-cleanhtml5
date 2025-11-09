@@ -17,7 +17,7 @@ class RotateableMultiParticles extends MultiParticles {
         this.drawer.rotationPositions = [];
     }
 
-    initParticle(particle: Particle) {
+    override initParticle(particle: Particle) {
         super.initParticle(particle);
         particle.angle = 0;
         particle.deltaAngle = Radians.fromDegrees(
@@ -40,7 +40,7 @@ class RotateableMultiParticles extends MultiParticles {
         v.y = ny + cy;
     }
 
-    updateParticle(particle: Particle, index: number, delta: number) {
+    override updateParticle(particle: Particle, index: number, delta: number) {
         super.updateParticle(particle, index, delta);
         particle.angle += particle.deltaAngle * delta;
 
@@ -52,7 +52,7 @@ class RotateableMultiParticles extends MultiParticles {
         }
     }
 
-    removeParticle(index: number) {
+    override removeParticle(index: number) {
         this.drawer.rotationAngles.splice(index, 1);
         this.drawer.rotationPositions.splice(index, 1);
         super.removeParticle(index);

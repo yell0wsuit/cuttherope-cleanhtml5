@@ -121,7 +121,7 @@ class Star extends CTRGameObject {
         this.addChild(sr);
     }
 
-    update(delta: number) {
+    override update(delta: number) {
         if (this.timeout > 0) {
             if (this.time > 0) {
                 this.time = Mover.moveToTarget(this.time, 0, 1, delta);
@@ -130,7 +130,7 @@ class Star extends CTRGameObject {
         super.update(delta);
     }
 
-    draw() {
+    override draw() {
         if (this.timedAnim) {
             this.timedAnim.draw();
         }

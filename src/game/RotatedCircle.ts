@@ -48,7 +48,6 @@ class RotatedCircle extends BaseElement {
     vinilActiveControllerL: ImageElement;
     vinilActiveControllerR: ImageElement;
     vinil: ImageElement;
-    passColorToChilds: boolean;
     vinilCenter: ImageElement;
     vinilHighlightL: ImageElement;
     vinilHighlightR: ImageElement;
@@ -227,7 +226,7 @@ class RotatedCircle extends BaseElement {
         return false;
     }
 
-    draw() {
+    override draw() {
         const ctx = Canvas.context;
         if (this.isRightControllerActive() || this.isLeftControllerActive()) {
             const lineWidth = (ACTIVE_CIRCLE_WIDTH + resolution.PM) * this.vinilControllerL.scaleX;

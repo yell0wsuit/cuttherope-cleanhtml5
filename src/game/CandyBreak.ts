@@ -34,22 +34,6 @@ type CandyBreakOptions = {
 
 class CandyBreak extends RotateableMultiParticles {
     pieceFrameIndices: number[];
-    duration: number;
-    angle: number;
-    angleVar: number;
-    speed: number;
-    speedVar: number;
-    radialAccel: number;
-    radialAccelVar: number;
-    tangentialAccel: number;
-    tangentialAccelVar: number;
-    life: number;
-    lifeVar: number;
-    size: number;
-    sizeVar: number;
-    emissionRate: number;
-    rotateSpeed: number;
-    rotateSpeedVar: number;
 
     constructor(numParticles: number, texture: Texture2D, options: CandyBreakOptions = {}) {
         super(numParticles, texture);
@@ -118,7 +102,7 @@ class CandyBreak extends RotateableMultiParticles {
         this.blendAdditive = false;
     }
 
-    initParticle(particle: Particle) {
+    override initParticle(particle: Particle) {
         super.initParticle(particle);
 
         const texture = this.imageGrid;

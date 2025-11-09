@@ -12,7 +12,7 @@ class HorizontallyTiledImage extends ImageElement {
         super();
     }
 
-    initTexture(texture: Texture2D) {
+    override initTexture(texture: Texture2D) {
         super.initTexture(texture);
         this.tiles = [0, 0, 0];
         this.offsets = [0, 0, 0];
@@ -54,7 +54,7 @@ class HorizontallyTiledImage extends ImageElement {
         this.offsets[2] = Math.trunc((this.height - h3) / 2.0);
     }
 
-    draw() {
+    override draw() {
         this.preDraw();
 
         if (!this.tiles || this.tiles.length === 0) {

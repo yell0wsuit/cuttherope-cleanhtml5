@@ -233,7 +233,7 @@ class Particles extends BaseElement {
         particle.size = this.size + this.sizeVar * MathHelper.randomMinus1to1();
     }
 
-    update(delta: number) {
+    override update(delta: number) {
         super.update(delta);
         if (this.onFinished) {
             if (this.particles.length === 0 && !this.active) {
@@ -343,7 +343,7 @@ class Particles extends BaseElement {
         this.emitCounter = 0;
     }
 
-    draw() {
+    override draw() {
         this.preDraw();
 
         // only draw if the image is non-transparent

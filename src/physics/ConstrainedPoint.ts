@@ -32,7 +32,7 @@ class ConstrainedPoint extends MaterialPoint {
     /**
      * Resets the point by clearing previous position and removing constraints
      */
-    resetAll(): void {
+    override resetAll(): void {
         super.resetAll();
         this.prevPos.x = Constants.INT_MAX;
         this.prevPos.y = Constants.INT_MAX;
@@ -146,7 +146,7 @@ class ConstrainedPoint extends MaterialPoint {
         return Constants.UNDEFINED;
     }
 
-    update(delta: number): void {
+    override update(delta: number): void {
         const totalForce = this.totalForce;
         const currentGravity = Gravity.current;
 

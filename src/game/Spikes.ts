@@ -229,7 +229,7 @@ class Spikes extends CTRGameObject {
         SoundMgr.stopLoopedSoundInstance(ResourceId.SND_ELECTRIC, this.electroInstanceKey);
     }
 
-    update(delta: number) {
+    override update(delta: number) {
         super.update(delta);
 
         if (this.mover || this.shouldUpdateRotation) {
@@ -304,7 +304,7 @@ class Spikes extends CTRGameObject {
         }
     }
 
-    drawBB() {
+    override drawBB() {
         const ctx = Canvas.context;
         if (ctx) {
             ctx.beginPath();

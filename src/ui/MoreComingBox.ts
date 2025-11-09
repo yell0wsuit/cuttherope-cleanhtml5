@@ -1,7 +1,7 @@
 import Box from "@/ui/Box";
 
 class MoreComingBox extends Box {
-    includeBoxNumberInTitle: boolean;
+    override includeBoxNumberInTitle: boolean;
 
     constructor(
         boxIndex: number,
@@ -14,16 +14,16 @@ class MoreComingBox extends Box {
         this.includeBoxNumberInTitle = false;
     }
 
-    isRequired = (): boolean => {
+    override isRequired = (): boolean => {
         // not a box required for game completion
         return false;
     };
 
-    isGameBox = (): boolean => {
+    override isGameBox = (): boolean => {
         return false;
     };
 
-    isClickable = (): boolean => {
+    override isClickable = (): boolean => {
         return false;
     };
 }

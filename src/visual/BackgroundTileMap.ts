@@ -9,14 +9,14 @@ class BackgroundTileMap extends TileMap {
         this.lastCameraPos = Vector.newUndefined();
     }
 
-    updateWithCameraPos(pos: Vector) {
+    override updateWithCameraPos(pos: Vector) {
         if (!this.lastCameraPos.equals(pos)) {
             super.updateWithCameraPos(pos);
             this.lastCameraPos.copyFrom(pos);
         }
     }
 
-    draw() {
+    override draw() {
         /* seems like this should be taken care of in BaseElement.preDraw?
 
              let rotationOffsetX = this.back.drawX + (this.back.width >> 1) + this.back.rotationCenterX,

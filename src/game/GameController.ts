@@ -126,7 +126,7 @@ class GameController extends ViewController {
         this.activate();
     }
 
-    mouseDown(x: number, y: number): boolean {
+    override mouseDown(x: number, y: number): boolean {
         const handledByBase = super.mouseDown(x, y);
         if (handledByBase) {
             return true;
@@ -146,7 +146,7 @@ class GameController extends ViewController {
         return false;
     }
 
-    mouseDragged(x: number, y: number): boolean {
+    override mouseDragged(x: number, y: number): boolean {
         const handledByBase = super.mouseDragged(x, y);
         if (handledByBase) {
             return true;
@@ -166,7 +166,7 @@ class GameController extends ViewController {
         return false;
     }
 
-    mouseMoved(x: number, y: number): boolean {
+    override mouseMoved(x: number, y: number): boolean {
         const handledByBase = super.mouseMoved(x, y);
         if (handledByBase) {
             return true;
@@ -186,7 +186,7 @@ class GameController extends ViewController {
         return false;
     }
 
-    mouseUp(x: number, y: number): boolean {
+    override mouseUp(x: number, y: number): boolean {
         const handledByBase = super.mouseUp(x, y);
         if (handledByBase) {
             return true;
@@ -206,7 +206,7 @@ class GameController extends ViewController {
         return false;
     }
 
-    doubleClick(x: number, y: number): boolean {
+    override doubleClick(x: number, y: number): boolean {
         const handledByBase = super.doubleClick(x, y);
         if (handledByBase) {
             return true;

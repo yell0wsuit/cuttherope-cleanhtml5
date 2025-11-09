@@ -18,7 +18,7 @@ class MultiParticles extends Particles {
         this.height = resolution.CANVAS_HEIGHT;
     }
 
-    initParticle(particle: Particle) {
+    override initParticle(particle: Particle) {
         const texture = this.imageGrid;
         const n = MathHelper.randomRange(0, texture.rects.length - 1);
         const tquad = texture.rects[n];
@@ -34,7 +34,7 @@ class MultiParticles extends Particles {
         particle.height = tquad.h * particle.size;
     }
 
-    updateParticle(particle: Particle, index: number, delta: number) {
+    override updateParticle(particle: Particle, index: number, delta: number) {
         // update the current position
         this.drawer.vertices[index] = new Rectangle(
             particle.pos.x - particle.width / 2,
@@ -50,12 +50,12 @@ class MultiParticles extends Particles {
         this.colors[index] = particle.color;
     }
 
-    removeParticle(index: number) {
+    override removeParticle(index: number) {
         this.drawer.removeQuads(index);
         super.removeParticle(index);
     }
 
-    draw() {
+    override draw() {
         this.preDraw();
 
         /* for debugging rotation: draw a line from origin at 0 degrees

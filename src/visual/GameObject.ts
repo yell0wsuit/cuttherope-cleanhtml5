@@ -24,7 +24,7 @@ class GameObject extends Animation {
         this.topLeftCalculated = false;
     }
 
-    initTexture(texture: Texture2D) {
+    override initTexture(texture: Texture2D) {
         super.initTexture(texture);
         this.bb = new Rectangle(0, 0, this.width, this.height);
         this.rbb = new Quad2D(this.bb.x, this.bb.y, this.bb.w, this.bb.h);
@@ -77,7 +77,7 @@ class GameObject extends Animation {
         this.drawPosIncrement = 0.0001;
     }
 
-    update(delta: number) {
+    override update(delta: number) {
         super.update(delta);
 
         if (!this.topLeftCalculated) {
@@ -136,7 +136,7 @@ class GameObject extends Animation {
         }
     }
 
-    drawBB() {
+    override drawBB() {
         const ctx = Canvas.context;
         const drawX = this.drawX;
         const drawY = this.drawY;

@@ -457,7 +457,7 @@ class GameSceneInit extends BaseElement {
 
         return false;
     }
-    show(): void {
+    override show(): void {
         this.initAnimations();
 
         if (!this.initBackground()) {

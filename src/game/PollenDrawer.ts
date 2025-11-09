@@ -142,7 +142,7 @@ class PollenDrawer extends BaseElement {
         }
     }
 
-    update(delta: number) {
+    override update(delta: number) {
         super.update(delta);
         this.drawer.update(delta);
 
@@ -193,7 +193,7 @@ class PollenDrawer extends BaseElement {
         }
     }
 
-    draw() {
+    override draw() {
         this.preDraw();
         this.drawer.draw();
         this.postDraw();

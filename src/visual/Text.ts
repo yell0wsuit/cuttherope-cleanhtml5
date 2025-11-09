@@ -198,7 +198,7 @@ class Text extends BaseElement {
         }
     }
 
-    draw() {
+    override draw() {
         this.preDraw();
 
         // only draw if the image is non-transparent

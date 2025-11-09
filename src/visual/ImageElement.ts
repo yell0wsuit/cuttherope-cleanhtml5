@@ -18,7 +18,7 @@ import type { ActionData } from "@/visual/Action";
 class ImageElement extends BaseElement {
     texture!: Texture2D;
     quadToDraw: number | undefined;
-    restoreCutTransparency = false;
+    override restoreCutTransparency = false;
 
     constructor() {
         super();
@@ -48,7 +48,7 @@ class ImageElement extends BaseElement {
         return texture;
     }
 
-    initTextureWithId(resId: number) {
+    override initTextureWithId(resId: number) {
         this.resId = resId;
         this.initTexture(this.getTexture(resId));
     }
@@ -71,7 +71,7 @@ class ImageElement extends BaseElement {
         this.height = this.texture.imageHeight;
     }
 
-    doRestoreCutTransparency() {
+    override doRestoreCutTransparency() {
         if (this.texture.preCutSize.x !== Vector.undefined.x) {
             this.restoreCutTransparency = true;
             this.width = this.texture.preCutSize.x;
@@ -79,7 +79,7 @@ class ImageElement extends BaseElement {
         }
     }
 
-    draw() {
+    override draw() {
         this.preDraw();
 
         // only draw if the image is non-transparent
@@ -251,7 +251,7 @@ class ImageElement extends BaseElement {
         return false;
     }
 
-    handleAction(actionData: ActionData): boolean {
+    override handleAction(actionData: ActionData): boolean {
         if (super.handleAction(actionData)) {
             return true;
         }

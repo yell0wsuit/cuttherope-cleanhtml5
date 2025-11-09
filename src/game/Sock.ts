@@ -99,7 +99,7 @@ class Sock extends CTRGameObject {
         this.b2.rotateAround(this.angle, this.x, this.y);
     }
 
-    draw() {
+    override draw() {
         super.draw();
 
         // Hide light after animation completes
@@ -112,7 +112,7 @@ class Sock extends CTRGameObject {
         }
     }
 
-    drawBB() {
+    override drawBB() {
         // DEBUG: draw bounding lines for transport area
         /*if (false) {
             const ctx = Canvas.context;
@@ -134,7 +134,7 @@ class Sock extends CTRGameObject {
         }*/
     }
 
-    update(delta: number) {
+    override update(delta: number) {
         super.update(delta);
         if (this.mover) {
             this.updateRotation();

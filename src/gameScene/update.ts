@@ -144,7 +144,7 @@ class GameSceneUpdate extends GameSceneCharacter {
         }
     }
 
-    update(delta: number): void {
+    override update(delta: number): void {
         const sharedState: GameSystemSharedState = {};
 
         this.pluginManager.beforeUpdate(delta, sharedState);

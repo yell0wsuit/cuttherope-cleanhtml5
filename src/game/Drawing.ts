@@ -5,7 +5,6 @@ import PubSub from "@/utils/PubSub";
 class Drawing extends GameObject {
     ingame: boolean;
     drawingIndex: number;
-    passTransformationsToChilds: boolean;
 
     constructor(hiddenId: number, drawingIndex: number) {
         super();

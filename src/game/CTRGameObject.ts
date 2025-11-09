@@ -8,7 +8,12 @@ class CTRGameObject extends GameObject {
         super();
     }
 
-    parseMover(item: { angle: number; path: string; moveSpeed: number; rotateSpeed: number }) {
+    override parseMover(item: {
+        angle: number;
+        path: string;
+        moveSpeed: number;
+        rotateSpeed: number;
+    }) {
         this.rotation = item.angle || 0;
 
         const path = item.path;

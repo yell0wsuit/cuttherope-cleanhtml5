@@ -47,7 +47,7 @@ class GameSceneLoaders extends GameSceneInit {
     loadBouncer = loadBouncer;
     loadTarget = loadTarget;
 
-    loadMap(map: MapData | null | undefined): void {
+    override loadMap(map: MapData | null | undefined): void {
         if (!map) {
             return;
         }

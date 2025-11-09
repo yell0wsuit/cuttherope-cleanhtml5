@@ -232,7 +232,7 @@ class Bungee extends ConstraintSystem {
         }
     }
 
-    update(delta: number) {
+    override update(delta: number) {
         if (this.cutTime > 0) {
             this.cutTime = Mover.moveToTarget(this.cutTime, 0, 1, delta);
             if (this.cutTime < CUT_DISSAPPEAR_TIMEOUT - WHITE_TIMEOUT && this.forceWhite) {

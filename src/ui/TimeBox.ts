@@ -117,7 +117,7 @@ class TimeBox extends Box {
         this.dateImg = null;
     }
 
-    isClickable = (): boolean => {
+    override isClickable = (): boolean => {
         return !this.isTimeLocked && !this.isBkCodeLocked;
     };
 
@@ -142,7 +142,7 @@ class TimeBox extends Box {
         }
     };
 
-    render = (ctx: CanvasRenderingContext2D, omnomoffset: number | null): void => {
+    override render = (ctx: CanvasRenderingContext2D, omnomoffset: number | null): void => {
         const locked = this.islocked || this.isTimeLocked || this.isBkCodeLocked;
 
         // draw the base box image

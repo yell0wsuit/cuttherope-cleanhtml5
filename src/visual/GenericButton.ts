@@ -112,7 +112,7 @@ class GenericButton extends BaseElement {
         }
     }
 
-    onTouchDown(tx: number, ty: number): boolean {
+    override onTouchDown(tx: number, ty: number): boolean {
         super.onTouchDown(tx, ty);
 
         if (this.state === GenericButton.StateType.UP) {
@@ -125,7 +125,7 @@ class GenericButton extends BaseElement {
         return false;
     }
 
-    onTouchUp(tx: number, ty: number): boolean {
+    override onTouchUp(tx: number, ty: number): boolean {
         super.onTouchUp(tx, ty);
 
         if (this.state === GenericButton.StateType.DOWN) {
@@ -141,7 +141,7 @@ class GenericButton extends BaseElement {
         return false;
     }
 
-    onTouchMove(tx: number, ty: number): boolean {
+    override onTouchMove(tx: number, ty: number): boolean {
         super.onTouchMove(tx, ty);
 
         if (this.state === GenericButton.StateType.DOWN) {

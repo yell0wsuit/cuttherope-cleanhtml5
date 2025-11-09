@@ -355,7 +355,7 @@ class TileMap extends BaseElement {
         }
     }
 
-    draw() {
+    override draw() {
         this.preDraw();
         for (let i = 0, len = this.drawers.length; i < len; i++) {
             const drawer = this.drawers[i];

@@ -206,7 +206,7 @@ class Grab extends CTRGameObject {
         this.lastWheelTouch.copyFrom(v);
     }
 
-    update(delta: number) {
+    override update(delta: number) {
         super.update(delta);
 
         if (this.launcher && this.rope) {
@@ -427,13 +427,13 @@ class Grab extends CTRGameObject {
         mainCtx.drawImage(circleCnv, x - radius - 2, y - radius - 2);
     }
 
-    drawBB() {
+    override drawBB() {
         if (this.wheel) {
             this.drawGrabCircle(this.x, this.y, resolution.GRAB_WHEEL_RADIUS, RGBAColor.red);
         }
     }
 
-    draw() {
+    override draw() {
         if (this.invisible) return;
 
         // NOTE: we do pre-draw when drawing the back so the position

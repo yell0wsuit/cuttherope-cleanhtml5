@@ -13,12 +13,6 @@ const IMG_OBJ_PUMP_particle_2 = 7;
 const IMG_OBJ_PUMP_particle_3 = 8;
 
 class PumpDirt extends MultiParticles {
-    angle: number;
-    angleVar: number;
-    speed: number;
-    life: number;
-    size: number;
-    emissionRate: number;
     additive: boolean;
 
     constructor(numParticles: number, texture: Texture2D, angle: number) {
@@ -52,7 +46,7 @@ class PumpDirt extends MultiParticles {
         this.additive = true;
     }
 
-    initParticle(particle: Particle) {
+    override initParticle(particle: Particle) {
         super.initParticle(particle);
 
         const texture = this.imageGrid;
@@ -69,7 +63,7 @@ class PumpDirt extends MultiParticles {
         particle.height = particleSize;
     }
 
-    updateParticleLocation(
+    override updateParticleLocation(
         p: { dir: Vector; pos: { add: (arg0: Vector) => void } },
         delta: number
     ) {

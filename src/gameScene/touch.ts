@@ -26,12 +26,12 @@ class GameSceneTouch extends GameSceneUpdate {
     /**
      * Number of ropes cut in quick succession (initialized in parent class)
      */
-    ropesCutAtOnce: number = 0;
+    // ropesCutAtOnce: number = 0;
 
     /**
      * Timer for tracking concurrent rope cuts (initialized in parent class)
      */
-    ropesAtOnceTimer: number = 0;
+    // ropesAtOnceTimer: number = 0;
 
     overOmNom = false;
 
@@ -615,7 +615,7 @@ class GameSceneTouch extends GameSceneUpdate {
         this.slastTouch.y = y;
         return true;
     }
-    onButtonPressed = (_id: number): void => {
+    override onButtonPressed = (_id: number): void => {
         Gravity.toggle();
         this.gravityNormal = Gravity.isNormal();
         SoundMgr.playSound(
@@ -635,7 +635,7 @@ class GameSceneTouch extends GameSceneUpdate {
         }
     };
 
-    rotateAllSpikesWithId = (sid: number): void => {
+    override rotateAllSpikesWithId = (sid: number): void => {
         for (let i = 0; i < this.spikes.length; i++) {
             const spike = this.spikes[i];
             if (!spike) {

@@ -17,7 +17,7 @@ class AnimationPool extends BaseElement {
         this.removeList = [];
     }
 
-    update(delta: number) {
+    override update(delta: number) {
         // remove the children
         for (let i = 0, len = this.removeList.length; i < len; i++) {
             const element = this.removeList[i];

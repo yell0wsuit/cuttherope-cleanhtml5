@@ -86,7 +86,7 @@ class Bouncer extends CTRGameObject {
         this.b2.rotateAround(angle, x, y);
     }
 
-    update(delta: number) {
+    override update(delta: number) {
         super.update(delta);
         if (this.mover) {
             this.updateRotation();

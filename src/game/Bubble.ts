@@ -10,7 +10,7 @@ class Bubble extends GameObject {
         this.withoutShadow = false;
     }
 
-    draw() {
+    override draw() {
         if (this.withoutShadow) {
             // only do transformations and draw children
             this.preDraw();

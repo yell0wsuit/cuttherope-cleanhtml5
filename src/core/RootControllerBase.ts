@@ -255,7 +255,7 @@ class RootControllerBase extends ViewController {
         this.suspended = false;
     }
 
-    mouseDown(x: number, y: number): boolean {
+    override mouseDown(x: number, y: number): boolean {
         if (this.currentController && this.currentController !== this) {
             this.dragMode = true;
             return this.currentController.mouseDown(x, y);
@@ -274,7 +274,7 @@ class RootControllerBase extends ViewController {
         return false;
     }
 
-    mouseUp(x: number, y: number): boolean {
+    override mouseUp(x: number, y: number): boolean {
         if (this.currentController && this.currentController !== this) {
             const handled = this.currentController.mouseUp(x, y);
             this.dragMode = false;
@@ -294,7 +294,7 @@ class RootControllerBase extends ViewController {
         return false;
     }
 
-    doubleClick(x: number, y: number): boolean {
+    override doubleClick(x: number, y: number): boolean {
         if (this.currentController && this.currentController !== this) {
             this.currentController.mouseUp(x, y);
             this.dragMode = false;

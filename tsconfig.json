@@ -32,11 +32,11 @@
         "exactOptionalPropertyTypes": true,
 
         // Style Options
-        // "noImplicitReturns": true,
-        // "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noImplicitOverride": true,
         // "noUnusedLocals": true,
         // "noUnusedParameters": true,
-        // "noFallthroughCasesInSwitch": true,
+        "noFallthroughCasesInSwitch": true,
         // "noPropertyAccessFromIndexSignature": true,
         "noImplicitAny": true,
 
