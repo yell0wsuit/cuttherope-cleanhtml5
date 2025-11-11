@@ -357,9 +357,9 @@ class Box {
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
                 ctx.clearRect(
                     resolution.uiScaledNumber(312),
-                    resolution.uiScaledNumber(100),
+                    resolution.uiScaledNumber(80),
                     resolution.uiScaledNumber(400),
-                    resolution.uiScaledNumber(460)
+                    resolution.uiScaledNumber(500)
                 );
                 ctx.restore();
 
