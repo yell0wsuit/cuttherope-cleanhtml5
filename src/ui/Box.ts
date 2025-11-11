@@ -341,8 +341,8 @@ class Box {
                 x = 0.95 + d;
                 y = 1.05 - d;
             } else if (t < s3) {
-                // intentionally not ending at 1.0 prevents the animation from "@/snapping" at the end.
-                d = Easing.easeOutCubic(t - s2, 0, 0.05, s3 - s2); // to 0.95
+                // Ease back to 1.0 scale
+                d = Easing.easeOutCubic(t - s2, 0, 0.06, s3 - s2);
                 x = 1.06 - d;
                 y = 0.94 + d;
             }
