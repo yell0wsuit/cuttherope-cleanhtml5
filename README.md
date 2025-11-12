@@ -15,6 +15,10 @@ The project is currently led by [yell0wsuit](https://github.com/yell0wsuit).
 > [!NOTE]
 > This project is not, and will never be affiliated with or endorsed by ZeptoLab. All rights to the original game and its assets belong to ZeptoLab.
 
+### Related project
+
+- [Cut the Rope (PC C#)](https://github.com/yell0wsuit/ctr-pc) (tentative name): A decompiled C# version of the game, currently being developed to match with the HTML version.
+
 ## Play
 
 You can play the game online at: <https://yell0wsuit.github.io/cuttherope-h5dx/>
