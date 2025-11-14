@@ -35,7 +35,6 @@ class ViewController {
     frames: number;
     accumDt: number;
     frameRate: number;
-    frameBalance: number;
     avgDelta: number;
     pastDeltas: number[];
 
@@ -52,9 +51,6 @@ class ViewController {
         this.frames = 0;
         this.accumDt = 0;
         this.frameRate = 0;
-        // like a bank account for frame updates. we try to keep our
-        // balance under 1 by doing extra frame updates when above 1
-        this.frameBalance = 0;
         // initially assume we are getting 60 fps
         this.avgDelta = 1 / 60;
         // keep the last five deltas (init with target fps)
@@ -120,13 +116,11 @@ class ViewController {
             return;
         }
 
-        // the physics engine needs to be updated at 60fps. we
-        // will do up to 3 updates for each frame that is
-        // actually rendered. This means we could run as low as 20 fps
-        const maxUpdates = Math.min(3, this.frameBalance | 0);
-        for (let i = 0; i < maxUpdates; i++) {
-            v.update(0.016);
-            this.frameBalance -= 1;
+        // Physics is frame-rate independent - just pass the actual delta time.
+        // Clamp to reasonable bounds to handle tab switches and extreme cases.
+        const clampedDelta = this.clampDelta(this.delta);
+        if (clampedDelta > 0) {
+            v.update(clampedDelta);
         }
     }
 
@@ -139,10 +133,6 @@ class ViewController {
             this.delta = this.lastTime !== Constants.UNDEFINED ? (time - this.lastTime) / 1000 : 0;
             this.lastTime = time;
         }
-
-        // if the physics engine requires 60 fps, how many frames do
-        // we need to update?
-        this.frameBalance += this.clampDelta(this.delta) / 0.016;
     }
 
     // Make sure a delta doesn't exceed some reasonable bounds
@@ -150,11 +140,11 @@ class ViewController {
     // and the user switches tabs (the browser will stop calling us to
     // preserve power).
     clampDelta(delta: number): number {
-        if (delta < 0.016) {
-            // sometimes we'll get a bunch of frames batched together
-            // but we don't want to go below the 60 fps delta
-            return 0.016;
-        } else if (delta > 0.05) {
+        if (delta <= 0) {
+            return 0;
+        }
+
+        if (delta > 0.05) {
             // dont go below the delta for 20 fps
             return 0.05;
         }
