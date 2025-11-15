@@ -9,8 +9,8 @@
         {
             "name": 1,
             "ropePhysicsSpeed": 1,
-            "special": 2,
-            "twoParts": false
+            "special": 1,
+            "nightLevel": false
         }
     ],
     "objects": [

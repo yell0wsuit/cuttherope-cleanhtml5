@@ -9,153 +9,213 @@
         {
             "name": 1,
             "ropePhysicsSpeed": 1,
-            "special": 2,
-            "twoParts": false
+            "special": 1,
+            "twoParts": false,
+            "water": 0,
+            "waterSpeed": 0,
+            "nightLevel": false
         }
     ],
     "objects": [
         {
             "name": 52,
             "x": 238,
-            "y": 178
+            "y": 168
         },
         {
             "name": 100,
             "x": 163,
-            "y": 101,
+            "y": 91,
             "length": 80,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
             "spider": false,
-            "part": "L"
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
         },
         {
             "name": 100,
             "x": 296,
-            "y": 98,
+            "y": 88,
             "length": 70,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
             "spider": false,
-            "part": "L"
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
         },
         {
             "name": 100,
-            "x": 249,
-            "y": 289,
+            "x": 250,
+            "y": 274,
             "length": 100,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
             "spider": false,
-            "part": "L"
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
         },
         {
             "name": 3,
             "x": 71,
-            "y": 118,
+            "y": 108,
             "timeout": -1
         },
         {
             "name": 3,
             "x": 253,
-            "y": 118,
+            "y": 114,
             "timeout": -1
         },
         {
             "name": 3,
-            "x": 253,
-            "y": 336,
+            "x": 254,
+            "y": 321,
             "timeout": -1
         },
         {
             "name": 2,
-            "x": 75,
-            "y": 421
+            "x": 76,
+            "y": 402
         },
         {
             "name": 54,
             "x": 72,
-            "y": 178
+            "y": 168
         },
         {
-            "name": 58,
+            "name": 59,
             "x": 138,
-            "y": 106,
-            "angle": 90,
-            "size": 3
+            "y": 100,
+            "size": 3,
+            "angle": 90
         },
         {
-            "name": 58,
-            "x": 110,
-            "y": 376,
-            "angle": 0,
-            "size": 4
+            "name": 60,
+            "x": 111,
+            "y": 361,
+            "size": 4,
+            "angle": 0
         },
         {
             "name": 56,
-            "x": 259,
-            "y": 390,
+            "x": 260,
+            "y": 375,
             "group": 0,
             "angle": 270
         },
         {
             "name": 56,
-            "x": 158,
-            "y": 428,
+            "x": 159,
+            "y": 409,
             "group": 0,
             "angle": 180
         },
         {
             "name": 58,
             "x": 79,
-            "y": 46,
-            "angle": 0,
-            "size": 2
+            "y": 37,
+            "size": 2,
+            "angle": 0
         },
         {
             "name": 10,
             "x": 112,
-            "y": 256,
-            "locale": "en",
+            "y": 246,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "en"
         },
         {
             "name": 4,
             "x": 38,
-            "y": 273,
+            "y": 263,
             "locale": "en",
             "text": "Keep the candy away from spikes",
             "width": 150
         }
     ],
-    "ru": [
+    "br": [
         {
             "name": 10,
             "x": 112,
-            "y": 256,
-            "locale": "ru",
+            "y": 247,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "br"
         },
         {
             "name": 4,
-            "x": 14,
-            "y": 269,
-            "locale": "ru",
-            "text": "Не дайте леденцу разбиться о шипы",
+            "x": 26,
+            "y": 264,
+            "locale": "br",
+            "text": "Mantenha os doces longe dos espinhos",
+            "width": 180
+        }
+    ],
+    "de": [
+        {
+            "name": 10,
+            "x": 112,
+            "y": 247,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "de"
+        },
+        {
+            "name": 4,
+            "x": 26,
+            "y": 264,
+            "locale": "de",
+            "text": "Halten Sie den Kandis von den Spitzen weg",
+            "width": 180
+        }
+    ],
+    "es": [
+        {
+            "name": 10,
+            "x": 112,
+            "y": 247,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "es"
+        },
+        {
+            "name": 4,
+            "x": 16,
+            "y": 264,
+            "locale": "es",
+            "text": "¡Mantén el caramelo alejado de los pinchos!",
             "width": 200
         }
     ],
@@ -163,36 +223,126 @@
         {
             "name": 10,
             "x": 111,
-            "y": 257,
-            "locale": "fr",
+            "y": 246,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "fr"
         },
         {
             "name": 4,
             "x": 34,
-            "y": 268,
+            "y": 257,
             "locale": "fr",
-            "text": "Garde le bonbon loin des pointes",
+            "text": "Gardez le bonbon loin des pointes",
             "width": 150
         }
     ],
-    "de": [
+    "it": [
         {
             "name": 10,
             "x": 112,
-            "y": 256,
-            "locale": "de",
+            "y": 246,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "it"
         },
         {
             "name": 4,
-            "x": 26,
-            "y": 273,
-            "locale": "de",
-            "text": "Pass auf, dass der Bonbon nicht in die Nähe der Spikes kommt",
-            "width": 250
+            "x": 16,
+            "y": 263,
+            "locale": "it",
+            "text": "Tieni il bonbon lontano dagli aculei",
+            "width": 200
+        }
+    ],
+    "ja": [
+        {
+            "name": 10,
+            "x": 112,
+            "y": 247,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ja"
+        },
+        {
+            "name": 4,
+            "x": 16,
+            "y": 264,
+            "locale": "ja",
+            "text": "キャンディが*トゲに*触れない*ように*注意*しましょう",
+            "width": 200
+        }
+    ],
+    "ko": [
+        {
+            "name": 10,
+            "x": 112,
+            "y": 247,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ko"
+        },
+        {
+            "name": 4,
+            "x": 20,
+            "y": 264,
+            "locale": "ko",
+            "text": "뾰족 장애물을 *조심하세요.",
+            "width": 200
+        }
+    ],
+    "nl": [
+        {
+            "name": 10,
+            "x": 112,
+            "y": 247,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "nl"
+        },
+        {
+            "name": 4,
+            "x": 16,
+            "y": 264,
+            "locale": "nl",
+            "text": "Houd het snoepje uit de buurt van pinnen",
+            "width": 200
+        }
+    ],
+    "ru": [
+        {
+            "name": 10,
+            "x": 112,
+            "y": 247,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ru"
+        },
+        {
+            "name": 4,
+            "x": 14,
+            "y": 260,
+            "locale": "ru",
+            "text": "Не дайте леденцу разбиться о шипы",
+            "width": 200
+        }
+    ],
+    "zh": [
+        {
+            "name": 10,
+            "x": 112,
+            "y": 247,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "zh"
+        },
+        {
+            "name": 4,
+            "x": 16,
+            "y": 264,
+            "locale": "zh",
+            "text": "让糖果避开尖刺",
+            "width": 200
         }
     ]
 }

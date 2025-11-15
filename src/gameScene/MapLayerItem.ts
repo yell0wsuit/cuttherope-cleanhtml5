@@ -179,6 +179,16 @@ interface TargetItem extends MapLayerItem {
     y: number;
 }
 
+interface RocketItem extends MapLayerItem {
+    x: number;
+    y: number;
+    impulse?: number;
+    time?: number;
+    isRotatable?: boolean;
+    angle?: number;
+    impulseFactor?: number;
+}
+
 export type { MapLayerItem as default };
 export type {
     MapSettingsItem,
@@ -197,4 +207,5 @@ export type {
     RotatedCircleItem,
     BouncerItem,
     TargetItem,
+    RocketItem,
 };

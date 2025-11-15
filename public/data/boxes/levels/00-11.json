@@ -9,48 +9,69 @@
         {
             "name": 1,
             "ropePhysicsSpeed": 1,
-            "special": 2,
-            "twoParts": false
+            "special": 1,
+            "nightLevel": false
         }
     ],
     "objects": [
         {
-            "name": 2,
-            "x": 72,
-            "y": 65
+            "name": 52,
+            "x": 207,
+            "y": 317
+        },
+        {
+            "name": 54,
+            "x": 211,
+            "y": 242
         },
         {
             "name": 100,
             "x": 137,
             "y": 219,
             "length": 100,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "wheel": false,
+            "moveVertical": false,
+            "spider": false
         },
         {
             "name": 100,
             "x": 288,
             "y": 218,
             "length": 100,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "wheel": false,
+            "moveVertical": false,
+            "spider": false
         },
         {
-            "name": 52,
-            "x": 207,
-            "y": 317
+            "name": 2,
+            "x": 72,
+            "y": 65
+        },
+        {
+            "name": 56,
+            "x": 213,
+            "y": 408,
+            "group": 0,
+            "angle": 270
+        },
+        {
+            "name": 55,
+            "x": 269,
+            "y": 160,
+            "angle": 180
+        },
+        {
+            "name": 56,
+            "x": 66,
+            "y": 371,
+            "group": 0,
+            "angle": 270
         },
         {
             "name": 3,
@@ -72,38 +93,8 @@
         },
         {
             "name": 54,
-            "x": 207,
-            "y": 182
-        },
-        {
-            "name": 54,
-            "x": 211,
-            "y": 242
-        },
-        {
-            "name": 54,
             "x": 64,
             "y": 310
-        },
-        {
-            "name": 55,
-            "x": 269,
-            "y": 160,
-            "angle": 180
-        },
-        {
-            "name": 56,
-            "x": 213,
-            "y": 408,
-            "group": 0,
-            "angle": 270
-        },
-        {
-            "name": 56,
-            "x": 66,
-            "y": 371,
-            "group": 0,
-            "angle": 270
         }
     ]
 }

@@ -9,7 +9,7 @@
         {
             "name": 1,
             "ropePhysicsSpeed": 1,
-            "special": 2,
+            "special": 1,
             "twoParts": false
         }
     ],

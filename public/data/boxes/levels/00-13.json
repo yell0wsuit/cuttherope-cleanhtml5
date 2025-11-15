@@ -9,8 +9,7 @@
         {
             "name": 1,
             "ropePhysicsSpeed": 1,
-            "special": 2,
-            "twoParts": false
+            "nightLevel": false
         }
     ],
     "objects": [
@@ -29,56 +28,48 @@
             "x": 40,
             "y": 82,
             "length": 100,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "wheel": false,
+            "moveVertical": false,
+            "spider": false
         },
         {
             "name": 100,
             "x": 289,
             "y": 81,
             "length": 100,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "wheel": false,
+            "moveVertical": false,
+            "spider": false
         },
         {
             "name": 100,
             "x": 288,
             "y": 235,
             "length": 150,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "wheel": false,
+            "moveVertical": false,
+            "spider": false
         },
         {
             "name": 100,
             "x": 39,
             "y": 234,
             "length": 150,
-            "wheel": false,
-            "gun": false,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "wheel": false,
+            "moveVertical": false,
+            "spider": false
         },
         {
             "name": 3,

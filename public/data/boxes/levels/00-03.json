@@ -10,75 +10,44 @@
             "name": 1,
             "ropePhysicsSpeed": 1,
             "special": 1,
-            "twoParts": false
+            "twoParts": false,
+            "water": 0,
+            "waterSpeed": 0,
+            "nightLevel": false
         }
     ],
     "objects": [
         {
+            "name": 3,
+            "x": 159,
+            "y": 126,
+            "timeout": -1
+        },
+        {
             "name": 2,
-            "x": 159,
-            "y": 425
-        },
-        {
-            "name": 52,
-            "x": 63,
-            "y": 238
-        },
-        {
-            "name": 3,
-            "x": 97,
-            "y": 311,
-            "timeout": -1
-        },
-        {
-            "name": 3,
-            "x": 159,
-            "y": 140,
-            "timeout": -1
-        },
-        {
-            "name": 3,
-            "x": 159,
-            "y": 66,
-            "timeout": -1
-        },
-        {
-            "name": 100,
-            "x": 63,
-            "y": 123,
-            "length": 100,
-            "wheel": false,
-            "gun": false,
-            "radius": -1,
-            "moveLength": -1,
-            "moveVertical": false,
-            "moveOffset": 0,
-            "spider": false,
-            "part": "L"
-        },
-        {
-            "name": 100,
-            "x": 159,
-            "y": 245,
-            "length": 70,
-            "wheel": false,
-            "gun": false,
-            "radius": -1,
-            "moveLength": -1,
-            "moveVertical": false,
-            "moveOffset": 0,
-            "spider": false,
-            "part": "L"
+            "x": 160,
+            "y": 403
         },
         {
             "name": 54,
             "x": 159,
-            "y": 337
+            "y": 323
+        },
+        {
+            "name": 3,
+            "x": 97,
+            "y": 297,
+            "timeout": -1
+        },
+        {
+            "name": 52,
+            "x": 63,
+            "y": 224
         },
         {
             "name": 4,
             "x": 195,
-            "y": 289,
+            "y": 275,
             "locale": "en",
             "text": "The bubble will lift the candy up",
             "width": 110
@@ -86,132 +55,447 @@
         {
             "name": 8,
             "x": 213,
-            "y": 367,
-            "locale": "en",
-            "angle": 50,
+            "y": 353,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "en",
+            "angle": 50
         },
         {
             "name": 4,
             "x": 185,
-            "y": 155,
+            "y": 141,
+            "special": 1,
             "locale": "en",
-            "text": "Click to pop the bubble",
+            "text": "Pop the bubble with your finger",
             "width": 120
+        },
+        {
+            "name": 100,
+            "x": 63,
+            "y": 109,
+            "length": 100,
+            "radius": -1,
+            "moveLength": -1,
+            "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
+            "spider": false,
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
+        },
+        {
+            "name": 100,
+            "x": 159,
+            "y": 231,
+            "length": 70,
+            "radius": -1,
+            "moveLength": -1,
+            "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
+            "spider": false,
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
         },
         {
             "name": 13,
             "x": 241,
-            "y": 143,
-            "locale": "en",
+            "y": 129,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "special": 1,
+            "locale": "en"
+        },
+        {
+            "name": 3,
+            "x": 159,
+            "y": 61,
+            "timeout": -1
         }
     ],
-    "ru": [
-        {
-            "name": 4,
-            "x": 169,
-            "y": 284,
-            "locale": "ru",
-            "text": "Пузырь подымет леденец вверх",
-            "width": 160
-        },
+    "br": [
         {
             "name": 8,
             "x": 210,
-            "y": 350,
-            "locale": "ru",
-            "angle": 20,
+            "y": 333,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "locale": "br",
+            "angle": 20
         },
         {
             "name": 4,
-            "x": 162,
-            "y": 161,
-            "locale": "ru",
-            "text": "Нажмите, чтобы лопнуть пузырь",
+            "x": 159,
+            "y": 257,
+            "locale": "br",
+            "text": "A bolha vai erguer os doces",
             "width": 160
+        },
+        {
+            "name": 4,
+            "x": 172,
+            "y": 144,
+            "special": 1,
+            "locale": "br",
+            "text": "Estoure a bolha com seu dedo",
+            "width": 140
         },
         {
             "name": 13,
             "x": 239,
-            "y": 153,
-            "locale": "ru",
+            "y": 136,
             "moveSpeed": 100,
-            "rotateSpeed": 100
-        }
-    ],
-    "fr": [
-        {
-            "name": 4,
-            "x": 166,
-            "y": 255,
-            "locale": "fr",
-            "text": "La bulle va soulever le bonbon dans les airs",
-            "width": 150
-        },
-        {
-            "name": 8,
-            "x": 210,
-            "y": 350,
-            "locale": "fr",
-            "angle": 15,
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
-            "name": 4,
-            "x": 185,
-            "y": 155,
-            "locale": "fr",
-            "text": "Clique pour éclater la bulle",
-            "width": 160
-        },
-        {
-            "name": 13,
-            "x": 241,
-            "y": 147,
-            "locale": "fr",
-            "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "special": 1,
+            "locale": "br"
         }
     ],
     "de": [
         {
+            "name": 8,
+            "x": 212,
+            "y": 346,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "de",
+            "angle": 50
+        },
+        {
             "name": 4,
             "x": 194,
-            "y": 283,
+            "y": 269,
             "locale": "de",
             "text": "Die Blase lässt die Süßigkeit schweben",
             "width": 130
         },
         {
-            "name": 8,
-            "x": 212,
-            "y": 360,
-            "locale": "de",
-            "angle": 50,
-            "moveSpeed": 100,
-            "rotateSpeed": 100
-        },
-        {
             "name": 4,
             "x": 175,
-            "y": 154,
+            "y": 140,
+            "special": 1,
             "locale": "de",
-            "text": "Klicke, um die Seifenblase platzen zu lassen",
+            "text": "Zerplatze die Blase mit deinem Finger",
             "width": 140
         },
         {
             "name": 13,
             "x": 241,
-            "y": 146,
-            "locale": "de",
+            "y": 132,
             "moveSpeed": 100,
-            "rotateSpeed": 100
+            "rotateSpeed": 100,
+            "special": 1,
+            "locale": "de"
+        }
+    ],
+    "es": [
+        {
+            "name": 8,
+            "x": 210,
+            "y": 335,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "es",
+            "angle": 20
+        },
+        {
+            "name": 4,
+            "x": 149,
+            "y": 239,
+            "locale": "es",
+            "text": "Las burbujas hacen que el caramelo se eleve.",
+            "width": 160
+        },
+        {
+            "name": 4,
+            "x": 162,
+            "y": 146,
+            "special": 1,
+            "locale": "es",
+            "text": "Haz estallar la burbuja con el dedo",
+            "width": 160
+        },
+        {
+            "name": 13,
+            "x": 239,
+            "y": 138,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "special": 1,
+            "locale": "es"
+        }
+    ],
+    "fr": [
+        {
+            "name": 8,
+            "x": 210,
+            "y": 336,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "fr",
+            "angle": 15
+        },
+        {
+            "name": 4,
+            "x": 166,
+            "y": 241,
+            "locale": "fr",
+            "text": "La bulle va soulever le bonbon dans les airs",
+            "width": 150
+        },
+        {
+            "name": 4,
+            "x": 165,
+            "y": 139,
+            "special": 1,
+            "locale": "fr",
+            "text": "Crevez la bulle avec votre doigt",
+            "width": 160
+        },
+        {
+            "name": 13,
+            "x": 241,
+            "y": 133,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "special": 1,
+            "locale": "fr"
+        }
+    ],
+    "it": [
+        {
+            "name": 8,
+            "x": 210,
+            "y": 335,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "it",
+            "angle": 20
+        },
+        {
+            "name": 4,
+            "x": 159,
+            "y": 259,
+            "locale": "it",
+            "text": "La bolla solleverà il bonbon",
+            "width": 160
+        },
+        {
+            "name": 4,
+            "x": 162,
+            "y": 146,
+            "special": 1,
+            "locale": "it",
+            "text": "Fai esplodere la bolla con il dito",
+            "width": 160
+        },
+        {
+            "name": 13,
+            "x": 239,
+            "y": 138,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "special": 1,
+            "locale": "it"
+        }
+    ],
+    "ja": [
+        {
+            "name": 8,
+            "x": 210,
+            "y": 336,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ja",
+            "angle": 20
+        },
+        {
+            "name": 4,
+            "x": 169,
+            "y": 250,
+            "locale": "ja",
+            "text": "泡で*キャンディを*持ち上げる*ことも*できます",
+            "width": 160
+        },
+        {
+            "name": 4,
+            "x": 162,
+            "y": 147,
+            "special": 1,
+            "locale": "ja",
+            "text": "指で*バブルを*破裂*させ*ましょう",
+            "width": 160
+        },
+        {
+            "name": 13,
+            "x": 239,
+            "y": 139,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "special": 1,
+            "locale": "ja"
+        }
+    ],
+    "ko": [
+        {
+            "name": 8,
+            "x": 210,
+            "y": 337,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ko",
+            "angle": 20
+        },
+        {
+            "name": 4,
+            "x": 169,
+            "y": 271,
+            "locale": "ko",
+            "text": "비눗방울이 사탕을 *띄워줘요.",
+            "width": 160
+        },
+        {
+            "name": 4,
+            "x": 162,
+            "y": 148,
+            "special": 1,
+            "locale": "ko",
+            "text": "손가락으로 비눗방울을 *터뜨리세요.",
+            "width": 160
+        },
+        {
+            "name": 13,
+            "x": 239,
+            "y": 140,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "special": 1,
+            "locale": "ko"
+        }
+    ],
+    "nl": [
+        {
+            "name": 8,
+            "x": 210,
+            "y": 318,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "nl",
+            "angle": 0
+        },
+        {
+            "name": 4,
+            "x": 159,
+            "y": 242,
+            "locale": "nl",
+            "text": "Het snoepje drijft in de bel omhoog",
+            "width": 160
+        },
+        {
+            "name": 4,
+            "x": 162,
+            "y": 149,
+            "special": 1,
+            "locale": "nl",
+            "text": "Prik de bel met je vinger door",
+            "width": 160
+        },
+        {
+            "name": 13,
+            "x": 239,
+            "y": 141,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "special": 1,
+            "locale": "nl"
+        }
+    ],
+    "ru": [
+        {
+            "name": 8,
+            "x": 210,
+            "y": 336,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "ru",
+            "angle": 20
+        },
+        {
+            "name": 4,
+            "x": 169,
+            "y": 270,
+            "locale": "ru",
+            "text": "Пузырь подымет леденец вверх",
+            "width": 160
+        },
+        {
+            "name": 4,
+            "x": 162,
+            "y": 147,
+            "special": 1,
+            "locale": "ru",
+            "text": "Лопните пузырь прикосновением",
+            "width": 160
+        },
+        {
+            "name": 13,
+            "x": 239,
+            "y": 139,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "special": 1,
+            "locale": "ru"
+        }
+    ],
+    "zh": [
+        {
+            "name": 8,
+            "x": 210,
+            "y": 329,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "locale": "zh",
+            "angle": 20
+        },
+        {
+            "name": 4,
+            "x": 169,
+            "y": 273,
+            "locale": "zh",
+            "text": "泡泡将提起糖果",
+            "width": 160
+        },
+        {
+            "name": 4,
+            "x": 162,
+            "y": 140,
+            "special": 1,
+            "locale": "zh",
+            "text": "用手指戳破泡泡",
+            "width": 160
+        },
+        {
+            "name": 13,
+            "x": 239,
+            "y": 132,
+            "moveSpeed": 100,
+            "rotateSpeed": 100,
+            "special": 1,
+            "locale": "zh"
         }
     ]
 }

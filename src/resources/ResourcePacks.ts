@@ -49,6 +49,7 @@ class ResourcePacks {
         ResourceId.IMG_OBJ_CANDY_PADDINGTON,
         ResourceId.IMG_SNOWFLAKES,
         ResourceId.IMG_CONFETTI_PARTICLES,
+        ResourceId.IMG_OBJ_ROCKET,
     ];
 
     // -- Game resources for Round 5 promo --
@@ -151,6 +152,8 @@ class ResourcePacks {
         ResourceId.SND_STAR_2,
         ResourceId.SND_STAR_3,
         ResourceId.SND_WIN,
+        ResourceId.SND_ROCKET_START,
+        ResourceId.SND_ROCKET_FLY,
     ];
 
     // -- Sound resources for full version --

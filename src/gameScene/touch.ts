@@ -21,6 +21,8 @@ import type Grab from "@/game/Grab";
 import type ConstrainedPoint from "@/physics/ConstrainedPoint";
 import type GenericButton from "@/visual/GenericButton";
 import GameSceneUpdate from "./update";
+import Rocket from "@/game/Rocket";
+import TrackType from "@/visual/TrackType";
 
 class GameSceneTouch extends GameSceneUpdate {
     /**
@@ -124,6 +126,31 @@ class GameSceneTouch extends GameSceneUpdate {
             }
         }
 
+        // handle rocket touches
+        const adjustedTouch = new Vector(cameraAdjustedX, cameraAdjustedY);
+        const rocketTouchRadius = 60 * this.PM;
+        for (let i = 0, len = this.rockets.length; i < len; i++) {
+            const rocket = this.rockets[i];
+            if (
+                rocket &&
+                rocket.isRotatable &&
+                rocket.state === Rocket.State.IDLE &&
+                rocket.isOperating === -1
+            ) {
+                const distance = Vector.distance(
+                    adjustedTouch.x,
+                    adjustedTouch.y,
+                    rocket.x,
+                    rocket.y
+                );
+                if (distance < rocketTouchRadius) {
+                    rocket.handleTouch(adjustedTouch);
+                    rocket.isOperating = touchIndex;
+                    return true;
+                }
+            }
+        }
+
         let activeCircle: RotatedCircle | null = null;
         let hasCircleInside = false;
         let intersectsAnotherCircle = false;
@@ -190,29 +217,29 @@ class GameSceneTouch extends GameSceneUpdate {
                 )
             );
 
-                const fadeOut = new Timeline();
-                fadeOut.addKeyFrame(
-                    KeyFrame.makeColor(
-                        RGBAColor.solidOpaque.copy(),
-                        KeyFrame.TransitionType.LINEAR,
-                        0.2
-                    )
-                );
-                fadeOut.onFinished = this.onRotatedCircleTimelineFinished.bind(this);
+            const fadeOut = new Timeline();
+            fadeOut.addKeyFrame(
+                KeyFrame.makeColor(
+                    RGBAColor.solidOpaque.copy(),
+                    KeyFrame.TransitionType.LINEAR,
+                    0.2
+                )
+            );
+            fadeOut.onFinished = this.onRotatedCircleTimelineFinished.bind(this);
 
-                const fadingOutCircle = activeCircle.copy();
-                if (fadingOutCircle) {
-                    fadingOutCircle.addTimeline(fadeOut);
-                    fadingOutCircle.playTimeline(0);
+            const fadingOutCircle = activeCircle.copy();
+            if (fadingOutCircle) {
+                fadingOutCircle.addTimeline(fadeOut);
+                fadingOutCircle.playTimeline(0);
 
-                    activeCircle.addTimeline(fadeIn);
-                    activeCircle.playTimeline(0);
+                activeCircle.addTimeline(fadeIn);
+                activeCircle.playTimeline(0);
 
-                    if (activeCircleIndex >= 0) {
-                        this.rotatedCircles[activeCircleIndex] = fadingOutCircle;
-                    }
-                    this.rotatedCircles.push(activeCircle);
+                if (activeCircleIndex >= 0) {
+                    this.rotatedCircles[activeCircleIndex] = fadingOutCircle;
                 }
+                this.rotatedCircles.push(activeCircle);
+            }
             activeCircle = null;
         }
 
@@ -328,6 +355,28 @@ class GameSceneTouch extends GameSceneUpdate {
                 this.onButtonPressed(GravityButton.DefaultId);
             }
             this.gravityTouchDown = Constants.UNDEFINED;
+        }
+
+        // handle rocket touch releases
+        for (let i = 0, len = this.rockets.length; i < len; i++) {
+            const rocket = this.rockets[i];
+            if (rocket && rocket.isOperating === touchIndex) {
+                const currentTimeline = rocket.currentTimeline;
+                if (!rocket.rotateHandled) {
+                    if (currentTimeline && currentTimeline.state === Timeline.StateType.PLAYING) {
+                        currentTimeline.jumpToTrack(TrackType.ROTATION, 1);
+                        currentTimeline.stop();
+                    }
+                    rocket.playTimeline(0);
+                    rocket.startRotation += 45;
+                } else {
+                    const adjustedTouch = new Vector(cameraAdjustedX, cameraAdjustedY);
+                    rocket.handleRotateFinal(adjustedTouch);
+                }
+                rocket.rotateHandled = false;
+                rocket.isOperating = -1;
+                return true;
+            }
         }
 
         for (const spike of this.spikes) {
@@ -496,6 +545,22 @@ class GameSceneTouch extends GameSceneUpdate {
 
                 r.lastTouch.copyFrom(cameraAdjustedTouch);
 
+                return true;
+            }
+        }
+
+        // handle rocket rotation
+        for (let i = 0, len = this.rockets.length; i < len; i++) {
+            const rocket = this.rockets[i];
+            if (rocket && rocket.isOperating === touchIndex) {
+                // Only allow rotation if the touch is still being dragged
+                if (this.dragging[touchIndex]) {
+                    rocket.handleRotate(cameraAdjustedTouch);
+                } else {
+                    // Touch was released, stop operating
+                    rocket.rotateHandled = false;
+                    rocket.isOperating = -1;
+                }
                 return true;
             }
         }
