@@ -9,104 +9,121 @@
         {
             "name": 1,
             "ropePhysicsSpeed": 1,
-            "special": 2,
-            "twoParts": false
+            "special": 1,
+            "twoParts": false,
+            "water": 0,
+            "waterSpeed": 0,
+            "nightLevel": false
         }
     ],
     "objects": [
         {
             "name": 2,
             "x": 161,
-            "y": 429
+            "y": 407
         },
         {
             "name": 56,
             "x": 260,
-            "y": 343,
+            "y": 323,
             "group": 0,
             "angle": 250
         },
         {
             "name": 56,
             "x": 58,
-            "y": 168,
+            "y": 158,
             "group": 0,
             "angle": 270
         },
         {
             "name": 3,
             "x": 61,
-            "y": 50,
+            "y": 61,
             "timeout": -1
         },
         {
-            "name": 58,
+            "name": 59,
             "x": 129,
-            "y": 92,
-            "angle": 300,
-            "size": 3
+            "y": 82,
+            "size": 3,
+            "angle": 300
         },
         {
             "name": 52,
-            "x": 229,
-            "y": 200
+            "x": 232,
+            "y": 177
         },
         {
             "name": 3,
             "x": 160,
-            "y": 122,
+            "y": 112,
             "timeout": -1
         },
         {
             "name": 54,
             "x": 70,
-            "y": 288
+            "y": 268
         },
         {
             "name": 3,
             "x": 70,
-            "y": 289,
+            "y": 269,
             "timeout": -1
         },
         {
             "name": 100,
             "x": 160,
-            "y": 81,
-            "length": 100,
-            "wheel": false,
-            "gun": false,
+            "y": 71,
+            "length": 90,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
             "spider": false,
-            "part": "L"
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
         },
         {
-            "name": 58,
+            "name": 59,
             "x": 193,
-            "y": 93,
-            "angle": -300,
-            "size": 3
+            "y": 83,
+            "size": 3,
+            "angle": -300
         },
         {
             "name": 100,
             "x": 162,
-            "y": 289,
+            "y": 269,
             "length": 100,
-            "wheel": false,
-            "gun": false,
             "radius": 40,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
             "spider": false,
-            "part": "L"
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
         },
         {
             "name": 54,
             "x": 160,
-            "y": 367
+            "y": 347
         }
     ]
 }

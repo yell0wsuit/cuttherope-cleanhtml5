@@ -41,6 +41,8 @@ class BaseElement {
     isDrawBB?: boolean;
     restoreCutTransparency?: boolean;
     resId?: number;
+    blendingMode: number;
+    previousCompositeOperation: GlobalCompositeOperation | null;
     initTextureWithId?(resourceId: number): void;
     doRestoreCutTransparency?(): void;
 
@@ -89,6 +91,21 @@ class BaseElement {
         this.currentTimelineIndex = Constants.UNDEFINED;
         this.currentTimeline = null;
         this.previousAlpha = 1;
+
+        /**
+         * Blending mode for rendering
+         * -1: default (no change)
+         * 0: normal alpha blending (source-over)
+         * 1: premultiplied alpha (lighter)
+         * 2: additive blending (lighter with additive glow)
+         * @type {number}
+         */
+        this.blendingMode = -1;
+
+        /**
+         * @type {string | null}
+         */
+        this.previousCompositeOperation = null;
     }
 
     calculateTopLeft(): void {
@@ -177,6 +194,25 @@ class BaseElement {
         if (this.color.a !== 1 && this.color.a !== this.previousAlpha) {
             ctx.globalAlpha = this.color.a;
         }
+
+        // apply blending mode
+        if (this.blendingMode !== -1) {
+            this.previousCompositeOperation = ctx.globalCompositeOperation;
+            switch (this.blendingMode) {
+                case 0:
+                    // Normal alpha blending
+                    ctx.globalCompositeOperation = "source-over";
+                    break;
+                case 1:
+                    // Premultiplied alpha
+                    ctx.globalCompositeOperation = "lighter";
+                    break;
+                case 2:
+                    // Additive blending for glows/sparks
+                    ctx.globalCompositeOperation = "lighter";
+                    break;
+            }
+        }
     }
 
     draw(): void {
@@ -195,6 +231,8 @@ class BaseElement {
     postDraw(): void {
         const ctx = Canvas.context;
         const alphaChanged = this.color.a !== 1 && this.color.a !== this.previousAlpha;
+        const blendingChanged =
+            this.blendingMode !== -1 && this.previousCompositeOperation !== null;
 
         // for debugging, draw vector from the origin towards 0 degrees
         if (this.drawZeroDegreesLine) {
@@ -255,6 +293,11 @@ class BaseElement {
             if (alphaChanged && Canvas.context) {
                 Canvas.context.globalAlpha = this.previousAlpha;
             }
+        }
+
+        // restore blending mode after all drawing is complete
+        if (blendingChanged && ctx && this.previousCompositeOperation) {
+            ctx.globalCompositeOperation = this.previousCompositeOperation;
         }
     }
 

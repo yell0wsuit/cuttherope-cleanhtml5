@@ -106,6 +106,11 @@ const drawImpl = function drawImpl(scene: GameScene): void {
         scene.bouncers[i]?.draw();
     }
 
+    for (let i = 0, len = scene.rockets.length; i < len; i++) {
+        const rocket = scene.rockets[i];
+        rocket && rocket.draw();
+    }
+
     for (let i = 0, len = scene.socks.length; i < len; i++) {
         const sock = scene.socks[i];
         if (!sock) {

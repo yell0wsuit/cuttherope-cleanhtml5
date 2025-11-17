@@ -9,8 +9,11 @@
         {
             "name": 1,
             "ropePhysicsSpeed": 1,
-            "special": 2,
-            "twoParts": false
+            "special": 1,
+            "twoParts": false,
+            "water": 0,
+            "waterSpeed": 0,
+            "nightLevel": false
         }
     ],
     "objects": [
@@ -51,17 +54,24 @@
         },
         {
             "name": 100,
-            "x": 157,
-            "y": 280,
-            "length": 80,
-            "wheel": false,
-            "gun": false,
+            "x": 159,
+            "y": 230,
+            "length": 95,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
             "spider": false,
-            "part": "L"
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
         },
         {
             "name": 52,
@@ -71,48 +81,62 @@
         {
             "name": 100,
             "x": 258,
-            "y": 117,
-            "length": 60,
-            "wheel": false,
-            "gun": false,
+            "y": 97,
+            "length": 70,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
             "spider": false,
-            "part": "L"
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
         },
         {
             "name": 100,
             "x": 65,
-            "y": 118,
-            "length": 60,
-            "wheel": false,
-            "gun": false,
+            "y": 98,
+            "length": 70,
             "radius": -1,
             "moveLength": -1,
-            "moveVertical": false,
             "moveOffset": 0,
+            "wheel": false,
+            "gun": false,
+            "kickable": false,
+            "kicked": false,
+            "invisible": false,
+            "moveVertical": false,
             "spider": false,
-            "part": "L"
+            "helicopter": false,
+            "hidePath": false,
+            "bindBulb": false,
+            "part": "L",
+            "bulbNumber": "first"
         },
         {
             "name": 3,
             "x": 254,
             "y": 277,
-            "timeout": "-1"
+            "timeout": -1
         },
         {
             "name": 3,
             "x": 160,
             "y": 370,
-            "timeout": "-1"
+            "timeout": -1
         },
         {
             "name": 3,
             "x": 65,
             "y": 274,
-            "timeout": "-1"
+            "timeout": -1
         }
     ]
 }

@@ -12,6 +12,7 @@ import type { GameScene } from "@/types/game-scene";
 function animateLevelRestart(scene: GameScene): void {
     scene.restartState = GameSceneConstants.RestartState.FADE_IN;
     scene.dimTime = Constants.DIM_TIMEOUT;
+    scene.stopActiveRocket();
 }
 
 function isFadingIn(scene: GameScene): boolean {
@@ -28,6 +29,12 @@ function calculateScore(scene: GameScene): void {
 
 function gameWon(scene: GameScene): void {
     scene.dd.cancelAllDispatches();
+
+    // Stop the rocket before marking candy as gone
+    if (scene.activeRocket) {
+        scene.activeRocket.time = -1; // Disable the timer
+        scene.stopActiveRocket();
+    }
 
     scene.target.playTimeline(GameSceneConstants.CharAnimation.WIN);
     SoundMgr.playSound(ResourceId.SND_MONSTER_CHEWING);
@@ -102,6 +109,7 @@ function gameWon(scene: GameScene): void {
 
 function gameLost(scene: GameScene): void {
     scene.dd.cancelAllDispatches();
+    scene.stopActiveRocket();
     scene.target.playTimeline(GameSceneConstants.CharAnimation.FAIL);
     SoundMgr.playSound(ResourceId.SND_MONSTER_SAD);
 

@@ -191,7 +191,10 @@ export function updateCollectibles(this: CollectiblesScene, delta: number): bool
     for (const bubble of this.bubbles) {
         bubble.update(delta);
 
-        if (!bubble.popped) {
+        // Don't capture candy in bubble if rocket is flying
+        const rocketFlying = this.activeRocket && this.activeRocket.state === 2; // State.FLY = 2
+
+        if (!bubble.popped && !rocketFlying) {
             if (this.twoParts !== GameSceneConstants.PartsType.NONE) {
                 if (
                     !this.noCandyL &&
