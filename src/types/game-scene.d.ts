@@ -33,7 +33,9 @@ type PartsTypeValue =
 type RestartStateValue =
     (typeof GameSceneConstants.RestartState)[keyof typeof GameSceneConstants.RestartState];
 type SockStateValue = (typeof Sock.StateType)[keyof typeof Sock.StateType];
-interface Rocket { update(delta: number): void }
+interface Rocket {
+    update(delta: number): void;
+}
 type ResourceIdValue = (typeof ResourceIdValues)[keyof typeof ResourceIdValues];
 
 interface GameSceneController {
@@ -119,6 +121,9 @@ export interface GameScene extends BaseElement {
     candyBubbleAnimation: Animation;
     candyBubbleAnimationL: Animation;
     candyBubbleAnimationR: Animation;
+    candyGhostBubbleAnimation?: Animation;
+    candyGhostBubbleAnimationL?: Animation;
+    candyGhostBubbleAnimationR?: Animation;
     bubbleDisappear: Animation;
     candyMain: GameObject;
     candyTop: GameObject;

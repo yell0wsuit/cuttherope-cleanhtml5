@@ -42,17 +42,20 @@ export function initCandyBubbles(this: GameSceneInit): void {
             0.0001;
 
         // Create ghost bubble animations for left and right
-        this.candyGhostBubbleAnimationL = new CandyInGhostBubbleAnimation();
-        this.candyGhostBubbleAnimationL.initWithResId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
+        this.candyGhostBubbleAnimationL = new CandyInGhostBubbleAnimation().initWithResId(
+            ResourceId.IMG_OBJ_BUBBLE_FLIGHT
+        );
         this.candyL.addChild(this.candyGhostBubbleAnimationL);
 
-        this.candyGhostBubbleAnimationR = new CandyInGhostBubbleAnimation();
-        this.candyGhostBubbleAnimationR.initWithResId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
+        this.candyGhostBubbleAnimationR = new CandyInGhostBubbleAnimation().initWithResId(
+            ResourceId.IMG_OBJ_BUBBLE_FLIGHT
+        );
         this.candyR.addChild(this.candyGhostBubbleAnimationR);
     } else {
         // Create ghost bubble animation for single candy
-        this.candyGhostBubbleAnimation = new CandyInGhostBubbleAnimation();
-        this.candyGhostBubbleAnimation.initWithResId(ResourceId.IMG_OBJ_BUBBLE_FLIGHT);
+        this.candyGhostBubbleAnimation = new CandyInGhostBubbleAnimation().initWithResId(
+            ResourceId.IMG_OBJ_BUBBLE_FLIGHT
+        );
         this.candy.addChild(this.candyGhostBubbleAnimation);
     }
 }
