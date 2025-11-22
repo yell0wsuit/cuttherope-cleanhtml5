@@ -252,7 +252,8 @@ class Ghost extends BaseElement {
                     this.x,
                     this.y,
                     DEFAULT_BOUNCER_WIDTH,
-                    this.bouncerAngle
+                    this.bouncerAngle,
+                    this
                 );
                 bouncer.addTimeline(morphIn);
                 bouncer.playTimeline(0);

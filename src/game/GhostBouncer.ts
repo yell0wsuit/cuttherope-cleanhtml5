@@ -11,9 +11,11 @@ const CLOUD_RADIUS = Math.sqrt(9000);
 class GhostBouncer extends Bouncer {
     backCloud: ImageElement;
     backCloud2: ImageElement;
+    ghost?: any;
 
-    constructor(x: number, y: number, width: number, angle: number) {
+    constructor(x: number, y: number, width: number, angle: number, ghost?: any) {
         super(x, y, width, angle);
+        this.ghost = ghost;
 
         // Cloud quad 4 (index 4) - back cloud 2 at angle + 170°
         this.backCloud2 = this.createCloud(angle + 170, 4);
@@ -62,6 +64,14 @@ class GhostBouncer extends Bouncer {
         this.backCloud.draw();
         this.backCloud2.draw();
         super.draw();
+
+        // Draw morphing effects on top of the bouncer
+        if (this.ghost?.morphingBubbles) {
+            this.ghost.morphingBubbles.draw();
+        }
+        if (this.ghost?.morphingCloud) {
+            this.ghost.morphingCloud.draw();
+        }
     }
 
     private createCloud(angle: number, quadIndex: number): ImageElement {
