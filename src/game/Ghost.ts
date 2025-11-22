@@ -109,46 +109,53 @@ class Ghost extends BaseElement {
     }
 
     updateGhost(delta: number): void {
-        // Clean up grab when rope is cut
-        if (this.grab) {
-            if (
-                this.grab.rope &&
-                this.grab.rope.cut !== Constants.UNDEFINED &&
-                this.grab.rope.cutTime === 0
-            ) {
-                this.removeFromSceneArray(this.scene.bungees, this.grab);
-                this.grab.destroyRope();
-                this.grab = null;
-            }
+        // Check for bubble fade-out completion
+        if (this.bubble && this.bubble.currentTimelineIndex === 11 && this.bubble.currentTimeline?.state === Timeline.StateType.STOPPED) {
+            this.removeFromSceneArray(this.scene.bubbles, this.bubble);
+            this.bubble = null;
+        }
+
+        // Check for bouncer fade-out completion
+        if (this.bouncer && this.bouncer.currentTimelineIndex === 11 && this.bouncer.currentTimeline?.state === Timeline.StateType.STOPPED) {
+            this.removeFromSceneArray(this.scene.bouncers, this.bouncer);
+            this.bouncer = null;
+        }
+
+        // Check for grab fade-out completion
+        if (this.grab && this.grab.currentTimelineIndex === 11 && this.grab.currentTimeline?.state === Timeline.StateType.STOPPED) {
+            this.grab.destroyRope();
+            this.removeFromSceneArray(this.scene.bungees, this.grab);
+            this.grab = null;
         }
 
         super.update(delta);
+
+        // Monitor rope cut while grab is on timeline 10 (visible/active)
+        if (this.grab && this.grab.rope && this.grab.rope.cut !== Constants.UNDEFINED && this.grab.currentTimelineIndex === 10) {
+            this.cyclingEnabled = true;
+            this.resetToState(DEFAULT_GHOST_STATE);
+        }
     }
 
     resetToNextState(): void {
         let state = this.ghostState;
         do {
             state = state << 1;
-            if (state > 8) {
+            if (state === 16) {
                 state = 2;
             }
-        } while ((state & this.possibleStatesMask) === 0 && state !== this.ghostState);
-
-        if (state === this.ghostState || (state & this.possibleStatesMask) === 0) {
-            return;
-        }
+        } while ((state & this.possibleStatesMask) === 0);
 
         this.resetToState(state);
     }
 
     resetToState(newState: number): void {
-        const allowedState =
-            newState === DEFAULT_GHOST_STATE || (newState & this.possibleStatesMask) !== 0;
-        if (!allowedState) {
+        if ((newState & this.possibleStatesMask) === 0) {
             return;
         }
 
-        // Create disappear timeline for current form
+        this.ghostState = newState;
+
         const morphOut = new Timeline();
         morphOut.addKeyFrame(
             KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.IMMEDIATE, 0)
@@ -157,42 +164,54 @@ class Ghost extends BaseElement {
             KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, GHOST_MORPHING_DISAPPEAR_TIME)
         );
 
-        // Fade out current morphed objects and remove from scene arrays
+        // Handle bubble fade-out
         if (this.bubble) {
-            this.bubble.addTimeline(morphOut);
-            this.bubble.playTimeline(0);
-            this.removeFromSceneArray(this.scene.bubbles, this.bubble);
-            this.bubble = null;  // Clear reference immediately
+            if (this.bubble.currentTimelineIndex === 11) {
+                this.removeFromSceneArray(this.scene.bubbles, this.bubble);
+                this.bubble = null;
+            } else {
+                this.bubble.addTimelineWithID(morphOut, 11);
+                this.bubble.playTimeline(11);
+                (this.bubble as any).popped = true;
+            }
         }
+
+        // Handle grab fade-out and rope
         if (this.grab) {
-            // Mark rope for cutting during morph
-            if (this.grab.rope) {
-                this.grab.rope.forceWhite = true;
-                this.grab.rope.cutTime = GHOST_MORPHING_APPEAR_TIME;
-                if (this.grab.rope.cut === Constants.UNDEFINED) {
-                    this.grab.rope.cut = 0;
+            const rope = this.grab.rope;
+            if (rope) {
+                rope.forceWhite = true;
+                rope.cutTime = GHOST_MORPHING_APPEAR_TIME;
+                if (rope.cut === Constants.UNDEFINED) {
+                    rope.cut = 0;
                 }
             }
-            this.grab.addTimeline(morphOut);
-            this.grab.playTimeline(0);
-            this.grab.destroyRope();
-            this.removeFromSceneArray(this.scene.bungees, this.grab);
-            this.grab = null;  // Clear reference immediately
+
+            if (this.grab.currentTimelineIndex === 11) {
+                this.grab.destroyRope();
+                this.removeFromSceneArray(this.scene.bungees, this.grab);
+                this.grab = null;
+            } else {
+                this.grab.addTimelineWithID(morphOut, 11);
+                this.grab.playTimeline(11);
+            }
         }
+
+        // Handle bouncer fade-out
         if (this.bouncer) {
-            this.bouncer.addTimeline(morphOut);
-            this.bouncer.playTimeline(0);
-            this.removeFromSceneArray(this.scene.bouncers, this.bouncer);
-            this.bouncer = null;  // Clear reference immediately
+            if (this.bouncer.currentTimelineIndex === 11) {
+                this.removeFromSceneArray(this.scene.bouncers, this.bouncer);
+                this.bouncer = null;
+            } else {
+                this.bouncer.addTimelineWithID(morphOut, 11);
+                this.bouncer.playTimeline();
+            }
         }
 
-        // Fade out ghost image if transitioning to a form
-        if (newState !== DEFAULT_GHOST_STATE && this.ghostImage.visible) {
-            this.ghostImage.playTimeline(1);
+        // Handle ghost image fade
+        if (this.ghostImage.currentTimelineIndex === 10) {
+            this.ghostImage.playTimeline(11);
         }
-
-        this.ghostState = newState;
-        this.ghostImage.visible = newState === DEFAULT_GHOST_STATE;
 
         const morphIn = new Timeline();
         morphIn.addKeyFrame(
@@ -204,12 +223,12 @@ class Ghost extends BaseElement {
 
         switch (newState) {
             case DEFAULT_GHOST_STATE:
-                this.ghostImage.playTimeline(0);
+                this.ghostImage.playTimeline(10);
                 break;
             case 2: {
                 const ghostBubble = new GhostBubble().initAt(this.x, this.y);
-                ghostBubble.addTimeline(morphIn);
-                ghostBubble.playTimeline(0);
+                ghostBubble.addTimelineWithID(morphIn, 10);
+                ghostBubble.playTimeline(10);
                 this.scene.bubbles.push(ghostBubble);
                 this.bubble = ghostBubble;
                 break;
@@ -243,8 +262,8 @@ class Ghost extends BaseElement {
 
                 this.scene.bungees.push(grab);
                 this.grab = grab;
-                grab.addTimeline(morphIn);
-                grab.playTimeline(0);
+                grab.addTimelineWithID(morphIn, 10);
+                grab.playTimeline(10);
                 break;
             }
             case 8: {
@@ -255,9 +274,9 @@ class Ghost extends BaseElement {
                     this.bouncerAngle,
                     this
                 );
-                bouncer.addTimeline(morphIn);
-                bouncer.playTimeline(0);
                 this.scene.bouncers.push(bouncer);
+                bouncer.addTimelineWithID(morphIn, 10);
+                bouncer.playTimeline();
                 this.bouncer = bouncer;
                 break;
             }
