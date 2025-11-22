@@ -17,11 +17,13 @@ class GhostBouncer extends Bouncer {
 
         // Cloud quad 4 (index 4) - back cloud 2 at angle + 170°
         this.backCloud2 = this.createCloud(angle + 170, 4);
+        this.backCloud2.visible = false;
         this.addChild(this.backCloud2);
         this.addFloatTimeline(this.backCloud2, 0.35, 0.7, 0.55, 0.4);
 
         // Cloud quad 4 (index 4) - back cloud at angle + 10°
         this.backCloud = this.createCloud(angle + 10, 4);
+        this.backCloud.visible = false;
         this.addChild(this.backCloud);
         this.addFloatTimeline(this.backCloud, 0.39, 0.9, 0.8, 0.7);
 
@@ -31,8 +33,8 @@ class GhostBouncer extends Bouncer {
             3
         );
         rightCloud.anchor = rightCloud.parentAnchor = Alignment.CENTER;
-        rightCloud.x = x + 60;
-        rightCloud.y = y + 55;
+        rightCloud.x = 60;
+        rightCloud.y = 55;
         this.addChild(rightCloud);
         this.addFloatTimeline(rightCloud, 0.45, 1.1, 1, 0.9);
 
@@ -42,13 +44,18 @@ class GhostBouncer extends Bouncer {
             2
         );
         leftCloud.anchor = leftCloud.parentAnchor = Alignment.CENTER;
-        leftCloud.x = x - 50;
-        leftCloud.y = y + 55;
+        leftCloud.x = -50;
+        leftCloud.y = 55;
         this.addChild(leftCloud);
         this.addFloatTimeline(leftCloud, 0.5, 1.1, 1, 0.9);
 
         // Child clouds inherit parent color and transformations
         (this as any).passTransformationsToChilds = true;
+    }
+
+    override playTimeline(): void {
+        // Block all timeline playback for GhostBouncer
+        // Prevents bounce animation from playing after morphIn completes
     }
 
     override draw(): void {
@@ -60,8 +67,8 @@ class GhostBouncer extends Bouncer {
     private createCloud(angle: number, quadIndex: number): ImageElement {
         const cloud = ImageElement.create(ResourceId.IMG_OBJ_GHOST, quadIndex);
         cloud.anchor = cloud.parentAnchor = Alignment.CENTER;
-        cloud.x = this.x + CLOUD_RADIUS * Math.cos(Radians.fromDegrees(angle));
-        cloud.y = this.y + CLOUD_RADIUS * Math.sin(Radians.fromDegrees(angle));
+        cloud.x = CLOUD_RADIUS * Math.cos(Radians.fromDegrees(angle));
+        cloud.y = CLOUD_RADIUS * Math.sin(Radians.fromDegrees(angle));
         return cloud;
     }
 
