@@ -91,6 +91,26 @@ class Ghost extends BaseElement {
         this.addFloatTimeline(this.ghostImageFace, 2);
         this.addFloatTimeline(this.ghostImageBody, 3);
 
+        // Set up appear/disappear timelines for ghost image
+        const appearTimeline = new Timeline();
+        appearTimeline.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.IMMEDIATE, 0)
+        );
+        appearTimeline.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, GHOST_MORPHING_APPEAR_TIME)
+        );
+        this.ghostImage.addTimelineWithID(appearTimeline, 10);
+
+        const disappearTimeline = new Timeline();
+        disappearTimeline.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.IMMEDIATE, 0)
+        );
+        disappearTimeline.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, GHOST_MORPHING_DISAPPEAR_TIME)
+        );
+        this.ghostImage.addTimelineWithID(disappearTimeline, 11);
+        this.ghostImage.playTimeline(10);
+
         const ghostTexture = RES_DATA[ResourceId.IMG_OBJ_GHOST]?.texture ?? null;
         this.morphingBubbles = ghostTexture ? new GhostMorphingParticles(ghostTexture) : null;
         this.morphingCloud = ghostTexture ? new GhostMorphingCloud(ghostTexture) : null;
@@ -109,6 +129,7 @@ class Ghost extends BaseElement {
     }
 
     updateGhost(delta: number): void {
+
         // Check for bubble fade-out completion
         if (this.bubble && this.bubble.currentTimelineIndex === 11 && this.bubble.currentTimeline?.state === Timeline.StateType.STOPPED) {
             this.removeFromSceneArray(this.scene.bubbles, this.bubble);
@@ -127,6 +148,7 @@ class Ghost extends BaseElement {
             this.removeFromSceneArray(this.scene.bungees, this.grab);
             this.grab = null;
         }
+
 
         super.update(delta);
 
