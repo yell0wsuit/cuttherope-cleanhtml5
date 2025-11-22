@@ -8,11 +8,6 @@ import ResourceId from "@/resources/ResourceId";
 import resolution from "@/resolution";
 import * as GameSceneConstants from "@/gameScene/constants";
 
-const CLOUD_SCALE_MIN = 0.7;
-const CLOUD_SCALE_MAX = 1;
-const CLOUD_DRIFT = 1;
-const CLOUD_DURATION = 0.45;
-
 class GhostBubble extends Bubble {
     private readonly clouds: ImageElement[];
 
@@ -34,6 +29,8 @@ class GhostBubble extends Bubble {
         this.anchor = Alignment.CENTER;
         this.popped = false;
 
+        this.addSupportingClouds();
+
         const bubble = ImageElement.create(
             ResourceId.IMG_OBJ_BUBBLE_ATTACHED,
             GameSceneConstants.IMG_OBJ_BUBBLE_ATTACHED_bubble
@@ -41,8 +38,6 @@ class GhostBubble extends Bubble {
         bubble.doRestoreCutTransparency();
         bubble.parentAnchor = bubble.anchor = Alignment.CENTER;
         this.addChild(bubble);
-
-        this.addSupportingClouds();
 
         return this;
     }
@@ -59,73 +54,9 @@ class GhostBubble extends Bubble {
         // Cloud quad 2 (index 2) - bottom center (with rotation)
         this.addBackCloud(-20, 75, 2, 0.93, 0.965, 1, 0.47, 1, -1, 350);
 
-        // Front clouds
-        this.addFrontCloud(60, 50, GameSceneConstants.IMG_OBJ_GHOST_bubble_3);
-        this.addFrontCloud(-55, 55, GameSceneConstants.IMG_OBJ_GHOST_bubble_5);
-        this.addFrontCloud(70, 10, GameSceneConstants.IMG_OBJ_GHOST_bubble_4);
-
         // Child clouds inherit parent color and transformations
         (this as any).passTransformationsToChilds = true;
         this.passColorToChilds = true;
-    }
-
-    private addFrontCloud(offsetX: number, offsetY: number, quad: number): void {
-        const cloud = ImageElement.create(ResourceId.IMG_OBJ_GHOST, quad);
-        cloud.anchor = cloud.parentAnchor = Alignment.CENTER;
-        cloud.x = this.x + offsetX;
-        cloud.y = this.y + offsetY;
-        this.addChild(cloud);
-        this.clouds.push(cloud);
-
-        const timeline = new Timeline();
-        timeline.loopType = Timeline.LoopType.REPLAY;
-        timeline.addKeyFrame(
-            KeyFrame.makeScale(
-                CLOUD_SCALE_MAX,
-                CLOUD_SCALE_MAX,
-                KeyFrame.TransitionType.IMMEDIATE,
-                0
-            )
-        );
-        timeline.addKeyFrame(
-            KeyFrame.makeScale(
-                CLOUD_SCALE_MIN,
-                CLOUD_SCALE_MIN,
-                KeyFrame.TransitionType.EASE_OUT,
-                CLOUD_DURATION
-            )
-        );
-        timeline.addKeyFrame(
-            KeyFrame.makeScale(
-                CLOUD_SCALE_MAX,
-                CLOUD_SCALE_MAX,
-                KeyFrame.TransitionType.EASE_IN,
-                CLOUD_DURATION
-            )
-        );
-
-        timeline.addKeyFrame(
-            KeyFrame.makePos(
-                cloud.x + CLOUD_DRIFT,
-                cloud.y + CLOUD_DRIFT,
-                KeyFrame.TransitionType.IMMEDIATE,
-                0
-            )
-        );
-        timeline.addKeyFrame(
-            KeyFrame.makePos(
-                cloud.x - CLOUD_DRIFT,
-                cloud.y - CLOUD_DRIFT,
-                KeyFrame.TransitionType.EASE_OUT,
-                CLOUD_DURATION
-            )
-        );
-        timeline.addKeyFrame(
-            KeyFrame.makePos(cloud.x, cloud.y, KeyFrame.TransitionType.EASE_IN, CLOUD_DURATION)
-        );
-
-        cloud.addTimeline(timeline);
-        cloud.playTimeline(0);
     }
 
     private addBackCloud(
@@ -142,8 +73,8 @@ class GhostBubble extends Bubble {
     ): void {
         const cloud = ImageElement.create(ResourceId.IMG_OBJ_GHOST, quad);
         cloud.anchor = cloud.parentAnchor = Alignment.CENTER;
-        cloud.x = this.x + offsetX;
-        cloud.y = this.y + offsetY;
+        cloud.x = offsetX;
+        cloud.y = offsetY;
         this.addChild(cloud);
         this.clouds.push(cloud);
 
@@ -164,32 +95,34 @@ class GhostBubble extends Bubble {
         timeline.addKeyFrame(
             KeyFrame.makeScale(startScale, startScale, KeyFrame.TransitionType.EASE_OUT, duration)
         );
+
+        // Position keyframes use relative offsets from parent center
         timeline.addKeyFrame(
             KeyFrame.makePos(
-                cloud.x + posDeltaX,
-                cloud.y + posDeltaY,
+                offsetX + posDeltaX,
+                offsetY + posDeltaY,
                 KeyFrame.TransitionType.IMMEDIATE,
                 0
             )
         );
         timeline.addKeyFrame(
-            KeyFrame.makePos(cloud.x, cloud.y, KeyFrame.TransitionType.EASE_IN, duration)
+            KeyFrame.makePos(offsetX, offsetY, KeyFrame.TransitionType.EASE_IN, duration)
         );
         timeline.addKeyFrame(
             KeyFrame.makePos(
-                cloud.x - posDeltaX,
-                cloud.y - posDeltaY,
+                offsetX - posDeltaX,
+                offsetY - posDeltaY,
                 KeyFrame.TransitionType.EASE_OUT,
                 duration
             )
         );
         timeline.addKeyFrame(
-            KeyFrame.makePos(cloud.x, cloud.y, KeyFrame.TransitionType.EASE_IN, duration)
+            KeyFrame.makePos(offsetX, offsetY, KeyFrame.TransitionType.EASE_IN, duration)
         );
         timeline.addKeyFrame(
             KeyFrame.makePos(
-                cloud.x + posDeltaX,
-                cloud.y + posDeltaY,
+                offsetX + posDeltaX,
+                offsetY + posDeltaY,
                 KeyFrame.TransitionType.EASE_OUT,
                 duration
             )
