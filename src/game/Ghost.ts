@@ -4,11 +4,14 @@ import KeyFrame from "@/visual/KeyFrame";
 import Timeline from "@/visual/Timeline";
 import BaseElement from "@/visual/BaseElement";
 import ImageElement from "@/visual/ImageElement";
-import Grab from "@/game/Grab";
 import Bungee from "@/game/Bungee";
-import Bouncer from "@/game/Bouncer";
 import GhostBubble from "@/game/GhostBubble";
+import GhostMorphingParticles from "@/game/GhostMorphingParticles";
+import GhostMorphingCloud from "@/game/GhostMorphingCloud";
+import GhostGrab from "@/game/GhostGrab";
+import GhostBouncer from "@/game/GhostBouncer";
 import ResourceId from "@/resources/ResourceId";
+import RES_DATA from "@/resources/ResData";
 import SoundMgr from "@/game/CTRSoundMgr";
 import * as GameSceneConstants from "@/gameScene/constants";
 import resolution from "@/resolution";
@@ -20,12 +23,15 @@ import type GameSceneInit from "@/gameScene/init";
 const GHOST_TOUCH_RADIUS = 80;
 const DEFAULT_BOUNCER_WIDTH = 1;
 const DEFAULT_GHOST_STATE = 1;
+const GHOST_MORPHING_BUBBLES_COUNT = 7;
+const GHOST_MORPHING_APPEAR_TIME = 0.36;
+const GHOST_MORPHING_DISAPPEAR_TIME = 0.16;
 
 class Ghost extends BaseElement {
     ghostState: number;
     bubble: GhostBubble | null;
-    grab: Grab | null;
-    bouncer: Bouncer | null;
+    grab: GhostGrab | null;
+    bouncer: GhostBouncer | null;
     cyclingEnabled: boolean;
     grabRadius: number;
     candyBreak: boolean;
@@ -34,6 +40,8 @@ class Ghost extends BaseElement {
     ghostImage: BaseElement;
     ghostImageBody: ImageElement;
     ghostImageFace: ImageElement;
+    morphingBubbles: GhostMorphingParticles | null;
+    morphingCloud: GhostMorphingCloud | null;
     private readonly scene: GameSceneInit;
 
     constructor(
@@ -61,14 +69,6 @@ class Ghost extends BaseElement {
         this.ghostImage = new BaseElement();
         this.addChild(this.ghostImage);
 
-        this.ghostImageBody = ImageElement.create(
-            ResourceId.IMG_OBJ_GHOST,
-            GameSceneConstants.IMG_OBJ_GHOST_body
-        );
-        this.ghostImageBody.anchor = this.ghostImageBody.parentAnchor = Alignment.CENTER;
-        this.ghostImageBody.x = this.x;
-        this.ghostImageBody.y = this.y;
-
         this.ghostImageFace = ImageElement.create(
             ResourceId.IMG_OBJ_GHOST,
             GameSceneConstants.IMG_OBJ_GHOST_face
@@ -77,22 +77,49 @@ class Ghost extends BaseElement {
         this.ghostImageFace.x = this.x;
         this.ghostImageFace.y = this.y;
 
+        this.ghostImageBody = ImageElement.create(
+            ResourceId.IMG_OBJ_GHOST,
+            GameSceneConstants.IMG_OBJ_GHOST_body
+        );
+        this.ghostImageBody.anchor = this.ghostImageBody.parentAnchor = Alignment.CENTER;
+        this.ghostImageBody.x = this.x;
+        this.ghostImageBody.y = this.y;
+
         this.ghostImage.addChild(this.ghostImageFace);
         this.ghostImage.addChild(this.ghostImageBody);
 
-        this.addFloatTimeline(this.ghostImageFace, 2, 0.5);
-        this.addFloatTimeline(this.ghostImageBody, 3, 0.6);
+        this.addFloatTimeline(this.ghostImageFace, 2);
+        this.addFloatTimeline(this.ghostImageBody, 3);
+
+        const ghostTexture = RES_DATA[ResourceId.IMG_OBJ_GHOST]?.texture ?? null;
+        this.morphingBubbles = ghostTexture ? new GhostMorphingParticles(ghostTexture) : null;
+        this.morphingCloud = ghostTexture ? new GhostMorphingCloud(ghostTexture) : null;
+
+        if (this.morphingBubbles) {
+            this.morphingBubbles.x = position.x;
+            this.morphingBubbles.y = position.y;
+            this.addChild(this.morphingBubbles);
+        }
+
+        if (this.morphingCloud) {
+            this.morphingCloud.x = position.x;
+            this.morphingCloud.y = position.y;
+            this.addChild(this.morphingCloud);
+        }
     }
 
     updateGhost(delta: number): void {
-        if (
-            this.grab &&
-            this.grab.rope &&
-            this.grab.rope.cut !== Constants.UNDEFINED &&
-            this.grab.rope.cutTime === 0
-        ) {
-            this.removeFromSceneArray(this.scene.bungees, this.grab);
-            this.grab = null;
+        // Clean up grab when rope is cut
+        if (this.grab) {
+            if (
+                this.grab.rope &&
+                this.grab.rope.cut !== Constants.UNDEFINED &&
+                this.grab.rope.cutTime === 0
+            ) {
+                this.removeFromSceneArray(this.scene.bungees, this.grab);
+                this.grab.destroyRope();
+                this.grab = null;
+            }
         }
 
         super.update(delta);
@@ -101,12 +128,16 @@ class Ghost extends BaseElement {
     resetToNextState(): void {
         let state = this.ghostState;
         do {
-            state = state === 8 ? DEFAULT_GHOST_STATE : state << 1;
+            state = state << 1;
+            if (state > 8) {
+                state = 2;
+            }
         } while ((state & this.possibleStatesMask) === 0 && state !== this.ghostState);
 
-        if ((state & this.possibleStatesMask) === 0) {
-            state = DEFAULT_GHOST_STATE;
+        if (state === this.ghostState || (state & this.possibleStatesMask) === 0) {
+            return;
         }
+
         this.resetToState(state);
     }
 
@@ -117,15 +148,58 @@ class Ghost extends BaseElement {
             return;
         }
 
-        this.clearMorphObjects();
-        this.ghostState = newState;
+        // Create disappear timeline for current form
+        const morphOut = new Timeline();
+        morphOut.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.IMMEDIATE, 0)
+        );
+        morphOut.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.LINEAR, GHOST_MORPHING_DISAPPEAR_TIME)
+        );
 
-        const morphTimeline = new Timeline();
-        morphTimeline.addKeyFrame(
+        // Fade out current morphed objects and remove from scene arrays
+        if (this.bubble) {
+            this.bubble.addTimeline(morphOut);
+            this.bubble.playTimeline(0);
+            this.removeFromSceneArray(this.scene.bubbles, this.bubble);
+            this.bubble = null;  // Clear reference immediately
+        }
+        if (this.grab) {
+            // Mark rope for cutting during morph
+            if (this.grab.rope) {
+                this.grab.rope.forceWhite = true;
+                this.grab.rope.cutTime = GHOST_MORPHING_APPEAR_TIME;
+                if (this.grab.rope.cut === Constants.UNDEFINED) {
+                    this.grab.rope.cut = 0;
+                }
+            }
+            this.grab.addTimeline(morphOut);
+            this.grab.playTimeline(0);
+            this.grab.destroyRope();
+            this.removeFromSceneArray(this.scene.bungees, this.grab);
+            this.grab = null;  // Clear reference immediately
+        }
+        if (this.bouncer) {
+            this.bouncer.addTimeline(morphOut);
+            this.bouncer.playTimeline(0);
+            this.removeFromSceneArray(this.scene.bouncers, this.bouncer);
+            this.bouncer = null;  // Clear reference immediately
+        }
+
+        // Fade out ghost image if transitioning to a form
+        if (newState !== DEFAULT_GHOST_STATE && this.ghostImage.visible) {
+            this.ghostImage.playTimeline(1);
+        }
+
+        this.ghostState = newState;
+        this.ghostImage.visible = newState === DEFAULT_GHOST_STATE;
+
+        const morphIn = new Timeline();
+        morphIn.addKeyFrame(
             KeyFrame.makeColor(RGBAColor.transparent.copy(), KeyFrame.TransitionType.IMMEDIATE, 0)
         );
-        morphTimeline.addKeyFrame(
-            KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, 0.36)
+        morphIn.addKeyFrame(
+            KeyFrame.makeColor(RGBAColor.solidOpaque.copy(), KeyFrame.TransitionType.LINEAR, GHOST_MORPHING_APPEAR_TIME)
         );
 
         switch (newState) {
@@ -134,16 +208,14 @@ class Ghost extends BaseElement {
                 break;
             case 2: {
                 const ghostBubble = new GhostBubble().initAt(this.x, this.y);
-                ghostBubble.addTimeline(morphTimeline);
+                ghostBubble.addTimeline(morphIn);
                 ghostBubble.playTimeline(0);
                 this.scene.bubbles.push(ghostBubble);
                 this.bubble = ghostBubble;
                 break;
             }
             case 4: {
-                const grab = new Grab();
-                grab.x = this.x;
-                grab.y = this.y;
+                const grab = new GhostGrab().initAt(this.x, this.y);
                 grab.wheel = false;
                 grab.spider = null;
                 grab.setRadius(this.grabRadius);
@@ -171,18 +243,18 @@ class Ghost extends BaseElement {
 
                 this.scene.bungees.push(grab);
                 this.grab = grab;
-                grab.addTimeline(morphTimeline);
+                grab.addTimeline(morphIn);
                 grab.playTimeline(0);
                 break;
             }
             case 8: {
-                const bouncer = new Bouncer(
+                const bouncer = new GhostBouncer(
                     this.x,
                     this.y,
                     DEFAULT_BOUNCER_WIDTH,
                     this.bouncerAngle
                 );
-                bouncer.addTimeline(morphTimeline);
+                bouncer.addTimeline(morphIn);
                 bouncer.playTimeline(0);
                 this.scene.bouncers.push(bouncer);
                 this.bouncer = bouncer;
@@ -193,6 +265,9 @@ class Ghost extends BaseElement {
         }
 
         SoundMgr.playSound(ResourceId.SND_GHOST_PUFF);
+
+        this.morphingBubbles?.startSystem(GHOST_MORPHING_BUBBLES_COUNT);
+        this.morphingCloud?.startSystem();
     }
 
     override onTouchDown(tx: number, ty: number): boolean {
@@ -202,24 +277,6 @@ class Ghost extends BaseElement {
             return true;
         }
         return false;
-    }
-
-    private clearMorphObjects() {
-        if (this.bubble) {
-            this.removeFromSceneArray(this.scene.bubbles, this.bubble);
-            this.bubble = null;
-        }
-
-        if (this.grab) {
-            this.grab.destroyRope();
-            this.removeFromSceneArray(this.scene.bungees, this.grab);
-            this.grab = null;
-        }
-
-        if (this.bouncer) {
-            this.removeFromSceneArray(this.scene.bouncers, this.bouncer);
-            this.bouncer = null;
-        }
     }
 
     private removeFromSceneArray<T>(collection: T[], target: T | null): void {
@@ -233,23 +290,47 @@ class Ghost extends BaseElement {
         }
     }
 
-    private addFloatTimeline(element: BaseElement, offset: number, duration: number) {
+    private addFloatTimeline(element: BaseElement, offset: number) {
         const float = new Timeline();
         float.loopType = Timeline.LoopType.REPLAY;
         float.addKeyFrame(
             KeyFrame.makePos(
                 element.x,
                 element.y - offset,
-                KeyFrame.TransitionType.EASE_OUT,
-                duration
+                KeyFrame.TransitionType.IMMEDIATE,
+                0
+            )
+        );
+        float.addKeyFrame(
+            KeyFrame.makePos(
+                element.x,
+                element.y,
+                KeyFrame.TransitionType.EASE_IN,
+                0.38
             )
         );
         float.addKeyFrame(
             KeyFrame.makePos(
                 element.x,
                 element.y + offset,
+                KeyFrame.TransitionType.EASE_OUT,
+                0.38
+            )
+        );
+        float.addKeyFrame(
+            KeyFrame.makePos(
+                element.x,
+                element.y,
                 KeyFrame.TransitionType.EASE_IN,
-                duration
+                0.38
+            )
+        );
+        float.addKeyFrame(
+            KeyFrame.makePos(
+                element.x,
+                element.y - offset,
+                KeyFrame.TransitionType.EASE_OUT,
+                0.38
             )
         );
         element.addTimeline(float);

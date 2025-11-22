@@ -43,83 +43,190 @@ class GhostBubble extends Bubble {
     }
 
     private addSupportingClouds() {
-        const quads = [
-            GameSceneConstants.IMG_OBJ_GHOST_bubble_2,
-            GameSceneConstants.IMG_OBJ_GHOST_bubble_4,
-            GameSceneConstants.IMG_OBJ_GHOST_bubble_3,
-        ];
+        // Cloud quad 6 (index 6) - right
+        this.addBackCloud(85, 25, 6, 0.8, 0.78, 0.76, 0.48);
+        // Cloud quad 5 (index 5) - right bottom
+        this.addBackCloud(65, 55, 5, 0.93, 0.965, 1, 0.4);
+        // Cloud quad 5 (index 5) - left
+        this.addBackCloud(
+            -90,
+            15,
+            5,
+            0.33,
+            0.365,
+            0.4,
+            0.43
+        );
+        // Cloud quad 6 (index 6) - left bottom
+        this.addBackCloud(
+            -75,
+            45,
+            6,
+            0.6,
+            0.565,
+            0.53,
+            0.42,
+            -1,
+            1
+        );
+        // Cloud quad 2 (index 2) - bottom center (with rotation)
+        this.addBackCloud(
+            -20,
+            75,
+            2,
+            0.93,
+            0.965,
+            1,
+            0.47,
+            1,
+            -1,
+            350
+        );
 
-        const offsets: [number, number][] = [
-            [60, 50],
-            [-55, 55],
-            [70, 10],
-        ];
+        // Front clouds
+        this.addFrontCloud(60, 50, GameSceneConstants.IMG_OBJ_GHOST_bubble_3);
+        this.addFrontCloud(-55, 55, GameSceneConstants.IMG_OBJ_GHOST_bubble_5);
+        this.addFrontCloud(70, 10, GameSceneConstants.IMG_OBJ_GHOST_bubble_4);
 
-        for (let i = 0; i < quads.length; i++) {
-            const cloud = ImageElement.create(ResourceId.IMG_OBJ_GHOST, quads[i]);
-            cloud.anchor = cloud.parentAnchor = Alignment.CENTER;
-            cloud.x = this.x + offsets[i]![0];
-            cloud.y = this.y + offsets[i]![1];
-            this.addChild(cloud);
-            this.clouds.push(cloud);
+        // Child clouds inherit parent color and transformations
+        (this as any).passTransformationsToChilds = true;
+        this.passColorToChilds = true;
+    }
 
-            const timeline = new Timeline();
-            timeline.loopType = Timeline.LoopType.REPLAY;
-            timeline.addKeyFrame(
-                KeyFrame.makeScale(
-                    CLOUD_SCALE_MAX,
-                    CLOUD_SCALE_MAX,
-                    KeyFrame.TransitionType.IMMEDIATE,
-                    0
-                )
-            );
-            timeline.addKeyFrame(
-                KeyFrame.makeScale(
-                    CLOUD_SCALE_MIN,
-                    CLOUD_SCALE_MIN,
-                    KeyFrame.TransitionType.EASE_OUT,
-                    CLOUD_DURATION
-                )
-            );
-            timeline.addKeyFrame(
-                KeyFrame.makeScale(
-                    CLOUD_SCALE_MAX,
-                    CLOUD_SCALE_MAX,
-                    KeyFrame.TransitionType.EASE_IN,
-                    CLOUD_DURATION
-                )
-            );
+    private addFrontCloud(offsetX: number, offsetY: number, quad: number): void {
+        const cloud = ImageElement.create(ResourceId.IMG_OBJ_GHOST, quad);
+        cloud.anchor = cloud.parentAnchor = Alignment.CENTER;
+        cloud.x = this.x + offsetX;
+        cloud.y = this.y + offsetY;
+        this.addChild(cloud);
+        this.clouds.push(cloud);
 
-            timeline.addKeyFrame(
-                KeyFrame.makePos(
-                    cloud.x + CLOUD_DRIFT,
-                    cloud.y + CLOUD_DRIFT,
-                    KeyFrame.TransitionType.IMMEDIATE,
-                    0
-                )
-            );
-            timeline.addKeyFrame(
-                KeyFrame.makePos(
-                    cloud.x - CLOUD_DRIFT,
-                    cloud.y - CLOUD_DRIFT,
-                    KeyFrame.TransitionType.EASE_OUT,
-                    CLOUD_DURATION
-                )
-            );
-            timeline.addKeyFrame(
-                KeyFrame.makePos(
-                    cloud.x,
-                    cloud.y,
-                    KeyFrame.TransitionType.EASE_IN,
-                    CLOUD_DURATION
-                )
-            );
+        const timeline = new Timeline();
+        timeline.loopType = Timeline.LoopType.REPLAY;
+        timeline.addKeyFrame(
+            KeyFrame.makeScale(
+                CLOUD_SCALE_MAX,
+                CLOUD_SCALE_MAX,
+                KeyFrame.TransitionType.IMMEDIATE,
+                0
+            )
+        );
+        timeline.addKeyFrame(
+            KeyFrame.makeScale(
+                CLOUD_SCALE_MIN,
+                CLOUD_SCALE_MIN,
+                KeyFrame.TransitionType.EASE_OUT,
+                CLOUD_DURATION
+            )
+        );
+        timeline.addKeyFrame(
+            KeyFrame.makeScale(
+                CLOUD_SCALE_MAX,
+                CLOUD_SCALE_MAX,
+                KeyFrame.TransitionType.EASE_IN,
+                CLOUD_DURATION
+            )
+        );
 
-            cloud.addTimeline(timeline);
-            cloud.playTimeline(0);
+        timeline.addKeyFrame(
+            KeyFrame.makePos(
+                cloud.x + CLOUD_DRIFT,
+                cloud.y + CLOUD_DRIFT,
+                KeyFrame.TransitionType.IMMEDIATE,
+                0
+            )
+        );
+        timeline.addKeyFrame(
+            KeyFrame.makePos(
+                cloud.x - CLOUD_DRIFT,
+                cloud.y - CLOUD_DRIFT,
+                KeyFrame.TransitionType.EASE_OUT,
+                CLOUD_DURATION
+            )
+        );
+        timeline.addKeyFrame(
+            KeyFrame.makePos(cloud.x, cloud.y, KeyFrame.TransitionType.EASE_IN, CLOUD_DURATION)
+        );
+
+        cloud.addTimeline(timeline);
+        cloud.playTimeline(0);
+    }
+
+    private addBackCloud(
+        offsetX: number,
+        offsetY: number,
+        quad: number,
+        startScale: number,
+        midScale: number,
+        endScale: number,
+        duration: number,
+        posDeltaX = 1,
+        posDeltaY = 1,
+        rotation = 0
+    ): void {
+        const cloud = ImageElement.create(ResourceId.IMG_OBJ_GHOST, quad);
+        cloud.anchor = cloud.parentAnchor = Alignment.CENTER;
+        cloud.x = this.x + offsetX;
+        cloud.y = this.y + offsetY;
+        this.addChild(cloud);
+        this.clouds.push(cloud);
+
+        const timeline = new Timeline();
+        timeline.loopType = Timeline.LoopType.REPLAY;
+        timeline.addKeyFrame(
+            KeyFrame.makeScale(startScale, startScale, KeyFrame.TransitionType.IMMEDIATE, 0)
+        );
+        timeline.addKeyFrame(
+            KeyFrame.makeScale(midScale, midScale, KeyFrame.TransitionType.EASE_IN, duration)
+        );
+        timeline.addKeyFrame(
+            KeyFrame.makeScale(endScale, endScale, KeyFrame.TransitionType.EASE_OUT, duration)
+        );
+        timeline.addKeyFrame(
+            KeyFrame.makeScale(midScale, midScale, KeyFrame.TransitionType.EASE_IN, duration)
+        );
+        timeline.addKeyFrame(
+            KeyFrame.makeScale(startScale, startScale, KeyFrame.TransitionType.EASE_OUT, duration)
+        );
+        timeline.addKeyFrame(
+            KeyFrame.makePos(
+                cloud.x + posDeltaX,
+                cloud.y + posDeltaY,
+                KeyFrame.TransitionType.IMMEDIATE,
+                0
+            )
+        );
+        timeline.addKeyFrame(
+            KeyFrame.makePos(cloud.x, cloud.y, KeyFrame.TransitionType.EASE_IN, duration)
+        );
+        timeline.addKeyFrame(
+            KeyFrame.makePos(
+                cloud.x - posDeltaX,
+                cloud.y - posDeltaY,
+                KeyFrame.TransitionType.EASE_OUT,
+                duration
+            )
+        );
+        timeline.addKeyFrame(
+            KeyFrame.makePos(cloud.x, cloud.y, KeyFrame.TransitionType.EASE_IN, duration)
+        );
+        timeline.addKeyFrame(
+            KeyFrame.makePos(
+                cloud.x + posDeltaX,
+                cloud.y + posDeltaY,
+                KeyFrame.TransitionType.EASE_OUT,
+                duration
+            )
+        );
+
+        if (rotation !== 0) {
+            timeline.addKeyFrame(
+                KeyFrame.makeRotation(rotation, KeyFrame.TransitionType.IMMEDIATE, 0)
+            );
         }
 
-        this.passColorToChilds = true;
+        cloud.addTimeline(timeline);
+        cloud.playTimeline(0);
     }
 }
 
