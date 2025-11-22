@@ -177,7 +177,10 @@ RES_DATA[ResourceId.IMG_OBJ_BEE_HD] = new ResEntry("obj_bee_hd.png", ResourceTyp
 RES_DATA[ResourceId.IMG_OBJ_POLLEN_HD] = new ResEntry("obj_pollen_hd.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.SND_SPIKE_ROTATE_IN] = new ResEntry("spike_rotate_in", ResourceType.SOUND);
 RES_DATA[ResourceId.SND_SPIKE_ROTATE_OUT] = new ResEntry("spike_rotate_out", ResourceType.SOUND);
-RES_DATA[ResourceId.IMG_CHAR_SUPPORTS] = new ResEntry("char_supports.png", ResourceType.IMAGE);
+RES_DATA[ResourceId.IMG_CHAR_SUPPORTS] = new ResEntry("char_supports.png", ResourceType.IMAGE, {
+    atlasPath: "char_supports.json",
+    atlasFormat: "texture-packer",
+});
 RES_DATA[ResourceId.IMG_OBJ_VINIL] = new ResEntry("obj_vinil.png", ResourceType.IMAGE);
 RES_DATA[ResourceId.SND_SCRATCH_IN] = new ResEntry("scratch_in", ResourceType.SOUND);
 RES_DATA[ResourceId.SND_SCRATCH_OUT] = new ResEntry("scratch_out", ResourceType.SOUND);
@@ -346,6 +349,13 @@ RES_DATA[ResourceId.SND_MENU_MUSIC_XMAS] = new ResEntry("menu_music_xmas", Resou
 RES_DATA[ResourceId.SND_GAME_MUSIC_XMAS] = new ResEntry("game_music_xmas", ResourceType.SOUND);
 
 RES_DATA[ResourceId.SND_TELEPORT_XMAS] = new ResEntry("teleport_xmas", ResourceType.SOUND);
+
+RES_DATA[ResourceId.IMG_OBJ_GHOST] = new ResEntry("obj_ghost.png", ResourceType.IMAGE, {
+    atlasPath: "obj_ghost.json",
+    atlasFormat: "texture-packer",
+});
+
+RES_DATA[ResourceId.SND_GHOST_PUFF] = new ResEntry("ghost_puff", ResourceType.SOUND);
 
 RES_DATA[ResourceId.IMG_CHAR_SUPPORTS_XMAS] = new ResEntry(
     "char_supports_xmas.png",

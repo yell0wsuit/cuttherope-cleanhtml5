@@ -10,6 +10,11 @@ import SoundMgr from "@/game/CTRSoundMgr";
 import Timeline from "@/visual/Timeline";
 import Vector from "@/core/Vector";
 import ResourceId from "@/resources/ResourceId";
+import {
+    disableGhostCycleForBubble,
+    enableGhostCycleForBubble,
+    isGhostBubble,
+} from "./bubbles";
 import type AnimationPool from "@/visual/AnimationPool";
 import type Bubble from "@/game/Bubble";
 import type { GameScene } from "@/types/game-scene";
@@ -60,7 +65,7 @@ export function updateCollectibles(this: CollectiblesScene, delta: number): bool
 
                 if (this.candyBubbleL || this.candyBubbleR) {
                     this.candyBubble = this.candyBubbleL ? this.candyBubbleL : this.candyBubbleR;
-                    this.candyBubbleAnimation.visible = true;
+                    this.candyBubbleAnimation.visible = !isGhostBubble(this, this.candyBubble);
                 }
 
                 this.lastCandyRotateDelta = 0;
@@ -202,7 +207,10 @@ export function updateCollectibles(this: CollectiblesScene, delta: number): bool
                         this.candyBubbleAnimationL
                     )
                 ) {
+                    enableGhostCycleForBubble(this, this.candyBubbleL);
                     this.candyBubbleL = bubble;
+                    const leftHasGhost = disableGhostCycleForBubble(this, bubble);
+                    this.candyBubbleAnimationL.visible = !leftHasGhost;
                     break;
                 }
 
@@ -215,7 +223,10 @@ export function updateCollectibles(this: CollectiblesScene, delta: number): bool
                         this.candyBubbleAnimationR
                     )
                 ) {
+                    enableGhostCycleForBubble(this, this.candyBubbleR);
                     this.candyBubbleR = bubble;
+                    const rightHasGhost = disableGhostCycleForBubble(this, bubble);
+                    this.candyBubbleAnimationR.visible = !rightHasGhost;
                     break;
                 }
             } else if (
@@ -227,7 +238,10 @@ export function updateCollectibles(this: CollectiblesScene, delta: number): bool
                     this.candyBubbleAnimation
                 )
             ) {
+                enableGhostCycleForBubble(this, this.candyBubble);
+                const hasGhost = disableGhostCycleForBubble(this, bubble);
                 this.candyBubble = bubble;
+                this.candyBubbleAnimation.visible = !hasGhost;
                 break;
             }
         }
@@ -242,6 +256,10 @@ export function updateCollectibles(this: CollectiblesScene, delta: number): bool
                 }
             }
         }
+    }
+
+    for (const ghost of this.ghosts) {
+        ghost.updateGhost(delta);
     }
 
     // tutorial text

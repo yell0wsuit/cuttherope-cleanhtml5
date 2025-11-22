@@ -19,6 +19,7 @@ import type PollenDrawer from "@/game/PollenDrawer";
 import type Pump from "@/game/Pump";
 import type Spikes from "@/game/Spikes";
 import type Star from "@/game/Star";
+import type Ghost from "@/game/Ghost";
 import type DelayedDispatcher from "@/utils/DelayedDispatcher";
 import type CTRGameObject from "@/game/CTRGameObject";
 import type TutorialText from "@/game/TutorialText";
@@ -91,6 +92,7 @@ export interface GameScene extends BaseElement {
     spikes: Spikes[];
     bouncers: Bouncer[];
     socks: (Sock & { state: SockStateValue })[];
+    ghosts: Ghost[];
     bungees: Grab[];
     stars: (Star | null)[];
     candy: GameObject;

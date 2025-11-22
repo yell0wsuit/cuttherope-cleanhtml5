@@ -196,8 +196,11 @@ const ResourceId = {
     SND_GAME_MUSIC_XMAS: 197,
     SND_TELEPORT_XMAS: 198,
 
+    IMG_OBJ_GHOST: 199,
+    SND_GHOST_PUFF: 200,
+
     // Total number of resources
-    RESOURCES_COUNT: 198,
+    RESOURCES_COUNT: 200,
 } as const;
 
 export default ResourceId;

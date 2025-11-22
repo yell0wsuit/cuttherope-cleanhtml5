@@ -24,6 +24,7 @@ export function resetGameState(this: GameSceneInit): void {
     this.pumps = [];
     this.rockets = [];
     this.socks = [];
+    this.ghosts = [];
     this.tutorialImages = [];
     this.tutorials = [];
     this.drawings = [];

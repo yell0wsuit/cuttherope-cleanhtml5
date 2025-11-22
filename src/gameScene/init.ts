@@ -33,6 +33,7 @@ import type GravityButton from "@/game/GravityButton";
 import type ImageElement from "@/visual/ImageElement";
 import type Star from "@/game/Star";
 import type Spikes from "@/game/Spikes";
+import type Ghost from "@/game/Ghost";
 import { initAnimations } from "./initGameScene/initAnimations";
 import { initBackground } from "./initGameScene/initBackground";
 import { resetGameState } from "./initGameScene/resetGameState";
@@ -111,6 +112,7 @@ abstract class GameSceneInit extends BaseElement {
     pumps: Pump[];
     rockets: { update(delta: number): void }[];
     socks: Sock[];
+    ghosts: Ghost[];
     tutorialImages: CTRGameObject[];
     tutorials: TutorialText[];
     drawings: Drawing[];
@@ -252,6 +254,7 @@ abstract class GameSceneInit extends BaseElement {
         this.pumps = [];
         this.rockets = [];
         this.socks = [];
+        this.ghosts = [];
         this.tutorialImages = [];
         this.tutorials = [];
         this.drawings = [];
