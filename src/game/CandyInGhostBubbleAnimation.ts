@@ -27,224 +27,199 @@ class CandyInGhostBubbleAnimation extends Animation {
 
     addSupportingCloudsTimelines(): void {
         // Cloud quad 6 - right
-        this.createPulsingCloud(
-            6,
-            this.x + 85,
-            this.y + 25,
-            [
-                {
-                    scale: 0.8,
-                    dx: 1,
-                    dy: 1,
-                    transition: KeyFrame.TransitionType.IMMEDIATE,
-                    duration: 0,
-                },
-                {
-                    scale: 0.78,
-                    dx: 0,
-                    dy: 0,
-                    transition: KeyFrame.TransitionType.EASE_IN,
-                    duration: 0.48,
-                },
-                {
-                    scale: 0.76,
-                    dx: -1,
-                    dy: -1,
-                    transition: KeyFrame.TransitionType.EASE_OUT,
-                    duration: 0.48,
-                },
-                {
-                    scale: 0.78,
-                    dx: 0,
-                    dy: 0,
-                    transition: KeyFrame.TransitionType.EASE_IN,
-                    duration: 0.48,
-                },
-                {
-                    scale: 0.8,
-                    dx: 1,
-                    dy: 1,
-                    transition: KeyFrame.TransitionType.EASE_OUT,
-                    duration: 0.48,
-                },
-            ]
-        );
+        this.createPulsingCloud(6, this.x + 85, this.y + 25, [
+            {
+                scale: 0.8,
+                dx: 1,
+                dy: 1,
+                transition: KeyFrame.TransitionType.IMMEDIATE,
+                duration: 0,
+            },
+            {
+                scale: 0.78,
+                dx: 0,
+                dy: 0,
+                transition: KeyFrame.TransitionType.EASE_IN,
+                duration: 0.48,
+            },
+            {
+                scale: 0.76,
+                dx: -1,
+                dy: -1,
+                transition: KeyFrame.TransitionType.EASE_OUT,
+                duration: 0.48,
+            },
+            {
+                scale: 0.78,
+                dx: 0,
+                dy: 0,
+                transition: KeyFrame.TransitionType.EASE_IN,
+                duration: 0.48,
+            },
+            {
+                scale: 0.8,
+                dx: 1,
+                dy: 1,
+                transition: KeyFrame.TransitionType.EASE_OUT,
+                duration: 0.48,
+            },
+        ]);
 
         // Cloud quad 5 - right bottom
-        this.createPulsingCloud(
-            5,
-            this.x + 65,
-            this.y + 55,
-            [
-                {
-                    scale: 0.93,
-                    dx: 1,
-                    dy: 1,
-                    transition: KeyFrame.TransitionType.IMMEDIATE,
-                    duration: 0,
-                },
-                {
-                    scale: 0.965,
-                    dx: 0,
-                    dy: 0,
-                    transition: KeyFrame.TransitionType.EASE_IN,
-                    duration: 0.4,
-                },
-                {
-                    scale: 1,
-                    dx: -1,
-                    dy: -1,
-                    transition: KeyFrame.TransitionType.EASE_OUT,
-                    duration: 0.4,
-                },
-                {
-                    scale: 0.965,
-                    dx: 0,
-                    dy: 0,
-                    transition: KeyFrame.TransitionType.EASE_IN,
-                    duration: 0.4,
-                },
-                {
-                    scale: 0.93,
-                    dx: 1,
-                    dy: 1,
-                    transition: KeyFrame.TransitionType.EASE_OUT,
-                    duration: 0.4,
-                },
-            ]
-        );
+        this.createPulsingCloud(5, this.x + 65, this.y + 55, [
+            {
+                scale: 0.93,
+                dx: 1,
+                dy: 1,
+                transition: KeyFrame.TransitionType.IMMEDIATE,
+                duration: 0,
+            },
+            {
+                scale: 0.965,
+                dx: 0,
+                dy: 0,
+                transition: KeyFrame.TransitionType.EASE_IN,
+                duration: 0.4,
+            },
+            {
+                scale: 1,
+                dx: -1,
+                dy: -1,
+                transition: KeyFrame.TransitionType.EASE_OUT,
+                duration: 0.4,
+            },
+            {
+                scale: 0.965,
+                dx: 0,
+                dy: 0,
+                transition: KeyFrame.TransitionType.EASE_IN,
+                duration: 0.4,
+            },
+            {
+                scale: 0.93,
+                dx: 1,
+                dy: 1,
+                transition: KeyFrame.TransitionType.EASE_OUT,
+                duration: 0.4,
+            },
+        ]);
 
         // Cloud quad 5 - left
-        this.createPulsingCloud(
-            5,
-            this.x - 90,
-            this.y + 15,
-            [
-                {
-                    scale: 0.33,
-                    dx: 1,
-                    dy: 1,
-                    transition: KeyFrame.TransitionType.IMMEDIATE,
-                    duration: 0,
-                },
-                {
-                    scale: 0.365,
-                    dx: 0,
-                    dy: 0,
-                    transition: KeyFrame.TransitionType.EASE_IN,
-                    duration: 0.43,
-                },
-                {
-                    scale: 0.4,
-                    dx: -1,
-                    dy: -1,
-                    transition: KeyFrame.TransitionType.EASE_OUT,
-                    duration: 0.43,
-                },
-                {
-                    scale: 0.365,
-                    dx: 0,
-                    dy: 0,
-                    transition: KeyFrame.TransitionType.EASE_IN,
-                    duration: 0.43,
-                },
-                {
-                    scale: 0.33,
-                    dx: 1,
-                    dy: 1,
-                    transition: KeyFrame.TransitionType.EASE_OUT,
-                    duration: 0.43,
-                },
-            ]
-        );
+        this.createPulsingCloud(5, this.x - 90, this.y + 15, [
+            {
+                scale: 0.33,
+                dx: 1,
+                dy: 1,
+                transition: KeyFrame.TransitionType.IMMEDIATE,
+                duration: 0,
+            },
+            {
+                scale: 0.365,
+                dx: 0,
+                dy: 0,
+                transition: KeyFrame.TransitionType.EASE_IN,
+                duration: 0.43,
+            },
+            {
+                scale: 0.4,
+                dx: -1,
+                dy: -1,
+                transition: KeyFrame.TransitionType.EASE_OUT,
+                duration: 0.43,
+            },
+            {
+                scale: 0.365,
+                dx: 0,
+                dy: 0,
+                transition: KeyFrame.TransitionType.EASE_IN,
+                duration: 0.43,
+            },
+            {
+                scale: 0.33,
+                dx: 1,
+                dy: 1,
+                transition: KeyFrame.TransitionType.EASE_OUT,
+                duration: 0.43,
+            },
+        ]);
 
         // Cloud quad 6 - left bottom
-        this.createPulsingCloud(
-            6,
-            this.x - 75,
-            this.y + 45,
-            [
-                {
-                    scale: 0.6,
-                    dx: -1,
-                    dy: 1,
-                    transition: KeyFrame.TransitionType.IMMEDIATE,
-                    duration: 0,
-                },
-                {
-                    scale: 0.565,
-                    dx: 0,
-                    dy: 0,
-                    transition: KeyFrame.TransitionType.EASE_IN,
-                    duration: 0.42,
-                },
-                {
-                    scale: 0.53,
-                    dx: 1,
-                    dy: -1,
-                    transition: KeyFrame.TransitionType.EASE_OUT,
-                    duration: 0.42,
-                },
-                {
-                    scale: 0.565,
-                    dx: 0,
-                    dy: 0,
-                    transition: KeyFrame.TransitionType.EASE_IN,
-                    duration: 0.42,
-                },
-                {
-                    scale: 0.6,
-                    dx: -1,
-                    dy: 1,
-                    transition: KeyFrame.TransitionType.EASE_OUT,
-                    duration: 0.42,
-                },
-            ]
-        );
+        this.createPulsingCloud(6, this.x - 75, this.y + 45, [
+            {
+                scale: 0.6,
+                dx: -1,
+                dy: 1,
+                transition: KeyFrame.TransitionType.IMMEDIATE,
+                duration: 0,
+            },
+            {
+                scale: 0.565,
+                dx: 0,
+                dy: 0,
+                transition: KeyFrame.TransitionType.EASE_IN,
+                duration: 0.42,
+            },
+            {
+                scale: 0.53,
+                dx: 1,
+                dy: -1,
+                transition: KeyFrame.TransitionType.EASE_OUT,
+                duration: 0.42,
+            },
+            {
+                scale: 0.565,
+                dx: 0,
+                dy: 0,
+                transition: KeyFrame.TransitionType.EASE_IN,
+                duration: 0.42,
+            },
+            {
+                scale: 0.6,
+                dx: -1,
+                dy: 1,
+                transition: KeyFrame.TransitionType.EASE_OUT,
+                duration: 0.42,
+            },
+        ]);
 
         // Cloud quad 2 - bottom center (with rotation)
-        const front = this.createPulsingCloud(
-            2,
-            this.x - 20,
-            this.y + 75,
-            [
-                {
-                    scale: 0.93,
-                    dx: 1,
-                    dy: -1,
-                    transition: KeyFrame.TransitionType.IMMEDIATE,
-                    duration: 0,
-                },
-                {
-                    scale: 0.965,
-                    dx: 0,
-                    dy: 0,
-                    transition: KeyFrame.TransitionType.EASE_IN,
-                    duration: 0.47,
-                },
-                {
-                    scale: 1,
-                    dx: -1,
-                    dy: 1,
-                    transition: KeyFrame.TransitionType.EASE_OUT,
-                    duration: 0.47,
-                },
-                {
-                    scale: 0.965,
-                    dx: 0,
-                    dy: 0,
-                    transition: KeyFrame.TransitionType.EASE_IN,
-                    duration: 0.47,
-                },
-                {
-                    scale: 0.93,
-                    dx: 1,
-                    dy: -1,
-                    transition: KeyFrame.TransitionType.EASE_OUT,
-                    duration: 0.47,
-                },
-            ]
-        );
+        const front = this.createPulsingCloud(2, this.x - 20, this.y + 75, [
+            {
+                scale: 0.93,
+                dx: 1,
+                dy: -1,
+                transition: KeyFrame.TransitionType.IMMEDIATE,
+                duration: 0,
+            },
+            {
+                scale: 0.965,
+                dx: 0,
+                dy: 0,
+                transition: KeyFrame.TransitionType.EASE_IN,
+                duration: 0.47,
+            },
+            {
+                scale: 1,
+                dx: -1,
+                dy: 1,
+                transition: KeyFrame.TransitionType.EASE_OUT,
+                duration: 0.47,
+            },
+            {
+                scale: 0.965,
+                dx: 0,
+                dy: 0,
+                transition: KeyFrame.TransitionType.EASE_IN,
+                duration: 0.47,
+            },
+            {
+                scale: 0.93,
+                dx: 1,
+                dy: -1,
+                transition: KeyFrame.TransitionType.EASE_OUT,
+                duration: 0.47,
+            },
+        ]);
 
         const rotation = new Timeline();
         rotation.addKeyFrame(KeyFrame.makeRotation(350, KeyFrame.TransitionType.IMMEDIATE, 0));

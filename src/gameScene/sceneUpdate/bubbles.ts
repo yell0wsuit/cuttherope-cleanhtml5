@@ -89,17 +89,26 @@ function popCandyBubble(scene: GameScene, isLeft: boolean): void {
             enableGhostCycleForBubble(scene, scene.candyBubbleL);
             scene.candyBubbleL = null;
             scene.candyBubbleAnimationL.visible = false;
+            if (scene.candyGhostBubbleAnimationL) {
+                scene.candyGhostBubbleAnimationL.visible = false;
+            }
             scene.popBubble(scene.candyL.x, scene.candyL.y);
         } else {
             enableGhostCycleForBubble(scene, scene.candyBubbleR);
             scene.candyBubbleR = null;
             scene.candyBubbleAnimationR.visible = false;
+            if (scene.candyGhostBubbleAnimationR) {
+                scene.candyGhostBubbleAnimationR.visible = false;
+            }
             scene.popBubble(scene.candyR.x, scene.candyR.y);
         }
     } else {
         enableGhostCycleForBubble(scene, scene.candyBubble);
         scene.candyBubble = null;
         scene.candyBubbleAnimation.visible = false;
+        if (scene.candyGhostBubbleAnimation) {
+            scene.candyGhostBubbleAnimation.visible = false;
+        }
         scene.popBubble(scene.candy.x, scene.candy.y);
     }
 }

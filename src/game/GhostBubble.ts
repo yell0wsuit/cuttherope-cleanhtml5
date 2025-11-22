@@ -23,6 +23,11 @@ class GhostBubble extends Bubble {
 
     initAt(x: number, y: number): this {
         this.initTextureWithId(ResourceId.IMG_OBJ_BUBBLE_ATTACHED);
+        // Set random texture quad for bubble variation (like regular bubbles)
+        const randomQuad = Math.floor(Math.random() * 2) + 1; // Random 1-2
+        this.setTextureQuad(randomQuad);
+        this.doRestoreCutTransparency();
+
         this.bb = Rectangle.copy(resolution.BUBBLE_BB);
         this.x = x;
         this.y = y;
@@ -48,40 +53,11 @@ class GhostBubble extends Bubble {
         // Cloud quad 5 (index 5) - right bottom
         this.addBackCloud(65, 55, 5, 0.93, 0.965, 1, 0.4);
         // Cloud quad 5 (index 5) - left
-        this.addBackCloud(
-            -90,
-            15,
-            5,
-            0.33,
-            0.365,
-            0.4,
-            0.43
-        );
+        this.addBackCloud(-90, 15, 5, 0.33, 0.365, 0.4, 0.43);
         // Cloud quad 6 (index 6) - left bottom
-        this.addBackCloud(
-            -75,
-            45,
-            6,
-            0.6,
-            0.565,
-            0.53,
-            0.42,
-            -1,
-            1
-        );
+        this.addBackCloud(-75, 45, 6, 0.6, 0.565, 0.53, 0.42, -1, 1);
         // Cloud quad 2 (index 2) - bottom center (with rotation)
-        this.addBackCloud(
-            -20,
-            75,
-            2,
-            0.93,
-            0.965,
-            1,
-            0.47,
-            1,
-            -1,
-            350
-        );
+        this.addBackCloud(-20, 75, 2, 0.93, 0.965, 1, 0.47, 1, -1, 350);
 
         // Front clouds
         this.addFrontCloud(60, 50, GameSceneConstants.IMG_OBJ_GHOST_bubble_3);
@@ -227,6 +203,23 @@ class GhostBubble extends Bubble {
 
         cloud.addTimeline(timeline);
         cloud.playTimeline(0);
+    }
+
+    override draw(): void {
+        // When popped, temporarily hide all clouds before drawing
+        if (this.popped) {
+            for (const cloud of this.clouds) {
+                cloud.visible = false;
+            }
+        }
+        // Call parent Bubble draw which will call preDraw, draw texture, and postDraw
+        super.draw();
+        // Restore cloud visibility after drawing
+        if (this.popped) {
+            for (const cloud of this.clouds) {
+                cloud.visible = true;
+            }
+        }
     }
 }
 

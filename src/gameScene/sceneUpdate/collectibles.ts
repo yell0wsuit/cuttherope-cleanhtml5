@@ -10,11 +10,7 @@ import SoundMgr from "@/game/CTRSoundMgr";
 import Timeline from "@/visual/Timeline";
 import Vector from "@/core/Vector";
 import ResourceId from "@/resources/ResourceId";
-import {
-    disableGhostCycleForBubble,
-    enableGhostCycleForBubble,
-    isGhostBubble,
-} from "./bubbles";
+import { disableGhostCycleForBubble, enableGhostCycleForBubble, isGhostBubble } from "./bubbles";
 import type AnimationPool from "@/visual/AnimationPool";
 import type Bubble from "@/game/Bubble";
 import type { GameScene } from "@/types/game-scene";
@@ -211,6 +207,9 @@ export function updateCollectibles(this: CollectiblesScene, delta: number): bool
                     this.candyBubbleL = bubble;
                     const leftHasGhost = disableGhostCycleForBubble(this, bubble);
                     this.candyBubbleAnimationL.visible = !leftHasGhost;
+                    if (this.candyGhostBubbleAnimationL) {
+                        this.candyGhostBubbleAnimationL.visible = leftHasGhost;
+                    }
                     break;
                 }
 
@@ -227,6 +226,9 @@ export function updateCollectibles(this: CollectiblesScene, delta: number): bool
                     this.candyBubbleR = bubble;
                     const rightHasGhost = disableGhostCycleForBubble(this, bubble);
                     this.candyBubbleAnimationR.visible = !rightHasGhost;
+                    if (this.candyGhostBubbleAnimationR) {
+                        this.candyGhostBubbleAnimationR.visible = rightHasGhost;
+                    }
                     break;
                 }
             } else if (
@@ -242,6 +244,9 @@ export function updateCollectibles(this: CollectiblesScene, delta: number): bool
                 const hasGhost = disableGhostCycleForBubble(this, bubble);
                 this.candyBubble = bubble;
                 this.candyBubbleAnimation.visible = !hasGhost;
+                if (this.candyGhostBubbleAnimation) {
+                    this.candyGhostBubbleAnimation.visible = hasGhost;
+                }
                 break;
             }
         }

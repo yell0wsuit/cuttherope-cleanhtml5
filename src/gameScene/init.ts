@@ -34,6 +34,7 @@ import type ImageElement from "@/visual/ImageElement";
 import type Star from "@/game/Star";
 import type Spikes from "@/game/Spikes";
 import type Ghost from "@/game/Ghost";
+import CandyInGhostBubbleAnimation from "@/game/CandyInGhostBubbleAnimation";
 import { initAnimations } from "./initGameScene/initAnimations";
 import { initBackground } from "./initGameScene/initBackground";
 import { resetGameState } from "./initGameScene/resetGameState";
@@ -130,6 +131,9 @@ abstract class GameSceneInit extends BaseElement {
     candyBubbleAnimation: Animation;
     candyBubbleAnimationL?: Animation;
     candyBubbleAnimationR?: Animation;
+    candyGhostBubbleAnimation?: Animation;
+    candyGhostBubbleAnimationL?: Animation;
+    candyGhostBubbleAnimationR?: Animation;
     candyBubble: Bubble | null;
     candyBubbleL: Bubble | null;
     candyBubbleR: Bubble | null;
