@@ -10,6 +10,7 @@ import * as GameSceneConstants from "@/gameScene/constants";
 
 class GhostBubble extends Bubble {
     private readonly clouds: ImageElement[];
+    private bubbleOutlineIndex: number = -1;
 
     constructor() {
         super();
@@ -38,6 +39,7 @@ class GhostBubble extends Bubble {
         bubble.doRestoreCutTransparency();
         bubble.parentAnchor = bubble.anchor = Alignment.CENTER;
         this.addChild(bubble);
+        this.bubbleOutlineIndex = this.children.indexOf(bubble);
 
         return this;
     }
@@ -138,6 +140,16 @@ class GhostBubble extends Bubble {
         cloud.playTimeline(0);
     }
 
+    override removeChildWithID(id: number): void {
+        // For GhostBubble, when removing child 0, remove the bubble outline instead
+        // (which is the last child added, not the first)
+        if (id === 0 && this.bubbleOutlineIndex !== -1) {
+            super.removeChildWithID(this.bubbleOutlineIndex);
+            return;
+        }
+        super.removeChildWithID(id);
+    }
+
     override draw(): void {
         // When popped, temporarily hide all clouds before drawing
         if (this.popped) {
@@ -147,7 +159,7 @@ class GhostBubble extends Bubble {
         }
         // Call parent Bubble draw which will call preDraw, draw texture, and postDraw
         super.draw();
-        // Restore cloud visibility after drawing
+        // Restore cloud visibility after drawing (will be managed by timeline/fade-out)
         if (this.popped) {
             for (const cloud of this.clouds) {
                 cloud.visible = true;

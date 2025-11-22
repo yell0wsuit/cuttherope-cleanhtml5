@@ -76,6 +76,11 @@ function isBubbleCapture(
         b.popped = true;
         b.removeChildWithID(0);
 
+        // For ghost bubbles, disable the ghost's cycling when captured
+        if (isGhostBubble(scene, b)) {
+            disableGhostCycleForBubble(scene, b);
+        }
+
         scene.attachCandy();
 
         return true;
