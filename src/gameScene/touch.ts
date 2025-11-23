@@ -216,6 +216,12 @@ class GameSceneTouch extends GameSceneUpdate {
             activeCircle = null;
         }
 
+        for (const ghost of this.ghosts) {
+            if (ghost?.onTouchDown(cameraAdjustedX, cameraAdjustedY)) {
+                return true;
+            }
+        }
+
         const GRAB_WHEEL_RADIUS = resolution.GRAB_WHEEL_RADIUS;
         const GRAB_WHEEL_DIAMETER = GRAB_WHEEL_RADIUS * 2;
         const GRAB_MOVE_RADIUS = resolution.GRAB_MOVE_RADIUS;
